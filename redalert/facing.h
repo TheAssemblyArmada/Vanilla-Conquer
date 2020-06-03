@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/FACING.H 1     3/03/97 10:24a Joe_bostic $ */
@@ -43,35 +43,58 @@
 */
 class FacingClass
 {
-	public:
-		FacingClass(void);
-		FacingClass(DirType dir) : CurrentFacing(dir), DesiredFacing(dir) {};
-		FacingClass(NoInitClass const & ) {};
+public:
+    FacingClass(void);
+    FacingClass(DirType dir)
+        : CurrentFacing(dir)
+        , DesiredFacing(dir){};
+    FacingClass(NoInitClass const&){};
 
-		operator DirType (void) const {return(CurrentFacing);};
+    operator DirType(void) const
+    {
+        return (CurrentFacing);
+    };
 
-		DirType Current(void) const {return(CurrentFacing);};
-		DirType Desired(void) const {return(DesiredFacing);};
+    DirType Current(void) const
+    {
+        return (CurrentFacing);
+    };
+    DirType Desired(void) const
+    {
+        return (DesiredFacing);
+    };
 
-		int Set_Desired(DirType facing);
-		int Set_Current(DirType facing);
+    int Set_Desired(DirType facing);
+    int Set_Current(DirType facing);
 
-		void Set(DirType facing) {
-			Set_Current(facing);
-			Set_Desired(facing);
-		};
+    void Set(DirType facing)
+    {
+        Set_Current(facing);
+        Set_Desired(facing);
+    };
 
-		DirType Get(void) const { return CurrentFacing; }
+    DirType Get(void) const
+    {
+        return CurrentFacing;
+    }
 
-		int Is_Rotating(void) const {return (DesiredFacing != CurrentFacing);};
-		int Difference(void) const {return (int)(signed char)((int)DesiredFacing - (int)CurrentFacing);}
-		int Difference(DirType facing) const {return (int)(signed char)((int)facing - (int)CurrentFacing);}
-		int Rotation_Adjust(int rate);
+    int Is_Rotating(void) const
+    {
+        return (DesiredFacing != CurrentFacing);
+    };
+    int Difference(void) const
+    {
+        return (int)(signed char)((int)DesiredFacing - (int)CurrentFacing);
+    }
+    int Difference(DirType facing) const
+    {
+        return (int)(signed char)((int)facing - (int)CurrentFacing);
+    }
+    int Rotation_Adjust(int rate);
 
-	private:
-		DirType CurrentFacing;
-		DirType DesiredFacing;
+private:
+    DirType CurrentFacing;
+    DirType DesiredFacing;
 };
-
 
 #endif

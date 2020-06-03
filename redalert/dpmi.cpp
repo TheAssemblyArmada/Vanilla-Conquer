@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c0\vcs\code\dpmi.cpv   4.41   04 Jul 1996 16:12:42   JOE_BOSTIC  $ */
@@ -41,14 +41,15 @@
 
 #ifndef __FLAT__
 
-void DOSSegmentClass::Swap(DOSSegmentClass &src, int soffset, DOSSegmentClass &dest, int doffset, int size)
+void DOSSegmentClass::Swap(DOSSegmentClass& src, int soffset, DOSSegmentClass& dest, int doffset, int size)
 {
-	if (!size) return;
+    if (!size)
+        return;
 
-	unsigned short ssel = src.Selector;
-	unsigned short dsel = dest.Selector;
+    unsigned short ssel = src.Selector;
+    unsigned short dsel = dest.Selector;
 
-	asm {
+    asm {
 		push	es
 		push	ds
 
@@ -59,9 +60,9 @@ void DOSSegmentClass::Swap(DOSSegmentClass &src, int soffset, DOSSegmentClass &d
 		mov	dx,dsel
 		mov	ds,ax
 		mov	es,dx
-	}
+    }
 again:
-	asm {
+    asm {
 		mov	al,ds:[si]
 		mov	ah,es:[di]
 		mov	ds:[si],ah
@@ -73,95 +74,85 @@ again:
 
 		pop	ds
 		pop	es
-	}
+    }
 }
 #endif
 
-
-void DOSSegmentClass::Swap(DOSSegmentClass &src, int soffset, DOSSegmentClass &dest, int doffset, int size)
+void DOSSegmentClass::Swap(DOSSegmentClass& src, int soffset, DOSSegmentClass& dest, int doffset, int size)
 {
-	extern void dss_swap(char *src, char *dest, int size);
+    extern void dss_swap(char* src, char* dest, int size);
 
-	#pragma aux dss_swap = 		\
-	"again: mov	al,[esi]"	\
-		"mov	ah,[edi]"		\
-		"mov	[esi],ah"		\
-		"stosb"					\
-		"inc	esi"				\
-		"loop	again"			\
-		parm	[esi] [edi] [ecx]	\
-		modify [ax];
+#pragma aux dss_swap = "again: mov	al,[esi]"                                                                           \
+                       "mov	ah,[edi]"                                                                                  \
+                       "mov	[esi],ah"                                                                                  \
+                       "stosb"                                                                                         \
+                       "inc	esi"                                                                                       \
+                       "loop	again" parm[esi][edi][ecx] modify[ax];
 
-	if (!size) return;
-	dss_swap((char *)(src.Selector + soffset), (char *)(dest.Selector + doffset), size);
+    if (!size)
+        return;
+    dss_swap((char*)(src.Selector + soffset), (char*)(dest.Selector + doffset), size);
 }
 
 #ifdef OBSOLETE
-void DOSSegmentClass::Copy(DOSSegmentClass &src, int soffset, DOSSegmentClass &dest, int doffset, int size)
+void DOSSegmentClass::Copy(DOSSegmentClass& src, int soffset, DOSSegmentClass& dest, int doffset, int size)
 {
-	extern void dss_copy(char *src, char *dest, int size);
-	#pragma aux dss_copy = 		\
-		"mov		ebx,ecx"			\
-		"shr		ecx,2"			\
-		"jecxz	copskip1"		\
-		"rep 		movsd"			\
-"copskip1: mov ecx,ebx"			\
-		"and		ecx,3"			\
-		"jecxz	copskip2"		\
-		"rep		movsb"			\
-"copskip2:"							\
-		parm	[esi edi ecx]		\
-		modify [ebx];
+    extern void dss_copy(char* src, char* dest, int size);
+#pragma aux dss_copy = "mov		ebx,ecx"                                                                                  \
+                       "shr		ecx,2"                                                                                    \
+                       "jecxz	copskip1"                                                                                \
+                       "rep 		movsd"                                                                                   \
+                       "copskip1: mov ecx,ebx"                                                                         \
+                       "and		ecx,3"                                                                                    \
+                       "jecxz	copskip2"                                                                                \
+                       "rep		movsb"                                                                                    \
+                       "copskip2:" parm[esi edi ecx] modify[ebx];
 
-	if (!size) return;
-	dss_copy((char *)(src.Selector + soffset), (char *)(dest.Selector + doffset), size);
+    if (!size)
+        return;
+    dss_copy((char*)(src.Selector + soffset), (char*)(dest.Selector + doffset), size);
 }
 #endif
 
 #ifdef OBSOLETE
-void DOSSegmentClass::Copy_To(void *source, int dest, int size)
+void DOSSegmentClass::Copy_To(void* source, int dest, int size)
 {
-	extern void dss_copy_to(void *src, (void *)dest, int size);
+    extern void dss_copy_to(void* src, (void*)dest, int size);
 
-	#pragma aux dss_copy_to =	\
-		"mov		ebx,ecx"			\
-		"shr		ecx,2"			\
-		"jecxz	cop2skip1"		\
-		"rep		movsd"			\
-"cop2skip1: mov ecx,ebx"		\
-		"and		ecx,3"			\
-		"jecxz	cop2skip2"		\
-		"rep		movsb"			\
-"cop2skip2:"						\
-		parm	[esi edi ecx]		\
-		modify [ebx];
+#pragma aux dss_copy_to = "mov		ebx,ecx"                                                                               \
+                          "shr		ecx,2"                                                                                 \
+                          "jecxz	cop2skip1"                                                                            \
+                          "rep		movsd"                                                                                 \
+                          "cop2skip1: mov ecx,ebx"                                                                     \
+                          "and		ecx,3"                                                                                 \
+                          "jecxz	cop2skip2"                                                                            \
+                          "rep		movsb"                                                                                 \
+                          "cop2skip2:" parm[esi edi ecx] modify[ebx];
 
-	if (!size) return;
-	dss_copy_to(src, (void *)(Selector + dest), size);
-
+    if (!size)
+        return;
+    dss_copy_to(src, (void*)(Selector + dest), size);
 }
 #endif
 
 #ifdef OBSOLETE
-void DOSSegmentClass::Copy_From(void *dest, int source, int size)
+void DOSSegmentClass::Copy_From(void* dest, int source, int size)
 {
-	extern void dss_copy_from(void *dest, (void *)source, int size);
+    extern void dss_copy_from(void* dest, (void*)source, int size);
 
-	#pragma aux dss_copy_from =	\
-		"mov		ebx,ecx"			\
-		"shr		ecx,2"			\
-		"jecxz	copfskip1"		\
-		"rep		movsd"			\
-"copfskip1: mov ecx,ebx"		\
-		"and		ecx,3"			\
-		"jecxz	copfskip2"		\
-		"rep		movsb"			\
-"copfskip2:"						\
-		parm	[edi esi ecx]		\
-		modify [ebx];
+#pragma aux dss_copy_from = "mov		ebx,ecx"                                                                             \
+                            "shr		ecx,2"                                                                               \
+                            "jecxz	copfskip1"                                                                          \
+                            "rep		movsd"                                                                               \
+                            "copfskip1: mov ecx,ebx"                                                                   \
+                            "and		ecx,3"                                                                               \
+                            "jecxz	copfskip2"                                                                          \
+                            "rep		movsb"                                                                               \
+                            "copfskip2:" parm[edi esi ecx] modify[ebx];
 
-	if (!size) return;
-	dss_copy_from(dest, (void *)(Selector + source), size);
+    if (!size)
+        return;
+    dss_copy_from(dest, (void*)(Selector + source), size);
 }
 #endif
 #endif

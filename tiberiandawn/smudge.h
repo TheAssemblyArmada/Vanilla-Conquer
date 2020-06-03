@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\smudge.h_v   2.16   16 Oct 1995 16:47:32   JOE_BOSTIC  $ */
@@ -35,8 +35,8 @@
 #ifndef SMUDGE_H
 #define SMUDGE_H
 
-#include	"object.h"
-#include	"type.h"
+#include "object.h"
+#include "type.h"
 
 /******************************************************************************
 **	This is the transitory form for smudges. They exist as independent objects
@@ -46,60 +46,77 @@
 */
 class SmudgeClass : public ObjectClass
 {
-	public:
-		/*-------------------------------------------------------------------
-		**	Constructors and destructors.
-		*/
-		static void * operator new(size_t size);
-		static void operator delete(void *ptr);
-		SmudgeClass(SmudgeType type, COORDINATE pos=-1, HousesType house = HOUSE_NONE);
-		SmudgeClass(void) : Class(0) {};
-		operator SmudgeType(void) const {return Class->Type;};
-		virtual ~SmudgeClass(void) {if (GameActive) SmudgeClass::Limbo();};
-		virtual RTTIType What_Am_I(void) const {return RTTI_SMUDGE;};
+public:
+    /*-------------------------------------------------------------------
+    **	Constructors and destructors.
+    */
+    static void* operator new(size_t size);
+    static void operator delete(void* ptr);
+    SmudgeClass(SmudgeType type, COORDINATE pos = -1, HousesType house = HOUSE_NONE);
+    SmudgeClass(void)
+        : Class(0){};
+    operator SmudgeType(void) const
+    {
+        return Class->Type;
+    };
+    virtual ~SmudgeClass(void)
+    {
+        if (GameActive)
+            SmudgeClass::Limbo();
+    };
+    virtual RTTIType What_Am_I(void) const
+    {
+        return RTTI_SMUDGE;
+    };
 
-		static void Init(void);
+    static void Init(void);
 
-		/*
-		**	File I/O.
-		*/
-		static void Read_INI(char *);
-		static void Write_INI(char *);
-		static char *INI_Name(void) {return "SMUDGE";};
-		bool Load(FileClass & file);
-		bool Save(FileClass & file);
-		virtual void Code_Pointers(void);
-		virtual void Decode_Pointers(void);
+    /*
+    **	File I/O.
+    */
+    static void Read_INI(char*);
+    static void Write_INI(char*);
+    static char* INI_Name(void)
+    {
+        return "SMUDGE";
+    };
+    bool Load(FileClass& file);
+    bool Save(FileClass& file);
+    virtual void Code_Pointers(void);
+    virtual void Decode_Pointers(void);
 
-		virtual ObjectTypeClass const & Class_Of(void) const {return *Class;};
-		virtual bool Mark(MarkType);
-		virtual void Draw_It(int , int , WindowNumberType ) {};
+    virtual ObjectTypeClass const& Class_Of(void) const
+    {
+        return *Class;
+    };
+    virtual bool Mark(MarkType);
+    virtual void Draw_It(int, int, WindowNumberType){};
 
-		void Disown(CELL cell);
+    void Disown(CELL cell);
 
-		/*
-		**	Dee-buggin' support.
-		*/
-		int Validate(void) const;
+    /*
+    **	Dee-buggin' support.
+    */
+    int Validate(void) const;
 
-	private:
+private:
+    static HousesType ToOwn;
 
-		static HousesType ToOwn;
+    /*
+    **	This is a pointer to the template object's class.
+    */
+    SmudgeTypeClass const* const Class;
 
-		/*
-		**	This is a pointer to the template object's class.
-		*/
-		SmudgeTypeClass const * const Class;
+    /*
+    ** Some additional padding in case we need to add data to the class and maintain backwards compatibility for
+    *save/load
+    */
+    unsigned char SaveLoadPadding[8];
 
-		/*
-		** Some additional padding in case we need to add data to the class and maintain backwards compatibility for save/load
-		*/
-		unsigned char SaveLoadPadding[8];
-
-		/*
-		** This contains the value of the Virtual Function Table Pointer
-		*/
-		static void * VTable;
+    /*
+    ** This contains the value of the Virtual Function Table Pointer
+    */
+    static void* VTable;
 };
 
 #endif

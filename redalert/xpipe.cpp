@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/XPIPE.CPP 1     3/03/97 10:26a Joe_bostic $ */
@@ -36,15 +36,13 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "FUNCTION.H"
-#include	"xpipe.h"
-#include	<stddef.h>
-#include	<string.h>
-
+#include "xpipe.h"
+#include <stddef.h>
+#include <string.h>
 
 //---------------------------------------------------------------------------------------------------------
 // BufferPipe
 //---------------------------------------------------------------------------------------------------------
-
 
 /***********************************************************************************************
  * BufferPipe::Put -- Submit data to the buffered pipe segment.                                *
@@ -64,29 +62,28 @@
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int BufferPipe::Put(void const * source, int slen)
+int BufferPipe::Put(void const* source, int slen)
 {
-	int total = 0;
+    int total = 0;
 
-	if (Is_Valid() && source != NULL && slen > 0) {
-		int len = slen;
-		if (BufferPtr.Get_Size() != 0) {
-			int theoretical_max = BufferPtr.Get_Size() - Index;
-			len = (slen < theoretical_max) ? slen : theoretical_max;
-		}
+    if (Is_Valid() && source != NULL && slen > 0) {
+        int len = slen;
+        if (BufferPtr.Get_Size() != 0) {
+            int theoretical_max = BufferPtr.Get_Size() - Index;
+            len = (slen < theoretical_max) ? slen : theoretical_max;
+        }
 
-		if (len > 0) {
-			memmove(((char *)BufferPtr.Get_Buffer()) + Index, source, len);
-		}
+        if (len > 0) {
+            memmove(((char*)BufferPtr.Get_Buffer()) + Index, source, len);
+        }
 
-		Index += len;
-//		Length -= len;
-//		Buffer = ((char *)Buffer) + len;
-		total += len;
-	}
-	return(total);
+        Index += len;
+        //		Length -= len;
+        //		Buffer = ((char *)Buffer) + len;
+        total += len;
+    }
+    return (total);
 }
-
 
 //---------------------------------------------------------------------------------------------------------
 // FilePipe
@@ -94,13 +91,12 @@ int BufferPipe::Put(void const * source, int slen)
 
 FilePipe::~FilePipe(void)
 {
-	if (Valid_File() && HasOpened) {
-		HasOpened = false;
-		File->Close();
-		File = NULL;
-	}
+    if (Valid_File() && HasOpened) {
+        HasOpened = false;
+        File->Close();
+        File = NULL;
+    }
 }
-
 
 /***********************************************************************************************
  * FilePipe::End -- End the file pipe handler.                                                 *
@@ -123,14 +119,13 @@ FilePipe::~FilePipe(void)
  *=============================================================================================*/
 int FilePipe::End(void)
 {
-	int total = Pipe::End();
-	if (Valid_File() && HasOpened) {
-		HasOpened = false;
-		File->Close();
-	}
-	return(total);
+    int total = Pipe::End();
+    if (Valid_File() && HasOpened) {
+        HasOpened = false;
+        File->Close();
+    }
+    return (total);
 }
-
 
 /***********************************************************************************************
  * FilePipe::Put -- Submit a block of data to the pipe.                                        *
@@ -149,15 +144,15 @@ int FilePipe::End(void)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int FilePipe::Put(void const * source, int slen)
+int FilePipe::Put(void const* source, int slen)
 {
-	if (Valid_File() && source != NULL && slen > 0) {
-		if (!File->Is_Open()) {
-			HasOpened = true;
-			File->Open(WRITE);
-		}
+    if (Valid_File() && source != NULL && slen > 0) {
+        if (!File->Is_Open()) {
+            HasOpened = true;
+            File->Open(WRITE);
+        }
 
-		return(File->Write(source, slen));
-	}
-	return(0);
+        return (File->Write(source, slen));
+    }
+    return (0);
 }

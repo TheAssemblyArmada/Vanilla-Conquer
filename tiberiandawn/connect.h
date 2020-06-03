@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\connect.h_v   1.12   16 Oct 1995 16:46:04   JOE_BOSTIC  $ */
@@ -194,7 +194,7 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#define CONN_DEBUG	0
+#define CONN_DEBUG 0
 
 /*
 ********************************** Defines **********************************
@@ -202,139 +202,165 @@
 /*---------------------------------------------------------------------------
 This structure is the header prefixed to any packet sent by the application.
 MagicNumber:	This is a number unique to the application; it's up to the
-					Receive_Packet routine to check this value, to be sure we're
-					not getting data from some other product.  This value should
-					be unique for each application.
+                    Receive_Packet routine to check this value, to be sure we're
+                    not getting data from some other product.  This value should
+                    be unique for each application.
 Code:				This will be one of the below-defined codes.
 PacketID:		This is a unique numerical ID for this packet.  The Connection
-					sets this ID on all packets sent out.
+                    sets this ID on all packets sent out.
 ---------------------------------------------------------------------------*/
-typedef struct {
-	unsigned short MagicNumber;
-	unsigned char Code;
-	unsigned long PacketID;
+typedef struct
+{
+    unsigned short MagicNumber;
+    unsigned char Code;
+    unsigned long PacketID;
 } CommHeaderType;
-
 
 /*
 ***************************** Class Declaration *****************************
 */
 class ConnectionClass
 {
-	/*
-	---------------------------- Public Interface ----------------------------
-	*/
-	public:
-		/*.....................................................................
-		These are the possible values for the Code field of the CommHeaderType:
-		.....................................................................*/
-		enum ConnectionEnum {
-			PACKET_DATA_ACK,			// this is a data packet requiring an ACK
-			PACKET_DATA_NOACK,		// this is a data packet not requiring an ACK
-			PACKET_ACK,					// this is an ACK for a packet
-			PACKET_COUNT,				// for computational purposes
-		};
+    /*
+    ---------------------------- Public Interface ----------------------------
+    */
+public:
+    /*.....................................................................
+    These are the possible values for the Code field of the CommHeaderType:
+    .....................................................................*/
+    enum ConnectionEnum
+    {
+        PACKET_DATA_ACK,   // this is a data packet requiring an ACK
+        PACKET_DATA_NOACK, // this is a data packet not requiring an ACK
+        PACKET_ACK,        // this is an ACK for a packet
+        PACKET_COUNT,      // for computational purposes
+    };
 
-		/*.....................................................................
-		Constructor/destructor.
-		.....................................................................*/
-		ConnectionClass (int maxlen, unsigned short magicnum, 
-			unsigned long retry_delta, unsigned long max_retries, 
-			unsigned long timeout);
-		virtual ~ConnectionClass ();
+    /*.....................................................................
+    Constructor/destructor.
+    .....................................................................*/
+    ConnectionClass(int maxlen,
+                    unsigned short magicnum,
+                    unsigned long retry_delta,
+                    unsigned long max_retries,
+                    unsigned long timeout);
+    virtual ~ConnectionClass();
 
-		/*.....................................................................
-		Initialization.
-		.....................................................................*/
-		virtual void Init (void) {};
+    /*.....................................................................
+    Initialization.
+    .....................................................................*/
+    virtual void Init(void){};
 
-		/*.....................................................................
-		Send/Receive routines.
-		.....................................................................*/
-		virtual int Send_Packet (void * buf, int buflen, int ack_req) = 0;
-		virtual int Receive_Packet (void * buf, int buflen) = 0;
-		virtual int Get_Packet (void * buf, int * buflen) = 0;
+    /*.....................................................................
+    Send/Receive routines.
+    .....................................................................*/
+    virtual int Send_Packet(void* buf, int buflen, int ack_req) = 0;
+    virtual int Receive_Packet(void* buf, int buflen) = 0;
+    virtual int Get_Packet(void* buf, int* buflen) = 0;
 
-		/*.....................................................................
-		The main polling routine for the connection.  Should be called as often
-		as possible.
-		.....................................................................*/
-		virtual int Service (void);
+    /*.....................................................................
+    The main polling routine for the connection.  Should be called as often
+    as possible.
+    .....................................................................*/
+    virtual int Service(void);
 
-		/*.....................................................................
-		This routine is used by the retry logic; returns the current time in
-		60ths of a second.
-		.....................................................................*/
-		static unsigned long Time (void);
+    /*.....................................................................
+    This routine is used by the retry logic; returns the current time in
+    60ths of a second.
+    .....................................................................*/
+    static unsigned long Time(void);
 
-		/*.....................................................................
-		Utility routines.
-		.....................................................................*/
-		unsigned short Magic_Num (void) { return (MagicNum); }
-		unsigned long Retry_Delta (void) { return (RetryDelta); }
-		void Set_Retry_Delta (unsigned long delta) { RetryDelta = delta;}
-		unsigned long Max_Retries (void) { return (MaxRetries); }
-		void Set_Max_Retries (unsigned long retries) { MaxRetries = retries;}
-		unsigned long Time_Out (void) { return (Timeout); }
-		void Set_TimeOut (unsigned long t) { Timeout = t;}
-		unsigned long Max_Packet_Len (void) { return (MaxPacketLen); }
-		static char * Command_Name(int command);
+    /*.....................................................................
+    Utility routines.
+    .....................................................................*/
+    unsigned short Magic_Num(void)
+    {
+        return (MagicNum);
+    }
+    unsigned long Retry_Delta(void)
+    {
+        return (RetryDelta);
+    }
+    void Set_Retry_Delta(unsigned long delta)
+    {
+        RetryDelta = delta;
+    }
+    unsigned long Max_Retries(void)
+    {
+        return (MaxRetries);
+    }
+    void Set_Max_Retries(unsigned long retries)
+    {
+        MaxRetries = retries;
+    }
+    unsigned long Time_Out(void)
+    {
+        return (Timeout);
+    }
+    void Set_TimeOut(unsigned long t)
+    {
+        Timeout = t;
+    }
+    unsigned long Max_Packet_Len(void)
+    {
+        return (MaxPacketLen);
+    }
+    static char* Command_Name(int command);
 
-	/*
-	-------------------------- Protected Interface ---------------------------
-	*/
-	protected:
-		/*.....................................................................
-		Routines to service the Send & Receive queues.
-		.....................................................................*/
-		virtual int Service_Send_Queue(void) = 0;
-		virtual int Service_Receive_Queue(void) = 0;
+    /*
+    -------------------------- Protected Interface ---------------------------
+    */
+protected:
+    /*.....................................................................
+    Routines to service the Send & Receive queues.
+    .....................................................................*/
+    virtual int Service_Send_Queue(void) = 0;
+    virtual int Service_Receive_Queue(void) = 0;
 
-		/*.....................................................................
-		This routine actually performs a hardware-dependent data send.  It's
-		pure virtual, so it >must< be defined by a derived class.
-		.....................................................................*/
-		virtual int Send(char *buf, int buflen) = 0;
+    /*.....................................................................
+    This routine actually performs a hardware-dependent data send.  It's
+    pure virtual, so it >must< be defined by a derived class.
+    .....................................................................*/
+    virtual int Send(char* buf, int buflen) = 0;
 
-		/*.....................................................................
-		This is the maximum packet length, including our own internal header.
-		.....................................................................*/
-		int MaxPacketLen;
+    /*.....................................................................
+    This is the maximum packet length, including our own internal header.
+    .....................................................................*/
+    int MaxPacketLen;
 
-		/*.....................................................................
-		Packet staging area; this is where the CommHeaderType gets tacked onto 
-		the application's packet before it's sent.
-		.....................................................................*/
-		char *PacketBuf;
+    /*.....................................................................
+    Packet staging area; this is where the CommHeaderType gets tacked onto
+    the application's packet before it's sent.
+    .....................................................................*/
+    char* PacketBuf;
 
-		/*.....................................................................
-		This is the magic number assigned to this connection.  It is the first 
-		few bytes of any transmission.
-		.....................................................................*/
-		unsigned short MagicNum;
+    /*.....................................................................
+    This is the magic number assigned to this connection.  It is the first
+    few bytes of any transmission.
+    .....................................................................*/
+    unsigned short MagicNum;
 
-		/*.....................................................................
-		This value determines the time delay before a packet is re-sent.
-		.....................................................................*/
-		unsigned long RetryDelta;
+    /*.....................................................................
+    This value determines the time delay before a packet is re-sent.
+    .....................................................................*/
+    unsigned long RetryDelta;
 
-		/*.....................................................................
-		This is the maximum number of retries allowed for a packet; if this
-		value is exceeded, the connection is probably broken.
-		.....................................................................*/
-		unsigned long MaxRetries;
+    /*.....................................................................
+    This is the maximum number of retries allowed for a packet; if this
+    value is exceeded, the connection is probably broken.
+    .....................................................................*/
+    unsigned long MaxRetries;
 
-		/*.....................................................................
-		This is the total timeout for this connection; if this time is exceeded
-		on a packet, the connection is probably broken.
-		.....................................................................*/
-		unsigned long Timeout;
+    /*.....................................................................
+    This is the total timeout for this connection; if this time is exceeded
+    on a packet, the connection is probably broken.
+    .....................................................................*/
+    unsigned long Timeout;
 
-		/*.....................................................................
-		Names of all packet commands
-		.....................................................................*/
-		static char *ConnectionClass::Commands[PACKET_COUNT];
+    /*.....................................................................
+    Names of all packet commands
+    .....................................................................*/
+    static char* ConnectionClass::Commands[PACKET_COUNT];
 };
 
 #endif
-

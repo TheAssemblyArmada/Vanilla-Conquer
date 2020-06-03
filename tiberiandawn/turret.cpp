@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\turret.cpv   2.18   16 Oct 1995 16:50:38   JOE_BOSTIC  $ */
@@ -43,9 +43,8 @@
  *   TurretClass::~TurretClass -- Default destructor for turret class objects.                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-#include	"turret.h"
-
+#include "function.h"
+#include "turret.h"
 
 /***********************************************************************************************
  * TurretClass::~TurretClass -- Default destructor for turret class objects.                   *
@@ -65,7 +64,6 @@ TurretClass::~TurretClass(void)
 {
 }
 
-
 /***********************************************************************************************
  * TurretClass::TurretClass -- The default constructor for turret class objects.               *
  *                                                                                             *
@@ -84,7 +82,6 @@ TurretClass::TurretClass(void)
 {
 }
 
-
 /***********************************************************************************************
  * TurretClass::TurretClass -- Normal constructor for the turret class.                        *
  *                                                                                             *
@@ -102,12 +99,11 @@ TurretClass::TurretClass(void)
  * HISTORY:                                                                                    *
  *   02/02/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-TurretClass::TurretClass(UnitType classid, HousesType house) :
-	DriveClass(classid, house)
+TurretClass::TurretClass(UnitType classid, HousesType house)
+    : DriveClass(classid, house)
 {
-	Reload = 0;
+    Reload = 0;
 }
-
 
 #ifdef CHEAT_KEYS
 /***********************************************************************************************
@@ -125,14 +121,15 @@ TurretClass::TurretClass(UnitType classid, HousesType house) :
  * HISTORY:                                                                                    *
  *   05/12/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TurretClass::Debug_Dump(MonoClass *mono) const
+void TurretClass::Debug_Dump(MonoClass* mono) const
 {
-	mono->Set_Cursor(36, 3);mono->Printf("%02X:%02X", SecondaryFacing.Current(), SecondaryFacing.Desired());
-	mono->Set_Cursor(28, 7);mono->Printf("%2d", Arm);
-	DriveClass::Debug_Dump(mono);
+    mono->Set_Cursor(36, 3);
+    mono->Printf("%02X:%02X", SecondaryFacing.Current(), SecondaryFacing.Desired());
+    mono->Set_Cursor(28, 7);
+    mono->Printf("%2d", Arm);
+    DriveClass::Debug_Dump(mono);
 }
 #endif
-
 
 /***********************************************************************************************
  * TurretClass::Ok_To_Move -- Queries whether the vehicle can move.                            *
@@ -155,19 +152,18 @@ void TurretClass::Debug_Dump(MonoClass *mono) const
  *=============================================================================================*/
 bool TurretClass::Ok_To_Move(DirType dir)
 {
-	if (Class->IsLockTurret) {
-		if (IsRotating) {
-			return(false);
-		} else {
-			if (SecondaryFacing.Difference(dir)) {
-				SecondaryFacing.Set_Desired(dir);
-				return(false);
-			}
-		}
-	}
-	return(true);
+    if (Class->IsLockTurret) {
+        if (IsRotating) {
+            return (false);
+        } else {
+            if (SecondaryFacing.Difference(dir)) {
+                SecondaryFacing.Set_Desired(dir);
+                return (false);
+            }
+        }
+    }
+    return (true);
 }
-
 
 /***********************************************************************************************
  * TurretClass::AI -- Handles the reloading of the turret weapon.                              *
@@ -186,45 +182,44 @@ bool TurretClass::Ok_To_Move(DirType dir)
  *=============================================================================================*/
 void TurretClass::AI(void)
 {
-	DriveClass::AI();
+    DriveClass::AI();
 
-	/*
-	**	A unit with a constant rotating radar dish is handled here.
-	*/
-	if (Class->IsRadarEquipped) {
-		SecondaryFacing.Set((DirType)(SecondaryFacing.Current() + 8));
-		Mark(MARK_CHANGE);
-	} else {
+    /*
+    **	A unit with a constant rotating radar dish is handled here.
+    */
+    if (Class->IsRadarEquipped) {
+        SecondaryFacing.Set((DirType)(SecondaryFacing.Current() + 8));
+        Mark(MARK_CHANGE);
+    } else {
 
-		IsRotating = false;
-		if (Class->IsTurretEquipped) {
-			if (IsTurretLockedDown) {
-				SecondaryFacing.Set_Desired(PrimaryFacing.Current());
-			}
+        IsRotating = false;
+        if (Class->IsTurretEquipped) {
+            if (IsTurretLockedDown) {
+                SecondaryFacing.Set_Desired(PrimaryFacing.Current());
+            }
 
-			if (SecondaryFacing.Is_Rotating()) {
-				if (SecondaryFacing.Rotation_Adjust(Class->ROT+1)) {
-					Mark(MARK_CHANGE);
-				}
+            if (SecondaryFacing.Is_Rotating()) {
+                if (SecondaryFacing.Rotation_Adjust(Class->ROT + 1)) {
+                    Mark(MARK_CHANGE);
+                }
 
-				/*
-				**	If no further rotation is necessary, flag that the rotation
-				**	has stopped.
-				*/
-				IsRotating = SecondaryFacing.Is_Rotating();
-			} else {
-				if (!IsTurretLockedDown && !Target_Legal(TarCom)) {
-					if (!Target_Legal(NavCom)) {
-						SecondaryFacing.Set_Desired(PrimaryFacing.Current());
-					} else {
-						SecondaryFacing.Set_Desired(Direction(NavCom));
-					}
-				}
-			}
-		}
-	}
+                /*
+                **	If no further rotation is necessary, flag that the rotation
+                **	has stopped.
+                */
+                IsRotating = SecondaryFacing.Is_Rotating();
+            } else {
+                if (!IsTurretLockedDown && !Target_Legal(TarCom)) {
+                    if (!Target_Legal(NavCom)) {
+                        SecondaryFacing.Set_Desired(PrimaryFacing.Current());
+                    } else {
+                        SecondaryFacing.Set_Desired(Direction(NavCom));
+                    }
+                }
+            }
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * TurretClass::Fire_At -- Try to fire upon the target specified.                              *
@@ -245,28 +240,27 @@ void TurretClass::AI(void)
  * HISTORY:                                                                                    *
  *   04/26/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-BulletClass * TurretClass::Fire_At(TARGET target, int which)
+BulletClass* TurretClass::Fire_At(TARGET target, int which)
 {
-	BulletClass * bullet = NULL;
-	WeaponTypeClass const * weapon = (which == 0) ? &Weapons[Class->Primary] : &Weapons[Class->Secondary];
+    BulletClass* bullet = NULL;
+    WeaponTypeClass const* weapon = (which == 0) ? &Weapons[Class->Primary] : &Weapons[Class->Secondary];
 
-	if (Can_Fire(target, which) == FIRE_OK) {
-		bullet = DriveClass::Fire_At(target, which);
+    if (Can_Fire(target, which) == FIRE_OK) {
+        bullet = DriveClass::Fire_At(target, which);
 
-		if (bullet) {
+        if (bullet) {
 
-			/*
-			**	Possible reload timer set.
-			*/
-			if (*this == UNIT_MSAM && Reload == 0) {
-				Reload = TICKS_PER_SECOND * 30;
-			}
-		}
-	}
+            /*
+            **	Possible reload timer set.
+            */
+            if (*this == UNIT_MSAM && Reload == 0) {
+                Reload = TICKS_PER_SECOND * 30;
+            }
+        }
+    }
 
-	return(bullet);
+    return (bullet);
 }
-
 
 /***********************************************************************************************
  * TurretClass::Can_Fire -- Determines if turret can fire upon target.                         *
@@ -289,60 +283,59 @@ BulletClass * TurretClass::Fire_At(TARGET target, int which)
  *=============================================================================================*/
 FireErrorType TurretClass::Can_Fire(TARGET target, int which) const
 {
-	DirType			dir;					// The facing to impart upon the projectile.
-	int				diff;
-	FireErrorType	fire = DriveClass::Can_Fire(target, which);
+    DirType dir; // The facing to impart upon the projectile.
+    int diff;
+    FireErrorType fire = DriveClass::Can_Fire(target, which);
 
-	if (fire == FIRE_OK) {
-		WeaponTypeClass const * weapon = (which == 0) ? &Weapons[Class->Primary] : &Weapons[Class->Secondary];
+    if (fire == FIRE_OK) {
+        WeaponTypeClass const* weapon = (which == 0) ? &Weapons[Class->Primary] : &Weapons[Class->Secondary];
 
-		/*
-		**	If this unit cannot fire while moving, then bail.
-		*/
-		if ((!Class->IsTurretEquipped || Class->IsLockTurret) && Target_Legal(NavCom)) {
-			return(FIRE_MOVING);
-		}
+        /*
+        **	If this unit cannot fire while moving, then bail.
+        */
+        if ((!Class->IsTurretEquipped || Class->IsLockTurret) && Target_Legal(NavCom)) {
+            return (FIRE_MOVING);
+        }
 
-		/*
-		**	If the turret is rotating and the projectile isn't a homing type, then
-		**	firing must be delayed until the rotation stops.
-		*/
-		if (!IsFiring && IsRotating && !BulletTypeClass::As_Reference(weapon->Fires).IsHoming) {
-			return(FIRE_ROTATING);
-		}
+        /*
+        **	If the turret is rotating and the projectile isn't a homing type, then
+        **	firing must be delayed until the rotation stops.
+        */
+        if (!IsFiring && IsRotating && !BulletTypeClass::As_Reference(weapon->Fires).IsHoming) {
+            return (FIRE_ROTATING);
+        }
 
-		dir = Direction(target);
+        dir = Direction(target);
 
-		/*
-		**	Determine if the turret facing isn't too far off of facing the target.
-		*/
-		if (Class->IsTurretEquipped) {
-			diff = SecondaryFacing.Difference(dir);
-		} else {
-			diff = PrimaryFacing.Difference(dir);
-		}
-		diff = ABS(diff);
+        /*
+        **	Determine if the turret facing isn't too far off of facing the target.
+        */
+        if (Class->IsTurretEquipped) {
+            diff = SecondaryFacing.Difference(dir);
+        } else {
+            diff = PrimaryFacing.Difference(dir);
+        }
+        diff = ABS(diff);
 
-		/*
-		**	Special flame tank logic.
-		*/
-		if (weapon->Fires == BULLET_FLAME) {
-			if (Dir_Facing(dir) == Dir_Facing(PrimaryFacing)) {
-				diff = 0;
-			}
-		}
+        /*
+        **	Special flame tank logic.
+        */
+        if (weapon->Fires == BULLET_FLAME) {
+            if (Dir_Facing(dir) == Dir_Facing(PrimaryFacing)) {
+                diff = 0;
+            }
+        }
 
-		if (BulletTypeClass::As_Reference(weapon->Fires).IsHoming) {
-			diff >>= 2;
-		}
-		if (diff < 8) {
-			return(DriveClass::Can_Fire(target, which));
-		}
-		return(FIRE_FACING);
-	}
-	return(fire);
+        if (BulletTypeClass::As_Reference(weapon->Fires).IsHoming) {
+            diff >>= 2;
+        }
+        if (diff < 8) {
+            return (DriveClass::Can_Fire(target, which));
+        }
+        return (FIRE_FACING);
+    }
+    return (fire);
 }
-
 
 /***********************************************************************************************
  * TurretClass::Fire_Coord -- Determines the coorindate that projectile would appear.          *
@@ -363,83 +356,82 @@ FireErrorType TurretClass::Can_Fire(TARGET target, int which) const
  *=============================================================================================*/
 COORDINATE TurretClass::Fire_Coord(int which) const
 {
-	COORDINATE coord = Center_Coord();
-	int dist = 0;
-	int lateral = 0;
-	DirType dir = PrimaryFacing.Current();
+    COORDINATE coord = Center_Coord();
+    int dist = 0;
+    int lateral = 0;
+    DirType dir = PrimaryFacing.Current();
 
-	if (Class->IsTurretEquipped) {
-		dir = SecondaryFacing.Current();
-	}
+    if (Class->IsTurretEquipped) {
+        dir = SecondaryFacing.Current();
+    }
 
-	switch (Class->Type) {
-		case UNIT_GUNBOAT:
-			coord = Coord_Move(coord, PrimaryFacing.Current(), Pixel2Lepton[Class->TurretOffset]);
-			dist = 0x0060;
-			break;
+    switch (Class->Type) {
+    case UNIT_GUNBOAT:
+        coord = Coord_Move(coord, PrimaryFacing.Current(), Pixel2Lepton[Class->TurretOffset]);
+        dist = 0x0060;
+        break;
 
-		case UNIT_ARTY:
-			coord = Coord_Move(coord, DIR_N, 0x0040);
-			dist = 0x0060;
-			break;
+    case UNIT_ARTY:
+        coord = Coord_Move(coord, DIR_N, 0x0040);
+        dist = 0x0060;
+        break;
 
-		case UNIT_FTANK:
-			dist = 0x30;
-			if (IsSecondShot) {
-				coord = Coord_Move(coord, (DirType)(dir+DIR_E), 0x20);
-			} else {
-				coord = Coord_Move(coord, (DirType)(dir+DIR_W), 0x20);
-			}
-			break;
+    case UNIT_FTANK:
+        dist = 0x30;
+        if (IsSecondShot) {
+            coord = Coord_Move(coord, (DirType)(dir + DIR_E), 0x20);
+        } else {
+            coord = Coord_Move(coord, (DirType)(dir + DIR_W), 0x20);
+        }
+        break;
 
-		case UNIT_HTANK:
-			coord = Coord_Move(coord, DIR_N, 0x0040);
-			if (which == 0) {
-				dist = 0x00C0;
-				lateral = 0x0028;
-			} else {
-				dist = 0x0008;
-				lateral = 0x0040;
-			}
-			if (IsSecondShot) {
-				coord = Coord_Move(coord, (DirType)(dir+DIR_E), lateral);
-			} else {
-				coord = Coord_Move(coord, (DirType)(dir+DIR_W), lateral);
-			}
-			break;
+    case UNIT_HTANK:
+        coord = Coord_Move(coord, DIR_N, 0x0040);
+        if (which == 0) {
+            dist = 0x00C0;
+            lateral = 0x0028;
+        } else {
+            dist = 0x0008;
+            lateral = 0x0040;
+        }
+        if (IsSecondShot) {
+            coord = Coord_Move(coord, (DirType)(dir + DIR_E), lateral);
+        } else {
+            coord = Coord_Move(coord, (DirType)(dir + DIR_W), lateral);
+        }
+        break;
 
-		case UNIT_LTANK:
-			coord = Coord_Move(coord, DIR_N, 0x0020);
-			dist = 0x00C0;
-			break;
+    case UNIT_LTANK:
+        coord = Coord_Move(coord, DIR_N, 0x0020);
+        dist = 0x00C0;
+        break;
 
-		case UNIT_MTANK:
-			coord = Coord_Move(coord, DIR_N, 0x0030);
-			dist = 0x00C0;
-			break;
+    case UNIT_MTANK:
+        coord = Coord_Move(coord, DIR_N, 0x0030);
+        dist = 0x00C0;
+        break;
 
-		case UNIT_APC:
-		case UNIT_JEEP:
-		case UNIT_BUGGY:
-			coord = Coord_Move(coord, DIR_N, 0x0030);
-			dist = 0x0030;
-			break;
+    case UNIT_APC:
+    case UNIT_JEEP:
+    case UNIT_BUGGY:
+        coord = Coord_Move(coord, DIR_N, 0x0030);
+        dist = 0x0030;
+        break;
 
 #ifdef PETROGLYPH_EXAMPLE_MOD
-		case UNIT_NUKE_TANK:
-			coord = Coord_Move(coord, DIR_N, 0x00A0);
-			dist = 0x00A0;
-			break;
-#endif //PETROGLYPH_EXAMPLE_MOD
-	}
+    case UNIT_NUKE_TANK:
+        coord = Coord_Move(coord, DIR_N, 0x00A0);
+        dist = 0x00A0;
+        break;
+#endif // PETROGLYPH_EXAMPLE_MOD
+    }
 
-	if (dist) {
-		coord = Coord_Move(coord, dir, dist);
-	}
+    if (dist) {
+        coord = Coord_Move(coord, dir, dist);
+    }
 
-	return(coord);
+    return (coord);
 }
-
 
 /***********************************************************************************************
  * TurretClass::Unlimbo -- Unlimboes turret object.                                            *
@@ -460,13 +452,12 @@ COORDINATE TurretClass::Fire_Coord(int which) const
  *=============================================================================================*/
 bool TurretClass::Unlimbo(COORDINATE coord, DirType dir)
 {
-	if (DriveClass::Unlimbo(coord, dir)) {
-		SecondaryFacing = dir;
-		return(true);
-	}
-	return(false);
+    if (DriveClass::Unlimbo(coord, dir)) {
+        SecondaryFacing = dir;
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * TurretClass::Fire_Direction -- Determines the directinon of firing.                         *
@@ -487,22 +478,22 @@ bool TurretClass::Unlimbo(COORDINATE coord, DirType dir)
  *=============================================================================================*/
 DirType TurretClass::Fire_Direction(void) const
 {
-	if (Class->IsTurretEquipped) {
-		if (*this == UNIT_MSAM) {
-			int diff1 = SecondaryFacing.Difference(DIR_E);
-			int diff2 = SecondaryFacing.Difference(DIR_W);
-			diff1 = ABS(diff1);
-			diff2 = ABS(diff2);
-			int diff = MIN(diff1, diff2);
-			int adj = Fixed_To_Cardinal(ABS(SecondaryFacing.Difference(DIR_N)), 64-diff);
-			if (SecondaryFacing.Difference(DIR_N) < 0) {
-				return(DirType)(SecondaryFacing - (DirType)adj);
-			} else {
-				return(DirType)(SecondaryFacing + (DirType)adj);
-			}
-		}
-		return(SecondaryFacing.Current());
-	}
+    if (Class->IsTurretEquipped) {
+        if (*this == UNIT_MSAM) {
+            int diff1 = SecondaryFacing.Difference(DIR_E);
+            int diff2 = SecondaryFacing.Difference(DIR_W);
+            diff1 = ABS(diff1);
+            diff2 = ABS(diff2);
+            int diff = MIN(diff1, diff2);
+            int adj = Fixed_To_Cardinal(ABS(SecondaryFacing.Difference(DIR_N)), 64 - diff);
+            if (SecondaryFacing.Difference(DIR_N) < 0) {
+                return (DirType)(SecondaryFacing - (DirType)adj);
+            } else {
+                return (DirType)(SecondaryFacing + (DirType)adj);
+            }
+        }
+        return (SecondaryFacing.Current());
+    }
 
-	return(PrimaryFacing.Current());
+    return (PrimaryFacing.Current());
 }

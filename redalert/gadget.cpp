@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/GADGET.CPP 1     3/03/97 10:24a Joe_bostic $ */
@@ -56,33 +56,29 @@
 
 #include "function.h"
 
-
 /*
 **	This records the current gadget the the gadget system is "stuck on". Such a
 **	gadget will be processed to the exclusion of all others until the mouse button
 **	is no longer pressed.
 */
-GadgetClass * GadgetClass::StuckOn = 0;
+GadgetClass* GadgetClass::StuckOn = 0;
 
 /*
 **	This is a copy of a pointer to the last list used by the gadget input system.
 **	If a change of list is detected, then all gadgets are forced to be redrawn.
 */
-GadgetClass * GadgetClass::LastList = 0;
-
+GadgetClass* GadgetClass::LastList = 0;
 
 /*
 **	This points to the gadget that is intercepting all keyboard events.
 */
-GadgetClass * GadgetClass::Focused = 0;
-
+GadgetClass* GadgetClass::Focused = 0;
 
 /*
 ** This points to the current color scheme for drawing all gadgets.
 */
 static RemapControlType _GreyScheme = {15};
-RemapControlType * GadgetClass::ColorScheme = &_GreyScheme;
-
+RemapControlType* GadgetClass::ColorScheme = &_GreyScheme;
 
 /***********************************************************************************************
  * GadgetClass::GadgetClass -- Constructor for gadget object.                                  *
@@ -106,14 +102,20 @@ RemapControlType * GadgetClass::ColorScheme = &_GreyScheme;
  * HISTORY:                                                                                    *
  *   01/03/1995 MML : Created.                                                                 *
  *=============================================================================================*/
-GadgetClass::GadgetClass(int x, int y, int w, int h, unsigned flags, int sticky) :
-	X(x), Y(y), Width(w), Height(h), IsToRepaint(false), IsSticky(sticky), IsDisabled(false), Flags(flags)
+GadgetClass::GadgetClass(int x, int y, int w, int h, unsigned flags, int sticky)
+    : X(x)
+    , Y(y)
+    , Width(w)
+    , Height(h)
+    , IsToRepaint(false)
+    , IsSticky(sticky)
+    , IsDisabled(false)
+    , Flags(flags)
 {
-	if (IsSticky) {
-		Flags |= LEFTPRESS|LEFTRELEASE;
-	}
+    if (IsSticky) {
+        Flags |= LEFTPRESS | LEFTRELEASE;
+    }
 }
-
 
 /***********************************************************************************************
  * GadgetClass::GadgetClass -- Constructor for the gadget object.                              *
@@ -130,18 +132,17 @@ GadgetClass::GadgetClass(int x, int y, int w, int h, unsigned flags, int sticky)
  * HISTORY:                                                                                    *
  *   08/01/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-GadgetClass::GadgetClass(GadgetClass const & gadget) :
-	X(gadget.X),
-	Y(gadget.Y),
-	Width(gadget.Width),
-	Height(gadget.Height),
-	IsToRepaint(gadget.IsToRepaint),
-	IsSticky(gadget.IsSticky),
-	IsDisabled(gadget.IsDisabled),
-	Flags(gadget.Flags)
+GadgetClass::GadgetClass(GadgetClass const& gadget)
+    : X(gadget.X)
+    , Y(gadget.Y)
+    , Width(gadget.Width)
+    , Height(gadget.Height)
+    , IsToRepaint(gadget.IsToRepaint)
+    , IsSticky(gadget.IsSticky)
+    , IsDisabled(gadget.IsDisabled)
+    , Flags(gadget.Flags)
 {
 }
-
 
 /***********************************************************************************************
  * GadgetClass::~GadgetClass -- Destructor for gadget object.                                  *
@@ -160,23 +161,22 @@ GadgetClass::GadgetClass(GadgetClass const & gadget) :
  *=============================================================================================*/
 GadgetClass::~GadgetClass(void)
 {
-	if (Has_Focus()) {
-		Clear_Focus();
-	}
+    if (Has_Focus()) {
+        Clear_Focus();
+    }
 
-	if (this == StuckOn) {
-		StuckOn = NULL;
-	}
+    if (this == StuckOn) {
+        StuckOn = NULL;
+    }
 
-	if (this == LastList) {
-		LastList = NULL;
-	}
+    if (this == LastList) {
+        LastList = NULL;
+    }
 
-	if (this == Focused) {
-		Focused = NULL;
-	}
+    if (this == Focused) {
+        Focused = NULL;
+    }
 }
-
 
 /***************************************************************************
  * GADGETCLASS::CLICKEDON -- If a mouse click is detected within gadget's  *
@@ -190,32 +190,29 @@ GadgetClass::~GadgetClass(void)
  *                                                                         *
  * HISTORY:    01/03/1995 MML : Created.                                   *
  *=========================================================================*/
-int GadgetClass::Clicked_On(KeyNumType & key, unsigned flags, int mousex, int mousey)
+int GadgetClass::Clicked_On(KeyNumType& key, unsigned flags, int mousex, int mousey)
 {
-	/*
-	**	Set flags to match only those events that occur AND are being looked for. If
-	**	the result is NULL, then we know that this button should be ignored.
-	*/
-	flags &= Flags;
+    /*
+    **	Set flags to match only those events that occur AND are being looked for. If
+    **	the result is NULL, then we know that this button should be ignored.
+    */
+    flags &= Flags;
 
-	/*
-	**	If keyboard input should be processed by this "gadget" and keyboard input is
-	**	detected, then always call the action function. It is up to the action function
-	**	in this case to either ignore the keyboard input or not.
-	**
-	**	For mouse actions, check to see if the mouse is in the region of the button
-	**	before calling the associated action function. This is the typical action for
-	**	buttons.
-	*/
-	if (this == StuckOn ||
-		(flags & KEYBOARD) ||
-		(flags && (mousex - X) < Width  && (mousey - Y) < Height)) {
+    /*
+    **	If keyboard input should be processed by this "gadget" and keyboard input is
+    **	detected, then always call the action function. It is up to the action function
+    **	in this case to either ignore the keyboard input or not.
+    **
+    **	For mouse actions, check to see if the mouse is in the region of the button
+    **	before calling the associated action function. This is the typical action for
+    **	buttons.
+    */
+    if (this == StuckOn || (flags & KEYBOARD) || (flags && (mousex - X) < Width && (mousey - Y) < Height)) {
 
-		return(Action(flags, key));
-	}
-	return(false);
+        return (Action(flags, key));
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Enable -- Enables the gadget.                                                  *
@@ -234,11 +231,10 @@ int GadgetClass::Clicked_On(KeyNumType & key, unsigned flags, int mousex, int mo
  *=============================================================================================*/
 void GadgetClass::Enable(void)
 {
-	IsDisabled = false;
-	IsToRepaint = true;
-	Clear_Focus();
+    IsDisabled = false;
+    IsToRepaint = true;
+    Clear_Focus();
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Disable -- Disables the gadget from input processing.                          *
@@ -257,11 +253,10 @@ void GadgetClass::Enable(void)
  *=============================================================================================*/
 void GadgetClass::Disable(void)
 {
-	IsDisabled = true;
-	IsToRepaint = true;
-	Clear_Focus();
+    IsDisabled = true;
+    IsToRepaint = true;
+    Clear_Focus();
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Remove -- Removes the specified gadget from the list.                          *
@@ -278,12 +273,11 @@ void GadgetClass::Disable(void)
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-GadgetClass * GadgetClass::Remove(void)
+GadgetClass* GadgetClass::Remove(void)
 {
-	Clear_Focus();
-	return(GadgetClass *)LinkClass::Remove();
+    Clear_Focus();
+    return (GadgetClass*)LinkClass::Remove();
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Get_Next -- Returns a pointer to the next gadget in the chain.                 *
@@ -300,11 +294,10 @@ GadgetClass * GadgetClass::Remove(void)
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-GadgetClass * GadgetClass::Get_Next(void) const
+GadgetClass* GadgetClass::Get_Next(void) const
 {
-	return(GadgetClass*)LinkClass::Get_Next();
+    return (GadgetClass*)LinkClass::Get_Next();
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Get_Prev -- Fetches a pointer to the previous gadget.                          *
@@ -321,11 +314,10 @@ GadgetClass * GadgetClass::Get_Next(void) const
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-GadgetClass * GadgetClass::Get_Prev(void) const
+GadgetClass* GadgetClass::Get_Prev(void) const
 {
-	return(GadgetClass*)LinkClass::Get_Prev();
+    return (GadgetClass*)LinkClass::Get_Prev();
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Delete_List -- Deletes all gadget objects in list.                             *
@@ -344,30 +336,29 @@ GadgetClass * GadgetClass::Get_Prev(void) const
  *=============================================================================================*/
 void GadgetClass::Delete_List(void)
 {
-	GadgetClass * g = this;
+    GadgetClass* g = this;
 
-	/*
-	**	Move to head of the list.
-	*/
-	while (g->Get_Prev()) {
-		g = g->Get_Prev();
-	}
+    /*
+    **	Move to head of the list.
+    */
+    while (g->Get_Prev()) {
+        g = g->Get_Prev();
+    }
 
-	/*
-	**	First delete all the gadgets following the first one. The reason the first one
-	**	is kept around is that sometimes deleting one gadget will result in related gadgets
-	**	in the same list also being deleted. The first gadget will always contain the
-	**	correct gadget pointer.
-	*/
-	while (g) {
-		g->Clear_Focus();
+    /*
+    **	First delete all the gadgets following the first one. The reason the first one
+    **	is kept around is that sometimes deleting one gadget will result in related gadgets
+    **	in the same list also being deleted. The first gadget will always contain the
+    **	correct gadget pointer.
+    */
+    while (g) {
+        g->Clear_Focus();
 
-		GadgetClass * temp = g;
-		g = g->Get_Next();
-		delete temp;
-	}
+        GadgetClass* temp = g;
+        g = g->Get_Next();
+        delete temp;
+    }
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Action -- Base action for gadget.                                              *
@@ -388,21 +379,20 @@ void GadgetClass::Delete_List(void)
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int GadgetClass::Action(unsigned flags, KeyNumType &)
+int GadgetClass::Action(unsigned flags, KeyNumType&)
 {
-	/*
-	**	If any of the event flags are active, then this indicates that something probably
-	**	has changed the gadget. Flag the gadget to be redrawn. Also, make sure that
-	**	any sticky flags are cleared up.
-	*/
-	if (flags) {
-		IsToRepaint = true;
-		Sticky_Process(flags);
-		return(true);
-	}
-	return(false);
+    /*
+    **	If any of the event flags are active, then this indicates that something probably
+    **	has changed the gadget. Flag the gadget to be redrawn. Also, make sure that
+    **	any sticky flags are cleared up.
+    */
+    if (flags) {
+        IsToRepaint = true;
+        Sticky_Process(flags);
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Draw_Me -- Gadget redraw action (flag control).                                *
@@ -422,13 +412,12 @@ int GadgetClass::Action(unsigned flags, KeyNumType &)
  *=============================================================================================*/
 int GadgetClass::Draw_Me(int forced)
 {
-	if (forced || IsToRepaint) {
-		IsToRepaint = false;
-		return(true);
-	}
-	return(false);
+    if (forced || IsToRepaint) {
+        IsToRepaint = false;
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Draw_All -- Forces all gadgets in list to be redrawn.                          *
@@ -447,14 +436,13 @@ int GadgetClass::Draw_Me(int forced)
  *=============================================================================================*/
 void GadgetClass::Draw_All(bool forced)
 {
-	GadgetClass * gadget = this;
+    GadgetClass* gadget = this;
 
-	while (gadget != NULL) {
-		gadget->Draw_Me(forced);
-		gadget = gadget->Get_Next();
-	}
+    while (gadget != NULL) {
+        gadget->Draw_Me(forced);
+        gadget = gadget->Get_Next();
+    }
 }
-
 
 /***************************************************************************
  * GADGETCLASS::PROCESSLIST -- Check list for a mouse click within a gadget*
@@ -469,194 +457,192 @@ void GadgetClass::Draw_All(bool forced)
  *=========================================================================*/
 KeyNumType GadgetClass::Input(void)
 {
-	int mousex, mousey;
-	KeyNumType key;
-	unsigned flags;
-	int forced = false;
+    int mousex, mousey;
+    KeyNumType key;
+    unsigned flags;
+    int forced = false;
 
-	/*
-	**	Record this list so that a forced redraw only occurs the FIRST time the
-	**	gadget list is passed to this routine.
-	*/
-	if (LastList != this) {
-		LastList = this;
-		forced = true;
-		StuckOn = NULL;
-		Focused = NULL;
-	}
+    /*
+    **	Record this list so that a forced redraw only occurs the FIRST time the
+    **	gadget list is passed to this routine.
+    */
+    if (LastList != this) {
+        LastList = this;
+        forced = true;
+        StuckOn = NULL;
+        Focused = NULL;
+    }
 
-	/*
-	**	Fetch any pending keyboard input.
-	*/
-	key = Keyboard->Check();
-	if (key != 0) {
-		key = Keyboard->Get();
-	}
+    /*
+    **	Fetch any pending keyboard input.
+    */
+    key = Keyboard->Check();
+    if (key != 0) {
+        key = Keyboard->Get();
+    }
 
 #ifdef WIN32
 #ifdef CHEAT_KEYS
-	if (key == KN_K && !Debug_Map && (Debug_Flag || Debug_Playtest)) {
-		/*
-		** time to create a screen shot using the PCX code (if it works)
-		*/
-		if (!Debug_MotionCapture) {
-			GraphicBufferClass temp_page(	SeenBuff.Get_Width(),
-													SeenBuff.Get_Height(),
-													NULL,
-													SeenBuff.Get_Width() * SeenBuff.Get_Height());
-			CDFileClass file;
-			char filename[30];
+    if (key == KN_K && !Debug_Map && (Debug_Flag || Debug_Playtest)) {
+        /*
+        ** time to create a screen shot using the PCX code (if it works)
+        */
+        if (!Debug_MotionCapture) {
+            GraphicBufferClass temp_page(
+                SeenBuff.Get_Width(), SeenBuff.Get_Height(), NULL, SeenBuff.Get_Width() * SeenBuff.Get_Height());
+            CDFileClass file;
+            char filename[30];
 
-//			Hide_Mouse();
-			SeenBuff.Blit(temp_page);
-//			Show_Mouse();
-			for (int lp = 0; lp < 99; lp ++) {
-				sprintf(filename, "scrsht%02d.pcx", lp);
-				file.Set_Name(filename);
-				if (!file.Is_Available()) break;
-			}
+            //			Hide_Mouse();
+            SeenBuff.Blit(temp_page);
+            //			Show_Mouse();
+            for (int lp = 0; lp < 99; lp++) {
+                sprintf(filename, "scrsht%02d.pcx", lp);
+                file.Set_Name(filename);
+                if (!file.Is_Available())
+                    break;
+            }
 
-			file.Cache(200000);
-			Write_PCX_File(file, temp_page, & GamePalette);
-			Sound_Effect(VOC_BEEP);
-		}
-	}
+            file.Cache(200000);
+            Write_PCX_File(file, temp_page, &GamePalette);
+            Sound_Effect(VOC_BEEP);
+        }
+    }
 #endif
 #endif
 
-	/*
-	**	For mouse button clicks, the mouse position is actually held in the MouseQ...
-	**	globals rather than their normal Mouse... globals. This is because we need to
-	**	know the position of the mouse at the exact instant when the click occurred
-	**	rather the the mouse position at the time we get around to this function.
-	*/
-	if (((key&0xFF) == KN_LMOUSE) || ((key&0xFF) == KN_RMOUSE)) {
-	   mousex = Keyboard->MouseQX;
-	   mousey = Keyboard->MouseQY;
-	} else {
-	   mousex = Get_Mouse_X();
-	   mousey = Get_Mouse_Y();
-	}
+    /*
+    **	For mouse button clicks, the mouse position is actually held in the MouseQ...
+    **	globals rather than their normal Mouse... globals. This is because we need to
+    **	know the position of the mouse at the exact instant when the click occurred
+    **	rather the the mouse position at the time we get around to this function.
+    */
+    if (((key & 0xFF) == KN_LMOUSE) || ((key & 0xFF) == KN_RMOUSE)) {
+        mousex = Keyboard->MouseQX;
+        mousey = Keyboard->MouseQY;
+    } else {
+        mousex = Get_Mouse_X();
+        mousey = Get_Mouse_Y();
+    }
 
-	/*
-	**	Set the mouse button state flags. These will be passed to the individual
-	**	buttons so that they can determine what action to perform (if any).
-	*/
-	flags = 0;
-	if (key) {
-		if (key == KN_LMOUSE) {
-			flags |= LEFTPRESS;
-		}
-		if (key == KN_RMOUSE) {
-			flags |= RIGHTPRESS;
-		}
-		if (key == (KN_LMOUSE | KN_RLSE_BIT)) {
-			flags |= LEFTRELEASE;
-		}
-		if (key == (KN_RMOUSE | KN_RLSE_BIT)) {
-			flags |= RIGHTRELEASE;
-		}
-	}
+    /*
+    **	Set the mouse button state flags. These will be passed to the individual
+    **	buttons so that they can determine what action to perform (if any).
+    */
+    flags = 0;
+    if (key) {
+        if (key == KN_LMOUSE) {
+            flags |= LEFTPRESS;
+        }
+        if (key == KN_RMOUSE) {
+            flags |= RIGHTPRESS;
+        }
+        if (key == (KN_LMOUSE | KN_RLSE_BIT)) {
+            flags |= LEFTRELEASE;
+        }
+        if (key == (KN_RMOUSE | KN_RLSE_BIT)) {
+            flags |= RIGHTRELEASE;
+        }
+    }
 
-	/*
-	**	If the mouse wasn't responsible for this key code, then it must be from
-	**	the keyboard. Flag this fact.
-	*/
-	if (key && !flags) {
-		flags |= KEYBOARD;
-	}
+    /*
+    **	If the mouse wasn't responsible for this key code, then it must be from
+    **	the keyboard. Flag this fact.
+    */
+    if (key && !flags) {
+        flags |= KEYBOARD;
+    }
 
-	/*
-	**	Mouse button up or down action is ignored if there is a keyboard event. This
-	**	allows keyboard events to fall through normally even if the mouse is over a
-	**	gadget that is flagged for LEFTUP or RIGHTUP.
-	*/
-	if (!key) {
+    /*
+    **	Mouse button up or down action is ignored if there is a keyboard event. This
+    **	allows keyboard events to fall through normally even if the mouse is over a
+    **	gadget that is flagged for LEFTUP or RIGHTUP.
+    */
+    if (!key) {
 
-		/*
-		**	Check for the mouse being held down. We can't use the normal input system
-		**	for this, so we must examine the actual current state of the mouse
-		**	buttons. As a side note, if we determine that the mouse button isn't being
-		**	held down, then we automatically know that it must be up -- set the flag
-		**	accordingly.
-		*/
-		if (Keyboard->Down(KN_LMOUSE)) {
-			flags |= LEFTHELD;
-		} else {
-			flags |= LEFTUP;
-		}
-		if (Keyboard->Down(KN_RMOUSE)) {
-			flags |= RIGHTHELD;
-		} else {
-			flags |= RIGHTUP;
-		}
-	}
+        /*
+        **	Check for the mouse being held down. We can't use the normal input system
+        **	for this, so we must examine the actual current state of the mouse
+        **	buttons. As a side note, if we determine that the mouse button isn't being
+        **	held down, then we automatically know that it must be up -- set the flag
+        **	accordingly.
+        */
+        if (Keyboard->Down(KN_LMOUSE)) {
+            flags |= LEFTHELD;
+        } else {
+            flags |= LEFTUP;
+        }
+        if (Keyboard->Down(KN_RMOUSE)) {
+            flags |= RIGHTHELD;
+        } else {
+            flags |= RIGHTUP;
+        }
+    }
 
-	/*
-	**	If "sticky" processing is active, then only process the stuck gadget.
-	*/
-	if (StuckOn) {
-		StuckOn->Draw_Me(false);
-		GadgetClass * oldstuck = StuckOn;
-		StuckOn->Clicked_On(key, flags, mousex, mousey);
-		if (StuckOn) {
-			StuckOn->Draw_Me(false);
-		} else {
-			oldstuck->Draw_Me(false);
-		}
-	} else {
+    /*
+    **	If "sticky" processing is active, then only process the stuck gadget.
+    */
+    if (StuckOn) {
+        StuckOn->Draw_Me(false);
+        GadgetClass* oldstuck = StuckOn;
+        StuckOn->Clicked_On(key, flags, mousex, mousey);
+        if (StuckOn) {
+            StuckOn->Draw_Me(false);
+        } else {
+            oldstuck->Draw_Me(false);
+        }
+    } else {
 
-		/*
-		**	If there is a gadget that has the keyboard focus, then route all keyboard
-		**	events to it.
-		*/
-		if (Focused && (flags & KEYBOARD)) {
-			Focused->Draw_Me(false);
-			Focused->Clicked_On(key, flags, mousex, mousey);
-			if (Focused) {
-				Focused->Draw_Me(false);
-			}
-		} else {
+        /*
+        **	If there is a gadget that has the keyboard focus, then route all keyboard
+        **	events to it.
+        */
+        if (Focused && (flags & KEYBOARD)) {
+            Focused->Draw_Me(false);
+            Focused->Clicked_On(key, flags, mousex, mousey);
+            if (Focused) {
+                Focused->Draw_Me(false);
+            }
+        } else {
 
-			/*
-			**	Sweep through all the buttons in the chain and pass the current button state
-			**	and keyboard input data to them. These routines will detect whether they should
-			**	perform some action and return a flag to this effect. They also have the option
-			**	of changing the key value so that an appropriate return value is use for this
-			**	processing routine.
-			*/
-			GadgetClass * next_button = this;
-			while (next_button != NULL) {
+            /*
+            **	Sweep through all the buttons in the chain and pass the current button state
+            **	and keyboard input data to them. These routines will detect whether they should
+            **	perform some action and return a flag to this effect. They also have the option
+            **	of changing the key value so that an appropriate return value is use for this
+            **	processing routine.
+            */
+            GadgetClass* next_button = this;
+            while (next_button != NULL) {
 
-				/*
-				**	Maybe redraw the button if it needs to or is being forced to redraw.
-				*/
-				next_button->Draw_Me(forced);
+                /*
+                **	Maybe redraw the button if it needs to or is being forced to redraw.
+                */
+                next_button->Draw_Me(forced);
 
-				if (!next_button->IsDisabled) {
+                if (!next_button->IsDisabled) {
 
-					/*
-					**	Process this button. If the button was recognized and action was
-					**	performed, then bail from further processing (speed reasons?).
-					*/
-					if (next_button->Clicked_On(key, flags, mousex, mousey)) {
+                    /*
+                    **	Process this button. If the button was recognized and action was
+                    **	performed, then bail from further processing (speed reasons?).
+                    */
+                    if (next_button->Clicked_On(key, flags, mousex, mousey)) {
 
-						/*
-						**	Some buttons will require repainting when they perform some action.
-						**	Do so at this time.
-						*/
-						next_button->Draw_Me(false);
-						break;
-					}
-				}
+                        /*
+                        **	Some buttons will require repainting when they perform some action.
+                        **	Do so at this time.
+                        */
+                        next_button->Draw_Me(false);
+                        break;
+                    }
+                }
 
-				next_button = next_button->Get_Next();
-			}
-		}
-	}
-	return(key);
+                next_button = next_button->Get_Next();
+            }
+        }
+    }
+    return (key);
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Extract_Gadget -- Sweeps through the gadget chain to find gadget specified.    *
@@ -678,21 +664,20 @@ KeyNumType GadgetClass::Input(void)
  * HISTORY:                                                                                    *
  *   01/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-ControlClass * GadgetClass::Extract_Gadget(unsigned id)
+ControlClass* GadgetClass::Extract_Gadget(unsigned id)
 {
-	GadgetClass * g = this;
+    GadgetClass* g = this;
 
-	if (id != 0) {
-		while (g != NULL) {
-			if (g->Get_ID() == id) {
-				return((ControlClass *)g);
-			}
-			g = g->Get_Next();
-		}
-	}
-	return(0);
+    if (id != 0) {
+        while (g != NULL) {
+            if (g->Get_ID() == id) {
+                return ((ControlClass*)g);
+            }
+            g = g->Get_Next();
+        }
+    }
+    return (0);
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Flag_To_Redraw -- Flags this gadget to be redrawn.                             *
@@ -712,9 +697,8 @@ ControlClass * GadgetClass::Extract_Gadget(unsigned id)
  *=============================================================================================*/
 void GadgetClass::Flag_To_Redraw(void)
 {
-	IsToRepaint = true;
+    IsToRepaint = true;
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Sticky_Process -- Handles the sticky flag processing.                          *
@@ -735,14 +719,13 @@ void GadgetClass::Flag_To_Redraw(void)
  *=============================================================================================*/
 void GadgetClass::Sticky_Process(unsigned flags)
 {
-	if (IsSticky && (flags & LEFTPRESS)) {
-		StuckOn = this;
-	}
-	if (StuckOn == this && (flags & LEFTRELEASE)) {
-		StuckOn = 0;
-	}
+    if (IsSticky && (flags & LEFTPRESS)) {
+        StuckOn = this;
+    }
+    if (StuckOn == this && (flags & LEFTRELEASE)) {
+        StuckOn = 0;
+    }
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Set_Focus -- Sets focus to this gadget.                                        *
@@ -762,14 +745,13 @@ void GadgetClass::Sticky_Process(unsigned flags)
  *=============================================================================================*/
 void GadgetClass::Set_Focus(void)
 {
-	if (Focused) {
-		Focused->Flag_To_Redraw();
-		Focused->Clear_Focus();
-	}
-	Flags |= KEYBOARD;
-	Focused = this;
+    if (Focused) {
+        Focused->Flag_To_Redraw();
+        Focused->Clear_Focus();
+    }
+    Flags |= KEYBOARD;
+    Focused = this;
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Clear_Focus -- Clears the focus if this gadget has it.                         *
@@ -789,12 +771,11 @@ void GadgetClass::Set_Focus(void)
  *=============================================================================================*/
 void GadgetClass::Clear_Focus(void)
 {
-	if (Focused == this) {
-		Flags &= ~KEYBOARD;
-		Focused = 0;
-	}
+    if (Focused == this) {
+        Flags &= ~KEYBOARD;
+        Focused = 0;
+    }
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Has_Focus -- Checks if this object currently has the keyboard focus.           *
@@ -813,9 +794,8 @@ void GadgetClass::Clear_Focus(void)
  *=============================================================================================*/
 bool GadgetClass::Has_Focus(void)
 {
-	return(this == Focused);
+    return (this == Focused);
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Is_List_To_Redraw -- tells if any gadget in the list needs redrawing           *
@@ -834,17 +814,16 @@ bool GadgetClass::Has_Focus(void)
  *=============================================================================================*/
 int GadgetClass::Is_List_To_Redraw(void)
 {
-	GadgetClass * gadget = this;
+    GadgetClass* gadget = this;
 
-	while (gadget != NULL) {
-		if (gadget->IsToRepaint) {
-			return (true);
-		}
-		gadget = gadget->Get_Next();
-	}
-	return (false);
+    while (gadget != NULL) {
+        if (gadget->IsToRepaint) {
+            return (true);
+        }
+        gadget = gadget->Get_Next();
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * GadgetClass::Set_Position -- Set the coordinate position of this gadget.                    *
@@ -863,7 +842,6 @@ int GadgetClass::Is_List_To_Redraw(void)
  *=============================================================================================*/
 void GadgetClass::Set_Position(int x, int y)
 {
-	X = x;
-	Y = y;
+    X = x;
+    Y = y;
 }
-

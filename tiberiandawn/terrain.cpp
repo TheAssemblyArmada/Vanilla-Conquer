@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\terrain.cpv   2.16   16 Oct 1995 16:51:44   JOE_BOSTIC  $ */
@@ -56,30 +56,29 @@
  *   TerrainClass::Validate -- validates terrain pointer													  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-#include	"terrain.h"
+#include "function.h"
+#include "terrain.h"
 
-#define	BARNACLE_STAGE			22
-#define	FIRST_SPORE_STAGE		30
-#define	FIRST_SPORABLE_LEVEL	7
+#define BARNACLE_STAGE       22
+#define FIRST_SPORE_STAGE    30
+#define FIRST_SPORABLE_LEVEL 7
 
 /*
 ** This contains the value of the Virtual Function Table Pointer
 */
-void * TerrainClass::VTable;
-
+void* TerrainClass::VTable;
 
 /***********************************************************************************************
  * TerrainClass::Validate -- validates terrain pointer													  *
  *                                                                                             *
  * INPUT:                                                                                      *
- *		none.																												  *
+ *		none. *
  *                                                                                             *
  * OUTPUT:                                                                                     *
- *		1 = ok, 0 = error																								  *
+ *		1 = ok, 0 = error *
  *                                                                                             *
  * WARNINGS:                                                                                   *
- *		none.																												  *
+ *		none. *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   08/09/1995 BRR : Created.                                                                 *
@@ -87,20 +86,18 @@ void * TerrainClass::VTable;
 #ifdef CHEAT_KEYS
 int TerrainClass::Validate(void) const
 {
-	int num;
+    int num;
 
-	num = Terrains.ID(this);
-	if (num < 0 || num >= TERRAIN_MAX) {
-		Validate_Error("TERRAIN");
-		return (0);
-	}
-	else
-		return (1);
+    num = Terrains.ID(this);
+    if (num < 0 || num >= TERRAIN_MAX) {
+        Validate_Error("TERRAIN");
+        return (0);
+    } else
+        return (1);
 }
 #else
-#define	Validate()
+#define Validate()
 #endif
-
 
 /***********************************************************************************************
  * TerrainClass::~TerrainClass -- Default destructor for terrain class objects.                *
@@ -119,11 +116,10 @@ int TerrainClass::Validate(void) const
  *=============================================================================================*/
 TerrainClass::~TerrainClass(void)
 {
-	if (GameActive && Class) {
-		TerrainClass::Limbo();
-	}
+    if (GameActive && Class) {
+        TerrainClass::Limbo();
+    }
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Take_Damage -- Damages the terrain object as specified.                       *
@@ -146,49 +142,48 @@ TerrainClass::~TerrainClass(void)
  *   11/22/1994 JLB : Shares base damage handler for techno objects.                           *
  *   12/11/1994 JLB : Shortens attached burning animations.                                    *
  *=============================================================================================*/
-ResultType TerrainClass::Take_Damage(int & damage, int distance, WarheadType warhead, TechnoClass * source)
+ResultType TerrainClass::Take_Damage(int& damage, int distance, WarheadType warhead, TechnoClass* source)
 {
-	Validate();
-	ResultType res = RESULT_NONE;
+    Validate();
+    ResultType res = RESULT_NONE;
 
-	/*
-	**	Small arms can never destroy a terrain element.
-	*/
-	if ((!IsOnFire || warhead == WARHEAD_FIRE) && warhead != WARHEAD_SA && !Class->IsImmune) {
+    /*
+    **	Small arms can never destroy a terrain element.
+    */
+    if ((!IsOnFire || warhead == WARHEAD_FIRE) && warhead != WARHEAD_SA && !Class->IsImmune) {
 
-		res = ObjectClass::Take_Damage(damage, distance, warhead, source);
+        res = ObjectClass::Take_Damage(damage, distance, warhead, source);
 
-		if (damage && warhead == WARHEAD_FIRE) {
-			Catch_Fire();
-		}
+        if (damage && warhead == WARHEAD_FIRE) {
+            Catch_Fire();
+        }
 
-		/*
-		**	If the terrain object is destroyed by this damage, then only remove it if it
-		**	currently isn't on fire and isn't in the process of crumbling.
-		*/
-		if (res == RESULT_DESTROYED) {
+        /*
+        **	If the terrain object is destroyed by this damage, then only remove it if it
+        **	currently isn't on fire and isn't in the process of crumbling.
+        */
+        if (res == RESULT_DESTROYED) {
 
-			/*
-			**	Remove this terrain object from the targeting computers of all other
-			**	game objects. No use beating a dead horse.
-			*/
-			Detach_All();
+            /*
+            **	Remove this terrain object from the targeting computers of all other
+            **	game objects. No use beating a dead horse.
+            */
+            Detach_All();
 
-			if (IsOnFire) {
+            if (IsOnFire) {
 
-				/*
-				**	Attached flame animation should be shortened as much as possible so that
-				**	crumbling can begin soon.
-				*/
-				Shorten_Attached_Anims(this);
-			} else {
-				Start_To_Crumble();
-			}
-		}
-	}
-	return(res);
+                /*
+                **	Attached flame animation should be shortened as much as possible so that
+                **	crumbling can begin soon.
+                */
+                Shorten_Attached_Anims(this);
+            } else {
+                Start_To_Crumble();
+            }
+        }
+    }
+    return (res);
 }
-
 
 /***********************************************************************************************
  * TerrainClass::As_Target -- Converts the terrain object into a target number.                *
@@ -207,10 +202,9 @@ ResultType TerrainClass::Take_Damage(int & damage, int distance, WarheadType war
  *=============================================================================================*/
 TARGET TerrainClass::As_Target(void) const
 {
-	Validate();
-	return(Build_Target(KIND_TERRAIN, Terrains.ID(this)));
+    Validate();
+    return (Build_Target(KIND_TERRAIN, Terrains.ID(this)));
 }
-
 
 /***********************************************************************************************
  * TerrainClass::new -- Creates a new terrain object.                                          *
@@ -227,15 +221,14 @@ TARGET TerrainClass::As_Target(void) const
  * HISTORY:                                                                                    *
  *   05/14/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void * TerrainClass::operator new(size_t)
+void* TerrainClass::operator new(size_t)
 {
-	void * ptr = Terrains.Allocate();
-	if (ptr) {
-		((TerrainClass *)ptr)->Set_Active();
-	}
-	return(ptr);
+    void* ptr = Terrains.Allocate();
+    if (ptr) {
+        ((TerrainClass*)ptr)->Set_Active();
+    }
+    return (ptr);
 }
-
 
 /***********************************************************************************************
  * TerrainClass::delete -- Deletes a terrain object.                                           *
@@ -252,14 +245,13 @@ void * TerrainClass::operator new(size_t)
  * HISTORY:                                                                                    *
  *   05/14/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TerrainClass::operator delete(void *ptr)
+void TerrainClass::operator delete(void* ptr)
 {
-	if (ptr) {
-		((TerrainClass *)ptr)->IsActive = false;
-	}
-	Terrains.Free((TerrainClass *)ptr);
+    if (ptr) {
+        ((TerrainClass*)ptr)->IsActive = false;
+    }
+    Terrains.Free((TerrainClass*)ptr);
 }
-
 
 /***********************************************************************************************
  * TerrainClass::TerrainClass -- This is the constructor for a terrain object                  *
@@ -279,23 +271,22 @@ void TerrainClass::operator delete(void *ptr)
  * HISTORY:                                                                                    *
  *   05/02/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-TerrainClass::TerrainClass(TerrainType type, CELL cell) :
-	Class(&TerrainTypeClass::As_Reference(type))
+TerrainClass::TerrainClass(TerrainType type, CELL cell)
+    : Class(&TerrainTypeClass::As_Reference(type))
 {
-	IsBlossoming = false;
-	IsBarnacled = false;
-	IsSporing = false;
-	IsCrumbling = false;
-	IsOnFire = false;
-	Strength = Class->MaxStrength;
-	if (cell != -1) {
-		if (!Unlimbo(Cell_Coord(cell))) {
-			delete this;
-		}
-	}
-	Set_Rate(0);	// turn off animation
+    IsBlossoming = false;
+    IsBarnacled = false;
+    IsSporing = false;
+    IsCrumbling = false;
+    IsOnFire = false;
+    Strength = Class->MaxStrength;
+    if (cell != -1) {
+        if (!Unlimbo(Cell_Coord(cell))) {
+            delete this;
+        }
+    }
+    Set_Rate(0); // turn off animation
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Mark -- Marks the terrain object on the map.                                  *
@@ -317,31 +308,30 @@ TerrainClass::TerrainClass(TerrainType type, CELL cell) :
  *=============================================================================================*/
 bool TerrainClass::Mark(MarkType mark)
 {
-	Validate();
-	if (ObjectClass::Mark(mark)) {
-		short const *overlap = Class->Overlap_List();
-		short const *occupy = Class->Occupy_List();
-		CELL cell = Coord_Cell(Coord);
+    Validate();
+    if (ObjectClass::Mark(mark)) {
+        short const* overlap = Class->Overlap_List();
+        short const* occupy = Class->Occupy_List();
+        CELL cell = Coord_Cell(Coord);
 
-		switch (mark) {
-			case MARK_UP:
-				Map.Pick_Up(cell, this);
-				break;
+        switch (mark) {
+        case MARK_UP:
+            Map.Pick_Up(cell, this);
+            break;
 
-			case MARK_DOWN:
-				Map.Place_Down(cell, this);
-				break;
+        case MARK_DOWN:
+            Map.Place_Down(cell, this);
+            break;
 
-			default:
-				Map.Refresh_Cells(cell, overlap);
-				Map.Refresh_Cells(cell, occupy);
-				break;
-		}
-		return(true);
-	}
-	return(false);
+        default:
+            Map.Refresh_Cells(cell, overlap);
+            Map.Refresh_Cells(cell, occupy);
+            break;
+        }
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Draw_It -- Renders the terrain object at the location specified.              *
@@ -364,34 +354,42 @@ bool TerrainClass::Mark(MarkType mark)
  *=============================================================================================*/
 void TerrainClass::Draw_It(int x, int y, WindowNumberType window)
 {
-	Validate();
-	void const * shapedata;
+    Validate();
+    void const* shapedata;
 
-	shapedata = Class->Get_Image_Data();
-	if (shapedata) {
-		int	shapenum = 0;
+    shapedata = Class->Get_Image_Data();
+    if (shapedata) {
+        int shapenum = 0;
 
-		/*
-		**	Determine the animation stage to render the terrain object. If it is crumbling, then
-		**	it will display the crumbling animation.
-		*/
-		if (IsCrumbling || Class->IsTransformable) {
-			shapenum = Fetch_Stage()+IsCrumbling;
-		} else {
-			if (Strength < 2) {
-				shapenum++;
-			}
-		}
+        /*
+        **	Determine the animation stage to render the terrain object. If it is crumbling, then
+        **	it will display the crumbling animation.
+        */
+        if (IsCrumbling || Class->IsTransformable) {
+            shapenum = Fetch_Stage() + IsCrumbling;
+        } else {
+            if (Strength < 2) {
+                shapenum++;
+            }
+        }
 
-		ShapeFlags_Type flags = SHAPE_NORMAL;
-		if (Is_Selected_By_Player() && Debug_Map) flags = flags | SHAPE_FADING;
+        ShapeFlags_Type flags = SHAPE_NORMAL;
+        if (Is_Selected_By_Player() && Debug_Map)
+            flags = flags | SHAPE_FADING;
 
-		IsTheaterShape = true;
-		CC_Draw_Shape(this, shapedata, shapenum, x, y, window, flags|SHAPE_WIN_REL|SHAPE_GHOST, Map.FadingLight, Map.UnitShadow);
-		IsTheaterShape = false;
-	}
+        IsTheaterShape = true;
+        CC_Draw_Shape(this,
+                      shapedata,
+                      shapenum,
+                      x,
+                      y,
+                      window,
+                      flags | SHAPE_WIN_REL | SHAPE_GHOST,
+                      Map.FadingLight,
+                      Map.UnitShadow);
+        IsTheaterShape = false;
+    }
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Init -- Initialize the terrain object tracking system.                        *
@@ -410,15 +408,14 @@ void TerrainClass::Draw_It(int x, int y, WindowNumberType window)
  *=============================================================================================*/
 void TerrainClass::Init(void)
 {
-	TerrainClass *ptr;
+    TerrainClass* ptr;
 
-	Terrains.Free_All();
+    Terrains.Free_All();
 
-	ptr = new TerrainClass();
-	VTable = ((void **)(((char *)ptr) + sizeof(AbstractClass) - 4))[0];
-	delete ptr;
+    ptr = new TerrainClass();
+    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
+    delete ptr;
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Can_Enter_Cell -- Determines if the terrain object can exist in the cell.     *
@@ -439,20 +436,20 @@ void TerrainClass::Init(void)
  *=============================================================================================*/
 MoveType TerrainClass::Can_Enter_Cell(CELL cell, FacingType) const
 {
-	Validate();
-	short const	*offset;		// Pointer to cell offset list.
+    Validate();
+    short const* offset; // Pointer to cell offset list.
 
-	if ((unsigned)cell >= MAP_CELL_TOTAL) return(MOVE_NO);
+    if ((unsigned)cell >= MAP_CELL_TOTAL)
+        return (MOVE_NO);
 
-	offset = Occupy_List();
-	while (*offset != REFRESH_EOL) {
-		if (!Map[(CELL)(cell + *offset++)].Is_Generally_Clear()) {
-			return(MOVE_NO);
-		}
-	}
-	return(MOVE_OK);
+    offset = Occupy_List();
+    while (*offset != REFRESH_EOL) {
+        if (!Map[(CELL)(cell + *offset++)].Is_Generally_Clear()) {
+            return (MOVE_NO);
+        }
+    }
+    return (MOVE_OK);
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Catch_Fire -- Catches the terrain object on fire.                             *
@@ -473,22 +470,21 @@ MoveType TerrainClass::Can_Enter_Cell(CELL cell, FacingType) const
  *=============================================================================================*/
 bool TerrainClass::Catch_Fire(void)
 {
-	Validate();
-	if (!IsCrumbling && !IsOnFire && Class->IsFlammable) {
-		AnimClass * anim = new AnimClass(ANIM_BURN_BIG, Coord_Add(Sort_Y(), 0xFFB00000L));
-		if (anim) {
-			anim->Attach_To(this);
-		}
-		anim = new AnimClass(ANIM_BURN_MED, Coord_Add(Sort_Y(), 0xFF200000L), 15);
-		if (anim) {
-			anim->Attach_To(this);
-		}
-		IsOnFire = true;
-		return(true);
-	}
-	return(false);
+    Validate();
+    if (!IsCrumbling && !IsOnFire && Class->IsFlammable) {
+        AnimClass* anim = new AnimClass(ANIM_BURN_BIG, Coord_Add(Sort_Y(), 0xFFB00000L));
+        if (anim) {
+            anim->Attach_To(this);
+        }
+        anim = new AnimClass(ANIM_BURN_MED, Coord_Add(Sort_Y(), 0xFF200000L), 15);
+        if (anim) {
+            anim->Attach_To(this);
+        }
+        IsOnFire = true;
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Fire_Out -- Handles when fire has gone out.                                   *
@@ -508,18 +504,17 @@ bool TerrainClass::Catch_Fire(void)
  *=============================================================================================*/
 void TerrainClass::Fire_Out(void)
 {
-	Validate();
-	if (IsOnFire) {
-		IsOnFire = false;
-		if (!IsCrumbling && !Strength) {
-			Detach_All();
-			Mark();
-			Start_To_Crumble();
-			new AnimClass(ANIM_SMOKE_M, Coord_Add(Coord, Class->CenterBase));
-		}
-	}
+    Validate();
+    if (IsOnFire) {
+        IsOnFire = false;
+        if (!IsCrumbling && !Strength) {
+            Detach_All();
+            Mark();
+            Start_To_Crumble();
+            new AnimClass(ANIM_SMOKE_M, Coord_Add(Coord, Class->CenterBase));
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * TerrainClass::AI -- Process the terrain object AI.                                          *
@@ -539,65 +534,64 @@ void TerrainClass::Fire_Out(void)
  *=============================================================================================*/
 void TerrainClass::AI(void)
 {
-	Validate();
-	ObjectClass::AI();
+    Validate();
+    ObjectClass::AI();
 
-	if (StageClass::Graphic_Logic()) {
-		Mark();
+    if (StageClass::Graphic_Logic()) {
+        Mark();
 
-		/*
-		**	If the terrain object is in the process of crumbling, then when at the
-		**	last stage of the crumbling animation, delete the terrain object.
-		*/
-		if (IsCrumbling && Fetch_Stage() == Get_Build_Frame_Count(Class->Get_Image_Data())-1) {
-			delete this;
-		}
-	}
+        /*
+        **	If the terrain object is in the process of crumbling, then when at the
+        **	last stage of the crumbling animation, delete the terrain object.
+        */
+        if (IsCrumbling && Fetch_Stage() == Get_Build_Frame_Count(Class->Get_Image_Data()) - 1) {
+            delete this;
+        }
+    }
 
-	/*
-	** if this is a blossom tree, let's update it at this time
-	*/
-	if (Class->IsTransformable) {
-		// If it's already blossomed, is it at barnacled stage?
-		if (IsBlossoming) {
-			// if it's not barnacled yet, check if we're at that stage
-			if (!IsBarnacled) {
-				if (Fetch_Stage() == BARNACLE_STAGE) {
-					IsBarnacled = true;
-					Set_Rate(0);	// turn off animation
-				}
-			} else {
-				/*
-				** If it's barnacled, see if it's pulsing and spore-ing
-				*/
-				if (IsSporing) {
-					if (Fetch_Stage() >= Get_Build_Frame_Count(Class->Get_Image_Data())-1) {
-						Explosion_Damage(Sort_Y(), 5, NULL, WARHEAD_SPORE);
-						Set_Stage(FIRST_SPORE_STAGE);
-						if (Random() & 1) {
-							IsSporing = false;
-							StageClass::Set_Rate(0);
-						}
-					}
-				} else {
-					if (Random() == 255) {	// is it time to start sporing?
-						IsSporing = true;
-						StageClass::Set_Rate(Options.Normalize_Delay(1));
-					}
-				}
-			}
-		} else {
+    /*
+    ** if this is a blossom tree, let's update it at this time
+    */
+    if (Class->IsTransformable) {
+        // If it's already blossomed, is it at barnacled stage?
+        if (IsBlossoming) {
+            // if it's not barnacled yet, check if we're at that stage
+            if (!IsBarnacled) {
+                if (Fetch_Stage() == BARNACLE_STAGE) {
+                    IsBarnacled = true;
+                    Set_Rate(0); // turn off animation
+                }
+            } else {
+                /*
+                ** If it's barnacled, see if it's pulsing and spore-ing
+                */
+                if (IsSporing) {
+                    if (Fetch_Stage() >= Get_Build_Frame_Count(Class->Get_Image_Data()) - 1) {
+                        Explosion_Damage(Sort_Y(), 5, NULL, WARHEAD_SPORE);
+                        Set_Stage(FIRST_SPORE_STAGE);
+                        if (Random() & 1) {
+                            IsSporing = false;
+                            StageClass::Set_Rate(0);
+                        }
+                    }
+                } else {
+                    if (Random() == 255) { // is it time to start sporing?
+                        IsSporing = true;
+                        StageClass::Set_Rate(Options.Normalize_Delay(1));
+                    }
+                }
+            }
+        } else {
 
-			// If it hasn't tried to blossom yet, can it do so now?
-			if (Random_Picky((int)1, (int)5000, (char*)NULL, (int)0) == 1) {
-				IsBlossoming = true;
-				StageClass::Set_Stage(1);
-				StageClass::Set_Rate(Options.Normalize_Delay(1));
-			}
-		}
-	}
+            // If it hasn't tried to blossom yet, can it do so now?
+            if (Random_Picky((int)1, (int)5000, (char*)NULL, (int)0) == 1) {
+                IsBlossoming = true;
+                StageClass::Set_Stage(1);
+                StageClass::Set_Rate(Options.Normalize_Delay(1));
+            }
+        }
+    }
 }
-
 
 #ifdef CHEAT_KEYS
 /***********************************************************************************************
@@ -615,13 +609,12 @@ void TerrainClass::AI(void)
  * HISTORY:                                                                                    *
  *   09/27/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TerrainClass::Debug_Dump(MonoClass *mono) const
+void TerrainClass::Debug_Dump(MonoClass* mono) const
 {
-	Validate();
-	ObjectClass::Debug_Dump(mono);
+    Validate();
+    ObjectClass::Debug_Dump(mono);
 }
 #endif
-
 
 /***********************************************************************************************
  * TerrainClass::Unlimbo -- Unlimbo terrain object onto the map.                               *
@@ -647,13 +640,12 @@ void TerrainClass::Debug_Dump(MonoClass *mono) const
  *=============================================================================================*/
 bool TerrainClass::Unlimbo(COORDINATE coord, DirType dir)
 {
-	Validate();
-	if (Class->Theater & (1 << Map.Theater)) {
-		return(ObjectClass::Unlimbo(coord, dir));
-	}
-	return(false);
+    Validate();
+    if (Class->Theater & (1 << Map.Theater)) {
+        return (ObjectClass::Unlimbo(coord, dir));
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Start_To_Crumble -- Initiates crumbling of terrain (tree) object.             *
@@ -672,14 +664,13 @@ bool TerrainClass::Unlimbo(COORDINATE coord, DirType dir)
  *=============================================================================================*/
 void TerrainClass::Start_To_Crumble(void)
 {
-	Validate();
-	if (!IsCrumbling) {
-		IsCrumbling = true;
-		Set_Rate(2);
-		Set_Stage(0);
-	}
+    Validate();
+    if (!IsCrumbling) {
+        IsCrumbling = true;
+        Set_Rate(2);
+        Set_Stage(0);
+    }
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Limbo -- Handles terrain specific limbo action.                               *
@@ -698,14 +689,13 @@ void TerrainClass::Start_To_Crumble(void)
  *=============================================================================================*/
 bool TerrainClass::Limbo(void)
 {
-	Validate();
-	if (!IsInLimbo) {
-		CELL cell = Coord_Cell(Coord);
-		Map[cell].Flag.Occupy.Monolith = false;
-	}
-	return(ObjectClass::Limbo());
+    Validate();
+    if (!IsInLimbo) {
+        CELL cell = Coord_Cell(Coord);
+        Map[cell].Flag.Occupy.Monolith = false;
+    }
+    return (ObjectClass::Limbo());
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Center_Coord -- Fetches the center point coordinate for terrain object.       *
@@ -723,10 +713,9 @@ bool TerrainClass::Limbo(void)
  *=============================================================================================*/
 COORDINATE TerrainClass::Center_Coord(void) const
 {
-	Validate();
-	return(Coord_Add(Coord, Class->CenterBase));
+    Validate();
+    return (Coord_Add(Coord, Class->CenterBase));
 }
-
 
 /***********************************************************************************************
  * TerrainClass::TerrainClass -- Constructor for a terrain class object.                       *
@@ -743,17 +732,16 @@ COORDINATE TerrainClass::Center_Coord(void) const
  * HISTORY:                                                                                    *
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-TerrainClass::TerrainClass(void) :
-	Class(0)
+TerrainClass::TerrainClass(void)
+    : Class(0)
 {
-	IsOnFire = false;
-	IsCrumbling = false;
-	IsBlossoming = false;
-	IsBarnacled = false;
-	IsSporing = false;
-	Strength = 0;
+    IsOnFire = false;
+    IsCrumbling = false;
+    IsBlossoming = false;
+    IsBarnacled = false;
+    IsSporing = false;
+    Strength = 0;
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Radar_Icon -- Fetches pointer to radar icon to use.                           *
@@ -771,29 +759,28 @@ TerrainClass::TerrainClass(void) :
  * HISTORY:                                                                                    *
  *   05/08/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-unsigned char * TerrainClass::Radar_Icon(CELL cell)
+unsigned char* TerrainClass::Radar_Icon(CELL cell)
 {
-	Validate();
-	unsigned char *icon = (unsigned char *)Class->Get_Radar_Data();	// get a pointer to radar icons
-	int  width = *icon++;							// extract the width from data
-	int  height = *icon++;							// extract the width from data
+    Validate();
+    unsigned char* icon = (unsigned char*)Class->Get_Radar_Data(); // get a pointer to radar icons
+    int width = *icon++;                                           // extract the width from data
+    int height = *icon++;                                          // extract the width from data
 
-	/*
-	** Icon number that we need can be found by converting the cell and base
-	** cell to and x and y offset from the upper left of the cell, and then
-	** multiplying it by the width of the terrain in icons, which we
-	** conveniantly stored out as the first byte of every icon we made.
-	*/
-	int basecell = Coord_Cell(Coord);				// find the base cell of terrain
-	int ydiff = Cell_Y(cell) - Cell_Y(basecell);
-	int xdiff = Cell_X(cell) - Cell_X(basecell);
-	if (xdiff < width && ydiff < height) {
-		int iconnum = (ydiff * width) + xdiff;
-		return(icon + (iconnum * 9));
-	}
-	return(NULL);
+    /*
+    ** Icon number that we need can be found by converting the cell and base
+    ** cell to and x and y offset from the upper left of the cell, and then
+    ** multiplying it by the width of the terrain in icons, which we
+    ** conveniantly stored out as the first byte of every icon we made.
+    */
+    int basecell = Coord_Cell(Coord); // find the base cell of terrain
+    int ydiff = Cell_Y(cell) - Cell_Y(basecell);
+    int xdiff = Cell_X(cell) - Cell_X(basecell);
+    if (xdiff < width && ydiff < height) {
+        int iconnum = (ydiff * width) + xdiff;
+        return (icon + (iconnum * 9));
+    }
+    return (NULL);
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Read_INI -- Reads terrain objects from INI file.                              *
@@ -814,34 +801,33 @@ unsigned char * TerrainClass::Radar_Icon(CELL cell)
  * HISTORY:                                                                                    *
  *   05/24/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TerrainClass::Read_INI(char *buffer)
+void TerrainClass::Read_INI(char* buffer)
 {
-	char	*tbuffer;	// Accumulation buffer of unit IDs.
-	int	len;			// Size of data in buffer.
-	char	buf[128];
-	TerrainClass * tptr;
+    char* tbuffer; // Accumulation buffer of unit IDs.
+    int len;       // Size of data in buffer.
+    char buf[128];
+    TerrainClass* tptr;
 
-	len = strlen(buffer) + 2;
-	tbuffer = buffer + len;
+    len = strlen(buffer) + 2;
+    tbuffer = buffer + len;
 
-	WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize-len, buffer);
-	while (*tbuffer != '\0') {
-		TerrainType	terrain;		// Terrain type.
-		CELL			cell;
+    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
+    while (*tbuffer != '\0') {
+        TerrainType terrain; // Terrain type.
+        CELL cell;
 
-		cell = atoi(tbuffer);
-		WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf)-1, buffer);
-		terrain = TerrainTypeClass::From_Name(strtok(buf, ","));
-		if (terrain != TERRAIN_NONE) {
-			tptr = new TerrainClass(terrain, cell);
-			tptr->Trigger = TriggerClass::As_Pointer(strtok(NULL,","));
-			if (tptr->Trigger)
-				tptr->Trigger->AttachCount++;
-		}
-		tbuffer += strlen(tbuffer)+1;
-	}
+        cell = atoi(tbuffer);
+        WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
+        terrain = TerrainTypeClass::From_Name(strtok(buf, ","));
+        if (terrain != TERRAIN_NONE) {
+            tptr = new TerrainClass(terrain, cell);
+            tptr->Trigger = TriggerClass::As_Pointer(strtok(NULL, ","));
+            if (tptr->Trigger)
+                tptr->Trigger->AttachCount++;
+        }
+        tbuffer += strlen(tbuffer) + 1;
+    }
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Write_INI -- Writes all terrain objects to the INI file.                      *
@@ -861,37 +847,35 @@ void TerrainClass::Read_INI(char *buffer)
  * HISTORY:                                                                                    *
  *   05/28/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TerrainClass::Write_INI(char *buffer)
+void TerrainClass::Write_INI(char* buffer)
 {
-	int	index;
-	char	uname[10];
-	char	buf[127];
-	char	*tbuffer;		// Accumulation buffer of unit IDs.
+    int index;
+    char uname[10];
+    char buf[127];
+    char* tbuffer; // Accumulation buffer of unit IDs.
 
-	/*
-	**	First, clear out all existing terrain data from the ini file.
-	*/
-	tbuffer = buffer + strlen(buffer) + 2;
-	WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize-strlen(buffer), buffer);
-	while (*tbuffer != '\0') {
-		WWWritePrivateProfileString(INI_Name(), tbuffer, NULL, buffer);
-		tbuffer += strlen(tbuffer)+1;
-	}
+    /*
+    **	First, clear out all existing terrain data from the ini file.
+    */
+    tbuffer = buffer + strlen(buffer) + 2;
+    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - strlen(buffer), buffer);
+    while (*tbuffer != '\0') {
+        WWWritePrivateProfileString(INI_Name(), tbuffer, NULL, buffer);
+        tbuffer += strlen(tbuffer) + 1;
+    }
 
-	/*
-	**	Write the terrain data out.
-	*/
-	for (index = 0; index < Terrains.Count(); index++) {
-		TerrainClass * terrain;
+    /*
+    **	Write the terrain data out.
+    */
+    for (index = 0; index < Terrains.Count(); index++) {
+        TerrainClass* terrain;
 
-		terrain = Terrains.Ptr(index);
-		if (!terrain->IsInLimbo && terrain->IsActive) {
+        terrain = Terrains.Ptr(index);
+        if (!terrain->IsInLimbo && terrain->IsActive) {
 
-			sprintf(uname, "%d", Coord_Cell(terrain->Coord));
-			sprintf(buf, "%s,%s",
-				terrain->Class->IniName,
-				terrain->Trigger ? terrain->Trigger->Get_Name() : "None" );
-			WWWritePrivateProfileString(INI_Name(), uname, buf, buffer);
-		}
-	}
+            sprintf(uname, "%d", Coord_Cell(terrain->Coord));
+            sprintf(buf, "%s,%s", terrain->Class->IniName, terrain->Trigger ? terrain->Trigger->Get_Name() : "None");
+            WWWritePrivateProfileString(INI_Name(), uname, buf, buffer);
+        }
+    }
 }

@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\aadata.cpv   2.18   16 Oct 1995 16:49:50   JOE_BOSTIC  $ */
@@ -46,251 +46,223 @@
  *   AircraftTypeClass::Who_Can_Build_Me -- Determines which object can build the aircraft obje*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
+#include "function.h"
 
-
-void const * AircraftTypeClass::LRotorData = NULL;
-void const * AircraftTypeClass::RRotorData = NULL;
+void const* AircraftTypeClass::LRotorData = NULL;
+void const* AircraftTypeClass::RRotorData = NULL;
 
 // A-10 attack plane
-static AircraftTypeClass const AttackPlane(
-	AIRCRAFT_A10,			// What kind of aircraft is this.
-	TXT_A10,					// Translated text number for aircraft.
-	"A10",					// INI name of aircraft.
-	99,						// Build level.
-	STRUCTF_NONE,			// Building prerequisite.
-		false,				// Is a leader type?
-		false,				// Does it fire a pair of shots in quick succession?
-		false,				//	Is this a typical transport vehicle?
-		true,					// Fixed wing aircraft?
-		false,				// Equipped with a rotor?
-		false,				// Custom rotor sets for each facing?
-		false,				// Can this aircraft land on clear terrain?
-		false,				// Can the aircraft be crushed by a tracked vehicle?
-		true,					// Is it invisible on radar?
-		false,				// Can the player select it so as to give it orders?
-		true,					// Can it be assigned as a target for attack.
-		false,				// Is it insignificant (won't be announced)?
-		false,				// Is it immune to normal combat damage?
-		false,				// Theater specific graphic image?
-		false,				// Can it be repaired in a repair facility?
-		false,				// Can the player construct or order this unit?
-		true,					// Is there a crew inside?
-	3,							// Number of shots it has (default).
-	60,						// The strength of this unit.
-	0,							// The range that it reveals terrain around itself.
-	800,						// Credit cost to construct.
-	0,							// The scenario this becomes available.
-	10,1,						// Risk, reward when calculating AI.
-	HOUSEF_MULTI1|
-	HOUSEF_MULTI2|
-	HOUSEF_MULTI3|
-	HOUSEF_MULTI4|
-	HOUSEF_MULTI5|
-	HOUSEF_MULTI6|
-	HOUSEF_JP|
-	HOUSEF_GOOD|
-	HOUSEF_BAD,				// Who can own this aircraft type.
-	WEAPON_NAPALM,WEAPON_NONE,
-	ARMOR_ALUMINUM,		// Armor type of this aircraft.
-	MPH_FAST,				// Maximum speed of aircraft.
-	5,							// Rate of turn.
-	MISSION_HUNT			// Default mission for aircraft.
+static AircraftTypeClass const AttackPlane(AIRCRAFT_A10, // What kind of aircraft is this.
+                                           TXT_A10,      // Translated text number for aircraft.
+                                           "A10",        // INI name of aircraft.
+                                           99,           // Build level.
+                                           STRUCTF_NONE, // Building prerequisite.
+                                           false,        // Is a leader type?
+                                           false,        // Does it fire a pair of shots in quick succession?
+                                           false,        //	Is this a typical transport vehicle?
+                                           true,         // Fixed wing aircraft?
+                                           false,        // Equipped with a rotor?
+                                           false,        // Custom rotor sets for each facing?
+                                           false,        // Can this aircraft land on clear terrain?
+                                           false,        // Can the aircraft be crushed by a tracked vehicle?
+                                           true,         // Is it invisible on radar?
+                                           false,        // Can the player select it so as to give it orders?
+                                           true,         // Can it be assigned as a target for attack.
+                                           false,        // Is it insignificant (won't be announced)?
+                                           false,        // Is it immune to normal combat damage?
+                                           false,        // Theater specific graphic image?
+                                           false,        // Can it be repaired in a repair facility?
+                                           false,        // Can the player construct or order this unit?
+                                           true,         // Is there a crew inside?
+                                           3,            // Number of shots it has (default).
+                                           60,           // The strength of this unit.
+                                           0,            // The range that it reveals terrain around itself.
+                                           800,          // Credit cost to construct.
+                                           0,            // The scenario this becomes available.
+                                           10,
+                                           1, // Risk, reward when calculating AI.
+                                           HOUSEF_MULTI1 | HOUSEF_MULTI2 | HOUSEF_MULTI3 | HOUSEF_MULTI4 | HOUSEF_MULTI5
+                                               | HOUSEF_MULTI6 | HOUSEF_JP | HOUSEF_GOOD
+                                               | HOUSEF_BAD, // Who can own this aircraft type.
+                                           WEAPON_NAPALM,
+                                           WEAPON_NONE,
+                                           ARMOR_ALUMINUM, // Armor type of this aircraft.
+                                           MPH_FAST,       // Maximum speed of aircraft.
+                                           5,              // Rate of turn.
+                                           MISSION_HUNT    // Default mission for aircraft.
 );
 
 // Transport helicopter.
-static AircraftTypeClass const TransportHeli(
-	AIRCRAFT_TRANSPORT,	// What kind of aircraft is this.
-	TXT_TRANS,				// Translated text number for aircraft.
-	"TRAN",					// INI name of aircraft.
-	6,							// Build level.
-	STRUCTF_HELIPAD,		// Building prerequisite.
-		false,				// Is a leader type?
-		false,				// Does it fire a pair of shots in quick succession?
-		true,					//	Is this a typical transport vehicle?
-		false,				// Fixed wing aircraft?
-		true,					// Equipped with a rotor?
-		true,					// Custom rotor sets for each facing?
-		true,					// Can this aircraft land on clear terrain?
-		false,				// Can the aircraft be crushed by a tracked vehicle?
-		true,					// Is it invisible on radar?
-		true,					// Can the player select it so as to give it orders?
-		true,					// Can it be assigned as a target for attack.
-		false,				// Is it insignificant (won't be announced)?
-		false,				// Theater specific graphic image?
-		false,				// Is it equipped with a combat turret?
-		false,				// Can it be repaired in a repair facility?
-		true,					// Can the player construct or order this unit?
-		true,					// Is there a crew inside?
-	0,							// Number of shots it has (default).
-	90,						// The strength of this unit.
-	0,							// The range that it reveals terrain around itself.
-	1500,						// Credit cost to construct.
-	98,						// The scenario this becomes available.
-	10,80,					// Risk, reward when calculating AI.
-	HOUSEF_MULTI1|
-	HOUSEF_MULTI2|
-	HOUSEF_MULTI3|
-	HOUSEF_MULTI4|
-	HOUSEF_MULTI5|
-	HOUSEF_MULTI6|
-	HOUSEF_JP|
-	HOUSEF_BAD|
-	HOUSEF_GOOD,			// Who can own this aircraft type.
-	WEAPON_NONE,WEAPON_NONE,
-	ARMOR_ALUMINUM,		// Armor type of this aircraft.
-	MPH_MEDIUM_FAST,		// Maximum speed of aircraft.
-	5,							// Rate of turn.
-	MISSION_HUNT			// Default mission for aircraft.
+static AircraftTypeClass const TransportHeli(AIRCRAFT_TRANSPORT, // What kind of aircraft is this.
+                                             TXT_TRANS,          // Translated text number for aircraft.
+                                             "TRAN",             // INI name of aircraft.
+                                             6,                  // Build level.
+                                             STRUCTF_HELIPAD,    // Building prerequisite.
+                                             false,              // Is a leader type?
+                                             false,              // Does it fire a pair of shots in quick succession?
+                                             true,               //	Is this a typical transport vehicle?
+                                             false,              // Fixed wing aircraft?
+                                             true,               // Equipped with a rotor?
+                                             true,               // Custom rotor sets for each facing?
+                                             true,               // Can this aircraft land on clear terrain?
+                                             false,              // Can the aircraft be crushed by a tracked vehicle?
+                                             true,               // Is it invisible on radar?
+                                             true,               // Can the player select it so as to give it orders?
+                                             true,               // Can it be assigned as a target for attack.
+                                             false,              // Is it insignificant (won't be announced)?
+                                             false,              // Theater specific graphic image?
+                                             false,              // Is it equipped with a combat turret?
+                                             false,              // Can it be repaired in a repair facility?
+                                             true,               // Can the player construct or order this unit?
+                                             true,               // Is there a crew inside?
+                                             0,                  // Number of shots it has (default).
+                                             90,                 // The strength of this unit.
+                                             0,                  // The range that it reveals terrain around itself.
+                                             1500,               // Credit cost to construct.
+                                             98,                 // The scenario this becomes available.
+                                             10,
+                                             80, // Risk, reward when calculating AI.
+                                             HOUSEF_MULTI1 | HOUSEF_MULTI2 | HOUSEF_MULTI3 | HOUSEF_MULTI4
+                                                 | HOUSEF_MULTI5 | HOUSEF_MULTI6 | HOUSEF_JP | HOUSEF_BAD
+                                                 | HOUSEF_GOOD, // Who can own this aircraft type.
+                                             WEAPON_NONE,
+                                             WEAPON_NONE,
+                                             ARMOR_ALUMINUM,  // Armor type of this aircraft.
+                                             MPH_MEDIUM_FAST, // Maximum speed of aircraft.
+                                             5,               // Rate of turn.
+                                             MISSION_HUNT     // Default mission for aircraft.
 );
 
 // Apache attach helicopter.
-static AircraftTypeClass const AttackHeli(
-	AIRCRAFT_HELICOPTER,	// What kind of aircraft is this.
-	TXT_HELI,				// Translated text number for aircraft.
-	"HELI",					// INI name of aircraft.
-	6,							// Build level.
-	STRUCTF_HELIPAD,		// Building prerequisite.
-		true,					// Is a leader type?
-		true,					// Does it fire a pair of shots in quick succession?
-		false,				//	Is this a typical transport vehicle?
-		false,				// Fixed wing aircraft?
-		true,					// Equipped with a rotor?
-		false,				// Custom rotor sets for each facing?
-		false,				// Can this aircraft land on clear terrain?
-		false,				// Can the aircraft be crushed by a tracked vehicle?
-		true,					// Is it invisible on radar?
-		true,					// Can the player select it so as to give it orders?
-		true,					// Can it be assigned as a target for attack.
-		false,				// Is it insignificant (won't be announced)?
-		false,				// Is it immune to normal combat damage?
-		false,				// Theater specific graphic image?
-		false,				// Can it be repaired in a repair facility?
-		true,					// Can the player construct or order this unit?
-		true,					// Is there a crew inside?
-	15,						// Number of shots it has (default).
-	125,						// The strength of this unit.
-	0,							// The range that it reveals terrain around itself.
-	1200,						// Credit cost to construct.
-	10,						// The scenario this becomes available.
-	10,80,					// Risk, reward when calculating AI.
-	HOUSEF_MULTI1|
-	HOUSEF_MULTI2|
-	HOUSEF_MULTI3|
-	HOUSEF_MULTI4|
-	HOUSEF_MULTI5|
-	HOUSEF_MULTI6|
-	HOUSEF_JP|
-	HOUSEF_BAD,				// Who can own this aircraft type.
-	WEAPON_CHAIN_GUN,WEAPON_NONE,
-	ARMOR_STEEL,			// Armor type of this aircraft.
-	MPH_FAST,				// Maximum speed of aircraft.
-	4,							// Rate of turn.
-	MISSION_HUNT			// Default mission for aircraft.
+static AircraftTypeClass const AttackHeli(AIRCRAFT_HELICOPTER, // What kind of aircraft is this.
+                                          TXT_HELI,            // Translated text number for aircraft.
+                                          "HELI",              // INI name of aircraft.
+                                          6,                   // Build level.
+                                          STRUCTF_HELIPAD,     // Building prerequisite.
+                                          true,                // Is a leader type?
+                                          true,                // Does it fire a pair of shots in quick succession?
+                                          false,               //	Is this a typical transport vehicle?
+                                          false,               // Fixed wing aircraft?
+                                          true,                // Equipped with a rotor?
+                                          false,               // Custom rotor sets for each facing?
+                                          false,               // Can this aircraft land on clear terrain?
+                                          false,               // Can the aircraft be crushed by a tracked vehicle?
+                                          true,                // Is it invisible on radar?
+                                          true,                // Can the player select it so as to give it orders?
+                                          true,                // Can it be assigned as a target for attack.
+                                          false,               // Is it insignificant (won't be announced)?
+                                          false,               // Is it immune to normal combat damage?
+                                          false,               // Theater specific graphic image?
+                                          false,               // Can it be repaired in a repair facility?
+                                          true,                // Can the player construct or order this unit?
+                                          true,                // Is there a crew inside?
+                                          15,                  // Number of shots it has (default).
+                                          125,                 // The strength of this unit.
+                                          0,                   // The range that it reveals terrain around itself.
+                                          1200,                // Credit cost to construct.
+                                          10,                  // The scenario this becomes available.
+                                          10,
+                                          80, // Risk, reward when calculating AI.
+                                          HOUSEF_MULTI1 | HOUSEF_MULTI2 | HOUSEF_MULTI3 | HOUSEF_MULTI4 | HOUSEF_MULTI5
+                                              | HOUSEF_MULTI6 | HOUSEF_JP
+                                              | HOUSEF_BAD, // Who can own this aircraft type.
+                                          WEAPON_CHAIN_GUN,
+                                          WEAPON_NONE,
+                                          ARMOR_STEEL, // Armor type of this aircraft.
+                                          MPH_FAST,    // Maximum speed of aircraft.
+                                          4,           // Rate of turn.
+                                          MISSION_HUNT // Default mission for aircraft.
 );
-
 
 // Orca attack helicopter.
-static AircraftTypeClass const OrcaHeli(
-	AIRCRAFT_ORCA,			// What kind of aircraft is this.
-	TXT_ORCA,				// Translated text number for aircraft.
-	"ORCA",					// INI name of aircraft.
-	6,							// Build level.
-	STRUCTF_HELIPAD,		// Building prerequisite.
-		true,					// Is a leader type?
-		true,					// Does it fire a pair of shots in quick succession?
-		false,				//	Is this a typical transport vehicle?
-		false,				// Fixed wing aircraft?
-		false,				// Equipped with a rotor?
-		false,				// Custom rotor sets for each facing?
-		false,				// Can this aircraft land on clear terrain?
-		false,				// Can the aircraft be crushed by a tracked vehicle?
-		true,					// Is it invisible on radar?
-		true,					// Can the player select it so as to give it orders?
-		true,					// Can it be assigned as a target for attack.
-		false,				// Is it insignificant (won't be announced)?
-		false,				// Is it immune to normal combat damage?
-		false,				// Theater specific graphic image?
-		false,				// Can it be repaired in a repair facility?
-		true,					// Can the player construct or order this unit?
-		true,					// Is there a crew inside?
-	6,							// Number of shots it has (default).
-	125,						// The strength of this unit.
-	0,							// The range that it reveals terrain around itself.
-	1200,						// Credit cost to construct.
-	10,						// The scenario this becomes available.
-	10,80,					// Risk, reward when calculating AI.
-	HOUSEF_MULTI1|
-	HOUSEF_MULTI2|
-	HOUSEF_MULTI3|
-	HOUSEF_MULTI4|
-	HOUSEF_MULTI5|
-	HOUSEF_MULTI6|
-	HOUSEF_JP|
-	HOUSEF_GOOD,			// Who can own this aircraft type.
-	WEAPON_DRAGON,WEAPON_NONE,
-	ARMOR_STEEL,			// Armor type of this aircraft.
-	MPH_FAST,				// Maximum speed of aircraft.
-	4,							// Rate of turn.
-	MISSION_HUNT			// Default mission for aircraft.
+static AircraftTypeClass const OrcaHeli(AIRCRAFT_ORCA,   // What kind of aircraft is this.
+                                        TXT_ORCA,        // Translated text number for aircraft.
+                                        "ORCA",          // INI name of aircraft.
+                                        6,               // Build level.
+                                        STRUCTF_HELIPAD, // Building prerequisite.
+                                        true,            // Is a leader type?
+                                        true,            // Does it fire a pair of shots in quick succession?
+                                        false,           //	Is this a typical transport vehicle?
+                                        false,           // Fixed wing aircraft?
+                                        false,           // Equipped with a rotor?
+                                        false,           // Custom rotor sets for each facing?
+                                        false,           // Can this aircraft land on clear terrain?
+                                        false,           // Can the aircraft be crushed by a tracked vehicle?
+                                        true,            // Is it invisible on radar?
+                                        true,            // Can the player select it so as to give it orders?
+                                        true,            // Can it be assigned as a target for attack.
+                                        false,           // Is it insignificant (won't be announced)?
+                                        false,           // Is it immune to normal combat damage?
+                                        false,           // Theater specific graphic image?
+                                        false,           // Can it be repaired in a repair facility?
+                                        true,            // Can the player construct or order this unit?
+                                        true,            // Is there a crew inside?
+                                        6,               // Number of shots it has (default).
+                                        125,             // The strength of this unit.
+                                        0,               // The range that it reveals terrain around itself.
+                                        1200,            // Credit cost to construct.
+                                        10,              // The scenario this becomes available.
+                                        10,
+                                        80, // Risk, reward when calculating AI.
+                                        HOUSEF_MULTI1 | HOUSEF_MULTI2 | HOUSEF_MULTI3 | HOUSEF_MULTI4 | HOUSEF_MULTI5
+                                            | HOUSEF_MULTI6 | HOUSEF_JP
+                                            | HOUSEF_GOOD, // Who can own this aircraft type.
+                                        WEAPON_DRAGON,
+                                        WEAPON_NONE,
+                                        ARMOR_STEEL, // Armor type of this aircraft.
+                                        MPH_FAST,    // Maximum speed of aircraft.
+                                        4,           // Rate of turn.
+                                        MISSION_HUNT // Default mission for aircraft.
 );
-
 
 // C-17 transport plane.
-static AircraftTypeClass const CargoPlane(
-	AIRCRAFT_CARGO,		// What kind of aircraft is this.
-	TXT_C17,					// Translated text number for aircraft.
-	"C17",					// INI name of aircraft.
-	99,						// Build level.
-	STRUCTF_NONE,			// Building prerequisite.
-		false,				// Is a leader type?
-		false,				// Does it fire a pair of shots in quick succession?
-		true,					//	Is this a typical transport vehicle?
-		true,					// Fixed wing aircraft?
-		false,				// Equipped with a rotor?
-		false,				// Custom rotor sets for each facing?
-		false,				// Can this aircraft land on clear terrain?
-		false,				// Can the aircraft be crushed by a tracked vehicle?
-		true,					// Is it invisible on radar?
-		false,				// Can the player select it so as to give it orders?
-		false,				// Can it be assigned as a target for attack.
-		false,				// Is it insignificant (won't be announced)?
-		false,				// Is it immune to normal combat damage?
-		false,				// Theater specific graphic image?
-		false,				// Can it be repaired in a repair facility?
-		false,				// Can the player construct or order this unit?
-		true,					// Is there a crew inside?
-	0,							// Number of shots it has (default).
-	25,						// The strength of this unit.
-	0,							// The range that it reveals terrain around itself.
-	800,						// Credit cost to construct.
-	0,							// The scenario this becomes available.
-	10,1,						// Risk, reward when calculating AI.
-	HOUSEF_MULTI1|
-	HOUSEF_MULTI2|
-	HOUSEF_MULTI3|
-	HOUSEF_MULTI4|
-	HOUSEF_MULTI5|
-	HOUSEF_MULTI6|
-	HOUSEF_JP|
-	HOUSEF_GOOD|
-	HOUSEF_BAD,				// Who can own this aircraft type.
-	WEAPON_NONE,WEAPON_NONE,
-	ARMOR_ALUMINUM,		// Armor type of this aircraft.
-	MPH_FAST,				// Maximum speed of aircraft.
-	5,							// Rate of turn.
-	MISSION_HUNT			// Default mission for aircraft.
+static AircraftTypeClass const CargoPlane(AIRCRAFT_CARGO, // What kind of aircraft is this.
+                                          TXT_C17,        // Translated text number for aircraft.
+                                          "C17",          // INI name of aircraft.
+                                          99,             // Build level.
+                                          STRUCTF_NONE,   // Building prerequisite.
+                                          false,          // Is a leader type?
+                                          false,          // Does it fire a pair of shots in quick succession?
+                                          true,           //	Is this a typical transport vehicle?
+                                          true,           // Fixed wing aircraft?
+                                          false,          // Equipped with a rotor?
+                                          false,          // Custom rotor sets for each facing?
+                                          false,          // Can this aircraft land on clear terrain?
+                                          false,          // Can the aircraft be crushed by a tracked vehicle?
+                                          true,           // Is it invisible on radar?
+                                          false,          // Can the player select it so as to give it orders?
+                                          false,          // Can it be assigned as a target for attack.
+                                          false,          // Is it insignificant (won't be announced)?
+                                          false,          // Is it immune to normal combat damage?
+                                          false,          // Theater specific graphic image?
+                                          false,          // Can it be repaired in a repair facility?
+                                          false,          // Can the player construct or order this unit?
+                                          true,           // Is there a crew inside?
+                                          0,              // Number of shots it has (default).
+                                          25,             // The strength of this unit.
+                                          0,              // The range that it reveals terrain around itself.
+                                          800,            // Credit cost to construct.
+                                          0,              // The scenario this becomes available.
+                                          10,
+                                          1, // Risk, reward when calculating AI.
+                                          HOUSEF_MULTI1 | HOUSEF_MULTI2 | HOUSEF_MULTI3 | HOUSEF_MULTI4 | HOUSEF_MULTI5
+                                              | HOUSEF_MULTI6 | HOUSEF_JP | HOUSEF_GOOD
+                                              | HOUSEF_BAD, // Who can own this aircraft type.
+                                          WEAPON_NONE,
+                                          WEAPON_NONE,
+                                          ARMOR_ALUMINUM, // Armor type of this aircraft.
+                                          MPH_FAST,       // Maximum speed of aircraft.
+                                          5,              // Rate of turn.
+                                          MISSION_HUNT    // Default mission for aircraft.
 );
 
-
-AircraftTypeClass const * const AircraftTypeClass::Pointers[AIRCRAFT_COUNT] = {
-	&TransportHeli,
-	&AttackPlane,
-	&AttackHeli,
-	&CargoPlane,
-	&OrcaHeli,
+AircraftTypeClass const* const AircraftTypeClass::Pointers[AIRCRAFT_COUNT] = {
+    &TransportHeli,
+    &AttackPlane,
+    &AttackHeli,
+    &CargoPlane,
+    &OrcaHeli,
 };
-
 
 /***********************************************************************************************
  * AircraftTypeClass::AircraftTypeClass -- Constructor for aircraft objects.                   *
@@ -306,86 +278,84 @@ AircraftTypeClass const * const AircraftTypeClass::Pointers[AIRCRAFT_COUNT] = {
  * HISTORY:                                                                                    *
  *   07/26/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-AircraftTypeClass::AircraftTypeClass(
-				AircraftType airtype,
-				int name,
-				char const *ininame,
-				unsigned char level,
-				long pre,
-				bool is_leader,
-				bool is_twoshooter,
-				bool is_transporter,
-				bool is_fixedwing,
-				bool is_rotorequipped,
-				bool is_rotorcustom,
-				bool is_landable,
-				bool is_crushable,
-				bool is_stealthy,
-				bool is_selectable,
-				bool is_legal_target,
-				bool is_insignificant,
-				bool is_immune,
-				bool is_theater,
-				bool is_repairable,
-				bool is_buildable,
-				bool is_crew,
-				int ammo,
-				unsigned short strength,
-				int sightrange,
-				int cost,
-				int scenario,
-				int risk,
-				int reward,
-				int ownable,
-				WeaponType primary,
-				WeaponType secondary,
-				ArmorType armor,
-				MPHType maxspeed,
-				int rot,
-				MissionType deforder) :
-					TechnoTypeClass(name,
-										ininame,
-										level,
-										pre,
-										is_leader,
-										false,
-										false,
-										is_transporter,
-										false,
-										is_crushable,
-										is_stealthy,
-										is_selectable,
-										is_legal_target,
-										is_insignificant,
-										is_immune,
-										is_theater,
-										is_twoshooter,
-										false,
-										is_repairable,
-										is_buildable,
-										is_crew,
-										ammo,
-										strength,
-										maxspeed,
-										sightrange,
-										cost,
-										scenario,
-										risk,
-										reward,
-										ownable,
-										primary,
-										secondary,
-										armor)
+AircraftTypeClass::AircraftTypeClass(AircraftType airtype,
+                                     int name,
+                                     char const* ininame,
+                                     unsigned char level,
+                                     long pre,
+                                     bool is_leader,
+                                     bool is_twoshooter,
+                                     bool is_transporter,
+                                     bool is_fixedwing,
+                                     bool is_rotorequipped,
+                                     bool is_rotorcustom,
+                                     bool is_landable,
+                                     bool is_crushable,
+                                     bool is_stealthy,
+                                     bool is_selectable,
+                                     bool is_legal_target,
+                                     bool is_insignificant,
+                                     bool is_immune,
+                                     bool is_theater,
+                                     bool is_repairable,
+                                     bool is_buildable,
+                                     bool is_crew,
+                                     int ammo,
+                                     unsigned short strength,
+                                     int sightrange,
+                                     int cost,
+                                     int scenario,
+                                     int risk,
+                                     int reward,
+                                     int ownable,
+                                     WeaponType primary,
+                                     WeaponType secondary,
+                                     ArmorType armor,
+                                     MPHType maxspeed,
+                                     int rot,
+                                     MissionType deforder)
+    : TechnoTypeClass(name,
+                      ininame,
+                      level,
+                      pre,
+                      is_leader,
+                      false,
+                      false,
+                      is_transporter,
+                      false,
+                      is_crushable,
+                      is_stealthy,
+                      is_selectable,
+                      is_legal_target,
+                      is_insignificant,
+                      is_immune,
+                      is_theater,
+                      is_twoshooter,
+                      false,
+                      is_repairable,
+                      is_buildable,
+                      is_crew,
+                      ammo,
+                      strength,
+                      maxspeed,
+                      sightrange,
+                      cost,
+                      scenario,
+                      risk,
+                      reward,
+                      ownable,
+                      primary,
+                      secondary,
+                      armor)
 {
-	IsRotorEquipped = is_rotorequipped;
-	IsRotorCustom = is_rotorcustom;
-	IsLandable = is_landable;
-	IsFixedWing = is_fixedwing;
-	Type = airtype;
-	ROT = rot;
-	Mission = deforder;
+    IsRotorEquipped = is_rotorequipped;
+    IsRotorCustom = is_rotorcustom;
+    IsLandable = is_landable;
+    IsFixedWing = is_fixedwing;
+    Type = airtype;
+    ROT = rot;
+    Mission = deforder;
 }
-
 
 /***********************************************************************************************
  * AircraftTypeClass::From_Name -- Converts an ASCII name into an aircraft type number.        *
@@ -403,18 +373,17 @@ AircraftTypeClass::AircraftTypeClass(
  * HISTORY:                                                                                    *
  *   07/26/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-AircraftType AircraftTypeClass::From_Name(char const *name)
+AircraftType AircraftTypeClass::From_Name(char const* name)
 {
-	if (name) {
-		for (AircraftType classid = AIRCRAFT_FIRST; classid < AIRCRAFT_COUNT; classid++) {
-			if (stricmp(Pointers[classid]->IniName, name) == 0) {
-				return(classid);
-			}
-		}
-	}
-	return(AIRCRAFT_NONE);
+    if (name) {
+        for (AircraftType classid = AIRCRAFT_FIRST; classid < AIRCRAFT_COUNT; classid++) {
+            if (stricmp(Pointers[classid]->IniName, name) == 0) {
+                return (classid);
+            }
+        }
+    }
+    return (AIRCRAFT_NONE);
 }
-
 
 /***********************************************************************************************
  * AircraftTypeClass::One_Time -- Performs one time initialization of the aircraft type class. *
@@ -433,35 +402,34 @@ AircraftType AircraftTypeClass::From_Name(char const *name)
  *=============================================================================================*/
 void AircraftTypeClass::One_Time(void)
 {
-	AircraftType index;
+    AircraftType index;
 
-	for (index = AIRCRAFT_FIRST; index < AIRCRAFT_COUNT; index++) {
-		char fullname[_MAX_FNAME+_MAX_EXT];
-		AircraftTypeClass	const & uclass = As_Reference(index);
+    for (index = AIRCRAFT_FIRST; index < AIRCRAFT_COUNT; index++) {
+        char fullname[_MAX_FNAME + _MAX_EXT];
+        AircraftTypeClass const& uclass = As_Reference(index);
 
-		/*
-		**	Fetch the supporting data files for the unit.
-		*/
-		char buffer[_MAX_FNAME];
-		if ( Get_Resolution_Factor() ) {
-			sprintf(buffer, "%sICNH", uclass.IniName);
-		} else {
-			sprintf(buffer, "%sICON", uclass.IniName);
-		}
-		_makepath(fullname, NULL, NULL, buffer, ".SHP");
-		((void const *&)uclass.CameoData) = MixFileClass::Retrieve(fullname);
+        /*
+        **	Fetch the supporting data files for the unit.
+        */
+        char buffer[_MAX_FNAME];
+        if (Get_Resolution_Factor()) {
+            sprintf(buffer, "%sICNH", uclass.IniName);
+        } else {
+            sprintf(buffer, "%sICON", uclass.IniName);
+        }
+        _makepath(fullname, NULL, NULL, buffer, ".SHP");
+        ((void const*&)uclass.CameoData) = MixFileClass::Retrieve(fullname);
 
-		/*
-		**	Generic shape for all houses load method.
-		*/
-		_makepath(fullname, NULL, NULL, uclass.IniName, ".SHP");
-		((void const *&)uclass.ImageData) = MixFileClass::Retrieve(fullname);
-	}
+        /*
+        **	Generic shape for all houses load method.
+        */
+        _makepath(fullname, NULL, NULL, uclass.IniName, ".SHP");
+        ((void const*&)uclass.ImageData) = MixFileClass::Retrieve(fullname);
+    }
 
-	LRotorData = MixFileClass::Retrieve("LROTOR.SHP");
-	RRotorData = MixFileClass::Retrieve("RROTOR.SHP");
+    LRotorData = MixFileClass::Retrieve("LROTOR.SHP");
+    RRotorData = MixFileClass::Retrieve("RROTOR.SHP");
 }
-
 
 /***********************************************************************************************
  * AircraftTypeClass::Create_One_Of -- Creates an aircraft object of the appropriate type.     *
@@ -479,11 +447,10 @@ void AircraftTypeClass::One_Time(void)
  * HISTORY:                                                                                    *
  *   07/26/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-ObjectClass * AircraftTypeClass::Create_One_Of(HouseClass * house) const
+ObjectClass* AircraftTypeClass::Create_One_Of(HouseClass* house) const
 {
-	return(new AircraftClass(Type, house->Class->House));
+    return (new AircraftClass(Type, house->Class->House));
 }
-
 
 #ifdef SCENARIO_EDITOR
 /***********************************************************************************************
@@ -503,13 +470,12 @@ ObjectClass * AircraftTypeClass::Create_One_Of(HouseClass * house) const
  *=============================================================================================*/
 void AircraftTypeClass::Prep_For_Add(void)
 {
-	for (AircraftType index = AIRCRAFT_FIRST; index < AIRCRAFT_COUNT; index++) {
-		if (As_Reference(index).Get_Image_Data()) {
-			Map.Add_To_List(&As_Reference(index));
-		}
-	}
+    for (AircraftType index = AIRCRAFT_FIRST; index < AIRCRAFT_COUNT; index++) {
+        if (As_Reference(index).Get_Image_Data()) {
+            Map.Add_To_List(&As_Reference(index));
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * AircraftTypeClass::Display -- Displays a generic version of the aircraft type.              *
@@ -532,16 +498,21 @@ void AircraftTypeClass::Prep_For_Add(void)
  *=============================================================================================*/
 void AircraftTypeClass::Display(int x, int y, WindowNumberType window, HousesType house) const
 {
-	int shape = 0;
-	void const * ptr = Get_Cameo_Data();
-	if (!ptr) {
-		ptr = Get_Image_Data();
-		shape = 5;
-	}
-	CC_Draw_Shape(ptr, shape, x, y, window, SHAPE_CENTER|SHAPE_WIN_REL|SHAPE_FADING, HouseClass::As_Pointer(house)->Remap_Table(false, true));
+    int shape = 0;
+    void const* ptr = Get_Cameo_Data();
+    if (!ptr) {
+        ptr = Get_Image_Data();
+        shape = 5;
+    }
+    CC_Draw_Shape(ptr,
+                  shape,
+                  x,
+                  y,
+                  window,
+                  SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_FADING,
+                  HouseClass::As_Pointer(house)->Remap_Table(false, true));
 }
 #endif
-
 
 /***********************************************************************************************
  * AircraftTypeClass::Occupy_List -- Returns with occupation list for landed aircraft.         *
@@ -558,12 +529,11 @@ void AircraftTypeClass::Display(int x, int y, WindowNumberType window, HousesTyp
  * HISTORY:                                                                                    *
  *   07/26/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-short const * AircraftTypeClass::Occupy_List(bool) const
+short const* AircraftTypeClass::Occupy_List(bool) const
 {
-	static short const _list[] = {0, REFRESH_EOL};
-	return(_list);
+    static short const _list[] = {0, REFRESH_EOL};
+    return (_list);
 }
-
 
 /***********************************************************************************************
  * AircraftTypeClass::Overlap_List -- Determines the overlap list for a landed aircraft.       *
@@ -579,12 +549,19 @@ short const * AircraftTypeClass::Occupy_List(bool) const
  * HISTORY:                                                                                    *
  *   07/26/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-short const * AircraftTypeClass::Overlap_List(void) const
+short const* AircraftTypeClass::Overlap_List(void) const
 {
-	static short const _list[] = {-(MAP_CELL_W-1), -MAP_CELL_W, -(MAP_CELL_W+1), -1, 1, (MAP_CELL_W-1), MAP_CELL_W, (MAP_CELL_W+1), REFRESH_EOL};
-	return(_list);
+    static short const _list[] = {-(MAP_CELL_W - 1),
+                                  -MAP_CELL_W,
+                                  -(MAP_CELL_W + 1),
+                                  -1,
+                                  1,
+                                  (MAP_CELL_W - 1),
+                                  MAP_CELL_W,
+                                  (MAP_CELL_W + 1),
+                                  REFRESH_EOL};
+    return (_list);
 }
-
 
 /***********************************************************************************************
  * AircraftTypeClass::Who_Can_Build_Me -- Determines which object can build the aircraft objec *
@@ -609,27 +586,24 @@ short const * AircraftTypeClass::Overlap_List(void) const
  * HISTORY:                                                                                    *
  *   11/30/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-BuildingClass * AircraftTypeClass::Who_Can_Build_Me(bool , bool legal, HousesType house) const
+BuildingClass* AircraftTypeClass::Who_Can_Build_Me(bool, bool legal, HousesType house) const
 {
-	BuildingClass * anybuilding = NULL;
-	for (int index = 0; index < Buildings.Count(); index++) {
-		BuildingClass * building = Buildings.Ptr(index);
+    BuildingClass* anybuilding = NULL;
+    for (int index = 0; index < Buildings.Count(); index++) {
+        BuildingClass* building = Buildings.Ptr(index);
 
-		if (building &&
-				!building->IsInLimbo &&
-				building->House->Class->House == house &&
-				building->Mission != MISSION_DECONSTRUCTION &&
-				((1L << building->ActLike) & Ownable) &&
-				(!legal || building->House->Can_Build(Type, building->ActLike)) &&
-				building->Class->ToBuild == RTTI_AIRCRAFTTYPE) {
+        if (building && !building->IsInLimbo && building->House->Class->House == house
+            && building->Mission != MISSION_DECONSTRUCTION && ((1L << building->ActLike) & Ownable)
+            && (!legal || building->House->Can_Build(Type, building->ActLike))
+            && building->Class->ToBuild == RTTI_AIRCRAFTTYPE) {
 
-			if (building->IsLeader) return(building);
-			anybuilding = building;
-		}
-	}
-	return(anybuilding);
+            if (building->IsLeader)
+                return (building);
+            anybuilding = building;
+        }
+    }
+    return (anybuilding);
 }
-
 
 /***********************************************************************************************
  * AircraftTypeClass::Repair_Cost -- Fetchs the cost per repair step.                          *
@@ -647,9 +621,8 @@ BuildingClass * AircraftTypeClass::Who_Can_Build_Me(bool , bool legal, HousesTyp
  *=============================================================================================*/
 int AircraftTypeClass::Repair_Cost(void) const
 {
-	return(Fixed_To_Cardinal(Cost/(MaxStrength/REPAIR_STEP), REPAIR_PERCENT));
+    return (Fixed_To_Cardinal(Cost / (MaxStrength / REPAIR_STEP), REPAIR_PERCENT));
 }
-
 
 /***********************************************************************************************
  * AircraftTypeClass::Repair_Step -- Fetches the number of health points per repair.           *
@@ -667,9 +640,8 @@ int AircraftTypeClass::Repair_Cost(void) const
  *=============================================================================================*/
 int AircraftTypeClass::Repair_Step(void) const
 {
-	return(REPAIR_STEP);
+    return (REPAIR_STEP);
 }
-
 
 /***********************************************************************************************
  * AircraftTypeClass::Max_Pips -- Fetches the maximum number of pips allowed.                  *
@@ -688,16 +660,15 @@ int AircraftTypeClass::Repair_Step(void) const
  *=============================================================================================*/
 int AircraftTypeClass::Max_Pips(void) const
 {
-	if (IsTransporter) {
-		return(Max_Passengers());
-	} else {
-		if (Primary != WEAPON_NONE) {
-			return(5);
-		}
-	}
-	return(0);
+    if (IsTransporter) {
+        return (Max_Passengers());
+    } else {
+        if (Primary != WEAPON_NONE) {
+            return (5);
+        }
+    }
+    return (0);
 }
-
 
 /***********************************************************************************************
  * AircraftTypeClass::Create_And_Place -- Creates and places aircraft using normal game system *
@@ -716,12 +687,8 @@ int AircraftTypeClass::Max_Pips(void) const
  *=============================================================================================*/
 bool AircraftTypeClass::Create_And_Place(CELL, HousesType) const
 {
-	return(false);
+    return (false);
 }
-
-
-
-
 
 /***********************************************************************************************
  * ATC::Init -- load up terrain set dependant sidebar icons                                    *
@@ -740,33 +707,29 @@ bool AircraftTypeClass::Create_And_Place(CELL, HousesType) const
 
 void AircraftTypeClass::Init(TheaterType theater)
 {
-	if (theater != LastTheater){
-		if ( Get_Resolution_Factor() ) {
+    if (theater != LastTheater) {
+        if (Get_Resolution_Factor()) {
 
-			AircraftType index;
-			char buffer[_MAX_FNAME];
-			char fullname[_MAX_FNAME+_MAX_EXT];
-			void const * cameo_ptr;
+            AircraftType index;
+            char buffer[_MAX_FNAME];
+            char fullname[_MAX_FNAME + _MAX_EXT];
+            void const* cameo_ptr;
 
-			for (index = AIRCRAFT_FIRST; index < AIRCRAFT_COUNT; index++) {
-				AircraftTypeClass	const & uclass = As_Reference(index);
+            for (index = AIRCRAFT_FIRST; index < AIRCRAFT_COUNT; index++) {
+                AircraftTypeClass const& uclass = As_Reference(index);
 
-				((void const *&)uclass.CameoData) = NULL;
+                ((void const*&)uclass.CameoData) = NULL;
 
-				sprintf(buffer, "%.4sICNH", uclass.IniName);
-				_makepath (fullname, NULL, NULL, buffer, Theaters[theater].Suffix);
-				cameo_ptr = MixFileClass::Retrieve(fullname);
-				if (cameo_ptr){
-					((void const *&)uclass.CameoData) = cameo_ptr;
-				}
-			}
-		}
-	}
+                sprintf(buffer, "%.4sICNH", uclass.IniName);
+                _makepath(fullname, NULL, NULL, buffer, Theaters[theater].Suffix);
+                cameo_ptr = MixFileClass::Retrieve(fullname);
+                if (cameo_ptr) {
+                    ((void const*&)uclass.CameoData) = cameo_ptr;
+                }
+            }
+        }
+    }
 }
-
-
-
-
 
 /***********************************************************************************************
  * AircraftTypeClass::Dimensions -- Fetches the graphic dimensions of the aircraft type.       *
@@ -785,11 +748,13 @@ void AircraftTypeClass::Init(TheaterType theater)
  * HISTORY:                                                                                    *
  *   08/07/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void AircraftTypeClass::Dimensions(int &width, int &height) const
+void AircraftTypeClass::Dimensions(int& width, int& height) const
 {
-	width = 21;
-	height = 20;
+    width = 21;
+    height = 20;
 }
 
-
-RTTIType AircraftTypeClass::What_Am_I(void) const {return RTTI_AIRCRAFTTYPE;};
+RTTIType AircraftTypeClass::What_Am_I(void) const
+{
+    return RTTI_AIRCRAFTTYPE;
+};

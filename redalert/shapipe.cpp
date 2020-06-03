@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/SHAPIPE.CPP 1     3/03/97 10:25a Joe_bostic $ */
@@ -34,9 +34,7 @@
  *   SHAPipe::Put -- Pass data through the pipe, but use it to build a SHA digest.             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#include	"shapipe.h"
-
+#include "shapipe.h"
 
 /***********************************************************************************************
  * SHAPipe::Put -- Pass data through the pipe, but use it to build a SHA digest.               *
@@ -56,12 +54,11 @@
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int SHAPipe::Put(void const * source, int slen)
+int SHAPipe::Put(void const* source, int slen)
 {
-	SHA.Hash(source, slen);
-	return(Pipe::Put(source, slen));
+    SHA.Hash(source, slen);
+    return (Pipe::Put(source, slen));
 }
-
 
 /***********************************************************************************************
  * SHAPipe::Result -- Fetches the current SHA value.                                           *
@@ -79,9 +76,7 @@ int SHAPipe::Put(void const * source, int slen)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int SHAPipe::Result(void * result) const
+int SHAPipe::Result(void* result) const
 {
-	return(SHA.Result(result));
+    return (SHA.Result(result));
 }
-
-

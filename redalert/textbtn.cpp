@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/TEXTBTN.CPP 1     3/03/97 10:25a Joe_bostic $ */
@@ -39,9 +39,8 @@
  *   TextButtonClass::TextButtonClass -- Normal constructor for a text button.                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
+#include "function.h"
 #include "textbtn.h"
-
 
 /***********************************************************************************************
  * TextButtonClass::TextButtonClass -- Normal constructor for a text button.                   *
@@ -69,25 +68,31 @@
  *                                                                                             *
  * HISTORY:  01/15/1995 JLB : Created.                                                         *
  *=============================================================================================*/
-TextButtonClass::TextButtonClass(unsigned id, char const * text, TextPrintType style, int x, int y, int w, int h, int blackborder) :
-	ToggleClass(id, x, y, w, h),
-	String(text)
+TextButtonClass::TextButtonClass(unsigned id,
+                                 char const* text,
+                                 TextPrintType style,
+                                 int x,
+                                 int y,
+                                 int w,
+                                 int h,
+                                 int blackborder)
+    : ToggleClass(id, x, y, w, h)
+    , String(text)
 {
-	PrintFlags = style;
-	IsBlackBorder = blackborder;
+    PrintFlags = style;
+    IsBlackBorder = blackborder;
 
-	if (w == -1 || h == -1) {
-		//PG_TO_FIX
-		//Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, PrintFlags);
-		if (w == -1) {
-			Width = String_Pixel_Width(String)+8;
-		}
-		if (h == -1) {
-			Height = FontHeight + FontYSpacing + 2;
-		}
-	}
+    if (w == -1 || h == -1) {
+        // PG_TO_FIX
+        // Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, PrintFlags);
+        if (w == -1) {
+            Width = String_Pixel_Width(String) + 8;
+        }
+        if (h == -1) {
+            Height = FontHeight + FontYSpacing + 2;
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * TextButtonClass::TextButtonClass -- Default constructor for a text button.                  *
@@ -100,14 +105,13 @@ TextButtonClass::TextButtonClass(unsigned id, char const * text, TextPrintType s
  *                                                                                             *
  * HISTORY:  01/15/1995 JLB : Created.                                                         *
  *=============================================================================================*/
-TextButtonClass::TextButtonClass(void) :
-	ToggleClass(0, 0, 0, 0, 0)
+TextButtonClass::TextButtonClass(void)
+    : ToggleClass(0, 0, 0, 0, 0)
 {
-	IsBlackBorder = false;
-	String = NULL;
-	PrintFlags = TPF_8POINT;
+    IsBlackBorder = false;
+    String = NULL;
+    PrintFlags = TPF_8POINT;
 }
-
 
 /***********************************************************************************************
  * TextButtonClass::TextButtonClass -- Normal constructor for a text button.                   *
@@ -137,26 +141,32 @@ TextButtonClass::TextButtonClass(void) :
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-TextButtonClass::TextButtonClass (unsigned id, int text, TextPrintType style, int x, int y, int w, int h, int blackborder) :
-	ToggleClass (id, x, y, w, h),
-	String(0)
+TextButtonClass::TextButtonClass(unsigned id,
+                                 int text,
+                                 TextPrintType style,
+                                 int x,
+                                 int y,
+                                 int w,
+                                 int h,
+                                 int blackborder)
+    : ToggleClass(id, x, y, w, h)
+    , String(0)
 {
-	PrintFlags = style;
-	IsBlackBorder = blackborder;
-	Set_Text(text);
+    PrintFlags = style;
+    IsBlackBorder = blackborder;
+    Set_Text(text);
 
-	if (w == -1 || h == -1) {
-		//PG_TO_FIX
-		//Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, PrintFlags);
-		if (w == -1) {
-			Width = String_Pixel_Width(String)+8;
-		}
-		if (h == -1) {
-			Height = FontHeight + FontYSpacing + 2;
-		}
-	}
+    if (w == -1 || h == -1) {
+        // PG_TO_FIX
+        // Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, PrintFlags);
+        if (w == -1) {
+            Width = String_Pixel_Width(String) + 8;
+        }
+        if (h == -1) {
+            Height = FontHeight + FontYSpacing + 2;
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * TextButtonClass::Draw_Me -- Draws the text buttons as indicated.                            *
@@ -176,32 +186,31 @@ TextButtonClass::TextButtonClass (unsigned id, int text, TextPrintType style, in
  *=============================================================================================*/
 int TextButtonClass::Draw_Me(int forced)
 {
-	if (ControlClass::Draw_Me(forced)) {
-		/*
-		**	Hide the mouse.
-		*/
-		if (LogicPage == &SeenBuff) {
-			Conditional_Hide_Mouse(X, Y, X+Width-1, Y+Height-1);
-		}
+    if (ControlClass::Draw_Me(forced)) {
+        /*
+        **	Hide the mouse.
+        */
+        if (LogicPage == &SeenBuff) {
+            Conditional_Hide_Mouse(X, Y, X + Width - 1, Y + Height - 1);
+        }
 
-		/*
-		**	Draw the background and overlaying text. These are virtual function
-		**	calls so that they may be overridden.
-		*/
-		Draw_Background();
-		Draw_Text(String);
+        /*
+        **	Draw the background and overlaying text. These are virtual function
+        **	calls so that they may be overridden.
+        */
+        Draw_Background();
+        Draw_Text(String);
 
-		/*
-		**	Display the mouse.
-		*/
-		if (LogicPage == &SeenBuff) {
-			Conditional_Show_Mouse();
-		}
-		return(true);
-	}
-	return(false);
+        /*
+        **	Display the mouse.
+        */
+        if (LogicPage == &SeenBuff) {
+            Conditional_Show_Mouse();
+        }
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * TextButtonClass::Set_Text -- Assigns a new text string to this button.                      *
@@ -220,18 +229,17 @@ int TextButtonClass::Draw_Me(int forced)
  * HISTORY:                                                                                    *
  *   01/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TextButtonClass::Set_Text(char const * text, bool resize)
+void TextButtonClass::Set_Text(char const* text, bool resize)
 {
-	String = text;
-	Flag_To_Redraw();
-	if (resize && String) {
-		//PG_TO_FIX
-		//Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, PrintFlags);
-		Width = String_Pixel_Width(String)+8;
-		Height = FontHeight + FontYSpacing + 2;
-	}
+    String = text;
+    Flag_To_Redraw();
+    if (resize && String) {
+        // PG_TO_FIX
+        // Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, PrintFlags);
+        Width = String_Pixel_Width(String) + 8;
+        Height = FontHeight + FontYSpacing + 2;
+    }
 }
-
 
 /***********************************************************************************************
  * TextButtonClass::Set_Text -- Sets the text for this text button.                            *
@@ -253,11 +261,10 @@ void TextButtonClass::Set_Text(char const * text, bool resize)
  *=============================================================================================*/
 void TextButtonClass::Set_Text(int text, bool resize)
 {
-	if (text != TXT_NONE) {
-		Set_Text(Text_String(text), resize);
-	}
+    if (text != TXT_NONE) {
+        Set_Text(Text_String(text), resize);
+    }
 }
-
 
 /***********************************************************************************************
  * TextButtonClass::Draw_Background -- Draws the background to the text button.                *
@@ -277,35 +284,34 @@ void TextButtonClass::Set_Text(int text, bool resize)
  *=============================================================================================*/
 void TextButtonClass::Draw_Background(void)
 {
-	/*
-	**	Draw a border if selected style.
-	*/
-	if (IsBlackBorder) {
-		LogicPage->Draw_Rect (X-1, Y-1, X+Width+2, Y+Height+2, BLACK);
-	}
+    /*
+    **	Draw a border if selected style.
+    */
+    if (IsBlackBorder) {
+        LogicPage->Draw_Rect(X - 1, Y - 1, X + Width + 2, Y + Height + 2, BLACK);
+    }
 
-	/*
-	**	Draw the body & set text color.
-	*/
-	BoxStyleEnum style;
+    /*
+    **	Draw the body & set text color.
+    */
+    BoxStyleEnum style;
 
-	if (IsDisabled) {
+    if (IsDisabled) {
 #ifdef WOLAPI_INTEGRATION
-		style = BOXSTYLE_BOX;
+        style = BOXSTYLE_BOX;
 #else
-		style = BOXSTYLE_DIS_RAISED;
+        style = BOXSTYLE_DIS_RAISED;
 #endif
-	} else {
-		if (IsPressed) {
-			style = BOXSTYLE_DOWN;
-		} else {
-			style = BOXSTYLE_RAISED;
-		}
-	}
+    } else {
+        if (IsPressed) {
+            style = BOXSTYLE_DOWN;
+        } else {
+            style = BOXSTYLE_RAISED;
+        }
+    }
 
-	Draw_Box(X, Y, Width, Height, style, true);
+    Draw_Box(X, Y, Width, Height, style, true);
 }
-
 
 /***********************************************************************************************
  * TextButtonClass::Draw_Text -- This draws the text for the text button.                      *
@@ -323,26 +329,26 @@ void TextButtonClass::Draw_Background(void)
  * HISTORY:                                                                                    *
  *   01/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TextButtonClass::Draw_Text(char const * text)
+void TextButtonClass::Draw_Text(char const* text)
 {
-	RemapControlType * scheme = GadgetClass::Get_Color_Scheme();
+    RemapControlType* scheme = GadgetClass::Get_Color_Scheme();
 
-	/*
-	**	Display the text.
-	*/
-	if (String) {
-		TextPrintType flags;
+    /*
+    **	Display the text.
+    */
+    if (String) {
+        TextPrintType flags;
 
-		if (IsDisabled) {
-			flags = (TextPrintType)0;
-		} else {
-			if (IsPressed || IsOn) {
-				flags = TPF_USE_GRAD_PAL|TPF_BRIGHT_COLOR;
-			} else {
-				flags = TPF_USE_GRAD_PAL|TPF_MEDIUM_COLOR;
-			}
-		}
+        if (IsDisabled) {
+            flags = (TextPrintType)0;
+        } else {
+            if (IsPressed || IsOn) {
+                flags = TPF_USE_GRAD_PAL | TPF_BRIGHT_COLOR;
+            } else {
+                flags = TPF_USE_GRAD_PAL | TPF_MEDIUM_COLOR;
+            }
+        }
 
-		Fancy_Text_Print(text, X+(Width>>1)-1, Y+1, scheme, TBLACK, PrintFlags|flags|TPF_CENTER);
-	}
+        Fancy_Text_Print(text, X + (Width >> 1) - 1, Y + 1, scheme, TBLACK, PrintFlags | flags | TPF_CENTER);
+    }
 }

@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\ipxgconn.cpv   1.9   16 Oct 1995 16:51:00   JOE_BOSTIC  $ */
@@ -37,10 +37,9 @@
  *   IPXGlobalConnClass::Send -- sends a packet										*
  *   IPXGlobalConnClass::Service_Receive_Queue -- services recieve queue	*
  *   IPXGlobalConnClass::Set_Bridge -- Sets up connection to cross a bridge*
-* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-
 
 /***************************************************************************
  * IPXGlobalConnClass::IPXGlobalConnClass -- class constructor             *
@@ -65,20 +64,19 @@
  * HISTORY:                                                                *
  *   12/20/1994 BR : Created.                                              *
  *=========================================================================*/
-IPXGlobalConnClass::IPXGlobalConnClass (int numsend, int numreceive, int maxlen,
-	unsigned short product_id) :
-	IPXConnClass (numsend, numreceive,
-		maxlen + sizeof(GlobalHeaderType) - sizeof(CommHeaderType),
-		GLOBAL_MAGICNUM, 		// magic number for this connection
-		NULL,						// IPX Address (none)
-		0, 						// Connection ID
-		"")						// Connection Name
+IPXGlobalConnClass::IPXGlobalConnClass(int numsend, int numreceive, int maxlen, unsigned short product_id)
+    : IPXConnClass(numsend,
+                   numreceive,
+                   maxlen + sizeof(GlobalHeaderType) - sizeof(CommHeaderType),
+                   GLOBAL_MAGICNUM, // magic number for this connection
+                   NULL,            // IPX Address (none)
+                   0,               // Connection ID
+                   "")              // Connection Name
 {
-	ProductID = product_id;
-	IsBridge = 0;
+    ProductID = product_id;
+    IsBridge = 0;
 
-}	/* end of IPXGlobalConnClass */
-
+} /* end of IPXGlobalConnClass */
 
 /***************************************************************************
  * IPXGlobalConnClass::Send_Packet -- adds a packet to the send queue		*
@@ -103,58 +101,56 @@ IPXGlobalConnClass::IPXGlobalConnClass (int numsend, int numreceive, int maxlen,
  * HISTORY:                                                                *
  *   12/20/1994 BR : Created.                                              *
  *=========================================================================*/
-int IPXGlobalConnClass::Send_Packet (void * buf, int buflen,
-	IPXAddressClass *address, int ack_req)
+int IPXGlobalConnClass::Send_Packet(void* buf, int buflen, IPXAddressClass* address, int ack_req)
 {
-	/*------------------------------------------------------------------------
-	Store the packet's Magic Number
-	------------------------------------------------------------------------*/
-	((GlobalHeaderType *)PacketBuf)->Header.MagicNumber = MagicNum;
+    /*------------------------------------------------------------------------
+    Store the packet's Magic Number
+    ------------------------------------------------------------------------*/
+    ((GlobalHeaderType*)PacketBuf)->Header.MagicNumber = MagicNum;
 
-	/*------------------------------------------------------------------------
-	If this is a ACK-required packet, sent to a specific system, mark it as
-	ACK-required; otherwise, mark as no-ACK-required.
-	------------------------------------------------------------------------*/
-	if (ack_req && address != NULL) {
-		((GlobalHeaderType *)PacketBuf)->Header.Code = PACKET_DATA_ACK;
-	} else {
-		((GlobalHeaderType *)PacketBuf)->Header.Code = PACKET_DATA_NOACK;
-	}
+    /*------------------------------------------------------------------------
+    If this is a ACK-required packet, sent to a specific system, mark it as
+    ACK-required; otherwise, mark as no-ACK-required.
+    ------------------------------------------------------------------------*/
+    if (ack_req && address != NULL) {
+        ((GlobalHeaderType*)PacketBuf)->Header.Code = PACKET_DATA_ACK;
+    } else {
+        ((GlobalHeaderType*)PacketBuf)->Header.Code = PACKET_DATA_NOACK;
+    }
 
-	/*------------------------------------------------------------------------
-	Fill in the packet ID.  This will have very limited meaning; it only
-	allows us to determine if an ACK packet we receive later goes with this
-	packet; it doesn't let us detect re-sends of other systems' packets.
-	------------------------------------------------------------------------*/
-	((GlobalHeaderType *)PacketBuf)->Header.PacketID = Queue->Send_Total();
+    /*------------------------------------------------------------------------
+    Fill in the packet ID.  This will have very limited meaning; it only
+    allows us to determine if an ACK packet we receive later goes with this
+    packet; it doesn't let us detect re-sends of other systems' packets.
+    ------------------------------------------------------------------------*/
+    ((GlobalHeaderType*)PacketBuf)->Header.PacketID = Queue->Send_Total();
 
-	/*------------------------------------------------------------------------
-	Set the product ID for this packet.
-	------------------------------------------------------------------------*/
-	((GlobalHeaderType *)PacketBuf)->ProductID = ProductID;
+    /*------------------------------------------------------------------------
+    Set the product ID for this packet.
+    ------------------------------------------------------------------------*/
+    ((GlobalHeaderType*)PacketBuf)->ProductID = ProductID;
 
-	/*------------------------------------------------------------------------
-	Set this packet's destination address.  If no address is specified, use
-	a Broadcast address (which IPXAddressClass's default constructor creates).
-	------------------------------------------------------------------------*/
-	if (address != NULL) {
-		((GlobalHeaderType *)PacketBuf)->Address = (*address);
-	} else {
-		((GlobalHeaderType *)PacketBuf)->Address = IPXAddressClass();
-	}
+    /*------------------------------------------------------------------------
+    Set this packet's destination address.  If no address is specified, use
+    a Broadcast address (which IPXAddressClass's default constructor creates).
+    ------------------------------------------------------------------------*/
+    if (address != NULL) {
+        ((GlobalHeaderType*)PacketBuf)->Address = (*address);
+    } else {
+        ((GlobalHeaderType*)PacketBuf)->Address = IPXAddressClass();
+    }
 
-	/*------------------------------------------------------------------------
-	Copy the application's data
-	------------------------------------------------------------------------*/
-	memcpy(PacketBuf + sizeof(GlobalHeaderType), buf, buflen);
+    /*------------------------------------------------------------------------
+    Copy the application's data
+    ------------------------------------------------------------------------*/
+    memcpy(PacketBuf + sizeof(GlobalHeaderType), buf, buflen);
 
-	/*------------------------------------------------------------------------
-	Queue it
-	------------------------------------------------------------------------*/
-	return(Queue->Queue_Send(PacketBuf,buflen + sizeof(GlobalHeaderType)));
+    /*------------------------------------------------------------------------
+    Queue it
+    ------------------------------------------------------------------------*/
+    return (Queue->Queue_Send(PacketBuf, buflen + sizeof(GlobalHeaderType)));
 
-}	/* end of Send_Packet */
-
+} /* end of Send_Packet */
 
 /***************************************************************************
  * IPXGlobalConnClass::Receive_Packet -- adds packet to the receive queue	*
@@ -174,78 +170,75 @@ int IPXGlobalConnClass::Send_Packet (void * buf, int buflen,
  * HISTORY:                                                                *
  *   12/20/1994 BR : Created.                                              *
  *=========================================================================*/
-int IPXGlobalConnClass::Receive_Packet (void * buf, int buflen,
-	IPXAddressClass *address)
+int IPXGlobalConnClass::Receive_Packet(void* buf, int buflen, IPXAddressClass* address)
 {
-	GlobalHeaderType *packet;				// ptr to this packet
-	SendQueueType *send_entry;				// ptr to send entry header
-	GlobalHeaderType *entry_data;			// ptr to queue entry data
-	int i;
+    GlobalHeaderType* packet;     // ptr to this packet
+    SendQueueType* send_entry;    // ptr to send entry header
+    GlobalHeaderType* entry_data; // ptr to queue entry data
+    int i;
 
-	/*
-	--------------------------- Check the magic # ----------------------------
-	*/
-	packet = (GlobalHeaderType *)buf;
-	if (packet->Header.MagicNumber!=MagicNum) {
-		return(false);
-	}
+    /*
+    --------------------------- Check the magic # ----------------------------
+    */
+    packet = (GlobalHeaderType*)buf;
+    if (packet->Header.MagicNumber != MagicNum) {
+        return (false);
+    }
 
-	/*------------------------------------------------------------------------
-	Process the packet based on its Code
-	------------------------------------------------------------------------*/
-	switch (packet->Header.Code) {
-		/*.....................................................................
-		DATA: Save the given address in the message buffer (so Get_Message()
-		can extract it later), and queue this message.
-		Don't bother checking for a Re-Send; since this queue is receiving data
-		from multiple systems, the Total_Receive() value for this queue will
-		have nothing to do with the packet's ID.  The application must deal
-		with this by being able to handle multiple receipts of the same packet.
-		.....................................................................*/
-		case PACKET_DATA_ACK:
-		case PACKET_DATA_NOACK:
-			packet->Address = (*address);
-			Queue->Queue_Receive (buf, buflen);
-			break;
+    /*------------------------------------------------------------------------
+    Process the packet based on its Code
+    ------------------------------------------------------------------------*/
+    switch (packet->Header.Code) {
+    /*.....................................................................
+    DATA: Save the given address in the message buffer (so Get_Message()
+    can extract it later), and queue this message.
+    Don't bother checking for a Re-Send; since this queue is receiving data
+    from multiple systems, the Total_Receive() value for this queue will
+    have nothing to do with the packet's ID.  The application must deal
+    with this by being able to handle multiple receipts of the same packet.
+    .....................................................................*/
+    case PACKET_DATA_ACK:
+    case PACKET_DATA_NOACK:
+        packet->Address = (*address);
+        Queue->Queue_Receive(buf, buflen);
+        break;
 
-		/*.....................................................................
-		ACK: If this ACK is for any of my packets, mark that packet as
-		acknowledged, then throw this packet away.  Otherwise, ignore the ACK
-		(if we re-sent before we received the other system's first ACK, this
-		ACK will be a leftover)
-		.....................................................................*/
-		case PACKET_ACK:
-			for (i = 0; i < Queue->Num_Send(); i++) {
-				/*
-				..................... Get queue entry ptr .......................
-				*/
-				send_entry = Queue->Get_Send(i);
-				/*
-				............. If ptr is valid, get ptr to its data ..............
-				*/
-				entry_data = (GlobalHeaderType *)(send_entry->Buffer);
-				/*
-				.............. If ACK is for this entry, mark it ................
-				*/
-				if (packet->Header.PacketID==entry_data->Header.PacketID &&
-					entry_data->Header.Code == PACKET_DATA_ACK) {
-					send_entry->IsACK = 1;
-					break;
-				}
-			}
-			break;
+    /*.....................................................................
+    ACK: If this ACK is for any of my packets, mark that packet as
+    acknowledged, then throw this packet away.  Otherwise, ignore the ACK
+    (if we re-sent before we received the other system's first ACK, this
+    ACK will be a leftover)
+    .....................................................................*/
+    case PACKET_ACK:
+        for (i = 0; i < Queue->Num_Send(); i++) {
+            /*
+            ..................... Get queue entry ptr .......................
+            */
+            send_entry = Queue->Get_Send(i);
+            /*
+            ............. If ptr is valid, get ptr to its data ..............
+            */
+            entry_data = (GlobalHeaderType*)(send_entry->Buffer);
+            /*
+            .............. If ACK is for this entry, mark it ................
+            */
+            if (packet->Header.PacketID == entry_data->Header.PacketID && entry_data->Header.Code == PACKET_DATA_ACK) {
+                send_entry->IsACK = 1;
+                break;
+            }
+        }
+        break;
 
-		/*.....................................................................
-		Default: ignore the packet
-		.....................................................................*/
-		default:
-			break;
+    /*.....................................................................
+    Default: ignore the packet
+    .....................................................................*/
+    default:
+        break;
 
-	}	/* end of switch */
+    } /* end of switch */
 
-	return(true);
+    return (true);
 }
-
 
 /***************************************************************************
  * IPXGlobalConnClass::Get_Packet -- gets a packet from the receive queue	*
@@ -265,51 +258,49 @@ int IPXGlobalConnClass::Receive_Packet (void * buf, int buflen,
  * HISTORY:                                                                *
  *   12/20/1994 BR : Created.                                              *
  *=========================================================================*/
-int IPXGlobalConnClass::Get_Packet (void * buf, int *buflen,
-	IPXAddressClass *address, unsigned short *product_id)
+int IPXGlobalConnClass::Get_Packet(void* buf, int* buflen, IPXAddressClass* address, unsigned short* product_id)
 {
-	ReceiveQueueType *rec_entry;					// ptr to receive entry header
-	GlobalHeaderType *packet;
-	int packetlen;										// size of received packet
+    ReceiveQueueType* rec_entry; // ptr to receive entry header
+    GlobalHeaderType* packet;
+    int packetlen; // size of received packet
 
-	/*
-	------------------------ Return if nothing to do -------------------------
-	*/
-	if (Queue->Num_Receive() == 0) {
-		return(false);
-	}
+    /*
+    ------------------------ Return if nothing to do -------------------------
+    */
+    if (Queue->Num_Receive() == 0) {
+        return (false);
+    }
 
-	/*
-	------------------ Get ptr to the next available entry -------------------
-	*/
-	rec_entry = Queue->Get_Receive(0);
+    /*
+    ------------------ Get ptr to the next available entry -------------------
+    */
+    rec_entry = Queue->Get_Receive(0);
 
-	/*
-	------------------------ Read it if it's un-read -------------------------
-	*/
-	if (rec_entry!=NULL && rec_entry->IsRead==0) {
-		/*
-		........................... Mark as read ..............................
-		*/
-		rec_entry->IsRead = 1;
+    /*
+    ------------------------ Read it if it's un-read -------------------------
+    */
+    if (rec_entry != NULL && rec_entry->IsRead == 0) {
+        /*
+        ........................... Mark as read ..............................
+        */
+        rec_entry->IsRead = 1;
 
-		/*
-		.......................... Copy data packet ...........................
-		*/
-		packet = (GlobalHeaderType *)(rec_entry->Buffer);
-		packetlen = rec_entry->BufLen - sizeof(GlobalHeaderType);
-		if (packetlen > 0)
-			memcpy(buf, rec_entry->Buffer + sizeof(GlobalHeaderType), packetlen);
-		(*buflen) = packetlen;
-		(*address) = packet->Address;
-		(*product_id) = packet->ProductID;
+        /*
+        .......................... Copy data packet ...........................
+        */
+        packet = (GlobalHeaderType*)(rec_entry->Buffer);
+        packetlen = rec_entry->BufLen - sizeof(GlobalHeaderType);
+        if (packetlen > 0)
+            memcpy(buf, rec_entry->Buffer + sizeof(GlobalHeaderType), packetlen);
+        (*buflen) = packetlen;
+        (*address) = packet->Address;
+        (*product_id) = packet->ProductID;
 
-		return(true);
-	}
+        return (true);
+    }
 
-	return(false);
+    return (false);
 }
-
 
 /***************************************************************************
  * IPXGlobalConnClass::Send -- sends a packet										*
@@ -331,36 +322,34 @@ int IPXGlobalConnClass::Get_Packet (void * buf, int *buflen,
  * HISTORY:                                                                *
  *   12/20/1994 BR : Created.                                              *
  *=========================================================================*/
-int IPXGlobalConnClass::Send(char *buf, int buflen)
+int IPXGlobalConnClass::Send(char* buf, int buflen)
 {
-	IPXAddressClass *addr;
-	int rc;
+    IPXAddressClass* addr;
+    int rc;
 
-	/*------------------------------------------------------------------------
-	Extract the packet's embedded IPX address
-	------------------------------------------------------------------------*/
-	addr = &(((GlobalHeaderType *)buf)->Address);
+    /*------------------------------------------------------------------------
+    Extract the packet's embedded IPX address
+    ------------------------------------------------------------------------*/
+    addr = &(((GlobalHeaderType*)buf)->Address);
 
-	/*------------------------------------------------------------------------
-	If it's a broadcast address, broadcast it
-	------------------------------------------------------------------------*/
-	if (addr->Is_Broadcast()) {
-		return(Broadcast (buf, buflen));
-	}  else {
-		/*------------------------------------------------------------------------
-		Otherwise, send it
-		------------------------------------------------------------------------*/
-		if (IsBridge && !memcmp (addr, BridgeNet, 4)) {
-			rc = Send_To (buf, buflen, &(((GlobalHeaderType *)buf)->Address),
-				BridgeNode);
-		} else {
-			rc = Send_To (buf, buflen, &(((GlobalHeaderType *)buf)->Address), NULL);
-		}
-		return (rc);
-	}
+    /*------------------------------------------------------------------------
+    If it's a broadcast address, broadcast it
+    ------------------------------------------------------------------------*/
+    if (addr->Is_Broadcast()) {
+        return (Broadcast(buf, buflen));
+    } else {
+        /*------------------------------------------------------------------------
+        Otherwise, send it
+        ------------------------------------------------------------------------*/
+        if (IsBridge && !memcmp(addr, BridgeNet, 4)) {
+            rc = Send_To(buf, buflen, &(((GlobalHeaderType*)buf)->Address), BridgeNode);
+        } else {
+            rc = Send_To(buf, buflen, &(((GlobalHeaderType*)buf)->Address), NULL);
+        }
+        return (rc);
+    }
 
-}	/* end of Send */
-
+} /* end of Send */
 
 /***************************************************************************
  * IPXGlobalConnClass::Service_Receive_Queue -- services the recieve queue	*
@@ -383,57 +372,56 @@ int IPXGlobalConnClass::Send(char *buf, int buflen)
  * HISTORY:                                                                *
  *   12/20/1994 BR : Created.                                              *
  *=========================================================================*/
-int IPXGlobalConnClass::Service_Receive_Queue (void)
+int IPXGlobalConnClass::Service_Receive_Queue(void)
 {
-	GlobalHeaderType ackpacket;					// ACK packet to send
-	ReceiveQueueType *rec_entry;					// ptr to receive entry header
-	GlobalHeaderType *packet_hdr;					// packet header
+    GlobalHeaderType ackpacket;   // ACK packet to send
+    ReceiveQueueType* rec_entry;  // ptr to receive entry header
+    GlobalHeaderType* packet_hdr; // packet header
 
-	/*------------------------------------------------------------------------
-	Get a pointer to the next received entry
-	------------------------------------------------------------------------*/
-	rec_entry = Queue->Get_Receive(0);
-	if (rec_entry==NULL)
-		return(1);
+    /*------------------------------------------------------------------------
+    Get a pointer to the next received entry
+    ------------------------------------------------------------------------*/
+    rec_entry = Queue->Get_Receive(0);
+    if (rec_entry == NULL)
+        return (1);
 
-	/*------------------------------------------------------------------------
-	If this packet doesn't require an ACK, mark it as ACK'd.
-	------------------------------------------------------------------------*/
-	packet_hdr = (GlobalHeaderType *)(rec_entry->Buffer);
-	if (packet_hdr->Header.Code==PACKET_DATA_NOACK)
-		rec_entry->IsACK = 1;
+    /*------------------------------------------------------------------------
+    If this packet doesn't require an ACK, mark it as ACK'd.
+    ------------------------------------------------------------------------*/
+    packet_hdr = (GlobalHeaderType*)(rec_entry->Buffer);
+    if (packet_hdr->Header.Code == PACKET_DATA_NOACK)
+        rec_entry->IsACK = 1;
 
-	/*------------------------------------------------------------------------
-	If this packet hasn't been ACK'd, send an ACK:
-	- Fill in the MagicNum & the Code
-	- Set the PacketID to the same ID that the sending system used, so the
-	  sending system knows which packet the ACK is for
-	------------------------------------------------------------------------*/
-	if (rec_entry->IsACK==0) {
-		ackpacket.Header.MagicNumber = MagicNum;
-		ackpacket.Header.Code = PACKET_ACK;
-		ackpacket.Header.PacketID = packet_hdr->Header.PacketID;
-		ackpacket.Address = packet_hdr->Address;
-		ackpacket.ProductID = ProductID;
+    /*------------------------------------------------------------------------
+    If this packet hasn't been ACK'd, send an ACK:
+    - Fill in the MagicNum & the Code
+    - Set the PacketID to the same ID that the sending system used, so the
+      sending system knows which packet the ACK is for
+    ------------------------------------------------------------------------*/
+    if (rec_entry->IsACK == 0) {
+        ackpacket.Header.MagicNumber = MagicNum;
+        ackpacket.Header.Code = PACKET_ACK;
+        ackpacket.Header.PacketID = packet_hdr->Header.PacketID;
+        ackpacket.Address = packet_hdr->Address;
+        ackpacket.ProductID = ProductID;
 
-		Send ((char *)&ackpacket, sizeof(GlobalHeaderType));
+        Send((char*)&ackpacket, sizeof(GlobalHeaderType));
 
-		rec_entry->IsACK = 1;
-	}
+        rec_entry->IsACK = 1;
+    }
 
-	/*------------------------------------------------------------------------
-	If this packet has been read by the application, and has been ACK'd, and
-	there is another packet in the queue behind this one, it means the other
-	system got the ACK we sent for this packet; remove this packet from the
-	queue.
-	------------------------------------------------------------------------*/
-	if (rec_entry!=NULL && rec_entry->IsRead && rec_entry->IsACK &&
-		Queue->Num_Receive() > 1)
-		Queue->UnQueue_Receive(NULL,NULL,0);
+    /*------------------------------------------------------------------------
+    If this packet has been read by the application, and has been ACK'd, and
+    there is another packet in the queue behind this one, it means the other
+    system got the ACK we sent for this packet; remove this packet from the
+    queue.
+    ------------------------------------------------------------------------*/
+    if (rec_entry != NULL && rec_entry->IsRead && rec_entry->IsACK && Queue->Num_Receive() > 1)
+        Queue->UnQueue_Receive(NULL, NULL, 0);
 
-	return(1);
+    return (1);
 
-}	/* end of Service_Receive_Queue */
+} /* end of Service_Receive_Queue */
 
 /***************************************************************************
  * Set_Bridge -- Sets up connection to cross a bridge                      *
@@ -456,15 +444,14 @@ int IPXGlobalConnClass::Service_Receive_Queue (void)
  *=========================================================================*/
 void IPXGlobalConnClass::Set_Bridge(NetNumType bridge)
 {
-	if (Configured) {
-		memcpy (BridgeNet, bridge, 4);
-		memset (BridgeNode, 0xff, 6);
+    if (Configured) {
+        memcpy(BridgeNet, bridge, 4);
+        memset(BridgeNode, 0xff, 6);
 
-		if (IPX_Get_Local_Target (BridgeNet, BridgeNode, Socket, BridgeNode)==0) {
-			IsBridge = 1;
-		} else {
-			IsBridge = 0;
-		}
-	}
+        if (IPX_Get_Local_Target(BridgeNet, BridgeNode, Socket, BridgeNode) == 0) {
+            IsBridge = 1;
+        } else {
+            IsBridge = 0;
+        }
+    }
 }
-

@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\trigger.cpv   2.17   16 Oct 1995 16:51:20   JOE_BOSTIC  $ */
@@ -59,65 +59,59 @@
 
 static void Do_All_To_Hunt(void);
 
-#define	FIXUP		0
+#define FIXUP 0
 
 /*
 ********************************** Globals **********************************
 */
-static const char * EventText[EVENT_COUNT + 1] = {
-	"None",
-	"Player Enters",
-	"Discovered",
-	"Attacked",
-	"Destroyed",
-	"Any",
-	"House Discov.",
-	"Units Destr.",
-	"Bldgs Destr.",
-	"All Destr.",
-	"Credits",
-	"Time",
-	"# Bldgs Dstr.",
-	"# Units Dstr.",
-	"No Factories",
-	"Civ. Evac.",
-	"Built It"
-};
+static const char* EventText[EVENT_COUNT + 1] = {"None",
+                                                 "Player Enters",
+                                                 "Discovered",
+                                                 "Attacked",
+                                                 "Destroyed",
+                                                 "Any",
+                                                 "House Discov.",
+                                                 "Units Destr.",
+                                                 "Bldgs Destr.",
+                                                 "All Destr.",
+                                                 "Credits",
+                                                 "Time",
+                                                 "# Bldgs Dstr.",
+                                                 "# Units Dstr.",
+                                                 "No Factories",
+                                                 "Civ. Evac.",
+                                                 "Built It"};
 
-
-static const char * ActionText[TriggerClass::ACTION_COUNT + 1] = {
-	"None",
-	"Win",
-	"Lose",
-	"Production",
-	"Create Team",
-	"Dstry Teams",
-	"All to Hunt",
-	"Reinforce.",
-	"DZ at 'Z'",
-	"Airstrike",
-	"Nuclear Missile",
-	"Ion Cannon",
-	"Dstry Trig 'XXXX'",
-	"Dstry Trig 'YYYY'",
-	"Dstry Trig 'ZZZZ'",
-	"Autocreate",
-	"Cap=Win/Des=Lose",
-	"Allow Win"
-};
-
+static const char* ActionText[TriggerClass::ACTION_COUNT + 1] = {"None",
+                                                                 "Win",
+                                                                 "Lose",
+                                                                 "Production",
+                                                                 "Create Team",
+                                                                 "Dstry Teams",
+                                                                 "All to Hunt",
+                                                                 "Reinforce.",
+                                                                 "DZ at 'Z'",
+                                                                 "Airstrike",
+                                                                 "Nuclear Missile",
+                                                                 "Ion Cannon",
+                                                                 "Dstry Trig 'XXXX'",
+                                                                 "Dstry Trig 'YYYY'",
+                                                                 "Dstry Trig 'ZZZZ'",
+                                                                 "Autocreate",
+                                                                 "Cap=Win/Des=Lose",
+                                                                 "Allow Win"};
 
 /***********************************************************************************************
  * TriggerClass::Validate -- validates trigger pointer													  *
  *                                                                                             *
  * INPUT:                                                                                      *
- *		none.																												  *
+ *		none. *
  *                                                                                             *
  * OUTPUT:                                                                                     *
- *		1 = ok, 0 = error																								  *
+ *		1 = ok, 0 = error *
  *                                                                                             *
  * WARNINGS:                                                                                   *
- *		none.																												  *
+ *		none. *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   08/09/1995 BRR : Created.                                                                 *
@@ -125,20 +119,18 @@ static const char * ActionText[TriggerClass::ACTION_COUNT + 1] = {
 #ifdef CHEAT_KEYS
 int TriggerClass::Validate(void) const
 {
-	int num;
+    int num;
 
-	num = Triggers.ID(this);
-	if (num < 0 || num >= TRIGGER_MAX) {
-		Validate_Error("TRIGGER");
-		return (0);
-	}
-	else
-		return (1);
+    num = Triggers.ID(this);
+    if (num < 0 || num >= TRIGGER_MAX) {
+        Validate_Error("TRIGGER");
+        return (0);
+    } else
+        return (1);
 }
 #else
-#define	Validate()
+#define Validate()
 #endif
-
 
 /***********************************************************************************************
  * TriggerClass::Event_Need_Object -- Determines if the specified event requires an object.    *
@@ -157,17 +149,16 @@ int TriggerClass::Validate(void) const
  *=============================================================================================*/
 bool TriggerClass::Event_Need_Object(EventType event)
 {
-	switch (event) {
-		case EVENT_PLAYER_ENTERED:
-		case EVENT_DISCOVERED:
-		case EVENT_ATTACKED:
-		case EVENT_DESTROYED:
-		case EVENT_ANY:
-			return(true);
-	}
-	return(false);
+    switch (event) {
+    case EVENT_PLAYER_ENTERED:
+    case EVENT_DISCOVERED:
+    case EVENT_ATTACKED:
+    case EVENT_DESTROYED:
+    case EVENT_ANY:
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Event_Need_House -- Determines if this event requires a house identifier.     *
@@ -186,24 +177,23 @@ bool TriggerClass::Event_Need_Object(EventType event)
  *=============================================================================================*/
 bool TriggerClass::Event_Need_House(EventType event)
 {
-	switch (event) {
-		case EVENT_PLAYER_ENTERED:
-		case EVENT_HOUSE_DISCOVERED:
-		case EVENT_UNITS_DESTROYED:
-		case EVENT_BUILDINGS_DESTROYED:
-		case EVENT_ALL_DESTROYED:
-		case EVENT_CREDITS:
-		case EVENT_TIME:
-		case EVENT_NBUILDINGS_DESTROYED:
-		case EVENT_NUNITS_DESTROYED:
-		case EVENT_NOFACTORIES:
-		case EVENT_EVAC_CIVILIAN:
-		case EVENT_BUILD:
-			return(true);
-	}
-	return(false);
+    switch (event) {
+    case EVENT_PLAYER_ENTERED:
+    case EVENT_HOUSE_DISCOVERED:
+    case EVENT_UNITS_DESTROYED:
+    case EVENT_BUILDINGS_DESTROYED:
+    case EVENT_ALL_DESTROYED:
+    case EVENT_CREDITS:
+    case EVENT_TIME:
+    case EVENT_NBUILDINGS_DESTROYED:
+    case EVENT_NUNITS_DESTROYED:
+    case EVENT_NOFACTORIES:
+    case EVENT_EVAC_CIVILIAN:
+    case EVENT_BUILD:
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Event_Need_Data -- Determines if this event requires a data value.            *
@@ -222,17 +212,16 @@ bool TriggerClass::Event_Need_House(EventType event)
  *=============================================================================================*/
 bool TriggerClass::Event_Need_Data(EventType event)
 {
-	switch (event) {
-		case EVENT_CREDITS:
-		case EVENT_TIME:
-		case EVENT_NBUILDINGS_DESTROYED:
-		case EVENT_NUNITS_DESTROYED:
-		case EVENT_BUILD:
-			return(true);
-	}
-	return(false);
+    switch (event) {
+    case EVENT_CREDITS:
+    case EVENT_TIME:
+    case EVENT_NBUILDINGS_DESTROYED:
+    case EVENT_NUNITS_DESTROYED:
+    case EVENT_BUILD:
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Action_Need_Team -- Determines if this action event requires a team.          *
@@ -252,15 +241,14 @@ bool TriggerClass::Event_Need_Data(EventType event)
  *=============================================================================================*/
 bool TriggerClass::Action_Need_Team(TriggerClass::ActionType action)
 {
-	switch (action) {
-		case ACTION_CREATE_TEAM:
-		case ACTION_DESTROY_TEAM:
-		case ACTION_REINFORCEMENTS:
-			return(true);
-	}
-	return(false);
+    switch (action) {
+    case ACTION_CREATE_TEAM:
+    case ACTION_DESTROY_TEAM:
+    case ACTION_REINFORCEMENTS:
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::TriggerClass -- constructor                                                   *
@@ -279,16 +267,15 @@ bool TriggerClass::Action_Need_Team(TriggerClass::ActionType action)
  *=============================================================================================*/
 TriggerClass::TriggerClass(void)
 {
-	IsPersistant = VOLATILE;
-	AttachCount = 0;
-	Event = EVENT_NONE;
-	Action = ACTION_NONE;
-	House = HOUSE_NONE;
-	DataCopy = Data = 0L;
-	Name[0] = '\0';
-	Team = NULL;
+    IsPersistant = VOLATILE;
+    AttachCount = 0;
+    Event = EVENT_NONE;
+    Action = ACTION_NONE;
+    House = HOUSE_NONE;
+    DataCopy = Data = 0L;
+    Name[0] = '\0';
+    Team = NULL;
 }
-
 
 /***********************************************************************************************
  * TriggerClass::~TriggerClass -- Destructor for trigger objects.                              *
@@ -307,12 +294,12 @@ TriggerClass::TriggerClass(void)
  *=============================================================================================*/
 TriggerClass::~TriggerClass(void)
 {
-	if (GameActive && House != HOUSE_NONE && Action == ACTION_ALLOWWIN) {
-		if (Houses.Ptr(House)->Blockage) Houses.Ptr(House)->Blockage--;
-		Houses.Ptr(House)->BorrowedTime = TICKS_PER_SECOND*4;
-	}
+    if (GameActive && House != HOUSE_NONE && Action == ACTION_ALLOWWIN) {
+        if (Houses.Ptr(House)->Blockage)
+            Houses.Ptr(House)->Blockage--;
+        Houses.Ptr(House)->BorrowedTime = TICKS_PER_SECOND * 4;
+    }
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Init -- clears triggers for new scenario                                      *
@@ -331,9 +318,8 @@ TriggerClass::~TriggerClass(void)
  *=============================================================================================*/
 void TriggerClass::Init(void)
 {
-	Triggers.Free_All();
+    Triggers.Free_All();
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Spring -- Trigger processing routine                                          *
@@ -355,184 +341,186 @@ void TriggerClass::Init(void)
  *   12/06/1994 BR : Created.                                                                  *
  *   06/25/1995 JLB : Added more trigger events.                                               *
  *=============================================================================================*/
-bool TriggerClass::Spring(EventType event, ObjectClass *obj)
+bool TriggerClass::Spring(EventType event, ObjectClass* obj)
 {
-	Validate();
-	/*
-	**	If this is not the event for this trigger, just return.
-	*/
-	if (event != Event && Event != EVENT_ANY) {
-		return(false);
-	}
+    Validate();
+    /*
+    **	If this is not the event for this trigger, just return.
+    */
+    if (event != Event && Event != EVENT_ANY) {
+        return (false);
+    }
 
-	/*
-	**	If time-based, decrement the minute counter; return if it's not time yet
-	*/
-	if (Event == EVENT_TIME) {
-		Data--;
-		if (Data > 0) {
-			return(false);
-		}
-		Data = DataCopy;
-	}
+    /*
+    **	If time-based, decrement the minute counter; return if it's not time yet
+    */
+    if (Event == EVENT_TIME) {
+        Data--;
+        if (Data > 0) {
+            return (false);
+        }
+        Data = DataCopy;
+    }
 
-	/*
-	**	Semi-persistant trigger: first detach it from the calling object, then
-	**	see if this is the last object we're attached to; if so, the trigger
-	**	will spring.
-	*/
-	if (IsPersistant == SEMIPERSISTANT) {
+    /*
+    **	Semi-persistant trigger: first detach it from the calling object, then
+    **	see if this is the last object we're attached to; if so, the trigger
+    **	will spring.
+    */
+    if (IsPersistant == SEMIPERSISTANT) {
 
-		/*
-		** Detach ourselves from the object
-		*/
-		obj->Trigger = NULL;
+        /*
+        ** Detach ourselves from the object
+        */
+        obj->Trigger = NULL;
 
-		/*
-		** Decrement our attachment counter
-		*/
-		AttachCount--;
+        /*
+        ** Decrement our attachment counter
+        */
+        AttachCount--;
 
-		/*
-		** If we're attached to more objects, don't spring; otherwise, spring.
-		** And, mark ourselves as volatile so we'll completely remove ourselves
-		** from the game after we go off.
-		*/
-		if (AttachCount > 0) {
-			return(false);
-		} else {
-			IsPersistant = VOLATILE;
-		}
-	}
+        /*
+        ** If we're attached to more objects, don't spring; otherwise, spring.
+        ** And, mark ourselves as volatile so we'll completely remove ourselves
+        ** from the game after we go off.
+        */
+        if (AttachCount > 0) {
+            return (false);
+        } else {
+            IsPersistant = VOLATILE;
+        }
+    }
 
-	/*
-	**	Otherwise, take an appropriate action.
-	*/
-	bool success = true;
-	TriggerClass * trig = NULL;
-	switch (Action) {
-		case ACTION_NUKE:
-			HouseClass::As_Pointer(HOUSE_BAD)->NukeStrike.Enable(true, false);
-			HouseClass::As_Pointer(HOUSE_BAD)->NukeStrike.Forced_Charge(PlayerPtr->Class->House == HOUSE_BAD);
-			break;
+    /*
+    **	Otherwise, take an appropriate action.
+    */
+    bool success = true;
+    TriggerClass* trig = NULL;
+    switch (Action) {
+    case ACTION_NUKE:
+        HouseClass::As_Pointer(HOUSE_BAD)->NukeStrike.Enable(true, false);
+        HouseClass::As_Pointer(HOUSE_BAD)->NukeStrike.Forced_Charge(PlayerPtr->Class->House == HOUSE_BAD);
+        break;
 
-		case ACTION_ION:
-			HouseClass::As_Pointer(HOUSE_GOOD)->IonCannon.Enable(true, false);
-			HouseClass::As_Pointer(HOUSE_GOOD)->IonCannon.Forced_Charge(PlayerPtr->Class->House == HOUSE_GOOD);
-			break;
+    case ACTION_ION:
+        HouseClass::As_Pointer(HOUSE_GOOD)->IonCannon.Enable(true, false);
+        HouseClass::As_Pointer(HOUSE_GOOD)->IonCannon.Forced_Charge(PlayerPtr->Class->House == HOUSE_GOOD);
+        break;
 
-		case ACTION_WINLOSE:
-			switch (event) {
-				case EVENT_DESTROYED:
-					if (!PlayerPtr->IsToWin || PlayerPtr->Blockage > 0) PlayerPtr->Flag_To_Lose();
-					success = true;
-					break;
+    case ACTION_WINLOSE:
+        switch (event) {
+        case EVENT_DESTROYED:
+            if (!PlayerPtr->IsToWin || PlayerPtr->Blockage > 0)
+                PlayerPtr->Flag_To_Lose();
+            success = true;
+            break;
 
-				case EVENT_PLAYER_ENTERED:
-					if (!PlayerPtr->IsToLose) PlayerPtr->Flag_To_Win();
-					success = true;
-					break;
+        case EVENT_PLAYER_ENTERED:
+            if (!PlayerPtr->IsToLose)
+                PlayerPtr->Flag_To_Win();
+            success = true;
+            break;
 
-				default:
-					success = false;
-					break;
-			}
-			break;
+        default:
+            success = false;
+            break;
+        }
+        break;
 
-		case ACTION_DESTROY_XXXX:
-			trig = As_Pointer("XXXX");
-			if (trig) {
-				trig->Remove();
-			}
-			delete trig;
-			break;
+    case ACTION_DESTROY_XXXX:
+        trig = As_Pointer("XXXX");
+        if (trig) {
+            trig->Remove();
+        }
+        delete trig;
+        break;
 
-		case ACTION_DESTROY_YYYY:
-			trig = As_Pointer("YYYY");
-			if (trig) {
-				trig->Remove();
-			}
-			delete trig;
-			break;
+    case ACTION_DESTROY_YYYY:
+        trig = As_Pointer("YYYY");
+        if (trig) {
+            trig->Remove();
+        }
+        delete trig;
+        break;
 
-		case ACTION_DESTROY_ZZZZ:
-			trig = As_Pointer("ZZZZ");
-			if (trig) {
-				trig->Remove();
-			}
-			delete trig;
-			break;
+    case ACTION_DESTROY_ZZZZ:
+        trig = As_Pointer("ZZZZ");
+        if (trig) {
+            trig->Remove();
+        }
+        delete trig;
+        break;
 
-		case ACTION_AIRSTRIKE:
-			PlayerPtr->IsAirstrikePending = true;
-//			PlayerPtr->Make_Air_Strike_Available(true);
-			break;
+    case ACTION_AIRSTRIKE:
+        PlayerPtr->IsAirstrikePending = true;
+        //			PlayerPtr->Make_Air_Strike_Available(true);
+        break;
 
-		case ACTION_DZ:
-			new AnimClass(ANIM_LZ_SMOKE, Cell_Coord(Waypoint[25]));
-			break;
+    case ACTION_DZ:
+        new AnimClass(ANIM_LZ_SMOKE, Cell_Coord(Waypoint[25]));
+        break;
 
-		case ACTION_NONE:
-			break;
+    case ACTION_NONE:
+        break;
 
-		case ACTION_WIN:
-			PlayerPtr->Flag_To_Win();
-			break;
+    case ACTION_WIN:
+        PlayerPtr->Flag_To_Win();
+        break;
 
-		case ACTION_LOSE:
-			PlayerPtr->Flag_To_Lose();
-			break;
+    case ACTION_LOSE:
+        PlayerPtr->Flag_To_Lose();
+        break;
 
-		case ACTION_BEGIN_PRODUCTION:
-			HouseClass::As_Pointer(House)->Begin_Production();
-			break;
+    case ACTION_BEGIN_PRODUCTION:
+        HouseClass::As_Pointer(House)->Begin_Production();
+        break;
 
-		case ACTION_AUTOCREATE:
-			if (obj && obj->Is_Techno()) {
-				((TechnoClass *)obj)->House->IsAlerted = true;
-			}
-			break;
+    case ACTION_AUTOCREATE:
+        if (obj && obj->Is_Techno()) {
+            ((TechnoClass*)obj)->House->IsAlerted = true;
+        }
+        break;
 
-		case ACTION_CREATE_TEAM:
-			if (Team) {
-				ScenarioInit++;
-				Team->Create_One_Of();
-				ScenarioInit--;
-			}
-			break;
+    case ACTION_CREATE_TEAM:
+        if (Team) {
+            ScenarioInit++;
+            Team->Create_One_Of();
+            ScenarioInit--;
+        }
+        break;
 
-		case ACTION_DESTROY_TEAM:
-			if (Team) {
-				Team->Destroy_All_Of();
-			}
-			break;
+    case ACTION_DESTROY_TEAM:
+        if (Team) {
+            Team->Destroy_All_Of();
+        }
+        break;
 
-		case ACTION_REINFORCEMENTS:
-			if (Team) {
-				success = Do_Reinforcements(Team);
-			}
-			break;
+    case ACTION_REINFORCEMENTS:
+        if (Team) {
+            success = Do_Reinforcements(Team);
+        }
+        break;
 
-		case ACTION_ALL_HUNT:
-			Do_All_To_Hunt();
-			break;
+    case ACTION_ALL_HUNT:
+        Do_All_To_Hunt();
+        break;
 
-		default:
-			break;
-	}
+    default:
+        break;
+    }
 
-	if (!success && Event == EVENT_TIME) Data = 1;
+    if (!success && Event == EVENT_TIME)
+        Data = 1;
 
-	/*
-	**	Remove trigger from the game.
-	*/
-	if (success && IsPersistant == VOLATILE) {
-		Remove();
-	}
+    /*
+    **	Remove trigger from the game.
+    */
+    if (success && IsPersistant == VOLATILE) {
+        Remove();
+    }
 
-	return(true);
+    return (true);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Spring -- Trigger processing routine                                          *
@@ -553,174 +541,174 @@ bool TriggerClass::Spring(EventType event, ObjectClass *obj)
  *=============================================================================================*/
 bool TriggerClass::Spring(EventType event, CELL cell)
 {
-	Validate();
-	/*
-	**	If this is not the event for this trigger, just return.
-	*/
-	if (event != Event) {
-		return(false);
-	}
+    Validate();
+    /*
+    **	If this is not the event for this trigger, just return.
+    */
+    if (event != Event) {
+        return (false);
+    }
 
-	/*
-	**	If time-based, decrement the minute counter; return if it's not time yet
-	*/
-	if (Event == EVENT_TIME) {
-		Data--;
-		if (Data > 0) {
-			return(false);
-		}
-		Data = DataCopy;
-	}
+    /*
+    **	If time-based, decrement the minute counter; return if it's not time yet
+    */
+    if (Event == EVENT_TIME) {
+        Data--;
+        if (Data > 0) {
+            return (false);
+        }
+        Data = DataCopy;
+    }
 
-	/*
-	**	Semi-persistant trigger: first detach it from the calling cell, then
-	**	see if this is the last cell we're attached to; if so, the trigger
-	**	will spring.
-	*/
-	if (IsPersistant == SEMIPERSISTANT) {
+    /*
+    **	Semi-persistant trigger: first detach it from the calling cell, then
+    **	see if this is the last cell we're attached to; if so, the trigger
+    **	will spring.
+    */
+    if (IsPersistant == SEMIPERSISTANT) {
 
-		/*
-		** Detach ourselves from the cell
-		*/
-		Map[cell].IsTrigger = 0;
+        /*
+        ** Detach ourselves from the cell
+        */
+        Map[cell].IsTrigger = 0;
 
-		/*
-		** Decrement our attachment counter
-		*/
-		AttachCount--;
+        /*
+        ** Decrement our attachment counter
+        */
+        AttachCount--;
 
-		/*
-		** If we're attached to more cells, don't spring; otherwise, spring.
-		** And, mark ourselves as volatile so we'll completely remove ourselves
-		** from the game after we go off.
-		*/
-		if (AttachCount > 0) {
-			return(false);
-		} else {
-			IsPersistant = VOLATILE;
-		}
-	}
+        /*
+        ** If we're attached to more cells, don't spring; otherwise, spring.
+        ** And, mark ourselves as volatile so we'll completely remove ourselves
+        ** from the game after we go off.
+        */
+        if (AttachCount > 0) {
+            return (false);
+        } else {
+            IsPersistant = VOLATILE;
+        }
+    }
 
-	/*
-	**	Otherwise, take an appropriate action.
-	*/
-	bool success = true;
-	TriggerClass * trig = NULL;
-	int index;
-	switch (Action) {
-		case ACTION_NUKE:
-			HouseClass::As_Pointer(HOUSE_BAD)->NukeStrike.Enable(true, false);
-			HouseClass::As_Pointer(HOUSE_BAD)->NukeStrike.Forced_Charge(PlayerPtr->Class->House == HOUSE_BAD);
-			break;
+    /*
+    **	Otherwise, take an appropriate action.
+    */
+    bool success = true;
+    TriggerClass* trig = NULL;
+    int index;
+    switch (Action) {
+    case ACTION_NUKE:
+        HouseClass::As_Pointer(HOUSE_BAD)->NukeStrike.Enable(true, false);
+        HouseClass::As_Pointer(HOUSE_BAD)->NukeStrike.Forced_Charge(PlayerPtr->Class->House == HOUSE_BAD);
+        break;
 
-		case ACTION_ION:
-			HouseClass::As_Pointer(HOUSE_GOOD)->IonCannon.Enable(true, false);
-			HouseClass::As_Pointer(HOUSE_GOOD)->IonCannon.Forced_Charge(PlayerPtr->Class->House == HOUSE_GOOD);
-			break;
+    case ACTION_ION:
+        HouseClass::As_Pointer(HOUSE_GOOD)->IonCannon.Enable(true, false);
+        HouseClass::As_Pointer(HOUSE_GOOD)->IonCannon.Forced_Charge(PlayerPtr->Class->House == HOUSE_GOOD);
+        break;
 
-		case ACTION_AUTOCREATE:
-			for (index = 0; index < Houses.Count(); index++) {
-				Houses.Ptr(index)->IsAlerted = true;
-			}
-			break;
+    case ACTION_AUTOCREATE:
+        for (index = 0; index < Houses.Count(); index++) {
+            Houses.Ptr(index)->IsAlerted = true;
+        }
+        break;
 
-		case ACTION_DESTROY_XXXX:
-			trig = As_Pointer("XXXX");
-			if (trig) {
-				trig->Remove();
-			}
-			delete trig;
-			break;
+    case ACTION_DESTROY_XXXX:
+        trig = As_Pointer("XXXX");
+        if (trig) {
+            trig->Remove();
+        }
+        delete trig;
+        break;
 
-		case ACTION_DESTROY_YYYY:
-			trig = As_Pointer("YYYY");
-			if (trig) {
-				trig->Remove();
-			}
-			delete trig;
-			break;
+    case ACTION_DESTROY_YYYY:
+        trig = As_Pointer("YYYY");
+        if (trig) {
+            trig->Remove();
+        }
+        delete trig;
+        break;
 
-		case ACTION_DESTROY_ZZZZ:
-			trig = As_Pointer("ZZZZ");
-			if (trig) {
-				trig->Remove();
-			}
-			delete trig;
-			break;
+    case ACTION_DESTROY_ZZZZ:
+        trig = As_Pointer("ZZZZ");
+        if (trig) {
+            trig->Remove();
+        }
+        delete trig;
+        break;
 
-		case ACTION_AIRSTRIKE:
-			HouseClass::As_Pointer(House)->AirStrike.Enable(false, true);
-			if (House == PlayerPtr->Class->House) {
-				PlayerPtr->AirStrike.Forced_Charge(true);
-				Map.Add(RTTI_SPECIAL, SPC_AIR_STRIKE);
-				Map.Column[1].Flag_To_Redraw();
-			}
-//			PlayerPtr->Make_Air_Strike_Available(true);
-			break;
+    case ACTION_AIRSTRIKE:
+        HouseClass::As_Pointer(House)->AirStrike.Enable(false, true);
+        if (House == PlayerPtr->Class->House) {
+            PlayerPtr->AirStrike.Forced_Charge(true);
+            Map.Add(RTTI_SPECIAL, SPC_AIR_STRIKE);
+            Map.Column[1].Flag_To_Redraw();
+        }
+        //			PlayerPtr->Make_Air_Strike_Available(true);
+        break;
 
-		case ACTION_DZ:
-			new AnimClass(ANIM_LZ_SMOKE, Cell_Coord(Waypoint[25]));
-			break;
+    case ACTION_DZ:
+        new AnimClass(ANIM_LZ_SMOKE, Cell_Coord(Waypoint[25]));
+        break;
 
-		case ACTION_NONE:
-			break;
+    case ACTION_NONE:
+        break;
 
-		case ACTION_WIN:
-			PlayerPtr->Flag_To_Win();
-			break;
+    case ACTION_WIN:
+        PlayerPtr->Flag_To_Win();
+        break;
 
-		case ACTION_LOSE:
-			PlayerPtr->Flag_To_Lose();
-			break;
+    case ACTION_LOSE:
+        PlayerPtr->Flag_To_Lose();
+        break;
 
-		case ACTION_BEGIN_PRODUCTION:
-			if (PlayerPtr->Class->House == HOUSE_GOOD) {
-				HouseClass::As_Pointer(HOUSE_BAD)->Begin_Production();
-			} else {
-				HouseClass::As_Pointer(HOUSE_GOOD)->Begin_Production();
-			}
-			break;
+    case ACTION_BEGIN_PRODUCTION:
+        if (PlayerPtr->Class->House == HOUSE_GOOD) {
+            HouseClass::As_Pointer(HOUSE_BAD)->Begin_Production();
+        } else {
+            HouseClass::As_Pointer(HOUSE_GOOD)->Begin_Production();
+        }
+        break;
 
-		case ACTION_CREATE_TEAM:
-			if (Team) {
-				ScenarioInit++;
-				Team->Create_One_Of();
-				ScenarioInit--;
-			}
-			break;
+    case ACTION_CREATE_TEAM:
+        if (Team) {
+            ScenarioInit++;
+            Team->Create_One_Of();
+            ScenarioInit--;
+        }
+        break;
 
-		case ACTION_DESTROY_TEAM:
-			if (Team) {
-				Team->Destroy_All_Of();
-			}
-			break;
+    case ACTION_DESTROY_TEAM:
+        if (Team) {
+            Team->Destroy_All_Of();
+        }
+        break;
 
-		case ACTION_REINFORCEMENTS:
-			if (Team) {
-				success = Do_Reinforcements(Team);
-			}
-			break;
+    case ACTION_REINFORCEMENTS:
+        if (Team) {
+            success = Do_Reinforcements(Team);
+        }
+        break;
 
-		case ACTION_ALL_HUNT:
-			Do_All_To_Hunt();
-			break;
+    case ACTION_ALL_HUNT:
+        Do_All_To_Hunt();
+        break;
 
-		default:
-			break;
-	}
+    default:
+        break;
+    }
 
-	if (!success && Event == EVENT_TIME) Data = 1;
+    if (!success && Event == EVENT_TIME)
+        Data = 1;
 
-	/*
-	**	Remove trigger from the game.
-	*/
-	if (success && IsPersistant == VOLATILE) {
-		Remove();
-	}
+    /*
+    **	Remove trigger from the game.
+    */
+    if (success && IsPersistant == VOLATILE) {
+        Remove();
+    }
 
-	return(true);
+    return (true);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Spring -- Trigger processing routine                                          *
@@ -747,171 +735,171 @@ bool TriggerClass::Spring(EventType event, CELL cell)
  *=============================================================================================*/
 bool TriggerClass::Spring(EventType event, HousesType house, long data)
 {
-	Validate();
-	/*
-	**	If this is not the event for this trigger, just return.
-	*/
-	if (event != Event || house != House) {
-		return(false);
-	}
+    Validate();
+    /*
+    **	If this is not the event for this trigger, just return.
+    */
+    if (event != Event || house != House) {
+        return (false);
+    }
 
-	/*
-	**	If credits-based, check 'data'
-	*/
-	if (Event == EVENT_CREDITS && data < Data) {
-		return(false);
-	}
+    /*
+    **	If credits-based, check 'data'
+    */
+    if (Event == EVENT_CREDITS && data < Data) {
+        return (false);
+    }
 
-	/*
-	**	Building event check to ensure that the building number matches.
-	*/
-	if (Event == EVENT_BUILD && data != Data) {
-		return(false);
-	}
+    /*
+    **	Building event check to ensure that the building number matches.
+    */
+    if (Event == EVENT_BUILD && data != Data) {
+        return (false);
+    }
 
-	/*
-	**	Number of objects destroyed checker. If the data supplied indicates that
-	**	the correct number of objects have been destroyed, then this trigger
-	**	will succeed.
-	*/
-	if (Event == EVENT_NBUILDINGS_DESTROYED || Event == EVENT_NUNITS_DESTROYED) {
-		if (data < Data) {
-			return(false);
-		}
-	}
+    /*
+    **	Number of objects destroyed checker. If the data supplied indicates that
+    **	the correct number of objects have been destroyed, then this trigger
+    **	will succeed.
+    */
+    if (Event == EVENT_NBUILDINGS_DESTROYED || Event == EVENT_NUNITS_DESTROYED) {
+        if (data < Data) {
+            return (false);
+        }
+    }
 
-	/*
-	**	If time-based, decrement the minute counter; return if it's not time yet
-	*/
-	if (Event == EVENT_TIME) {
-		Data--;
-		if (Data > 0) {
-			return(false);
-		}
-		Data = DataCopy;
-	}
+    /*
+    **	If time-based, decrement the minute counter; return if it's not time yet
+    */
+    if (Event == EVENT_TIME) {
+        Data--;
+        if (Data > 0) {
+            return (false);
+        }
+        Data = DataCopy;
+    }
 
-	/*
-	**	The trigger has gone off; take appropriate action
-	*/
-	bool success = true;
-	TriggerClass * trig = NULL;
-	switch (Action) {
+    /*
+    **	The trigger has gone off; take appropriate action
+    */
+    bool success = true;
+    TriggerClass* trig = NULL;
+    switch (Action) {
 
-		case ACTION_NUKE:
-			HouseClass::As_Pointer(HOUSE_BAD)->NukeStrike.Enable(true, false);
-			HouseClass::As_Pointer(HOUSE_BAD)->NukeStrike.Forced_Charge(PlayerPtr->Class->House == HOUSE_BAD);
-			break;
+    case ACTION_NUKE:
+        HouseClass::As_Pointer(HOUSE_BAD)->NukeStrike.Enable(true, false);
+        HouseClass::As_Pointer(HOUSE_BAD)->NukeStrike.Forced_Charge(PlayerPtr->Class->House == HOUSE_BAD);
+        break;
 
-		case ACTION_ION:
-			HouseClass::As_Pointer(HOUSE_GOOD)->IonCannon.Enable(true, false);
-			HouseClass::As_Pointer(HOUSE_GOOD)->IonCannon.Forced_Charge(PlayerPtr->Class->House == HOUSE_GOOD);
-			break;
+    case ACTION_ION:
+        HouseClass::As_Pointer(HOUSE_GOOD)->IonCannon.Enable(true, false);
+        HouseClass::As_Pointer(HOUSE_GOOD)->IonCannon.Forced_Charge(PlayerPtr->Class->House == HOUSE_GOOD);
+        break;
 
-		/*
-		**	This will remove a blockage to the win condition. No action need
-		**	be performed here since the act of deleting the trigger will
-		**	remove the blockage.
-		*/
-		case ACTION_ALLOWWIN:
-			break;
+    /*
+    **	This will remove a blockage to the win condition. No action need
+    **	be performed here since the act of deleting the trigger will
+    **	remove the blockage.
+    */
+    case ACTION_ALLOWWIN:
+        break;
 
-		case ACTION_AUTOCREATE:
-			HouseClass::As_Pointer(House)->IsAlerted = true;
-			break;
+    case ACTION_AUTOCREATE:
+        HouseClass::As_Pointer(House)->IsAlerted = true;
+        break;
 
-		case ACTION_DESTROY_XXXX:
-			trig = As_Pointer("XXXX");
-			if (trig) {
-				trig->Remove();
-			}
-			delete trig;
-			break;
+    case ACTION_DESTROY_XXXX:
+        trig = As_Pointer("XXXX");
+        if (trig) {
+            trig->Remove();
+        }
+        delete trig;
+        break;
 
-		case ACTION_DESTROY_YYYY:
-			trig = As_Pointer("YYYY");
-			if (trig) {
-				trig->Remove();
-			}
-			delete trig;
-			break;
+    case ACTION_DESTROY_YYYY:
+        trig = As_Pointer("YYYY");
+        if (trig) {
+            trig->Remove();
+        }
+        delete trig;
+        break;
 
-		case ACTION_DESTROY_ZZZZ:
-			trig = As_Pointer("ZZZZ");
-			if (trig) {
-				trig->Remove();
-			}
-			delete trig;
-			break;
+    case ACTION_DESTROY_ZZZZ:
+        trig = As_Pointer("ZZZZ");
+        if (trig) {
+            trig->Remove();
+        }
+        delete trig;
+        break;
 
-		case ACTION_AIRSTRIKE:
-			PlayerPtr->AirStrike.Enable(false, true);
-			if (House == PlayerPtr->Class->House) {
-				PlayerPtr->AirStrike.Forced_Charge(true);
-				Map.Add(RTTI_SPECIAL, SPC_AIR_STRIKE);
-				Map.Column[1].Flag_To_Redraw();
-			}
-			break;
+    case ACTION_AIRSTRIKE:
+        PlayerPtr->AirStrike.Enable(false, true);
+        if (House == PlayerPtr->Class->House) {
+            PlayerPtr->AirStrike.Forced_Charge(true);
+            Map.Add(RTTI_SPECIAL, SPC_AIR_STRIKE);
+            Map.Column[1].Flag_To_Redraw();
+        }
+        break;
 
-		case ACTION_NONE:
-			break;
+    case ACTION_NONE:
+        break;
 
-		case ACTION_DZ:
-			new AnimClass(ANIM_LZ_SMOKE, Cell_Coord(Waypoint[25]));
-			break;
+    case ACTION_DZ:
+        new AnimClass(ANIM_LZ_SMOKE, Cell_Coord(Waypoint[25]));
+        break;
 
-		case ACTION_WIN:
-			PlayerPtr->Flag_To_Win();
-			break;
+    case ACTION_WIN:
+        PlayerPtr->Flag_To_Win();
+        break;
 
-		case ACTION_LOSE:
-			PlayerPtr->Flag_To_Lose();
-			break;
+    case ACTION_LOSE:
+        PlayerPtr->Flag_To_Lose();
+        break;
 
-		case ACTION_BEGIN_PRODUCTION:
-			HouseClass::As_Pointer(House)->Begin_Production();
-			break;
+    case ACTION_BEGIN_PRODUCTION:
+        HouseClass::As_Pointer(House)->Begin_Production();
+        break;
 
-		case ACTION_CREATE_TEAM:
-			if (Team) {
-				ScenarioInit++;
-				Team->Create_One_Of();
-				ScenarioInit--;
-			}
-			break;
+    case ACTION_CREATE_TEAM:
+        if (Team) {
+            ScenarioInit++;
+            Team->Create_One_Of();
+            ScenarioInit--;
+        }
+        break;
 
-		case ACTION_DESTROY_TEAM:
-			if (Team) {
-				Team->Destroy_All_Of();
-			}
-			break;
+    case ACTION_DESTROY_TEAM:
+        if (Team) {
+            Team->Destroy_All_Of();
+        }
+        break;
 
-		case ACTION_REINFORCEMENTS:
-			if (Team) {
-				success = Do_Reinforcements(Team);
-			}
-			break;
+    case ACTION_REINFORCEMENTS:
+        if (Team) {
+            success = Do_Reinforcements(Team);
+        }
+        break;
 
-		case ACTION_ALL_HUNT:
-			Do_All_To_Hunt();
-			break;
+    case ACTION_ALL_HUNT:
+        Do_All_To_Hunt();
+        break;
 
-		default:
-			break;
-	}
+    default:
+        break;
+    }
 
-	if (!success && Event == EVENT_TIME) Data = 1;
+    if (!success && Event == EVENT_TIME)
+        Data = 1;
 
-	/*
-	**	Remove trigger from the game.
-	*/
-	if (success && IsPersistant == VOLATILE) {
-		Remove();
-	}
+    /*
+    **	Remove trigger from the game.
+    */
+    if (success && IsPersistant == VOLATILE) {
+        Remove();
+    }
 
-	return(true);
+    return (true);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Remove -- removes this trigger from the game                                  *
@@ -930,61 +918,60 @@ bool TriggerClass::Spring(EventType event, HousesType house, long data)
  *=============================================================================================*/
 bool TriggerClass::Remove(void)
 {
-	Validate();
-	CELL cell;
-	HousesType h;
-	int index;
+    Validate();
+    CELL cell;
+    HousesType h;
+    int index;
 
-	/*
-	**	Loop through all cells; remove any reference to this trigger
-	*/
-	for (cell = 0; cell < MAP_CELL_TOTAL; cell++) {
-		if (Map[cell].IsTrigger) {
-			if (CellTriggers[cell] == this) {
-				Map[cell].IsTrigger = 0;
-				CellTriggers[cell] = NULL;
-			}
-		}
-	}
+    /*
+    **	Loop through all cells; remove any reference to this trigger
+    */
+    for (cell = 0; cell < MAP_CELL_TOTAL; cell++) {
+        if (Map[cell].IsTrigger) {
+            if (CellTriggers[cell] == this) {
+                Map[cell].IsTrigger = 0;
+                CellTriggers[cell] = NULL;
+            }
+        }
+    }
 
-	/*
-	**	Loop through all objects, removing any reference to this trigger
-	*/
-	for (index = 0; index < Infantry.Count(); index++) {
-		if (Infantry.Ptr(index)->Trigger == this) {
-			Infantry.Ptr(index)->Trigger = NULL;
-		}
-	}
-	for (index = 0; index < Buildings.Count(); index++) {
-		if (Buildings.Ptr(index)->Trigger == this) {
-			Buildings.Ptr(index)->Trigger = NULL;
-		}
-	}
-	for (index = 0; index < Units.Count(); index++) {
-		if (Units.Ptr(index)->Trigger == this) {
-			Units.Ptr(index)->Trigger = NULL;
-		}
-	}
-	for (index = 0; index < Terrains.Count(); index++) {
-		if (Terrains.Ptr(index)->Trigger == this) {
-			Terrains.Ptr(index)->Trigger = NULL;
-		}
-	}
+    /*
+    **	Loop through all objects, removing any reference to this trigger
+    */
+    for (index = 0; index < Infantry.Count(); index++) {
+        if (Infantry.Ptr(index)->Trigger == this) {
+            Infantry.Ptr(index)->Trigger = NULL;
+        }
+    }
+    for (index = 0; index < Buildings.Count(); index++) {
+        if (Buildings.Ptr(index)->Trigger == this) {
+            Buildings.Ptr(index)->Trigger = NULL;
+        }
+    }
+    for (index = 0; index < Units.Count(); index++) {
+        if (Units.Ptr(index)->Trigger == this) {
+            Units.Ptr(index)->Trigger = NULL;
+        }
+    }
+    for (index = 0; index < Terrains.Count(); index++) {
+        if (Terrains.Ptr(index)->Trigger == this) {
+            Terrains.Ptr(index)->Trigger = NULL;
+        }
+    }
 
-	/*
-	**	Remove this trigger from any house list it's in. Invoking '-=' with a
-	**	pointer not in the list has no effect; loop through all houses just to
-	**	be on the safe side.
-	*/
-	for (h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
-		HouseTriggers[h].Delete(this);
-	}
+    /*
+    **	Remove this trigger from any house list it's in. Invoking '-=' with a
+    **	pointer not in the list has no effect; loop through all houses just to
+    **	be on the safe side.
+    */
+    for (h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+        HouseTriggers[h].Delete(this);
+    }
 
-	delete this;
+    delete this;
 
-	return(true);
+    return (true);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Read_INI -- reads triggers from the INI file                                  *
@@ -1023,67 +1010,67 @@ bool TriggerClass::Remove(void)
  * HISTORY:                                                                                    *
  *   11/28/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-void TriggerClass::Read_INI(char *buffer)
+void TriggerClass::Read_INI(char* buffer)
 {
-	TriggerClass *trigger;				// Working trigger pointer.
-	char *tbuffer;							// Accumulation buffer of trigger IDs.
-	int len;									// Length of data in buffer.
-	char buf[128];
+    TriggerClass* trigger; // Working trigger pointer.
+    char* tbuffer;         // Accumulation buffer of trigger IDs.
+    int len;               // Length of data in buffer.
+    char buf[128];
 
-	/*
-	**	Set 'tbuffer' to point just past the INI buffer
-	*/
-	len = strlen(buffer) + 2;
-	tbuffer = buffer + len;
+    /*
+    **	Set 'tbuffer' to point just past the INI buffer
+    */
+    len = strlen(buffer) + 2;
+    tbuffer = buffer + len;
 
-	/*
-	**	Read all TRIGGER entry names into 'tbuffer'
-	*/
-	WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize-len, buffer);
+    /*
+    **	Read all TRIGGER entry names into 'tbuffer'
+    */
+    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
 
-	/*
-	**	Loop for all trigger entries.
-	*/
-	while (*tbuffer != '\0') {
+    /*
+    **	Loop for all trigger entries.
+    */
+    while (*tbuffer != '\0') {
 
-		/*
-		**	Create a new trigger.
-		*/
-		trigger = new TriggerClass();
+        /*
+        **	Create a new trigger.
+        */
+        trigger = new TriggerClass();
 
-		/*
-		**	Set its name.
-		*/
-		trigger->Set_Name (tbuffer);
+        /*
+        **	Set its name.
+        */
+        trigger->Set_Name(tbuffer);
 
-		/*
-		**	Get the trigger entry.
-		*/
-		WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf)-1, buffer);
+        /*
+        **	Get the trigger entry.
+        */
+        WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
 
-		/*
-		**	Fill in the trigger.
-		*/
-		trigger->Fill_In(tbuffer,buf);
+        /*
+        **	Fill in the trigger.
+        */
+        trigger->Fill_In(tbuffer, buf);
 
-		/*
-		**	Add 'trigger' to the House's list.
-		*/
-//		if (trigger->House != HOUSE_NONE && trigger->Event != EVENT_PLAYER_ENTERED) {
-//		if (Event_Need_House(trigger->Event) && !Event_Need_Object(trigger->Event)) {
-		if (trigger->House != HOUSE_NONE) {
-			if (trigger->Action == ACTION_ALLOWWIN) HouseClass::As_Pointer(trigger->House)->Blockage++;
-			HouseTriggers[trigger->House].Add(trigger);
-			trigger->AttachCount++;
-		}
+        /*
+        **	Add 'trigger' to the House's list.
+        */
+        //		if (trigger->House != HOUSE_NONE && trigger->Event != EVENT_PLAYER_ENTERED) {
+        //		if (Event_Need_House(trigger->Event) && !Event_Need_Object(trigger->Event)) {
+        if (trigger->House != HOUSE_NONE) {
+            if (trigger->Action == ACTION_ALLOWWIN)
+                HouseClass::As_Pointer(trigger->House)->Blockage++;
+            HouseTriggers[trigger->House].Add(trigger);
+            trigger->AttachCount++;
+        }
 
-		/*
-		**	Go to next entry.
-		*/
-		tbuffer += strlen(tbuffer)+1;
-	}
+        /*
+        **	Go to next entry.
+        */
+        tbuffer += strlen(tbuffer) + 1;
+    }
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Fill_In -- fills in trigger from the given INI entry                          *
@@ -1109,56 +1096,55 @@ void TriggerClass::Read_INI(char *buffer)
  * HISTORY:                                                                                    *
  *   11/28/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-void TriggerClass::Fill_In(char * name, char *entry)
+void TriggerClass::Fill_In(char* name, char* entry)
 {
-	Validate();
-	char *p;
+    Validate();
+    char* p;
 
-	/*
-	**	Set its name.
-	*/
-	Set_Name(name);
+    /*
+    **	Set its name.
+    */
+    Set_Name(name);
 
-	/*
-	**	1st token: Event.
-	*/
-	Event = Event_From_Name(strtok(entry, ","));
+    /*
+    **	1st token: Event.
+    */
+    Event = Event_From_Name(strtok(entry, ","));
 
-	/*
-	**	2nd token: Action.
-	*/
-	Action = Action_From_Name(strtok(NULL, ","));
+    /*
+    **	2nd token: Action.
+    */
+    Action = Action_From_Name(strtok(NULL, ","));
 
-	/*
-	**	3rd token: Data.
-	*/
-	DataCopy = Data = atol(strtok(NULL, ","));
+    /*
+    **	3rd token: Data.
+    */
+    DataCopy = Data = atol(strtok(NULL, ","));
 
-	/*
-	**	4th token: House.
-	*/
-	House = HouseTypeClass::From_Name(strtok(NULL, ","));
-	if (House == HOUSE_NONE && Event == EVENT_PLAYER_ENTERED) {
-		House = PlayerPtr->Class->House;
-	}
+    /*
+    **	4th token: House.
+    */
+    House = HouseTypeClass::From_Name(strtok(NULL, ","));
+    if (House == HOUSE_NONE && Event == EVENT_PLAYER_ENTERED) {
+        House = PlayerPtr->Class->House;
+    }
 
-	/*
-	**	5th token: Team.
-	*/
-	Team = TeamTypeClass::As_Pointer(strtok(NULL, ","));
+    /*
+    **	5th token: Team.
+    */
+    Team = TeamTypeClass::As_Pointer(strtok(NULL, ","));
 
-	/*
-	** 6th token: IsPersistant.  This token was added later, so we must check
-	** for its existence.
-	*/
-	p = strtok(NULL, ",");
-	if (p) {
-		IsPersistant = (PersistantType)atoi(p);
-	} else {
-		IsPersistant = VOLATILE;
-	}
+    /*
+    ** 6th token: IsPersistant.  This token was added later, so we must check
+    ** for its existence.
+    */
+    p = strtok(NULL, ",");
+    if (p) {
+        IsPersistant = (PersistantType)atoi(p);
+    } else {
+        IsPersistant = VOLATILE;
+    }
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Write_INI -- writes triggers to the INI file                                  *
@@ -1178,57 +1164,57 @@ void TriggerClass::Fill_In(char * name, char *entry)
  * HISTORY:                                                                                    *
  *   11/28/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-void TriggerClass::Write_INI(char *buffer, bool refresh)
+void TriggerClass::Write_INI(char* buffer, bool refresh)
 {
-	int index;
-	char buf[128];
-	TriggerClass *trigger;
-	char const *hname;
-	char const *tname;
+    int index;
+    char buf[128];
+    TriggerClass* trigger;
+    char const* hname;
+    char const* tname;
 
-	/*
-	**	First, clear out all existing trigger data from the INI file.
-	*/
-	if (refresh) {
-		WWWritePrivateProfileString(INI_Name(), NULL, NULL, buffer);
-	}
+    /*
+    **	First, clear out all existing trigger data from the INI file.
+    */
+    if (refresh) {
+        WWWritePrivateProfileString(INI_Name(), NULL, NULL, buffer);
+    }
 
-	/*
-	**	Now write all the trigger data out
-	*/
-	for (index = 0; index < Triggers.Count(); index++) {
+    /*
+    **	Now write all the trigger data out
+    */
+    for (index = 0; index < Triggers.Count(); index++) {
 
-		/*
-		**	Get ptr to next active trigger.
-		*/
-		trigger = Triggers.Ptr(index);
+        /*
+        **	Get ptr to next active trigger.
+        */
+        trigger = Triggers.Ptr(index);
 
-		/*
-		**	Generate INI entry.
-		*/
-		if (trigger->House==HOUSE_NONE) {
-			hname = "None";
-		} else {
-			hname = HouseClass::As_Pointer(trigger->House)->Class->IniName;
-		}
+        /*
+        **	Generate INI entry.
+        */
+        if (trigger->House == HOUSE_NONE) {
+            hname = "None";
+        } else {
+            hname = HouseClass::As_Pointer(trigger->House)->Class->IniName;
+        }
 
-		if (trigger->Team==NULL) {
-			tname = "None";
-		} else {
-			tname = trigger->Team->IniName;
-		}
+        if (trigger->Team == NULL) {
+            tname = "None";
+        } else {
+            tname = trigger->Team->IniName;
+        }
 
-		sprintf(buf,"%s,%s,%ld,%s,%s,%d",
-			TriggerClass::Name_From_Event(trigger->Event),
-			TriggerClass::Name_From_Action(trigger->Action),
-			trigger->Data,
-			hname,
-			tname,
-			trigger->IsPersistant);
-		WWWritePrivateProfileString(INI_Name(), trigger->Get_Name(), buf, buffer);
-	}
+        sprintf(buf,
+                "%s,%s,%ld,%s,%s,%d",
+                TriggerClass::Name_From_Event(trigger->Event),
+                TriggerClass::Name_From_Action(trigger->Action),
+                trigger->Data,
+                hname,
+                tname,
+                trigger->IsPersistant);
+        WWWritePrivateProfileString(INI_Name(), trigger->Get_Name(), buf, buffer);
+    }
 }
-
 
 /***********************************************************************************************
  * TriggerClass::As_Pointer -- returns pointer for the given trigger name                      *
@@ -1249,23 +1235,22 @@ void TriggerClass::Write_INI(char *buffer, bool refresh)
  * HISTORY:                                                                                    *
  *   11/28/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-TriggerClass * TriggerClass::As_Pointer(char const * name)
+TriggerClass* TriggerClass::As_Pointer(char const* name)
 {
-	if (name == NULL) {
-		return(NULL);
-	}
+    if (name == NULL) {
+        return (NULL);
+    }
 
-	for (int i = 0; i < Triggers.Count(); i++) {
-		TriggerClass * trigger = Triggers.Ptr(i);
+    for (int i = 0; i < Triggers.Count(); i++) {
+        TriggerClass* trigger = Triggers.Ptr(i);
 
-		if (!stricmp(name, trigger->Name)) {
-			return(trigger);
-		}
-	}
+        if (!stricmp(name, trigger->Name)) {
+            return (trigger);
+        }
+    }
 
-	return(NULL);
+    return (NULL);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::operator new -- 'new' operator                                                *
@@ -1282,15 +1267,14 @@ TriggerClass * TriggerClass::As_Pointer(char const * name)
  * HISTORY:                                                                                    *
  *   11/28/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-void * TriggerClass::operator new(size_t )
+void* TriggerClass::operator new(size_t)
 {
-	void * ptr = Triggers.Allocate();
-	if (ptr) {
-		((TriggerClass *)ptr)->IsActive = true;
-	}
-	return(ptr);
+    void* ptr = Triggers.Allocate();
+    if (ptr) {
+        ((TriggerClass*)ptr)->IsActive = true;
+    }
+    return (ptr);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::operator delete -- 'delete' operator                                          *
@@ -1307,14 +1291,13 @@ void * TriggerClass::operator new(size_t )
  * HISTORY:                                                                                    *
  *   11/28/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-void TriggerClass::operator delete(void *ptr)
+void TriggerClass::operator delete(void* ptr)
 {
-	if (ptr) {
-		((TriggerClass *)ptr)->IsActive = false;
-	}
-	Triggers.Free((TriggerClass *)ptr);
+    if (ptr) {
+        ((TriggerClass*)ptr)->IsActive = false;
+    }
+    Triggers.Free((TriggerClass*)ptr);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Event_From_Name -- retrieves EventType for given name                         *
@@ -1331,23 +1314,22 @@ void TriggerClass::operator delete(void *ptr)
  * HISTORY:                                                                                    *
  *   11/29/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-EventType TriggerClass::Event_From_Name (char const *name)
+EventType TriggerClass::Event_From_Name(char const* name)
 {
-	int i;
+    int i;
 
-	if (name == NULL) {
-		return(EVENT_NONE);
-	}
+    if (name == NULL) {
+        return (EVENT_NONE);
+    }
 
-	for (i = EVENT_NONE; i < EVENT_COUNT; i++) {
-		if (!stricmp(name,EventText[i + 1])) {
-			return((EventType)i);
-		}
-	}
+    for (i = EVENT_NONE; i < EVENT_COUNT; i++) {
+        if (!stricmp(name, EventText[i + 1])) {
+            return ((EventType)i);
+        }
+    }
 
-	return(EVENT_NONE);
+    return (EVENT_NONE);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Name_From_Event -- retrieves name for EventType                               *
@@ -1364,11 +1346,10 @@ EventType TriggerClass::Event_From_Name (char const *name)
  * HISTORY:                                                                                    *
  *   11/29/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-char const *TriggerClass::Name_From_Event(EventType event)
+char const* TriggerClass::Name_From_Event(EventType event)
 {
-	return(EventText[event + 1]);
+    return (EventText[event + 1]);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Action_From_Name -- retrieves ActionType for given name                       *
@@ -1385,23 +1366,22 @@ char const *TriggerClass::Name_From_Event(EventType event)
  * HISTORY:                                                                                    *
  *   11/29/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-TriggerClass::ActionType TriggerClass::Action_From_Name (char const *name)
+TriggerClass::ActionType TriggerClass::Action_From_Name(char const* name)
 {
-	int i;
+    int i;
 
-	if (name == NULL) {
-		return(ACTION_NONE);
-	}
+    if (name == NULL) {
+        return (ACTION_NONE);
+    }
 
-	for (i = ACTION_NONE; i < ACTION_COUNT; i++) {
-		if (!stricmp(name,ActionText[i + 1])) {
-			return((ActionType)i);
-		}
-	}
+    for (i = ACTION_NONE; i < ACTION_COUNT; i++) {
+        if (!stricmp(name, ActionText[i + 1])) {
+            return ((ActionType)i);
+        }
+    }
 
-	return(ACTION_NONE);
+    return (ACTION_NONE);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Name_From_Action -- retrieves name for ActionType                             *
@@ -1418,11 +1398,10 @@ TriggerClass::ActionType TriggerClass::Action_From_Name (char const *name)
  * HISTORY:                                                                                    *
  *   11/29/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-char const *TriggerClass::Name_From_Action(ActionType action)
+char const* TriggerClass::Name_From_Action(ActionType action)
 {
-	return(ActionText[action + 1]);
+    return (ActionText[action + 1]);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::As_Target -- Converts trigger to a target value                               *
@@ -1438,10 +1417,9 @@ char const *TriggerClass::Name_From_Action(ActionType action)
  *=============================================================================================*/
 TARGET TriggerClass::As_Target(void) const
 {
-	Validate();
-	return(Build_Target(KIND_TRIGGER, Triggers.ID(this)));
+    Validate();
+    return (Build_Target(KIND_TRIGGER, Triggers.ID(this)));
 }
-
 
 /***********************************************************************************************
  * Do_All_To_Hunt -- Forces all computer controlled units into hunt mode.                      *
@@ -1461,23 +1439,25 @@ TARGET TriggerClass::As_Target(void) const
  *=============================================================================================*/
 static void Do_All_To_Hunt(void)
 {
-	int index;
+    int index;
 
-	for (index = 0; index < Units.Count(); index++) {
-		UnitClass * unit = Units.Ptr(index);
+    for (index = 0; index < Units.Count(); index++) {
+        UnitClass* unit = Units.Ptr(index);
 
-		if (!unit->House->IsHuman && unit->IsDown && !unit->IsInLimbo) {
-			if (unit->Team) unit->Team->Remove(unit);
-			unit->Assign_Mission(MISSION_HUNT);
-		}
-	}
+        if (!unit->House->IsHuman && unit->IsDown && !unit->IsInLimbo) {
+            if (unit->Team)
+                unit->Team->Remove(unit);
+            unit->Assign_Mission(MISSION_HUNT);
+        }
+    }
 
-	for (index = 0; index < Infantry.Count(); index++) {
-		InfantryClass * infantry = Infantry.Ptr(index);
+    for (index = 0; index < Infantry.Count(); index++) {
+        InfantryClass* infantry = Infantry.Ptr(index);
 
-		if (!infantry->House->IsHuman && infantry->IsDown && !infantry->IsInLimbo) {
-			if (infantry->Team) infantry->Team->Remove(infantry);
-			infantry->Assign_Mission(MISSION_HUNT);
-		}
-	}
+        if (!infantry->House->IsHuman && infantry->IsDown && !infantry->IsInLimbo) {
+            if (infantry->Team)
+                infantry->Team->Remove(infantry);
+            infantry->Assign_Mission(MISSION_HUNT);
+        }
+    }
 }

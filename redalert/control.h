@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/CONTROL.H 1     3/03/97 10:24a Joe_bostic $ */
@@ -35,7 +35,7 @@
 #ifndef CONTROL_H
 #define CONTROL_H
 
-#include	"gadget.h"
+#include "gadget.h"
 
 /***************************************************************************
  * ControlClass -- Region tracking class									         *
@@ -54,34 +54,34 @@
  *=========================================================================*/
 class ControlClass : public GadgetClass
 {
-	public:
-		ControlClass(NoInitClass const & x) : GadgetClass(x) {};
-		ControlClass(unsigned id, int x, int y, int w, int h, unsigned flags=LEFTPRESS|RIGHTPRESS, int sticky=false);
-		ControlClass(ControlClass const & control);
+public:
+    ControlClass(NoInitClass const& x)
+        : GadgetClass(x){};
+    ControlClass(unsigned id, int x, int y, int w, int h, unsigned flags = LEFTPRESS | RIGHTPRESS, int sticky = false);
+    ControlClass(ControlClass const& control);
 
-		virtual void Make_Peer(GadgetClass & gadget);
+    virtual void Make_Peer(GadgetClass& gadget);
 
-		/*
-		**	Render support function.
-		*/
-		virtual int Draw_Me(int forced=false);
+    /*
+    **	Render support function.
+    */
+    virtual int Draw_Me(int forced = false);
 
-		/*
-		**	This is the ID number for this control gadget. This number is used to generate
-		**	a special pseudo-key when the gadget detects valid input.
-		*/
-		unsigned ID;
+    /*
+    **	This is the ID number for this control gadget. This number is used to generate
+    **	a special pseudo-key when the gadget detects valid input.
+    */
+    unsigned ID;
 
-	protected:
-		virtual unsigned Get_ID(void) const;
-		virtual int Action(unsigned flags, KeyNumType & key);
+protected:
+    virtual unsigned Get_ID(void) const;
+    virtual int Action(unsigned flags, KeyNumType& key);
 
-		/*
-		**	This points to the peer button to inform when something happens to this
-		**	gadget.
-		*/
-		GadgetClass * Peer;
+    /*
+    **	This points to the peer button to inform when something happens to this
+    **	gadget.
+    */
+    GadgetClass* Peer;
 };
 
 #endif
-

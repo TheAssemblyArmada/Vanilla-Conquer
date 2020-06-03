@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c0\vcs\code\turret.cpv   3.1   13 Mar 1996 09:49:34   JOE_BOSTIC  $ */
@@ -43,9 +43,8 @@
  *   TurretClass::~TurretClass -- Default destructor for turret class objects.                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-#include	"turret.h"
-
+#include "function.h"
+#include "turret.h"
 
 /***********************************************************************************************
  * TurretClass::~TurretClass -- Default destructor for turret class objects.                   *
@@ -65,7 +64,6 @@ TurretClass::~TurretClass(void)
 {
 }
 
-
 /***********************************************************************************************
  * TurretClass::TurretClass -- The default constructor for turret class objects.               *
  *                                                                                             *
@@ -84,7 +82,6 @@ TurretClass::TurretClass(void)
 {
 }
 
-
 /***********************************************************************************************
  * TurretClass::TurretClass -- Normal constructor for the turret class.                        *
  *                                                                                             *
@@ -102,10 +99,7 @@ TurretClass::TurretClass(void)
  * HISTORY:                                                                                    *
  *   02/02/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-TurretClass::TurretClass(UnitType classid, HousesType house) :
-	DriveClass(classid, house)
+TurretClass::TurretClass(UnitType classid, HousesType house)
+    : DriveClass(classid, house)
 {
 }
-
-
-

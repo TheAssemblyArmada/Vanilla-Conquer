@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/FLASHER.CPP 1     3/03/97 10:24a Joe_bostic $ */
@@ -34,8 +34,7 @@
  *   FlasherClass::Process -- Performs the logic processing for the flashing ability.          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-
+#include "function.h"
 
 #ifdef CHEAT_KEYS
 /***********************************************************************************************
@@ -53,13 +52,12 @@
  * HISTORY:                                                                                    *
  *   05/31/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void FlasherClass::Debug_Dump(MonoClass * mono) const
+void FlasherClass::Debug_Dump(MonoClass* mono) const
 {
-	mono->Set_Cursor(50, 7);
-	mono->Printf("%2d", FlashCount);
+    mono->Set_Cursor(50, 7);
+    mono->Printf("%2d", FlashCount);
 }
 #endif
-
 
 /***********************************************************************************************
  * FlasherClass::Process -- Performs the logic processing for the flashing ability.            *
@@ -79,27 +77,24 @@ void FlasherClass::Debug_Dump(MonoClass * mono) const
  *=============================================================================================*/
 bool FlasherClass::Process(void)
 {
-	// 2019/09/20 JAS - Flashing info needs to exist per player
-	for (int i = 0; i < HOUSE_COUNT; i++)
-	{
-		if (FlashCountPerPlayer[i])
-		{
-			FlashCountPerPlayer[i]--;
-		}
-	}
+    // 2019/09/20 JAS - Flashing info needs to exist per player
+    for (int i = 0; i < HOUSE_COUNT; i++) {
+        if (FlashCountPerPlayer[i]) {
+            FlashCountPerPlayer[i]--;
+        }
+    }
 
-	if (FlashCount) {
-		FlashCount--;
-		IsBlushing = false;
+    if (FlashCount) {
+        FlashCount--;
+        IsBlushing = false;
 
-		if (FlashCount & 0x01) {
-			IsBlushing = true;
-		}
-		return(true);
-	}
-	return(false);
+        if (FlashCount & 0x01) {
+            IsBlushing = true;
+        }
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * FlasherClass::Get_Flashing_Flags --																			  *
@@ -117,14 +112,12 @@ bool FlasherClass::Process(void)
  *=============================================================================================*/
 unsigned int FlasherClass::Get_Flashing_Flags() const
 {
-	unsigned flags = 0;
-	for (int i = 0; i < HOUSE_COUNT; ++i)
-	{
-		if (FlashCountPerPlayer[i] > 0)
-		{
-			flags |= (1 << i);
-		}
-	}
+    unsigned flags = 0;
+    for (int i = 0; i < HOUSE_COUNT; ++i) {
+        if (FlashCountPerPlayer[i] > 0) {
+            flags |= (1 << i);
+        }
+    }
 
-	return flags;
+    return flags;
 }

@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/MOUSE.CPP 1     3/03/97 10:25a Joe_bostic $ */
@@ -40,20 +40,18 @@
  *   MouseClass::Set_Default_Mouse -- Sets the mouse to match the shape specified.             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-
+#include "function.h"
 
 /*
 **	This points to the loaded mouse shapes.
 */
-void const * MouseClass::MouseShapes;
+void const* MouseClass::MouseShapes;
 
 /*
 **	This is the timer that controls the mouse animation. It is always at a fixed
 **	rate so it uses the constant system timer.
 */
 CDTimerClass<SystemTimerClass> MouseClass::Timer = 0;
-
 
 /***********************************************************************************************
  * MouseClass::MouseClass -- Default constructor for the mouse handler class.                  *
@@ -70,14 +68,13 @@ CDTimerClass<SystemTimerClass> MouseClass::Timer = 0;
  * HISTORY:                                                                                    *
  *   12/24/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-MouseClass::MouseClass(void) :
-	IsSmall(false),
-	CurrentMouseShape(MOUSE_NORMAL),
-	NormalMouseShape(MOUSE_NORMAL),
-	Frame(0)
+MouseClass::MouseClass(void)
+    : IsSmall(false)
+    , CurrentMouseShape(MOUSE_NORMAL)
+    , NormalMouseShape(MOUSE_NORMAL)
+    , Frame(0)
 {
 }
-
 
 /***********************************************************************************************
  * MouseClass::Set_Default_Mouse -- Sets the mouse to match the shape specified.               *
@@ -95,12 +92,11 @@ MouseClass::MouseClass(void) :
  *=============================================================================================*/
 void MouseClass::Set_Default_Mouse(MouseType mouse, bool size)
 {
-	assert((unsigned)mouse < MOUSE_COUNT);
+    assert((unsigned)mouse < MOUSE_COUNT);
 
-	NormalMouseShape = mouse;
-	Override_Mouse_Shape(mouse, size);
+    NormalMouseShape = mouse;
+    Override_Mouse_Shape(mouse, size);
 }
-
 
 /***********************************************************************************************
  * MouseClass::Revert_Mouse_Shape -- Reverts the mouse shape to the non overridden shape.      *
@@ -119,9 +115,8 @@ void MouseClass::Set_Default_Mouse(MouseType mouse, bool size)
  *=============================================================================================*/
 void MouseClass::Revert_Mouse_Shape(void)
 {
-	Override_Mouse_Shape(NormalMouseShape, false);
+    Override_Mouse_Shape(NormalMouseShape, false);
 }
-
 
 /***********************************************************************************************
  * MouseClass::Mouse_Small -- Controls the sizing of the mouse.                                *
@@ -141,25 +136,25 @@ void MouseClass::Revert_Mouse_Shape(void)
  *=============================================================================================*/
 void MouseClass::Mouse_Small(bool wsmall)
 {
-	MouseStruct const * control = &MouseControl[CurrentMouseShape];
+    MouseStruct const* control = &MouseControl[CurrentMouseShape];
 
-	if (IsSmall == wsmall) {
-		return;
-	}
+    if (IsSmall == wsmall) {
+        return;
+    }
 
-	IsSmall	= wsmall;
+    IsSmall = wsmall;
 
-	if (wsmall) {
-		if (control->SmallFrame != -1) {
-			Set_Mouse_Cursor(control->X, control->Y, Extract_Shape(MouseShapes, control->SmallFrame + Frame/4));
-		} else {
-			Set_Mouse_Cursor(MouseControl[MOUSE_NORMAL].X, MouseControl[MOUSE_NORMAL].Y, Extract_Shape(MouseShapes, MOUSE_NORMAL));
-		}
-	} else {
-		Set_Mouse_Cursor(control->X, control->Y, Extract_Shape(MouseShapes, control->StartFrame + Frame/4));
-	}
+    if (wsmall) {
+        if (control->SmallFrame != -1) {
+            Set_Mouse_Cursor(control->X, control->Y, Extract_Shape(MouseShapes, control->SmallFrame + Frame / 4));
+        } else {
+            Set_Mouse_Cursor(
+                MouseControl[MOUSE_NORMAL].X, MouseControl[MOUSE_NORMAL].Y, Extract_Shape(MouseShapes, MOUSE_NORMAL));
+        }
+    } else {
+        Set_Mouse_Cursor(control->X, control->Y, Extract_Shape(MouseShapes, control->StartFrame + Frame / 4));
+    }
 }
-
 
 /***********************************************************************************************
  * MouseClass::Override_Mouse_Shape -- Alters the shape of the mouse.                          *
@@ -182,49 +177,48 @@ void MouseClass::Mouse_Small(bool wsmall)
  *   12/24/1994 JLB : Added small control parameter.                                           *
  *=============================================================================================*/
 #ifdef WIN32
-void Block_Mouse(GraphicBufferClass *buffer);
-void Unblock_Mouse(GraphicBufferClass *buffer);
+void Block_Mouse(GraphicBufferClass* buffer);
+void Unblock_Mouse(GraphicBufferClass* buffer);
 #endif
 
 bool MouseClass::Override_Mouse_Shape(MouseType mouse, bool wsmall)
 {
-	assert((unsigned)mouse < MOUSE_COUNT);
+    assert((unsigned)mouse < MOUSE_COUNT);
 
-	MouseStruct const * control = &MouseControl[mouse];
-	static bool startup = false;
-	int baseshp;
+    MouseStruct const* control = &MouseControl[mouse];
+    static bool startup = false;
+    int baseshp;
 
-	/*
-	**	Only certain mouse shapes have a small counterpart. If the requested mouse
-	**	shape is not one of these, then force the small size override flag to false.
-	*/
-	if (control->SmallFrame == -1) {
-		wsmall = false;
-	}
+    /*
+    **	Only certain mouse shapes have a small counterpart. If the requested mouse
+    **	shape is not one of these, then force the small size override flag to false.
+    */
+    if (control->SmallFrame == -1) {
+        wsmall = false;
+    }
 
-	/*
-	**	If the mouse shape is going to change, then inform the mouse driver of the
-	**	change.
-	*/
-	if (!startup || (MouseShapes && ((mouse != CurrentMouseShape) || (wsmall != IsSmall)))) {
-		startup = true;
+    /*
+    **	If the mouse shape is going to change, then inform the mouse driver of the
+    **	change.
+    */
+    if (!startup || (MouseShapes && ((mouse != CurrentMouseShape) || (wsmall != IsSmall)))) {
+        startup = true;
 
-		Timer = control->FrameRate;
-		Frame = 0;
+        Timer = control->FrameRate;
+        Frame = 0;
 
-		baseshp = (wsmall) ? control->SmallFrame : control->StartFrame;
-		if (baseshp == -1) {
-			baseshp = control->StartFrame;
-		}
+        baseshp = (wsmall) ? control->SmallFrame : control->StartFrame;
+        if (baseshp == -1) {
+            baseshp = control->StartFrame;
+        }
 
-		Set_Mouse_Cursor(control->X, control->Y, Extract_Shape(MouseShapes, baseshp));
-		CurrentMouseShape = mouse;
-		IsSmall = wsmall;
-		return(true);
-	}
-	return(false);
+        Set_Mouse_Cursor(control->X, control->Y, Extract_Shape(MouseShapes, baseshp));
+        CurrentMouseShape = mouse;
+        IsSmall = wsmall;
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * MouseClass::AI -- Process player input as it relates to the mouse                           *
@@ -247,26 +241,26 @@ bool MouseClass::Override_Mouse_Shape(MouseType mouse, bool wsmall)
  *   05/28/1995 JLB : Moderates animation so is more steady regardless of speed.               *
  *   06/30/1995 JLB : Uses constant timer system.                                              *
  *=============================================================================================*/
-void MouseClass::AI(KeyNumType &input, int x, int y)
+void MouseClass::AI(KeyNumType& input, int x, int y)
 {
-	MouseStruct const * control = &MouseControl[CurrentMouseShape];
+    MouseStruct const* control = &MouseControl[CurrentMouseShape];
 
-	if (control->FrameRate && Timer == 0) {
+    if (control->FrameRate && Timer == 0) {
 
-		Frame++;
-		Frame %= control->FrameCount;
-		Timer = control->FrameRate;
+        Frame++;
+        Frame %= control->FrameCount;
+        Timer = control->FrameRate;
 
-		if (!IsSmall || control->SmallFrame != -1) {
-			int baseframe = (IsSmall) ? control->SmallFrame : control->StartFrame;
-			if (baseframe == -1) baseframe = control->StartFrame;
-			Set_Mouse_Cursor(control->X, control->Y, Extract_Shape(MouseShapes, baseframe + Frame));
-		}
-	}
+        if (!IsSmall || control->SmallFrame != -1) {
+            int baseframe = (IsSmall) ? control->SmallFrame : control->StartFrame;
+            if (baseframe == -1)
+                baseframe = control->StartFrame;
+            Set_Mouse_Cursor(control->X, control->Y, Extract_Shape(MouseShapes, baseframe + Frame));
+        }
+    }
 
-	ScrollClass::AI(input, x, y);
+    ScrollClass::AI(input, x, y);
 }
-
 
 /***********************************************************************************************
  * MouseClass::One_Time -- Performs the one time initialization of the mouse system.           *
@@ -285,24 +279,23 @@ void MouseClass::AI(KeyNumType &input, int x, int y)
  *=============================================================================================*/
 void MouseClass::One_Time(void)
 {
-	ScrollClass::One_Time();
+    ScrollClass::One_Time();
 
-	/*
-	**	Override the mouse shape file with the one in the current directory, but only if there
-	**	is an override file available.
-	*/
-	#ifndef NDEBUG
-		RawFileClass file("MOUSE.SHP");
-		if (file.Is_Available()) {
-			MouseShapes = Load_Alloc_Data(file);
-		} else {
-			MouseShapes = MFCD::Retrieve("MOUSE.SHP");
-		}
-	#else
-		MouseShapes = MFCD::Retrieve("MOUSE.SHP");
-	#endif
+/*
+**	Override the mouse shape file with the one in the current directory, but only if there
+**	is an override file available.
+*/
+#ifndef NDEBUG
+    RawFileClass file("MOUSE.SHP");
+    if (file.Is_Available()) {
+        MouseShapes = Load_Alloc_Data(file);
+    } else {
+        MouseShapes = MFCD::Retrieve("MOUSE.SHP");
+    }
+#else
+    MouseShapes = MFCD::Retrieve("MOUSE.SHP");
+#endif
 }
-
 
 /***********************************************************************************************
  * MouseClass::Init_Clear -- Sets the mouse system to a known state                            *
@@ -321,11 +314,10 @@ void MouseClass::One_Time(void)
  *=============================================================================================*/
 void MouseClass::Init_Clear(void)
 {
-	ScrollClass::Init_Clear();
-	IsSmall = false;
-	NormalMouseShape = MOUSE_NORMAL;
+    ScrollClass::Init_Clear();
+    IsSmall = false;
+    NormalMouseShape = MOUSE_NORMAL;
 }
-
 
 /*
 **	This array of structures is used to control the mouse animation
@@ -335,55 +327,55 @@ void MouseClass::Init_Clear(void)
 //#define	WD	45
 //#define	HT	36
 //#else
-#define	WD	29
-#define	HT	23
+#define WD 29
+#define HT 23
 //#endif
 
 MouseClass::MouseStruct MouseClass::MouseControl[MOUSE_COUNT] = {
-	{0, 	1,		0,		80,	0,		0},		//	MOUSE_NORMAL
-	{1, 	1,		0,		-1,	WD/2,	0},		//	MOUSE_N
-	{2, 	1,		0,		-1,	WD,	0},		//	MOUSE_NE
-	{3, 	1,		0,		-1,	WD,	HT/2},	//	MOUSE_E
-	{4,	1,		0,		-1,	WD,	HT},		//	MOUSE_SE
-	{5,	1,		0,		-1,	WD/2,	HT},		//	MOUSE_S
-	{6,	1,		0,		-1,	0, 	HT},		//	MOUSE_SW
-	{7,	1,		0,		-1,	0, 	HT/2},	//	MOUSE_W
-	{8,	1,		0,		-1,	0, 	0},		//	MOUSE_NW
+    {0, 1, 0, 80, 0, 0},       //	MOUSE_NORMAL
+    {1, 1, 0, -1, WD / 2, 0},  //	MOUSE_N
+    {2, 1, 0, -1, WD, 0},      //	MOUSE_NE
+    {3, 1, 0, -1, WD, HT / 2}, //	MOUSE_E
+    {4, 1, 0, -1, WD, HT},     //	MOUSE_SE
+    {5, 1, 0, -1, WD / 2, HT}, //	MOUSE_S
+    {6, 1, 0, -1, 0, HT},      //	MOUSE_SW
+    {7, 1, 0, -1, 0, HT / 2},  //	MOUSE_W
+    {8, 1, 0, -1, 0, 0},       //	MOUSE_NW
 
-	{124, 1,		0,		-1,	WD/2,	0},		//	MOUSE_NO_N
-	{125, 1,		0,		-1,	WD,	0},		//	MOUSE_NO_NE
-	{126, 1,		0,		-1,	WD,	HT/2},	//	MOUSE_NO_E
-	{127,	1,		0,		-1,	WD,	HT},		//	MOUSE_NO_SE
-	{128,	1,		0,		-1,	WD/2,	HT},		//	MOUSE_NO_S
-	{129,	1,		0,		-1,	0, 	HT},		//	MOUSE_NO_SW
-	{130,	1,		0,		-1,	0, 	HT/2},	//	MOUSE_NO_W
-	{131,	1,		0,		-1,	0, 	0},		//	MOUSE_NO_NW
+    {124, 1, 0, -1, WD / 2, 0},  //	MOUSE_NO_N
+    {125, 1, 0, -1, WD, 0},      //	MOUSE_NO_NE
+    {126, 1, 0, -1, WD, HT / 2}, //	MOUSE_NO_E
+    {127, 1, 0, -1, WD, HT},     //	MOUSE_NO_SE
+    {128, 1, 0, -1, WD / 2, HT}, //	MOUSE_NO_S
+    {129, 1, 0, -1, 0, HT},      //	MOUSE_NO_SW
+    {130, 1, 0, -1, 0, HT / 2},  //	MOUSE_NO_W
+    {131, 1, 0, -1, 0, 0},       //	MOUSE_NO_NW
 
-	{14,	1,		0,		33,	WD/2,	HT/2},	//	MOUSE_NO_MOVE
-	{10,	4,		4,		29,	WD/2,	HT/2},	//	MOUSE_CAN_MOVE
-	{113,	3,		4,		142,	WD/2,	HT/2},	//	MOUSE_ENTER
-	{59,	9,		4,		-1,	WD/2,	HT/2},	//	MOUSE_DEPLOY
-	{15,	6,		4,		-1,	WD/2,	HT/2},	//	MOUSE_CAN_SELECT
-	{21,	8,		4,		134,	WD/2,	HT/2},	//	MOUSE_CAN_ATTACK
-	{68,	12,	2,		-1,	WD/2,	HT/2},	//	MOUSE_SELL_BACK
-	{148,	12,	2,		-1,	WD/2,	HT/2},	//	MOUSE_SELL_UNIT
-	{35,	24,	2,		-1,	WD/2,	HT/2},	//	MOUSE_REPAIR
-	{120,	1,		0,		-1,	WD/2,	HT/2},	//	MOUSE_NO_REPAIR
-	{119,	1,		0,		-1,	WD/2,	HT/2},	//	MOUSE_NO_SELL_BACK
-	{81,	1,		0,		145,	WD/2, HT/2},	//	MOUSE_RADAR_CURSOR
-	{90,	7,		4,		-1,	WD/2,	HT/2},	//	MOUSE_NUCLEAR_BOMB
-	{82,	8,		2,		213,	WD/2,	HT/2},	//	MOUSE_AIR_STRIKE
-	{116,	3,		4,		121,	WD/2,	HT/2},	//	MOUSE_DEMOLITIONS
-	{147,	1,		0,		146,	WD/2,	HT/2},	//	MOUSE_AREA_GUARD
-	{160,	4,		4,		194,	WD/2,	HT/2},	//	MOUSE_HEAL
-	{164,	3,		4,		167,	WD/2,	HT/2},	//	MOUSE_DAMAGE
-	{170,	24,	2,		-1,	WD/2,	HT/2},	//	MOUSE_GREPAIR
-	{195,	8,		4,		203,	WD/2,	HT/2},	// MOUSE_STAY_ATTACK
-	{211,	1,		0,		-1,	WD/2,	HT/2},	// MOUSE_NO_DEPLOY
-	{212,	1,		0,		-1,	WD/2,	HT/2},	// MOUSE_NO_ENTER
-	{213,	1,		0,		-1,	WD/2,	HT/2},	// MOUSE_NO_REPAIR
+    {14, 1, 0, 33, WD / 2, HT / 2},   //	MOUSE_NO_MOVE
+    {10, 4, 4, 29, WD / 2, HT / 2},   //	MOUSE_CAN_MOVE
+    {113, 3, 4, 142, WD / 2, HT / 2}, //	MOUSE_ENTER
+    {59, 9, 4, -1, WD / 2, HT / 2},   //	MOUSE_DEPLOY
+    {15, 6, 4, -1, WD / 2, HT / 2},   //	MOUSE_CAN_SELECT
+    {21, 8, 4, 134, WD / 2, HT / 2},  //	MOUSE_CAN_ATTACK
+    {68, 12, 2, -1, WD / 2, HT / 2},  //	MOUSE_SELL_BACK
+    {148, 12, 2, -1, WD / 2, HT / 2}, //	MOUSE_SELL_UNIT
+    {35, 24, 2, -1, WD / 2, HT / 2},  //	MOUSE_REPAIR
+    {120, 1, 0, -1, WD / 2, HT / 2},  //	MOUSE_NO_REPAIR
+    {119, 1, 0, -1, WD / 2, HT / 2},  //	MOUSE_NO_SELL_BACK
+    {81, 1, 0, 145, WD / 2, HT / 2},  //	MOUSE_RADAR_CURSOR
+    {90, 7, 4, -1, WD / 2, HT / 2},   //	MOUSE_NUCLEAR_BOMB
+    {82, 8, 2, 213, WD / 2, HT / 2},  //	MOUSE_AIR_STRIKE
+    {116, 3, 4, 121, WD / 2, HT / 2}, //	MOUSE_DEMOLITIONS
+    {147, 1, 0, 146, WD / 2, HT / 2}, //	MOUSE_AREA_GUARD
+    {160, 4, 4, 194, WD / 2, HT / 2}, //	MOUSE_HEAL
+    {164, 3, 4, 167, WD / 2, HT / 2}, //	MOUSE_DAMAGE
+    {170, 24, 2, -1, WD / 2, HT / 2}, //	MOUSE_GREPAIR
+    {195, 8, 4, 203, WD / 2, HT / 2}, // MOUSE_STAY_ATTACK
+    {211, 1, 0, -1, WD / 2, HT / 2},  // MOUSE_NO_DEPLOY
+    {212, 1, 0, -1, WD / 2, HT / 2},  // MOUSE_NO_ENTER
+    {213, 1, 0, -1, WD / 2, HT / 2},  // MOUSE_NO_REPAIR
 
-	{97,	8,		3,		-1,	WD/2,	HT/2},	//	MOUSE_CHRONO_SELECT
-	{105,	8,		2,		-1,	WD/2,	HT/2},	//	MOUSE_CHRONO_DEST
+    {97, 8, 3, -1, WD / 2, HT / 2},  //	MOUSE_CHRONO_SELECT
+    {105, 8, 2, -1, WD / 2, HT / 2}, //	MOUSE_CHRONO_DEST
 
 };

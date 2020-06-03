@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/STATBTN.CPP 1     3/03/97 10:25a Joe_bostic $ */
@@ -37,10 +37,8 @@
  *   StaticButtonClass::StaticButtonClass -- Normal constructor for a text button.             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#include	"function.h"
+#include "function.h"
 #include "statbtn.h"
-
 
 /***********************************************************************************************
  * StaticButtonClass::StaticButtonClass -- Normal constructor for a text button.               *
@@ -65,28 +63,27 @@
  *                                                                                             *
  * HISTORY:  01/15/1995 JLB : Created.                                                         *
  *=============================================================================================*/
-StaticButtonClass::StaticButtonClass(unsigned , char const * text, TextPrintType style, int x, int y, int w, int h) :
-	GadgetClass(x, y, w, h, FlagEnum(0)),
-	String(NULL),
-	PrintFlags(style)
+StaticButtonClass::StaticButtonClass(unsigned, char const* text, TextPrintType style, int x, int y, int w, int h)
+    : GadgetClass(x, y, w, h, FlagEnum(0))
+    , String(NULL)
+    , PrintFlags(style)
 {
-	/*
-	**	Make a duplicate of the string to display.
-	*/
-	Set_Text(text, false);
+    /*
+    **	Make a duplicate of the string to display.
+    */
+    Set_Text(text, false);
 
-	if (w == -1 || h == -1) {
-		//PG_TO_FIX
-		//Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, PrintFlags);
-		if (w == -1) {
-			Width = String_Pixel_Width(String);
-		}
-		if (h == -1) {
-			Height = FontHeight;
-		}
-	}
+    if (w == -1 || h == -1) {
+        // PG_TO_FIX
+        // Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, PrintFlags);
+        if (w == -1) {
+            Width = String_Pixel_Width(String);
+        }
+        if (h == -1) {
+            Height = FontHeight;
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * StaticButtonClass::StaticButtonClass -- Default constructor for a text button.              *
@@ -99,13 +96,12 @@ StaticButtonClass::StaticButtonClass(unsigned , char const * text, TextPrintType
  *                                                                                             *
  * HISTORY:  01/15/1995 JLB : Created.                                                         *
  *=============================================================================================*/
-StaticButtonClass::StaticButtonClass(void) :
-	GadgetClass(0, 0, 0, 0, FlagEnum(0)),
-	String(NULL),
-	PrintFlags(TPF_8POINT)
+StaticButtonClass::StaticButtonClass(void)
+    : GadgetClass(0, 0, 0, 0, FlagEnum(0))
+    , String(NULL)
+    , PrintFlags(TPF_8POINT)
 {
 }
-
 
 /***********************************************************************************************
  * StaticButtonClass::Draw_Me -- Draws the text buttons as indicated.                          *
@@ -125,32 +121,31 @@ StaticButtonClass::StaticButtonClass(void) :
  *=============================================================================================*/
 int StaticButtonClass::Draw_Me(int forced)
 {
-	if (GadgetClass::Draw_Me(forced)) {
-		/*
-		**	Hide the mouse.
-		*/
-		if (LogicPage == &SeenBuff) {
-			Conditional_Hide_Mouse(X, Y, X+Width-1, Y+Height-1);
-		}
+    if (GadgetClass::Draw_Me(forced)) {
+        /*
+        **	Hide the mouse.
+        */
+        if (LogicPage == &SeenBuff) {
+            Conditional_Hide_Mouse(X, Y, X + Width - 1, Y + Height - 1);
+        }
 
-		/*
-		**	Draw the background and overlaying text. These are virtual function
-		**	calls so that they may be overridden.
-		*/
-		Draw_Background();
-		Draw_Text(String);
+        /*
+        **	Draw the background and overlaying text. These are virtual function
+        **	calls so that they may be overridden.
+        */
+        Draw_Background();
+        Draw_Text(String);
 
-		/*
-		**	Display the mouse.
-		*/
-		if (LogicPage == &SeenBuff) {
-			Conditional_Show_Mouse();
-		}
-		return(true);
-	}
-	return(false);
+        /*
+        **	Display the mouse.
+        */
+        if (LogicPage == &SeenBuff) {
+            Conditional_Show_Mouse();
+        }
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * StaticButtonClass::Set_Text -- Assigns a new text string to this button.                    *
@@ -169,31 +164,30 @@ int StaticButtonClass::Draw_Me(int forced)
  * HISTORY:                                                                                    *
  *   01/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void StaticButtonClass::Set_Text(char const * text, bool resize)
+void StaticButtonClass::Set_Text(char const* text, bool resize)
 {
-	if (String != NULL) {
-		delete [] String;
-		String = NULL;
-	}
+    if (String != NULL) {
+        delete[] String;
+        String = NULL;
+    }
 
-	if (text != NULL) {
-		String = new char[strlen(text)+1];
-		if (String != NULL) {
-			strcpy(String, text);
-		}
-	}
+    if (text != NULL) {
+        String = new char[strlen(text) + 1];
+        if (String != NULL) {
+            strcpy(String, text);
+        }
+    }
 
-	Flag_To_Redraw();
-	if (resize && String != NULL) {
-		Draw_Background();
-		//PG_TO_FIX
-		//Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, PrintFlags);
-		Width = String_Pixel_Width(String);
-		Height = FontHeight + FontYSpacing;
-		Background = Buffer();
-	}
+    Flag_To_Redraw();
+    if (resize && String != NULL) {
+        Draw_Background();
+        // PG_TO_FIX
+        // Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, PrintFlags);
+        Width = String_Pixel_Width(String);
+        Height = FontHeight + FontYSpacing;
+        Background = Buffer();
+    }
 }
-
 
 /***********************************************************************************************
  * StaticButtonClass::Draw_Background -- Draws the background to the text button.              *
@@ -213,26 +207,25 @@ void StaticButtonClass::Set_Text(char const * text, bool resize)
  *=============================================================================================*/
 void StaticButtonClass::Draw_Background(void)
 {
-	/*
-	**	If the background hasn't been recorded from the buffer, then
-	**	allocate and record the background image now.
-	*/
-	if (Background.Get_Buffer() == NULL && Width > 0 && Height > 0) {
-		new(&Background) Buffer(Width*Height);
-		if (Background.Get_Buffer() != NULL) {
-			LogicPage->To_Buffer(X, Y, Width, Height, Background, Background.Get_Size());
-		}
-	}
+    /*
+    **	If the background hasn't been recorded from the buffer, then
+    **	allocate and record the background image now.
+    */
+    if (Background.Get_Buffer() == NULL && Width > 0 && Height > 0) {
+        new (&Background) Buffer(Width * Height);
+        if (Background.Get_Buffer() != NULL) {
+            LogicPage->To_Buffer(X, Y, Width, Height, Background, Background.Get_Size());
+        }
+    }
 
-	/*
-	**	If there is a background image present, then restore it to the buffer now.
-	*/
-	if (Background.Get_Buffer() != NULL && LogicPage->Lock()) {
-		Buffer_To_Page(X, Y, Width, Height, Background, *LogicPage);
-		LogicPage->Unlock();
-	}
+    /*
+    **	If there is a background image present, then restore it to the buffer now.
+    */
+    if (Background.Get_Buffer() != NULL && LogicPage->Lock()) {
+        Buffer_To_Page(X, Y, Width, Height, Background, *LogicPage);
+        LogicPage->Unlock();
+    }
 }
-
 
 /***********************************************************************************************
  * StaticButtonClass::Draw_Text -- This draws the text for the text button.                    *
@@ -250,21 +243,21 @@ void StaticButtonClass::Draw_Background(void)
  * HISTORY:                                                                                    *
  *   01/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void StaticButtonClass::Draw_Text(char const * text)
+void StaticButtonClass::Draw_Text(char const* text)
 {
-	/*
-	**	Display the text.
-	*/
-	if (String != NULL) {
-		int x = X;
+    /*
+    **	Display the text.
+    */
+    if (String != NULL) {
+        int x = X;
 
-		if (PrintFlags & TPF_CENTER) {
-			x += Width/2;
-		}
-		if (PrintFlags & TPF_RIGHT) {
-			x += Width-1;
-		}
+        if (PrintFlags & TPF_CENTER) {
+            x += Width / 2;
+        }
+        if (PrintFlags & TPF_RIGHT) {
+            x += Width - 1;
+        }
 
-		Fancy_Text_Print(text, x, Y, GadgetClass::Get_Color_Scheme(), TBLACK, PrintFlags);
-	}
+        Fancy_Text_Print(text, x, Y, GadgetClass::Get_Color_Scheme(), TBLACK, PrintFlags);
+    }
 }

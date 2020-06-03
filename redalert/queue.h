@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/QUEUE.H 1     3/03/97 10:25a Joe_bostic $ */
@@ -41,9 +41,9 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#include	"mission.h"
-#include	"target.h"
-#include	"defines.h"
+#include "mission.h"
+#include "target.h"
+#include "defines.h"
 
 //#pragma warn -inl
 
@@ -62,62 +62,60 @@
 **	The size parameter MUST be an exact power of two (2, 4, 8, 16, etc.) otherwise the internal
 **	indexing algorithm will fail.
 */
-template<class T, int size>
-class QueueClass
+template <class T, int size> class QueueClass
 {
-	public:
-		/*
-		**	This is the count of the number of objects in the queue. If this count is zero,
-		**	then the operator[], First(), and Next() functions are undefined. Check this
-		**	value BEFORE calling these functions.
-		*/
-		const int Count;
+public:
+    /*
+    **	This is the count of the number of objects in the queue. If this count is zero,
+    **	then the operator[], First(), and Next() functions are undefined. Check this
+    **	value BEFORE calling these functions.
+    */
+    const int Count;
 
-		//-------------- Functions --------------------
-		QueueClass(void);						// Default constructor.
+    //-------------- Functions --------------------
+    QueueClass(void); // Default constructor.
 
-		/*
-		**	The bracket subscript operator functions similarly to the way a normal subscript
-		**	operator works except that entry [0] matches the first-in-line and entry
-		**	[Count-1] matches the last-in-line. This is ensured regardless of the actual position
-		**	of the object in the circular internal list.
-		*/
-		T & operator[](int);
+    /*
+    **	The bracket subscript operator functions similarly to the way a normal subscript
+    **	operator works except that entry [0] matches the first-in-line and entry
+    **	[Count-1] matches the last-in-line. This is ensured regardless of the actual position
+    **	of the object in the circular internal list.
+    */
+    T& operator[](int);
 
-		/*
-		**	This function will return a reference to the "head of the line" object.
-		*/
-		T & First(void);
+    /*
+    **	This function will return a reference to the "head of the line" object.
+    */
+    T& First(void);
 
-		/*
-		**	This function clears the list of objects.
-		*/
-		void Init(void);
+    /*
+    **	This function clears the list of objects.
+    */
+    void Init(void);
 
-		/*
-		**	This function discards the head-of-the-line object and advances all the remaining
-		**	objects up by one. Mnemonic: Imagine a broadway audition and the director yells
-		**	"NEXT!"
-		*/
-		int Next(void);
+    /*
+    **	This function discards the head-of-the-line object and advances all the remaining
+    **	objects up by one. Mnemonic: Imagine a broadway audition and the director yells
+    **	"NEXT!"
+    */
+    int Next(void);
 
-		/*
-		**	This will add an object to the tail of the line. If there is no more room to add
-		**	the object, then false will be returned.
-		*/
-		int Add(T const &);
+    /*
+    **	This will add an object to the tail of the line. If there is no more room to add
+    **	the object, then false will be returned.
+    */
+    int Add(T const&);
 
-		int Get_Head(void);
-		int Get_Tail(void);
-		T * Get_Array(void);
+    int Get_Head(void);
+    int Get_Tail(void);
+    T* Get_Array(void);
 
-	private:
-		int Head;								// Index of element in list the longest.
-		int Tail;								// Index where next new addition will go.
+private:
+    int Head; // Index of element in list the longest.
+    int Tail; // Index where next new addition will go.
 
-		T Array[size];							// Raw array of objects.
+    T Array[size]; // Raw array of objects.
 };
-
 
 /***********************************************************************************************
  * QueueClass<T,size>::QueueClass -- Default constructor for QueueClass objects.               *
@@ -134,12 +132,12 @@ class QueueClass
  * HISTORY:                                                                                    *
  *   12/09/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T, int size>
-inline QueueClass<T,size>::QueueClass(void) : Count(0)
+template <class T, int size>
+inline QueueClass<T, size>::QueueClass(void)
+    : Count(0)
 {
-	Init();
+    Init();
 }
-
 
 /***********************************************************************************************
  * QueueClass<T,size>::Init -- Initializes queue to empty state.                               *
@@ -155,14 +153,12 @@ inline QueueClass<T,size>::QueueClass(void) : Count(0)
  * HISTORY:                                                                                    *
  *   12/09/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T, int size>
-inline void QueueClass<T,size>::Init(void)
+template <class T, int size> inline void QueueClass<T, size>::Init(void)
 {
-	((int &)Count) = 0;
-	Head = 0;
-	Tail = 0;
+    ((int&)Count) = 0;
+    Head = 0;
+    Tail = 0;
 }
-
 
 /***********************************************************************************************
  * QueueClass<T,size>::Add -- Add object to queue.                                             *
@@ -179,18 +175,16 @@ inline void QueueClass<T,size>::Init(void)
  * HISTORY:                                                                                    *
  *   12/09/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T, int size>
-inline int QueueClass<T,size>::Add(T const &q)
+template <class T, int size> inline int QueueClass<T, size>::Add(T const& q)
 {
-	if (Count < size) {
-		Array[Tail] = q;
-		Tail = (Tail + 1) & (size-1);
-		((int &)Count) = Count + 1;
-		return(true);
-	}
-	return (false);
+    if (Count < size) {
+        Array[Tail] = q;
+        Tail = (Tail + 1) & (size - 1);
+        ((int&)Count) = Count + 1;
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * QueueClass<T,size>::Next -- Throws out the head of the line.                                *
@@ -209,16 +203,14 @@ inline int QueueClass<T,size>::Add(T const &q)
  * HISTORY:                                                                                    *
  *   12/09/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T, int size>
-inline int QueueClass<T,size>::Next(void)
+template <class T, int size> inline int QueueClass<T, size>::Next(void)
 {
-	if (Count) {
-		Head = (Head + 1) & (size-1);
-		((int &)Count) = Count - 1;
-	}
-	return (Count);
+    if (Count) {
+        Head = (Head + 1) & (size - 1);
+        ((int&)Count) = Count - 1;
+    }
+    return (Count);
 }
-
 
 /***********************************************************************************************
  * QueueClass<T,size>::operator[] -- Fetches reference to sub object in queue.                 *
@@ -240,12 +232,10 @@ inline int QueueClass<T,size>::Next(void)
  * HISTORY:                                                                                    *
  *   12/09/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T, int size>
-inline T & QueueClass<T,size>::operator[](int index)
+template <class T, int size> inline T& QueueClass<T, size>::operator[](int index)
 {
-	return Array[(Head + index) & (size-1)];
+    return Array[(Head + index) & (size - 1)];
 }
-
 
 /***********************************************************************************************
  * QueueClass<T,size>::First -- Fetches reference to first object in list.                     *
@@ -265,28 +255,24 @@ inline T & QueueClass<T,size>::operator[](int index)
  * HISTORY:                                                                                    *
  *   12/09/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T, int size>
-inline T & QueueClass<T,size>::First(void)
+template <class T, int size> inline T& QueueClass<T, size>::First(void)
 {
-	return Array[Head];
+    return Array[Head];
 }
 
-template<class T, int size>
-inline int QueueClass<T,size>::Get_Head(void)
+template <class T, int size> inline int QueueClass<T, size>::Get_Head(void)
 {
-	return Head;
+    return Head;
 }
 
-template<class T, int size>
-inline int QueueClass<T,size>::Get_Tail(void)
+template <class T, int size> inline int QueueClass<T, size>::Get_Tail(void)
 {
-	return Tail;
+    return Tail;
 }
 
-template<class T, int size>
-inline T * QueueClass<T,size>::Get_Array(void)
+template <class T, int size> inline T* QueueClass<T, size>::Get_Array(void)
 {
-	return Array;
+    return Array;
 }
 
 #endif

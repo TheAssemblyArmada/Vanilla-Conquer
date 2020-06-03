@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\shapebtn.cpv   2.17   16 Oct 1995 16:52:00   JOE_BOSTIC  $ */
@@ -34,9 +34,8 @@
  *   ShapeButtonClass::Draw_Me -- Renders the shape button's imagery.                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
+#include "function.h"
 #include "shapebtn.h"
-
 
 /***********************************************************************************************
  * ShapeButtonClass::ShapeButtonClass -- Default Constructor for a shape type button.          *
@@ -51,12 +50,11 @@
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-ShapeButtonClass::ShapeButtonClass(void) :
-	ToggleClass(0, 0, 0, 0, 0)
+ShapeButtonClass::ShapeButtonClass(void)
+    : ToggleClass(0, 0, 0, 0, 0)
 {
-	ReflectButtonState = false;
+    ReflectButtonState = false;
 }
-
 
 /***********************************************************************************************
  * ShapeButtonClass::ShapeButtonClass -- Constructor for a shape type button.                  *
@@ -81,25 +79,23 @@ ShapeButtonClass::ShapeButtonClass(void) :
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-ShapeButtonClass::ShapeButtonClass(unsigned id, void const * shape, int x, int y) :
-	ToggleClass(id, x, y, 0, 0)
+ShapeButtonClass::ShapeButtonClass(unsigned id, void const* shape, int x, int y)
+    : ToggleClass(id, x, y, 0, 0)
 {
-	Width = 0;
-	Height = 0;
-	ReflectButtonState = false;
-	Set_Shape(shape);
+    Width = 0;
+    Height = 0;
+    ReflectButtonState = false;
+    Set_Shape(shape);
 }
 
-
-void ShapeButtonClass::Set_Shape(void const * data)
+void ShapeButtonClass::Set_Shape(void const* data)
 {
-	ShapeData = data;
-	if (ShapeData) {
-		Width = Get_Build_Frame_Width(ShapeData);
-		Height = Get_Build_Frame_Height(ShapeData);
-	}
+    ShapeData = data;
+    if (ShapeData) {
+        Width = Get_Build_Frame_Width(ShapeData);
+        Height = Get_Build_Frame_Height(ShapeData);
+    }
 }
-
 
 /***********************************************************************************************
  * ShapeButtonClass::Draw_Me -- Renders the shape button's imagery.                            *
@@ -119,45 +115,42 @@ void ShapeButtonClass::Set_Shape(void const * data)
  *=============================================================================================*/
 int ShapeButtonClass::Draw_Me(int forced)
 {
-	if (ControlClass::Draw_Me(forced) && ShapeData) {
+    if (ControlClass::Draw_Me(forced) && ShapeData) {
 
-		/*
-		**	Hide the mouse.
-		*/
-		if (LogicPage == &SeenBuff) {
-			Conditional_Hide_Mouse(X, Y, X+Width-1, Y+Height-1);
-		}
+        /*
+        **	Hide the mouse.
+        */
+        if (LogicPage == &SeenBuff) {
+            Conditional_Hide_Mouse(X, Y, X + Width - 1, Y + Height - 1);
+        }
 
-		/*
-		**	Draw the body & set text color.
-		*/
-		int shapenum = 0;
-		if (IsDisabled) {
-			shapenum = DISABLED_SHAPE;
-		} else {
+        /*
+        **	Draw the body & set text color.
+        */
+        int shapenum = 0;
+        if (IsDisabled) {
+            shapenum = DISABLED_SHAPE;
+        } else {
 
-			if (!ReflectButtonState){
-				if (IsPressed) {
-					shapenum = DOWN_SHAPE;
-				} else {
-					shapenum = UP_SHAPE;
-				}
-			}else{
-				shapenum = IsOn;
-			}
-		}
-		CC_Draw_Shape(ShapeData, shapenum, X, Y, WINDOW_MAIN, SHAPE_NORMAL);
+            if (!ReflectButtonState) {
+                if (IsPressed) {
+                    shapenum = DOWN_SHAPE;
+                } else {
+                    shapenum = UP_SHAPE;
+                }
+            } else {
+                shapenum = IsOn;
+            }
+        }
+        CC_Draw_Shape(ShapeData, shapenum, X, Y, WINDOW_MAIN, SHAPE_NORMAL);
 
-		/*
-		**	Display the mouse.
-		*/
-		if (LogicPage == &SeenBuff) {
-			Conditional_Show_Mouse();
-		}
-		return(true);
-	}
-	return(false);
+        /*
+        **	Display the mouse.
+        */
+        if (LogicPage == &SeenBuff) {
+            Conditional_Show_Mouse();
+        }
+        return (true);
+    }
+    return (false);
 }
-
-
-

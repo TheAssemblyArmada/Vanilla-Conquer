@@ -1,18 +1,17 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
-
 
 /***********************************************************************************************
  ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
@@ -75,28 +74,23 @@
  *                                                                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#define	MAX_PROFILE_TIME	60*1		//1 minute(s) @ 14.4 Mb per hour
-#define	PROFILE_RATE		1000	//samples per sec (max 1000)
-
+#define MAX_PROFILE_TIME 60 * 1 // 1 minute(s) @ 14.4 Mb per hour
+#define PROFILE_RATE     1000   // samples per sec (max 1000)
 
 /*
  * Defines for choosing between the old and new profiler system
  *
-*/
+ */
 
-#define	OLD_PROFILE_SYSTEM	1
-#define	NEW_PROFILE_SYSTEM	2
+#define OLD_PROFILE_SYSTEM 1
+#define NEW_PROFILE_SYSTEM 2
 
 //#define	PROFILE_SYSTEM			OLD_PROFILE_SYSTEM
-#define	PROFILE_SYSTEM			NEW_PROFILE_SYSTEM
+#define PROFILE_SYSTEM NEW_PROFILE_SYSTEM
 
-
-
-extern "C"{
-	void __cdecl Profile_Init(void);
-	void __cdecl Profile_End(void);
-	void __cdecl Start_Profiler(void);
-	void __cdecl Stop_Profiler(void);
+extern "C" {
+void __cdecl Profile_Init(void);
+void __cdecl Profile_End(void);
+void __cdecl Start_Profiler(void);
+void __cdecl Stop_Profiler(void);
 }
-

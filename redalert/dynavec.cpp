@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/DYNAVEC.CPP 1     3/03/97 10:24a Joe_bostic $ */
@@ -38,17 +38,14 @@
  *   DynamicVectorClass<T>::Resize -- Changes size of a dynamic vector.    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #if (0)
-#include	"function.h"
+#include "function.h"
 #include "vector.h"
 #ifdef WINSOCK_IPX
-#include	"WSProto.h"
-#include	"WSPUDP.h"
-#endif	//WINSOCK_IPX
+#include "WSProto.h"
+#include "WSPUDP.h"
+#endif // WINSOCK_IPX
 //#include	<mem.h>
-#include	<stdio.h>
-
-
-
+#include <stdio.h>
 
 /***********************************************************************************************
  * DynamicVectorClass<T>::DynamicVectorClass -- Constructor for dynamic vector.                *
@@ -70,14 +67,13 @@
  * HISTORY:                                                                                    *
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-DynamicVectorClass<T>::DynamicVectorClass(unsigned size, T const * array)
-	: VectorClass<T>(size, array)
+template <class T>
+DynamicVectorClass<T>::DynamicVectorClass(unsigned size, T const* array)
+    : VectorClass<T>(size, array)
 {
-	GrowthStep = 10;
-	ActiveCount = 0;
+    GrowthStep = 10;
+    ActiveCount = 0;
 }
-
 
 /***********************************************************************************************
  * DynamicVectorClass<T>::Resize -- Changes the size of a dynamic vector.                      *
@@ -98,16 +94,15 @@ DynamicVectorClass<T>::DynamicVectorClass(unsigned size, T const * array)
  * HISTORY:                                                                                    *
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-int DynamicVectorClass<T>::Resize(unsigned newsize, T const * array)
+template <class T> int DynamicVectorClass<T>::Resize(unsigned newsize, T const* array)
 {
-	if (VectorClass<T>::Resize(newsize, array)) {
-		if (Length() < (unsigned)ActiveCount) ActiveCount = Length();
-		return(true);
-	}
-	return(false);
+    if (VectorClass<T>::Resize(newsize, array)) {
+        if (Length() < (unsigned)ActiveCount)
+            ActiveCount = Length();
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * DynamicVectorClass<T>::ID -- Find matching value in the dynamic vector.                     *
@@ -127,15 +122,14 @@ int DynamicVectorClass<T>::Resize(unsigned newsize, T const * array)
  * HISTORY:                                                                                    *
  *   03/13/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-int DynamicVectorClass<T>::ID(T const & object)
+template <class T> int DynamicVectorClass<T>::ID(T const& object)
 {
-	for (int index = 0; index < Count(); index++) {
-		if ((*this)[index] == object) return(index);
-	}
-	return(-1);
+    for (int index = 0; index < Count(); index++) {
+        if ((*this)[index] == object)
+            return (index);
+    }
+    return (-1);
 }
-
 
 /***********************************************************************************************
  * DynamicVectorClass<T>::Add -- Add an element to the vector.                                 *
@@ -154,36 +148,34 @@ int DynamicVectorClass<T>::ID(T const & object)
  * HISTORY:                                                                                    *
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-int DynamicVectorClass<T>::Add(T const & object)
+template <class T> int DynamicVectorClass<T>::Add(T const& object)
 {
-	if (ActiveCount >= Length()) {
-		if ((IsAllocated || !VectorMax) && GrowthStep > 0) {
-			if (!Resize(Length() + GrowthStep)) {
+    if (ActiveCount >= Length()) {
+        if ((IsAllocated || !VectorMax) && GrowthStep > 0) {
+            if (!Resize(Length() + GrowthStep)) {
 
-				/*
-				**	Failure to increase the size of the vector is an error condition.
-				**	Return with the error flag.
-				*/
-				return(false);
-			}
-		} else {
+                /*
+                **	Failure to increase the size of the vector is an error condition.
+                **	Return with the error flag.
+                */
+                return (false);
+            }
+        } else {
 
-			/*
-			**	Increasing the size of this vector is not allowed! Bail this
-			**	routine with the error code.
-			*/
-			return(false);
-		}
-	}
+            /*
+            **	Increasing the size of this vector is not allowed! Bail this
+            **	routine with the error code.
+            */
+            return (false);
+        }
+    }
 
-	/*
-	**	There is room for the new object now. Add it to the end of the object vector.
-	*/
-	(*this)[ActiveCount++] = object;
-	return(true);
+    /*
+    **	There is room for the new object now. Add it to the end of the object vector.
+    */
+    (*this)[ActiveCount++] = object;
+    return (true);
 }
-
 
 /***********************************************************************************************
  * DynamicVectorClass<T>::Add_Head -- Adds element to head of the list.                        *
@@ -200,41 +192,39 @@ int DynamicVectorClass<T>::Add(T const & object)
  * HISTORY:                                                                                    *
  *   09/21/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-int DynamicVectorClass<T>::Add_Head(T const & object)
+template <class T> int DynamicVectorClass<T>::Add_Head(T const& object)
 {
-	if (ActiveCount >= Length()) {
-		if ((IsAllocated || !VectorMax) && GrowthStep > 0) {
-			if (!Resize(Length() + GrowthStep)) {
+    if (ActiveCount >= Length()) {
+        if ((IsAllocated || !VectorMax) && GrowthStep > 0) {
+            if (!Resize(Length() + GrowthStep)) {
 
-				/*
-				**	Failure to increase the size of the vector is an error condition.
-				**	Return with the error flag.
-				*/
-				return(false);
-			}
-		} else {
+                /*
+                **	Failure to increase the size of the vector is an error condition.
+                **	Return with the error flag.
+                */
+                return (false);
+            }
+        } else {
 
-			/*
-			**	Increasing the size of this vector is not allowed! Bail this
-			**	routine with the error code.
-			*/
-			return(false);
-		}
-	}
+            /*
+            **	Increasing the size of this vector is not allowed! Bail this
+            **	routine with the error code.
+            */
+            return (false);
+        }
+    }
 
-	/*
-	**	There is room for the new object now. Add it to the end of the object vector.
-	*/
-	if (ActiveCount) {
-		memmove(&(*this)[1], &(*this)[0], ActiveCount * sizeof(T));
-	}
-	(*this)[0] = object;
-	ActiveCount++;
-//	(*this)[ActiveCount++] = object;
-	return(true);
+    /*
+    **	There is room for the new object now. Add it to the end of the object vector.
+    */
+    if (ActiveCount) {
+        memmove(&(*this)[1], &(*this)[0], ActiveCount * sizeof(T));
+    }
+    (*this)[0] = object;
+    ActiveCount++;
+    //	(*this)[ActiveCount++] = object;
+    return (true);
 }
-
 
 /***********************************************************************************************
  * DynamicVectorClass<T>::Delete -- Remove the specified object from the vector.               *
@@ -252,12 +242,10 @@ int DynamicVectorClass<T>::Add_Head(T const & object)
  * HISTORY:                                                                                    *
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-int DynamicVectorClass<T>::Delete(T const & object)
+template <class T> int DynamicVectorClass<T>::Delete(T const& object)
 {
-	return(Delete(ID(object)));
+    return (Delete(ID(object)));
 }
-
 
 /***********************************************************************************************
  * DynamicVectorClass<T>::Delete -- Deletes the specified index from the vector.               *
@@ -276,24 +264,23 @@ int DynamicVectorClass<T>::Delete(T const & object)
  * HISTORY:                                                                                    *
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-int DynamicVectorClass<T>::Delete(int index)
+template <class T> int DynamicVectorClass<T>::Delete(int index)
 {
-	if ((unsigned)index < ActiveCount) {
-		ActiveCount--;
+    if ((unsigned)index < ActiveCount) {
+        ActiveCount--;
 
-		/*
-		**	If there are any objects past the index that was deleted, copy those
-		**	objects down in order to fill the hole. A simple memory copy is
-		**	not sufficient since the vector could contain class objects that
-		**	need to use the assignment operator for movement.
-		*/
-		for (int i = index; i < ActiveCount; i++) {
-			(*this)[i] = (*this)[i+1];
-		}
-		return(true);
-	}
-	return(false);
+        /*
+        **	If there are any objects past the index that was deleted, copy those
+        **	objects down in order to fill the hole. A simple memory copy is
+        **	not sufficient since the vector could contain class objects that
+        **	need to use the assignment operator for movement.
+        */
+        for (int i = index; i < ActiveCount; i++) {
+            (*this)[i] = (*this)[i + 1];
+        }
+        return (true);
+    }
+    return (false);
 }
 
 /************************** end of dynavec.cpp *****************************/

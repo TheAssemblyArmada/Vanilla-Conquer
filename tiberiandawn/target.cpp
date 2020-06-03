@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\target.cpv   2.17   16 Oct 1995 16:51:06   JOE_BOSTIC  $ */
@@ -47,9 +47,8 @@
  *   Target_Legal -- Determines if the specified target is legal.                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-#include	"target.h"
-
+#include "function.h"
+#include "target.h"
 
 /***********************************************************************************************
  * As_Trigger -- Converts specified target into a trigger pointer.                             *
@@ -66,15 +65,14 @@
  * HISTORY:                                                                                    *
  *   07/08/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-TriggerClass * As_Trigger(TARGET target, bool check_active)
+TriggerClass* As_Trigger(TARGET target, bool check_active)
 {
-	TriggerClass* trigger = Is_Target_Trigger(target) ? Triggers.Raw_Ptr(Target_Value(target)) : NULL;
-	if (check_active && trigger != NULL && !trigger->IsActive) {
-		trigger = NULL;
-	}
-	return(trigger);
+    TriggerClass* trigger = Is_Target_Trigger(target) ? Triggers.Raw_Ptr(Target_Value(target)) : NULL;
+    if (check_active && trigger != NULL && !trigger->IsActive) {
+        trigger = NULL;
+    }
+    return (trigger);
 }
-
 
 /***********************************************************************************************
  * As_Team -- Converts a target number into a team pointer.                                    *
@@ -91,15 +89,14 @@ TriggerClass * As_Trigger(TARGET target, bool check_active)
  * HISTORY:                                                                                    *
  *   07/08/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-TeamClass * As_Team(TARGET target, bool check_active)
+TeamClass* As_Team(TARGET target, bool check_active)
 {
-	TeamClass* team = Is_Target_Team(target) ? Teams.Raw_Ptr(Target_Value(target)) : NULL;
-	if (check_active && team != NULL && !team->IsActive) {
-		team = NULL;
-	}
-	return(team);
+    TeamClass* team = Is_Target_Team(target) ? Teams.Raw_Ptr(Target_Value(target)) : NULL;
+    if (check_active && team != NULL && !team->IsActive) {
+        team = NULL;
+    }
+    return (team);
 }
-
 
 /***********************************************************************************************
  * As_TeamType -- Converts a target into a team type pointer.                                  *
@@ -116,11 +113,10 @@ TeamClass * As_Team(TARGET target, bool check_active)
  * HISTORY:                                                                                    *
  *   07/08/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-TeamTypeClass * As_TeamType(TARGET target)
+TeamTypeClass* As_TeamType(TARGET target)
 {
-	return(Is_Target_TeamType(target) ? TeamTypes.Raw_Ptr(Target_Value(target)) : NULL);
+    return (Is_Target_TeamType(target) ? TeamTypes.Raw_Ptr(Target_Value(target)) : NULL);
 }
-
 
 /***********************************************************************************************
  * As_Animation -- Converts target value into animation pointer.                               *
@@ -137,15 +133,14 @@ TeamTypeClass * As_TeamType(TARGET target)
  * HISTORY:                                                                                    *
  *   07/08/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-AnimClass * As_Animation(TARGET target, bool check_active)
+AnimClass* As_Animation(TARGET target, bool check_active)
 {
-	AnimClass* anim = Is_Target_Animation(target) ? Anims.Raw_Ptr(Target_Value(target)) : NULL;
-	if (check_active && anim != NULL && !anim->IsActive) {
-		anim = NULL;
-	}
-	return(anim);
+    AnimClass* anim = Is_Target_Animation(target) ? Anims.Raw_Ptr(Target_Value(target)) : NULL;
+    if (check_active && anim != NULL && !anim->IsActive) {
+        anim = NULL;
+    }
+    return (anim);
 }
-
 
 /***********************************************************************************************
  * As_Bullet -- Converts the target into a bullet pointer.                                     *
@@ -162,15 +157,14 @@ AnimClass * As_Animation(TARGET target, bool check_active)
  * HISTORY:                                                                                    *
  *   07/08/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-BulletClass * As_Bullet(TARGET target, bool check_active)
+BulletClass* As_Bullet(TARGET target, bool check_active)
 {
-	BulletClass* bullet = Is_Target_Bullet(target) ? Bullets.Raw_Ptr(Target_Value(target)) : NULL;
-	if (check_active && bullet != NULL && !bullet->IsActive) {
-		bullet = NULL;
-	}
-	return(bullet);
+    BulletClass* bullet = Is_Target_Bullet(target) ? Bullets.Raw_Ptr(Target_Value(target)) : NULL;
+    if (check_active && bullet != NULL && !bullet->IsActive) {
+        bullet = NULL;
+    }
+    return (bullet);
 }
-
 
 /***********************************************************************************************
  * As_Aircraft -- Converts the target value into an aircraft pointer.                          *
@@ -187,15 +181,14 @@ BulletClass * As_Bullet(TARGET target, bool check_active)
  * HISTORY:                                                                                    *
  *   08/27/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-AircraftClass * As_Aircraft(TARGET target, bool check_active)
+AircraftClass* As_Aircraft(TARGET target, bool check_active)
 {
-	AircraftClass* aircraft = Is_Target_Aircraft(target) ? Aircraft.Raw_Ptr(Target_Value(target)) : NULL;
-	if (check_active && aircraft != NULL && !aircraft->IsActive) {
-		aircraft = NULL;
-	}
-	return(aircraft);
+    AircraftClass* aircraft = Is_Target_Aircraft(target) ? Aircraft.Raw_Ptr(Target_Value(target)) : NULL;
+    if (check_active && aircraft != NULL && !aircraft->IsActive) {
+        aircraft = NULL;
+    }
+    return (aircraft);
 }
-
 
 /***********************************************************************************************
  * As_Techno -- Converts a target value into a TechnoClass pointer.                            *
@@ -213,16 +206,15 @@ AircraftClass * As_Aircraft(TARGET target, bool check_active)
  * HISTORY:                                                                                    *
  *   06/02/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-TechnoClass * As_Techno(TARGET target, bool check_active)
+TechnoClass* As_Techno(TARGET target, bool check_active)
 {
-	ObjectClass * obj = As_Object(target, check_active);
+    ObjectClass* obj = As_Object(target, check_active);
 
-	if (obj && obj->Is_Techno()) {
-		return(TechnoClass *)obj;
-	}
-	return(NULL);
+    if (obj && obj->Is_Techno()) {
+        return (TechnoClass*)obj;
+    }
+    return (NULL);
 }
-
 
 /***********************************************************************************************
  * As_Object -- Converts a target value into an object pointer.                                *
@@ -241,58 +233,57 @@ TechnoClass * As_Techno(TARGET target, bool check_active)
  * HISTORY:                                                                                    *
  *   05/27/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-ObjectClass * As_Object(TARGET target, bool check_active)
+ObjectClass* As_Object(TARGET target, bool check_active)
 {
-	int val = Target_Value(target);
-	ObjectClass * object = NULL;
+    int val = Target_Value(target);
+    ObjectClass* object = NULL;
 
-	switch (Target_Kind(target)) {
-		case KIND_INFANTRY:
-			object = Infantry.Raw_Ptr(val);
-			break;
+    switch (Target_Kind(target)) {
+    case KIND_INFANTRY:
+        object = Infantry.Raw_Ptr(val);
+        break;
 
-		case KIND_UNIT:
-			object = Units.Raw_Ptr(val);
-			break;
+    case KIND_UNIT:
+        object = Units.Raw_Ptr(val);
+        break;
 
-		case KIND_BUILDING:
-			object = Buildings.Raw_Ptr(val);
-			break;
+    case KIND_BUILDING:
+        object = Buildings.Raw_Ptr(val);
+        break;
 
-		case KIND_AIRCRAFT:
-			object = Aircraft.Raw_Ptr(val);
-			break;
+    case KIND_AIRCRAFT:
+        object = Aircraft.Raw_Ptr(val);
+        break;
 
-		case KIND_TERRAIN:
-			object = Terrains.Raw_Ptr(val);
-			break;
+    case KIND_TERRAIN:
+        object = Terrains.Raw_Ptr(val);
+        break;
 
-		case KIND_BULLET:
-			object = Bullets.Raw_Ptr(val);
-			break;
+    case KIND_BULLET:
+        object = Bullets.Raw_Ptr(val);
+        break;
 
-		case KIND_ANIMATION:
-			object = Anims.Raw_Ptr(val);
-			break;
+    case KIND_ANIMATION:
+        object = Anims.Raw_Ptr(val);
+        break;
 
-		default:
-			break;
-	}
+    default:
+        break;
+    }
 
-	/*
-	**	Special check to ensure that a target value that references an
-	**	invalid object will not be converted back into an object pointer.
-	**	This condition is rare, but could occur in a network game if the
-	**	object it refers to is destroyed between the time an event message
-	**	is sent and when it is received.
-	*/
-	if (check_active && object != NULL && !object->IsActive) {
-		object = NULL;
-	}
+    /*
+    **	Special check to ensure that a target value that references an
+    **	invalid object will not be converted back into an object pointer.
+    **	This condition is rare, but could occur in a network game if the
+    **	object it refers to is destroyed between the time an event message
+    **	is sent and when it is received.
+    */
+    if (check_active && object != NULL && !object->IsActive) {
+        object = NULL;
+    }
 
-	return(object);
+    return (object);
 }
-
 
 /***********************************************************************************************
  * As_Unit -- Converts a target value into a unit pointer.                                     *
@@ -310,15 +301,14 @@ ObjectClass * As_Object(TARGET target, bool check_active)
  * HISTORY:                                                                                    *
  *   05/27/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-UnitClass * As_Unit(TARGET target, bool check_active)
+UnitClass* As_Unit(TARGET target, bool check_active)
 {
-	UnitClass* unit = Is_Target_Unit(target) ? Units.Raw_Ptr(Target_Value(target)) : NULL;
-	if (check_active && unit != NULL && !unit->IsActive) {
-		unit = NULL;
-	}
-	return(unit);
+    UnitClass* unit = Is_Target_Unit(target) ? Units.Raw_Ptr(Target_Value(target)) : NULL;
+    if (check_active && unit != NULL && !unit->IsActive) {
+        unit = NULL;
+    }
+    return (unit);
 }
-
 
 /***********************************************************************************************
  * As_Infantry -- If the target is infantry, return a pointer to it.                           *
@@ -336,23 +326,21 @@ UnitClass * As_Unit(TARGET target, bool check_active)
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-InfantryClass * As_Infantry(TARGET target, bool check_active)
+InfantryClass* As_Infantry(TARGET target, bool check_active)
 {
-	InfantryClass* infantry = Is_Target_Infantry(target) ? Infantry.Raw_Ptr(Target_Value(target)) : NULL;
-	if (check_active && infantry != NULL && !infantry->IsActive) {
-		infantry = NULL;
-	}
-	return(infantry);
+    InfantryClass* infantry = Is_Target_Infantry(target) ? Infantry.Raw_Ptr(Target_Value(target)) : NULL;
+    if (check_active && infantry != NULL && !infantry->IsActive) {
+        infantry = NULL;
+    }
+    return (infantry);
 }
-
 
 #ifdef NEVER
-TerrainClass * As_Terrain(TARGET target)
+TerrainClass* As_Terrain(TARGET target)
 {
-	return(Is_Target_Terrain(target) ? &Terrains[Target_Value(target)] : NULL);
+    return (Is_Target_Terrain(target) ? &Terrains[Target_Value(target)] : NULL);
 }
 #endif
-
 
 /***********************************************************************************************
  * As_Building -- Converts a target value into a building object pointer.                      *
@@ -369,15 +357,14 @@ TerrainClass * As_Terrain(TARGET target)
  * HISTORY:                                                                                    *
  *   05/27/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-BuildingClass * As_Building(TARGET target, bool check_active)
+BuildingClass* As_Building(TARGET target, bool check_active)
 {
-	BuildingClass* building = Is_Target_Building(target) ? Buildings.Raw_Ptr(Target_Value(target)) : NULL;
-	if (check_active && building != NULL && !building->IsActive) {
-		building = NULL;
-	}
-	return(building);
+    BuildingClass* building = Is_Target_Building(target) ? Buildings.Raw_Ptr(Target_Value(target)) : NULL;
+    if (check_active && building != NULL && !building->IsActive) {
+        building = NULL;
+    }
+    return (building);
 }
-
 
 /***********************************************************************************************
  * Target_Legal -- Determines if the specified target is legal.                                *
@@ -398,15 +385,15 @@ BuildingClass * As_Building(TARGET target, bool check_active)
  *=============================================================================================*/
 bool Target_Legal(TARGET target)
 {
-	if (target == TARGET_NONE) return(false);
+    if (target == TARGET_NONE)
+        return (false);
 
-	ObjectClass * obj = As_Object(target, false);
-	if (obj) {
-		return(obj->IsActive);
-	}
-	return(true);
+    ObjectClass* obj = As_Object(target, false);
+    if (obj) {
+        return (obj->IsActive);
+    }
+    return (true);
 }
-
 
 /***********************************************************************************************
  * As_Cell -- Converts a target value into a cell number.                                      *
@@ -425,9 +412,8 @@ bool Target_Legal(TARGET target)
  *=============================================================================================*/
 CELL As_Cell(TARGET target)
 {
-	return(Coord_Cell(As_Coord(target)));
+    return (Coord_Cell(As_Coord(target)));
 }
-
 
 /***********************************************************************************************
  * As_Coord -- Converts a target value into a coordinate value.                                *
@@ -447,42 +433,41 @@ CELL As_Cell(TARGET target)
  *=============================================================================================*/
 COORDINATE As_Coord(TARGET target)
 {
-	if (Target_Legal(target)) {
-		/*
-		**	Cell target values are handled as a special case. The value of the target number is
-		**	actually the cell index number.
-		*/
-		if (Is_Target_Cell(target)) {
-			return(Cell_Coord((CELL)Target_Value(target)));
-		}
+    if (Target_Legal(target)) {
+        /*
+        **	Cell target values are handled as a special case. The value of the target number is
+        **	actually the cell index number.
+        */
+        if (Is_Target_Cell(target)) {
+            return (Cell_Coord((CELL)Target_Value(target)));
+        }
 
-		/*
-		**	Normal targets correspond to game objects. Fetch the object pointer and then ask it
-		**	for the center coordinate. Return the center coordinate as the target's coordinate.
-		*/
-		ObjectClass * obj = As_Object(target);
-		if (obj) {
+        /*
+        **	Normal targets correspond to game objects. Fetch the object pointer and then ask it
+        **	for the center coordinate. Return the center coordinate as the target's coordinate.
+        */
+        ObjectClass* obj = As_Object(target);
+        if (obj) {
 
-			/*
-			** If this is invalid memory or the object is dead then return 0
-			** This is a kludge to fix the problem of team target objects being assigned after
-			** the object is already destroyed - 1/15/97 3:13PM
-			*/
-			if (IsBadReadPtr ((void*)obj, sizeof (ObjectClass) ) || !obj->IsActive){
-//OutputDebugString ("C&C95 - As_Coord called for invalid target object\m");
-				return(0x00000000L);
-			}
+            /*
+            ** If this is invalid memory or the object is dead then return 0
+            ** This is a kludge to fix the problem of team target objects being assigned after
+            ** the object is already destroyed - 1/15/97 3:13PM
+            */
+            if (IsBadReadPtr((void*)obj, sizeof(ObjectClass)) || !obj->IsActive) {
+                // OutputDebugString ("C&C95 - As_Coord called for invalid target object\m");
+                return (0x00000000L);
+            }
 
-			return(obj->Target_Coord());
-		}
-	}
+            return (obj->Target_Coord());
+        }
+    }
 
-	/*
-	**	An unrecognized target value results in a null coordinate value.
-	*/
-	return(0x00000000L);
+    /*
+    **	An unrecognized target value results in a null coordinate value.
+    */
+    return (0x00000000L);
 }
-
 
 /***********************************************************************************************
  * As_Movement_Coord -- Fetches coordinate if trying to move to this target.                   *
@@ -503,27 +488,27 @@ COORDINATE As_Coord(TARGET target)
  *=============================================================================================*/
 COORDINATE As_Movement_Coord(TARGET target)
 {
-	if (Target_Legal(target)) {
-		/*
-		**	Cell target values are handled as a special case. The value of the target number is
-		**	actually the cell index number.
-		*/
-		if (Is_Target_Cell(target)) {
-			return(Cell_Coord((CELL)Target_Value(target)));
-		}
+    if (Target_Legal(target)) {
+        /*
+        **	Cell target values are handled as a special case. The value of the target number is
+        **	actually the cell index number.
+        */
+        if (Is_Target_Cell(target)) {
+            return (Cell_Coord((CELL)Target_Value(target)));
+        }
 
-		/*
-		**	Normal targets correspond to game objects. Fetch the object pointer and then ask it
-		**	for the center coordinate. Return the center coordinate as the target's coordinate.
-		*/
-		ObjectClass * obj = As_Object(target);
-		if (obj) {
-			return(obj->Docking_Coord());
-		}
-	}
+        /*
+        **	Normal targets correspond to game objects. Fetch the object pointer and then ask it
+        **	for the center coordinate. Return the center coordinate as the target's coordinate.
+        */
+        ObjectClass* obj = As_Object(target);
+        if (obj) {
+            return (obj->Docking_Coord());
+        }
+    }
 
-	/*
-	**	An unrecognized target value results in a null coordinate value.
-	*/
-	return(0x00000000L);
+    /*
+    **	An unrecognized target value results in a null coordinate value.
+    */
+    return (0x00000000L);
 }

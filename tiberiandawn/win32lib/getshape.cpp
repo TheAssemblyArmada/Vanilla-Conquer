@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /***************************************************************************
@@ -44,8 +44,7 @@
 ********************************* Includes **********************************
 */
 #include "wwstd.h"
-#include	"shape.h"
-
+#include "shape.h"
 
 /***************************************************************************
  * Get_Shape_Size -- Fetch the size of the shape in memory.                *
@@ -66,23 +65,22 @@
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int cdecl Get_Shape_Size(VOID const *shape)
+int cdecl Get_Shape_Size(VOID const* shape)
 {
-	Shape_Type *shp = (Shape_Type *)shape;
+    Shape_Type* shp = (Shape_Type*)shape;
 
-	/*
-	------------------------- Return if NULL pointer -------------------------
-	*/
-	if (!shape) 
-		return(0);
+    /*
+    ------------------------- Return if NULL pointer -------------------------
+    */
+    if (!shape)
+        return (0);
 
-	/*
-	-------------------------- Returns shape's size --------------------------
-	*/
-	return (shp->ShapeSize);
+    /*
+    -------------------------- Returns shape's size --------------------------
+    */
+    return (shp->ShapeSize);
 
-}	/* end of Get_Shape_Size */
-
+} /* end of Get_Shape_Size */
 
 /***************************************************************************
  * Get_Shape_Uncomp_Size -- gets shape's uncompressed size in bytes			*
@@ -101,14 +99,13 @@ int cdecl Get_Shape_Size(VOID const *shape)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int Get_Shape_Uncomp_Size(VOID const *shape)
+int Get_Shape_Uncomp_Size(VOID const* shape)
 {
-	Shape_Type *shp = (Shape_Type *)shape;
+    Shape_Type* shp = (Shape_Type*)shape;
 
-	return (shp->DataLength);
+    return (shp->DataLength);
 
-}	/* end of Get_Shape_Uncomp_Size */
-
+} /* end of Get_Shape_Uncomp_Size */
 
 /***************************************************************************
  * Get_Shape_Data -- retrieves a shape's special prefix data					*
@@ -134,17 +131,16 @@ int Get_Shape_Uncomp_Size(VOID const *shape)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-WORD cdecl Get_Shape_Data(VOID const *shape, WORD data)
+WORD cdecl Get_Shape_Data(VOID const* shape, WORD data)
 {
-	WORD *word_ptr = (WORD *)shape;
-	WORD retval;
+    WORD* word_ptr = (WORD*)shape;
+    WORD retval;
 
-	retval = *(word_ptr - (data+1));
+    retval = *(word_ptr - (data + 1));
 
-	return (retval);
+    return (retval);
 
-}	/* end of Get_Shape_Data */
-
+} /* end of Get_Shape_Data */
 
 /***************************************************************************
  * Extract_Shape_Count -- returns # of shapes in the given shape block		*
@@ -166,14 +162,13 @@ WORD cdecl Get_Shape_Data(VOID const *shape, WORD data)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int cdecl Extract_Shape_Count(VOID const *buffer)
+int cdecl Extract_Shape_Count(VOID const* buffer)
 {
-	ShapeBlock_Type *block = (ShapeBlock_Type *)buffer;
+    ShapeBlock_Type* block = (ShapeBlock_Type*)buffer;
 
-	return (block->NumShapes);
+    return (block->NumShapes);
 
-}	/* end of Extract_Shape_Count */
-
+} /* end of Extract_Shape_Count */
 
 /***************************************************************************
  * Extract_Shape -- Gets pointer to shape in given shape block					*
@@ -193,25 +188,24 @@ int cdecl Extract_Shape_Count(VOID const *buffer)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-VOID * cdecl Extract_Shape(VOID const *buffer, int shape)
+VOID* cdecl Extract_Shape(VOID const* buffer, int shape)
 {
-	ShapeBlock_Type *block = (ShapeBlock_Type*) buffer;
-	//int numshapes;		// Number of shapes
-	long offset;			// Offset of shape data, from start of block
-	char *bytebuf = (char*) buffer;
+    ShapeBlock_Type* block = (ShapeBlock_Type*)buffer;
+    // int numshapes;		// Number of shapes
+    long offset; // Offset of shape data, from start of block
+    char* bytebuf = (char*)buffer;
 
-	/*
-	----------------------- Return if invalid argument -----------------------
-	*/
-	if (!buffer || shape < 0 || shape >= block->NumShapes)
-		return(NULL);
+    /*
+    ----------------------- Return if invalid argument -----------------------
+    */
+    if (!buffer || shape < 0 || shape >= block->NumShapes)
+        return (NULL);
 
-	offset = block->Offsets[shape];
+    offset = block->Offsets[shape];
 
-	return(bytebuf + 2 + offset);
+    return (bytebuf + 2 + offset);
 
-}	/* end of Extract_Shape */
-
+} /* end of Extract_Shape */
 
 /***************************************************************************
  * Get_Shape_Width -- gets shape width in pixels									*
@@ -230,14 +224,13 @@ VOID * cdecl Extract_Shape(VOID const *buffer, int shape)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int Get_Shape_Width(VOID const *shape)
+int Get_Shape_Width(VOID const* shape)
 {
-	Shape_Type *shp = (Shape_Type *)shape;
+    Shape_Type* shp = (Shape_Type*)shape;
 
-	return (shp->Width);
+    return (shp->Width);
 
-}	/* end of Get_Shape_Width */
-
+} /* end of Get_Shape_Width */
 
 /***************************************************************************
  * Get_Shape_Height -- gets shape height in pixels									*
@@ -256,14 +249,13 @@ int Get_Shape_Width(VOID const *shape)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int Get_Shape_Height(VOID const *shape)
+int Get_Shape_Height(VOID const* shape)
 {
-	Shape_Type *shp = (Shape_Type *)shape;
+    Shape_Type* shp = (Shape_Type*)shape;
 
-	return (shp->Height);
+    return (shp->Height);
 
-}	/* end of Get_Shape_Height */
-
+} /* end of Get_Shape_Height */
 
 /***************************************************************************
  * Set_Shape_Height -- modifies shape's height										*
@@ -287,18 +279,17 @@ int Get_Shape_Height(VOID const *shape)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int cdecl Set_Shape_Height(VOID const *shape, WORD newheight)
+int cdecl Set_Shape_Height(VOID const* shape, WORD newheight)
 {
-	Shape_Type *shp = (Shape_Type *)shape;
-	WORD oldheight;
+    Shape_Type* shp = (Shape_Type*)shape;
+    WORD oldheight;
 
-	oldheight = shp->Height;
-	shp->Height = newheight;
+    oldheight = shp->Height;
+    shp->Height = newheight;
 
-	return(oldheight);
+    return (oldheight);
 
-}	/* end of Set_Shape_Height */
-
+} /* end of Set_Shape_Height */
 
 /***************************************************************************
  * Restore_Shape_Height -- restores a shape to its original height			*
@@ -316,18 +307,17 @@ int cdecl Set_Shape_Height(VOID const *shape, WORD newheight)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int cdecl Restore_Shape_Height(VOID *shape)
+int cdecl Restore_Shape_Height(VOID* shape)
 {
-	Shape_Type *shp = (Shape_Type *)shape;
-	WORD oldheight;
+    Shape_Type* shp = (Shape_Type*)shape;
+    WORD oldheight;
 
-	oldheight = shp->Height;
-	shp->Height = shp->OriginalHeight;
+    oldheight = shp->Height;
+    shp->Height = shp->OriginalHeight;
 
-	return(oldheight);
+    return (oldheight);
 
-}	/* end of Restore_Shape_Height */
-
+} /* end of Restore_Shape_Height */
 
 /***************************************************************************
  * Get_Shape_Original_Height -- gets shape's unmodified height					*
@@ -346,13 +336,12 @@ int cdecl Restore_Shape_Height(VOID *shape)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int Get_Shape_Original_Height(VOID const *shape)
+int Get_Shape_Original_Height(VOID const* shape)
 {
-	Shape_Type *shp = (Shape_Type *)shape;
-	
-	return (shp->OriginalHeight);
+    Shape_Type* shp = (Shape_Type*)shape;
 
-}	/* end of Get_Shape_Original_Height */
+    return (shp->OriginalHeight);
 
+} /* end of Get_Shape_Original_Height */
 
 /************************* end of getshape.cpp *****************************/

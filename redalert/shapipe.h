@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/SHAPIPE.H 1     3/03/97 10:25a Joe_bostic $ */
@@ -32,12 +32,11 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #ifndef SHAPIPE_H
 #define SHAPIPE_H
 
-#include	"pipe.h"
-#include	"sha.h"
+#include "pipe.h"
+#include "sha.h"
 
 /*
 **	This class serves as a pipe that generates a Secure Hash from the data stream that flows
@@ -45,19 +44,21 @@
 */
 class SHAPipe : public Pipe
 {
-	public:
-		SHAPipe(void) {}
-		virtual int Put(void const * source, int slen);
+public:
+    SHAPipe(void)
+    {
+    }
+    virtual int Put(void const* source, int slen);
 
-		// Fetch the SHA hash value (stored in result buffer -- 20 bytes long).
-		int Result(void * result) const;
+    // Fetch the SHA hash value (stored in result buffer -- 20 bytes long).
+    int Result(void* result) const;
 
-	protected:
-		SHAEngine SHA;
+protected:
+    SHAEngine SHA;
 
-	private:
-		SHAPipe(SHAPipe & rvalue);
-		SHAPipe & operator = (SHAPipe const & pipe);
+private:
+    SHAPipe(SHAPipe& rvalue);
+    SHAPipe& operator=(SHAPipe const& pipe);
 };
 
 #endif

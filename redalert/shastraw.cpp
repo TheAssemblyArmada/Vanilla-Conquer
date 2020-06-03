@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/SHASTRAW.CPP 1     3/03/97 10:25a Joe_bostic $ */
@@ -34,9 +34,7 @@
  *   SHAStraw::Result -- Fetches the current SHA digest.                                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#include	"shastraw.h"
-
+#include "shastraw.h"
 
 /***********************************************************************************************
  * SHAStraw::Get -- Fetch data from the straw and process the SHA with the data.               *
@@ -58,17 +56,16 @@
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int SHAStraw::Get(void * source, int slen)
+int SHAStraw::Get(void* source, int slen)
 {
-	if (source == NULL || slen < 1) {
-		return(0);
-	}
+    if (source == NULL || slen < 1) {
+        return (0);
+    }
 
-	int counter = Straw::Get(source, slen);
-	SHA.Hash(source, counter);
-	return(counter);
+    int counter = Straw::Get(source, slen);
+    SHA.Hash(source, counter);
+    return (counter);
 }
-
 
 /***********************************************************************************************
  * SHAStraw::Result -- Fetches the current SHA digest.                                         *
@@ -87,7 +84,7 @@ int SHAStraw::Get(void * source, int slen)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int SHAStraw::Result(void * result) const
+int SHAStraw::Result(void* result) const
 {
-	return(SHA.Result(result));
+    return (SHA.Result(result));
 }

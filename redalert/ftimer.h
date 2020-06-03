@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/FTIMER.H 1     3/03/97 10:24a Joe_bostic $ */
@@ -55,7 +55,6 @@
 #ifndef FTIMER_H
 #define FTIMER_H
 
-
 /*
 **	The "bool" integral type was defined by the C++ committee in
 **	November of '94. Until the compiler supports this, use the following
@@ -64,11 +63,14 @@
 #ifndef __BORLANDC__
 #ifndef TRUE_FALSE_DEFINED
 #define TRUE_FALSE_DEFINED
-enum {false=0,true=1};
+enum
+{
+    false = 0,
+    true = 1
+};
 typedef int bool;
 #endif
 #endif
-
 
 /**********************************************************************
 **	This class is solely used as a parameter to a constructor that does
@@ -81,12 +83,12 @@ typedef int bool;
 */
 #ifndef NOINITCLASS
 #define NOINITCLASS
-struct NoInitClass {
-	public:
-		void operator () (void) const {};
+struct NoInitClass
+{
+public:
+    void operator()(void) const {};
 };
 #endif
-
 
 /*
 **	This is a timer class that watches a constant rate timer (specified by the parameter
@@ -96,36 +98,33 @@ struct NoInitClass {
 **	long that automatically advances at the speed of the timer class object controlling it.
 */
 // Let lint know that non-virtual destructor is OK for this class.
-//lint -esym(1509,BasicTimerClass)
-template<class T>
-class BasicTimerClass {
- 	public:
-		// Constructor allows assignment as if class was integral 'long' type.
-		BasicTimerClass(unsigned long set=0);
-		BasicTimerClass(NoInitClass const & );
+// lint -esym(1509,BasicTimerClass)
+template <class T> class BasicTimerClass
+{
+public:
+    // Constructor allows assignment as if class was integral 'long' type.
+    BasicTimerClass(unsigned long set = 0);
+    BasicTimerClass(NoInitClass const&);
 
-		~BasicTimerClass(void);
+    ~BasicTimerClass(void);
 
-		// Fetch current value of timer.
-		unsigned long Value(void) const;
+    // Fetch current value of timer.
+    unsigned long Value(void) const;
 
-		// Conversion operator to allow consistent treatment with integral types.
-		operator unsigned long(void) const;
+    // Conversion operator to allow consistent treatment with integral types.
+    operator unsigned long(void) const;
 
-		// Function operator to allow timer object definition to be cascaded.
-		unsigned long operator () (void) const;
+    // Function operator to allow timer object definition to be cascaded.
+    unsigned long operator()(void) const;
 
-	protected:
-		T Timer;			// Timer regulator (ticks at constant rate).
-		unsigned long Started;	// Time started.
+protected:
+    T Timer;               // Timer regulator (ticks at constant rate).
+    unsigned long Started; // Time started.
 };
 
-
-template<class T>
-inline BasicTimerClass<T>::BasicTimerClass(NoInitClass const & )
+template <class T> inline BasicTimerClass<T>::BasicTimerClass(NoInitClass const&)
 {
 }
-
 
 /***********************************************************************************************
  * BasicTimerClass<T>::BasicTimerClass -- Constructor for basic timer class.                   *
@@ -143,14 +142,13 @@ inline BasicTimerClass<T>::BasicTimerClass(NoInitClass const & )
  * HISTORY:                                                                                    *
  *   02/05/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-//lint -esym(1403,BasicTimerClass<class FrameTimerClass>::Timer)
-//lint -esym(1403,BasicTimerClass<class SystemTimerClass>::Timer)
-template<class T>
-inline BasicTimerClass<T>::BasicTimerClass(unsigned long set) :
-	Started(Timer()-set)
+// lint -esym(1403,BasicTimerClass<class FrameTimerClass>::Timer)
+// lint -esym(1403,BasicTimerClass<class SystemTimerClass>::Timer)
+template <class T>
+inline BasicTimerClass<T>::BasicTimerClass(unsigned long set)
+    : Started(Timer() - set)
 {
 }
-
 
 /***********************************************************************************************
  * BasicTimerClass<T>::~BasicTimerClass -- Destructor for basic timer object.                  *
@@ -166,18 +164,14 @@ inline BasicTimerClass<T>::BasicTimerClass(unsigned long set) :
  * HISTORY:                                                                                    *
  *   02/05/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-inline BasicTimerClass<T>::~BasicTimerClass(void)
+template <class T> inline BasicTimerClass<T>::~BasicTimerClass(void)
 {
 }
 
-
-template<class T>
-inline unsigned long BasicTimerClass<T>::Value(void) const
+template <class T> inline unsigned long BasicTimerClass<T>::Value(void) const
 {
-	return(Timer()-Started);
+    return (Timer() - Started);
 }
-
 
 /***********************************************************************************************
  * BasicTimerClass<T>::operator long -- Conversion to long operator.                           *
@@ -195,12 +189,10 @@ inline unsigned long BasicTimerClass<T>::Value(void) const
  * HISTORY:                                                                                    *
  *   02/05/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-inline BasicTimerClass<T>::operator unsigned long(void) const
+template <class T> inline BasicTimerClass<T>::operator unsigned long(void) const
 {
-	return(Timer()-Started);
+    return (Timer() - Started);
 }
-
 
 /***********************************************************************************************
  * BasicTimerClass<T>::operator () -- Function operator for timer object.                      *
@@ -218,12 +210,10 @@ inline BasicTimerClass<T>::operator unsigned long(void) const
  * HISTORY:                                                                                    *
  *   02/05/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-inline unsigned long BasicTimerClass<T>::operator () (void) const
+template <class T> inline unsigned long BasicTimerClass<T>::operator()(void) const
 {
-	return(Timer()-Started);
+    return (Timer() - Started);
 }
-
 
 /*
 **	This timer class functions similarly to the basic timer class. In addition to the
@@ -231,44 +221,42 @@ inline unsigned long BasicTimerClass<T>::operator () (void) const
 **	will. If you have no need to start or stop the timer, then use the basic timer
 **	class instead.
 */
-template<class T>
-class TTimerClass : public BasicTimerClass<T> {
- 	public:
-		// Constructor allows assignment as if class was integral 'long' type.
-		TTimerClass(unsigned long set=0);
-		TTimerClass(NoInitClass const & x);
+template <class T> class TTimerClass : public BasicTimerClass<T>
+{
+public:
+    // Constructor allows assignment as if class was integral 'long' type.
+    TTimerClass(unsigned long set = 0);
+    TTimerClass(NoInitClass const& x);
 
-		~TTimerClass(void) {};
+    ~TTimerClass(void){};
 
-		// Fetches current value of timer.
-		unsigned long Value(void) const;
+    // Fetches current value of timer.
+    unsigned long Value(void) const;
 
-		// Conversion operator to allow consistent treatment with integral types.
-		operator unsigned long(void) const;
+    // Conversion operator to allow consistent treatment with integral types.
+    operator unsigned long(void) const;
 
-		// Function operator to allow timer object definition to be cascaded.
-		unsigned long operator () (void) const;
+    // Function operator to allow timer object definition to be cascaded.
+    unsigned long operator()(void) const;
 
-		// Stops (pauses) the timer.
-		void Stop(void);
+    // Stops (pauses) the timer.
+    void Stop(void);
 
-		// Starts (resumes) the timer.
-		void Start(void);
+    // Starts (resumes) the timer.
+    void Start(void);
 
-		// Queries whether the timer is currently active.
-		bool Is_Active(void) const;
+    // Queries whether the timer is currently active.
+    bool Is_Active(void) const;
 
-	private:
-		unsigned long Accumulated;				//	Total accumulated ticks.
+private:
+    unsigned long Accumulated; //	Total accumulated ticks.
 };
 
-
-template<class T>
-inline TTimerClass<T>::TTimerClass(NoInitClass const & x) :
-	BasicTimerClass<T>(x)
+template <class T>
+inline TTimerClass<T>::TTimerClass(NoInitClass const& x)
+    : BasicTimerClass<T>(x)
 {
 }
-
 
 /***********************************************************************************************
  * TTimerClass<T>::TTimerClass -- Constructor for timer class object.                          *
@@ -286,13 +274,12 @@ inline TTimerClass<T>::TTimerClass(NoInitClass const & x) :
  * HISTORY:                                                                                    *
  *   02/05/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-inline TTimerClass<T>::TTimerClass(unsigned long set) :
-	BasicTimerClass<T>(set),
-	Accumulated(0)
+template <class T>
+inline TTimerClass<T>::TTimerClass(unsigned long set)
+    : BasicTimerClass<T>(set)
+    , Accumulated(0)
 {
 }
-
 
 /***********************************************************************************************
  * TTimerClass<T>::Value -- Returns with the current value of the timer.                       *
@@ -310,16 +297,14 @@ inline TTimerClass<T>::TTimerClass(unsigned long set) :
  * HISTORY:                                                                                    *
  *   07/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-inline unsigned long TTimerClass<T>::Value(void) const
+template <class T> inline unsigned long TTimerClass<T>::Value(void) const
 {
-	unsigned long value = Accumulated;
-	if (Started != 0xFFFFFFFFU) {
-		value += BasicTimerClass<T>::Value();
-	}
-	return(value);
+    unsigned long value = Accumulated;
+    if (Started != 0xFFFFFFFFU) {
+        value += BasicTimerClass<T>::Value();
+    }
+    return (value);
 }
-
 
 /***********************************************************************************************
  * TTimerClass<T>::operator long -- Conversion operator for timer object.                      *
@@ -338,16 +323,14 @@ inline unsigned long TTimerClass<T>::Value(void) const
  * HISTORY:                                                                                    *
  *   02/05/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-inline TTimerClass<T>::operator unsigned long(void) const
+template <class T> inline TTimerClass<T>::operator unsigned long(void) const
 {
-	unsigned long value = Accumulated;
-	if (Started != 0xFFFFFFFFU) {
-		value += BasicTimerClass<T>::Value();
-	}
-	return(value);
+    unsigned long value = Accumulated;
+    if (Started != 0xFFFFFFFFU) {
+        value += BasicTimerClass<T>::Value();
+    }
+    return (value);
 }
-
 
 /***********************************************************************************************
  * TTimerClass<T>::operator () -- Function operator for timer object.                          *
@@ -366,16 +349,14 @@ inline TTimerClass<T>::operator unsigned long(void) const
  * HISTORY:                                                                                    *
  *   02/05/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-inline unsigned long TTimerClass<T>::operator () (void) const
+template <class T> inline unsigned long TTimerClass<T>::operator()(void) const
 {
-	unsigned long value = Accumulated;
-	if (Started != 0xFFFFFFFFU) {
-		value += BasicTimerClass<T>::Value();
-	}
-	return(value);
+    unsigned long value = Accumulated;
+    if (Started != 0xFFFFFFFFU) {
+        value += BasicTimerClass<T>::Value();
+    }
+    return (value);
 }
-
 
 /***********************************************************************************************
  * TTimerClass<T>::Stop -- Stops the current timer from incrementing.                          *
@@ -393,15 +374,13 @@ inline unsigned long TTimerClass<T>::operator () (void) const
  * HISTORY:                                                                                    *
  *   02/05/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-void TTimerClass<T>::Stop(void)
+template <class T> void TTimerClass<T>::Stop(void)
 {
-	if (Started != 0xFFFFFFFFU) {
-		Accumulated += BasicTimerClass<T>::operator unsigned long();
-		Started = 0xFFFFFFFFU;
-	}
+    if (Started != 0xFFFFFFFFU) {
+        Accumulated += BasicTimerClass<T>::operator unsigned long();
+        Started = 0xFFFFFFFFU;
+    }
 }
-
 
 /***********************************************************************************************
  * TTimerClass<T>::Start -- Starts (resumes) a stopped timer.                                  *
@@ -417,14 +396,12 @@ void TTimerClass<T>::Stop(void)
  * HISTORY:                                                                                    *
  *   02/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-void TTimerClass<T>::Start(void)
+template <class T> void TTimerClass<T>::Start(void)
 {
-	if (Started == 0xFFFFFFFFU) {
-		Started = Timer();
-	}
+    if (Started == 0xFFFFFFFFU) {
+        Started = Timer();
+    }
 }
-
 
 /***********************************************************************************************
  * TTimerClass<T>::Is_Active -- Checks to see if the timer is counting.                        *
@@ -442,12 +419,10 @@ void TTimerClass<T>::Start(void)
  * HISTORY:                                                                                    *
  *   02/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-inline bool TTimerClass<T>::Is_Active(void) const
+template <class T> inline bool TTimerClass<T>::Is_Active(void) const
 {
-	return(Started != 0xFFFFFFFFU);
+    return (Started != 0xFFFFFFFFU);
 }
-
 
 /*
 **	This timer counts down from the specified (or constructed) value down towards zero.
@@ -456,47 +431,49 @@ inline bool TTimerClass<T>::Is_Active(void) const
 **	count down timer is one that has value of zero. You can treat this class object as if it
 **	were an integral "magic" long that automatically counts down toward zero.
 */
-template<class T>
-class CDTimerClass : public BasicTimerClass<T> {
-	public:
-		// Constructor allows assignment as if class was integral 'long' type.
-		CDTimerClass(unsigned long set=0);
-		CDTimerClass(NoInitClass const & x);
+template <class T> class CDTimerClass : public BasicTimerClass<T>
+{
+public:
+    // Constructor allows assignment as if class was integral 'long' type.
+    CDTimerClass(unsigned long set = 0);
+    CDTimerClass(NoInitClass const& x);
 
-		~CDTimerClass(void);
+    ~CDTimerClass(void);
 
-		// Fetches current value of count down timer.
-		unsigned long Value(void) const;
+    // Fetches current value of count down timer.
+    unsigned long Value(void) const;
 
-		// Conversion operator to allow consistent treatment with integral types.
-		operator unsigned long(void) const;
+    // Conversion operator to allow consistent treatment with integral types.
+    operator unsigned long(void) const;
 
-		// Function operator to allow timer object definition to be cascaded.
-		unsigned long operator () (void) const;
+    // Function operator to allow timer object definition to be cascaded.
+    unsigned long operator()(void) const;
 
-		// Stops (pauses) the timer.
-		void Stop(void);
+    // Stops (pauses) the timer.
+    void Stop(void);
 
-		// Starts (resumes) the timer.
-		void Start(void);
+    // Starts (resumes) the timer.
+    void Start(void);
 
-		// Queries whether the timer is currently active.
-		bool Is_Active(void) const;
+    // Queries whether the timer is currently active.
+    bool Is_Active(void) const;
 
-		bool Was_Started(void) const { return WasStarted; }
+    bool Was_Started(void) const
+    {
+        return WasStarted;
+    }
 
-	private:
-		unsigned long DelayTime;			// Ticks remaining before countdown timer expires.
-		bool WasStarted;
+private:
+    unsigned long DelayTime; // Ticks remaining before countdown timer expires.
+    bool WasStarted;
 };
 
-
-template<class T>
-inline CDTimerClass<T>::CDTimerClass(NoInitClass const & x) :
-	BasicTimerClass<T>(x), WasStarted(false)
+template <class T>
+inline CDTimerClass<T>::CDTimerClass(NoInitClass const& x)
+    : BasicTimerClass<T>(x)
+    , WasStarted(false)
 {
 }
-
 
 /***********************************************************************************************
  * CDTimerClass<T>::CDTimerClass -- Constructor for count down timer.                          *
@@ -514,14 +491,13 @@ inline CDTimerClass<T>::CDTimerClass(NoInitClass const & x) :
  * HISTORY:                                                                                    *
  *   02/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-inline CDTimerClass<T>::CDTimerClass(unsigned long set) :
-	BasicTimerClass<T>(0),
-	DelayTime(set),
-	WasStarted(false)
+template <class T>
+inline CDTimerClass<T>::CDTimerClass(unsigned long set)
+    : BasicTimerClass<T>(0)
+    , DelayTime(set)
+    , WasStarted(false)
 {
 }
-
 
 /***********************************************************************************************
  * CDTimerClass<T>::~CDTimerClass -- Destructor for the count down timer object.               *
@@ -537,11 +513,9 @@ inline CDTimerClass<T>::CDTimerClass(unsigned long set) :
  * HISTORY:                                                                                    *
  *   02/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-inline CDTimerClass<T>::~CDTimerClass(void)
+template <class T> inline CDTimerClass<T>::~CDTimerClass(void)
 {
 }
-
 
 /***********************************************************************************************
  * CDTimerClass<T>::Value -- Fetches the current value of the countdown timer.                 *
@@ -559,21 +533,19 @@ inline CDTimerClass<T>::~CDTimerClass(void)
  * HISTORY:                                                                                    *
  *   07/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-inline unsigned long CDTimerClass<T>::Value(void) const
+template <class T> inline unsigned long CDTimerClass<T>::Value(void) const
 {
-	unsigned long remain = DelayTime;
-	if (Started != 0xFFFFFFFFU) {
-		unsigned long value = BasicTimerClass<T>::Value();
-		if (value < remain) {
-			return(remain - value);
-		} else {
-			return(0);
-		}
-	}
-	return(remain);
+    unsigned long remain = DelayTime;
+    if (Started != 0xFFFFFFFFU) {
+        unsigned long value = BasicTimerClass<T>::Value();
+        if (value < remain) {
+            return (remain - value);
+        } else {
+            return (0);
+        }
+    }
+    return (remain);
 }
-
 
 /***********************************************************************************************
  * CDTimerClass<T>::operator long -- Conversion to long operator function.                     *
@@ -591,21 +563,19 @@ inline unsigned long CDTimerClass<T>::Value(void) const
  * HISTORY:                                                                                    *
  *   02/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-inline CDTimerClass<T>::operator unsigned long(void) const
+template <class T> inline CDTimerClass<T>::operator unsigned long(void) const
 {
-	unsigned long remain = DelayTime;
-	if (Started != 0xFFFFFFFFU) {
-		unsigned long value = BasicTimerClass<T>::Value();
-		if (value < remain) {
-			return(remain - value);
-		} else {
-			return(0);
-		}
-	}
-	return(remain);
+    unsigned long remain = DelayTime;
+    if (Started != 0xFFFFFFFFU) {
+        unsigned long value = BasicTimerClass<T>::Value();
+        if (value < remain) {
+            return (remain - value);
+        } else {
+            return (0);
+        }
+    }
+    return (remain);
 }
-
 
 /***********************************************************************************************
  * CDTimerClass<T>::operator () -- Function operator for the count down timer.                 *
@@ -623,21 +593,19 @@ inline CDTimerClass<T>::operator unsigned long(void) const
  * HISTORY:                                                                                    *
  *   02/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-inline unsigned long CDTimerClass<T>::operator () (void) const
+template <class T> inline unsigned long CDTimerClass<T>::operator()(void) const
 {
-	unsigned long remain = DelayTime;
-	if (Started != 0xFFFFFFFFU) {
-		unsigned long value = BasicTimerClass<T>::Value();
-		if (value < remain) {
-			return(remain - value);
-		} else {
-			return(0);
-		}
-	}
-	return(remain);
+    unsigned long remain = DelayTime;
+    if (Started != 0xFFFFFFFFU) {
+        unsigned long value = BasicTimerClass<T>::Value();
+        if (value < remain) {
+            return (remain - value);
+        } else {
+            return (0);
+        }
+    }
+    return (remain);
 }
-
 
 /***********************************************************************************************
  * CDTimerClass<T>::Stop -- Stops (pauses) the count down timer.                               *
@@ -655,15 +623,13 @@ inline unsigned long CDTimerClass<T>::operator () (void) const
  * HISTORY:                                                                                    *
  *   02/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-void CDTimerClass<T>::Stop(void)
+template <class T> void CDTimerClass<T>::Stop(void)
 {
-	if (Started != 0xFFFFFFFFU) {
-		DelayTime = *this;
-		Started = 0xFFFFFFFFU;
-	}
+    if (Started != 0xFFFFFFFFU) {
+        DelayTime = *this;
+        Started = 0xFFFFFFFFU;
+    }
 }
-
 
 /***********************************************************************************************
  * CDTimerClass<T>::Start -- Starts (resumes) the count down timer.                            *
@@ -680,16 +646,14 @@ void CDTimerClass<T>::Stop(void)
  * HISTORY:                                                                                    *
  *   02/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-void CDTimerClass<T>::Start(void)
+template <class T> void CDTimerClass<T>::Start(void)
 {
-	WasStarted = true;
+    WasStarted = true;
 
-	if (Started == 0xFFFFFFFFU) {
-		Started = Timer();
-	}
+    if (Started == 0xFFFFFFFFU) {
+        Started = Timer();
+    }
 }
-
 
 /***********************************************************************************************
  * CDTimerClass<T>::Is_Active -- Checks to see if the timer object is active.                  *
@@ -707,10 +671,9 @@ void CDTimerClass<T>::Start(void)
  * HISTORY:                                                                                    *
  *   02/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-inline bool CDTimerClass<T>::Is_Active(void) const
+template <class T> inline bool CDTimerClass<T>::Is_Active(void) const
 {
-	return(Started != 0xFFFFFFFFU);
+    return (Started != 0xFFFFFFFFU);
 }
 
 #endif

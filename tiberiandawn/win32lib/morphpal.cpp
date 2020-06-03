@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /***************************************************************************
@@ -42,8 +42,7 @@
 /*
 ********************************* Constants *********************************
 */
-#define SCALE(a,b,c) (((((long)(a)<<8) / (long)(b) ) * (unsigned long)(c)) >>8)
-
+#define SCALE(a, b, c) (((((long)(a) << 8) / (long)(b)) * (unsigned long)(c)) >> 8)
 
 /*
 ********************************** Globals **********************************
@@ -53,8 +52,10 @@
 ******************************** Prototypes *********************************
 */
 
-PRIVATE int __cdecl Palette_To_Palette(void *src_palette, void *dst_palette, unsigned long current_time, unsigned long delay);
-
+PRIVATE int __cdecl Palette_To_Palette(void* src_palette,
+                                       void* dst_palette,
+                                       unsigned long current_time,
+                                       unsigned long delay);
 
 /***************************************************************************
  * Morph_Palette -- morphs a palette from source to destination            *
@@ -73,37 +74,34 @@ PRIVATE int __cdecl Palette_To_Palette(void *src_palette, void *dst_palette, uns
  * HISTORY:                                                                *
  *   05/02/1994 BR : Created.                                              *
  *=========================================================================*/
-void cdecl Morph_Palette (void *src_pal, void *dst_pal, unsigned int delay,
-	void (*callback) (void) )
+void cdecl Morph_Palette(void* src_pal, void* dst_pal, unsigned int delay, void (*callback)(void))
 {
-	int	result;
-	unsigned long	pal_start = TickCount.Time();
-	extern void   (*cb_ptr) ( void ) ;	// callback function pointer
+    int result;
+    unsigned long pal_start = TickCount.Time();
+    extern void (*cb_ptr)(void); // callback function pointer
 
-//	(void *)cb_ptr = callback;
-	cb_ptr = callback ;
+    //	(void *)cb_ptr = callback;
+    cb_ptr = callback;
 
-	/*===================================================================*/
-	/* Make sure that we don't go too fast but also make sure we keep		*/
-	/*		processing the morph palette if we have one.							*/
-	/*===================================================================*/
-	while (1) {
-		if (src_pal && dst_pal) {
-			result = Palette_To_Palette (src_pal, dst_pal,
-				(TickCount.Time() - pal_start), (unsigned long)delay);
-			if (!result)
-				break;
+    /*===================================================================*/
+    /* Make sure that we don't go too fast but also make sure we keep		*/
+    /*		processing the morph palette if we have one.							*/
+    /*===================================================================*/
+    while (1) {
+        if (src_pal && dst_pal) {
+            result = Palette_To_Palette(src_pal, dst_pal, (TickCount.Time() - pal_start), (unsigned long)delay);
+            if (!result)
+                break;
 
-			if (callback) {
-				(*cb_ptr)();
-			}
-		}
-	}
+            if (callback) {
+                (*cb_ptr)();
+            }
+        }
+    }
 
-	return;
+    return;
 
-}	/* end of Morph_Palette */
-
+} /* end of Morph_Palette */
 
 /***************************************************************************
  * Palette_To_Palette -- morph src palette to a dst palette                *
@@ -127,47 +125,46 @@ void cdecl Morph_Palette (void *src_pal, void *dst_pal, unsigned int delay,
  * HISTORY:                                                                *
  *   05/24/1993  MC : Created.                                             *
  *=========================================================================*/
-PRIVATE int cdecl Palette_To_Palette(void *src_palette, void *dst_palette,
-	unsigned long current_time, unsigned long delay)
+PRIVATE int cdecl Palette_To_Palette(void* src_palette,
+                                     void* dst_palette,
+                                     unsigned long current_time,
+                                     unsigned long delay)
 {
-	char	colour;
-	char	diff;
-	int	chgval;
-	int	lp;
-	int	change;
-	static char  palette[768];
-	char	*src_pal = (char*)src_palette;
-	char	*dst_pal = (char*)dst_palette;
+    char colour;
+    char diff;
+    int chgval;
+    int lp;
+    int change;
+    static char palette[768];
+    char* src_pal = (char*)src_palette;
+    char* dst_pal = (char*)dst_palette;
 
-	/*======================================================================*/
-	/* Loop through each RGB value attempting to change it to the correct	*/
-	/*		color.																				*/
-	/*======================================================================*/
-	for (change = lp = 0; lp < 768; lp++) {
-		if (current_time < delay ) {
-			diff		= dst_pal[lp] & (char)63;
-			diff	  -= src_pal[lp] & (char)63;
-			if (diff)
-				change = TRUE;
-			chgval	= SCALE(diff, delay, current_time);
-			colour 	= src_pal[lp] & (char)63;
-			colour	+=(char)chgval;
-		}
-		else {
-			colour = dst_pal[lp] & (char)63;
-			change = FALSE;
-		}
-		palette[lp] = colour;
-	}
-	/*======================================================================*/
-	/* Set the palette to the color that we created.								*/
-	/*======================================================================*/
-	Set_Palette(palette);
-	return(change);
+    /*======================================================================*/
+    /* Loop through each RGB value attempting to change it to the correct	*/
+    /*		color.																				*/
+    /*======================================================================*/
+    for (change = lp = 0; lp < 768; lp++) {
+        if (current_time < delay) {
+            diff = dst_pal[lp] & (char)63;
+            diff -= src_pal[lp] & (char)63;
+            if (diff)
+                change = TRUE;
+            chgval = SCALE(diff, delay, current_time);
+            colour = src_pal[lp] & (char)63;
+            colour += (char)chgval;
+        } else {
+            colour = dst_pal[lp] & (char)63;
+            change = FALSE;
+        }
+        palette[lp] = colour;
+    }
+    /*======================================================================*/
+    /* Set the palette to the color that we created.								*/
+    /*======================================================================*/
+    Set_Palette(palette);
+    return (change);
 
-}	/* end of Palette_To_Palette */
-
+} /* end of Palette_To_Palette */
 
 /*************************** End of morphpal.cpp ***************************/
-
 

@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /*
@@ -45,7 +45,6 @@
 #ifndef _WSNWLINK_
 #define _WSNWLINK_
 
-
 /*
  *   Set/get the IPX packet type.  The value specified in the
  *   optval argument will be set as the packet type on every IPX
@@ -54,8 +53,7 @@
  *
  */
 
-#define IPX_PTYPE               0x4000
-
+#define IPX_PTYPE 0x4000
 
 /*
  *   Set/get the receive filter packet type.  Only IPX packets with
@@ -65,16 +63,14 @@
  *
  */
 
-#define IPX_FILTERPTYPE         0x4001
-
+#define IPX_FILTERPTYPE 0x4001
 
 /*
  *   Stop filtering on packet type set with IPX_FILTERPTYPE.
  *
  */
 
-#define IPX_STOPFILTERPTYPE     0x4003
-
+#define IPX_STOPFILTERPTYPE 0x4003
 
 /*
  *   Set/get the value of the datastream field in the SPX header on
@@ -82,8 +78,7 @@
  *
  */
 
-#define IPX_DSTYPE              0x4002
-
+#define IPX_DSTYPE 0x4002
 
 /*
  *   Enable extended addressing.  On sends, adds the element
@@ -100,8 +95,7 @@
  *
  */
 
-#define IPX_EXTENDED_ADDRESS    0x4004
-
+#define IPX_EXTENDED_ADDRESS 0x4004
 
 /*
  *   Send protocol header up on all receive packets.  optval points
@@ -109,8 +103,7 @@
  *
  */
 
-#define IPX_RECVHDR             0x4005
-
+#define IPX_RECVHDR 0x4005
 
 /*
  *   Get the maximum data size that can be sent.  Not valid with
@@ -119,8 +112,7 @@
  *
  */
 
-#define IPX_MAXSIZE             0x4006
-
+#define IPX_MAXSIZE 0x4006
 
 /*
  *   Query information about a specific adapter that IPX is bound
@@ -133,18 +125,18 @@
  *
  */
 
-#define IPX_ADDRESS             0x4007
+#define IPX_ADDRESS 0x4007
 
-typedef struct _IPX_ADDRESS_DATA {
-    INT   adapternum;  /* input: 0-based adapter number */
-    UCHAR netnum[4];   /* output: IPX network number */
-    UCHAR nodenum[6];  /* output: IPX node address */
-    BOOLEAN wan;       /* output: TRUE = adapter is on a wan link */
-    BOOLEAN status;    /* output: TRUE = wan link is up (or adapter is not wan) */
-    INT   maxpkt;      /* output: max packet size, not including IPX header */
-    ULONG linkspeed;   /* output: link speed in 100 bytes/sec (i.e. 96 == 9600 bps) */
+typedef struct _IPX_ADDRESS_DATA
+{
+    INT adapternum;   /* input: 0-based adapter number */
+    UCHAR netnum[4];  /* output: IPX network number */
+    UCHAR nodenum[6]; /* output: IPX node address */
+    BOOLEAN wan;      /* output: TRUE = adapter is on a wan link */
+    BOOLEAN status;   /* output: TRUE = wan link is up (or adapter is not wan) */
+    INT maxpkt;       /* output: max packet size, not including IPX header */
+    ULONG linkspeed;  /* output: link speed in 100 bytes/sec (i.e. 96 == 9600 bps) */
 } IPX_ADDRESS_DATA, *PIPX_ADDRESS_DATA;
-
 
 /*
  *   Query information about a specific IPX network number.  If the
@@ -155,18 +147,18 @@ typedef struct _IPX_ADDRESS_DATA {
  *
  */
 
-#define IPX_GETNETINFO          0x4008
+#define IPX_GETNETINFO 0x4008
 
-typedef struct _IPX_NETNUM_DATA {
-    UCHAR  netnum[4];  /* input: IPX network number */
-    USHORT hopcount;   /* output: hop count to this network, in machine order */
-    USHORT netdelay;   /* output: tick count to this network, in machine order */
-    INT    cardnum;    /* output: 0-based adapter number used to route to this net */
-                       /*         can be used as adapternum input to IPX_ADDRESS */
-    UCHAR  router[6];  /* output: MAC address of the next hop router, zeroed if */
-                       /*         the network is directly attached */
+typedef struct _IPX_NETNUM_DATA
+{
+    UCHAR netnum[4]; /* input: IPX network number */
+    USHORT hopcount; /* output: hop count to this network, in machine order */
+    USHORT netdelay; /* output: tick count to this network, in machine order */
+    INT cardnum;     /* output: 0-based adapter number used to route to this net */
+                     /*         can be used as adapternum input to IPX_ADDRESS */
+    UCHAR router[6]; /* output: MAC address of the next hop router, zeroed if */
+                     /*         the network is directly attached */
 } IPX_NETNUM_DATA, *PIPX_NETNUM_DATA;
-
 
 /*
  *   Like IPX_GETNETINFO except it *does not* issue RIP requests. If the
@@ -177,8 +169,7 @@ typedef struct _IPX_NETNUM_DATA {
  *
  */
 
-#define IPX_GETNETINFO_NORIP    0x4009
-
+#define IPX_GETNETINFO_NORIP 0x4009
 
 /*
  *   Get information on a connected SPX socket.  optval points
@@ -190,9 +181,10 @@ typedef struct _IPX_NETNUM_DATA {
 
 #define IPX_SPXGETCONNECTIONSTATUS 0x400B
 
-typedef struct _IPX_SPXCONNSTATUS_DATA {
-    UCHAR  ConnectionState;
-    UCHAR  WatchDogActive;
+typedef struct _IPX_SPXCONNSTATUS_DATA
+{
+    UCHAR ConnectionState;
+    UCHAR WatchDogActive;
     USHORT LocalConnectionId;
     USHORT RemoteConnectionId;
     USHORT LocalSequenceNumber;
@@ -201,16 +193,15 @@ typedef struct _IPX_SPXCONNSTATUS_DATA {
     USHORT RemoteAckNumber;
     USHORT RemoteAllocNumber;
     USHORT LocalSocket;
-    UCHAR  ImmediateAddress[6];
-    UCHAR  RemoteNetwork[4];
-    UCHAR  RemoteNode[6];
+    UCHAR ImmediateAddress[6];
+    UCHAR RemoteNetwork[4];
+    UCHAR RemoteNode[6];
     USHORT RemoteSocket;
     USHORT RetransmissionCount;
     USHORT EstimatedRoundTripDelay; /* In milliseconds */
     USHORT RetransmittedPackets;
     USHORT SuppressedPacket;
 } IPX_SPXCONNSTATUS_DATA, *PIPX_SPXCONNSTATUS_DATA;
-
 
 /*
  *   Get notification when the status of an adapter that IPX is
@@ -242,8 +233,7 @@ typedef struct _IPX_SPXCONNSTATUS_DATA {
  *
  */
 
-#define IPX_ADDRESS_NOTIFY      0x400C
-
+#define IPX_ADDRESS_NOTIFY 0x400C
 
 /*
  *   Get the maximum number of adapters present.  If this call returns
@@ -253,8 +243,7 @@ typedef struct _IPX_SPXCONNSTATUS_DATA {
  *
  */
 
-#define IPX_MAX_ADAPTER_NUM     0x400D
-
+#define IPX_MAX_ADAPTER_NUM 0x400D
 
 /*
  *   Like IPX_GETNETINFO except it forces IPX to re-RIP even if the
@@ -264,8 +253,7 @@ typedef struct _IPX_SPXCONNSTATUS_DATA {
  *
  */
 
-#define IPX_RERIPNETNUMBER      0x400E
-
+#define IPX_RERIPNETNUMBER 0x400E
 
 /*
  *   A hint that broadcast packets may be received.  The default is
@@ -277,8 +265,7 @@ typedef struct _IPX_SPXCONNSTATUS_DATA {
  *
  */
 
-#define IPX_RECEIVE_BROADCAST   0x400F
-
+#define IPX_RECEIVE_BROADCAST 0x400F
 
 /*
  *   On SPX connections, don't delay before sending ack.  Applications
@@ -288,7 +275,6 @@ typedef struct _IPX_SPXCONNSTATUS_DATA {
  *
  */
 
-#define IPX_IMMEDIATESPXACK     0x4010
+#define IPX_IMMEDIATESPXACK 0x4010
 
 #endif
-

@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/STRAW.H 1     3/03/97 10:25a Joe_bostic $ */
@@ -45,11 +45,14 @@
 #ifndef __BORLANDC__
 #ifndef TRUE_FALSE_DEFINED
 #define TRUE_FALSE_DEFINED
-enum {false=0,true=1};
+enum
+{
+    false = 0,
+    true = 1
+};
 typedef int bool;
 #endif
 #endif
-
 
 /*
 **	This is a demand driven data carrier. It will retrieve the byte request by passing
@@ -60,28 +63,33 @@ typedef int bool;
 */
 class Straw
 {
-	public:
-		Straw(void) : ChainTo(0), ChainFrom(0) {}
-		virtual ~Straw(void);
+public:
+    Straw(void)
+        : ChainTo(0)
+        , ChainFrom(0)
+    {
+    }
+    virtual ~Straw(void);
 
-		virtual void Get_From(Straw * pipe);
-		void Get_From(Straw & pipe) {Get_From(&pipe);}
-		virtual int Get(void * buffer, int slen);
+    virtual void Get_From(Straw* pipe);
+    void Get_From(Straw& pipe)
+    {
+        Get_From(&pipe);
+    }
+    virtual int Get(void* buffer, int slen);
 
-		/*
-		**	Pointer to the next pipe segment in the chain.
-		*/
-		Straw * ChainTo;
-		Straw * ChainFrom;
+    /*
+    **	Pointer to the next pipe segment in the chain.
+    */
+    Straw* ChainTo;
+    Straw* ChainFrom;
 
-	private:
-
-		/*
-		**	Disable the copy constructor and assignment operator.
-		*/
-		Straw(Straw & rvalue);
-		Straw & operator = (Straw const & pipe);
+private:
+    /*
+    **	Disable the copy constructor and assignment operator.
+    */
+    Straw(Straw& rvalue);
+    Straw& operator=(Straw const& pipe);
 };
-
 
 #endif

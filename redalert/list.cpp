@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/LIST.CPP 1     3/03/97 10:25a Joe_bostic $ */
@@ -54,8 +54,7 @@
  *   ListClass::~ListClass -- Destructor for list class objects.                               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-
+#include "function.h"
 
 /***************************************************************************
  * ListClass::ListClass -- class constructor                               *
@@ -76,71 +75,68 @@
  *                                                                         *
  * HISTORY:          01/05/1995 MML : Created.                             *
  *=========================================================================*/
-ListClass::ListClass (int id, int x, int y, int w, int h, TextPrintType flags, void const * up, void const * down) :
-	ControlClass(id, x, y, w, h, LEFTPRESS | LEFTRELEASE | KEYBOARD, false),
-	UpGadget(0, up, x+w, y),
-	DownGadget(0, down, x+w, y+h),
-	ScrollGadget(0, x+w, y, 0, h, true)
+ListClass::ListClass(int id, int x, int y, int w, int h, TextPrintType flags, void const* up, void const* down)
+    : ControlClass(id, x, y, w, h, LEFTPRESS | LEFTRELEASE | KEYBOARD, false)
+    , UpGadget(0, up, x + w, y)
+    , DownGadget(0, down, x + w, y + h)
+    , ScrollGadget(0, x + w, y, 0, h, true)
 {
-	/*
-	**	Set preliminary values for the slider related gadgets. They don't automatically
-	**	appear at this time, but there are some values that can be pre-filled in.
-	*/
-	UpGadget.X -= UpGadget.Width;
-	DownGadget.X -= DownGadget.Width;
-	DownGadget.Y -= DownGadget.Height;
-	ScrollGadget.X -= max(UpGadget.Width, DownGadget.Width);
-	ScrollGadget.Y = Y+UpGadget.Height;
-	ScrollGadget.Height -= UpGadget.Height + DownGadget.Height;
-	ScrollGadget.Width = max(UpGadget.Width, DownGadget.Width);
+    /*
+    **	Set preliminary values for the slider related gadgets. They don't automatically
+    **	appear at this time, but there are some values that can be pre-filled in.
+    */
+    UpGadget.X -= UpGadget.Width;
+    DownGadget.X -= DownGadget.Width;
+    DownGadget.Y -= DownGadget.Height;
+    ScrollGadget.X -= max(UpGadget.Width, DownGadget.Width);
+    ScrollGadget.Y = Y + UpGadget.Height;
+    ScrollGadget.Height -= UpGadget.Height + DownGadget.Height;
+    ScrollGadget.Width = max(UpGadget.Width, DownGadget.Width);
 
-	/*
-	**	Set the list box to a default state.
-	*/
-	TextFlags = flags;
-	IsScrollActive = false;
-	Tabs = 0;
-	SelectedIndex = 0;
-	CurrentTopIndex = 0;
-	//PG_TO_FIX
-	//Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, TextFlags);
-	LineHeight = FontHeight+FontYSpacing-1;
-	LineCount = (h-1) / LineHeight;
+    /*
+    **	Set the list box to a default state.
+    */
+    TextFlags = flags;
+    IsScrollActive = false;
+    Tabs = 0;
+    SelectedIndex = 0;
+    CurrentTopIndex = 0;
+    // PG_TO_FIX
+    // Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, TextFlags);
+    LineHeight = FontHeight + FontYSpacing - 1;
+    LineCount = (h - 1) / LineHeight;
 }
 
-
-ListClass::ListClass(ListClass const & list) :
-	ControlClass(list),
-	TextFlags(list.TextFlags),
-	Tabs(list.Tabs),
-	List(list.List),
-	LineHeight(list.LineHeight),
-	LineCount(list.LineCount),
-	IsScrollActive(list.IsScrollActive),
-	UpGadget(list.UpGadget),
-	DownGadget(list.DownGadget),
-	ScrollGadget(list.ScrollGadget),
-	SelectedIndex(list.SelectedIndex),
-	CurrentTopIndex(list.CurrentTopIndex)
+ListClass::ListClass(ListClass const& list)
+    : ControlClass(list)
+    , TextFlags(list.TextFlags)
+    , Tabs(list.Tabs)
+    , List(list.List)
+    , LineHeight(list.LineHeight)
+    , LineCount(list.LineCount)
+    , IsScrollActive(list.IsScrollActive)
+    , UpGadget(list.UpGadget)
+    , DownGadget(list.DownGadget)
+    , ScrollGadget(list.ScrollGadget)
+    , SelectedIndex(list.SelectedIndex)
+    , CurrentTopIndex(list.CurrentTopIndex)
 {
-	UpGadget.Make_Peer(*this);
-	DownGadget.Make_Peer(*this);
-	ScrollGadget.Make_Peer(*this);
+    UpGadget.Make_Peer(*this);
+    DownGadget.Make_Peer(*this);
+    ScrollGadget.Make_Peer(*this);
 }
-
 
 void ListClass::Set_Position(int x, int y)
 {
-	UpGadget.X = x + Width - UpGadget.Width;
-	UpGadget.Y = y;
-	DownGadget.X = x + Width - DownGadget.Width;
-	DownGadget.Y = y + Height - DownGadget.Height;
-	ScrollGadget.X = x + Width - max(UpGadget.Width, DownGadget.Width);
-	ScrollGadget.Y = y + UpGadget.Height;
-	ScrollGadget.Height = Height - (UpGadget.Height + DownGadget.Height);
-	ScrollGadget.Width = max(UpGadget.Width, DownGadget.Width);
+    UpGadget.X = x + Width - UpGadget.Width;
+    UpGadget.Y = y;
+    DownGadget.X = x + Width - DownGadget.Width;
+    DownGadget.Y = y + Height - DownGadget.Height;
+    ScrollGadget.X = x + Width - max(UpGadget.Width, DownGadget.Width);
+    ScrollGadget.Y = y + UpGadget.Height;
+    ScrollGadget.Height = Height - (UpGadget.Height + DownGadget.Height);
+    ScrollGadget.Width = max(UpGadget.Width, DownGadget.Width);
 }
-
 
 /***********************************************************************************************
  * ListClass::~ListClass -- Destructor for list class objects.                                 *
@@ -155,9 +151,8 @@ void ListClass::Set_Position(int x, int y)
  *=============================================================================================*/
 ListClass::~ListClass(void)
 {
-	Remove_Scroll_Bar();
+    Remove_Scroll_Bar();
 }
-
 
 /***********************************************************************************************
  * ListClass::Add_Item -- Adds an item to the list box.                                        *
@@ -170,30 +165,29 @@ ListClass::~ListClass(void)
  * WARNINGS:   none                                                                            *
  * HISTORY:    01/15/1995 JLB : Created.                                                       *
  *=============================================================================================*/
-int ListClass::Add_Item(char const * text)
+int ListClass::Add_Item(char const* text)
 {
-	if (text) {
-		List.Add(text);
-		Flag_To_Redraw();
+    if (text) {
+        List.Add(text);
+        Flag_To_Redraw();
 
-		/*
-		**	Add scroll gadget if the list gets too large to display all of the items
-		**	at the same time.
-		*/
-		if (List.Count() > LineCount) {
-			Add_Scroll_Bar();
-		}
+        /*
+        **	Add scroll gadget if the list gets too large to display all of the items
+        **	at the same time.
+        */
+        if (List.Count() > LineCount) {
+            Add_Scroll_Bar();
+        }
 
-		/*
-		**	Tell the slider that there is one more entry in the list.
-		*/
-		if (IsScrollActive) {
-			ScrollGadget.Set_Maximum(List.Count());
-		}
-	}
-	return(List.Count() - 1);
+        /*
+        **	Tell the slider that there is one more entry in the list.
+        */
+        if (IsScrollActive) {
+            ScrollGadget.Set_Maximum(List.Count());
+        }
+    }
+    return (List.Count() - 1);
 }
-
 
 /***********************************************************************************************
  * ListClass::Add_Item -- Adds a text item (as number) to the list box.                        *
@@ -210,56 +204,54 @@ int ListClass::Add_Item(char const * text)
  *=============================================================================================*/
 int ListClass::Add_Item(int text)
 {
-	if (text != TXT_NONE) {
-		Add_Item(Text_String(text));
-	}
-	return(List.Count() - 1);
+    if (text != TXT_NONE) {
+        Add_Item(Text_String(text));
+    }
+    return (List.Count() - 1);
 }
-
 
 void ListClass::Remove_Item(int index)
 {
-	if (index < List.Count()) {
-		List.Delete(index);
+    if (index < List.Count()) {
+        List.Delete(index);
 
-		/*
-		**	If the list is now small enough to display completely within the list box region,
-		**	then delete the slider gadget (if they are present).
-		*/
-		if (List.Count() <= LineCount) {
-			Remove_Scroll_Bar();
-		}
+        /*
+        **	If the list is now small enough to display completely within the list box region,
+        **	then delete the slider gadget (if they are present).
+        */
+        if (List.Count() <= LineCount) {
+            Remove_Scroll_Bar();
+        }
 
-		/*
-		**	Tell the slider that there is one less entry in the list.
-		*/
-		if (IsScrollActive) {
-			ScrollGadget.Set_Maximum(List.Count());
-		}
+        /*
+        **	Tell the slider that there is one less entry in the list.
+        */
+        if (IsScrollActive) {
+            ScrollGadget.Set_Maximum(List.Count());
+        }
 
-		/*
-		** If we just removed the selected entry, select the previous one
-		*/
-		if (SelectedIndex >= List.Count()) {
-			SelectedIndex--;
-			if (SelectedIndex < 0) {
-				SelectedIndex = 0;
-			}
-		}
+        /*
+        ** If we just removed the selected entry, select the previous one
+        */
+        if (SelectedIndex >= List.Count()) {
+            SelectedIndex--;
+            if (SelectedIndex < 0) {
+                SelectedIndex = 0;
+            }
+        }
 
-		/*
-		** If we just removed the top-displayed entry, step up one item
-		*/
-		if (CurrentTopIndex >= List.Count()) {
-			CurrentTopIndex--;
-			if (CurrentTopIndex < 0)
-				CurrentTopIndex = 0;
-			if (IsScrollActive)
-				ScrollGadget.Step(1);
-		}
-	}
+        /*
+        ** If we just removed the top-displayed entry, step up one item
+        */
+        if (CurrentTopIndex >= List.Count()) {
+            CurrentTopIndex--;
+            if (CurrentTopIndex < 0)
+                CurrentTopIndex = 0;
+            if (IsScrollActive)
+                ScrollGadget.Step(1);
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * ListClass::Remove_Item -- Remove specified text from list box.                              *
@@ -276,13 +268,12 @@ void ListClass::Remove_Item(int index)
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void ListClass::Remove_Item(char const * text)
+void ListClass::Remove_Item(char const* text)
 {
-	if (text) {
-		Remove_Item(List.ID(text));
-	}
+    if (text) {
+        Remove_Item(List.ID(text));
+    }
 }
-
 
 /***************************************************************************
  * ListClass::Action -- If clicked on, do this!                            *
@@ -296,46 +287,46 @@ void ListClass::Remove_Item(char const * text)
  *                                                                         *
  * HISTORY:          01/05/1995 MML : Created.                             *
  *=========================================================================*/
-int ListClass::Action(unsigned flags, KeyNumType & key)
+int ListClass::Action(unsigned flags, KeyNumType& key)
 {
-	if (flags & LEFTRELEASE) {
-		key = KN_NONE;
-		flags &= (~LEFTRELEASE);
-		ControlClass::Action(flags, key);
-		return(true);
-	} else {
+    if (flags & LEFTRELEASE) {
+        key = KN_NONE;
+        flags &= (~LEFTRELEASE);
+        ControlClass::Action(flags, key);
+        return (true);
+    } else {
 
-		/*
-		** Handle keyboard events here.
-		*/
-		if (flags & KEYBOARD) {
+        /*
+        ** Handle keyboard events here.
+        */
+        if (flags & KEYBOARD) {
 
-			/*
-			**	Process the keyboard character. If indicated, consume this keyboard event
-			**	so that the edit gadget ID number is not returned.
-			*/
-			if (key == KN_UP) {
-				Step_Selected_Index(-1);
-				key = KN_NONE;
-			} else if (key == KN_DOWN) {
-				Step_Selected_Index(1);
-				key = KN_NONE;
-			} else {
-				flags &= ~KEYBOARD;
-			}
+            /*
+            **	Process the keyboard character. If indicated, consume this keyboard event
+            **	so that the edit gadget ID number is not returned.
+            */
+            if (key == KN_UP) {
+                Step_Selected_Index(-1);
+                key = KN_NONE;
+            } else if (key == KN_DOWN) {
+                Step_Selected_Index(1);
+                key = KN_NONE;
+            } else {
+                flags &= ~KEYBOARD;
+            }
 
-		} else {
+        } else {
 
-			int index = Get_Mouse_Y() - (Y+1);
-			index = index / LineHeight;
-			SelectedIndex = CurrentTopIndex + index;
-			SelectedIndex = min(SelectedIndex, List.Count()-1);
-			if (SelectedIndex == -1) SelectedIndex = 0;
-		}
-	}
-	return(ControlClass::Action(flags, key));
+            int index = Get_Mouse_Y() - (Y + 1);
+            index = index / LineHeight;
+            SelectedIndex = CurrentTopIndex + index;
+            SelectedIndex = min(SelectedIndex, List.Count() - 1);
+            if (SelectedIndex == -1)
+                SelectedIndex = 0;
+        }
+    }
+    return (ControlClass::Action(flags, key));
 }
-
 
 /***********************************************************************************************
  * ListClass::Draw_Me -- Draws the listbox.                                                    *
@@ -355,45 +346,44 @@ int ListClass::Action(unsigned flags, KeyNumType & key)
  *=============================================================================================*/
 int ListClass::Draw_Me(int forced)
 {
-	if (GadgetClass::Draw_Me(forced)) {
+    if (GadgetClass::Draw_Me(forced)) {
 
-		/*
-		**	Turn off the mouse.
-		*/
-		if (LogicPage == &SeenBuff) {
-			Conditional_Hide_Mouse(X, Y, X+Width, Y+Height);
-		}
+        /*
+        **	Turn off the mouse.
+        */
+        if (LogicPage == &SeenBuff) {
+            Conditional_Hide_Mouse(X, Y, X + Width, Y + Height);
+        }
 
-		Draw_Box (X, Y, Width, Height, BOXSTYLE_BOX, true);
+        Draw_Box(X, Y, Width, Height, BOXSTYLE_BOX, true);
 
-		/*
-		**	Draw List.
-		*/
-		if (List.Count()) {
-			for (int index = 0; index < LineCount; index++)  {
-				int line = CurrentTopIndex + index;
+        /*
+        **	Draw List.
+        */
+        if (List.Count()) {
+            for (int index = 0; index < LineCount; index++) {
+                int line = CurrentTopIndex + index;
 
-				if (List.Count() > line) {
+                if (List.Count() > line) {
 
-					/*
-					**	Prints the text and handles right edge clipping and tabs.
-					*/
-					Draw_Entry(line, X+1, Y+(LineHeight*index)+1, Width-2, (line == SelectedIndex));
-				}
-			}
-		}
+                    /*
+                    **	Prints the text and handles right edge clipping and tabs.
+                    */
+                    Draw_Entry(line, X + 1, Y + (LineHeight * index) + 1, Width - 2, (line == SelectedIndex));
+                }
+            }
+        }
 
-		/*
-		**	Turn on the mouse.
-		*/
-		if (LogicPage == &SeenBuff) {
-			Conditional_Show_Mouse();
-		}
-		return(true);
-	}
-	return(false);
+        /*
+        **	Turn on the mouse.
+        */
+        if (LogicPage == &SeenBuff) {
+            Conditional_Show_Mouse();
+        }
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * ListClass::Bump -- Bumps the list box up/down one "page".                                   *
@@ -412,14 +402,13 @@ int ListClass::Draw_Me(int forced)
  *=============================================================================================*/
 void ListClass::Bump(int up)
 {
-	if (IsScrollActive) {
-		if (ScrollGadget.Step(up)) {
-			CurrentTopIndex = ScrollGadget.Get_Value();
-			Flag_To_Redraw();
-		}
-	}
+    if (IsScrollActive) {
+        if (ScrollGadget.Step(up)) {
+            CurrentTopIndex = ScrollGadget.Get_Value();
+            Flag_To_Redraw();
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * ListClass::Step -- Moves the list view one line in direction specified.                     *
@@ -437,14 +426,13 @@ void ListClass::Bump(int up)
  *=============================================================================================*/
 void ListClass::Step(int up)
 {
-	if (IsScrollActive) {
-		if (ScrollGadget.Step(up)) {
-			CurrentTopIndex = ScrollGadget.Get_Value();
-			Flag_To_Redraw();
-		}
-	}
+    if (IsScrollActive) {
+        if (ScrollGadget.Step(up)) {
+            CurrentTopIndex = ScrollGadget.Get_Value();
+            Flag_To_Redraw();
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * ListClass::Get_Item -- Fetches an arbitrary item string.                                    *
@@ -461,15 +449,14 @@ void ListClass::Step(int up)
  * HISTORY:                                                                                    *
  *   01/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-char const * ListClass::Get_Item(int index) const
+char const* ListClass::Get_Item(int index) const
 {
-	if (List.Count() == 0) {
-		return NULL;
-	}
-	index = min(index, List.Count()-1);
-	return(List[index]);
+    if (List.Count() == 0) {
+        return NULL;
+    }
+    index = min(index, List.Count() - 1);
+    return (List[index]);
 }
-
 
 /***********************************************************************************************
  * ListClass::Current_Item -- Fetches pointer to current item string.                          *
@@ -485,14 +472,13 @@ char const * ListClass::Get_Item(int index) const
  * HISTORY:                                                                                    *
  *   01/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-char const * ListClass::Current_Item(void) const
+char const* ListClass::Current_Item(void) const
 {
-	if (List.Count() <= SelectedIndex) {
-		return(0);
-	}
-	return(List[SelectedIndex]);
+    if (List.Count() <= SelectedIndex) {
+        return (0);
+    }
+    return (List[SelectedIndex]);
 }
-
 
 /***********************************************************************************************
  * ListClass::Current_Index -- Fetches the current selected index.                             *
@@ -511,9 +497,8 @@ char const * ListClass::Current_Item(void) const
  *=============================================================================================*/
 int ListClass::Current_Index(void) const
 {
-	return(SelectedIndex);
+    return (SelectedIndex);
 }
-
 
 /***********************************************************************************************
  * ListClass::Peer_To_Peer -- A peer gadget was touched -- make adjustments.                   *
@@ -535,26 +520,25 @@ int ListClass::Current_Index(void) const
  * HISTORY:                                                                                    *
  *   01/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void ListClass::Peer_To_Peer(unsigned flags, KeyNumType &, ControlClass & whom)
+void ListClass::Peer_To_Peer(unsigned flags, KeyNumType&, ControlClass& whom)
 {
-	if (flags & LEFTRELEASE) {
-		if (&whom == &UpGadget) {
-			Step(true);
-		}
-		if (&whom == &DownGadget) {
-			Step(false);
-		}
-	}
+    if (flags & LEFTRELEASE) {
+        if (&whom == &UpGadget) {
+            Step(true);
+        }
+        if (&whom == &DownGadget) {
+            Step(false);
+        }
+    }
 
-	/*
-	**	The slider has changed, so reflect the current list position
-	**	according to the slider setting.
-	*/
-	if (&whom == &ScrollGadget) {
-		Set_View_Index(ScrollGadget.Get_Value());
-	}
+    /*
+    **	The slider has changed, so reflect the current list position
+    **	according to the slider setting.
+    */
+    if (&whom == &ScrollGadget) {
+        Set_View_Index(ScrollGadget.Get_Value());
+    }
 }
-
 
 /***********************************************************************************************
  * ListClass::Set_View_Index -- Sets the top line for the current list view.                   *
@@ -574,18 +558,17 @@ void ListClass::Peer_To_Peer(unsigned flags, KeyNumType &, ControlClass & whom)
  *=============================================================================================*/
 int ListClass::Set_View_Index(int index)
 {
-	index = Bound(index, 0, max(0, List.Count() - LineCount));
-	if (index != CurrentTopIndex) {
-		CurrentTopIndex = index;
-		Flag_To_Redraw();
-		if (IsScrollActive) {
-			ScrollGadget.Set_Value(CurrentTopIndex);
-		}
-		return(true);
-	}
-	return(false);
+    index = Bound(index, 0, max(0, List.Count() - LineCount));
+    if (index != CurrentTopIndex) {
+        CurrentTopIndex = index;
+        Flag_To_Redraw();
+        if (IsScrollActive) {
+            ScrollGadget.Set_Value(CurrentTopIndex);
+        }
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * ListClass::Add_Scroll_Bar -- Adds a scroll bar to the list box.                             *
@@ -604,56 +587,55 @@ int ListClass::Set_View_Index(int index)
  *=============================================================================================*/
 int ListClass::Add_Scroll_Bar(void)
 {
-	if (!IsScrollActive) {
-		IsScrollActive = true;
+    if (!IsScrollActive) {
+        IsScrollActive = true;
 
-		/*
-		**	Everything has been created successfully. Flag the list box to be
-		**	redrawn because it now must be made narrower to accomodate the new
-		**	slider gadgets.
-		*/
-		Flag_To_Redraw();
-		Width -= ScrollGadget.Width;
+        /*
+        **	Everything has been created successfully. Flag the list box to be
+        **	redrawn because it now must be made narrower to accomodate the new
+        **	slider gadgets.
+        */
+        Flag_To_Redraw();
+        Width -= ScrollGadget.Width;
 
-		/*
-		**	Tell the newly created gadgets that they should inform this list box
-		**	whenever they get touched. In this way, the list box will automatically
-		**	be updated under control of the slider buttons.
-		*/
-		UpGadget.Make_Peer(*this);
-		DownGadget.Make_Peer(*this);
-		ScrollGadget.Make_Peer(*this);
+        /*
+        **	Tell the newly created gadgets that they should inform this list box
+        **	whenever they get touched. In this way, the list box will automatically
+        **	be updated under control of the slider buttons.
+        */
+        UpGadget.Make_Peer(*this);
+        DownGadget.Make_Peer(*this);
+        ScrollGadget.Make_Peer(*this);
 
-		/*
-		**	Add these newly created gadgets to the same gadget list that the
-		**	list box is part of.
-		*/
-		UpGadget.Add(*this);
-		DownGadget.Add(*this);
-		ScrollGadget.Add(*this);
+        /*
+        **	Add these newly created gadgets to the same gadget list that the
+        **	list box is part of.
+        */
+        UpGadget.Add(*this);
+        DownGadget.Add(*this);
+        ScrollGadget.Add(*this);
 
-		/*
-		**	Make sure these added gadgets get redrawn at the next opportunity.
-		*/
-		UpGadget.Flag_To_Redraw();
-		DownGadget.Flag_To_Redraw();
-		ScrollGadget.Flag_To_Redraw();
+        /*
+        **	Make sure these added gadgets get redrawn at the next opportunity.
+        */
+        UpGadget.Flag_To_Redraw();
+        DownGadget.Flag_To_Redraw();
+        ScrollGadget.Flag_To_Redraw();
 
-		/*
-		**	Inform the slider of the size of the window and the current view position.
-		*/
-		ScrollGadget.Set_Maximum(List.Count());
-		ScrollGadget.Set_Thumb_Size(LineCount);
-		ScrollGadget.Set_Value(CurrentTopIndex);
+        /*
+        **	Inform the slider of the size of the window and the current view position.
+        */
+        ScrollGadget.Set_Maximum(List.Count());
+        ScrollGadget.Set_Thumb_Size(LineCount);
+        ScrollGadget.Set_Value(CurrentTopIndex);
 
-		/*
-		**	Return with success flag.
-		*/
-		return(true);
-	}
-	return(false);
+        /*
+        **	Return with success flag.
+        */
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * ListClass::Remove_Scroll_Bar -- Removes the scroll bar if present                           *
@@ -672,18 +654,17 @@ int ListClass::Add_Scroll_Bar(void)
  *=============================================================================================*/
 int ListClass::Remove_Scroll_Bar(void)
 {
-	if (IsScrollActive) {
-		IsScrollActive = false;
-		Width += ScrollGadget.Width;
-		ScrollGadget.Remove();
-		UpGadget.Remove();
-		DownGadget.Remove();
-		Flag_To_Redraw();
-		return(true);
-	}
-	return(false);
+    if (IsScrollActive) {
+        IsScrollActive = false;
+        Width += ScrollGadget.Width;
+        ScrollGadget.Remove();
+        UpGadget.Remove();
+        DownGadget.Remove();
+        Flag_To_Redraw();
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * ListClass::Set_Tabs -- Sets the tab stop list to be used for text printing.                 *
@@ -702,11 +683,10 @@ int ListClass::Remove_Scroll_Bar(void)
  * HISTORY:                                                                                    *
  *   01/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void ListClass::Set_Tabs(int const * tabs)
+void ListClass::Set_Tabs(int const* tabs)
 {
-	Tabs = tabs;
+    Tabs = tabs;
 }
-
 
 /***********************************************************************************************
  * ListClass::Draw_Entry -- Draws a list box text line as indicated.                           *
@@ -731,22 +711,20 @@ void ListClass::Set_Tabs(int const * tabs)
  *=============================================================================================*/
 void ListClass::Draw_Entry(int index, int x, int y, int width, int selected)
 {
-	TextPrintType flags = TextFlags;
-	RemapControlType * scheme = GadgetClass::Get_Color_Scheme();
+    TextPrintType flags = TextFlags;
+    RemapControlType* scheme = GadgetClass::Get_Color_Scheme();
 
-	if (selected) {
-		flags = flags | TPF_BRIGHT_COLOR;
-		LogicPage->Fill_Rect (x, y, x + width - 1, y + LineHeight - 1, scheme->Shadow);
-	} else {
-		if (!(flags & TPF_USE_GRAD_PAL)) {
-			flags = flags | TPF_MEDIUM_COLOR;
-		}
-	}
+    if (selected) {
+        flags = flags | TPF_BRIGHT_COLOR;
+        LogicPage->Fill_Rect(x, y, x + width - 1, y + LineHeight - 1, scheme->Shadow);
+    } else {
+        if (!(flags & TPF_USE_GRAD_PAL)) {
+            flags = flags | TPF_MEDIUM_COLOR;
+        }
+    }
 
-	Conquer_Clip_Text_Print(List[index], x, y, scheme, TBLACK, flags, width, Tabs);
-
+    Conquer_Clip_Text_Print(List[index], x, y, scheme, TBLACK, flags, width, Tabs);
 }
-
 
 /***********************************************************************************************
  * ListClass::Add -- Adds myself to list immediately after given object                        *
@@ -756,8 +734,8 @@ void ListClass::Draw_Entry(int index, int x, int y, int width, int selected)
  * - Up arrow (if active)                                                                      *
  * - Down arrow (if active)                                                                    *
  * - Scroll gadget (if active)                                                                 *
- *                                                                                             *                                                                                       *
- * INPUT:   object   -- Pointer to the object to be added right after this one.                *
+ *                                                                                             * * INPUT:   object   --
+ *Pointer to the object to be added right after this one.                *
  *                                                                                             *
  * OUTPUT:  Returns with a pointer to the head of the list.                                    *
  *                                                                                             *
@@ -766,23 +744,22 @@ void ListClass::Draw_Entry(int index, int x, int y, int width, int selected)
  * HISTORY:                                                                                    *
  *   01/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass & ListClass::Add(LinkClass & list)
+LinkClass& ListClass::Add(LinkClass& list)
 {
-	/*
-	**	Add the scroll bar gadgets if they're active.
-	*/
-	if (IsScrollActive) {
-		ScrollGadget.Add(list);
-		DownGadget.Add(list);
-		UpGadget.Add(list);
-	}
+    /*
+    **	Add the scroll bar gadgets if they're active.
+    */
+    if (IsScrollActive) {
+        ScrollGadget.Add(list);
+        DownGadget.Add(list);
+        UpGadget.Add(list);
+    }
 
-	/*
-	**	Add myself to the list, then return.
-	*/
-	return(ControlClass::Add(list));
+    /*
+    **	Add myself to the list, then return.
+    */
+    return (ControlClass::Add(list));
 }
-
 
 /***********************************************************************************************
  * ListClass::Add_Head -- Adds myself to head of the given list                                *
@@ -797,23 +774,22 @@ LinkClass & ListClass::Add(LinkClass & list)
  * HISTORY:                                                                                    *
  *   01/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass & ListClass::Add_Head(LinkClass & list)
+LinkClass& ListClass::Add_Head(LinkClass& list)
 {
-	/*
-	**	Add the scroll bar gadgets if they're active.
-	*/
-	if (IsScrollActive) {
-		ScrollGadget.Add_Head(list);
-		DownGadget.Add_Head(list);
-		UpGadget.Add_Head(list);
-	}
+    /*
+    **	Add the scroll bar gadgets if they're active.
+    */
+    if (IsScrollActive) {
+        ScrollGadget.Add_Head(list);
+        DownGadget.Add_Head(list);
+        UpGadget.Add_Head(list);
+    }
 
-	/*
-	**	Add myself to the list, then return.
-	*/
-	return(ControlClass::Add_Head(list));
+    /*
+    **	Add myself to the list, then return.
+    */
+    return (ControlClass::Add_Head(list));
 }
-
 
 /***********************************************************************************************
  * ListClass::Add_Tail -- Adds myself to tail of given list                                    *
@@ -834,25 +810,24 @@ LinkClass & ListClass::Add_Head(LinkClass & list)
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass & ListClass::Add_Tail(LinkClass & list)
+LinkClass& ListClass::Add_Tail(LinkClass& list)
 {
-	/*
-	**	Add myself to the list.
-	*/
-	ControlClass::Add_Tail(list);
+    /*
+    **	Add myself to the list.
+    */
+    ControlClass::Add_Tail(list);
 
-	/*
-	**	Add the scroll bar gadgets if they're active.
-	*/
-	if (IsScrollActive) {
-		UpGadget.Add_Tail(list);
-		DownGadget.Add_Tail(list);
-		ScrollGadget.Add_Tail(list);
-	}
+    /*
+    **	Add the scroll bar gadgets if they're active.
+    */
+    if (IsScrollActive) {
+        UpGadget.Add_Tail(list);
+        DownGadget.Add_Tail(list);
+        ScrollGadget.Add_Tail(list);
+    }
 
-	return(Head_Of_List());
+    return (Head_Of_List());
 }
-
 
 /***********************************************************************************************
  * ListClass::Remove -- Removes the specified object from the list.                            *
@@ -871,23 +846,22 @@ LinkClass & ListClass::Add_Tail(LinkClass & list)
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-GadgetClass * ListClass::Remove(void)
+GadgetClass* ListClass::Remove(void)
 {
-	/*
-	**	Remove the scroll bar if it's active
-	*/
-	if (IsScrollActive) {
-		ScrollGadget.Remove();
-		DownGadget.Remove();
-		UpGadget.Remove();
-	}
+    /*
+    **	Remove the scroll bar if it's active
+    */
+    if (IsScrollActive) {
+        ScrollGadget.Remove();
+        DownGadget.Remove();
+        UpGadget.Remove();
+    }
 
-	/*
-	**	Remove myself & return
-	*/
-	return(ControlClass::Remove());
+    /*
+    **	Remove myself & return
+    */
+    return (ControlClass::Remove());
 }
-
 
 /***********************************************************************************************
  * ListClass::Set_Selected_Index -- Set the top of the listbox to index specified.             *
@@ -906,20 +880,19 @@ GadgetClass * ListClass::Remove(void)
  *=============================================================================================*/
 void ListClass::Set_Selected_Index(int index)
 {
-   if (index < List.Count()) {
-		SelectedIndex = index;
-		Flag_To_Redraw();
-		if (SelectedIndex < CurrentTopIndex) {
-			Set_View_Index(SelectedIndex);
-		}
-		if (SelectedIndex >= CurrentTopIndex+LineCount) {
-			Set_View_Index(SelectedIndex-(LineCount-1));
-		}
-   } else {
-   	SelectedIndex = 0;
-   }
+    if (index < List.Count()) {
+        SelectedIndex = index;
+        Flag_To_Redraw();
+        if (SelectedIndex < CurrentTopIndex) {
+            Set_View_Index(SelectedIndex);
+        }
+        if (SelectedIndex >= CurrentTopIndex + LineCount) {
+            Set_View_Index(SelectedIndex - (LineCount - 1));
+        }
+    } else {
+        SelectedIndex = 0;
+    }
 }
-
 
 /***********************************************************************************************
  * ListClass::Step_Selected_Index -- Change the listbox top line in direction specified.       *
@@ -938,32 +911,30 @@ void ListClass::Set_Selected_Index(int index)
  *=============================================================================================*/
 int ListClass::Step_Selected_Index(int step)
 {
-	int old = SelectedIndex;
+    int old = SelectedIndex;
 
-	Set_Selected_Index(old + step);
-	return(old);
+    Set_Selected_Index(old + step);
+    return (old);
 }
-
 
 void ListClass::Flag_To_Redraw(void)
 {
-	if (IsScrollActive) {
-		UpGadget.Flag_To_Redraw();
-		DownGadget.Flag_To_Redraw();
-		ScrollGadget.Flag_To_Redraw();
-	}
-	ControlClass::Flag_To_Redraw();
+    if (IsScrollActive) {
+        UpGadget.Flag_To_Redraw();
+        DownGadget.Flag_To_Redraw();
+        ScrollGadget.Flag_To_Redraw();
+    }
+    ControlClass::Flag_To_Redraw();
 }
 
-
-void ListClass::Set_Selected_Index(char const * text)
+void ListClass::Set_Selected_Index(char const* text)
 {
-	if (text && List.Count() > 0) {
-		for (int index = 0; index < List.Count(); index++) {
-			if (stricmp(List[index], text) == 0) {
-				Set_Selected_Index(index);
-				break;
-			}
-		}
-	}
+    if (text && List.Count() > 0) {
+        for (int index = 0; index < List.Count(); index++) {
+            if (stricmp(List[index], text) == 0) {
+                Set_Selected_Index(index);
+                break;
+            }
+        }
+    }
 }

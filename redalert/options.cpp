@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/OPTIONS.CPP 1     3/03/97 10:25a Joe_bostic $ */
@@ -58,16 +58,14 @@
  *   OptionsClass::Set_Tint -- Sets the tint setting.                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-#include	"options.h"
-
+#include "function.h"
+#include "options.h"
 
 #ifdef WIN32
-char const * const OptionsClass::HotkeyName = "WinHotkeys";
+char const* const OptionsClass::HotkeyName = "WinHotkeys";
 #else
-char const * const OptionsClass::HotkeyName = "DOSHotkeys";
+char const* const OptionsClass::HotkeyName = "DOSHotkeys";
 #endif
-
 
 /***********************************************************************************************
  * OptionsClass::OptionsClass -- The default constructor for the options class.                *
@@ -84,80 +82,85 @@ char const * const OptionsClass::HotkeyName = "DOSHotkeys";
  * HISTORY:                                                                                    *
  *   07/21/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-OptionsClass::OptionsClass(void) :
-	GameSpeed(3),
-	ScrollRate(3),
+OptionsClass::OptionsClass(void)
+    : GameSpeed(3)
+    , ScrollRate(3)
+    ,
 #ifdef WIN32
-	Volume(".40"),			// was .295
-	ScoreVolume(".25"),
+    Volume(".40")
+    , // was .295
+    ScoreVolume(".25")
+    ,
 #ifdef FIXIT_VERSION_3
-	MultiScoreVolume("0"),
+    MultiScoreVolume("0")
+    ,
 #endif
 #else
-	Volume(".8"),
-	ScoreVolume(".6"),
+    Volume(".8")
+    , ScoreVolume(".6")
+    ,
 #endif
-	Brightness(fixed::_1_2),
-	Tint(fixed::_1_2),
-	Saturation(fixed::_1_2),
-	Contrast(fixed::_1_2),
-	AutoScroll(true),
-	IsScoreRepeat(false),
-	IsScoreShuffle(false),
-	IsPaletteScroll(true),
+    Brightness(fixed::_1_2)
+    , Tint(fixed::_1_2)
+    , Saturation(fixed::_1_2)
+    , Contrast(fixed::_1_2)
+    , AutoScroll(true)
+    , IsScoreRepeat(false)
+    , IsScoreShuffle(false)
+    , IsPaletteScroll(true)
+    ,
 
-	KeyForceMove1(KN_LALT),
-	KeyForceMove2(KN_RALT),
-	KeyForceAttack1(KN_LCTRL),
-	KeyForceAttack2(KN_RCTRL),
-	KeySelect1(KN_LSHIFT),
-	KeySelect2(KN_RSHIFT),
-	KeyScatter(KN_X),
-	KeyStop(KN_S),
-	KeyGuard(KN_G),
-	KeyNext(KN_N),
-	KeyPrevious(KN_B),
-	KeyFormation(KN_F),
-	KeyHome1(KN_HOME),
-	KeyHome2(KN_E_HOME),
-	KeyBase(KN_H),
-	KeyResign(KN_R),
-	KeyAlliance(KN_A),
-	KeyBookmark1(KN_F9),
-	KeyBookmark2(KN_F10),
-	KeyBookmark3(KN_F11),
-	KeyBookmark4(KN_F12),
-	KeySelectView(KN_E),
-	KeyRepair(KN_T),
-	KeyRepairOn(KN_NONE),
-	KeyRepairOff(KN_NONE),
-	KeySell(KN_Y),
-	KeySellOn(KN_NONE),
-	KeySellOff(KN_NONE),
-	KeyMap(KN_U),
-	KeySidebarUp(KN_UP),
-	KeySidebarDown(KN_DOWN),
-	KeyOption1(KN_ESC),
-	KeyOption2(KN_SPACE),
-	KeyScrollLeft(KN_NONE),
-	KeyScrollRight(KN_NONE),
-	KeyScrollUp(KN_NONE),
-	KeyScrollDown(KN_NONE),
-	KeyQueueMove1(KN_Q),
-	KeyQueueMove2(KN_Q),
-	KeyTeam1(KN_1),
-	KeyTeam2(KN_2),
-	KeyTeam3(KN_3),
-	KeyTeam4(KN_4),
-	KeyTeam5(KN_5),
-	KeyTeam6(KN_6),
-	KeyTeam7(KN_7),
-	KeyTeam8(KN_8),
-	KeyTeam9(KN_9),
-	KeyTeam10(KN_0)
+    KeyForceMove1(KN_LALT)
+    , KeyForceMove2(KN_RALT)
+    , KeyForceAttack1(KN_LCTRL)
+    , KeyForceAttack2(KN_RCTRL)
+    , KeySelect1(KN_LSHIFT)
+    , KeySelect2(KN_RSHIFT)
+    , KeyScatter(KN_X)
+    , KeyStop(KN_S)
+    , KeyGuard(KN_G)
+    , KeyNext(KN_N)
+    , KeyPrevious(KN_B)
+    , KeyFormation(KN_F)
+    , KeyHome1(KN_HOME)
+    , KeyHome2(KN_E_HOME)
+    , KeyBase(KN_H)
+    , KeyResign(KN_R)
+    , KeyAlliance(KN_A)
+    , KeyBookmark1(KN_F9)
+    , KeyBookmark2(KN_F10)
+    , KeyBookmark3(KN_F11)
+    , KeyBookmark4(KN_F12)
+    , KeySelectView(KN_E)
+    , KeyRepair(KN_T)
+    , KeyRepairOn(KN_NONE)
+    , KeyRepairOff(KN_NONE)
+    , KeySell(KN_Y)
+    , KeySellOn(KN_NONE)
+    , KeySellOff(KN_NONE)
+    , KeyMap(KN_U)
+    , KeySidebarUp(KN_UP)
+    , KeySidebarDown(KN_DOWN)
+    , KeyOption1(KN_ESC)
+    , KeyOption2(KN_SPACE)
+    , KeyScrollLeft(KN_NONE)
+    , KeyScrollRight(KN_NONE)
+    , KeyScrollUp(KN_NONE)
+    , KeyScrollDown(KN_NONE)
+    , KeyQueueMove1(KN_Q)
+    , KeyQueueMove2(KN_Q)
+    , KeyTeam1(KN_1)
+    , KeyTeam2(KN_2)
+    , KeyTeam3(KN_3)
+    , KeyTeam4(KN_4)
+    , KeyTeam5(KN_5)
+    , KeyTeam6(KN_6)
+    , KeyTeam7(KN_7)
+    , KeyTeam8(KN_8)
+    , KeyTeam9(KN_9)
+    , KeyTeam10(KN_0)
 {
 }
-
 
 /***********************************************************************************************
  * OptionsClass::One_Time -- This performs any one time initialization for the options class.  *
@@ -177,9 +180,8 @@ OptionsClass::OptionsClass(void) :
  *=============================================================================================*/
 void OptionsClass::One_Time(void)
 {
-	Set_Score_Vol(ScoreVolume * 256);
+    Set_Score_Vol(ScoreVolume * 256);
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Process -- Handles all the options graphic interface.                         *
@@ -200,7 +202,6 @@ void OptionsClass::Process(void)
 {
 }
 
-
 /***********************************************************************************************
  * OptionsClass::Set_Shuffle -- Controls the play shuffle setting.                             *
  *                                                                                             *
@@ -218,9 +219,8 @@ void OptionsClass::Process(void)
  *=============================================================================================*/
 void OptionsClass::Set_Shuffle(int on)
 {
-	IsScoreShuffle = on;
+    IsScoreShuffle = on;
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Set_Repeat -- Controls the score repeat option.                               *
@@ -239,9 +239,8 @@ void OptionsClass::Set_Shuffle(int on)
  *=============================================================================================*/
 void OptionsClass::Set_Repeat(int on)
 {
-	IsScoreRepeat = on;
+    IsScoreRepeat = on;
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Set_Score_Volume -- Sets the global score volume to that specified.           *
@@ -262,13 +261,12 @@ void OptionsClass::Set_Repeat(int on)
  *=============================================================================================*/
 void OptionsClass::Set_Score_Volume(fixed volume, bool feedback)
 {
-	ScoreVolume = Sub_Saturate(volume, 1);
-	Set_Score_Vol(ScoreVolume * 256);
-	if (feedback && !Theme.Still_Playing()) {
-		Sound_Effect(VOC_BEEP, ScoreVolume);
-	}
+    ScoreVolume = Sub_Saturate(volume, 1);
+    Set_Score_Vol(ScoreVolume * 256);
+    if (feedback && !Theme.Still_Playing()) {
+        Sound_Effect(VOC_BEEP, ScoreVolume);
+    }
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Set_Sound_Volume -- Sets the sound effects volume level.                      *
@@ -290,12 +288,11 @@ void OptionsClass::Set_Score_Volume(fixed volume, bool feedback)
  *=============================================================================================*/
 void OptionsClass::Set_Sound_Volume(fixed volume, bool feedback)
 {
-	Volume = Sub_Saturate(volume, 1);
-	if (feedback) {
-		Sound_Effect(VOC_BEEP);
-	}
+    Volume = Sub_Saturate(volume, 1);
+    if (feedback) {
+        Sound_Effect(VOC_BEEP);
+    }
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Set_Brightness -- Sets the brightness level to that specified.                *
@@ -314,11 +311,10 @@ void OptionsClass::Set_Sound_Volume(fixed volume, bool feedback)
  *=============================================================================================*/
 void OptionsClass::Set_Brightness(fixed brightness)
 {
-	Brightness = fixed::_1_4 + (fixed::_1_2 * brightness);
-	Adjust_Palette(OriginalPalette, InGamePalette, Brightness, Saturation, Tint, Contrast);
-	InGamePalette.Set();
+    Brightness = fixed::_1_4 + (fixed::_1_2 * brightness);
+    Adjust_Palette(OriginalPalette, InGamePalette, Brightness, Saturation, Tint, Contrast);
+    InGamePalette.Set();
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Get_Brightness -- Fetches the current brightness setting.                     *
@@ -337,9 +333,8 @@ void OptionsClass::Set_Brightness(fixed brightness)
  *=============================================================================================*/
 fixed OptionsClass::Get_Brightness(void) const
 {
-	return((Brightness - fixed::_1_4) / fixed::_1_2);
+    return ((Brightness - fixed::_1_4) / fixed::_1_2);
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Set_Saturation -- Sets the color to the value specified.                      *
@@ -358,11 +353,10 @@ fixed OptionsClass::Get_Brightness(void) const
  *=============================================================================================*/
 void OptionsClass::Set_Saturation(fixed color)
 {
-	Saturation = color;
-	Adjust_Palette(OriginalPalette, InGamePalette, Brightness, Saturation, Tint, Contrast);
-	InGamePalette.Set();
+    Saturation = color;
+    Adjust_Palette(OriginalPalette, InGamePalette, Brightness, Saturation, Tint, Contrast);
+    InGamePalette.Set();
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Get_Saturation -- Fetches the current color setting.                          *
@@ -382,9 +376,8 @@ void OptionsClass::Set_Saturation(fixed color)
  *=============================================================================================*/
 fixed OptionsClass::Get_Saturation(void) const
 {
-	return(Saturation);
+    return (Saturation);
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Set_Contrast -- Sets the contrast to the value specified.                     *
@@ -403,11 +396,10 @@ fixed OptionsClass::Get_Saturation(void) const
  *=============================================================================================*/
 void OptionsClass::Set_Contrast(fixed contrast)
 {
-	Contrast = fixed::_1_4 + (fixed::_1_2 * contrast);
-	Adjust_Palette(OriginalPalette, InGamePalette, Brightness, Saturation, Tint, Contrast);
-	InGamePalette.Set();
+    Contrast = fixed::_1_4 + (fixed::_1_2 * contrast);
+    Adjust_Palette(OriginalPalette, InGamePalette, Brightness, Saturation, Tint, Contrast);
+    InGamePalette.Set();
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Get_Contrast -- Gets the current contrast setting.                            *
@@ -426,9 +418,8 @@ void OptionsClass::Set_Contrast(fixed contrast)
  *=============================================================================================*/
 fixed OptionsClass::Get_Contrast(void) const
 {
-	return((Contrast - fixed::_1_4) / fixed::_1_2);
+    return ((Contrast - fixed::_1_4) / fixed::_1_2);
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Set_Tint -- Sets the tint setting.                                            *
@@ -446,11 +437,10 @@ fixed OptionsClass::Get_Contrast(void) const
  *=============================================================================================*/
 void OptionsClass::Set_Tint(fixed tint)
 {
-	Tint = tint;
-	Adjust_Palette(OriginalPalette, InGamePalette, Brightness, Saturation, Tint, Contrast);
-	InGamePalette.Set();
+    Tint = tint;
+    Adjust_Palette(OriginalPalette, InGamePalette, Brightness, Saturation, Tint, Contrast);
+    InGamePalette.Set();
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Get_Tint -- Fetches the current tint setting.                                 *
@@ -469,9 +459,8 @@ void OptionsClass::Set_Tint(fixed tint)
  *=============================================================================================*/
 fixed OptionsClass::Get_Tint(void) const
 {
-	return(Tint);
+    return (Tint);
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Adjust_Palette -- Adjusts the palette according to the settings specified.    *
@@ -499,50 +488,54 @@ fixed OptionsClass::Get_Tint(void) const
  *   07/21/1994 JLB : Created.                                                                 *
  *   12/02/1995 JLB : Uses palette class objects.                                              *
  *=============================================================================================*/
-void OptionsClass::Adjust_Palette(PaletteClass const & oldpal, PaletteClass & newpal, fixed brightness, fixed color, fixed tint, fixed contrast) const
+void OptionsClass::Adjust_Palette(PaletteClass const& oldpal,
+                                  PaletteClass& newpal,
+                                  fixed brightness,
+                                  fixed color,
+                                  fixed tint,
+                                  fixed contrast) const
 {
-	//if (!oldpal || !newpal) return;	Can't be NULL... ST - 5/9/2019
+    // if (!oldpal || !newpal) return;	Can't be NULL... ST - 5/9/2019
 
-	/*
-	**	Adjust for palette.
-	*/
-	for (int index = 0; index < PaletteClass::COLOR_COUNT; index++) {
-		if (index == CC_MOUSE_COLOR) {
-			newpal[index] = oldpal[index];
-		} else {
-			/*
-			**	Convert the working palette entry into an HSV format for
-			**	manipulation.
-			*/
-			HSVClass hsv = oldpal[index];
+    /*
+    **	Adjust for palette.
+    */
+    for (int index = 0; index < PaletteClass::COLOR_COUNT; index++) {
+        if (index == CC_MOUSE_COLOR) {
+            newpal[index] = oldpal[index];
+        } else {
+            /*
+            **	Convert the working palette entry into an HSV format for
+            **	manipulation.
+            */
+            HSVClass hsv = oldpal[index];
 
-			/*
-			**	Adjust contrast by moving the value toward the center according to the
-			**	percentage indicated.
-			*/
-			int temp;
-			temp = (hsv.Value_Component() * (brightness * 256)) / 0x80;		// Brightness
-			temp = Bound(temp, 0, 0xFF);
-			int v = temp;
-			temp = (((((int)v) - 0x80) * (contrast * 256)) / 0x80) + 0x80;	// Contrast
-			temp = Bound(temp, 0, 0xFF);
-			v = temp;
-			temp = (hsv.Saturation_Component() * (color * 256)) / 0x80;		// Color
-			temp = Bound(temp, 0, 0xFF);
-			int s = temp;
-			temp = (hsv.Hue_Component() * (tint * 256)) / 0x80;					// Tint
-			temp = Bound(temp, 0, 0xFF);
-			int h = temp;
+            /*
+            **	Adjust contrast by moving the value toward the center according to the
+            **	percentage indicated.
+            */
+            int temp;
+            temp = (hsv.Value_Component() * (brightness * 256)) / 0x80; // Brightness
+            temp = Bound(temp, 0, 0xFF);
+            int v = temp;
+            temp = (((((int)v) - 0x80) * (contrast * 256)) / 0x80) + 0x80; // Contrast
+            temp = Bound(temp, 0, 0xFF);
+            v = temp;
+            temp = (hsv.Saturation_Component() * (color * 256)) / 0x80; // Color
+            temp = Bound(temp, 0, 0xFF);
+            int s = temp;
+            temp = (hsv.Hue_Component() * (tint * 256)) / 0x80; // Tint
+            temp = Bound(temp, 0, 0xFF);
+            int h = temp;
 
-			/*
-			**	Replace the working palette entry according to the newly calculated
-			**	hue, saturation, and value.
-			*/
-			newpal[index] = HSVClass(h, s, v);
-		}
-	}
+            /*
+            **	Replace the working palette entry according to the newly calculated
+            **	hue, saturation, and value.
+            */
+            newpal[index] = HSVClass(h, s, v);
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Load_Settings -- reads options settings from the INI file                     *
@@ -563,138 +556,136 @@ void OptionsClass::Adjust_Palette(PaletteClass const & oldpal, PaletteClass & ne
  *=============================================================================================*/
 void OptionsClass::Load_Settings(void)
 {
-	/*
-	**	Create filename and read the file.
-	*/
-	CCFileClass file(CONFIG_FILE_NAME);
-	INIClass ini;
-	ini.Load(file);
+    /*
+    **	Create filename and read the file.
+    */
+    CCFileClass file(CONFIG_FILE_NAME);
+    INIClass ini;
+    ini.Load(file);
 
-	/*
-	**	Read in the Options values
-	*/
-	static char const * const OPTIONS = "Options";
-	GameSpeed = ini.Get_Int(OPTIONS, "GameSpeed", GameSpeed);
-	ScrollRate = ini.Get_Int(OPTIONS, "ScrollRate", ScrollRate);
-	Set_Brightness(ini.Get_Fixed(OPTIONS, "Brightness", Brightness));
-	Set_Sound_Volume(ini.Get_Fixed(OPTIONS, "Volume", Volume), false);
-	Set_Score_Volume(ini.Get_Fixed(OPTIONS, "ScoreVolume", ScoreVolume), false);
+    /*
+    **	Read in the Options values
+    */
+    static char const* const OPTIONS = "Options";
+    GameSpeed = ini.Get_Int(OPTIONS, "GameSpeed", GameSpeed);
+    ScrollRate = ini.Get_Int(OPTIONS, "ScrollRate", ScrollRate);
+    Set_Brightness(ini.Get_Fixed(OPTIONS, "Brightness", Brightness));
+    Set_Sound_Volume(ini.Get_Fixed(OPTIONS, "Volume", Volume), false);
+    Set_Score_Volume(ini.Get_Fixed(OPTIONS, "ScoreVolume", ScoreVolume), false);
 #ifdef FIXIT_VERSION_3
-	MultiScoreVolume = ini.Get_Fixed(OPTIONS, "MultiplayerScoreVolume", MultiScoreVolume);
+    MultiScoreVolume = ini.Get_Fixed(OPTIONS, "MultiplayerScoreVolume", MultiScoreVolume);
 #endif
-	Set_Contrast(ini.Get_Fixed(OPTIONS, "Contrast", Contrast));
-	Set_Saturation(ini.Get_Fixed(OPTIONS, "Color", Saturation));
-	Set_Tint(ini.Get_Fixed(OPTIONS, "Tint", Tint));
-	AutoScroll = ini.Get_Bool(OPTIONS, "AutoScroll", AutoScroll);
-	Set_Repeat(ini.Get_Bool(OPTIONS, "IsScoreRepeat", IsScoreRepeat));
-	Set_Shuffle(ini.Get_Bool(OPTIONS, "IsScoreShuffle", IsScoreShuffle));
-	SlowPalette = ini.Get_Bool(OPTIONS, "SlowPalette", SlowPalette);
-	IsPaletteScroll = ini.Get_Bool(OPTIONS, "PaletteScroll", IsPaletteScroll);
+    Set_Contrast(ini.Get_Fixed(OPTIONS, "Contrast", Contrast));
+    Set_Saturation(ini.Get_Fixed(OPTIONS, "Color", Saturation));
+    Set_Tint(ini.Get_Fixed(OPTIONS, "Tint", Tint));
+    AutoScroll = ini.Get_Bool(OPTIONS, "AutoScroll", AutoScroll);
+    Set_Repeat(ini.Get_Bool(OPTIONS, "IsScoreRepeat", IsScoreRepeat));
+    Set_Shuffle(ini.Get_Bool(OPTIONS, "IsScoreShuffle", IsScoreShuffle));
+    SlowPalette = ini.Get_Bool(OPTIONS, "SlowPalette", SlowPalette);
+    IsPaletteScroll = ini.Get_Bool(OPTIONS, "PaletteScroll", IsPaletteScroll);
 
-	KeyForceMove1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceMove1", KeyForceMove1);
-	KeyForceMove2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceMove2", KeyForceMove2);
-	KeyForceAttack1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceAttack1", KeyForceAttack1);
-	KeyForceAttack2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceAttack2", KeyForceAttack2);
-	KeySelect1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeySelect1", KeySelect1);
-	KeySelect2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeySelect2", KeySelect2);
-	KeyScatter = (KeyNumType)ini.Get_Int(HotkeyName, "KeyScatter", KeyScatter);
-	KeyStop = (KeyNumType)ini.Get_Int(HotkeyName, "KeyStop", KeyStop);
-	KeyGuard = (KeyNumType)ini.Get_Int(HotkeyName, "KeyGuard", KeyGuard);
-	KeyNext = (KeyNumType)ini.Get_Int(HotkeyName, "KeyNext", KeyNext);
-	KeyPrevious = (KeyNumType)ini.Get_Int(HotkeyName, "KeyPrevious", KeyPrevious);
-	KeyFormation = (KeyNumType)ini.Get_Int(HotkeyName, "KeyFormation", KeyFormation);
-	KeyHome1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyHome1", KeyHome1);
-	KeyHome2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyHome2", KeyHome2);
-	KeyBase = (KeyNumType)ini.Get_Int(HotkeyName, "KeyBase", KeyBase);
-	KeyResign = (KeyNumType)ini.Get_Int(HotkeyName, "KeyResign", KeyResign);
-	KeyAlliance = (KeyNumType)ini.Get_Int(HotkeyName, "KeyAlliance", KeyAlliance);
-	KeyBookmark1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyBookmark1", KeyBookmark1);
-	KeyBookmark2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyBookmark2", KeyBookmark2);
-	KeyBookmark3 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyBookmark3", KeyBookmark3);
-	KeyBookmark4 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyBookmark4", KeyBookmark4);
-	KeySelectView =  (KeyNumType)ini.Get_Int(HotkeyName, "KeySelectView", KeySelectView);
-	KeyRepair =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyRepairToggle", KeyRepair);
-	KeyRepairOn = (KeyNumType)ini.Get_Int(HotkeyName, "KeyRepairOn", KeyRepairOn);
-	KeyRepairOff = (KeyNumType)ini.Get_Int(HotkeyName, "KeyRepairOff", KeyRepairOff);
-	KeySell =  (KeyNumType)ini.Get_Int(HotkeyName, "KeySellToggle", KeySell);
-	KeySellOn = (KeyNumType)ini.Get_Int(HotkeyName, "KeySellOn", KeySellOn);
-	KeySellOff = (KeyNumType)ini.Get_Int(HotkeyName, "KeySellOff", KeySellOff);
-	KeyMap =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyMapToggle", KeyMap);
-	KeySidebarUp =  (KeyNumType)ini.Get_Int(HotkeyName, "KeySidebarUp", KeySidebarUp);
-	KeySidebarDown =  (KeyNumType)ini.Get_Int(HotkeyName, "KeySidebarDown", KeySidebarDown);
-	KeyOption1 =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyOption1", KeyOption1);
-	KeyOption2 =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyOption2", KeyOption2);
-	KeyScrollLeft =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyScrollLeft", KeyScrollLeft);
-	KeyScrollRight =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyScrollRight", KeyScrollRight);
-	KeyScrollUp =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyScrollUp", KeyScrollUp);
-	KeyScrollDown =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyScrollDown", KeyScrollDown);
-	KeyQueueMove1 =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyQueueMove1", KeyQueueMove1);
-	KeyQueueMove2 =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyQueueMove2", KeyQueueMove2);
-	KeyTeam1 =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam1", KeyTeam1);
-	KeyTeam2 =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam2", KeyTeam2);
-	KeyTeam3 =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam3", KeyTeam3);
-	KeyTeam4 =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam4", KeyTeam4);
-	KeyTeam5 =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam5", KeyTeam5);
-	KeyTeam6 =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam6", KeyTeam6);
-	KeyTeam7 =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam7", KeyTeam7);
-	KeyTeam8 =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam8", KeyTeam8);
-	KeyTeam9 =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam9", KeyTeam9);
-	KeyTeam10 =  (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam10", KeyTeam10);
-
+    KeyForceMove1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceMove1", KeyForceMove1);
+    KeyForceMove2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceMove2", KeyForceMove2);
+    KeyForceAttack1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceAttack1", KeyForceAttack1);
+    KeyForceAttack2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceAttack2", KeyForceAttack2);
+    KeySelect1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeySelect1", KeySelect1);
+    KeySelect2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeySelect2", KeySelect2);
+    KeyScatter = (KeyNumType)ini.Get_Int(HotkeyName, "KeyScatter", KeyScatter);
+    KeyStop = (KeyNumType)ini.Get_Int(HotkeyName, "KeyStop", KeyStop);
+    KeyGuard = (KeyNumType)ini.Get_Int(HotkeyName, "KeyGuard", KeyGuard);
+    KeyNext = (KeyNumType)ini.Get_Int(HotkeyName, "KeyNext", KeyNext);
+    KeyPrevious = (KeyNumType)ini.Get_Int(HotkeyName, "KeyPrevious", KeyPrevious);
+    KeyFormation = (KeyNumType)ini.Get_Int(HotkeyName, "KeyFormation", KeyFormation);
+    KeyHome1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyHome1", KeyHome1);
+    KeyHome2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyHome2", KeyHome2);
+    KeyBase = (KeyNumType)ini.Get_Int(HotkeyName, "KeyBase", KeyBase);
+    KeyResign = (KeyNumType)ini.Get_Int(HotkeyName, "KeyResign", KeyResign);
+    KeyAlliance = (KeyNumType)ini.Get_Int(HotkeyName, "KeyAlliance", KeyAlliance);
+    KeyBookmark1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyBookmark1", KeyBookmark1);
+    KeyBookmark2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyBookmark2", KeyBookmark2);
+    KeyBookmark3 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyBookmark3", KeyBookmark3);
+    KeyBookmark4 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyBookmark4", KeyBookmark4);
+    KeySelectView = (KeyNumType)ini.Get_Int(HotkeyName, "KeySelectView", KeySelectView);
+    KeyRepair = (KeyNumType)ini.Get_Int(HotkeyName, "KeyRepairToggle", KeyRepair);
+    KeyRepairOn = (KeyNumType)ini.Get_Int(HotkeyName, "KeyRepairOn", KeyRepairOn);
+    KeyRepairOff = (KeyNumType)ini.Get_Int(HotkeyName, "KeyRepairOff", KeyRepairOff);
+    KeySell = (KeyNumType)ini.Get_Int(HotkeyName, "KeySellToggle", KeySell);
+    KeySellOn = (KeyNumType)ini.Get_Int(HotkeyName, "KeySellOn", KeySellOn);
+    KeySellOff = (KeyNumType)ini.Get_Int(HotkeyName, "KeySellOff", KeySellOff);
+    KeyMap = (KeyNumType)ini.Get_Int(HotkeyName, "KeyMapToggle", KeyMap);
+    KeySidebarUp = (KeyNumType)ini.Get_Int(HotkeyName, "KeySidebarUp", KeySidebarUp);
+    KeySidebarDown = (KeyNumType)ini.Get_Int(HotkeyName, "KeySidebarDown", KeySidebarDown);
+    KeyOption1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyOption1", KeyOption1);
+    KeyOption2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyOption2", KeyOption2);
+    KeyScrollLeft = (KeyNumType)ini.Get_Int(HotkeyName, "KeyScrollLeft", KeyScrollLeft);
+    KeyScrollRight = (KeyNumType)ini.Get_Int(HotkeyName, "KeyScrollRight", KeyScrollRight);
+    KeyScrollUp = (KeyNumType)ini.Get_Int(HotkeyName, "KeyScrollUp", KeyScrollUp);
+    KeyScrollDown = (KeyNumType)ini.Get_Int(HotkeyName, "KeyScrollDown", KeyScrollDown);
+    KeyQueueMove1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyQueueMove1", KeyQueueMove1);
+    KeyQueueMove2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyQueueMove2", KeyQueueMove2);
+    KeyTeam1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam1", KeyTeam1);
+    KeyTeam2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam2", KeyTeam2);
+    KeyTeam3 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam3", KeyTeam3);
+    KeyTeam4 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam4", KeyTeam4);
+    KeyTeam5 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam5", KeyTeam5);
+    KeyTeam6 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam6", KeyTeam6);
+    KeyTeam7 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam7", KeyTeam7);
+    KeyTeam8 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam8", KeyTeam8);
+    KeyTeam9 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam9", KeyTeam9);
+    KeyTeam10 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam10", KeyTeam10);
 
 #ifdef WIN32
-	KeyForceMove1 = (KeyNumType)(KeyForceMove1 & ~WWKEY_VK_BIT);
-	KeyForceMove2 = (KeyNumType)(KeyForceMove2 & ~WWKEY_VK_BIT);
-	KeyForceAttack1 = (KeyNumType)(KeyForceAttack1 & ~WWKEY_VK_BIT);
-	KeyForceAttack2 = (KeyNumType)(KeyForceAttack2 & ~WWKEY_VK_BIT);
-	KeySelect1 = (KeyNumType)(KeySelect1 & ~WWKEY_VK_BIT);
-	KeySelect2 = (KeyNumType)(KeySelect2 & ~WWKEY_VK_BIT);
-	KeyScatter = (KeyNumType)(KeyScatter & ~WWKEY_VK_BIT);
-	KeyStop = (KeyNumType)(KeyStop & ~WWKEY_VK_BIT);
-	KeyGuard = (KeyNumType)(KeyGuard & ~WWKEY_VK_BIT);
-	KeyNext = (KeyNumType)(KeyNext & ~WWKEY_VK_BIT);
-	KeyPrevious = (KeyNumType)(KeyPrevious & ~WWKEY_VK_BIT);
-	KeyFormation = (KeyNumType)(KeyFormation & ~WWKEY_VK_BIT);
-	KeyHome1 = (KeyNumType)(KeyHome1 & ~WWKEY_VK_BIT);
-	KeyHome2 = (KeyNumType)(KeyHome2 & ~WWKEY_VK_BIT);
-	KeyBase = (KeyNumType)(KeyBase & ~WWKEY_VK_BIT);
-	KeyResign = (KeyNumType)(KeyResign & ~WWKEY_VK_BIT);
-	KeyAlliance = (KeyNumType)(KeyAlliance & ~WWKEY_VK_BIT);
-	KeyBookmark1 = (KeyNumType)(KeyBookmark1 & ~WWKEY_VK_BIT);
-	KeyBookmark2 = (KeyNumType)(KeyBookmark2 & ~WWKEY_VK_BIT);
-	KeyBookmark3 = (KeyNumType)(KeyBookmark3 & ~WWKEY_VK_BIT);
-	KeyBookmark4 = (KeyNumType)(KeyBookmark4 & ~WWKEY_VK_BIT);
-	KeySelectView = (KeyNumType)(KeySelectView & ~WWKEY_VK_BIT);
-	KeyRepair = (KeyNumType)(KeyRepair & ~WWKEY_VK_BIT);
-	KeyRepairOn = (KeyNumType)(KeyRepairOn & ~WWKEY_VK_BIT);
-	KeyRepairOff = (KeyNumType)(KeyRepairOff & ~WWKEY_VK_BIT);
-	KeySell = (KeyNumType)(KeySell & ~WWKEY_VK_BIT);
-	KeySellOn = (KeyNumType)(KeySellOn & ~WWKEY_VK_BIT);
-	KeySellOff = (KeyNumType)(KeySellOff & ~WWKEY_VK_BIT);
-	KeyMap = (KeyNumType)(KeyMap & ~WWKEY_VK_BIT);
-	KeySidebarUp = (KeyNumType)(KeySidebarUp & ~WWKEY_VK_BIT);
-	KeySidebarDown = (KeyNumType)(KeySidebarDown & ~WWKEY_VK_BIT);
-	KeyOption1 = (KeyNumType)(KeyOption1 & ~WWKEY_VK_BIT);
-	KeyOption2 = (KeyNumType)(KeyOption2 & ~WWKEY_VK_BIT);
-	KeyScrollLeft = (KeyNumType)(KeyScrollLeft & ~WWKEY_VK_BIT);
-	KeyScrollRight = (KeyNumType)(KeyScrollRight & ~WWKEY_VK_BIT);
-	KeyScrollUp = (KeyNumType)(KeyScrollUp & ~WWKEY_VK_BIT);
-	KeyScrollDown = (KeyNumType)(KeyScrollDown & ~WWKEY_VK_BIT);
-	KeyQueueMove1 = (KeyNumType)(KeyQueueMove1 & ~WWKEY_VK_BIT);
-	KeyQueueMove2 = (KeyNumType)(KeyQueueMove2 & ~WWKEY_VK_BIT);
-	KeyTeam1 = (KeyNumType)(KeyTeam1 & ~WWKEY_VK_BIT);
-	KeyTeam2 = (KeyNumType)(KeyTeam2 & ~WWKEY_VK_BIT);
-	KeyTeam3 = (KeyNumType)(KeyTeam3 & ~WWKEY_VK_BIT);
-	KeyTeam4 = (KeyNumType)(KeyTeam4 & ~WWKEY_VK_BIT);
-	KeyTeam5 = (KeyNumType)(KeyTeam5 & ~WWKEY_VK_BIT);
-	KeyTeam6 = (KeyNumType)(KeyTeam6 & ~WWKEY_VK_BIT);
-	KeyTeam7 = (KeyNumType)(KeyTeam7 & ~WWKEY_VK_BIT);
-	KeyTeam8 = (KeyNumType)(KeyTeam8 & ~WWKEY_VK_BIT);
-	KeyTeam9 = (KeyNumType)(KeyTeam9 & ~WWKEY_VK_BIT);
-	KeyTeam10 = (KeyNumType)(KeyTeam10 & ~WWKEY_VK_BIT);
+    KeyForceMove1 = (KeyNumType)(KeyForceMove1 & ~WWKEY_VK_BIT);
+    KeyForceMove2 = (KeyNumType)(KeyForceMove2 & ~WWKEY_VK_BIT);
+    KeyForceAttack1 = (KeyNumType)(KeyForceAttack1 & ~WWKEY_VK_BIT);
+    KeyForceAttack2 = (KeyNumType)(KeyForceAttack2 & ~WWKEY_VK_BIT);
+    KeySelect1 = (KeyNumType)(KeySelect1 & ~WWKEY_VK_BIT);
+    KeySelect2 = (KeyNumType)(KeySelect2 & ~WWKEY_VK_BIT);
+    KeyScatter = (KeyNumType)(KeyScatter & ~WWKEY_VK_BIT);
+    KeyStop = (KeyNumType)(KeyStop & ~WWKEY_VK_BIT);
+    KeyGuard = (KeyNumType)(KeyGuard & ~WWKEY_VK_BIT);
+    KeyNext = (KeyNumType)(KeyNext & ~WWKEY_VK_BIT);
+    KeyPrevious = (KeyNumType)(KeyPrevious & ~WWKEY_VK_BIT);
+    KeyFormation = (KeyNumType)(KeyFormation & ~WWKEY_VK_BIT);
+    KeyHome1 = (KeyNumType)(KeyHome1 & ~WWKEY_VK_BIT);
+    KeyHome2 = (KeyNumType)(KeyHome2 & ~WWKEY_VK_BIT);
+    KeyBase = (KeyNumType)(KeyBase & ~WWKEY_VK_BIT);
+    KeyResign = (KeyNumType)(KeyResign & ~WWKEY_VK_BIT);
+    KeyAlliance = (KeyNumType)(KeyAlliance & ~WWKEY_VK_BIT);
+    KeyBookmark1 = (KeyNumType)(KeyBookmark1 & ~WWKEY_VK_BIT);
+    KeyBookmark2 = (KeyNumType)(KeyBookmark2 & ~WWKEY_VK_BIT);
+    KeyBookmark3 = (KeyNumType)(KeyBookmark3 & ~WWKEY_VK_BIT);
+    KeyBookmark4 = (KeyNumType)(KeyBookmark4 & ~WWKEY_VK_BIT);
+    KeySelectView = (KeyNumType)(KeySelectView & ~WWKEY_VK_BIT);
+    KeyRepair = (KeyNumType)(KeyRepair & ~WWKEY_VK_BIT);
+    KeyRepairOn = (KeyNumType)(KeyRepairOn & ~WWKEY_VK_BIT);
+    KeyRepairOff = (KeyNumType)(KeyRepairOff & ~WWKEY_VK_BIT);
+    KeySell = (KeyNumType)(KeySell & ~WWKEY_VK_BIT);
+    KeySellOn = (KeyNumType)(KeySellOn & ~WWKEY_VK_BIT);
+    KeySellOff = (KeyNumType)(KeySellOff & ~WWKEY_VK_BIT);
+    KeyMap = (KeyNumType)(KeyMap & ~WWKEY_VK_BIT);
+    KeySidebarUp = (KeyNumType)(KeySidebarUp & ~WWKEY_VK_BIT);
+    KeySidebarDown = (KeyNumType)(KeySidebarDown & ~WWKEY_VK_BIT);
+    KeyOption1 = (KeyNumType)(KeyOption1 & ~WWKEY_VK_BIT);
+    KeyOption2 = (KeyNumType)(KeyOption2 & ~WWKEY_VK_BIT);
+    KeyScrollLeft = (KeyNumType)(KeyScrollLeft & ~WWKEY_VK_BIT);
+    KeyScrollRight = (KeyNumType)(KeyScrollRight & ~WWKEY_VK_BIT);
+    KeyScrollUp = (KeyNumType)(KeyScrollUp & ~WWKEY_VK_BIT);
+    KeyScrollDown = (KeyNumType)(KeyScrollDown & ~WWKEY_VK_BIT);
+    KeyQueueMove1 = (KeyNumType)(KeyQueueMove1 & ~WWKEY_VK_BIT);
+    KeyQueueMove2 = (KeyNumType)(KeyQueueMove2 & ~WWKEY_VK_BIT);
+    KeyTeam1 = (KeyNumType)(KeyTeam1 & ~WWKEY_VK_BIT);
+    KeyTeam2 = (KeyNumType)(KeyTeam2 & ~WWKEY_VK_BIT);
+    KeyTeam3 = (KeyNumType)(KeyTeam3 & ~WWKEY_VK_BIT);
+    KeyTeam4 = (KeyNumType)(KeyTeam4 & ~WWKEY_VK_BIT);
+    KeyTeam5 = (KeyNumType)(KeyTeam5 & ~WWKEY_VK_BIT);
+    KeyTeam6 = (KeyNumType)(KeyTeam6 & ~WWKEY_VK_BIT);
+    KeyTeam7 = (KeyNumType)(KeyTeam7 & ~WWKEY_VK_BIT);
+    KeyTeam8 = (KeyNumType)(KeyTeam8 & ~WWKEY_VK_BIT);
+    KeyTeam9 = (KeyNumType)(KeyTeam9 & ~WWKEY_VK_BIT);
+    KeyTeam10 = (KeyNumType)(KeyTeam10 & ~WWKEY_VK_BIT);
 #endif
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Save_Settings -- writes options settings to the INI file                      *
@@ -713,101 +704,100 @@ void OptionsClass::Load_Settings(void)
  *   07/03/1996 JLB : Revamped and tightened up.                                               *
  *   07/30/1996 JLB : Handles hotkeys.                                                         *
  *=============================================================================================*/
-void OptionsClass::Save_Settings (void)
+void OptionsClass::Save_Settings(void)
 {
-	CCFileClass file(CONFIG_FILE_NAME);
-	INIClass ini;
+    CCFileClass file(CONFIG_FILE_NAME);
+    INIClass ini;
 
-	/*
-	**	Load any existing options file because it may contain entries that won't be
-	**	explicitly written out by this routine. By preloading the database, these entries
-	**	will be carried over.
-	*/
-	if (file.Is_Available()) {
-		ini.Load(file);
-	}
+    /*
+    **	Load any existing options file because it may contain entries that won't be
+    **	explicitly written out by this routine. By preloading the database, these entries
+    **	will be carried over.
+    */
+    if (file.Is_Available()) {
+        ini.Load(file);
+    }
 
-	/*
-	**	Save Options settings
-	*/
-	static char const * const OPTIONS = "Options";
-	ini.Put_Int(OPTIONS, "GameSpeed", GameSpeed);
-	ini.Put_Int(OPTIONS, "ScrollRate", ScrollRate);
-	ini.Put_Fixed(OPTIONS, "Brightness", Brightness);
-	ini.Put_Fixed(OPTIONS, "Volume", Volume);
+    /*
+    **	Save Options settings
+    */
+    static char const* const OPTIONS = "Options";
+    ini.Put_Int(OPTIONS, "GameSpeed", GameSpeed);
+    ini.Put_Int(OPTIONS, "ScrollRate", ScrollRate);
+    ini.Put_Fixed(OPTIONS, "Brightness", Brightness);
+    ini.Put_Fixed(OPTIONS, "Volume", Volume);
 #ifdef FIXIT_VERSION_3
-	if( Session.Type == GAME_NORMAL )		//	Save only when non-multiplayer.
-		ini.Put_Fixed(OPTIONS, "ScoreVolume", ScoreVolume);
+    if (Session.Type == GAME_NORMAL) //	Save only when non-multiplayer.
+        ini.Put_Fixed(OPTIONS, "ScoreVolume", ScoreVolume);
 #else
-	ini.Put_Fixed(OPTIONS, "ScoreVolume", ScoreVolume);
+    ini.Put_Fixed(OPTIONS, "ScoreVolume", ScoreVolume);
 #endif
 #ifdef FIXIT_VERSION_3
-	ini.Put_Fixed(OPTIONS, "MultiplayerScoreVolume", MultiScoreVolume);
+    ini.Put_Fixed(OPTIONS, "MultiplayerScoreVolume", MultiScoreVolume);
 #endif
-	ini.Put_Fixed(OPTIONS, "Contrast", Contrast);
-	ini.Put_Fixed(OPTIONS, "Color", Saturation);
-	ini.Put_Fixed(OPTIONS, "Tint", Tint);
-	ini.Put_Bool(OPTIONS, "AutoScroll", AutoScroll);
-	ini.Put_Bool(OPTIONS, "IsScoreRepeat", IsScoreRepeat);
-	ini.Put_Bool(OPTIONS, "IsScoreShuffle", IsScoreShuffle);
-	ini.Put_Bool(OPTIONS, "PaletteScroll", IsPaletteScroll);
+    ini.Put_Fixed(OPTIONS, "Contrast", Contrast);
+    ini.Put_Fixed(OPTIONS, "Color", Saturation);
+    ini.Put_Fixed(OPTIONS, "Tint", Tint);
+    ini.Put_Bool(OPTIONS, "AutoScroll", AutoScroll);
+    ini.Put_Bool(OPTIONS, "IsScoreRepeat", IsScoreRepeat);
+    ini.Put_Bool(OPTIONS, "IsScoreShuffle", IsScoreShuffle);
+    ini.Put_Bool(OPTIONS, "PaletteScroll", IsPaletteScroll);
 
-	ini.Put_Int(HotkeyName, "KeyForceMove1", KeyForceMove1);
-	ini.Put_Int(HotkeyName, "KeyForceMove2", KeyForceMove2);
-	ini.Put_Int(HotkeyName, "KeyForceAttack1", KeyForceAttack1);
-	ini.Put_Int(HotkeyName, "KeyForceAttack2", KeyForceAttack2);
-	ini.Put_Int(HotkeyName, "KeySelect1", KeySelect1);
-	ini.Put_Int(HotkeyName, "KeySelect2", KeySelect2);
-	ini.Put_Int(HotkeyName, "KeyScatter", KeyScatter);
-	ini.Put_Int(HotkeyName, "KeyStop", KeyStop);
-	ini.Put_Int(HotkeyName, "KeyGuard", KeyGuard);
-	ini.Put_Int(HotkeyName, "KeyNext", KeyNext);
-	ini.Put_Int(HotkeyName, "KeyPrevious", KeyPrevious);
-	ini.Put_Int(HotkeyName, "KeyFormation", KeyFormation);
-	ini.Put_Int(HotkeyName, "KeyHome1", KeyHome1);
-	ini.Put_Int(HotkeyName, "KeyHome2", KeyHome2);
-	ini.Put_Int(HotkeyName, "KeyBase", KeyBase);
-	ini.Put_Int(HotkeyName, "KeyResign", KeyResign);
-	ini.Put_Int(HotkeyName, "KeyAlliance", KeyAlliance);
-	ini.Put_Int(HotkeyName, "KeyBookmark1", KeyBookmark1);
-	ini.Put_Int(HotkeyName, "KeyBookmark2", KeyBookmark2);
-	ini.Put_Int(HotkeyName, "KeyBookmark3", KeyBookmark3);
-	ini.Put_Int(HotkeyName, "KeyBookmark4", KeyBookmark4);
-	ini.Put_Int(HotkeyName, "KeySelectView", KeySelectView);
-	ini.Put_Int(HotkeyName, "KeyRepairToggle", KeyRepair);
-	ini.Put_Int(HotkeyName, "KeyRepairOn", KeyRepairOn);
-	ini.Put_Int(HotkeyName, "KeyRepairOff", KeyRepairOff);
-	ini.Put_Int(HotkeyName, "KeySellToggle", KeySell);
-	ini.Put_Int(HotkeyName, "KeySellOn", KeySellOn);
-	ini.Put_Int(HotkeyName, "KeySellOff", KeySellOff);
-	ini.Put_Int(HotkeyName, "KeyMapToggle", KeyMap);
-	ini.Put_Int(HotkeyName, "KeySidebarUp", KeySidebarUp);
-	ini.Put_Int(HotkeyName, "KeySidebarDown", KeySidebarDown);
-	ini.Put_Int(HotkeyName, "KeyOption1", KeyOption1);
-	ini.Put_Int(HotkeyName, "KeyOption2", KeyOption2);
-	ini.Put_Int(HotkeyName, "KeyScrollLeft", KeyScrollLeft);
-	ini.Put_Int(HotkeyName, "KeyScrollRight", KeyScrollRight);
-	ini.Put_Int(HotkeyName, "KeyScrollUp", KeyScrollUp);
-	ini.Put_Int(HotkeyName, "KeyScrollDown", KeyScrollDown);
-	ini.Put_Int(HotkeyName, "KeyQueueMove1", KeyQueueMove1);
-	ini.Put_Int(HotkeyName, "KeyQueueMove2", KeyQueueMove2);
-	ini.Put_Int(HotkeyName, "KeyTeam1", KeyTeam1);
-	ini.Put_Int(HotkeyName, "KeyTeam2", KeyTeam2);
-	ini.Put_Int(HotkeyName, "KeyTeam3", KeyTeam3);
-	ini.Put_Int(HotkeyName, "KeyTeam4", KeyTeam4);
-	ini.Put_Int(HotkeyName, "KeyTeam5", KeyTeam5);
-	ini.Put_Int(HotkeyName, "KeyTeam6", KeyTeam6);
-	ini.Put_Int(HotkeyName, "KeyTeam7", KeyTeam7);
-	ini.Put_Int(HotkeyName, "KeyTeam8", KeyTeam8);
-	ini.Put_Int(HotkeyName, "KeyTeam9", KeyTeam9);
-	ini.Put_Int(HotkeyName, "KeyTeam10", KeyTeam10);
+    ini.Put_Int(HotkeyName, "KeyForceMove1", KeyForceMove1);
+    ini.Put_Int(HotkeyName, "KeyForceMove2", KeyForceMove2);
+    ini.Put_Int(HotkeyName, "KeyForceAttack1", KeyForceAttack1);
+    ini.Put_Int(HotkeyName, "KeyForceAttack2", KeyForceAttack2);
+    ini.Put_Int(HotkeyName, "KeySelect1", KeySelect1);
+    ini.Put_Int(HotkeyName, "KeySelect2", KeySelect2);
+    ini.Put_Int(HotkeyName, "KeyScatter", KeyScatter);
+    ini.Put_Int(HotkeyName, "KeyStop", KeyStop);
+    ini.Put_Int(HotkeyName, "KeyGuard", KeyGuard);
+    ini.Put_Int(HotkeyName, "KeyNext", KeyNext);
+    ini.Put_Int(HotkeyName, "KeyPrevious", KeyPrevious);
+    ini.Put_Int(HotkeyName, "KeyFormation", KeyFormation);
+    ini.Put_Int(HotkeyName, "KeyHome1", KeyHome1);
+    ini.Put_Int(HotkeyName, "KeyHome2", KeyHome2);
+    ini.Put_Int(HotkeyName, "KeyBase", KeyBase);
+    ini.Put_Int(HotkeyName, "KeyResign", KeyResign);
+    ini.Put_Int(HotkeyName, "KeyAlliance", KeyAlliance);
+    ini.Put_Int(HotkeyName, "KeyBookmark1", KeyBookmark1);
+    ini.Put_Int(HotkeyName, "KeyBookmark2", KeyBookmark2);
+    ini.Put_Int(HotkeyName, "KeyBookmark3", KeyBookmark3);
+    ini.Put_Int(HotkeyName, "KeyBookmark4", KeyBookmark4);
+    ini.Put_Int(HotkeyName, "KeySelectView", KeySelectView);
+    ini.Put_Int(HotkeyName, "KeyRepairToggle", KeyRepair);
+    ini.Put_Int(HotkeyName, "KeyRepairOn", KeyRepairOn);
+    ini.Put_Int(HotkeyName, "KeyRepairOff", KeyRepairOff);
+    ini.Put_Int(HotkeyName, "KeySellToggle", KeySell);
+    ini.Put_Int(HotkeyName, "KeySellOn", KeySellOn);
+    ini.Put_Int(HotkeyName, "KeySellOff", KeySellOff);
+    ini.Put_Int(HotkeyName, "KeyMapToggle", KeyMap);
+    ini.Put_Int(HotkeyName, "KeySidebarUp", KeySidebarUp);
+    ini.Put_Int(HotkeyName, "KeySidebarDown", KeySidebarDown);
+    ini.Put_Int(HotkeyName, "KeyOption1", KeyOption1);
+    ini.Put_Int(HotkeyName, "KeyOption2", KeyOption2);
+    ini.Put_Int(HotkeyName, "KeyScrollLeft", KeyScrollLeft);
+    ini.Put_Int(HotkeyName, "KeyScrollRight", KeyScrollRight);
+    ini.Put_Int(HotkeyName, "KeyScrollUp", KeyScrollUp);
+    ini.Put_Int(HotkeyName, "KeyScrollDown", KeyScrollDown);
+    ini.Put_Int(HotkeyName, "KeyQueueMove1", KeyQueueMove1);
+    ini.Put_Int(HotkeyName, "KeyQueueMove2", KeyQueueMove2);
+    ini.Put_Int(HotkeyName, "KeyTeam1", KeyTeam1);
+    ini.Put_Int(HotkeyName, "KeyTeam2", KeyTeam2);
+    ini.Put_Int(HotkeyName, "KeyTeam3", KeyTeam3);
+    ini.Put_Int(HotkeyName, "KeyTeam4", KeyTeam4);
+    ini.Put_Int(HotkeyName, "KeyTeam5", KeyTeam5);
+    ini.Put_Int(HotkeyName, "KeyTeam6", KeyTeam6);
+    ini.Put_Int(HotkeyName, "KeyTeam7", KeyTeam7);
+    ini.Put_Int(HotkeyName, "KeyTeam8", KeyTeam8);
+    ini.Put_Int(HotkeyName, "KeyTeam9", KeyTeam9);
+    ini.Put_Int(HotkeyName, "KeyTeam10", KeyTeam10);
 
-	/*
-	**	Write the INI data out to a file.
-	*/
-	ini.Save(file);
+    /*
+    **	Write the INI data out to a file.
+    */
+    ini.Save(file);
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Set -- Sets options based on current settings                                 *
@@ -826,16 +816,15 @@ void OptionsClass::Save_Settings (void)
  *=============================================================================================*/
 void OptionsClass::Set(void)
 {
-	Set_Brightness(Brightness);
-	Set_Contrast(Contrast);
-	Set_Saturation(Saturation);
-	Set_Tint(Tint);
-	Set_Sound_Volume(Volume, false);
-	Set_Score_Volume(ScoreVolume, false);
-	Set_Repeat(IsScoreRepeat);
-	Set_Shuffle(IsScoreShuffle);
+    Set_Brightness(Brightness);
+    Set_Contrast(Contrast);
+    Set_Saturation(Saturation);
+    Set_Tint(Tint);
+    Set_Sound_Volume(Volume, false);
+    Set_Score_Volume(ScoreVolume, false);
+    Set_Repeat(IsScoreRepeat);
+    Set_Shuffle(IsScoreShuffle);
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Normalize_Delay -- Normalizes delay factor to keep rate constant.             *
@@ -860,22 +849,17 @@ void OptionsClass::Set(void)
  *=============================================================================================*/
 int OptionsClass::Normalize_Delay(int delay) const
 {
-	static int _adjust[][8] = {
-		{2,2,1,1,1,1,1,1},
-		{3,3,3,2,2,2,1,1},
-		{5,4,4,3,3,2,2,1},
-		{7,6,5,4,4,4,3,2}
-	};
-	if (delay) {
-		if (delay < 5) {
-			delay = _adjust[delay-1][GameSpeed];
-		} else {
-			delay = ((delay * 8) / (GameSpeed+1));
-		}
-	}
-	return(delay);
+    static int _adjust[][8] = {
+        {2, 2, 1, 1, 1, 1, 1, 1}, {3, 3, 3, 2, 2, 2, 1, 1}, {5, 4, 4, 3, 3, 2, 2, 1}, {7, 6, 5, 4, 4, 4, 3, 2}};
+    if (delay) {
+        if (delay < 5) {
+            delay = _adjust[delay - 1][GameSpeed];
+        } else {
+            delay = ((delay * 8) / (GameSpeed + 1));
+        }
+    }
+    return (delay);
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Fixup_Palette -- Adjusts the real palette to match the palette sliders.       *
@@ -894,10 +878,9 @@ int OptionsClass::Normalize_Delay(int delay) const
  *=============================================================================================*/
 void OptionsClass::Fixup_Palette(void) const
 {
-	Adjust_Palette(OriginalPalette, InGamePalette, Brightness, Saturation, Tint, Contrast);
-	CCPalette = InGamePalette;
+    Adjust_Palette(OriginalPalette, InGamePalette, Brightness, Saturation, Tint, Contrast);
+    CCPalette = InGamePalette;
 }
-
 
 /***********************************************************************************************
  * OptionsClass::Normalize_Volume -- Convert to a real volume value.                           *
@@ -916,5 +899,5 @@ void OptionsClass::Fixup_Palette(void) const
  *=============================================================================================*/
 int OptionsClass::Normalize_Volume(int volume) const
 {
-	return(volume * Volume);
+    return (volume * Volume);
 }

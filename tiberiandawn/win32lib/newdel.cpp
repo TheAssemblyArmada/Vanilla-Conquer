@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /***************************************************************************
@@ -37,13 +37,11 @@
 
 #include "wwmem.h"
 
-
 /*=========================================================================*/
 /* The following PRIVATE functions are in this file:                       */
 /*=========================================================================*/
 
 /*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
-
 
 /***************************************************************************
  * OPERATOR NEW -- Overides the global new function.                       *
@@ -57,11 +55,10 @@
  * HISTORY:                                                                *
  *   06/21/1994 SKB : Created.                                             *
  *=========================================================================*/
-void * operator new(size_t size) 
+void* operator new(size_t size)
 {
-	return (Alloc((unsigned long) size, MEM_NEW));
+    return (Alloc((unsigned long)size, MEM_NEW));
 }
-
 
 /***************************************************************************
  * OPERATOR NEW[] -- Overides the array version of new.                    *
@@ -77,11 +74,10 @@ void * operator new(size_t size)
  * HISTORY:                                                                *
  *   06/21/1994 SKB : Created.                                             *
  *=========================================================================*/
-void * operator new[](size_t size) 
+void* operator new[](size_t size)
 {
-	return (Alloc((unsigned long) size, MEM_NEW));
+    return (Alloc((unsigned long)size, MEM_NEW));
 }
- 
 
 /***************************************************************************
  * OPERATOR DELETE -- Overides the global delete function.                 *
@@ -97,9 +93,9 @@ void * operator new[](size_t size)
  * HISTORY:                                                                *
  *   06/21/1994 SKB : Created.                                             *
  *=========================================================================*/
-void operator delete(void *ptr) 
+void operator delete(void* ptr)
 {
-	Free(ptr);
+    Free(ptr);
 }
 
 /***************************************************************************
@@ -116,10 +112,7 @@ void operator delete(void *ptr)
  * HISTORY:                                                                *
  *   10/20/1994 SKB : Created.                                             *
  *=========================================================================*/
-void operator delete[](void *ptr) 
+void operator delete[](void* ptr)
 {
-	Free(ptr);
+    Free(ptr);
 }
-
-
-

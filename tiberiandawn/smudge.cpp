@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\smudge.cpv   2.18   16 Oct 1995 16:52:06   JOE_BOSTIC  $ */
@@ -41,29 +41,27 @@
  *   SmudgeClass::Validate -- validates smudge pointer													  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-#include	"smudge.h"
-
+#include "function.h"
+#include "smudge.h"
 
 /*
 ** This contains the value of the Virtual Function Table Pointer
 */
-void * SmudgeClass::VTable;
+void* SmudgeClass::VTable;
 
 HousesType SmudgeClass::ToOwn = HOUSE_NONE;
-
 
 /***********************************************************************************************
  * SmudgeClass::Validate -- validates smudge pointer														  *
  *                                                                                             *
  * INPUT:                                                                                      *
- *		none.																												  *
+ *		none. *
  *                                                                                             *
  * OUTPUT:                                                                                     *
- *		1 = ok, 0 = error																								  *
+ *		1 = ok, 0 = error *
  *                                                                                             *
  * WARNINGS:                                                                                   *
- *		none.																												  *
+ *		none. *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   08/09/1995 BRR : Created.                                                                 *
@@ -71,20 +69,18 @@ HousesType SmudgeClass::ToOwn = HOUSE_NONE;
 #ifdef CHEAT_KEYS
 int SmudgeClass::Validate(void) const
 {
-	int num;
+    int num;
 
-	num = Smudges.ID(this);
-	if (num < 0 || num >= SMUDGE_MAX) {
-		Validate_Error("SMUDGE");
-		return (0);
-	}
-	else
-		return (1);
+    num = Smudges.ID(this);
+    if (num < 0 || num >= SMUDGE_MAX) {
+        Validate_Error("SMUDGE");
+        return (0);
+    } else
+        return (1);
 }
 #else
-#define	Validate()
+#define Validate()
 #endif
-
 
 /***********************************************************************************************
  * SmudgeClass::operator new -- Creator of smudge objects.                                     *
@@ -101,15 +97,14 @@ int SmudgeClass::Validate(void) const
  * HISTORY:                                                                                    *
  *   09/01/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void * SmudgeClass::operator new(size_t )
+void* SmudgeClass::operator new(size_t)
 {
-	void * ptr = Smudges.Allocate();
-	if (ptr) {
-		((SmudgeClass *)ptr)->Set_Active();
-	}
-	return(ptr);
+    void* ptr = Smudges.Allocate();
+    if (ptr) {
+        ((SmudgeClass*)ptr)->Set_Active();
+    }
+    return (ptr);
 }
-
 
 /***********************************************************************************************
  * SmudgeClass::operator delete -- Deletes the smudge from the tracking system.                *
@@ -125,16 +120,15 @@ void * SmudgeClass::operator new(size_t )
  * HISTORY:                                                                                    *
  *   09/01/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void SmudgeClass::operator delete(void *ptr)
+void SmudgeClass::operator delete(void* ptr)
 {
-	if (ptr) {
-		((SmudgeClass *)ptr)->IsActive = false;
-	}
-	Smudges.Free((SmudgeClass *)ptr);
+    if (ptr) {
+        ((SmudgeClass*)ptr)->IsActive = false;
+    }
+    Smudges.Free((SmudgeClass*)ptr);
 
-	//Map.Validate();
+    // Map.Validate();
 }
-
 
 /***********************************************************************************************
  * SmudgeClass::SmudgeClass -- Constructor for smudge objects.                                 *
@@ -156,18 +150,17 @@ void SmudgeClass::operator delete(void *ptr)
  * HISTORY:                                                                                    *
  *   09/01/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-SmudgeClass::SmudgeClass(SmudgeType type, COORDINATE pos, HousesType house) :
-	Class(&SmudgeTypeClass::As_Reference(type))
+SmudgeClass::SmudgeClass(SmudgeType type, COORDINATE pos, HousesType house)
+    : Class(&SmudgeTypeClass::As_Reference(type))
 {
-	if (pos != -1) {
-		ToOwn = house;
-		if (!Unlimbo(pos)) {
-			Delete_This();
-		}
-		ToOwn = HOUSE_NONE;
-	}
+    if (pos != -1) {
+        ToOwn = house;
+        if (!Unlimbo(pos)) {
+            Delete_This();
+        }
+        ToOwn = HOUSE_NONE;
+    }
 }
-
 
 /***********************************************************************************************
  * SmudgeClass::Init -- Initialize the smudge tracking system.                                 *
@@ -186,15 +179,14 @@ SmudgeClass::SmudgeClass(SmudgeType type, COORDINATE pos, HousesType house) :
  *=============================================================================================*/
 void SmudgeClass::Init(void)
 {
-	SmudgeClass *ptr;
+    SmudgeClass* ptr;
 
-	Smudges.Free_All();
+    Smudges.Free_All();
 
-	ptr = new SmudgeClass();
-	VTable = ((void **)(((char *)ptr) + sizeof(AbstractClass) - 4))[0];
-	delete ptr;
+    ptr = new SmudgeClass();
+    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
+    delete ptr;
 }
-
 
 /***********************************************************************************************
  * SmudgeClass::Mark -- Marks a smudge down on the map.                                        *
@@ -214,63 +206,63 @@ void SmudgeClass::Init(void)
  *=============================================================================================*/
 bool SmudgeClass::Mark(MarkType mark)
 {
-	Validate();
-	if (ObjectClass::Mark(mark)) {
-		if (mark == MARK_DOWN) {
-			CELL origin = Coord_Cell(Coord);
+    Validate();
+    if (ObjectClass::Mark(mark)) {
+        if (mark == MARK_DOWN) {
+            CELL origin = Coord_Cell(Coord);
 
-			for (int w = 0; w < Class->Width; w++) {
-				for (int h = 0; h < Class->Height; h++) {
-					CELL newcell = origin + w + (h*MAP_CELL_W);
-					if (Map.In_Radar(newcell)) {
-						CellClass * cell = &Map[newcell];
+            for (int w = 0; w < Class->Width; w++) {
+                for (int h = 0; h < Class->Height; h++) {
+                    CELL newcell = origin + w + (h * MAP_CELL_W);
+                    if (Map.In_Radar(newcell)) {
+                        CellClass* cell = &Map[newcell];
 
-						if (Class->IsBib) {
-							cell->Smudge = Class->Type;
-							cell->SmudgeData = w + (h*Class->Width);
-							cell->Owner = ToOwn;
-						} else {
-							if (cell->Is_Generally_Clear()) {
-								if (Class->IsCrater && cell->Smudge != SMUDGE_NONE && SmudgeTypeClass::As_Reference(cell->Smudge).IsCrater) {
-									cell->SmudgeData++;
-									cell->SmudgeData = (int)MIN((int)cell->SmudgeData, (int)4);
-								}
+                        if (Class->IsBib) {
+                            cell->Smudge = Class->Type;
+                            cell->SmudgeData = w + (h * Class->Width);
+                            cell->Owner = ToOwn;
+                        } else {
+                            if (cell->Is_Generally_Clear()) {
+                                if (Class->IsCrater && cell->Smudge != SMUDGE_NONE
+                                    && SmudgeTypeClass::As_Reference(cell->Smudge).IsCrater) {
+                                    cell->SmudgeData++;
+                                    cell->SmudgeData = (int)MIN((int)cell->SmudgeData, (int)4);
+                                }
 
-								if (cell->Smudge == SMUDGE_NONE) {
+                                if (cell->Smudge == SMUDGE_NONE) {
 
-									/*
-									**	Special selection of a crater that starts as close to the
-									**	specified coordinate as possible.
-									*/
-									if (Class->IsCrater) {
-										cell->Smudge = (SmudgeType)(SMUDGE_CRATER1 + CellClass::Spot_Index(Coord));
-									} else {
-										cell->Smudge = Class->Type;
-									}
-									cell->SmudgeData = 0;
-								}
-							}
-						}
+                                    /*
+                                    **	Special selection of a crater that starts as close to the
+                                    **	specified coordinate as possible.
+                                    */
+                                    if (Class->IsCrater) {
+                                        cell->Smudge = (SmudgeType)(SMUDGE_CRATER1 + CellClass::Spot_Index(Coord));
+                                    } else {
+                                        cell->Smudge = Class->Type;
+                                    }
+                                    cell->SmudgeData = 0;
+                                }
+                            }
+                        }
 
-						/*
-						**	Flag everything that might be overlapping this cell to redraw itself.
-						*/
-						cell->Redraw_Objects();
-					}
-				}
-			}
+                        /*
+                        **	Flag everything that might be overlapping this cell to redraw itself.
+                        */
+                        cell->Redraw_Objects();
+                    }
+                }
+            }
 
-			/*
-			**	Whether it was successful in placing, or not, delete the smudge object. It isn't
-			**	needed once the map has been updated with the proper smudge data.
-			*/
-			Delete_This();
-			return(true);
-		}
-	}
-	return(false);
+            /*
+            **	Whether it was successful in placing, or not, delete the smudge object. It isn't
+            **	needed once the map has been updated with the proper smudge data.
+            */
+            Delete_This();
+            return (true);
+        }
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * SmudgeClass::Read_INI -- Reads smudge data from an INI file.                                *
@@ -288,36 +280,36 @@ bool SmudgeClass::Mark(MarkType mark)
  *   09/01/1994 JLB : Created.                                                                 *
  *   07/24/1995 JLB : Sets the smudge data value as well.                                      *
  *=============================================================================================*/
-void SmudgeClass::Read_INI(char *buffer)
+void SmudgeClass::Read_INI(char* buffer)
 {
-	char	buf[128];	// Working string staging buffer.
+    char buf[128]; // Working string staging buffer.
 
-	int len = strlen(buffer) + 2;
-	char * tbuffer = buffer + len;
+    int len = strlen(buffer) + 2;
+    char* tbuffer = buffer + len;
 
-	WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize-len, buffer);
-	while (*tbuffer != '\0') {
-		SmudgeType	smudge;		// Smudge type.
+    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
+    while (*tbuffer != '\0') {
+        SmudgeType smudge; // Smudge type.
 
-		WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf)-1, buffer);
-		smudge = SmudgeTypeClass::From_Name(strtok(buf, ","));
-		if (smudge != SMUDGE_NONE) {
-			char * ptr = strtok(NULL, ",");
-			if (ptr) {
-				int data = 0;
-				CELL cell = atoi(ptr);
-				ptr = strtok(NULL, ",");
-				if (ptr) data = atoi(ptr);
-				new SmudgeClass(smudge, Cell_Coord(cell));
-				if (Map[cell].Smudge == smudge && data) {
-					Map[cell].SmudgeData = data;
-				}
-			}
-		}
-		tbuffer += strlen(tbuffer)+1;
-	}
+        WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
+        smudge = SmudgeTypeClass::From_Name(strtok(buf, ","));
+        if (smudge != SMUDGE_NONE) {
+            char* ptr = strtok(NULL, ",");
+            if (ptr) {
+                int data = 0;
+                CELL cell = atoi(ptr);
+                ptr = strtok(NULL, ",");
+                if (ptr)
+                    data = atoi(ptr);
+                new SmudgeClass(smudge, Cell_Coord(cell));
+                if (Map[cell].Smudge == smudge && data) {
+                    Map[cell].SmudgeData = data;
+                }
+            }
+        }
+        tbuffer += strlen(tbuffer) + 1;
+    }
 }
-
 
 /***********************************************************************************************
  * SmudgeClass::Write_INI -- Writes the smudge data to an INI file.                            *
@@ -334,40 +326,39 @@ void SmudgeClass::Read_INI(char *buffer)
  *   09/01/1994 JLB : Created.                                                                 *
  *   07/24/1995 JLB : Records the smudge data as well.                                         *
  *=============================================================================================*/
-void SmudgeClass::Write_INI(char *buffer)
+void SmudgeClass::Write_INI(char* buffer)
 {
-	char	uname[10];
-	char	buf[127];
-	char	*tbuffer;		// Accumulation buffer of unit IDs.
+    char uname[10];
+    char buf[127];
+    char* tbuffer; // Accumulation buffer of unit IDs.
 
-	/*
-	**	First, clear out all existing template data from the ini file.
-	*/
-	tbuffer = buffer + strlen(buffer) + 2;
-	WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize-strlen(buffer), buffer);
-	while (*tbuffer != '\0') {
-		WWWritePrivateProfileString(INI_Name(), tbuffer, NULL, buffer);
-		tbuffer += strlen(tbuffer)+1;
-	}
+    /*
+    **	First, clear out all existing template data from the ini file.
+    */
+    tbuffer = buffer + strlen(buffer) + 2;
+    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - strlen(buffer), buffer);
+    while (*tbuffer != '\0') {
+        WWWritePrivateProfileString(INI_Name(), tbuffer, NULL, buffer);
+        tbuffer += strlen(tbuffer) + 1;
+    }
 
-	/*
-	**	Find all templates and write them to the file.
-	*/
-	for (CELL index = 0; index < MAP_CELL_TOTAL; index++) {
-		CellClass * ptr;
+    /*
+    **	Find all templates and write them to the file.
+    */
+    for (CELL index = 0; index < MAP_CELL_TOTAL; index++) {
+        CellClass* ptr;
 
-		ptr = &Map[index];
-		if (ptr->Smudge != SMUDGE_NONE) {
-			SmudgeTypeClass const * stype = &SmudgeTypeClass::As_Reference(ptr->Smudge);
-			if (!stype->IsBib) {
-				sprintf(uname, "%03d", index);
-				sprintf(buf, "%s,%d,%d", stype->IniName, index, ptr->SmudgeData);
-				WWWritePrivateProfileString(INI_Name(), uname, buf, buffer);
-			}
-		}
-	}
+        ptr = &Map[index];
+        if (ptr->Smudge != SMUDGE_NONE) {
+            SmudgeTypeClass const* stype = &SmudgeTypeClass::As_Reference(ptr->Smudge);
+            if (!stype->IsBib) {
+                sprintf(uname, "%03d", index);
+                sprintf(buf, "%s,%d,%d", stype->IniName, index, ptr->SmudgeData);
+                WWWritePrivateProfileString(INI_Name(), uname, buf, buffer);
+            }
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * SmudgeClass::Disown -- Disowns (removes) a building bib piece.                              *
@@ -387,19 +378,19 @@ void SmudgeClass::Write_INI(char *buffer)
  *=============================================================================================*/
 void SmudgeClass::Disown(CELL cell)
 {
-	Validate();
-	if (Class->IsBib) {
-		for (int w = 0; w < Class->Width; w++) {
-			for (int h = 0; h < Class->Height; h++) {
-				CellClass & cellptr = Map[cell + w + (h*MAP_CELL_W)];
+    Validate();
+    if (Class->IsBib) {
+        for (int w = 0; w < Class->Width; w++) {
+            for (int h = 0; h < Class->Height; h++) {
+                CellClass& cellptr = Map[cell + w + (h * MAP_CELL_W)];
 
-				if (cellptr.Overlay == OVERLAY_NONE || !OverlayTypeClass::As_Reference(cellptr.Overlay).IsWall) {
-					cellptr.Smudge = SMUDGE_NONE;
-					cellptr.SmudgeData = 0;
-					cellptr.Owner = HOUSE_NONE;
-					cellptr.Redraw_Objects();
-				}
-			}
-		}
-	}
+                if (cellptr.Overlay == OVERLAY_NONE || !OverlayTypeClass::As_Reference(cellptr.Overlay).IsWall) {
+                    cellptr.Smudge = SMUDGE_NONE;
+                    cellptr.SmudgeData = 0;
+                    cellptr.Owner = HOUSE_NONE;
+                    cellptr.Redraw_Objects();
+                }
+            }
+        }
+    }
 }

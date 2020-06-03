@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /***************************************************************************
@@ -43,44 +43,40 @@
 //#include <dos.h>
 //#include <bios.h>
 
-
 #ifndef WWMEM_H
 #include "wwmem.h"
 #endif
 
-
-extern "C" unsigned long Largest_Mem_Block ( void ) ;
+extern "C" unsigned long Largest_Mem_Block(void);
 
 /*
 ** Define the equates necessary to call a DPMI interrupt.
 */
-#define	DPMI_INT									0x0031
-#define	DPMI_LOCK_MEM							0x0600
-#define	DPMI_UNLOCK_MEM						0x0601
+#define DPMI_INT        0x0031
+#define DPMI_LOCK_MEM   0x0600
+#define DPMI_UNLOCK_MEM 0x0601
 
 /*=========================================================================*/
 /* The following PRIVATE functions are in this file:                       */
 /*=========================================================================*/
 
-
 /*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
 
-unsigned long MinRam=0L;		// Record of least memory at worst case.
-unsigned long MaxRam=0L;		// Record of total allocated at worst case.
+unsigned long MinRam = 0L; // Record of least memory at worst case.
+unsigned long MaxRam = 0L; // Record of total allocated at worst case.
 static unsigned long TotalRam = 0L;
 static unsigned long Memory_Calls = 0L;
 
 void (*Memory_Error)(void) = NULL;
-extern void (*Memory_Error_Exit)(char *string)=NULL;
-
+extern void (*Memory_Error_Exit)(char* string) = NULL;
 
 //#define MEM_CHECK
 
 #ifdef MEM_CHECK
-extern "C"{
-	extern void __cdecl Int3(void);
+extern "C" {
+extern void __cdecl Int3(void);
 }
-#endif	//MEM_CHECK
+#endif // MEM_CHECK
 
 /***************************************************************************
  * DPMI_LOCK -- handles locking a block of DPMI memory                     *
@@ -94,8 +90,8 @@ extern "C"{
  * HISTORY:                                                                *
  *   06/23/1995 PWG : Created.                                             *
  *=========================================================================*/
-#include"mono.h"
-void DPMI_Lock(VOID const *, long const )
+#include "mono.h"
+void DPMI_Lock(VOID const*, long const)
 {
 }
 
@@ -111,7 +107,7 @@ void DPMI_Lock(VOID const *, long const )
  * HISTORY:                                                                *
  *   06/23/1995 PWG : Created.                                             *
  *=========================================================================*/
-void DPMI_Unlock(void const *, long const )
+void DPMI_Unlock(void const*, long const)
 {
 }
 
@@ -144,161 +140,154 @@ void DPMI_Unlock(void const *, long const )
  *   03/09/1995 JLB : Fixed                                                *
  *   09/28/1995 ST  : Simplified for win95                                                                      *
  *=========================================================================*/
-void *Alloc(unsigned long bytes_to_alloc, MemoryFlagType flags)
+void* Alloc(unsigned long bytes_to_alloc, MemoryFlagType flags)
 {
 
 #ifdef WIN32
 
-	void	*mem_ptr;
+    void* mem_ptr;
 
 #ifdef MEM_CHECK
-	bytes_to_alloc += 32;
-#endif	//MEM_CHECK
+    bytes_to_alloc += 32;
+#endif // MEM_CHECK
 
-	mem_ptr = malloc ( bytes_to_alloc );
+    mem_ptr = malloc(bytes_to_alloc);
 
-	if ( !mem_ptr && Memory_Error ){
-		Memory_Error();
-	}
+    if (!mem_ptr && Memory_Error) {
+        Memory_Error();
+    }
 
-	if ( mem_ptr && ( flags & MEM_CLEAR ) ){
-		memset ( mem_ptr , 0 , bytes_to_alloc );
-	}
+    if (mem_ptr && (flags & MEM_CLEAR)) {
+        memset(mem_ptr, 0, bytes_to_alloc);
+    }
 
 #ifdef MEM_CHECK
-	mem_ptr = (void*)((char*)mem_ptr + 16);
-	unsigned long *magic_ptr =(unsigned long*) ( ((char *)mem_ptr) - 16 );
-	*magic_ptr++ = (unsigned long)mem_ptr;
-	*magic_ptr++ = (unsigned long)mem_ptr;
-	*magic_ptr++ = (unsigned long)mem_ptr;
-	*magic_ptr 	 = bytes_to_alloc - 32;
-	magic_ptr = (unsigned long*) ( ((char*)mem_ptr) + bytes_to_alloc - 32 );
-	*magic_ptr++ = (unsigned long)mem_ptr;
-	*magic_ptr++ = (unsigned long)mem_ptr;
-	*magic_ptr++ = (unsigned long)mem_ptr;
-	*magic_ptr 	 = (unsigned long)mem_ptr;
-#endif	//MEM_CHECK
+    mem_ptr = (void*)((char*)mem_ptr + 16);
+    unsigned long* magic_ptr = (unsigned long*)(((char*)mem_ptr) - 16);
+    *magic_ptr++ = (unsigned long)mem_ptr;
+    *magic_ptr++ = (unsigned long)mem_ptr;
+    *magic_ptr++ = (unsigned long)mem_ptr;
+    *magic_ptr = bytes_to_alloc - 32;
+    magic_ptr = (unsigned long*)(((char*)mem_ptr) + bytes_to_alloc - 32);
+    *magic_ptr++ = (unsigned long)mem_ptr;
+    *magic_ptr++ = (unsigned long)mem_ptr;
+    *magic_ptr++ = (unsigned long)mem_ptr;
+    *magic_ptr = (unsigned long)mem_ptr;
+#endif // MEM_CHECK
 
-	Memory_Calls++;
-	return ( mem_ptr );
+    Memory_Calls++;
+    return (mem_ptr);
 
 #else
 
+    union REGS regs;
+    struct SREGS sregs;
+    unsigned char* retval = NULL; // Pointer to allocated block.
+    unsigned long original_size;  // Original allocation size.
+    unsigned long bytesfree;      // Number of free bytes.
+    long* longptr = NULL;         // Pointer used to store selector
 
+    /*
+    ** Save the original allocated space size so that we can clear the
+    ** exact amount of RAM if they specified MEM_CLEAR.
+    */
+    original_size = bytes_to_alloc;
 
-	union REGS		regs ;
-	struct SREGS 	sregs ;
-	unsigned char *retval=NULL;	// Pointer to allocated block.
-	unsigned long	original_size;	// Original allocation size.
-	unsigned long	bytesfree;		// Number of free bytes.
-	long 				*longptr=NULL;	// Pointer used to store selector
+    /*
+    ** Reserve one byte for the header of the memory we allocated.
+    ** We will store the flags variable there for later use.
+    */
+    bytes_to_alloc += (flags & MEM_LOCK) ? 5 : 1;
 
-	/*
-	** Save the original allocated space size so that we can clear the
-	** exact amount of RAM if they specified MEM_CLEAR.
-	*/
-	original_size = bytes_to_alloc;
+    /*
+    **	Initialize the total ram available value.
+    */
+    if (!TotalRam) {
+        TotalRam = Total_Ram_Free(MEM_NORMAL);
+    }
 
-	/*
-	** Reserve one byte for the header of the memory we allocated.
-	** We will store the flags variable there for later use.
-	*/
-	bytes_to_alloc += (flags & MEM_LOCK) ? 5 : 1;
+    // Try to allocate the memory out of the protected mode memory
+    // chain if we did not require a real mode allocation.  If this
+    // fails we will have to try to allocate it out of real mode memory.
+    // Real mode memory is a last resort because some types of applications
+    // require real mode memory.
+    if (!(flags & MEM_REAL)) {
+        retval = (unsigned char*)malloc(bytes_to_alloc);
+    }
 
-	/*
-	**	Initialize the total ram available value.
-	*/
-	if (!TotalRam) {
-		TotalRam = Total_Ram_Free(MEM_NORMAL);
-	}
+    // Try to allocate the memory out of the real mode memory using DPMI
+    // service 0x100.  Note that retval will be null if we are requesting
+    // real mode memory so that we do not have to explicitly check for the
+    // real mode flag.  Remember we need to reserve room for the dos
+    // selector value at the beginning of our allocated block so rather than
+    // adding fifteen and rounding, we need to add 19 and round.
+    if (!retval) {
+        flags = (MemoryFlagType)(flags | MEM_REAL);
+        regs.x.eax = 0x100;
+        regs.x.ebx = (bytes_to_alloc + 19) >> 4;
+        if (regs.x.ebx & 0xFFFF0000) {
+            retval = NULL;
+        } else {
+            segread(&sregs);
+            int386x(0x31, &regs, &regs, &sregs);
+            if (regs.x.cflag)
+                retval = NULL;
+            else {
+                longptr = (long*)(((regs.x.eax & 0xFFFF) << 4) + 1);
+                *longptr++ = regs.x.edx & 0xFFFF;
+                retval = (unsigned char*)longptr;
+            }
+        }
+    }
 
+    // If the alloc failed then we need to signify a memory error.
+    if (retval == NULL) {
+        if (Memory_Error != NULL)
+            Memory_Error();
+        return NULL;
+    }
 
-	// Try to allocate the memory out of the protected mode memory
-	// chain if we did not require a real mode allocation.  If this
-	// fails we will have to try to allocate it out of real mode memory.
-	// Real mode memory is a last resort because some types of applications
-	// require real mode memory.
-	if (!(flags & MEM_REAL)) {
-		retval = (unsigned char*)malloc(bytes_to_alloc);
-	}
+    // If the memory needs to be DPMI locked then we should store the
+    // original size in the header before we store the flags.
+    if (flags & MEM_LOCK) {
+        longptr = (long*)retval;
+        *longptr++ = original_size;
+        retval = (unsigned char*)longptr;
+    }
 
-	// Try to allocate the memory out of the real mode memory using DPMI
-	// service 0x100.  Note that retval will be null if we are requesting
-	// real mode memory so that we do not have to explicitly check for the
-	// real mode flag.  Remember we need to reserve room for the dos
-	// selector value at the beginning of our allocated block so rather than
-	// adding fifteen and rounding, we need to add 19 and round.
-	if (!retval) {
-		flags = (MemoryFlagType)(flags | MEM_REAL);
-		regs.x.eax = 0x100;
-		regs.x.ebx = (bytes_to_alloc + 19) >> 4;
-		if (regs.x.ebx & 0xFFFF0000) {
-			retval = NULL;
-		} else {
-			segread ( & sregs ) ;
-			int386x ( 0x31 , & regs, & regs , & sregs	) ;
-			if (regs.x.cflag)
-				retval = NULL;
-			else {
-				longptr		= (long *)(((regs.x.eax & 0xFFFF) << 4)+ 1);
-				*longptr++	= regs.x.edx & 0xFFFF;
-				retval		= (unsigned char *)longptr;
-			}
-		}
-	}
+    // Now that we know the alloc was sucessful (and for an extra byte
+    // more than the user wanted) we need to stick in the memory flags.
+    *retval++ = flags;
 
-	// If the alloc failed then we need to signify a memory error.
-	if (retval == NULL) {
-		if(Memory_Error != NULL)
-			Memory_Error();
-		return NULL;
-	}
+    // If the memory needed to be DPMI locked then set it up so it
+    // is locked.
+    if (flags & MEM_LOCK) {
+        DPMI_Lock(retval, original_size);
+    }
 
-	// If the memory needs to be DPMI locked then we should store the
-	// original size in the header before we store the flags.
-	if (flags & MEM_LOCK) {
-		longptr		= (long *)retval;
-		*longptr++	= original_size;
-		retval		= (unsigned char *)longptr;
-	}
+    /* Clear the space if they wanted it clear */
 
+    if (flags & MEM_CLEAR) {
+        unsigned char* ptr; // Working memory block pointer.
 
-	// Now that we know the alloc was sucessful (and for an extra byte
-	// more than the user wanted) we need to stick in the memory flags.
-	*retval++ 		= flags;
+        ptr = retval;
+        memset(ptr, '\0', original_size);
+    }
 
-	// If the memory needed to be DPMI locked then set it up so it
-	// is locked.
-	if (flags & MEM_LOCK) {
-		DPMI_Lock(retval, original_size);
+    bytesfree = Total_Ram_Free(MEM_NORMAL);
+    if (bytesfree < MinRam) {
+        MinRam = bytesfree;
+    }
+    if (TotalRam - bytesfree > MaxRam) {
+        MaxRam = TotalRam - bytesfree;
+    }
 
-	}
+    Memory_Calls++;
 
-
-	/* Clear the space if they wanted it clear */
-
-	if (flags & MEM_CLEAR) {
-		unsigned char	*ptr;		// Working memory block pointer.
-
-		ptr = retval;
-		memset(ptr, '\0', original_size);
-	}
-
-	bytesfree = Total_Ram_Free(MEM_NORMAL);
-	if (bytesfree < MinRam) {
-		MinRam = bytesfree;
-	}
-	if (TotalRam-bytesfree > MaxRam) {
-		MaxRam = TotalRam-bytesfree;
-	}
-
-	Memory_Calls++;
-
-	return(retval);
+    return (retval);
 
 #endif
 }
-
 
 /***************************************************************************
  * Free -- Free an Alloc'ed block of RAM.                                  *
@@ -316,81 +305,74 @@ void *Alloc(unsigned long bytes_to_alloc, MemoryFlagType flags)
  ***************************************************************************/
 #ifdef WIN32
 
-void Free(void const *pointer)
+void Free(void const* pointer)
 {
 
-	if ( pointer ){
+    if (pointer) {
 
 #ifdef MEM_CHECK
 
-		unsigned long	*magic_ptr = (unsigned long*) ( ((char*)pointer) - 16 );
+        unsigned long* magic_ptr = (unsigned long*)(((char*)pointer) - 16);
 
-		if (*magic_ptr++ != (unsigned long)pointer ||
-		 	*magic_ptr++ != (unsigned long)pointer ||
-		 	*magic_ptr++ != (unsigned long)pointer ){
-		 	Int3();
-		}
+        if (*magic_ptr++ != (unsigned long)pointer || *magic_ptr++ != (unsigned long)pointer
+            || *magic_ptr++ != (unsigned long)pointer) {
+            Int3();
+        }
 
-		magic_ptr = (unsigned long*) ( ((char*)pointer) + *magic_ptr );
+        magic_ptr = (unsigned long*)(((char*)pointer) + *magic_ptr);
 
-		if (*magic_ptr++ != (unsigned long)pointer ||
-		 	*magic_ptr++ != (unsigned long)pointer ||
-		 	*magic_ptr++ != (unsigned long)pointer ||
-		 	*magic_ptr++ != (unsigned long)pointer ){
-		 	Int3();
-		}
+        if (*magic_ptr++ != (unsigned long)pointer || *magic_ptr++ != (unsigned long)pointer
+            || *magic_ptr++ != (unsigned long)pointer || *magic_ptr++ != (unsigned long)pointer) {
+            Int3();
+        }
 
-		pointer = (void*) (((char*)pointer)-16);
-#endif	//MEM_CHECK
+        pointer = (void*)(((char*)pointer) - 16);
+#endif // MEM_CHECK
 
-		free ( (void*)pointer );
-		Memory_Calls--;
-	}
+        free((void*)pointer);
+        Memory_Calls--;
+    }
 
 #else
 
-void Free(void const *pointer)
+void Free(void const* pointer)
 {
 
-	union REGS		regs ;
-	struct SREGS 	sregs ;
+    union REGS regs;
+    struct SREGS sregs;
 
+    if (pointer) {
+        /*
+        ** Get a pointer to the flags that we stored off.
+        */
+        char* byteptr = ((char*)pointer) - 1;
 
-	if (pointer) {
-		/*
-		** Get a pointer to the flags that we stored off.
-		*/
-		char *byteptr	= ((char *)pointer) - 1;
+        /*
+        ** Check to see if this was locked me and if it was unlock it.
+        */
+        if (*byteptr & MEM_LOCK) {
+            long* longptr = ((long*)byteptr) - 1;
+            DPMI_Unlock(pointer, *longptr);
+            pointer = (void*)longptr;
+        } else
+            pointer = (void*)byteptr;
 
-		/*
-		** Check to see if this was locked me and if it was unlock it.
-		*/
-		if (*byteptr & MEM_LOCK) {
-			long *longptr = ((long *)byteptr) - 1;
-			DPMI_Unlock(pointer, *longptr);
-			pointer = (void *)longptr;
-		} else
-			pointer = (void *)byteptr;
-
-
-		// If the pointer is a real mode pointer than it will point to the
-		// first megabyte of system memory.  If it does than we need to
-		// use DPMI to free it.
-		if (*byteptr & MEM_REAL) {
-			regs.x.eax	= 0x101;
-			regs.x.edx	= *(((long *)pointer) - 1);
-			segread ( & sregs ) ;
-			int386x(0x31, &regs, &regs, &sregs);
-		} else {
-			free((void *)pointer);
-		}
-		Memory_Calls--;
-	}
+        // If the pointer is a real mode pointer than it will point to the
+        // first megabyte of system memory.  If it does than we need to
+        // use DPMI to free it.
+        if (*byteptr & MEM_REAL) {
+            regs.x.eax = 0x101;
+            regs.x.edx = *(((long*)pointer) - 1);
+            segread(&sregs);
+            int386x(0x31, &regs, &regs, &sregs);
+        } else {
+            free((void*)pointer);
+        }
+        Memory_Calls--;
+    }
 
 #endif
 }
-
-
 
 /***************************************************************************
  * Resize_Alloc -- Change the size of an allocated block.                  *
@@ -409,24 +391,23 @@ void Free(void const *pointer)
  * HISTORY:                                                                *
  *   02/01/1992 JLB : Commented.                                           *
  *=========================================================================*/
-void *Resize_Alloc(void *original_ptr, unsigned long new_size_in_bytes)
+void* Resize_Alloc(void* original_ptr, unsigned long new_size_in_bytes)
 {
 
-	unsigned long *temp;
+    unsigned long* temp;
 
-	temp = (unsigned long*)original_ptr;
+    temp = (unsigned long*)original_ptr;
 
-	/* ReAlloc the space */
-	temp = (unsigned long *)realloc(temp, new_size_in_bytes);
-	if (temp == NULL) {
-		if(Memory_Error != NULL)
-			Memory_Error();
-		return NULL;
-	}
+    /* ReAlloc the space */
+    temp = (unsigned long*)realloc(temp, new_size_in_bytes);
+    if (temp == NULL) {
+        if (Memory_Error != NULL)
+            Memory_Error();
+        return NULL;
+    }
 
-	return(temp);
+    return (temp);
 }
-
 
 /***************************************************************************
  * Ram_Free -- Determines the largest free chunk of RAM.                   *
@@ -447,15 +428,14 @@ void *Resize_Alloc(void *original_ptr, unsigned long new_size_in_bytes)
 long Ram_Free(MemoryFlagType)
 {
 //	return(_memmax());
-#if(0)
-	MEMORYSTATUS	mem_info;
-	mem_info.dwLength=sizeof(mem_info);
-	GlobalMemoryStatus(&mem_info);
-	return ( mem_info.dwAvailPhys );
+#if (0)
+    MEMORYSTATUS mem_info;
+    mem_info.dwLength = sizeof(mem_info);
+    GlobalMemoryStatus(&mem_info);
+    return (mem_info.dwAvailPhys);
 #endif
-	return ( 64*1024*1024 );
+    return (64 * 1024 * 1024);
 }
-
 
 /***************************************************************************
  * Heap_Size -- Size of the heap we have.                                  *
@@ -471,14 +451,13 @@ long Ram_Free(MemoryFlagType)
  * HISTORY:                                                                *
  *   06/21/1994 SKB : Created.                                             *
  *=========================================================================*/
-long Heap_Size(MemoryFlagType )
+long Heap_Size(MemoryFlagType)
 {
-	if (!TotalRam) {
-		TotalRam = Total_Ram_Free(MEM_NORMAL);
-	}
-	return(TotalRam);
+    if (!TotalRam) {
+        TotalRam = Total_Ram_Free(MEM_NORMAL);
+    }
+    return (TotalRam);
 }
-
 
 /***************************************************************************
  * Total_Ram_Free -- Total amount of free RAM.                             *
@@ -495,15 +474,14 @@ long Heap_Size(MemoryFlagType )
  *   06/21/1994 SKB : Created.                                             *
  *   03/09/1995 JLB : Uses prerecorded heap size maximum.                  *
  *=========================================================================*/
-long Total_Ram_Free(MemoryFlagType )
+long Total_Ram_Free(MemoryFlagType)
 {
-#if(0)
-	MEMORYSTATUS	mem_info;
-	mem_info.dwLength=sizeof(mem_info);
-	GlobalMemoryStatus(&mem_info);
-	return ( mem_info.dwAvailPhys );
+#if (0)
+    MEMORYSTATUS mem_info;
+    mem_info.dwLength = sizeof(mem_info);
+    GlobalMemoryStatus(&mem_info);
+    return (mem_info.dwAvailPhys);
 #endif
 
-	return ( 64*1024*1024 );
+    return (64 * 1024 * 1024);
 }
-

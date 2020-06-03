@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/SUPER.CPP 1     3/03/97 10:25a Joe_bostic $ */
@@ -42,8 +42,7 @@
  *   SuperClass::Suspend -- Suspend the charging of the super weapon.                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-
+#include "function.h"
 
 /***********************************************************************************************
  * SuperClass::SuperClass -- Constructor for special super weapon objects.                     *
@@ -65,21 +64,20 @@
  * HISTORY:                                                                                    *
  *   07/28/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-SuperClass::SuperClass(int recharge, bool powered, VoxType charging, VoxType ready, VoxType impatient, VoxType suspend) :
-	IsPowered(powered),
-	IsPresent(false),
-	IsOneTime(false),
-	IsReady(false),
-	Control(0),
-	OldStage(-1),
-	VoxRecharge(ready),
-	VoxCharging(charging),
-	VoxImpatient(impatient),
-	VoxSuspend(suspend),
-	RechargeTime(recharge)
+SuperClass::SuperClass(int recharge, bool powered, VoxType charging, VoxType ready, VoxType impatient, VoxType suspend)
+    : IsPowered(powered)
+    , IsPresent(false)
+    , IsOneTime(false)
+    , IsReady(false)
+    , Control(0)
+    , OldStage(-1)
+    , VoxRecharge(ready)
+    , VoxCharging(charging)
+    , VoxImpatient(impatient)
+    , VoxSuspend(suspend)
+    , RechargeTime(recharge)
 {
 }
-
 
 /***********************************************************************************************
  * SuperClass::Suspend -- Suspend the charging of the super weapon.                            *
@@ -98,25 +96,24 @@ SuperClass::SuperClass(int recharge, bool powered, VoxType charging, VoxType rea
  *=============================================================================================*/
 bool SuperClass::Suspend(bool on)
 {
-	if (IsPresent && !IsReady && !IsOneTime && on == Control.Is_Active()) {
-		if (!on) {
-			Control.Start();
-		} else {
-			Control.Stop();
-		}
-//		if (on != IsSuspended) {
-//			if (on) {
-//				SuspendTime = Control;
-//			} else {
-//				Control = SuspendTime;
-//			}
-//			IsSuspended = on;
-			return(true);
-//		}
-	}
-	return(false);
+    if (IsPresent && !IsReady && !IsOneTime && on == Control.Is_Active()) {
+        if (!on) {
+            Control.Start();
+        } else {
+            Control.Stop();
+        }
+        //		if (on != IsSuspended) {
+        //			if (on) {
+        //				SuspendTime = Control;
+        //			} else {
+        //				Control = SuspendTime;
+        //			}
+        //			IsSuspended = on;
+        return (true);
+        //		}
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * SuperClass::Enable -- Enable this super special weapon.                                     *
@@ -141,16 +138,16 @@ bool SuperClass::Suspend(bool on)
  *=============================================================================================*/
 bool SuperClass::Enable(bool onetime, bool player, bool quiet)
 {
-	if (!IsPresent) {
-		IsPresent = true;
-		IsOneTime = onetime;
-		bool retval = Recharge(player && !quiet);
-		if (quiet) Suspend(true);
-		return(retval);
-	}
-	return(false);
+    if (!IsPresent) {
+        IsPresent = true;
+        IsOneTime = onetime;
+        bool retval = Recharge(player && !quiet);
+        if (quiet)
+            Suspend(true);
+        return (retval);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * SuperClass::Remove -- Removes super weapon availability.                                    *
@@ -170,14 +167,13 @@ bool SuperClass::Enable(bool onetime, bool player, bool quiet)
  *=============================================================================================*/
 bool SuperClass::Remove(void)
 {
-	if (IsPresent && !IsOneTime) {
-		IsReady = false;
-		IsPresent = false;
-		return(true);
-	}
-	return(false);
+    if (IsPresent && !IsOneTime) {
+        IsReady = false;
+        IsPresent = false;
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * SuperClass::Recharge -- Starts the special super weapon recharging.                         *
@@ -197,26 +193,25 @@ bool SuperClass::Remove(void)
  *=============================================================================================*/
 bool SuperClass::Recharge(bool player)
 {
-	if (IsPresent && !IsReady) {
-//		IsSuspended = false;
-		OldStage = -1;
-		Control.Start();
-		Control = RechargeTime;
+    if (IsPresent && !IsReady) {
+        //		IsSuspended = false;
+        OldStage = -1;
+        Control.Start();
+        Control = RechargeTime;
 
 #ifdef CHEAT_KEYS
-		if (Special.IsSpeedBuild) {
-			Control = 1;
-		}
+        if (Special.IsSpeedBuild) {
+            Control = 1;
+        }
 #endif
 
-		if (player) {
-			Speak(VoxCharging);
-		}
-		return(true);
-	}
-	return(false);
+        if (player) {
+            Speak(VoxCharging);
+        }
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * Superclass::Discharged -- Handles discharged action for special super weapon.               *
@@ -237,18 +232,17 @@ bool SuperClass::Recharge(bool player)
  *=============================================================================================*/
 bool SuperClass::Discharged(bool player)
 {
-	if (Control.Is_Active() && IsPresent && IsReady) {
-		IsReady = false;
-		if (IsOneTime) {
-			IsOneTime = false;
-			return(Remove());
-		} else {
-			Recharge(player);
-		}
-	}
-	return(false);
+    if (Control.Is_Active() && IsPresent && IsReady) {
+        IsReady = false;
+        if (IsOneTime) {
+            IsOneTime = false;
+            return (Remove());
+        } else {
+            Recharge(player);
+        }
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * SuperClass::AI -- Process the super weapon AI.                                              *
@@ -270,30 +264,29 @@ bool SuperClass::Discharged(bool player)
  *=============================================================================================*/
 bool SuperClass::AI(bool player)
 {
-	if (IsPresent && !IsReady) {
-		if (!Control.Is_Active()) {
-			if (OldStage != -1) {
-				OldStage = -1;
-				return(true);
-			}
-		} else {
-			if (Control == 0) {
-				IsReady = true;
-				if (player) {
-					Speak(VoxRecharge);
-				}
-				return(true);
-			} else {
-				if (Anim_Stage() != OldStage) {
-					OldStage = Anim_Stage();
-					return(true);
-				}
-			}
-		}
-	}
-	return(false);
+    if (IsPresent && !IsReady) {
+        if (!Control.Is_Active()) {
+            if (OldStage != -1) {
+                OldStage = -1;
+                return (true);
+            }
+        } else {
+            if (Control == 0) {
+                IsReady = true;
+                if (player) {
+                    Speak(VoxRecharge);
+                }
+                return (true);
+            } else {
+                if (Anim_Stage() != OldStage) {
+                    OldStage = Anim_Stage();
+                    return (true);
+                }
+            }
+        }
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * SuperClass::Anim_Stage -- Fetches the animation stage for this super weapon.                *
@@ -314,22 +307,21 @@ bool SuperClass::AI(bool player)
  *=============================================================================================*/
 int SuperClass::Anim_Stage(void) const
 {
-	if (IsPresent) {
-		if (IsReady) {
-			return(ANIMATION_STAGES);
-		}
-//		int time = Control;
-//		if (IsSuspended) {
-//			time = SuspendTime;
-//		}
+    if (IsPresent) {
+        if (IsReady) {
+            return (ANIMATION_STAGES);
+        }
+        //		int time = Control;
+        //		if (IsSuspended) {
+        //			time = SuspendTime;
+        //		}
 
-		int stage = ANIMATION_STAGES * fixed(RechargeTime-Control.Value(), RechargeTime);
-		stage = min(stage, ANIMATION_STAGES-1);
-		return(stage);
-	}
-	return(0);
+        int stage = ANIMATION_STAGES * fixed(RechargeTime - Control.Value(), RechargeTime);
+        stage = min(stage, ANIMATION_STAGES - 1);
+        return (stage);
+    }
+    return (0);
 }
-
 
 /***********************************************************************************************
  * SuperClass::Impatient_Click -- Called when player clicks on unfinished super weapon.        *
@@ -349,13 +341,12 @@ int SuperClass::Anim_Stage(void) const
  *=============================================================================================*/
 void SuperClass::Impatient_Click(void) const
 {
-	if (!Control.Is_Active()) {
-		Speak(VoxSuspend);
-	} else {
-		Speak(VoxImpatient);
-	}
+    if (!Control.Is_Active()) {
+        Speak(VoxSuspend);
+    } else {
+        Speak(VoxImpatient);
+    }
 }
-
 
 /***********************************************************************************************
  * SuperClass::Forced_Charge -- Force the super weapon to full charge state.                   *
@@ -376,13 +367,13 @@ void SuperClass::Impatient_Click(void) const
  *=============================================================================================*/
 void SuperClass::Forced_Charge(bool player)
 {
-	if (IsPresent) {
-		IsReady = true;
-		Control.Start();
-		Control = 0;
-//		IsSuspended = false;
-		if (player) {
-			Speak(VoxRecharge);
-		}
-	}
+    if (IsPresent) {
+        IsReady = true;
+        Control.Start();
+        Control = 0;
+        //		IsSuspended = false;
+        if (player) {
+            Speak(VoxRecharge);
+        }
+    }
 }

@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/LCWSTRAW.CPP 1     3/03/97 10:25a Joe_bostic $ */
@@ -35,11 +35,10 @@
  *   LCWStraw::~LCWStraw -- Destructor for the LCW straw.                                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"lcwstraw.h"
-#include	"lcw.h"
-#include	<string.h>
-#include	<assert.h>
-
+#include "lcwstraw.h"
+#include "lcw.h"
+#include <string.h>
+#include <assert.h>
 
 /***********************************************************************************************
  * LCWStraw::LCWStraw -- Constructor for LCW straw object.                                     *
@@ -60,20 +59,19 @@
  * HISTORY:                                                                                    *
  *   07/04/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-LCWStraw::LCWStraw(CompControl control, int blocksize) :
-		Control(control),
-		Counter(0),
-		Buffer(NULL),
-		Buffer2(NULL),
-		BlockSize(blocksize)
+LCWStraw::LCWStraw(CompControl control, int blocksize)
+    : Control(control)
+    , Counter(0)
+    , Buffer(NULL)
+    , Buffer2(NULL)
+    , BlockSize(blocksize)
 {
-	SafetyMargin = BlockSize/128+1;
-	Buffer = new char[BlockSize+SafetyMargin];
-	if (control == COMPRESS) {
-		Buffer2 = new char[BlockSize+SafetyMargin];
-	}
+    SafetyMargin = BlockSize / 128 + 1;
+    Buffer = new char[BlockSize + SafetyMargin];
+    if (control == COMPRESS) {
+        Buffer2 = new char[BlockSize + SafetyMargin];
+    }
 }
-
 
 /***********************************************************************************************
  * LCWStraw::~LCWStraw -- Destructor for the LCW straw.                                        *
@@ -91,13 +89,12 @@ LCWStraw::LCWStraw(CompControl control, int blocksize) :
  *=============================================================================================*/
 LCWStraw::~LCWStraw(void)
 {
-	delete [] Buffer;
-	Buffer = NULL;
+    delete[] Buffer;
+    Buffer = NULL;
 
-	delete [] Buffer2;
-	Buffer2 = NULL;
+    delete[] Buffer2;
+    Buffer2 = NULL;
 }
-
 
 /***********************************************************************************************
  * LCWStraw::Get -- Fetch data through the LCW processor.                                      *
@@ -120,57 +117,62 @@ LCWStraw::~LCWStraw(void)
  * HISTORY:                                                                                    *
  *   07/04/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int LCWStraw::Get(void * destbuf, int slen)
+int LCWStraw::Get(void* destbuf, int slen)
 {
-	assert(Buffer != NULL);
+    assert(Buffer != NULL);
 
-	int total = 0;
+    int total = 0;
 
-	/*
-	**	Verify parameters for legality.
-	*/
-	if (destbuf == NULL || slen < 1) {
-		return(0);
-	}
+    /*
+    **	Verify parameters for legality.
+    */
+    if (destbuf == NULL || slen < 1) {
+        return (0);
+    }
 
-	while (slen > 0) {
+    while (slen > 0) {
 
-		/*
-		**	Copy as much data is requested and available into the desired
-		**	destination buffer.
-		*/
-		if (Counter) {
-			int len = (slen < Counter) ? slen : Counter;
-			if (Control == DECOMPRESS) {
-				memmove(destbuf, &Buffer[BlockHeader.UncompCount-Counter], len);
-			} else {
-				memmove(destbuf, &Buffer2[(BlockHeader.CompCount+sizeof(BlockHeader))-Counter], len);
-			}
-			destbuf = ((char *)destbuf) + len;
-			slen -= len;
-			Counter -= len;
-			total += len;
-		}
-		if (slen == 0) break;
+        /*
+        **	Copy as much data is requested and available into the desired
+        **	destination buffer.
+        */
+        if (Counter) {
+            int len = (slen < Counter) ? slen : Counter;
+            if (Control == DECOMPRESS) {
+                memmove(destbuf, &Buffer[BlockHeader.UncompCount - Counter], len);
+            } else {
+                memmove(destbuf, &Buffer2[(BlockHeader.CompCount + sizeof(BlockHeader)) - Counter], len);
+            }
+            destbuf = ((char*)destbuf) + len;
+            slen -= len;
+            Counter -= len;
+            total += len;
+        }
+        if (slen == 0)
+            break;
 
-		if (Control == DECOMPRESS) {
-			int incount = Straw::Get(&BlockHeader, sizeof(BlockHeader));
-			if (incount != sizeof(BlockHeader)) break;
+        if (Control == DECOMPRESS) {
+            int incount = Straw::Get(&BlockHeader, sizeof(BlockHeader));
+            if (incount != sizeof(BlockHeader))
+                break;
 
-			void * ptr = &Buffer[(BlockSize+SafetyMargin) - BlockHeader.CompCount];
-			incount = Straw::Get(ptr, BlockHeader.CompCount);
-			if (incount != BlockHeader.CompCount) break;
+            void* ptr = &Buffer[(BlockSize + SafetyMargin) - BlockHeader.CompCount];
+            incount = Straw::Get(ptr, BlockHeader.CompCount);
+            if (incount != BlockHeader.CompCount)
+                break;
 
-			LCW_Uncomp(ptr, Buffer);
-			Counter = BlockHeader.UncompCount;
-		} else {
-			BlockHeader.UncompCount = (unsigned short)Straw::Get(Buffer, BlockSize);
-			if (BlockHeader.UncompCount == 0) break;
-			BlockHeader.CompCount = (unsigned short)LCW_Comp(Buffer, &Buffer2[sizeof(BlockHeader)], BlockHeader.UncompCount);
-			memmove(Buffer2, &BlockHeader, sizeof(BlockHeader));
-			Counter = BlockHeader.CompCount+sizeof(BlockHeader);
-		}
-	}
+            LCW_Uncomp(ptr, Buffer);
+            Counter = BlockHeader.UncompCount;
+        } else {
+            BlockHeader.UncompCount = (unsigned short)Straw::Get(Buffer, BlockSize);
+            if (BlockHeader.UncompCount == 0)
+                break;
+            BlockHeader.CompCount =
+                (unsigned short)LCW_Comp(Buffer, &Buffer2[sizeof(BlockHeader)], BlockHeader.UncompCount);
+            memmove(Buffer2, &BlockHeader, sizeof(BlockHeader));
+            Counter = BlockHeader.CompCount + sizeof(BlockHeader);
+        }
+    }
 
-	return(total);
+    return (total);
 }

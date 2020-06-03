@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/CCPTR.CPP 1     3/03/97 10:24a Joe_bostic $ */
@@ -33,11 +33,8 @@
  *   CCPtr<T>::operator > -- Greater than comparison operator.                                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include "function.h"
 
-#include	"function.h"
-
-
- 
 template class CCPtr<AircraftClass>;
 template class CCPtr<AircraftTypeClass>;
 template class CCPtr<AnimClass>;
@@ -70,9 +67,7 @@ template class CCPtr<VesselTypeClass>;
 template class CCPtr<WarheadTypeClass>;
 template class CCPtr<WeaponTypeClass>;
 
-
-template<class T> FixedIHeapClass* CCPtr<T>::Heap = NULL;
-
+template <class T> FixedIHeapClass* CCPtr<T>::Heap = NULL;
 
 /*
 **	These member functions for the CCPtr class cannot be declared inside the
@@ -80,14 +75,14 @@ template<class T> FixedIHeapClass* CCPtr<T>::Heap = NULL;
 **	contain CCPtr objects. The recursive nature of this type of declaration
 **	is not handled by Watcom, hence the body declaration is dislocated here.
 */
-template<class T>
-CCPtr<T>::CCPtr(T * ptr) : ID(-1)
+template <class T>
+CCPtr<T>::CCPtr(T* ptr)
+    : ID(-1)
 {
-	if (ptr != NULL) {
-		ID = ptr->ID;
-	}
+    if (ptr != NULL) {
+        ID = ptr->ID;
+    }
 }
-
 
 /***********************************************************************************************
  * CCPtr<T>::operator > -- Greater than comparison operator.                                   *
@@ -104,8 +99,7 @@ CCPtr<T>::CCPtr(T * ptr) : ID(-1)
  * HISTORY:                                                                                    *
  *   07/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-bool CCPtr<T>::operator > (CCPtr<T> const & rvalue) const
+template <class T> bool CCPtr<T>::operator>(CCPtr<T> const& rvalue) const
 {
-	return (stricmp((*this)->Name(), rvalue->Name()) > 0);
+    return (stricmp((*this)->Name(), rvalue->Name()) > 0);
 }

@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\gscreen.cpv   2.17   16 Oct 1995 16:51:34   JOE_BOSTIC  $ */
@@ -48,10 +48,9 @@
 
 #include <filepcx.h>
 
-GadgetClass * GScreenClass::Buttons = 0;
+GadgetClass* GScreenClass::Buttons = 0;
 
-GraphicBufferClass * GScreenClass::ShadowPage = 0;
-
+GraphicBufferClass* GScreenClass::ShadowPage = 0;
 
 /***********************************************************************************************
  * GScreenClass::GScreenClass -- Default constructor for GScreenClass.                         *
@@ -70,10 +69,9 @@ GraphicBufferClass * GScreenClass::ShadowPage = 0;
  *=============================================================================================*/
 GScreenClass::GScreenClass(void)
 {
-	IsToUpdate = true;
-	IsToRedraw = true;
+    IsToUpdate = true;
+    IsToRedraw = true;
 }
-
 
 /***********************************************************************************************
  * GScreenClass::One_Time -- Handles one time class setups.                                    *
@@ -101,18 +99,17 @@ GScreenClass::GScreenClass(void)
  *=============================================================================================*/
 void GScreenClass::One_Time(void)
 {
-	/*
-	**	Allocate the screen shadow page. This page is used to reduce access to the
-	**	actual screen memory. It contains a duplicate of what the SEENPAGE is.
-	*/
-	Buttons = 0;
-	ShadowPage = new GraphicBufferClass(320,200);
-	if (ShadowPage) {
-		ShadowPage->Clear();
-		HiddenPage.Clear();
-	}
+    /*
+    **	Allocate the screen shadow page. This page is used to reduce access to the
+    **	actual screen memory. It contains a duplicate of what the SEENPAGE is.
+    */
+    Buttons = 0;
+    ShadowPage = new GraphicBufferClass(320, 200);
+    if (ShadowPage) {
+        ShadowPage->Clear();
+        HiddenPage.Clear();
+    }
 }
-
 
 /***********************************************************************************************
  * GScreenClass::Init -- Init's the entire display hierarchy by calling all Init routines.     *
@@ -135,11 +132,10 @@ void GScreenClass::One_Time(void)
  *=============================================================================================*/
 void GScreenClass::Init(TheaterType theater)
 {
-	Init_Clear();
-	Init_IO();
-	Init_Theater(theater);
+    Init_Clear();
+    Init_IO();
+    Init_Theater(theater);
 }
-
 
 /***********************************************************************************************
  * GScreenClass::Init_Clear -- Sets the map to a known state.                                  *
@@ -162,17 +158,16 @@ void GScreenClass::Init(TheaterType theater)
  *=============================================================================================*/
 void GScreenClass::Init_Clear(void)
 {
-	/*
-	** Clear the ShadowPage & HidPage to force a complete shadow blit.
-	*/
-	if (ShadowPage) {
-		ShadowPage->Clear();
-		HiddenPage.Clear();
-	}
+    /*
+    ** Clear the ShadowPage & HidPage to force a complete shadow blit.
+    */
+    if (ShadowPage) {
+        ShadowPage->Clear();
+        HiddenPage.Clear();
+    }
 
-	IsToRedraw = true;
+    IsToRedraw = true;
 }
-
 
 /***********************************************************************************************
  * GScreenClass::Init_Theater -- Performs theater-specific initializations.                    *
@@ -193,10 +188,9 @@ void GScreenClass::Init_Clear(void)
  * HISTORY:                                                                                    *
  *   12/28/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-void GScreenClass::Init_Theater(TheaterType )
+void GScreenClass::Init_Theater(TheaterType)
 {
 }
-
 
 /***********************************************************************************************
  * GScreenClass::Init_IO -- Initializes the Button list ('Buttons').                           *
@@ -215,14 +209,12 @@ void GScreenClass::Init_Theater(TheaterType )
  *=============================================================================================*/
 void GScreenClass::Init_IO(void)
 {
-	/*
-	** Reset the button list.  This means that any other elements of the map that need
-	** buttons must attach them after this routine is called!
-	*/
-	Buttons = 0;
-
+    /*
+    ** Reset the button list.  This means that any other elements of the map that need
+    ** buttons must attach them after this routine is called!
+    */
+    Buttons = 0;
 }
-
 
 /***********************************************************************************************
  * GScreenClass::Flag_To_Redraw -- Flags the display to be redrawn.                            *
@@ -246,12 +238,11 @@ void GScreenClass::Init_IO(void)
  *=============================================================================================*/
 void GScreenClass::Flag_To_Redraw(bool complete)
 {
-	IsToUpdate = true;
-	if (complete) {
-		IsToRedraw = true;
-	}
+    IsToUpdate = true;
+    if (complete) {
+        IsToRedraw = true;
+    }
 }
-
 
 /***********************************************************************************************
  * GScreenClass::Input -- Fetches input and processes gadgets.                                 *
@@ -270,39 +261,37 @@ void GScreenClass::Flag_To_Redraw(bool complete)
  * HISTORY:                                                                                    *
  *   01/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void GScreenClass::Input(KeyNumType & key, int & x, int & y)
+void GScreenClass::Input(KeyNumType& key, int& x, int& y)
 {
-	key = Keyboard::Check();
+    key = Keyboard::Check();
 
-	x = Keyboard::Mouse_X();
-	y = Keyboard::Mouse_Y();
+    x = Keyboard::Mouse_X();
+    y = Keyboard::Mouse_Y();
 
-	if (Buttons) {
+    if (Buttons) {
 
-		/*
-		** If any buttons need redrawing, they will do so in the Input routine, and
-		** they should draw themselves to the HidPage.  So, flag ourselves for a Blit
-		** to show the newly drawn buttons.
-		*/
-		if (Buttons->Is_List_To_Redraw()) {
-			Flag_To_Redraw(false);
-		}
+        /*
+        ** If any buttons need redrawing, they will do so in the Input routine, and
+        ** they should draw themselves to the HidPage.  So, flag ourselves for a Blit
+        ** to show the newly drawn buttons.
+        */
+        if (Buttons->Is_List_To_Redraw()) {
+            Flag_To_Redraw(false);
+        }
 
-		GraphicViewPortClass * oldpage= Set_Logic_Page(HidPage);
+        GraphicViewPortClass* oldpage = Set_Logic_Page(HidPage);
 
-		key = Buttons->Input();
+        key = Buttons->Input();
 
-		Set_Logic_Page(oldpage);
+        Set_Logic_Page(oldpage);
 
-	} else {
-		if (key) {
-			key = Keyboard::Get();
-		}
-	}
-	AI(key, x, y);
-
+    } else {
+        if (key) {
+            key = Keyboard::Get();
+        }
+    }
+    AI(key, x, y);
 }
-
 
 /***********************************************************************************************
  * GScreenClass::Add_A_Button -- Add a gadget to the game input system.                        *
@@ -319,33 +308,32 @@ void GScreenClass::Input(KeyNumType & key, int & x, int & y)
  * HISTORY:                                                                                    *
  *   01/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void GScreenClass::Add_A_Button(GadgetClass & gadget)
+void GScreenClass::Add_A_Button(GadgetClass& gadget)
 {
-	/*------------------------------------------------------------------------
-	If this gadget is already in the list, remove it before adding it in:
-	- If 1st gadget in list, use Remove_A_Button to remove it, to reset the
-	  value of 'Buttons' appropriately
-	- Otherwise, just call the Remove function for that gadget to remove it
-	  from any list it may be in
-	------------------------------------------------------------------------*/
-	if (Buttons == &gadget) {
-		Remove_A_Button(gadget);
-	} else {
-		gadget.Remove();
-	}
+    /*------------------------------------------------------------------------
+    If this gadget is already in the list, remove it before adding it in:
+    - If 1st gadget in list, use Remove_A_Button to remove it, to reset the
+      value of 'Buttons' appropriately
+    - Otherwise, just call the Remove function for that gadget to remove it
+      from any list it may be in
+    ------------------------------------------------------------------------*/
+    if (Buttons == &gadget) {
+        Remove_A_Button(gadget);
+    } else {
+        gadget.Remove();
+    }
 
-	/*------------------------------------------------------------------------
-	Now add the gadget to our list:
-	- If there are not buttons, start the list with this one
-	- Otherwise, add it to the tail of the existing list
-	------------------------------------------------------------------------*/
-	if (Buttons) {
-		gadget.Add_Tail(*Buttons);
-	} else {
-		Buttons = &gadget;
-	}
+    /*------------------------------------------------------------------------
+    Now add the gadget to our list:
+    - If there are not buttons, start the list with this one
+    - Otherwise, add it to the tail of the existing list
+    ------------------------------------------------------------------------*/
+    if (Buttons) {
+        gadget.Add_Tail(*Buttons);
+    } else {
+        Buttons = &gadget;
+    }
 }
-
 
 /***********************************************************************************************
  * GScreenClass::Remove_A_Button -- Removes a gadget from the game input system.               *
@@ -360,11 +348,10 @@ void GScreenClass::Add_A_Button(GadgetClass & gadget)
  * HISTORY:                                                                                    *
  *   01/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void GScreenClass::Remove_A_Button(GadgetClass & gadget)
+void GScreenClass::Remove_A_Button(GadgetClass& gadget)
 {
-	Buttons = gadget.Remove();
+    Buttons = gadget.Remove();
 }
-
 
 /***********************************************************************************************
  * GScreenClass::Render -- General drawing dispatcher an display update function.              *
@@ -386,91 +373,87 @@ void GScreenClass::Remove_A_Button(GadgetClass & gadget)
  *=============================================================================================*/
 void GScreenClass::Render(void)
 {
-	//if (Buttons && Buttons->Is_List_To_Redraw()) {
-	//	IsToRedraw = true;
-	//}
+    // if (Buttons && Buttons->Is_List_To_Redraw()) {
+    //	IsToRedraw = true;
+    //}
 
+    if (IsToUpdate || IsToRedraw) {
 
-	if (IsToUpdate || IsToRedraw) {
+        // WWMouse->Erase_Mouse(&HidPage, TRUE);
+        GraphicViewPortClass* oldpage = Set_Logic_Page(HidPage);
 
-		//WWMouse->Erase_Mouse(&HidPage, TRUE);
-		GraphicViewPortClass * oldpage= Set_Logic_Page(HidPage);
+        // if (IsToRedraw) {
+        //	Hide_Mouse();
+        //	SeenBuff.To_Buffer(0, 0, 320, 200, ShadowPage);
+        //	Show_Mouse();
+        //}
+        Draw_It(IsToRedraw);
 
-		//if (IsToRedraw) {
-		//	Hide_Mouse();
-		//	SeenBuff.To_Buffer(0, 0, 320, 200, ShadowPage);
-		//	Show_Mouse();
-		//}
-		Draw_It(IsToRedraw);
-
-		if (Buttons) Buttons->Draw_All(false);
+        if (Buttons)
+            Buttons->Draw_All(false);
 
 #ifdef SCENARIO_EDITOR
-		/*
-		** Draw the Editor's buttons
-		*/
-		if (Debug_Map) {
-			if (Buttons) {
-				Buttons->Draw_All();
-			}
-		}
+        /*
+        ** Draw the Editor's buttons
+        */
+        if (Debug_Map) {
+            if (Buttons) {
+                Buttons->Draw_All();
+            }
+        }
 #endif
-		/*
-		** Draw the multiplayer message system to the Hidpage at this point.
-		** This way, they'll Blit along with the rest of the map.
-		*/
-		if (Messages.Num_Messages() > 0) {
-			Messages.Set_Width(Lepton_To_Cell(Map.TacLeptonWidth) * ICON_PIXEL_W);
-		}
-		Messages.Draw();
+        /*
+        ** Draw the multiplayer message system to the Hidpage at this point.
+        ** This way, they'll Blit along with the rest of the map.
+        */
+        if (Messages.Num_Messages() > 0) {
+            Messages.Set_Width(Lepton_To_Cell(Map.TacLeptonWidth) * ICON_PIXEL_W);
+        }
+        Messages.Draw();
 
-		//Blit_Display(); // 5/19/20 SKY - Skip copying to scene page, we can get the data directly from hidden page
-		IsToUpdate = false;
-		IsToRedraw = false;
+        // Blit_Display(); // 5/19/20 SKY - Skip copying to scene page, we can get the data directly from hidden page
+        IsToUpdate = false;
+        IsToRedraw = false;
 
-		Set_Logic_Page(oldpage);
-	}
+        Set_Logic_Page(oldpage);
+    }
 }
-
-
 
 #ifdef CHEAT_KEYS
 
-#define MAX_SCREENS_SAVED 30*15	      // Enough for 30 seconds @ 15 fps
+#define MAX_SCREENS_SAVED 30 * 15 // Enough for 30 seconds @ 15 fps
 
-GraphicBufferClass *ScreenList[MAX_SCREENS_SAVED];
+GraphicBufferClass* ScreenList[MAX_SCREENS_SAVED];
 int CurrentScreen = 0;
 bool ScreenRecording = false;
 
 void Add_Current_Screen(void)
 {
-#if (0)		                            // ST - 1/2/2019 5:51PM
-	if (ScreenRecording){
-		ScreenList[CurrentScreen] = new GraphicBufferClass;
-		ScreenList[CurrentScreen]->Init ( SeenBuff.Get_Width(), SeenBuff.Get_Height(), NULL, 0, (GBC_Enum) 0);
-		SeenBuff.Blit (*ScreenList[CurrentScreen]);
+#if (0) // ST - 1/2/2019 5:51PM
+    if (ScreenRecording) {
+        ScreenList[CurrentScreen] = new GraphicBufferClass;
+        ScreenList[CurrentScreen]->Init(SeenBuff.Get_Width(), SeenBuff.Get_Height(), NULL, 0, (GBC_Enum)0);
+        SeenBuff.Blit(*ScreenList[CurrentScreen]);
 
-		CurrentScreen++;
+        CurrentScreen++;
 
-		if (CurrentScreen == MAX_SCREENS_SAVED){
+        if (CurrentScreen == MAX_SCREENS_SAVED) {
 
-			char filename[20];
-			for (int i = 0 ; i < MAX_SCREENS_SAVED ; i++){
-				sprintf (filename, "SCRN%04d.PCX", i);
-				Write_PCX_File (filename,*ScreenList[i], (unsigned char *)CurrentPalette);
-				delete ScreenList[i];
-			}
+            char filename[20];
+            for (int i = 0; i < MAX_SCREENS_SAVED; i++) {
+                sprintf(filename, "SCRN%04d.PCX", i);
+                Write_PCX_File(filename, *ScreenList[i], (unsigned char*)CurrentPalette);
+                delete ScreenList[i];
+            }
 
-			CurrentScreen = 0;
-			ScreenRecording = 0;
-
-		}
-	}
+            CurrentScreen = 0;
+            ScreenRecording = 0;
+        }
+    }
 #endif
 }
 
-#endif	//CHEAT_KEYS
-
+#endif // CHEAT_KEYS
 
 extern bool CanVblankSync;
 
@@ -492,37 +475,32 @@ extern bool CanVblankSync;
  *=============================================================================================*/
 void GScreenClass::Blit_Display(void)
 {
-	if (SeenBuff.Get_Width()!=320){
+    if (SeenBuff.Get_Width() != 320) {
 #if (0)
-		if (HidPage.Get_IsDirectDraw() && (Options.GameSpeed >1 || Options.ScrollRate==6 && CanVblankSync) ){
-			WWMouse->Draw_Mouse(&HidPage);
-			SeenBuff.Get_Graphic_Buffer()->Get_DD_Surface()->Flip(NULL , DDFLIP_WAIT);
-			SeenBuff.Blit (HidPage , 0 , 0 , 0 , 0 , SeenBuff.Get_Width() , SeenBuff.Get_Height() , (BOOL) FALSE );
+        if (HidPage.Get_IsDirectDraw() && (Options.GameSpeed > 1 || Options.ScrollRate == 6 && CanVblankSync)) {
+            WWMouse->Draw_Mouse(&HidPage);
+            SeenBuff.Get_Graphic_Buffer()->Get_DD_Surface()->Flip(NULL, DDFLIP_WAIT);
+            SeenBuff.Blit(HidPage, 0, 0, 0, 0, SeenBuff.Get_Width(), SeenBuff.Get_Height(), (BOOL)FALSE);
 #ifdef CHEAT_KEYS
-			Add_Current_Screen();
+            Add_Current_Screen();
 #endif
-			//HidPage.Blit ( SeenBuff , 0 , 0 , 0 , 0 , HidPage.Get_Width() , HidPage.Get_Height() , (BOOL) FALSE );
-			WWMouse->Erase_Mouse(&HidPage, FALSE);
-		}else{
-#else	//(0)
-			WWMouse->Draw_Mouse(&HidPage);
-			HidPage.Blit ( SeenBuff , 0 , 0 , 0 , 0 , HidPage.Get_Width() , HidPage.Get_Height() , (BOOL) FALSE );
+            // HidPage.Blit ( SeenBuff , 0 , 0 , 0 , 0 , HidPage.Get_Width() , HidPage.Get_Height() , (BOOL) FALSE );
+            WWMouse->Erase_Mouse(&HidPage, FALSE);
+        } else {
+#else //(0)
+        WWMouse->Draw_Mouse(&HidPage);
+        HidPage.Blit(SeenBuff, 0, 0, 0, 0, HidPage.Get_Width(), HidPage.Get_Height(), (BOOL)FALSE);
 #ifdef CHEAT_KEYS
-			Add_Current_Screen();
+        Add_Current_Screen();
 #endif
-			WWMouse->Erase_Mouse(&HidPage, FALSE);
-#endif	//(0)
+        WWMouse->Erase_Mouse(&HidPage, FALSE);
+#endif //(0)
 #if (0)
-		}
-#endif	//(0)
+        }
+#endif //(0)
 
-	} else {
-		// ST - 1/2/2019 5:26PM
-		//ModeX_Blit (&HiddenPage);
-	}
-
+    } else {
+        // ST - 1/2/2019 5:26PM
+        // ModeX_Blit (&HiddenPage);
+    }
 }
-
-
-
-

@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\credits.cpv   2.17   16 Oct 1995 16:51:28   JOE_BOSTIC  $ */
@@ -35,8 +35,7 @@
  *   CreditClass::CreditClass -- Default constructor for the credit class object.              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-
+#include "function.h"
 
 /***********************************************************************************************
  * CreditClass::CreditClass -- Default constructor for the credit class object.                *
@@ -55,14 +54,13 @@
  *=============================================================================================*/
 CreditClass::CreditClass(void)
 {
-	IsToRedraw = false;
-	IsUp = false;
-	IsAudible = false;
-	Credits = 0;
-	Current = 0;
-	Countdown = 0;
+    IsToRedraw = false;
+    IsUp = false;
+    IsAudible = false;
+    Credits = 0;
+    Current = 0;
+    Countdown = 0;
 }
-
 
 /***********************************************************************************************
  * CreditClass::Graphic_Logic -- Handles the credit redraw logic.                              *
@@ -81,38 +79,37 @@ CreditClass::CreditClass(void)
  * HISTORY:                                                                                    *
  *   03/13/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-#define	XX (320-120)
-#define	WW	50
+#define XX (320 - 120)
+#define WW 50
 void CreditClass::Graphic_Logic(bool forced)
 {
-	int factor = Get_Resolution_Factor();
-	int xx = SeenBuff.Get_Width() - (120 << factor);
-	if (forced || IsToRedraw) {
+    int factor = Get_Resolution_Factor();
+    int xx = SeenBuff.Get_Width() - (120 << factor);
+    if (forced || IsToRedraw) {
 
-		/*
-		**	Play a sound effect when the money display changes, but only if a sound
-		**	effect was requested.
-		*/
-		if (IsAudible) {
-			if (IsUp) {
-				Sound_Effect(VOC_UP, VOL_1);
-			} else  {
-				Sound_Effect(VOC_DOWN, VOL_1);
-			}
-		}
+        /*
+        **	Play a sound effect when the money display changes, but only if a sound
+        **	effect was requested.
+        */
+        if (IsAudible) {
+            if (IsUp) {
+                Sound_Effect(VOC_UP, VOL_1);
+            } else {
+                Sound_Effect(VOC_DOWN, VOL_1);
+            }
+        }
 
-		/*
-		**	Display the new current value.
-		*/
-		//LogicPage->Fill_Rect(xx-(20 << factor), 1 << factor, xx+(20 << factor), 6 << factor, LTGREY);
-		TabClass::Draw_Credits_Tab();
-		Fancy_Text_Print("%ld", xx, 0, 11, TBLACK, TPF_GREEN12_GRAD|TPF_CENTER | TPF_USE_GRAD_PAL, Current);
+        /*
+        **	Display the new current value.
+        */
+        // LogicPage->Fill_Rect(xx-(20 << factor), 1 << factor, xx+(20 << factor), 6 << factor, LTGREY);
+        TabClass::Draw_Credits_Tab();
+        Fancy_Text_Print("%ld", xx, 0, 11, TBLACK, TPF_GREEN12_GRAD | TPF_CENTER | TPF_USE_GRAD_PAL, Current);
 
-		IsToRedraw = false;
-		IsAudible = false;
-	}
+        IsToRedraw = false;
+        IsAudible = false;
+    }
 }
-
 
 /***********************************************************************************************
  * CreditClass::AI -- Handles updating the credit display.                                     *
@@ -135,49 +132,53 @@ void CreditClass::Graphic_Logic(bool forced)
  *   03/13/1995 JLB : Created.                                                                 *
  *   10/16/2019  ST : Added house and logic parameters so we can call this from HouseClass::AI *
  *=============================================================================================*/
-void CreditClass::AI(bool forced, HouseClass *player_ptr, bool logic_only)
+void CreditClass::AI(bool forced, HouseClass* player_ptr, bool logic_only)
 {
-	if (player_ptr == NULL) {
-		return;
-	}
+    if (player_ptr == NULL) {
+        return;
+    }
 
-	Credits = player_ptr->Available_Money();
+    Credits = player_ptr->Available_Money();
 
-	/*
-	**	Make sure that the credit counter doesn't drop below zero.
-	*/
-	Credits = MAX(Credits, 0L);
+    /*
+    **	Make sure that the credit counter doesn't drop below zero.
+    */
+    Credits = MAX(Credits, 0L);
 
-	if (Current == Credits) return;
+    if (Current == Credits)
+        return;
 
-	if (forced) {
-		IsAudible = false;
-		Current = Credits;
-	} else {
+    if (forced) {
+        IsAudible = false;
+        Current = Credits;
+    } else {
 
-		if (Countdown) Countdown--;
-		if (Countdown) return;
+        if (Countdown)
+            Countdown--;
+        if (Countdown)
+            return;
 
-		/*
-		**	Determine the amount to change the display toward the
-		**	desired value.
-		*/
-		long adder = Credits - Current;
-		adder = ABS(adder);
-		adder >>= 5;
-		adder = Bound(adder, 1L, 71+72);
-		if (Current > Credits) adder = -adder;
-		Current += adder;
-		Countdown = 1;
+        /*
+        **	Determine the amount to change the display toward the
+        **	desired value.
+        */
+        long adder = Credits - Current;
+        adder = ABS(adder);
+        adder >>= 5;
+        adder = Bound(adder, 1L, 71 + 72);
+        if (Current > Credits)
+            adder = -adder;
+        Current += adder;
+        Countdown = 1;
 
-		if (Current-adder != Current) {
-			IsAudible = true;
-			IsUp = (adder > 0);
-		}
-	}
-	IsToRedraw = true;
+        if (Current - adder != Current) {
+            IsAudible = true;
+            IsUp = (adder > 0);
+        }
+    }
+    IsToRedraw = true;
 
-	if (!logic_only) {
-		Map.Flag_To_Redraw(false);
-	}
+    if (!logic_only) {
+        Map.Flag_To_Redraw(false);
+    }
 }

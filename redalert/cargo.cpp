@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/CARGO.CPP 1     3/03/97 10:24a Joe_bostic $ */
@@ -36,8 +36,7 @@
  *   CargoClass::Detach_Object -- Removes a unit from the cargo hold.                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-
+#include "function.h"
 
 #ifdef CHEAT_KEYS
 /***********************************************************************************************
@@ -54,15 +53,14 @@
  * HISTORY:                                                                                    *
  *   06/02/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void CargoClass::Debug_Dump(MonoClass * mono) const
+void CargoClass::Debug_Dump(MonoClass* mono) const
 {
-	if (How_Many()) {
-		mono->Set_Cursor(63, 3);
-		mono->Printf("(%d)%04X", How_Many(), Attached_Object());
-	}
+    if (How_Many()) {
+        mono->Set_Cursor(63, 3);
+        mono->Printf("(%d)%04X", How_Many(), Attached_Object());
+    }
 }
 #endif
-
 
 /***********************************************************************************************
  * CargoClass::Attach -- Add unit to cargo hold.                                               *
@@ -81,44 +79,45 @@ void CargoClass::Debug_Dump(MonoClass * mono) const
  *   04/23/1994 JLB : Created.                                                                 *
  *   10/31/94   JLB : Handles chained objects.                                                 *
  *=============================================================================================*/
-void CargoClass::Attach(FootClass * object)
+void CargoClass::Attach(FootClass* object)
 {
-	/*
-	**	If there is no object, then no action is necessary.
-	*/
-	if (object == NULL) return;
+    /*
+    **	If there is no object, then no action is necessary.
+    */
+    if (object == NULL)
+        return;
 
-	object->Limbo();
+    object->Limbo();
 
-	/*
-	**	Attach any existing cargo hold object to the end of the list as indicated by the
-	**	object pointer passed into this routine. This is necessary because several objects may
-	**	be attached at one time or several objects may be attached as a result of several calls
-	**	to this routine. Either case must be handled properly.
-	*/
-	ObjectClass * o = object->Next;
-	while (o != NULL) {
-		if (o->Next == (void*)NULL) break;
-		o = o->Next;
-	}
-	if (o != NULL) {
-		o->Next = CargoHold;
-	} else {
-		object->Next = CargoHold;
-	}
+    /*
+    **	Attach any existing cargo hold object to the end of the list as indicated by the
+    **	object pointer passed into this routine. This is necessary because several objects may
+    **	be attached at one time or several objects may be attached as a result of several calls
+    **	to this routine. Either case must be handled properly.
+    */
+    ObjectClass* o = object->Next;
+    while (o != NULL) {
+        if (o->Next == (void*)NULL)
+            break;
+        o = o->Next;
+    }
+    if (o != NULL) {
+        o->Next = CargoHold;
+    } else {
+        object->Next = CargoHold;
+    }
 
-	/*
-	**	Finally, assign the object pointer as the first object attached to this cargo hold.
-	*/
-	CargoHold = object;
-	Quantity = 0;
-	object = CargoHold;
-	while (object != NULL) {
-		Quantity++;
-		object = (FootClass *)(ObjectClass *)object->Next;
-	}
+    /*
+    **	Finally, assign the object pointer as the first object attached to this cargo hold.
+    */
+    CargoHold = object;
+    Quantity = 0;
+    object = CargoHold;
+    while (object != NULL) {
+        Quantity++;
+        object = (FootClass*)(ObjectClass*)object->Next;
+    }
 }
-
 
 /***********************************************************************************************
  * CargoClass::Detach_Object -- Removes a unit from the cargo hold.                            *
@@ -138,18 +137,17 @@ void CargoClass::Attach(FootClass * object)
  *   04/23/1994 JLB : Created.                                                                 *
  *   06/07/1994 JLB : Handles generic object types.                                            *
  *=============================================================================================*/
-FootClass * CargoClass::Detach_Object(void)
+FootClass* CargoClass::Detach_Object(void)
 {
-	TechnoClass * unit = Attached_Object();
+    TechnoClass* unit = Attached_Object();
 
-	if (unit != NULL) {
-		CargoHold = (FootClass *)(ObjectClass *)unit->Next;
-		unit->Next = 0;
-		Quantity--;
-	}
-	return((FootClass *)unit);
+    if (unit != NULL) {
+        CargoHold = (FootClass*)(ObjectClass*)unit->Next;
+        unit->Next = 0;
+        Quantity--;
+    }
+    return ((FootClass*)unit);
 }
-
 
 /***********************************************************************************************
  * CargoClass::Attached_Object -- Determine attached unit pointer.                             *
@@ -169,12 +167,10 @@ FootClass * CargoClass::Detach_Object(void)
  *   09/07/1992 JLB : Created.                                                                 *
  *   06/07/1994 JLB : Handles generic object types.                                            *
  *=============================================================================================*/
-FootClass * CargoClass::Attached_Object(void) const
+FootClass* CargoClass::Attached_Object(void) const
 {
-	if (Is_Something_Attached()) {
-		return(CargoHold);
-	}
-	return(NULL);
+    if (Is_Something_Attached()) {
+        return (CargoHold);
+    }
+    return (NULL);
 }
-
-

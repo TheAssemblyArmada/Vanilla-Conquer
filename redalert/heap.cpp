@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/HEAP.CPP 1     3/03/97 10:24a Joe_bostic $ */
@@ -50,15 +50,13 @@
  *   TFixedIHeapClass::Save -- Saves all active objects                                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#include	"function.h"
-#include	"heap.h"
+#include "function.h"
+#include "heap.h"
 //#include	<mem.h>
-#include	<stdio.h>
-#include	<stddef.h>
-#include	<conio.h>
-#include	<string.h>
-
+#include <stdio.h>
+#include <stddef.h>
+#include <conio.h>
+#include <string.h>
 
 template class TFixedIHeapClass<AircraftClass>;
 template class TFixedIHeapClass<AircraftTypeClass>;
@@ -93,7 +91,6 @@ template class TFixedIHeapClass<VesselTypeClass>;
 template class TFixedIHeapClass<WarheadTypeClass>;
 template class TFixedIHeapClass<WeaponTypeClass>;
 
-
 /***********************************************************************************************
  * FixedHeapClass::FixedHeapClass -- Normal constructor for heap management class.             *
  *                                                                                             *
@@ -112,15 +109,14 @@ template class TFixedIHeapClass<WeaponTypeClass>;
  * HISTORY:                                                                                    *
  *   02/21/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-FixedHeapClass::FixedHeapClass(int size) :
-	IsAllocated(false),
-	Size(size),
-	TotalCount(0),
-	ActiveCount(0),
-	Buffer(0)
+FixedHeapClass::FixedHeapClass(int size)
+    : IsAllocated(false)
+    , Size(size)
+    , TotalCount(0)
+    , ActiveCount(0)
+    , Buffer(0)
 {
 }
-
 
 /***********************************************************************************************
  * FixedHeapClass::~FixedHeapClass -- Destructor for the heap manager class.                   *
@@ -139,9 +135,8 @@ FixedHeapClass::FixedHeapClass(int size) :
  *=============================================================================================*/
 FixedHeapClass::~FixedHeapClass(void)
 {
-	FixedHeapClass::Clear();
+    FixedHeapClass::Clear();
 }
-
 
 /***********************************************************************************************
  * FixedHeapClass::Set_Heap -- Assigns a memory block for this heap manager.                   *
@@ -163,45 +158,46 @@ FixedHeapClass::~FixedHeapClass(void)
  * HISTORY:                                                                                    *
  *   02/21/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int FixedHeapClass::Set_Heap(int count, void * buffer)
+int FixedHeapClass::Set_Heap(int count, void* buffer)
 {
-	/*
-	**	Clear out the old heap data.
-	*/
-	Clear();
+    /*
+    **	Clear out the old heap data.
+    */
+    Clear();
 
-	/*
-	**	If there is no size to the objects in the heap, then this block memory
-	**	handler can NEVER function. Return with a failure condition.
-	*/
-	if (!Size) return(false);
+    /*
+    **	If there is no size to the objects in the heap, then this block memory
+    **	handler can NEVER function. Return with a failure condition.
+    */
+    if (!Size)
+        return (false);
 
-	/*
-	**	If there is no count specified, then this indicates that the heap should
-	**	be disabled.
-	*/
-	if (!count) return(true);
+    /*
+    **	If there is no count specified, then this indicates that the heap should
+    **	be disabled.
+    */
+    if (!count)
+        return (true);
 
-	/*
-	**	Initialize the free boolean vector and the buffer for the actual
-	**	allocation objects.
-	*/
-	if (FreeFlag.Resize(count)) {
-		if (!buffer) {
-			buffer = new char[count * Size];
-			if (!buffer) {
-				FreeFlag.Clear();
-				return(false);
-			}
-			IsAllocated = true;
-		}
-		Buffer = buffer;
-		TotalCount = count;
-		return(true);
-	}
-	return(false);
+    /*
+    **	Initialize the free boolean vector and the buffer for the actual
+    **	allocation objects.
+    */
+    if (FreeFlag.Resize(count)) {
+        if (!buffer) {
+            buffer = new char[count * Size];
+            if (!buffer) {
+                FreeFlag.Clear();
+                return (false);
+            }
+            IsAllocated = true;
+        }
+        Buffer = buffer;
+        TotalCount = count;
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * FixedHeapClass::Allocate -- Allocate a sub-block from the heap.                             *
@@ -219,20 +215,19 @@ int FixedHeapClass::Set_Heap(int count, void * buffer)
  * HISTORY:                                                                                    *
  *   02/21/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void * FixedHeapClass::Allocate(void)
+void* FixedHeapClass::Allocate(void)
 {
-	if (ActiveCount < TotalCount) {
-		int index = FreeFlag.First_False();
+    if (ActiveCount < TotalCount) {
+        int index = FreeFlag.First_False();
 
-		if (index != -1) {
-			ActiveCount++;
-			FreeFlag[index] = true;
-			return((*this)[index]);
-		}
-	}
-	return(0);
+        if (index != -1) {
+            ActiveCount++;
+            FreeFlag[index] = true;
+            return ((*this)[index]);
+        }
+    }
+    return (0);
 }
-
 
 /***********************************************************************************************
  * FixedHeapClass::Free -- Frees a sub-block in the heap.                                      *
@@ -250,22 +245,21 @@ void * FixedHeapClass::Allocate(void)
  * HISTORY:                                                                                    *
  *   02/21/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int FixedHeapClass::Free(void * pointer)
+int FixedHeapClass::Free(void* pointer)
 {
-	if (pointer && ActiveCount) {
-		int index = ID(pointer);
+    if (pointer && ActiveCount) {
+        int index = ID(pointer);
 
-		if (index < TotalCount) {
-			if (FreeFlag[index]) {
-				ActiveCount--;
-				FreeFlag[index] = false;
-				return(true);
-			}
-		}
-	}
-	return(false);
+        if (index < TotalCount) {
+            if (FreeFlag[index]) {
+                ActiveCount--;
+                FreeFlag[index] = false;
+                return (true);
+            }
+        }
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * FixedHeapClass::ID -- Converts a pointer to a sub-block index number.                       *
@@ -284,14 +278,13 @@ int FixedHeapClass::Free(void * pointer)
  * HISTORY:                                                                                    *
  *   02/21/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int FixedHeapClass::ID(void const * pointer) const
+int FixedHeapClass::ID(void const* pointer) const
 {
-	if (pointer && Size) {
-		return((int)(((char *)pointer - (char *)Buffer) / Size));
-	}
-	return(-1);
+    if (pointer && Size) {
+        return ((int)(((char*)pointer - (char*)Buffer) / Size));
+    }
+    return (-1);
 }
-
 
 /***********************************************************************************************
  * FixedHeapClass::Clear -- Clears (and frees) the heap manager memory.                        *
@@ -311,19 +304,18 @@ int FixedHeapClass::ID(void const * pointer) const
  *=============================================================================================*/
 void FixedHeapClass::Clear(void)
 {
-	/*
-	**	Free the old buffer (if present).
-	*/
-	if (Buffer && IsAllocated) {
-		delete[] Buffer;
-	}
-	Buffer = 0;
-	IsAllocated = false;
-	ActiveCount = 0;
-	TotalCount = 0;
-	FreeFlag.Clear();
+    /*
+    **	Free the old buffer (if present).
+    */
+    if (Buffer && IsAllocated) {
+        delete[] Buffer;
+    }
+    Buffer = 0;
+    IsAllocated = false;
+    ActiveCount = 0;
+    TotalCount = 0;
+    FreeFlag.Clear();
 }
-
 
 /***********************************************************************************************
  * FixedHeapClass::Free_All -- Frees all objects in the fixed heap.                            *
@@ -342,14 +334,12 @@ void FixedHeapClass::Clear(void)
  *=============================================================================================*/
 int FixedHeapClass::Free_All(void)
 {
-	ActiveCount = 0;
-	FreeFlag.Reset();
-	return(true);
+    ActiveCount = 0;
+    FreeFlag.Reset();
+    return (true);
 }
 
-
 /////////////////////////////////////////////////////////////////////
-
 
 /***********************************************************************************************
  * FixedIHeapClass::Free_All -- Frees all objects out of the indexed heap.                     *
@@ -368,10 +358,9 @@ int FixedHeapClass::Free_All(void)
  *=============================================================================================*/
 int FixedIHeapClass::Free_All(void)
 {
-	ActivePointers.Delete_All();
-	return(FixedHeapClass::Free_All());
+    ActivePointers.Delete_All();
+    return (FixedHeapClass::Free_All());
 }
-
 
 /***********************************************************************************************
  * FixedIHeapClass::Clear -- Clears the fixed heap of all entries.                             *
@@ -391,10 +380,9 @@ int FixedIHeapClass::Free_All(void)
  *=============================================================================================*/
 void FixedIHeapClass::Clear(void)
 {
-	FixedHeapClass::Clear();
-	ActivePointers.Clear();
+    FixedHeapClass::Clear();
+    ActivePointers.Clear();
 }
-
 
 /***********************************************************************************************
  * FixedIHeapClass::Set_Heap -- Set the heap to the buffer provided.                           *
@@ -414,16 +402,15 @@ void FixedIHeapClass::Clear(void)
  * HISTORY:                                                                                    *
  *   09/21/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int FixedIHeapClass::Set_Heap(int count, void * buffer)
+int FixedIHeapClass::Set_Heap(int count, void* buffer)
 {
-	Clear();
-	if (FixedHeapClass::Set_Heap(count, buffer)) {
-		ActivePointers.Resize(count);
-		return(true);
-	}
-	return(false);
+    Clear();
+    if (FixedHeapClass::Set_Heap(count, buffer)) {
+        ActivePointers.Resize(count);
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * FixedIHeapClass::Allocate -- Allocate an object from the heap.                              *
@@ -440,16 +427,15 @@ int FixedIHeapClass::Set_Heap(int count, void * buffer)
  * HISTORY:                                                                                    *
  *   09/21/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void * FixedIHeapClass::Allocate(void)
+void* FixedIHeapClass::Allocate(void)
 {
-	void * ptr = FixedHeapClass::Allocate();
-	if (ptr)	{
-		ActivePointers.Add(ptr);
-		memset (ptr, 0, Size);
-	}
-	return(ptr);
+    void* ptr = FixedHeapClass::Allocate();
+    if (ptr) {
+        ActivePointers.Add(ptr);
+        memset(ptr, 0, Size);
+    }
+    return (ptr);
 }
-
 
 /***********************************************************************************************
  * FixedIHeapClass::Free -- Frees an object in the heap.                                       *
@@ -467,14 +453,13 @@ void * FixedIHeapClass::Allocate(void)
  * HISTORY:                                                                                    *
  *   02/21/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int FixedIHeapClass::Free(void * pointer)
+int FixedIHeapClass::Free(void* pointer)
 {
-	if (FixedHeapClass::Free(pointer)) {
-		ActivePointers.Delete(pointer);
-	}
-	return(false);
+    if (FixedHeapClass::Free(pointer)) {
+        ActivePointers.Delete(pointer);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * FixedIHeapClass::Logical_ID -- Fetches the logical ID number.                               *
@@ -494,18 +479,17 @@ int FixedIHeapClass::Free(void * pointer)
  * HISTORY:                                                                                    *
  *   05/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int FixedIHeapClass::Logical_ID(void const * pointer) const
+int FixedIHeapClass::Logical_ID(void const* pointer) const
 {
-	if (pointer != NULL) {
-		for (int index = 0; index < Count(); index++) {
-			if (Active_Ptr(index) == pointer) {
-				return(index);
-			}
-		}
-	}
-	return(-1);
+    if (pointer != NULL) {
+        for (int index = 0; index < Count(); index++) {
+            if (Active_Ptr(index) == pointer) {
+                return (index);
+            }
+        }
+    }
+    return (-1);
 }
-
 
 /***********************************************************************************************
  * TFixedIHeapClass::Save -- Saves all active objects                                          *
@@ -520,35 +504,33 @@ int FixedIHeapClass::Logical_ID(void const * pointer) const
  *   03/15/1995 BRR : Created.                                                                 *
  *   03/12/1996 JLB : Uses in-place new operator for virtual table control.                    *
  *=============================================================================================*/
-template<class T>
-int TFixedIHeapClass<T>::Save(Pipe & file) const
+template <class T> int TFixedIHeapClass<T>::Save(Pipe& file) const
 {
-	/*
-	** Save the number of instances of this class
-	*/
-	file.Put(&ActiveCount, sizeof(ActiveCount));
+    /*
+    ** Save the number of instances of this class
+    */
+    file.Put(&ActiveCount, sizeof(ActiveCount));
 
-	/*
-	** Save each instance of this class
-	*/
-	for (int i = 0; i < ActiveCount; i++) {
+    /*
+    ** Save each instance of this class
+    */
+    for (int i = 0; i < ActiveCount; i++) {
 
-		/*
-		** Save the array index of the object, so it can be loaded back into the
-		** same array location (so TARGET translations will work)
-		*/
-		int idx = ID(Ptr(i));
-		file.Put(&idx, sizeof(idx));
+        /*
+        ** Save the array index of the object, so it can be loaded back into the
+        ** same array location (so TARGET translations will work)
+        */
+        int idx = ID(Ptr(i));
+        file.Put(&idx, sizeof(idx));
 
-		/*
-		** Save the object itself
-		*/
-		file.Put(Ptr(i), sizeof(T));
-	}
+        /*
+        ** Save the object itself
+        */
+        file.Put(Ptr(i), sizeof(T));
+    }
 
-	return(true);
+    return (true);
 }
-
 
 /***********************************************************************************************
  * TFixedIHeapClass::Load -- Loads all active objects                                          *
@@ -562,60 +544,58 @@ int TFixedIHeapClass<T>::Save(Pipe & file) const
  * HISTORY:                                                                                    *
  *   03/15/1995 BRR : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-int TFixedIHeapClass<T>::Load(Straw & file)
+template <class T> int TFixedIHeapClass<T>::Load(Straw& file)
 {
-	int i;			// loop counter
-	int idx;			// object index
-	T * ptr;			// object pointer
-	int a_count;
+    int i;   // loop counter
+    int idx; // object index
+    T* ptr;  // object pointer
+    int a_count;
 
-	/*
-	** Read the number of instances of this class
-	*/
-	if (file.Get(&a_count, sizeof(a_count)) != sizeof(a_count)) {
-		return(false);
-	}
+    /*
+    ** Read the number of instances of this class
+    */
+    if (file.Get(&a_count, sizeof(a_count)) != sizeof(a_count)) {
+        return (false);
+    }
 
-	/*
-	** Error if more objects than we can hold
-	*/
-	if (a_count > TotalCount) {
-		return(false);
-	}
+    /*
+    ** Error if more objects than we can hold
+    */
+    if (a_count > TotalCount) {
+        return (false);
+    }
 
-	/*
-	** Read each class instance
-	*/
-	for (i = 0; i < a_count; i++) {
-		/*
-		** Read the object's array index
-		*/
-		if (file.Get(&idx, sizeof(idx)) != sizeof(idx)) {
-			return(false);
-		}
+    /*
+    ** Read each class instance
+    */
+    for (i = 0; i < a_count; i++) {
+        /*
+        ** Read the object's array index
+        */
+        if (file.Get(&idx, sizeof(idx)) != sizeof(idx)) {
+            return (false);
+        }
 
-		/*
-		** Get a pointer to the object, activate that object
-		*/
-		ptr = (T *)(*this)[idx];
-		FreeFlag[idx] = true;
-		ActiveCount++;
-		ActivePointers.Add(ptr);
+        /*
+        ** Get a pointer to the object, activate that object
+        */
+        ptr = (T*)(*this)[idx];
+        FreeFlag[idx] = true;
+        ActiveCount++;
+        ActivePointers.Add(ptr);
 
-		/*
-		** Load the object
-		*/
-		file.Get(ptr, sizeof(T));
-		new(ptr) T(NoInitClass());
-//		if (!ptr->Load(file)) {
-//			return(false);
-//		}
-	}
+        /*
+        ** Load the object
+        */
+        file.Get(ptr, sizeof(T));
+        new (ptr) T(NoInitClass());
+        //		if (!ptr->Load(file)) {
+        //			return(false);
+        //		}
+    }
 
-	return(true);
+    return (true);
 }
-
 
 /***********************************************************************************************
  * TFixedIHeapClass::Code_Pointers -- codes pointers for every object, to prepare for save     *
@@ -629,16 +609,14 @@ int TFixedIHeapClass<T>::Load(Straw & file)
  * HISTORY:                                                                                    *
  *   03/15/1995 BRR : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-void TFixedIHeapClass<T>::Code_Pointers(void)
+template <class T> void TFixedIHeapClass<T>::Code_Pointers(void)
 {
-	int i;
+    int i;
 
-	for (i = 0; i < ActiveCount; i++) {
-		Ptr(i)->Code_Pointers();
-	}
+    for (i = 0; i < ActiveCount; i++) {
+        Ptr(i)->Code_Pointers();
+    }
 }
-
 
 /***********************************************************************************************
  * TFixedIHeapClass::Decode_Pointers -- Decodes all object pointers, for after loading         *
@@ -652,12 +630,11 @@ void TFixedIHeapClass<T>::Code_Pointers(void)
  * HISTORY:                                                                                    *
  *   03/15/1995 BRR : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-void TFixedIHeapClass<T>::Decode_Pointers(void)
+template <class T> void TFixedIHeapClass<T>::Decode_Pointers(void)
 {
-	int i;
+    int i;
 
-	for (i = 0; i < ActiveCount; i++) {
-		Ptr(i)->Decode_Pointers();
-	}
+    for (i = 0; i < ActiveCount; i++) {
+        Ptr(i)->Decode_Pointers();
+    }
 }

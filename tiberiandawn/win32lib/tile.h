@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /***************************************************************************
@@ -37,19 +37,17 @@
 /*=========================================================================*/
 /* The following prototypes are for the file: ICONSET.CPP						*/
 /*=========================================================================*/
-void * Load_Icon_Set(char const *filename, void *iconsetptr, long buffsize);
-void Free_Icon_Set(void const *iconset);
-long Get_Icon_Set_Size(void const *iconset);
-int Get_Icon_Set_Width(void const *iconset);
-int Get_Icon_Set_Height(void const *iconset);
-void * Get_Icon_Set_Icondata(void const *iconset);
-void * Get_Icon_Set_Trans(void const *iconset);
-void * Get_Icon_Set_Remapdata(void const *iconset);
-void * Get_Icon_Set_Palettedata(void const *iconset);
-int Get_Icon_Set_Count(void const *iconset);
-void * Get_Icon_Set_Map(void const *iconset);
-
-
+void* Load_Icon_Set(char const* filename, void* iconsetptr, long buffsize);
+void Free_Icon_Set(void const* iconset);
+long Get_Icon_Set_Size(void const* iconset);
+int Get_Icon_Set_Width(void const* iconset);
+int Get_Icon_Set_Height(void const* iconset);
+void* Get_Icon_Set_Icondata(void const* iconset);
+void* Get_Icon_Set_Trans(void const* iconset);
+void* Get_Icon_Set_Remapdata(void const* iconset);
+void* Get_Icon_Set_Palettedata(void const* iconset);
+int Get_Icon_Set_Count(void const* iconset);
+void* Get_Icon_Set_Map(void const* iconset);
 
 #if (1)
 /*
@@ -58,43 +56,43 @@ void * Get_Icon_Set_Map(void const *iconset);
 */
 
 // C&C version of struct
-typedef struct {
-	short	Width;			// Width of icons (pixels).
-	short	Height;			// Height of icons (pixels).
-	short	Count;			// Number of (logical) icons in this set.
-//	BOOL	Allocated;		// Was this iconset allocated?
-	short	Allocated;		// Was this iconset allocated?
-	long	Size;				// Size of entire iconset memory block.
-	unsigned char *Icons;			// Offset from buffer start to icon data.
-	long	Palettes;		// Offset from buffer start to palette data.
-	long	Remaps;			// Offset from buffer start to remap index data.
-	long	TransFlag;		// Offset for transparency flag table.
-	unsigned char *Map;				// Icon map offset (if present).
+typedef struct
+{
+    short Width;          // Width of icons (pixels).
+    short Height;         // Height of icons (pixels).
+    short Count;          // Number of (logical) icons in this set.
+                          //	BOOL	Allocated;		// Was this iconset allocated?
+    short Allocated;      // Was this iconset allocated?
+    long Size;            // Size of entire iconset memory block.
+    unsigned char* Icons; // Offset from buffer start to icon data.
+    long Palettes;        // Offset from buffer start to palette data.
+    long Remaps;          // Offset from buffer start to remap index data.
+    long TransFlag;       // Offset for transparency flag table.
+    unsigned char* Map;   // Icon map offset (if present).
 } IControl_Type;
-
 
 #else
 
 // RA version of struct
-typedef struct {
-	short	Width;			// Width of icons (pixels).
-	short	Height;			// Height of icons (pixels).
-	short	Count;			// Number of (logical) icons in this set.
-	short	Allocated;		// Was this iconset allocated?
-	short MapWidth;		// Width of map (in icons).
-	short MapHeight;		// Height of map (in icons).
-	long	Size;				// Size of entire iconset memory block.
-	long	Icons;			// Offset from buffer start to icon data.
-//	unsigned char * Icons;	// Offset from buffer start to icon data.
-	long	Palettes;		// Offset from buffer start to palette data.
-	long	Remaps;			// Offset from buffer start to remap index data.
-	long	TransFlag;		// Offset for transparency flag table.
-	long	ColorMap;		// Offset for color control value table.
-	long	Map;				// Icon map offset (if present).
-//	unsigned char * Map;				// Icon map offset (if present).
+typedef struct
+{
+    short Width;     // Width of icons (pixels).
+    short Height;    // Height of icons (pixels).
+    short Count;     // Number of (logical) icons in this set.
+    short Allocated; // Was this iconset allocated?
+    short MapWidth;  // Width of map (in icons).
+    short MapHeight; // Height of map (in icons).
+    long Size;       // Size of entire iconset memory block.
+    long Icons;      // Offset from buffer start to icon data.
+                     //	unsigned char * Icons;	// Offset from buffer start to icon data.
+    long Palettes;   // Offset from buffer start to palette data.
+    long Remaps;     // Offset from buffer start to remap index data.
+    long TransFlag;  // Offset for transparency flag table.
+    long ColorMap;   // Offset for color control value table.
+    long Map;        // Icon map offset (if present).
+    //	unsigned char * Map;				// Icon map offset (if present).
 } IControl_Type;
 
 #endif
 
-
-#endif //TILE_H
+#endif // TILE_H

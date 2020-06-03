@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/DIAL8.H 1     3/03/97 10:24a Joe_bostic $ */
@@ -35,39 +35,37 @@
 
 class Dial8Class : public ControlClass
 {
-	public:
-		/*
-		** Constructor/Destructor
-		*/
-		Dial8Class(int id, int x, int y, int w, int h, DirType dir);
+public:
+    /*
+    ** Constructor/Destructor
+    */
+    Dial8Class(int id, int x, int y, int w, int h, DirType dir);
 
-		/*
-		** Get/Set the direction the dial is currently pointing
-		*/
-		DirType Get_Direction(void) const;
-		void Set_Direction(DirType dir);
+    /*
+    ** Get/Set the direction the dial is currently pointing
+    */
+    DirType Get_Direction(void) const;
+    void Set_Direction(DirType dir);
 
-		/*
-		** Overloaded draw routine
-		*/
-		virtual int Draw_Me(int forced = false);
+    /*
+    ** Overloaded draw routine
+    */
+    virtual int Draw_Me(int forced = false);
 
-	protected:
-		/*
-		** Overloaded event processing routine
-		*/
-		virtual int Action(unsigned flags, KeyNumType &key);
+protected:
+    /*
+    ** Overloaded event processing routine
+    */
+    virtual int Action(unsigned flags, KeyNumType& key);
 
-	private:
-		int FaceX;						// x-coord of center of face
-		int FaceY;						// y-coord of center of face
-		int FacePoint[8][2];			// coords of the little dial decorations
-		int FaceLine[8][2];			// coords for drawing the dial hand
-		DirType Direction;			// 0-255 numerical direction of dial
-		FacingType Facing;			// numerical facing direction of dial (0 - 7)
-		FacingType OldFacing;		// previous Facing value
-
+private:
+    int FaceX;            // x-coord of center of face
+    int FaceY;            // y-coord of center of face
+    int FacePoint[8][2];  // coords of the little dial decorations
+    int FaceLine[8][2];   // coords for drawing the dial hand
+    DirType Direction;    // 0-255 numerical direction of dial
+    FacingType Facing;    // numerical facing direction of dial (0 - 7)
+    FacingType OldFacing; // previous Facing value
 };
 
 #endif
-

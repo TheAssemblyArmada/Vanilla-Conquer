@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/MISSION.CPP 1     3/03/97 10:25a Joe_bostic $ */
@@ -45,8 +45,7 @@
  *   MissionClass::Is_Recruitable_Mission -- Determines if this mission is recruitable for a te*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-
+#include "function.h"
 
 /***********************************************************************************************
  * MissionClass::MissionClass -- Default constructor for the mission object type.              *
@@ -64,16 +63,15 @@
  *   01/23/1995 JLB : Created.                                                                 *
  *   03/01/1996 JLB : Uses initializer lists.                                                  *
  *=============================================================================================*/
-MissionClass::MissionClass(RTTIType rtti, int id) :
-	ObjectClass(rtti, id),
-	Mission(MISSION_NONE),
-	SuspendedMission(MISSION_NONE),
-	MissionQueue(MISSION_NONE),
-	Status(0),
-	Timer(0)
+MissionClass::MissionClass(RTTIType rtti, int id)
+    : ObjectClass(rtti, id)
+    , Mission(MISSION_NONE)
+    , SuspendedMission(MISSION_NONE)
+    , MissionQueue(MISSION_NONE)
+    , Status(0)
+    , Timer(0)
 {
 }
-
 
 /***********************************************************************************************
  * MissionClass::Mission_???  -- Stub mission functions that do nothing.                       *
@@ -91,25 +89,78 @@ MissionClass::MissionClass(RTTIType rtti, int id) :
  * HISTORY:                                                                                    *
  *   01/23/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int MissionClass::Mission_Sleep(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Ambush(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Attack(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Capture(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Guard(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Guard_Area(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Harvest(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Hunt(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Move(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Retreat(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Return(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Stop(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Unload(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Enter(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Construction(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Deconstruction(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Repair(void) {return TICKS_PER_SECOND*30;};
-int MissionClass::Mission_Missile(void) {return TICKS_PER_SECOND*30;};
-
+int MissionClass::Mission_Sleep(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Ambush(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Attack(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Capture(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Guard(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Guard_Area(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Harvest(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Hunt(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Move(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Retreat(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Return(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Stop(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Unload(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Enter(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Construction(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Deconstruction(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Repair(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
+int MissionClass::Mission_Missile(void)
+{
+    return TICKS_PER_SECOND * 30;
+};
 
 /***********************************************************************************************
  * MissionClass::Set_Mission -- Sets the mission to the specified value.                       *
@@ -129,12 +180,11 @@ int MissionClass::Mission_Missile(void) {return TICKS_PER_SECOND*30;};
  *=============================================================================================*/
 void MissionClass::Set_Mission(MissionType mission)
 {
-	assert(IsActive);
+    assert(IsActive);
 
-	Mission = mission;
-	MissionQueue = MISSION_NONE;
+    Mission = mission;
+    MissionQueue = MISSION_NONE;
 }
-
 
 /***********************************************************************************************
  * MissionClass::Get_Mission -- Fetches the mission that this object is acting under.          *
@@ -154,11 +204,10 @@ void MissionClass::Set_Mission(MissionType mission)
  *=============================================================================================*/
 MissionType MissionClass::Get_Mission(void) const
 {
-	assert(IsActive);
+    assert(IsActive);
 
-	return(Mission == MISSION_NONE ? MissionQueue : Mission);
+    return (Mission == MISSION_NONE ? MissionQueue : Mission);
 }
-
 
 #ifdef CHEAT_KEYS
 /***********************************************************************************************
@@ -176,19 +225,22 @@ MissionType MissionClass::Get_Mission(void) const
  * HISTORY:                                                                                    *
  *   05/28/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void MissionClass::Debug_Dump(MonoClass * mono) const
+void MissionClass::Debug_Dump(MonoClass* mono) const
 {
-	assert(IsActive);
+    assert(IsActive);
 
-	mono->Set_Cursor(1, 9);mono->Printf("%-14s", MissionClass::Mission_Name(Mission));
-	mono->Set_Cursor(16, 9);mono->Printf("%-12s", MissionClass::Mission_Name(MissionQueue));
-	mono->Set_Cursor(1, 7);mono->Printf("%3d", (long)Timer);
-	mono->Set_Cursor(6, 7);mono->Printf("%2d", Status);
+    mono->Set_Cursor(1, 9);
+    mono->Printf("%-14s", MissionClass::Mission_Name(Mission));
+    mono->Set_Cursor(16, 9);
+    mono->Printf("%-12s", MissionClass::Mission_Name(MissionQueue));
+    mono->Set_Cursor(1, 7);
+    mono->Printf("%3d", (long)Timer);
+    mono->Set_Cursor(6, 7);
+    mono->Printf("%2d", Status);
 
-	ObjectClass::Debug_Dump(mono);
+    ObjectClass::Debug_Dump(mono);
 }
 #endif
-
 
 /***********************************************************************************************
  * MissionClass::AI -- Processes order script.                                                 *
@@ -209,114 +261,113 @@ void MissionClass::Debug_Dump(MonoClass * mono) const
  *=============================================================================================*/
 void MissionClass::AI(void)
 {
-	assert(IsActive);
+    assert(IsActive);
 
-	ObjectClass::AI();
+    ObjectClass::AI();
 
-	/*
-	**	If this is the kind of object that is "paralyzed with fear" while it is above
-	**	ground level (such as when be paradropped), it will perform no mission AI
-	**	processing.
-	*/
-	if ((What_Am_I() == RTTI_INFANTRY || What_Am_I() == RTTI_UNIT || What_Am_I() == RTTI_VESSEL) && Height > 0) {
-		return;
-	}
+    /*
+    **	If this is the kind of object that is "paralyzed with fear" while it is above
+    **	ground level (such as when be paradropped), it will perform no mission AI
+    **	processing.
+    */
+    if ((What_Am_I() == RTTI_INFANTRY || What_Am_I() == RTTI_UNIT || What_Am_I() == RTTI_VESSEL) && Height > 0) {
+        return;
+    }
 
-	/*
-	**	This is the script AI equivalent processing.
-	*/
-	BStart(BENCH_MISSION);
-	if (Timer == 0 && Strength > 0) {
-		switch (Mission) {
-			default:
-				Timer = Mission_Sleep();
-				break;
+    /*
+    **	This is the script AI equivalent processing.
+    */
+    BStart(BENCH_MISSION);
+    if (Timer == 0 && Strength > 0) {
+        switch (Mission) {
+        default:
+            Timer = Mission_Sleep();
+            break;
 
-			case MISSION_HARMLESS:
-			case MISSION_SLEEP:
-				Timer = Mission_Sleep();
-				break;
+        case MISSION_HARMLESS:
+        case MISSION_SLEEP:
+            Timer = Mission_Sleep();
+            break;
 
-			case MISSION_STICKY:
-			case MISSION_GUARD:
-				Timer = Mission_Guard();
-				break;
+        case MISSION_STICKY:
+        case MISSION_GUARD:
+            Timer = Mission_Guard();
+            break;
 
-			case MISSION_ENTER:
-				Timer = Mission_Enter();
-				break;
+        case MISSION_ENTER:
+            Timer = Mission_Enter();
+            break;
 
-			case MISSION_CONSTRUCTION:
-				Timer = Mission_Construction();
-				break;
+        case MISSION_CONSTRUCTION:
+            Timer = Mission_Construction();
+            break;
 
-			case MISSION_DECONSTRUCTION:
-				Timer = Mission_Deconstruction();
-				break;
+        case MISSION_DECONSTRUCTION:
+            Timer = Mission_Deconstruction();
+            break;
 
-			case MISSION_CAPTURE:
-			case MISSION_SABOTAGE:
-				Timer = Mission_Capture();
-				break;
+        case MISSION_CAPTURE:
+        case MISSION_SABOTAGE:
+            Timer = Mission_Capture();
+            break;
 
-			case MISSION_QMOVE:
-			case MISSION_MOVE:
-				Timer = Mission_Move();
-				break;
+        case MISSION_QMOVE:
+        case MISSION_MOVE:
+            Timer = Mission_Move();
+            break;
 
-			case MISSION_ATTACK:
-				Timer = Mission_Attack();
-				break;
+        case MISSION_ATTACK:
+            Timer = Mission_Attack();
+            break;
 
-			case MISSION_RETREAT:
-				Timer = Mission_Retreat();
-				break;
+        case MISSION_RETREAT:
+            Timer = Mission_Retreat();
+            break;
 
-			case MISSION_HARVEST:
-				Timer = Mission_Harvest();
-				break;
+        case MISSION_HARVEST:
+            Timer = Mission_Harvest();
+            break;
 
-			case MISSION_GUARD_AREA:
-				Timer = Mission_Guard_Area();
-				break;
+        case MISSION_GUARD_AREA:
+            Timer = Mission_Guard_Area();
+            break;
 
-			case MISSION_RETURN:
-				Timer = Mission_Return();
-				break;
+        case MISSION_RETURN:
+            Timer = Mission_Return();
+            break;
 
-			case MISSION_STOP:
-				Timer = Mission_Stop();
-				break;
+        case MISSION_STOP:
+            Timer = Mission_Stop();
+            break;
 
-			case MISSION_AMBUSH:
-				Timer = Mission_Ambush();
-				break;
+        case MISSION_AMBUSH:
+            Timer = Mission_Ambush();
+            break;
 
-			case MISSION_HUNT:
-			case MISSION_RESCUE:
-				Timer = Mission_Hunt();
-				break;
+        case MISSION_HUNT:
+        case MISSION_RESCUE:
+            Timer = Mission_Hunt();
+            break;
 
-//			case MISSION_TIMED_HUNT:
-//				Timer = Mission_Timed_Hunt();
-//				break;
+            //			case MISSION_TIMED_HUNT:
+            //				Timer = Mission_Timed_Hunt();
+            //				break;
 
-			case MISSION_UNLOAD:
-				Timer = Mission_Unload();
-				break;
+        case MISSION_UNLOAD:
+            Timer = Mission_Unload();
+            break;
 
-			case MISSION_REPAIR:
-				Timer = Mission_Repair();
-				break;
+        case MISSION_REPAIR:
+            Timer = Mission_Repair();
+            break;
 
-			case MISSION_MISSILE:
-				Timer = Mission_Missile();
-				break;
-		}
-	}
-	BEnd(BENCH_MISSION);
+        case MISSION_MISSILE:
+            Timer = Mission_Missile();
+            break;
+        }
+    }
+    BEnd(BENCH_MISSION);
 }
-
 
 /***********************************************************************************************
  * MissionClass::Commence -- Start script with new order.                                      *
@@ -339,22 +390,21 @@ void MissionClass::AI(void)
  *=============================================================================================*/
 bool MissionClass::Commence(void)
 {
-	assert(IsActive);
+    assert(IsActive);
 
-	if (MissionQueue != MISSION_NONE) {
-		Mission = MissionQueue;
-		MissionQueue = MISSION_NONE;
+    if (MissionQueue != MISSION_NONE) {
+        Mission = MissionQueue;
+        MissionQueue = MISSION_NONE;
 
-		/*
-		**	Force immediate state machine processing at the first state machine state value.
-		*/
-		Timer = 0;
-		Status = 0;
-		return(true);
-	}
-	return(false);
+        /*
+        **	Force immediate state machine processing at the first state machine state value.
+        */
+        Timer = 0;
+        Status = 0;
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * MissionClass::Assign_Mission -- Give an order to a unit.                                    *
@@ -375,18 +425,18 @@ bool MissionClass::Commence(void)
  *=============================================================================================*/
 void MissionClass::Assign_Mission(MissionType order)
 {
-	assert(IsActive);
+    assert(IsActive);
 
-	/*
-	**	Ensure that a MISSION_QMOVE is translated into a MISSION_MOVE.
-	*/
-	if (order == MISSION_QMOVE) order = MISSION_MOVE;
+    /*
+    **	Ensure that a MISSION_QMOVE is translated into a MISSION_MOVE.
+    */
+    if (order == MISSION_QMOVE)
+        order = MISSION_MOVE;
 
-	if (order != MISSION_NONE && Mission != order)  {
-		MissionQueue = order;
-	}
+    if (order != MISSION_NONE && Mission != order) {
+        MissionQueue = order;
+    }
 }
-
 
 /***********************************************************************************************
  * MissionClass::Mission_From_Name -- Fetch order pointer from its name.                       *
@@ -406,20 +456,19 @@ void MissionClass::Assign_Mission(MissionType order)
  *   10/07/1992 JLB : Created.                                                                 *
  *   04/22/1994 JLB : Converted to static member function.                                     *
  *=============================================================================================*/
-MissionType MissionClass::Mission_From_Name(char const * name)
+MissionType MissionClass::Mission_From_Name(char const* name)
 {
-	MissionType	order;
+    MissionType order;
 
-	if (name) {
-		for (order = MISSION_FIRST; order < MISSION_COUNT; order++) {
-			if (stricmp(Missions[order], name) == 0) {
-				return(order);
-			}
-		}
-	}
-	return(MISSION_NONE);
+    if (name) {
+        for (order = MISSION_FIRST; order < MISSION_COUNT; order++) {
+            if (stricmp(Missions[order], name) == 0) {
+                return (order);
+            }
+        }
+    }
+    return (MISSION_NONE);
 }
-
 
 /***********************************************************************************************
  * MissionClass::Mission_Name -- Converts a mission number into an ASCII string.               *
@@ -436,14 +485,13 @@ MissionType MissionClass::Mission_From_Name(char const * name)
  * HISTORY:                                                                                    *
  *   01/23/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-char const * MissionClass::Mission_Name(MissionType mission)
+char const* MissionClass::Mission_Name(MissionType mission)
 {
-	if (mission != MISSION_NONE)  {
-		return(Missions[mission]);
-	}
-	return("None");
+    if (mission != MISSION_NONE) {
+        return (Missions[mission]);
+    }
+    return ("None");
 }
-
 
 /***********************************************************************************************
  * MissionClass::Override_Mission -- temporarily overrides the units mission                   *
@@ -464,17 +512,16 @@ char const * MissionClass::Mission_Name(MissionType mission)
  *=============================================================================================*/
 void MissionClass::Override_Mission(MissionType mission, TARGET, TARGET)
 {
-	assert(IsActive);
+    assert(IsActive);
 
-	if (MissionQueue != MISSION_NONE) {
-		SuspendedMission = MissionQueue;
-	} else {
-		SuspendedMission = Mission;
-	}
+    if (MissionQueue != MISSION_NONE) {
+        SuspendedMission = MissionQueue;
+    } else {
+        SuspendedMission = Mission;
+    }
 
-	Assign_Mission(mission);
+    Assign_Mission(mission);
 }
-
 
 /***********************************************************************************************
  * MissionClass::Restore_Mission -- Restores overridden mission                                *
@@ -490,16 +537,15 @@ void MissionClass::Override_Mission(MissionType mission, TARGET, TARGET)
  *=============================================================================================*/
 bool MissionClass::Restore_Mission(void)
 {
-	assert(IsActive);
+    assert(IsActive);
 
-	if (SuspendedMission != MISSION_NONE) {
-		Assign_Mission(SuspendedMission);
-	 	SuspendedMission= MISSION_NONE;
-		return(true);
-	}
-	return(false);
+    if (SuspendedMission != MISSION_NONE) {
+        Assign_Mission(SuspendedMission);
+        SuspendedMission = MISSION_NONE;
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * MissionClass::Is_Recruitable_Mission -- Determines if this mission is recruitable for a tea *
@@ -518,53 +564,48 @@ bool MissionClass::Restore_Mission(void)
  *=============================================================================================*/
 bool MissionClass::Is_Recruitable_Mission(MissionType mission)
 {
-	if (mission == MISSION_NONE) {
-		return(true);
-	}
-	return(MissionControl[mission].IsRecruitable);
+    if (mission == MISSION_NONE) {
+        return (true);
+    }
+    return (MissionControl[mission].IsRecruitable);
 }
 
-
-
-MissionControlClass::MissionControlClass(void) :
-	Mission(MISSION_NONE),
-	IsNoThreat(false),
-	IsZombie(false),
-	IsRecruitable(true),
-	IsParalyzed(false),
-	IsRetaliate(true),
-	IsScatter(true),
-	Rate(".016"),
-	AARate(".016")
+MissionControlClass::MissionControlClass(void)
+    : Mission(MISSION_NONE)
+    , IsNoThreat(false)
+    , IsZombie(false)
+    , IsRecruitable(true)
+    , IsParalyzed(false)
+    , IsRetaliate(true)
+    , IsScatter(true)
+    , Rate(".016")
+    , AARate(".016")
 {
 }
 
-
-char const * MissionControlClass::Name(void) const
+char const* MissionControlClass::Name(void) const
 {
-	if (Mission == MISSION_NONE) {
-		return("<none>");
-	}
-	return(Missions[Mission]);
+    if (Mission == MISSION_NONE) {
+        return ("<none>");
+    }
+    return (Missions[Mission]);
 }
 
-
-
-bool MissionControlClass::Read_INI(CCINIClass & ini)
+bool MissionControlClass::Read_INI(CCINIClass& ini)
 {
-	if (ini.Is_Present(Name())) {
-		IsNoThreat = ini.Get_Bool(Name(), "NoThreat", IsNoThreat);
-		IsZombie = ini.Get_Bool(Name(), "Zombie", IsZombie);
-		IsRecruitable = ini.Get_Bool(Name(), "Recruitable", IsRecruitable);
-		IsParalyzed = ini.Get_Bool(Name(), "Paralyzed", IsParalyzed);
-		IsRetaliate = ini.Get_Bool(Name(), "Retaliate", IsRetaliate);
-		IsScatter = ini.Get_Bool(Name(), "Scatter", IsScatter);
-		Rate = ini.Get_Fixed(Name(), "Rate", Rate);
-		AARate = ini.Get_Fixed(Name(), "AARate", 0);
-		if (AARate == 0) {
-			AARate = Rate;
-		}
-		return(true);
-	}
-	return(false);
+    if (ini.Is_Present(Name())) {
+        IsNoThreat = ini.Get_Bool(Name(), "NoThreat", IsNoThreat);
+        IsZombie = ini.Get_Bool(Name(), "Zombie", IsZombie);
+        IsRecruitable = ini.Get_Bool(Name(), "Recruitable", IsRecruitable);
+        IsParalyzed = ini.Get_Bool(Name(), "Paralyzed", IsParalyzed);
+        IsRetaliate = ini.Get_Bool(Name(), "Retaliate", IsRetaliate);
+        IsScatter = ini.Get_Bool(Name(), "Scatter", IsScatter);
+        Rate = ini.Get_Fixed(Name(), "Rate", Rate);
+        AARate = ini.Get_Fixed(Name(), "AARate", 0);
+        if (AARate == 0) {
+            AARate = Rate;
+        }
+        return (true);
+    }
+    return (false);
 }

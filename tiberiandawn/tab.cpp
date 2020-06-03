@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\tab.cpv   2.18   16 Oct 1995 16:52:04   JOE_BOSTIC  $ */
@@ -36,11 +36,9 @@
  *   TabClass::TabClass -- Default construct for the tab button class.                         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
+#include "function.h"
 
-
-void const * TabClass::TabShape = NULL;
-
+void const* TabClass::TabShape = NULL;
 
 /***********************************************************************************************
  * TabClass::TabClass -- Default construct for the tab button class.                           *
@@ -58,10 +56,9 @@ void const * TabClass::TabShape = NULL;
  *=============================================================================================*/
 TabClass::TabClass(void)
 {
-	IsToRedraw = false;
-//	Select = -1;
+    IsToRedraw = false;
+    //	Select = -1;
 }
-
 
 /***********************************************************************************************
  * TabClass::Draw_It -- Displays the tab buttons as necessary.                                 *
@@ -84,12 +81,12 @@ TabClass::TabClass(void)
 void TabClass::Draw_It(bool complete)
 {
 
-	SidebarClass::Draw_It(complete);
+    SidebarClass::Draw_It(complete);
 
-	if (Debug_Map){
-		//HidPage.Unlock();
-		return;
-	}
+    if (Debug_Map) {
+        // HidPage.Unlock();
+        return;
+    }
 
 // Disable tab drawing. ST - 3/1/2019 11:35AM
 #if 0
@@ -125,15 +122,13 @@ void TabClass::Draw_It(bool complete)
 
 	Credits.Graphic_Logic(complete || IsToRedraw);
 #endif
-	IsToRedraw = false;
+    IsToRedraw = false;
 }
-
 
 void TabClass::Draw_Credits_Tab(void)
 {
-	CC_Draw_Shape(TabShape, 0, 320, 0, WINDOW_MAIN, SHAPE_NORMAL);
+    CC_Draw_Shape(TabShape, 0, 320, 0, WINDOW_MAIN, SHAPE_NORMAL);
 }
-
 
 /***********************************************************************************************
  * TC::Hilite_Tab -- Draw a tab in its depressed state                                         *
@@ -152,14 +147,13 @@ void TabClass::Draw_Credits_Tab(void)
 
 void TabClass::Hilite_Tab(int tab)
 {
-	int xpos = 0;
-	int text = TXT_TAB_BUTTON_CONTROLS;
-	tab = tab;
+    int xpos = 0;
+    int text = TXT_TAB_BUTTON_CONTROLS;
+    tab = tab;
 
-	CC_Draw_Shape(TabShape, 1 , xpos, 0, WINDOW_MAIN, SHAPE_NORMAL);
-	Fancy_Text_Print(TXT_TAB_BUTTON_CONTROLS, 80, 0, 11, TBLACK, TPF_GREEN12|TPF_CENTER | TPF_USE_GRAD_PAL);
+    CC_Draw_Shape(TabShape, 1, xpos, 0, WINDOW_MAIN, SHAPE_NORMAL);
+    Fancy_Text_Print(TXT_TAB_BUTTON_CONTROLS, 80, 0, 11, TBLACK, TPF_GREEN12 | TPF_CENTER | TPF_USE_GRAD_PAL);
 }
-
 
 /***********************************************************************************************
  * TabClass::AI -- Handles player I/O with the tab buttons.                                    *
@@ -181,42 +175,43 @@ void TabClass::Hilite_Tab(int tab)
  *   05/31/1995 JLB : Fixed to handle mouse shape properly.                                    *
  *   08/25/1995 JLB : Handles new scrolling option.                                            *
  *=============================================================================================*/
-void TabClass::AI(KeyNumType &input, int x, int y)
+void TabClass::AI(KeyNumType& input, int x, int y)
 {
-	if (y >= 0 && y < Tab_Height && x < (SeenBuff.Get_Width() - 1) && x > 0) {
+    if (y >= 0 && y < Tab_Height && x < (SeenBuff.Get_Width() - 1) && x > 0) {
 
-		bool ok = false;
-		int	width = SeenBuff.Get_Width();
+        bool ok = false;
+        int width = SeenBuff.Get_Width();
 
-		/*
-		**	If the mouse is at the top of the screen, then the tab bars only work
-		**	in certain areas. If the special scroll modification is not active, then
-		**	the tabs never work when the mouse is at the top of the screen.
-		*/
-		if (y > 0 || (Special.IsScrollMod && ((x > 3 && x < Eva_Width) || (x < width-3 && x > width-Eva_Width)))) {
-			ok = true;
-		}
+        /*
+        **	If the mouse is at the top of the screen, then the tab bars only work
+        **	in certain areas. If the special scroll modification is not active, then
+        **	the tabs never work when the mouse is at the top of the screen.
+        */
+        if (y > 0 || (Special.IsScrollMod && ((x > 3 && x < Eva_Width) || (x < width - 3 && x > width - Eva_Width)))) {
+            ok = true;
+        }
 
-		if (ok) {
-			if (input == KN_LMOUSE) {
-				int sel = -1;
-				if (x < Eva_Width) sel = 0;
-				if (x > width-Eva_Width) sel = 1;
-				if (sel >= 0) {
-					Set_Active(sel);
-					input = KN_NONE;
-				}
-			}
+        if (ok) {
+            if (input == KN_LMOUSE) {
+                int sel = -1;
+                if (x < Eva_Width)
+                    sel = 0;
+                if (x > width - Eva_Width)
+                    sel = 1;
+                if (sel >= 0) {
+                    Set_Active(sel);
+                    input = KN_NONE;
+                }
+            }
 
-			Override_Mouse_Shape(MOUSE_NORMAL, false);
-		}
-	}
+            Override_Mouse_Shape(MOUSE_NORMAL, false);
+        }
+    }
 
-	Credits.AI();
+    Credits.AI();
 
-	SidebarClass::AI(input, x, y);
+    SidebarClass::AI(input, x, y);
 }
-
 
 /***********************************************************************************************
  * TabClass::Set_Active -- Activates a "filefolder tab" button.                                *
@@ -233,29 +228,29 @@ void TabClass::AI(KeyNumType &input, int x, int y)
  * HISTORY:                                                                                    *
  *   12/15/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
- void TabClass::Set_Active(int select)
+void TabClass::Set_Active(int select)
 {
-	switch (select) {
-		case 0:
-			Queue_Options();
-			break;
+    switch (select) {
+    case 0:
+        Queue_Options();
+        break;
 
-		case 1:
-			Map.SidebarClass::Activate(-1);
-			break;
+    case 1:
+        Map.SidebarClass::Activate(-1);
+        break;
 
-		default:
-			break;
-	}
+    default:
+        break;
+    }
 }
 
 void TabClass::One_Time(void)
 {
-	int factor = (SeenBuff.Get_Width() == 320) ? 1 : 2;
-	Eva_Width	= 80 * factor;
-	//Tab_Height	= 8 * factor;
-	Tab_Height	= 0;		// Disable tab drawing. ST - 3/1/2019 11:35AM
+    int factor = (SeenBuff.Get_Width() == 320) ? 1 : 2;
+    Eva_Width = 80 * factor;
+    // Tab_Height	= 8 * factor;
+    Tab_Height = 0; // Disable tab drawing. ST - 3/1/2019 11:35AM
 
-	SidebarClass::One_Time();
-	TabShape = Hires_Retrieve("TABS.SHP");
+    SidebarClass::One_Time();
+    TabShape = Hires_Retrieve("TABS.SHP");
 }

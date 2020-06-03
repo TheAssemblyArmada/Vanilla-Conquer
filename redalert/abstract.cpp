@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/ABSTRACT.CPP 1     3/03/97 10:24a Joe_bostic $ */
@@ -38,8 +38,7 @@
  *   AbstractTypeClass::Get_Ownable -- Fetch the ownable bits for this object.                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-
+#include "function.h"
 
 /***********************************************************************************************
  * AbstractClass::Debug_Dump -- Display debug information to mono screen.                      *
@@ -57,20 +56,22 @@
  *   07/10/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 #ifdef CHEAT_KEYS
-void AbstractClass::Debug_Dump(MonoClass * mono) const
+void AbstractClass::Debug_Dump(MonoClass* mono) const
 {
-	assert(IsActive);
+    assert(IsActive);
 
-	mono->Set_Cursor(11, 5);mono->Printf("%08X", As_Target());
-	mono->Set_Cursor(20, 1);mono->Printf("%08X", Coord);
-	mono->Set_Cursor(29, 1);mono->Printf("%3d", Height);
-	if (Owner() != HOUSE_NONE) {
-		mono->Set_Cursor(1, 3);
-		mono->Printf("%-18s", Text_String(HouseTypeClass::As_Reference(Owner()).FullName));
-	}
+    mono->Set_Cursor(11, 5);
+    mono->Printf("%08X", As_Target());
+    mono->Set_Cursor(20, 1);
+    mono->Printf("%08X", Coord);
+    mono->Set_Cursor(29, 1);
+    mono->Printf("%3d", Height);
+    if (Owner() != HOUSE_NONE) {
+        mono->Set_Cursor(1, 3);
+        mono->Printf("%-18s", Text_String(HouseTypeClass::As_Reference(Owner()).FullName));
+    }
 }
 #endif
-
 
 /***********************************************************************************************
  * AbstractClass::Distance -- Determines distance to target.                                   *
@@ -89,27 +90,27 @@ void AbstractClass::Debug_Dump(MonoClass * mono) const
  *=============================================================================================*/
 int AbstractClass::Distance(TARGET target) const
 {
-	/*
-	**	Should subtract a fudge-factor distance for building targets.
-	*/
-	BuildingClass * obj = As_Building(target);
-	int dist = Distance(As_Coord(target));
+    /*
+    **	Should subtract a fudge-factor distance for building targets.
+    */
+    BuildingClass* obj = As_Building(target);
+    int dist = Distance(As_Coord(target));
 
-	/*
-	** If the object is a building the adjust it by the average radius
-	** of the object.
-	*/
-	if (obj && obj->IsActive) {
-		dist -= ((obj->Class->Width() + obj->Class->Height()) * (0x100 / 4));
-		if (dist < 0) dist = 0;
-	}
+    /*
+    ** If the object is a building the adjust it by the average radius
+    ** of the object.
+    */
+    if (obj && obj->IsActive) {
+        dist -= ((obj->Class->Width() + obj->Class->Height()) * (0x100 / 4));
+        if (dist < 0)
+            dist = 0;
+    }
 
-	/*
-	** Return the distance to the target
-	*/
-	return(dist);
+    /*
+    ** Return the distance to the target
+    */
+    return (dist);
 }
-
 
 /***********************************************************************************************
  * AbstractTypeClass::AbstractTypeClass -- Constructor for abstract type objects.              *
@@ -128,15 +129,14 @@ int AbstractClass::Distance(TARGET target) const
  * HISTORY:                                                                                    *
  *   05/22/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-AbstractTypeClass::AbstractTypeClass(RTTIType rtti, int id, int name, char const * ini) :
-	RTTI(rtti),
-	ID(id),
-	FullName(name)
+AbstractTypeClass::AbstractTypeClass(RTTIType rtti, int id, int name, char const* ini)
+    : RTTI(rtti)
+    , ID(id)
+    , FullName(name)
 {
-	strncpy((char *)IniName, ini, sizeof(IniName));
-	((char &)IniName[sizeof(IniName)-1]) = '\0';
+    strncpy((char*)IniName, ini, sizeof(IniName));
+    ((char&)IniName[sizeof(IniName) - 1]) = '\0';
 }
-
 
 /***********************************************************************************************
  * AbstractTypeClass::Coord_Fixup -- Performs custom adjustments to location coordinate.       *
@@ -156,9 +156,8 @@ AbstractTypeClass::AbstractTypeClass(RTTIType rtti, int id, int name, char const
  *=============================================================================================*/
 COORDINATE AbstractTypeClass::Coord_Fixup(COORDINATE coord) const
 {
-	return(coord);
+    return (coord);
 }
-
 
 /***********************************************************************************************
  * AbstractTypeClass::Full_Name -- Returns the full name (number) of this object type.         *
@@ -178,15 +177,14 @@ COORDINATE AbstractTypeClass::Coord_Fixup(COORDINATE coord) const
 int AbstractTypeClass::Full_Name(void) const
 {
 #ifdef FIXIT_NAME_OVERRIDE
-	for (int index = 0; index < ARRAY_SIZE(NameOverride); index++) {
-		if (NameIDOverride[index] == ((RTTI+1) * 100) + ID)  {
-			return(-(index+1));
-		}
-	}
+    for (int index = 0; index < ARRAY_SIZE(NameOverride); index++) {
+        if (NameIDOverride[index] == ((RTTI + 1) * 100) + ID) {
+            return (-(index + 1));
+        }
+    }
 #endif
-	return(FullName);
+    return (FullName);
 }
-
 
 /***********************************************************************************************
  * AbstractTypeClass::Get_Ownable -- Fetch the ownable bits for this object.                   *
@@ -206,8 +204,5 @@ int AbstractTypeClass::Full_Name(void) const
  *=============================================================================================*/
 int AbstractTypeClass::Get_Ownable(void) const
 {
-	return(HOUSEF_ALLIES | HOUSEF_SOVIET | HOUSEF_OTHERS);
+    return (HOUSEF_ALLIES | HOUSEF_SOVIET | HOUSEF_OTHERS);
 }
-
-
-

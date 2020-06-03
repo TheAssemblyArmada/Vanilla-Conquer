@@ -1,18 +1,17 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
-
 
 /***********************************************************************************************
  ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
@@ -49,24 +48,22 @@
  *                                                                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include <WINDOWS.H>
 #include "ccdde.h"
 #include <stdio.h>
 #include <timer.h>
 
-DDEServerClass	DDEServer;				//Instance of the DDE Server class
+DDEServerClass DDEServer; // Instance of the DDE Server class
 
-Instance_Class	*DDE_Class = NULL;	// pointer for client callback
-												// this *must* be called DDE_Class
+Instance_Class* DDE_Class = NULL; // pointer for client callback
+                                  // this *must* be called DDE_Class
 
-BOOL CC95AlreadyRunning = FALSE;		//Was there an instance of C&C 95 already running when we started?
+BOOL CC95AlreadyRunning = FALSE; // Was there an instance of C&C 95 already running when we started?
 
-extern HWND 			MainWindow;
-extern TimerClass	GameTimer;
-extern bool			GameTimerInUse;
-extern void 			CCDebugString (char *string);
-
+extern HWND MainWindow;
+extern TimerClass GameTimer;
+extern bool GameTimerInUse;
+extern void CCDebugString(char* string);
 
 /***********************************************************************************************
  * DDE_Callback -- DDE server callback function                                                *
@@ -83,13 +80,10 @@ extern void 			CCDebugString (char *string);
  * HISTORY:                                                                                    *
  *    6/8/96 3:19PM ST : Created                                                               *
  *=============================================================================================*/
-BOOL CALLBACK DDE_Callback (unsigned char *data, long length)
+BOOL CALLBACK DDE_Callback(unsigned char* data, long length)
 {
-	return (DDEServer.Callback(data, length));
+    return (DDEServer.Callback(data, length));
 }
-
-
-
 
 /***********************************************************************************************
  * DDEServerClass::DDEServerClass -- class constructor                                         *
@@ -107,33 +101,29 @@ BOOL CALLBACK DDE_Callback (unsigned char *data, long length)
  *=============================================================================================*/
 DDEServerClass::DDEServerClass(void)
 {
-	MPlayerGameInfo = NULL;		//Flag that we havnt received a start game info packet yet
+    MPlayerGameInfo = NULL; // Flag that we havnt received a start game info packet yet
 
-	DDE_Class = new Instance_Class ("CONQUER", "WCHAT");
+    DDE_Class = new Instance_Class("CONQUER", "WCHAT");
 
-	DDE_Class->Enable_Callback( TRUE );
-	IsEnabled = TRUE;
+    DDE_Class->Enable_Callback(TRUE);
+    IsEnabled = TRUE;
 
-	if (DDE_Class->Test_Server_Running(DDE_Class->local_name)){
-		CC95AlreadyRunning = TRUE;
-	}else{
-		
-		//ST - 12/20/2018 2:27PM
-		//DDE_Class->Register_Server( DDE_Callback );
-	}
+    if (DDE_Class->Test_Server_Running(DDE_Class->local_name)) {
+        CC95AlreadyRunning = TRUE;
+    } else {
+
+        // ST - 12/20/2018 2:27PM
+        // DDE_Class->Register_Server( DDE_Callback );
+    }
 }
-
-
 
 void DDEServerClass::Enable(void)
 {
-	if (!IsEnabled){
-		DDE_Class->Enable_Callback( TRUE );
-		IsEnabled = TRUE;
-	}
+    if (!IsEnabled) {
+        DDE_Class->Enable_Callback(TRUE);
+        IsEnabled = TRUE;
+    }
 }
-
-
 
 /***********************************************************************************************
  * DDEServerClass::Disable -- Disables the DDE callback                                        *
@@ -151,16 +141,11 @@ void DDEServerClass::Enable(void)
  *=============================================================================================*/
 void DDEServerClass::Disable(void)
 {
-	if (IsEnabled){
-		DDE_Class->Enable_Callback( FALSE );
-		IsEnabled = FALSE;
-	}
+    if (IsEnabled) {
+        DDE_Class->Enable_Callback(FALSE);
+        IsEnabled = FALSE;
+    }
 }
-
-
-
-
-
 
 /***********************************************************************************************
  * DDEServerClass::~DDEServerClass -- class destructor                                         *
@@ -178,11 +163,9 @@ void DDEServerClass::Disable(void)
  *=============================================================================================*/
 DDEServerClass::~DDEServerClass(void)
 {
-	Delete_MPlayer_Game_Info();
-	delete( DDE_Class );
+    Delete_MPlayer_Game_Info();
+    delete (DDE_Class);
 }
-
-
 
 /***********************************************************************************************
  * DDESC::Callback -- callback function. Called from the DDE_Callback wrapper function         *
@@ -199,99 +182,95 @@ DDEServerClass::~DDEServerClass(void)
  * HISTORY:                                                                                    *
  *    6/8/96 3:21PM ST : Created                                                               *
  *=============================================================================================*/
-BOOL DDEServerClass::Callback(unsigned char *data, long length)
+BOOL DDEServerClass::Callback(unsigned char* data, long length)
 {
 
-	/*
-	** If the packet length < 0 then this is a special advisory packet
-	*/
-	if ( length<0 ) {
+    /*
+    ** If the packet length < 0 then this is a special advisory packet
+    */
+    if (length < 0) {
 
-		switch( length ) {
+        switch (length) {
 
-			case	DDE_ADVISE_CONNECT:
-				CCDebugString("C&C95 - DDE advisory: client connect detected.");
-				return TRUE;
+        case DDE_ADVISE_CONNECT:
+            CCDebugString("C&C95 - DDE advisory: client connect detected.");
+            return TRUE;
 
-			case	DDE_ADVISE_DISCONNECT:
-				CCDebugString("C&C95 - DDE advisory: client disconnect detected.");
-				return TRUE;
+        case DDE_ADVISE_DISCONNECT:
+            CCDebugString("C&C95 - DDE advisory: client disconnect detected.");
+            return TRUE;
 
-			default:
-				CCDebugString("C&C95 - DDE advisory: Unknown DDE advise type.");
-				return FALSE;
-		}
+        default:
+            CCDebugString("C&C95 - DDE advisory: Unknown DDE advise type.");
+            return FALSE;
+        }
 
-	}else{
+    } else {
 
-		/*
-		** Packet must be at least the length of the packet type & size fields to be valid
-		*/
-		if (length < 2*sizeof(int)) {
-			CCDebugString ("C&C95 - Received invalid packet.");
-			return (FALSE);
-		}
+        /*
+        ** Packet must be at least the length of the packet type & size fields to be valid
+        */
+        if (length < 2 * sizeof(int)) {
+            CCDebugString("C&C95 - Received invalid packet.");
+            return (FALSE);
+        }
 
-		/*
-		** Find out what kind of packet this is and its length.
-		*/
-		int *packet_pointer = (int *)data;
-		int  actual_length = ntohl(*packet_pointer++);
-		int  packet_type =  ntohl(*packet_pointer++);
+        /*
+        ** Find out what kind of packet this is and its length.
+        */
+        int* packet_pointer = (int*)data;
+        int actual_length = ntohl(*packet_pointer++);
+        int packet_type = ntohl(*packet_pointer++);
 
-		/*
-		** Strip the ID int from the start of the packet
-		*/
-		data   += 2*sizeof (int);
-		length -= 2*sizeof (int);
-		actual_length -= 2*sizeof (int);
+        /*
+        ** Strip the ID int from the start of the packet
+        */
+        data += 2 * sizeof(int);
+        length -= 2 * sizeof(int);
+        actual_length -= 2 * sizeof(int);
 
-		/*
-		** Take the appropriate action for the packet type
-		*/
-		switch ( packet_type ){
+        /*
+        ** Take the appropriate action for the packet type
+        */
+        switch (packet_type) {
 
-			/*
-			** This is a packet with the info required for starting a new internet game. This is really
-		 	* just C&CSPAWN.INI sent from WChat instead of read from disk.
-			*/
-			case DDE_PACKET_START_MPLAYER_GAME:
-				CCDebugString("C&C95 - Received start game packet.");
-				Delete_MPlayer_Game_Info();
-				MPlayerGameInfo = new char [actual_length + 1];
-				memcpy (MPlayerGameInfo, data, actual_length);
-				*(MPlayerGameInfo + actual_length) = 0;		//Terminator in case we treat it as a string
-				MPlayerGameInfoLength = actual_length;
-				LastHeartbeat = 0;
-				break;
+        /*
+        ** This is a packet with the info required for starting a new internet game. This is really
+        * just C&CSPAWN.INI sent from WChat instead of read from disk.
+        */
+        case DDE_PACKET_START_MPLAYER_GAME:
+            CCDebugString("C&C95 - Received start game packet.");
+            Delete_MPlayer_Game_Info();
+            MPlayerGameInfo = new char[actual_length + 1];
+            memcpy(MPlayerGameInfo, data, actual_length);
+            *(MPlayerGameInfo + actual_length) = 0; // Terminator in case we treat it as a string
+            MPlayerGameInfoLength = actual_length;
+            LastHeartbeat = 0;
+            break;
 
-			case DDE_TICKLE:
-				CCDebugString("C&C95 - Received 'tickle' packet.");
-				//SetForegroundWindow ( MainWindow );
-				//ShowWindow ( MainWindow, SW_SHOWMAXIMIZED );
-				break;
+        case DDE_TICKLE:
+            CCDebugString("C&C95 - Received 'tickle' packet.");
+            // SetForegroundWindow ( MainWindow );
+            // ShowWindow ( MainWindow, SW_SHOWMAXIMIZED );
+            break;
 
-			case DDE_PACKET_HEART_BEAT:
-				CCDebugString("C&C95 - Received heart beat packet.");
-				if (GameTimerInUse){
-					LastHeartbeat = GameTimer.Time();
-				}else{
-					LastHeartbeat = 0;
-				}
-				break;
+        case DDE_PACKET_HEART_BEAT:
+            CCDebugString("C&C95 - Received heart beat packet.");
+            if (GameTimerInUse) {
+                LastHeartbeat = GameTimer.Time();
+            } else {
+                LastHeartbeat = 0;
+            }
+            break;
 
-			default:
-				CCDebugString("C&C95 - Received unrecognised packet.");
-				break;
+        default:
+            CCDebugString("C&C95 - Received unrecognised packet.");
+            break;
+        }
+    }
 
-		}
-	}
-
-	return (TRUE);
-
+    return (TRUE);
 }
-
-
 
 /***********************************************************************************************
  * DDESC::Get_MPlayer_Game_Info -- returns a pointer to the multiplayer setup info from wchat  *
@@ -307,12 +286,10 @@ BOOL DDEServerClass::Callback(unsigned char *data, long length)
  * HISTORY:                                                                                    *
  *    6/8/96 3:23PM ST : Created                                                               *
  *=============================================================================================*/
-char *DDEServerClass::Get_MPlayer_Game_Info (void)
+char* DDEServerClass::Get_MPlayer_Game_Info(void)
 {
-	return (MPlayerGameInfo);
+    return (MPlayerGameInfo);
 }
-
-
 
 /***********************************************************************************************
  * DDESC::Delete_MPlayer_Game_Info -- clears out multi player game setup info                  *
@@ -330,13 +307,11 @@ char *DDEServerClass::Get_MPlayer_Game_Info (void)
  *=============================================================================================*/
 void DDEServerClass::Delete_MPlayer_Game_Info(void)
 {
-	if (MPlayerGameInfo){
-		delete [] MPlayerGameInfo;
-		MPlayerGameInfo = NULL;
-	}
+    if (MPlayerGameInfo) {
+        delete[] MPlayerGameInfo;
+        MPlayerGameInfo = NULL;
+    }
 }
-
-
 
 /***********************************************************************************************
  * DDESC::Time_Since_Heartbeat -- returns the time in ticks since the last heartbeat from wchat*
@@ -354,11 +329,8 @@ void DDEServerClass::Delete_MPlayer_Game_Info(void)
  *=============================================================================================*/
 int DDEServerClass::Time_Since_Heartbeat(void)
 {
-	return (GameTimer.Time() - LastHeartbeat);
+    return (GameTimer.Time() - LastHeartbeat);
 }
-
-
-
 
 /***********************************************************************************************
  * Send_Data_To_DDE_Server -- sends a packet to WChat                                          *
@@ -376,44 +348,43 @@ int DDEServerClass::Time_Since_Heartbeat(void)
  * HISTORY:                                                                                    *
  *    6/9/96 11:07PM ST : Created                                                              *
  *=============================================================================================*/
-BOOL Send_Data_To_DDE_Server (char *data, int length, int packet_type)
+BOOL Send_Data_To_DDE_Server(char* data, int length, int packet_type)
 {
 #if (0)
-	BOOL	app_exists;
+    BOOL app_exists;
 
-	app_exists = DDE_Class->Test_Server_Running(DDE_Class->remote_name);
+    app_exists = DDE_Class->Test_Server_Running(DDE_Class->remote_name);
 
-	if (app_exists != TRUE) {
-		CCDebugString("Connection to server failed!");
-		return(FALSE);
-	}
-#endif	//(0)
+    if (app_exists != TRUE) {
+        CCDebugString("Connection to server failed!");
+        return (FALSE);
+    }
+#endif //(0)
 
-	if( DDE_Class->Open_Poke_Connection(DDE_Class->remote_name) == FALSE) {
-		CCDebugString("C&C95 - Failed to connect for POKE!");
-		return (FALSE);
-	}
+    if (DDE_Class->Open_Poke_Connection(DDE_Class->remote_name) == FALSE) {
+        CCDebugString("C&C95 - Failed to connect for POKE!");
+        return (FALSE);
+    }
 
-	char *poke_data = new char [length + 2*sizeof(int)];
+    char* poke_data = new char[length + 2 * sizeof(int)];
 
-	int *poke_data_int = (int*)poke_data;
+    int* poke_data_int = (int*)poke_data;
 
-	*poke_data_int 	= htonl (length + 2*sizeof(int));
-	*(poke_data_int+1)= htonl (packet_type);
+    *poke_data_int = htonl(length + 2 * sizeof(int));
+    *(poke_data_int + 1) = htonl(packet_type);
 
-	memcpy (poke_data + 8, data, length);
+    memcpy(poke_data + 8, data, length);
 
+    if (DDE_Class->Poke_Server((LPBYTE)poke_data, ntohl(*poke_data_int)) == FALSE) {
+        CCDebugString("C&C95 - POKE failed!\n");
+        DDE_Class->Close_Poke_Connection(); // close down the link
+        delete poke_data;
+        return (FALSE);
+    }
 
-	if(DDE_Class->Poke_Server( (LPBYTE) poke_data, ntohl(*poke_data_int) ) == FALSE) {
-		CCDebugString("C&C95 - POKE failed!\n");
-		DDE_Class->Close_Poke_Connection();		// close down the link
-		delete poke_data;
-		return (FALSE);
-	}
+    DDE_Class->Close_Poke_Connection(); // close down the link
 
-	DDE_Class->Close_Poke_Connection();		// close down the link
+    delete poke_data;
 
-	delete poke_data;
-
-	return (TRUE);
+    return (TRUE);
 }

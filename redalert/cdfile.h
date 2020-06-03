@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/CDFILE.H 1     3/03/97 10:24a Joe_bostic $ */
@@ -35,8 +35,8 @@
 #ifndef CDFILE_H
 #define CDFILE_H
 
-#include	<dos.h>
-#include	"bfiofile.h"
+#include <dos.h>
+#include "bfiofile.h"
 
 /*
 **	This class is derived from the BufferIOFileClass. This class adds the functionality of searching
@@ -50,67 +50,81 @@
 */
 class CDFileClass : public BufferIOFileClass
 {
-	public:
-		CDFileClass(char const *filename);
-		CDFileClass(void);
-		virtual ~CDFileClass(void) {};
+public:
+    CDFileClass(char const* filename);
+    CDFileClass(void);
+    virtual ~CDFileClass(void){};
 
-		virtual char const * Set_Name(char const *filename);
-		virtual int Open(char const *filename, int rights=READ);
-		virtual int Open(int rights=READ);
+    virtual char const* Set_Name(char const* filename);
+    virtual int Open(char const* filename, int rights = READ);
+    virtual int Open(int rights = READ);
 
-		void Searching(int on) {IsDisabled = !on;};
+    void Searching(int on)
+    {
+        IsDisabled = !on;
+    };
 
-		static bool Is_There_Search_Drives(void) {return(First != NULL);};
-		static int Set_Search_Drives(char * pathlist);
-		static void Add_Search_Drive(char *path);
-		static void Clear_Search_Drives(void);
-		static void Refresh_Search_Drives(void);
-		static void Set_CD_Drive(int drive);
-		static int  Get_CD_Drive(void) {return(CurrentCDDrive);};
-		static int  Get_Last_CD_Drive(void) {return(LastCDDrive);};
+    static bool Is_There_Search_Drives(void)
+    {
+        return (First != NULL);
+    };
+    static int Set_Search_Drives(char* pathlist);
+    static void Add_Search_Drive(char* path);
+    static void Clear_Search_Drives(void);
+    static void Refresh_Search_Drives(void);
+    static void Set_CD_Drive(int drive);
+    static int Get_CD_Drive(void)
+    {
+        return (CurrentCDDrive);
+    };
+    static int Get_Last_CD_Drive(void)
+    {
+        return (LastCDDrive);
+    };
 
-		// RawPath will overflow if we keep setting the path. ST - 1/23/2019 11:12AM
-		static void Reset_Raw_Path(void) { RawPath[0] = 0; }
+    // RawPath will overflow if we keep setting the path. ST - 1/23/2019 11:12AM
+    static void Reset_Raw_Path(void)
+    {
+        RawPath[0] = 0;
+    }
 
-		// Need to access the paths. ST - 3/15/2019 2:14PM
-		static const char *Get_Search_Path(int index);
+    // Need to access the paths. ST - 3/15/2019 2:14PM
+    static const char* Get_Search_Path(int index);
 
-	private:
+private:
+    /*
+    **	Is multi-drive searching disabled for this file object?
+    */
+    unsigned IsDisabled : 1;
 
-		/*
-		**	Is multi-drive searching disabled for this file object?
-		*/
-		unsigned IsDisabled:1;
+    /*
+    **	This is the control record for each of the drives specified in the search
+    **	path. There can be many such search paths available.
+    */
+    typedef struct
+    {
+        void* Next;       // Pointer to next search record.
+        char const* Path; // Pointer to path string.
+    } SearchDriveType;
 
-		/*
-		**	This is the control record for each of the drives specified in the search
-		**	path. There can be many such search paths available.
-		*/
-		typedef struct {
-			void * Next;		// Pointer to next search record.
-			char const * Path;			// Pointer to path string.
-		} SearchDriveType;
+    /*
+    **	This points to the first path record.
+    */
+    static SearchDriveType* First;
+    /*
+    ** This is a copy of the unparsed search path list
+    */
+    static char RawPath[512];
 
-		/*
-		**	This points to the first path record.
-		*/
-		static SearchDriveType * First;
-		/*
-		** This is a copy of the unparsed search path list
-		*/
-		static char RawPath[512];
+    /*
+    ** The drive letter of the current cd drive
+    */
+    static int CurrentCDDrive;
 
-		/*
-		** The drive letter of the current cd drive
-		*/
-		static int CurrentCDDrive;
-
-		/*
-		** The drive letter of the last used CD drive
-		*/
-		static int LastCDDrive;
+    /*
+    ** The drive letter of the last used CD drive
+    */
+    static int LastCDDrive;
 };
 
 #endif
-

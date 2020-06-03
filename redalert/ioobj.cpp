@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/IOOBJ.CPP 1     3/03/97 10:24a Joe_bostic $ */
@@ -64,7 +64,6 @@
 
 #include "function.h"
 
-
 /***********************************************************************************************
  * TeamTypeClass::Code_Pointers -- codes class's pointers for load/save                        *
  *                                                                                             *
@@ -87,15 +86,14 @@
  *=============================================================================================*/
 void TeamTypeClass::Code_Pointers(void)
 {
-	/*
-	**	Code the Class array
-	*/
-	for (int i = 0; i < ClassCount; i++) {
-		Members[i].Class = (TechnoTypeClass *)Members[i].Class->As_Target();
-		assert(Members[i].Class != NULL);
-	}
+    /*
+    **	Code the Class array
+    */
+    for (int i = 0; i < ClassCount; i++) {
+        Members[i].Class = (TechnoTypeClass*)Members[i].Class->As_Target();
+        assert(Members[i].Class != NULL);
+    }
 }
-
 
 /***********************************************************************************************
  * TeamTypeClass::Decode_Pointers -- decodes pointers for load/save                            *
@@ -117,15 +115,14 @@ void TeamTypeClass::Code_Pointers(void)
  *=============================================================================================*/
 void TeamTypeClass::Decode_Pointers(void)
 {
-	/*
-	**	Decode the Class array
-	*/
-	for (int i = 0; i < ClassCount; i++) {
-		Members[i].Class =  As_TechnoType((TARGET)Members[i].Class);
-		assert(Members[i].Class != NULL);
-	}
+    /*
+    **	Decode the Class array
+    */
+    for (int i = 0; i < ClassCount; i++) {
+        Members[i].Class = As_TechnoType((TARGET)Members[i].Class);
+        assert(Members[i].Class != NULL);
+    }
 }
-
 
 /***********************************************************************************************
  * TeamClass::Code_Pointers -- codes class's pointers for load/save                            *
@@ -150,14 +147,13 @@ void TeamTypeClass::Decode_Pointers(void)
  *=============================================================================================*/
 void TeamClass::Code_Pointers(void)
 {
-	/*
-	**	Code the 'Member'
-	*/
-	if (Member) {
-		Member = (FootClass *)Member->As_Target();
-	}
+    /*
+    **	Code the 'Member'
+    */
+    if (Member) {
+        Member = (FootClass*)Member->As_Target();
+    }
 }
-
 
 /***********************************************************************************************
  * TeamClass::Decode_Pointers -- decodes pointers for load/save                                *
@@ -180,15 +176,14 @@ void TeamClass::Code_Pointers(void)
  *=============================================================================================*/
 void TeamClass::Decode_Pointers(void)
 {
-	/*
-	**	Decode the 'Member'
-	*/
-	if (Member) {
-		Member = (FootClass *)As_Techno((TARGET)Member, false);
-		assert(Member != NULL);
-	}
+    /*
+    **	Decode the 'Member'
+    */
+    if (Member) {
+        Member = (FootClass*)As_Techno((TARGET)Member, false);
+        assert(Member != NULL);
+    }
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Code_Pointers -- codes class's pointers for load/save                         *
@@ -212,10 +207,9 @@ void TeamClass::Decode_Pointers(void)
  *=============================================================================================*/
 void TriggerTypeClass::Code_Pointers(void)
 {
-	Action1.Code_Pointers();
-	Action2.Code_Pointers();
+    Action1.Code_Pointers();
+    Action2.Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Decode_Pointers -- decodes pointers for load/save                             *
@@ -237,10 +231,9 @@ void TriggerTypeClass::Code_Pointers(void)
  *=============================================================================================*/
 void TriggerTypeClass::Decode_Pointers(void)
 {
-	Action1.Decode_Pointers();
-	Action2.Decode_Pointers();
+    Action1.Decode_Pointers();
+    Action2.Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * BulletClass::Code_Pointers -- codes class's pointers for load/save                          *
@@ -264,19 +257,18 @@ void TriggerTypeClass::Decode_Pointers(void)
  *=============================================================================================*/
 void BulletClass::Code_Pointers(void)
 {
-	/*
-	**	Code 'Payback'
-	*/
-	if (Payback) {
-		Payback = (TechnoClass *)Payback->As_Target();
-	}
+    /*
+    **	Code 'Payback'
+    */
+    if (Payback) {
+        Payback = (TechnoClass*)Payback->As_Target();
+    }
 
-	/*
-	**	Chain to parent
-	*/
-	ObjectClass::Code_Pointers();
+    /*
+    **	Chain to parent
+    */
+    ObjectClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * BulletClass::Decode_Pointers -- decodes pointers for load/save                              *
@@ -298,20 +290,19 @@ void BulletClass::Code_Pointers(void)
  *=============================================================================================*/
 void BulletClass::Decode_Pointers(void)
 {
-	/*
-	**	Decode 'Payback'
-	*/
-	if (Payback) {
-		Payback = As_Techno((TARGET)Payback, false);
-		assert(Payback != NULL);
-	}
+    /*
+    **	Decode 'Payback'
+    */
+    if (Payback) {
+        Payback = As_Techno((TARGET)Payback, false);
+        assert(Payback != NULL);
+    }
 
-	/*
-	**	Chain to parent
-	*/
-	ObjectClass::Decode_Pointers();
+    /*
+    **	Chain to parent
+    */
+    ObjectClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * FactoryClass::Code_Pointers -- codes class's pointers for load/save                         *
@@ -335,13 +326,12 @@ void BulletClass::Decode_Pointers(void)
  *=============================================================================================*/
 void FactoryClass::Code_Pointers(void)
 {
-	if (Object) {
-		Object = (TechnoClass *)Object->As_Target();
-	}
+    if (Object) {
+        Object = (TechnoClass*)Object->As_Target();
+    }
 
-	((HouseClass *&)House) = (HouseClass *)House->Class->House;
+    ((HouseClass*&)House) = (HouseClass*)House->Class->House;
 }
-
 
 /***********************************************************************************************
  * FactoryClass::Decode_Pointers -- decodes pointers for load/save                             *
@@ -363,17 +353,16 @@ void FactoryClass::Code_Pointers(void)
  *=============================================================================================*/
 void FactoryClass::Decode_Pointers(void)
 {
-	if (Object) {
-		Object = As_Techno((TARGET)Object, false);
-		assert(Object != NULL);
-	}
+    if (Object) {
+        Object = As_Techno((TARGET)Object, false);
+        assert(Object != NULL);
+    }
 
-	unsigned int house_ptr_val = *((unsigned int*)&House);
-	((HouseClass *&)House) = HouseClass::As_Pointer((HousesType)house_ptr_val);
+    unsigned int house_ptr_val = *((unsigned int*)&House);
+    ((HouseClass*&)House) = HouseClass::As_Pointer((HousesType)house_ptr_val);
 
-	assert(House != NULL);
+    assert(House != NULL);
 }
-
 
 /***********************************************************************************************
  * LayerClass::Load -- Loads from a save game file.                                            *
@@ -387,35 +376,34 @@ void FactoryClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool LayerClass::Load(Straw & file)
+bool LayerClass::Load(Straw& file)
 {
-	/*
-	**	Read # elements in the layer
-	*/
-	int count;
-	if (file.Get(&count, sizeof(count)) != sizeof(count)) {
-		return(false);
-	}
+    /*
+    **	Read # elements in the layer
+    */
+    int count;
+    if (file.Get(&count, sizeof(count)) != sizeof(count)) {
+        return (false);
+    }
 
-	/*
-	**	Clear the array
-	*/
-	Clear();
+    /*
+    **	Clear the array
+    */
+    Clear();
 
-	/*
-	**	Read in all array elements
-	*/
-	for (int index = 0; index < count; index++) {
-		ObjectClass * ptr;
-		if (file.Get(&ptr, sizeof(ObjectClass *)) != sizeof(ObjectClass *)) {
-			return(false);
-		}
-		Add(ptr);
-	}
+    /*
+    **	Read in all array elements
+    */
+    for (int index = 0; index < count; index++) {
+        ObjectClass* ptr;
+        if (file.Get(&ptr, sizeof(ObjectClass*)) != sizeof(ObjectClass*)) {
+            return (false);
+        }
+        Add(ptr);
+    }
 
-	return(true);
+    return (true);
 }
-
 
 /***********************************************************************************************
  * LayerClass::Save -- Write to a save game file.                                              *
@@ -429,25 +417,24 @@ bool LayerClass::Load(Straw & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool LayerClass::Save(Pipe & file) const
+bool LayerClass::Save(Pipe& file) const
 {
-	/*
-	**	Save # array elements
-	*/
-	int count = Count();
-	file.Put(&count, sizeof(count));
+    /*
+    **	Save # array elements
+    */
+    int count = Count();
+    file.Put(&count, sizeof(count));
 
-	/*
-	**	Save all elements
-	*/
-	for (int index = 0; index < count; index++) {
-		ObjectClass * ptr = (*this)[index];
-		file.Put(&ptr, sizeof(ObjectClass *));
-	}
+    /*
+    **	Save all elements
+    */
+    for (int index = 0; index < count; index++) {
+        ObjectClass* ptr = (*this)[index];
+        file.Put(&ptr, sizeof(ObjectClass*));
+    }
 
-	return(true);
+    return (true);
 }
-
 
 /***********************************************************************************************
  * LayerClass::Code_Pointers -- codes class's pointers for load/save                           *
@@ -471,13 +458,12 @@ bool LayerClass::Save(Pipe & file) const
  *=============================================================================================*/
 void LayerClass::Code_Pointers(void)
 {
-	for (int index = 0; index < Count(); index++) {
-		ObjectClass * obj = (*this)[index];
-		assert(obj != NULL);
-		(*this)[index] = (ObjectClass *)(obj->As_Target());
-	}
+    for (int index = 0; index < Count(); index++) {
+        ObjectClass* obj = (*this)[index];
+        assert(obj != NULL);
+        (*this)[index] = (ObjectClass*)(obj->As_Target());
+    }
 }
-
 
 /***********************************************************************************************
  * LayerClass::Decode_Pointers -- decodes pointers for load/save                               *
@@ -499,13 +485,12 @@ void LayerClass::Code_Pointers(void)
  *=============================================================================================*/
 void LayerClass::Decode_Pointers(void)
 {
-	for (int index = 0; index < Count(); index++) {
-		TARGET target = (TARGET)(*this)[index];
-		(*this)[index] = (ObjectClass *)As_Object(target, false);
-		assert((*this)[index] != NULL);
-	}
+    for (int index = 0; index < Count(); index++) {
+        TARGET target = (TARGET)(*this)[index];
+        (*this)[index] = (ObjectClass*)As_Object(target, false);
+        assert((*this)[index] != NULL);
+    }
 }
-
 
 /***********************************************************************************************
  * HouseClass::Code_Pointers -- codes class's pointers for load/save                           *
@@ -531,7 +516,6 @@ void HouseClass::Code_Pointers(void)
 {
 }
 
-
 /***********************************************************************************************
  * HouseClass::Decode_Pointers -- decodes pointers for load/save                               *
  *                                                                                             *
@@ -552,15 +536,14 @@ void HouseClass::Code_Pointers(void)
  *=============================================================================================*/
 void HouseClass::Decode_Pointers(void)
 {
-	/*
-	** Re-assign the house's remap table (for multiplayer game loads)
-	** Loading the house from disk will have over-written the house's RemapTable, so
-	** Init_Data() is called to reset it to a valid pointer.
-	*/
-	
-	Init_Data(RemapColor, ActLike, Credits);
-}
+    /*
+    ** Re-assign the house's remap table (for multiplayer game loads)
+    ** Loading the house from disk will have over-written the house's RemapTable, so
+    ** Init_Data() is called to reset it to a valid pointer.
+    */
 
+    Init_Data(RemapColor, ActLike, Credits);
+}
 
 /***********************************************************************************************
  * ScoreClass::Code_Pointers -- codes class's pointers for load/save                           *
@@ -579,9 +562,8 @@ void HouseClass::Decode_Pointers(void)
  *=============================================================================================*/
 void ScoreClass::Code_Pointers(void)
 {
-	RealTime.Stop();
+    RealTime.Stop();
 }
-
 
 /***********************************************************************************************
  * ScoreClass::Decode_Pointers -- decodes pointers for load/save                               *
@@ -600,9 +582,8 @@ void ScoreClass::Code_Pointers(void)
  *=============================================================================================*/
 void ScoreClass::Decode_Pointers(void)
 {
-	RealTime.Start();
+    RealTime.Start();
 }
-
 
 /***********************************************************************************************
  * FootClass::Code_Pointers -- codes class's pointers for load/save                            *
@@ -626,15 +607,14 @@ void ScoreClass::Decode_Pointers(void)
  *=============================================================================================*/
 void FootClass::Code_Pointers(void)
 {
-	if (Member != NULL && Member->IsActive) {
-		Member = (FootClass *)Member->As_Target();
-	} else {
-		Member = TARGET_NONE;
-	}
+    if (Member != NULL && Member->IsActive) {
+        Member = (FootClass*)Member->As_Target();
+    } else {
+        Member = TARGET_NONE;
+    }
 
-	TechnoClass::Code_Pointers();
+    TechnoClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * FootClass::Decode_Pointers -- decodes pointers for load/save                                *
@@ -656,14 +636,13 @@ void FootClass::Code_Pointers(void)
  *=============================================================================================*/
 void FootClass::Decode_Pointers(void)
 {
-	if ((TARGET)Member != TARGET_NONE) {
-		Member = (FootClass *)As_Techno((TARGET)Member, false);
-		assert(Member != NULL);
-	}
+    if ((TARGET)Member != TARGET_NONE) {
+        Member = (FootClass*)As_Techno((TARGET)Member, false);
+        assert(Member != NULL);
+    }
 
-	TechnoClass::Decode_Pointers();
+    TechnoClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * RadioClass::Code_Pointers -- codes class's pointers for load/save                           *
@@ -687,16 +666,15 @@ void FootClass::Decode_Pointers(void)
  *=============================================================================================*/
 void RadioClass::Code_Pointers(void)
 {
-	/*
-	**	Code 'Radio'
-	*/
-	if (Radio) {
-		Radio = (RadioClass *)Radio->As_Target();
-	}
+    /*
+    **	Code 'Radio'
+    */
+    if (Radio) {
+        Radio = (RadioClass*)Radio->As_Target();
+    }
 
-	MissionClass::Code_Pointers();
+    MissionClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * RadioClass::Decode_Pointers -- decodes pointers for load/save                               *
@@ -718,17 +696,16 @@ void RadioClass::Code_Pointers(void)
  *=============================================================================================*/
 void RadioClass::Decode_Pointers(void)
 {
-	/*
-	**	Decode 'Radio'
-	*/
-	if (Radio) {
-		Radio = As_Techno((TARGET)Radio, false);
-		assert(Radio != NULL);
-	}
+    /*
+    **	Decode 'Radio'
+    */
+    if (Radio) {
+        Radio = As_Techno((TARGET)Radio, false);
+        assert(Radio != NULL);
+    }
 
-	MissionClass::Decode_Pointers();
+    MissionClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * TechnoClass::Code_Pointers -- codes class's pointers for load/save                          *
@@ -752,10 +729,9 @@ void RadioClass::Decode_Pointers(void)
  *=============================================================================================*/
 void TechnoClass::Code_Pointers(void)
 {
-	CargoClass::Code_Pointers();
-	RadioClass::Code_Pointers();
+    CargoClass::Code_Pointers();
+    RadioClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * TechnoClass::Decode_Pointers -- decodes pointers for load/save                              *
@@ -777,10 +753,9 @@ void TechnoClass::Code_Pointers(void)
  *=============================================================================================*/
 void TechnoClass::Decode_Pointers(void)
 {
-	CargoClass::Decode_Pointers();
-	RadioClass::Decode_Pointers();
+    CargoClass::Decode_Pointers();
+    RadioClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * CargoClass::Code_Pointers -- codes class's pointers for load/save                           *
@@ -804,14 +779,13 @@ void TechnoClass::Decode_Pointers(void)
  *=============================================================================================*/
 void CargoClass::Code_Pointers(void)
 {
-	/*
-	**	Code 'CargoHold'
-	*/
-	if (CargoHold) {
-		CargoHold = (FootClass *)CargoHold->As_Target();
-	}
+    /*
+    **	Code 'CargoHold'
+    */
+    if (CargoHold) {
+        CargoHold = (FootClass*)CargoHold->As_Target();
+    }
 }
-
 
 /***********************************************************************************************
  * CargoClass::Decode_Pointers -- decodes pointers for load/save                               *
@@ -833,15 +807,14 @@ void CargoClass::Code_Pointers(void)
  *=============================================================================================*/
 void CargoClass::Decode_Pointers(void)
 {
-	/*
-	**	Decode 'CargoHold'
-	*/
-	if (CargoHold) {
-		CargoHold = (FootClass *)As_Techno((TARGET)CargoHold, false);
-		assert(CargoHold != NULL);
-	}
+    /*
+    **	Decode 'CargoHold'
+    */
+    if (CargoHold) {
+        CargoHold = (FootClass*)As_Techno((TARGET)CargoHold, false);
+        assert(CargoHold != NULL);
+    }
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Code_Pointers -- codes class's pointers for load/save                          *
@@ -865,11 +838,10 @@ void CargoClass::Decode_Pointers(void)
  *=============================================================================================*/
 void ObjectClass::Code_Pointers(void)
 {
-	if (Next) {
-		Next = (ObjectClass *)Next->As_Target();
-	}
+    if (Next) {
+        Next = (ObjectClass*)Next->As_Target();
+    }
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Decode_Pointers -- decodes pointers for load/save                              *
@@ -891,8 +863,8 @@ void ObjectClass::Code_Pointers(void)
  *=============================================================================================*/
 void ObjectClass::Decode_Pointers(void)
 {
-	if (Next) {
-		Next = As_Object((TARGET)Next, false);
-		assert(Next != NULL);
-	}
+    if (Next) {
+        Next = As_Object((TARGET)Next, false);
+        assert(Next != NULL);
+    }
 }

@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/TRIGGER.CPP 1     3/03/97 10:26a Joe_bostic $ */
@@ -46,7 +46,6 @@
 
 #include "function.h"
 
-
 #if defined(CHEAT_KEYS) || defined(SCENARIO_EDITOR)
 /***********************************************************************************************
  * TriggerClass::Description -- Fetch a one line ASCII description of the trigger.             *
@@ -63,11 +62,10 @@
  * HISTORY:                                                                                    *
  *   07/09/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-char const * TriggerClass::Description(void) const
+char const* TriggerClass::Description(void) const
 {
-	return(Class->Description());
+    return (Class->Description());
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Draw_It -- Draws this trigger as if it were part of a list box.               *
@@ -84,28 +82,34 @@ char const * TriggerClass::Description(void) const
  * HISTORY:                                                                                    *
  *   07/09/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TriggerClass::Draw_It(int , int x, int y, int width, int height, bool selected, TextPrintType flags) const
+void TriggerClass::Draw_It(int, int x, int y, int width, int height, bool selected, TextPrintType flags) const
 {
-	RemapControlType * scheme = GadgetClass::Get_Color_Scheme();
-	static int _tabs[] = {13,40};
-	if ((flags & 0x0F) == TPF_6PT_GRAD || (flags & 0x0F) == TPF_EFNT) {
+    RemapControlType* scheme = GadgetClass::Get_Color_Scheme();
+    static int _tabs[] = {13, 40};
+    if ((flags & 0x0F) == TPF_6PT_GRAD || (flags & 0x0F) == TPF_EFNT) {
 
-		if (selected) {
-			flags = flags | TPF_BRIGHT_COLOR;
-			LogicPage->Fill_Rect(x, y, x + width - 1, y + height - 1, scheme->Shadow);
-		} else {
-			if (!(flags & TPF_USE_GRAD_PAL)) {
-				flags = flags | TPF_MEDIUM_COLOR;
-			}
-		}
+        if (selected) {
+            flags = flags | TPF_BRIGHT_COLOR;
+            LogicPage->Fill_Rect(x, y, x + width - 1, y + height - 1, scheme->Shadow);
+        } else {
+            if (!(flags & TPF_USE_GRAD_PAL)) {
+                flags = flags | TPF_MEDIUM_COLOR;
+            }
+        }
 
-		Conquer_Clip_Text_Print(Description(), x, y, scheme, TBLACK, flags, width, _tabs);
-	} else {
-		Conquer_Clip_Text_Print(Description(), x, y, (selected ? &ColorRemaps[PCOLOR_DIALOG_BLUE] : &ColorRemaps[PCOLOR_GREY]), TBLACK, flags, width, _tabs);
-	}
+        Conquer_Clip_Text_Print(Description(), x, y, scheme, TBLACK, flags, width, _tabs);
+    } else {
+        Conquer_Clip_Text_Print(Description(),
+                                x,
+                                y,
+                                (selected ? &ColorRemaps[PCOLOR_DIALOG_BLUE] : &ColorRemaps[PCOLOR_GREY]),
+                                TBLACK,
+                                flags,
+                                width,
+                                _tabs);
+    }
 }
 #endif
-
 
 /***********************************************************************************************
  * TriggerClass::TriggerClass -- constructor                                                   *
@@ -122,17 +126,16 @@ void TriggerClass::Draw_It(int , int x, int y, int width, int height, bool selec
  * HISTORY:                                                                                    *
  *   11/28/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-TriggerClass::TriggerClass(TriggerTypeClass * trigtype) :
-	RTTI(RTTI_TRIGGER),
-	ID(Triggers.ID(this)),
-	Class(trigtype),
-	AttachCount(0),
-	Cell(0)
+TriggerClass::TriggerClass(TriggerTypeClass* trigtype)
+    : RTTI(RTTI_TRIGGER)
+    , ID(Triggers.ID(this))
+    , Class(trigtype)
+    , AttachCount(0)
+    , Cell(0)
 {
-	Class->Event1.Reset(Event1);
-	Class->Event2.Reset(Event2);
+    Class->Event1.Reset(Event1);
+    Class->Event2.Reset(Event2);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::~TriggerClass -- Destructor for trigger objects.                              *
@@ -151,31 +154,31 @@ TriggerClass::TriggerClass(TriggerTypeClass * trigtype) :
  *=============================================================================================*/
 TriggerClass::~TriggerClass(void)
 {
-	if (GameActive && Class.Is_Valid() && (Class->Attaches_To() & ATTACH_GENERAL) != 0) {
-		if (LogicTriggerID >= LogicTriggers.ID(this)) {
-			LogicTriggerID--;
-			if (LogicTriggerID < 0 && LogicTriggers.Count() == 0) {
-				LogicTriggerID = 0;
-			}
-		}
-	}
+    if (GameActive && Class.Is_Valid() && (Class->Attaches_To() & ATTACH_GENERAL) != 0) {
+        if (LogicTriggerID >= LogicTriggers.ID(this)) {
+            LogicTriggerID--;
+            if (LogicTriggerID < 0 && LogicTriggers.Count() == 0) {
+                LogicTriggerID = 0;
+            }
+        }
+    }
 
-	if (GameActive && Class.Is_Valid() && (Class->Attaches_To() & ATTACH_MAP) != 0) {
-		if (MapTriggerID >= MapTriggers.ID(this)) {
-			MapTriggerID--;
-			if (MapTriggerID < 0 && MapTriggers.Count() == 0) {
-				MapTriggerID = 0;
-			}
-		}
-	}
+    if (GameActive && Class.Is_Valid() && (Class->Attaches_To() & ATTACH_MAP) != 0) {
+        if (MapTriggerID >= MapTriggers.ID(this)) {
+            MapTriggerID--;
+            if (MapTriggerID < 0 && MapTriggers.Count() == 0) {
+                MapTriggerID = 0;
+            }
+        }
+    }
 
-	if (GameActive && Class->House != HOUSE_NONE && Class->Action1.Action == TACTION_ALLOWWIN) {
-		if (Houses.Ptr(Class->House)->Blockage) Houses.Ptr(Class->House)->Blockage--;
-		Houses.Ptr(Class->House)->BorrowedTime = TICKS_PER_SECOND*4;
-	}
-	ID = -1;
+    if (GameActive && Class->House != HOUSE_NONE && Class->Action1.Action == TACTION_ALLOWWIN) {
+        if (Houses.Ptr(Class->House)->Blockage)
+            Houses.Ptr(Class->House)->Blockage--;
+        Houses.Ptr(Class->House)->BorrowedTime = TICKS_PER_SECOND * 4;
+    }
+    ID = -1;
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Init -- clears triggers for new scenario                                      *
@@ -194,9 +197,8 @@ TriggerClass::~TriggerClass(void)
  *=============================================================================================*/
 void TriggerClass::Init(void)
 {
-	Triggers.Free_All();
+    Triggers.Free_All();
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Spring -- Spring the trigger (possibly).                                      *
@@ -221,139 +223,146 @@ void TriggerClass::Init(void)
  *   05/31/1996 JLB : Created.                                                                 *
  *   08/13/1996 JLB : Linked triggers supported.                                               *
  *=============================================================================================*/
-bool TriggerClass::Spring(TEventType event, ObjectClass * obj, CELL cell, bool forced)
+bool TriggerClass::Spring(TEventType event, ObjectClass* obj, CELL cell, bool forced)
 {
-	assert(Triggers.ID(this) == ID);
+    assert(Triggers.ID(this) == ID);
 
-	bool e1 = Class->Event1(Event1, event, Class->House, obj, forced);
-	bool e2 = false;
-	bool execute = false;
+    bool e1 = Class->Event1(Event1, event, Class->House, obj, forced);
+    bool e2 = false;
+    bool execute = false;
 
-	/*
-	**	Forced triggers must presume that the cell parameter is invalid. It then
-	**	uses the embedded cell value in the trigger as the official location where
-	**	the trigger will detonate at.
-	*/
-	if (forced) {
-		cell = Cell;
-	} else {
+    /*
+    **	Forced triggers must presume that the cell parameter is invalid. It then
+    **	uses the embedded cell value in the trigger as the official location where
+    **	the trigger will detonate at.
+    */
+    if (forced) {
+        cell = Cell;
+    } else {
 
-		/*
-		**	Determine if the trigger event is considered to have been sprung according to the
-		**	event control value. This might require that both events be triggered, one event
-		**	triggered, or either event triggered to activate the trigger action.
-		*/
-		switch (Class->EventControl) {
-			case MULTI_ONLY:
-				execute = e1;
-				break;
+        /*
+        **	Determine if the trigger event is considered to have been sprung according to the
+        **	event control value. This might require that both events be triggered, one event
+        **	triggered, or either event triggered to activate the trigger action.
+        */
+        switch (Class->EventControl) {
+        case MULTI_ONLY:
+            execute = e1;
+            break;
 
-			case MULTI_AND:
-				e2 = Class->Event2(Event2, event, Class->House, obj, forced);
-				execute = (e1 && e2);
-				break;
+        case MULTI_AND:
+            e2 = Class->Event2(Event2, event, Class->House, obj, forced);
+            execute = (e1 && e2);
+            break;
 
-			case MULTI_LINKED:
-			case MULTI_OR:
-				e2 = Class->Event2(Event2, event, Class->House, obj, forced);
-				execute = (e1 || e2);
-				break;
-		}
-	}
+        case MULTI_LINKED:
+        case MULTI_OR:
+            e2 = Class->Event2(Event2, event, Class->House, obj, forced);
+            execute = (e1 || e2);
+            break;
+        }
+    }
 
-	/*
-	**	See if the trigger is sprung with a qualifying event.
-	*/
-	if (execute || forced) {
+    /*
+    **	See if the trigger is sprung with a qualifying event.
+    */
+    if (execute || forced) {
 
-		/*
-		**	Verify that the trigger event should really be sprung. Exceptions
-		**	would include semi-persistent triggers that don't actually
-		**	spring until all triggers have sprung.
-		*/
-		if (Class->IsPersistant == TriggerTypeClass::SEMIPERSISTANT) {
+        /*
+        **	Verify that the trigger event should really be sprung. Exceptions
+        **	would include semi-persistent triggers that don't actually
+        **	spring until all triggers have sprung.
+        */
+        if (Class->IsPersistant == TriggerTypeClass::SEMIPERSISTANT) {
 
-			/*
-			** Detach ourselves from the object and record that there
-			**	is one less attachment to keep track of.
-			*/
-			if (obj) {
-				obj->Trigger = NULL;
-			}
-			if (cell) {
-				Map[cell].Trigger = NULL;
-			}
+            /*
+            ** Detach ourselves from the object and record that there
+            **	is one less attachment to keep track of.
+            */
+            if (obj) {
+                obj->Trigger = NULL;
+            }
+            if (cell) {
+                Map[cell].Trigger = NULL;
+            }
 
-			/*
-			** If we're attached to more objects, don't spring; otherwise, spring.
-			** And, mark ourselves as volatile so we'll completely remove ourselves
-			** from the game after we go off.
-			*/
-			AttachCount--;
-			if (AttachCount > 0) {
-				return(false);
-			}
-		}
+            /*
+            ** If we're attached to more objects, don't spring; otherwise, spring.
+            ** And, mark ourselves as volatile so we'll completely remove ourselves
+            ** from the game after we go off.
+            */
+            AttachCount--;
+            if (AttachCount > 0) {
+                return (false);
+            }
+        }
 
-		/*
-		**	For linked trigger events, perform the action associated with the matching
-		**	trigger event. Otherwise perform the action for both events.
-		*/
-		bool ok = false;
-		HousesType hh = Class->House;
-		if (Class->EventControl == MULTI_LINKED) {
-			if (e1 || forced) ok |= Class->Action1(hh, obj, ID, cell);
-			if (e2 && !forced) ok |= Class->Action2(hh, obj, ID, cell);
-		} else {
+        /*
+        **	For linked trigger events, perform the action associated with the matching
+        **	trigger event. Otherwise perform the action for both events.
+        */
+        bool ok = false;
+        HousesType hh = Class->House;
+        if (Class->EventControl == MULTI_LINKED) {
+            if (e1 || forced)
+                ok |= Class->Action1(hh, obj, ID, cell);
+            if (e2 && !forced)
+                ok |= Class->Action2(hh, obj, ID, cell);
+        } else {
 
-			switch (Class->ActionControl) {
-				case MULTI_ONLY:
-					ok |= Class->Action1(hh, obj, ID, cell);
-					break;
+            switch (Class->ActionControl) {
+            case MULTI_ONLY:
+                ok |= Class->Action1(hh, obj, ID, cell);
+                break;
 
-				default:
-				case MULTI_AND:
-					ok |= Class->Action1(hh, obj, ID, cell);
-					ok |= Class->Action2(hh, obj, ID, cell);
-					break;
-			}
-		}
-		if (!IsActive) return(true);
+            default:
+            case MULTI_AND:
+                ok |= Class->Action1(hh, obj, ID, cell);
+                ok |= Class->Action2(hh, obj, ID, cell);
+                break;
+            }
+        }
+        if (!IsActive)
+            return (true);
 
-		/*
-		**	If at least one action was performed, then consider this
-		**	trigger to have completed and thus will be deleted if
-		**	necessary.
-		*/
-		if (ok) {
-			#ifdef CHEAT_KEYS
-			MonoArray[DMONO_STRESS].Sub_Window(61, 1, 17, 11);
-			MonoArray[DMONO_STRESS].Scroll();
-			MonoArray[DMONO_STRESS].Sub_Window(61, 1, 18, 11);
-			MonoArray[DMONO_STRESS].Set_Cursor(0, 10);
-			MonoArray[DMONO_STRESS].Printf("%02d:%02d:%02d-%s", Scen.Timer / TICKS_PER_HOUR, (Scen.Timer % TICKS_PER_HOUR)/TICKS_PER_MINUTE, (Scen.Timer % TICKS_PER_MINUTE)/TICKS_PER_SECOND, Class->IniName);
-			MonoArray[DMONO_STRESS].Sub_Window();
-			#endif
+        /*
+        **	If at least one action was performed, then consider this
+        **	trigger to have completed and thus will be deleted if
+        **	necessary.
+        */
+        if (ok) {
+#ifdef CHEAT_KEYS
+            MonoArray[DMONO_STRESS].Sub_Window(61, 1, 17, 11);
+            MonoArray[DMONO_STRESS].Scroll();
+            MonoArray[DMONO_STRESS].Sub_Window(61, 1, 18, 11);
+            MonoArray[DMONO_STRESS].Set_Cursor(0, 10);
+            MonoArray[DMONO_STRESS].Printf("%02d:%02d:%02d-%s",
+                                           Scen.Timer / TICKS_PER_HOUR,
+                                           (Scen.Timer % TICKS_PER_HOUR) / TICKS_PER_MINUTE,
+                                           (Scen.Timer % TICKS_PER_MINUTE) / TICKS_PER_SECOND,
+                                           Class->IniName);
+            MonoArray[DMONO_STRESS].Sub_Window();
+#endif
 
-			if (Class->IsPersistant == TriggerTypeClass::VOLATILE || (Class->IsPersistant == TriggerTypeClass::SEMIPERSISTANT && AttachCount <= 1)) {
-				Detach_This_From_All(As_Target(), true);
-				delete this;
-				return(true);
-			} else {
+            if (Class->IsPersistant == TriggerTypeClass::VOLATILE
+                || (Class->IsPersistant == TriggerTypeClass::SEMIPERSISTANT && AttachCount <= 1)) {
+                Detach_This_From_All(As_Target(), true);
+                delete this;
+                return (true);
+            } else {
 
-				/*
-				**	Reset event data so that the event will
-				**	repeat as necessary.
-				*/
-				Class->Event1.Reset(Event1);
-				Class->Event2.Reset(Event2);
-			}
-		}
-	}
+                /*
+                **	Reset event data so that the event will
+                **	repeat as necessary.
+                */
+                Class->Event1.Reset(Event1);
+                Class->Event2.Reset(Event2);
+            }
+        }
+    }
 
-	return(false);
+    return (false);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::operator new -- 'new' operator                                                *
@@ -370,16 +379,15 @@ bool TriggerClass::Spring(TEventType event, ObjectClass * obj, CELL cell, bool f
  * HISTORY:                                                                                    *
  *   11/28/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-void * TriggerClass::operator new(size_t )
+void* TriggerClass::operator new(size_t)
 {
-	void * ptr = Triggers.Allocate();
-	if (ptr) {
-		((TriggerClass *)ptr)->IsActive = true;
-	}
+    void* ptr = Triggers.Allocate();
+    if (ptr) {
+        ((TriggerClass*)ptr)->IsActive = true;
+    }
 
-	return(ptr);
+    return (ptr);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::operator delete -- Returns a trigger to the special memory pool.              *
@@ -396,14 +404,13 @@ void * TriggerClass::operator new(size_t )
  * HISTORY:                                                                                    *
  *   07/09/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TriggerClass::operator delete(void * pointer)
+void TriggerClass::operator delete(void* pointer)
 {
-	if (pointer) {
-		((TriggerClass *)pointer)->IsActive = false;
-	}
-	Triggers.Free((TriggerClass *)pointer);
+    if (pointer) {
+        ((TriggerClass*)pointer)->IsActive = false;
+    }
+    Triggers.Free((TriggerClass*)pointer);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::As_Target -- Converts trigger to a target value                               *
@@ -421,11 +428,10 @@ void TriggerClass::operator delete(void * pointer)
  *=============================================================================================*/
 TARGET TriggerClass::As_Target(void) const
 {
-	assert(Triggers.ID(this) == ID);
+    assert(Triggers.ID(this) == ID);
 
-	return(Build_Target(RTTI_TRIGGER, ID));
+    return (Build_Target(RTTI_TRIGGER, ID));
 }
-
 
 /***********************************************************************************************
  * Find_Or_Make -- Find or create a trigger of the type specified.                             *
@@ -447,23 +453,23 @@ TARGET TriggerClass::As_Target(void) const
  * HISTORY:                                                                                    *
  *   07/09/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-TriggerClass * Find_Or_Make(TriggerTypeClass * trigtype)
+TriggerClass* Find_Or_Make(TriggerTypeClass* trigtype)
 {
-	if (!trigtype) return(NULL);
+    if (!trigtype)
+        return (NULL);
 
-	for (int index = 0; index < Triggers.Count(); index++) {
-		if (trigtype == Triggers.Ptr(index)->Class) {
-			return(Triggers.Ptr(index));
-		}
-	}
+    for (int index = 0; index < Triggers.Count(); index++) {
+        if (trigtype == Triggers.Ptr(index)->Class) {
+            return (Triggers.Ptr(index));
+        }
+    }
 
-	/*
-	**	No trigger was found, so make one.
-	*/
-	TriggerClass * trig = new TriggerClass(trigtype);
-	return(trig);
+    /*
+    **	No trigger was found, so make one.
+    */
+    TriggerClass* trig = new TriggerClass(trigtype);
+    return (trig);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Detach -- Detach specified target from this trigger.                          *
@@ -483,12 +489,12 @@ TriggerClass * Find_Or_Make(TriggerTypeClass * trigtype)
  * HISTORY:                                                                                    *
  *   07/09/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TriggerClass::Detach(TARGET target, bool )
+void TriggerClass::Detach(TARGET target, bool)
 {
-	if (Is_Target_TriggerType(target)) {
-		assert((TriggerTypeClass*)Class != As_TriggerType(target));
-//		if (Class == As_TriggerType(target)) {
-//			Class = NULL;
-//		}
-	}
+    if (Is_Target_TriggerType(target)) {
+        assert((TriggerTypeClass*)Class != As_TriggerType(target));
+        //		if (Class == As_TriggerType(target)) {
+        //			Class = NULL;
+        //		}
+    }
 }

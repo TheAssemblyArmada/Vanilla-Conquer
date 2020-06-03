@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/LCWUNCMP.CPP 1     3/03/97 10:25a Joe_bostic $ */
@@ -67,97 +67,102 @@ extern "C" {
  * HISTORY:                                                                *
  *    03/20/1995 IML : Created.                                            *
  *=========================================================================*/
-unsigned long __cdecl LCW_Uncompress (void * source, void * dest, unsigned long )
-//unsigned long LCW_Uncompress (void * source, void * dest, unsigned long length)
+unsigned long __cdecl LCW_Uncompress(void* source, void* dest, unsigned long)
+// unsigned long LCW_Uncompress (void * source, void * dest, unsigned long length)
 {
-	unsigned char * source_ptr, * dest_ptr, * copy_ptr, op_code, data;
-	unsigned	  count, * word_dest_ptr, word_data;
+    unsigned char *source_ptr, *dest_ptr, *copy_ptr, op_code, data;
+    unsigned count, *word_dest_ptr, word_data;
 
-	/* Copy the source and destination ptrs. */
-	source_ptr = (unsigned char*) source;
-	dest_ptr   = (unsigned char*) dest;
+    /* Copy the source and destination ptrs. */
+    source_ptr = (unsigned char*)source;
+    dest_ptr = (unsigned char*)dest;
 
-	while (1 /*TRUE*/) {
+    while (1 /*TRUE*/) {
 
-		/* Read in the operation code. */
-		op_code = *source_ptr++;
+        /* Read in the operation code. */
+        op_code = *source_ptr++;
 
-		if (!(op_code & 0x80)) {
+        if (!(op_code & 0x80)) {
 
-			/* Do a short copy from destination. */
-			count	 = (op_code >> 4) + 3;
-			copy_ptr = dest_ptr - ((unsigned) *source_ptr++ + (((unsigned) op_code & 0x0f) << 8));
+            /* Do a short copy from destination. */
+            count = (op_code >> 4) + 3;
+            copy_ptr = dest_ptr - ((unsigned)*source_ptr++ + (((unsigned)op_code & 0x0f) << 8));
 
-			while (count--) *dest_ptr++ = *copy_ptr++;
+            while (count--)
+                *dest_ptr++ = *copy_ptr++;
 
-		} else {
+        } else {
 
-			if (!(op_code & 0x40)) {
+            if (!(op_code & 0x40)) {
 
-				if (op_code == 0x80) {
+                if (op_code == 0x80) {
 
-					/* Return # of destination bytes written. */
-					return ((unsigned long) (dest_ptr - (unsigned char*) dest));
+                    /* Return # of destination bytes written. */
+                    return ((unsigned long)(dest_ptr - (unsigned char*)dest));
 
-				} else {
+                } else {
 
-					/* Do a medium copy from source. */
-					count = op_code & 0x3f;
+                    /* Do a medium copy from source. */
+                    count = op_code & 0x3f;
 
-					while (count--) *dest_ptr++ = *source_ptr++;
-				}
+                    while (count--)
+                        *dest_ptr++ = *source_ptr++;
+                }
 
-			} else {
+            } else {
 
-				if (op_code == 0xfe) {
+                if (op_code == 0xfe) {
 
-					/* Do a long run. */
-					count = *source_ptr + ((unsigned) *(source_ptr + 1) << 8);
-					word_data = data = *(source_ptr + 2);
-					word_data  = (word_data << 24) + (word_data << 16) + (word_data << 8) + word_data;
-					source_ptr += 3;
+                    /* Do a long run. */
+                    count = *source_ptr + ((unsigned)*(source_ptr + 1) << 8);
+                    word_data = data = *(source_ptr + 2);
+                    word_data = (word_data << 24) + (word_data << 16) + (word_data << 8) + word_data;
+                    source_ptr += 3;
 
-					copy_ptr = dest_ptr + 4 - ((unsigned) dest_ptr & 0x3);
-					count -= (copy_ptr - dest_ptr);
-					while (dest_ptr < copy_ptr) *dest_ptr++ = data;
+                    copy_ptr = dest_ptr + 4 - ((unsigned)dest_ptr & 0x3);
+                    count -= (copy_ptr - dest_ptr);
+                    while (dest_ptr < copy_ptr)
+                        *dest_ptr++ = data;
 
-					word_dest_ptr = (unsigned*) dest_ptr;
+                    word_dest_ptr = (unsigned*)dest_ptr;
 
-					dest_ptr += (count & 0xfffffffc);
+                    dest_ptr += (count & 0xfffffffc);
 
-					while (word_dest_ptr < (unsigned*) dest_ptr) {
-						*word_dest_ptr		= word_data;
-						*(word_dest_ptr + 1) = word_data;
-						word_dest_ptr += 2;
-					}
+                    while (word_dest_ptr < (unsigned*)dest_ptr) {
+                        *word_dest_ptr = word_data;
+                        *(word_dest_ptr + 1) = word_data;
+                        word_dest_ptr += 2;
+                    }
 
-					copy_ptr = dest_ptr + (count & 0x3);
-					while (dest_ptr < copy_ptr) *dest_ptr++ = data;
+                    copy_ptr = dest_ptr + (count & 0x3);
+                    while (dest_ptr < copy_ptr)
+                        *dest_ptr++ = data;
 
-				} else {
+                } else {
 
-					if (op_code == 0xff) {
+                    if (op_code == 0xff) {
 
-						/* Do a long copy from destination. */
-						count	 = *source_ptr + ((unsigned) *(source_ptr + 1) << 8);
-						copy_ptr = (unsigned char*) dest + *(source_ptr + 2) + ((unsigned) *(source_ptr + 3) << 8);
-						source_ptr += 4;
+                        /* Do a long copy from destination. */
+                        count = *source_ptr + ((unsigned)*(source_ptr + 1) << 8);
+                        copy_ptr = (unsigned char*)dest + *(source_ptr + 2) + ((unsigned)*(source_ptr + 3) << 8);
+                        source_ptr += 4;
 
-						while (count--) *dest_ptr++ = *copy_ptr++;
+                        while (count--)
+                            *dest_ptr++ = *copy_ptr++;
 
-					} else {
+                    } else {
 
-						/* Do a medium copy from destination. */
-						count = (op_code & 0x3f) + 3;
-						copy_ptr = (unsigned char*) dest + *source_ptr + ((unsigned) *(source_ptr + 1) << 8);
-						source_ptr += 2;
+                        /* Do a medium copy from destination. */
+                        count = (op_code & 0x3f) + 3;
+                        copy_ptr = (unsigned char*)dest + *source_ptr + ((unsigned)*(source_ptr + 1) << 8);
+                        source_ptr += 2;
 
-						while (count--) *dest_ptr++ = *copy_ptr++;
-					}
-				}
-			}
-		}
-	}
+                        while (count--)
+                            *dest_ptr++ = *copy_ptr++;
+                    }
+                }
+            }
+        }
+    }
 }
-
 }

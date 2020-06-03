@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/CONTROL.CPP 1     3/03/97 10:24a Joe_bostic $ */
@@ -38,8 +38,7 @@
  *   ControlClass::Make_Peer -- Assigns a peer gadget to this gadget.                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-
+#include "function.h"
 
 /***********************************************************************************************
  * ControlClass::ControlClass -- Constructor for control class objects.                        *
@@ -68,13 +67,12 @@
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-ControlClass::ControlClass(unsigned id, int x, int y, int w, int h, unsigned flags, int sticky) :
-	GadgetClass(x, y, w, h, flags, sticky),
-	ID(id),
-	Peer(0)
+ControlClass::ControlClass(unsigned id, int x, int y, int w, int h, unsigned flags, int sticky)
+    : GadgetClass(x, y, w, h, flags, sticky)
+    , ID(id)
+    , Peer(0)
 {
 }
-
 
 /***********************************************************************************************
  * ControlClass::ControlClass -- Copy constructor for control gadget.                          *
@@ -91,10 +89,10 @@ ControlClass::ControlClass(unsigned id, int x, int y, int w, int h, unsigned fla
  * HISTORY:                                                                                    *
  *   12/05/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-ControlClass::ControlClass(ControlClass const & control) :
-	GadgetClass(control),
-	ID(control.ID),
-	Peer(control.Peer)
+ControlClass::ControlClass(ControlClass const& control)
+    : GadgetClass(control)
+    , ID(control.ID)
+    , Peer(control.Peer)
 {
 }
 
@@ -119,32 +117,31 @@ ControlClass::ControlClass(ControlClass const & control) :
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int ControlClass::Action(unsigned flags, KeyNumType & key)
+int ControlClass::Action(unsigned flags, KeyNumType& key)
 {
 
-	/*
-	**	Only if the flags indicate that a recognized action has occurred, do the
-	**	normal processing of this gadget and set return value to the gadget ID.
-	*/
-	if (flags) {
-		if (ID) {
-			key = (KeyNumType)(ID | KN_BUTTON);
-		} else {
-			key = KN_NONE;
-		}
-	}
+    /*
+    **	Only if the flags indicate that a recognized action has occurred, do the
+    **	normal processing of this gadget and set return value to the gadget ID.
+    */
+    if (flags) {
+        if (ID) {
+            key = (KeyNumType)(ID | KN_BUTTON);
+        } else {
+            key = KN_NONE;
+        }
+    }
 
-	/*
-	**	If there is a peer link established, inform that gadget of this
-	**	action call.
-	*/
-	if (Peer) {
-		Peer->Peer_To_Peer(flags, key, *this);
-	}
+    /*
+    **	If there is a peer link established, inform that gadget of this
+    **	action call.
+    */
+    if (Peer) {
+        Peer->Peer_To_Peer(flags, key, *this);
+    }
 
-	return(GadgetClass::Action(flags, key));
+    return (GadgetClass::Action(flags, key));
 }
-
 
 /***********************************************************************************************
  * ControlClass::Make_Peer -- Assigns a peer gadget to this gadget.                            *
@@ -163,11 +160,10 @@ int ControlClass::Action(unsigned flags, KeyNumType & key)
  * HISTORY:                                                                                    *
  *   01/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void ControlClass::Make_Peer(GadgetClass & gadget)
+void ControlClass::Make_Peer(GadgetClass& gadget)
 {
-	Peer = &gadget;
+    Peer = &gadget;
 }
-
 
 /***********************************************************************************************
  * ControlClass::Get_ID -- Gets the ID number for this gadget.                                 *
@@ -188,9 +184,8 @@ void ControlClass::Make_Peer(GadgetClass & gadget)
  *=============================================================================================*/
 unsigned ControlClass::Get_ID(void) const
 {
-	return(ID);
+    return (ID);
 }
-
 
 /***********************************************************************************************
  * ControlClass::Draw_Me -- Draw logic for the control class object.                           *
@@ -216,8 +211,8 @@ unsigned ControlClass::Get_ID(void) const
  *=============================================================================================*/
 int ControlClass::Draw_Me(int forced)
 {
-	if (Peer) {
-		Peer->Draw_Me();
-	}
-	return(GadgetClass::Draw_Me(forced));
+    if (Peer) {
+        Peer->Draw_Me();
+    }
+    return (GadgetClass::Draw_Me(forced));
 }

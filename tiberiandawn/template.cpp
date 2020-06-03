@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\template.cpv   2.18   16 Oct 1995 16:51:46   JOE_BOSTIC  $ */
@@ -44,27 +44,25 @@
  *   TemplateClass::Validate -- validates template pointer												  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-#include	"template.h"
-
+#include "function.h"
+#include "template.h"
 
 /*
 ** This contains the value of the Virtual Function Table Pointer
 */
-void * TemplateClass::VTable;
-
+void* TemplateClass::VTable;
 
 /***********************************************************************************************
  * TemplateClass::Validate -- validates template pointer													  *
  *                                                                                             *
  * INPUT:                                                                                      *
- *		none.																												  *
+ *		none. *
  *                                                                                             *
  * OUTPUT:                                                                                     *
- *		1 = ok, 0 = error																								  *
+ *		1 = ok, 0 = error *
  *                                                                                             *
  * WARNINGS:                                                                                   *
- *		none.																												  *
+ *		none. *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   08/09/1995 BRR : Created.                                                                 *
@@ -72,20 +70,18 @@ void * TemplateClass::VTable;
 #ifdef CHEAT_KEYS
 int TemplateClass::Validate(void) const
 {
-	int num;
+    int num;
 
-	num = Templates.ID(this);
-	if (num < 0 || num >= TEMPLATE_MAX) {
-		Validate_Error("TEMPLATE");
-		return (0);
-	}
-	else
-		return (1);
+    num = Templates.ID(this);
+    if (num < 0 || num >= TEMPLATE_MAX) {
+        Validate_Error("TEMPLATE");
+        return (0);
+    } else
+        return (1);
 }
 #else
-#define	Validate()
+#define Validate()
 #endif
-
 
 /***********************************************************************************************
  * TemplateClass::Read_INI -- Reads the scenario control INI file.                             *
@@ -102,30 +98,29 @@ int TemplateClass::Validate(void) const
  * HISTORY:                                                                                    *
  *   05/24/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TemplateClass::Read_INI(char *buffer)
+void TemplateClass::Read_INI(char* buffer)
 {
-	char	*tbuffer;	// Accumulation buffer of unit IDs.
-	int	len;			// Size of data in buffer.
-	CELL	cell;			// Cell of building.
-	char	buf[128];	// Working string staging buffer.
+    char* tbuffer; // Accumulation buffer of unit IDs.
+    int len;       // Size of data in buffer.
+    CELL cell;     // Cell of building.
+    char buf[128]; // Working string staging buffer.
 
-	len = strlen(buffer) + 2;
-	tbuffer = buffer + len;
+    len = strlen(buffer) + 2;
+    tbuffer = buffer + len;
 
-	WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize-len, buffer);
-	while (*tbuffer != '\0') {
-		TemplateType	temp;		// Terrain type.
+    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
+    while (*tbuffer != '\0') {
+        TemplateType temp; // Terrain type.
 
-		cell = atoi(tbuffer);
-		WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf)-1, buffer);
-		temp = TemplateTypeClass::From_Name(strtok(buf, ",\r\n"));
-		if (temp != TEMPLATE_NONE) {
-			new TemplateClass(temp, cell);
-		}
-		tbuffer += strlen(tbuffer)+1;
-	}
+        cell = atoi(tbuffer);
+        WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
+        temp = TemplateTypeClass::From_Name(strtok(buf, ",\r\n"));
+        if (temp != TEMPLATE_NONE) {
+            new TemplateClass(temp, cell);
+        }
+        tbuffer += strlen(tbuffer) + 1;
+    }
 }
-
 
 /***********************************************************************************************
  * TemplateClass::Write_INI -- Writes the template objects to the INI file.                    *
@@ -142,37 +137,36 @@ void TemplateClass::Read_INI(char *buffer)
  * HISTORY:                                                                                    *
  *   05/28/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TemplateClass::Write_INI(char *buffer)
+void TemplateClass::Write_INI(char* buffer)
 {
-	char	uname[10];
-	char	buf[127];
-	char	*tbuffer;		// Accumulation buffer of unit IDs.
+    char uname[10];
+    char buf[127];
+    char* tbuffer; // Accumulation buffer of unit IDs.
 
-	/*
-	**	First, clear out all existing template data from the ini file.
-	*/
-	tbuffer = buffer + strlen(buffer) + 2;
-	WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize-strlen(buffer), buffer);
-	while (*tbuffer != '\0') {
-		WWWritePrivateProfileString(INI_Name(), tbuffer, NULL, buffer);
-		tbuffer += strlen(tbuffer)+1;
-	}
+    /*
+    **	First, clear out all existing template data from the ini file.
+    */
+    tbuffer = buffer + strlen(buffer) + 2;
+    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - strlen(buffer), buffer);
+    while (*tbuffer != '\0') {
+        WWWritePrivateProfileString(INI_Name(), tbuffer, NULL, buffer);
+        tbuffer += strlen(tbuffer) + 1;
+    }
 
-	/*
-	**	Find all templates and write them to the file.
-	*/
-	for (int index = 0; index < MAP_CELL_TOTAL; index++) {
-		CellClass * ptr;
+    /*
+    **	Find all templates and write them to the file.
+    */
+    for (int index = 0; index < MAP_CELL_TOTAL; index++) {
+        CellClass* ptr;
 
-		ptr = &Map[index];
-		if (ptr->TType != TEMPLATE_NONE && ptr->TIcon == 0) {
-			sprintf(uname, "%03d", index);
-			sprintf(buf, "%s", TemplateTypeClass::As_Reference(ptr->TType).IniName);
-			WWWritePrivateProfileString(INI_Name(), uname, buf, buffer);
-		}
-	}
+        ptr = &Map[index];
+        if (ptr->TType != TEMPLATE_NONE && ptr->TIcon == 0) {
+            sprintf(uname, "%03d", index);
+            sprintf(buf, "%s", TemplateTypeClass::As_Reference(ptr->TType).IniName);
+            WWWritePrivateProfileString(INI_Name(), uname, buf, buffer);
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * TemplateClass::TemplateClass -- Default constructor for template class objects.             *
@@ -190,11 +184,10 @@ void TemplateClass::Write_INI(char *buffer)
  * HISTORY:                                                                                    *
  *   01/23/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-TemplateClass::TemplateClass(void) :
-	Class(0)
+TemplateClass::TemplateClass(void)
+    : Class(0)
 {
 }
-
 
 /***********************************************************************************************
  * TemplateClass::As_Target -- Converts a template object into a target number.                *
@@ -213,10 +206,9 @@ TemplateClass::TemplateClass(void) :
  *=============================================================================================*/
 TARGET TemplateClass::As_Target(void) const
 {
-	Validate();
-	return(Build_Target(KIND_TEMPLATE, Templates.ID(this)));
+    Validate();
+    return (Build_Target(KIND_TEMPLATE, Templates.ID(this)));
 }
-
 
 /***********************************************************************************************
  * TemplateClass::Init -- Resets the template object system.                                   *
@@ -235,15 +227,14 @@ TARGET TemplateClass::As_Target(void) const
  *=============================================================================================*/
 void TemplateClass::Init(void)
 {
-	TemplateClass *ptr;
+    TemplateClass* ptr;
 
-	Templates.Free_All();
+    Templates.Free_All();
 
-	ptr = new TemplateClass();
-	VTable = ((void **)(((char *)ptr) + sizeof(AbstractClass) - 4))[0];
-	delete ptr;
+    ptr = new TemplateClass();
+    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
+    delete ptr;
 }
-
 
 /***********************************************************************************************
  * TemplateClass::Mark -- Lifts or drops a template object.                                    *
@@ -264,75 +255,74 @@ void TemplateClass::Init(void)
  *=============================================================================================*/
 bool TemplateClass::Mark(MarkType mark)
 {
-	Validate();
-	static bool noup = false;
-	void const * iset = Class->Get_Image_Data();
-	if (iset && ObjectClass::Mark(mark)) {
+    Validate();
+    static bool noup = false;
+    void const* iset = Class->Get_Image_Data();
+    if (iset && ObjectClass::Mark(mark)) {
 
-		void * map = Get_Icon_Set_Map(iset);
+        void* map = Get_Icon_Set_Map(iset);
 
-		for (int y = 0; y < Class->Height; y++) {
-			for (int x = 0; x < Class->Width; x++) {
-				CELL cell = Coord_Cell(Coord) + y*MAP_CELL_W + x;
-				if (Map.In_Radar(cell)) {
-					CellClass * cellptr = &Map[cell];
-					int number = y*Class->Width + x;
+        for (int y = 0; y < Class->Height; y++) {
+            for (int x = 0; x < Class->Width; x++) {
+                CELL cell = Coord_Cell(Coord) + y * MAP_CELL_W + x;
+                if (Map.In_Radar(cell)) {
+                    CellClass* cellptr = &Map[cell];
+                    int number = y * Class->Width + x;
 
-					/*
-					**	Determine if this logical icon actually maps to a real icon. If no real
-					**	icon is associated with this logical position, then don't do any action
-					**	since none is required.
-					*/
-					char * mapptr = (char*)map;
-					bool real = (mapptr[number] != -1);
+                    /*
+                    **	Determine if this logical icon actually maps to a real icon. If no real
+                    **	icon is associated with this logical position, then don't do any action
+                    **	since none is required.
+                    */
+                    char* mapptr = (char*)map;
+                    bool real = (mapptr[number] != -1);
 
-					if (real) {
-						/*
-						**	Lift the terrain object from the map.
-						*/
-						if (mark == MARK_UP && !noup) {
-							if (cellptr->TType == Class->Type && cellptr->TIcon == number) {
-								cellptr->TType = TEMPLATE_NONE;
-								cellptr->TIcon = 0;
-							}
-						}
+                    if (real) {
+                        /*
+                        **	Lift the terrain object from the map.
+                        */
+                        if (mark == MARK_UP && !noup) {
+                            if (cellptr->TType == Class->Type && cellptr->TIcon == number) {
+                                cellptr->TType = TEMPLATE_NONE;
+                                cellptr->TIcon = 0;
+                            }
+                        }
 
-						/*
-						**	Place the terrain object down.
-						*/
-						if (mark == MARK_DOWN) {
-							if (*this == TEMPLATE_CLEAR1) {
-								cellptr->TType = TEMPLATE_NONE;
-								cellptr->TIcon = 0;
-							} else {
-								cellptr->TType = Class->Type;
-	//							cellptr->TIcon = real;
-								cellptr->TIcon = number;
-							}
-						}
+                        /*
+                        **	Place the terrain object down.
+                        */
+                        if (mark == MARK_DOWN) {
+                            if (*this == TEMPLATE_CLEAR1) {
+                                cellptr->TType = TEMPLATE_NONE;
+                                cellptr->TIcon = 0;
+                            } else {
+                                cellptr->TType = Class->Type;
+                                //							cellptr->TIcon = real;
+                                cellptr->TIcon = number;
+                            }
+                        }
 
-						cellptr->Redraw_Objects();
-						cellptr->Recalc_Attributes();
-					}
-				}
-			}
-		}
+                        cellptr->Redraw_Objects();
+                        cellptr->Recalc_Attributes();
+                    }
+                }
+            }
+        }
 
-		/*
-		**	When marking this template down onto the map, the map template numbers are update
-		**	but the template is removed from existence. Make sure that the deletion of the
-		**	template object doesn't also lift the template numbers up from the map.
-		*/
-		if (mark == MARK_DOWN) {
-			noup = true;
-			delete this;
-			noup = false;
-		}
-		return(true);
-	}
-	return(false);
+        /*
+        **	When marking this template down onto the map, the map template numbers are update
+        **	but the template is removed from existence. Make sure that the deletion of the
+        **	template object doesn't also lift the template numbers up from the map.
+        */
+        if (mark == MARK_DOWN) {
+            noup = true;
+            delete this;
+            noup = false;
+        }
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * TemplateClass::new -- Allocates a template object from pool                                 *
@@ -349,15 +339,14 @@ bool TemplateClass::Mark(MarkType mark)
  * HISTORY:                                                                                    *
  *   05/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void * TemplateClass::operator new(size_t )
+void* TemplateClass::operator new(size_t)
 {
-	void * ptr = Templates.Allocate();
-	if (ptr) {
-		((TemplateClass *)ptr)->Set_Active();
-	}
-	return(ptr);
+    void* ptr = Templates.Allocate();
+    if (ptr) {
+        ((TemplateClass*)ptr)->Set_Active();
+    }
+    return (ptr);
 }
-
 
 /***********************************************************************************************
  * TemplateClass::delete -- Returns a template object to the pool.                             *
@@ -374,14 +363,13 @@ void * TemplateClass::operator new(size_t )
  * HISTORY:                                                                                    *
  *   05/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TemplateClass::operator delete(void *ptr)
+void TemplateClass::operator delete(void* ptr)
 {
-	if (ptr) {
-		((TemplateClass *)ptr)->IsActive = false;
-	}
-	Templates.Free((TemplateClass *)ptr);
+    if (ptr) {
+        ((TemplateClass*)ptr)->IsActive = false;
+    }
+    Templates.Free((TemplateClass*)ptr);
 }
-
 
 /***********************************************************************************************
  * TemplateClass::TemplateClass -- Template object constructor.                                *
@@ -399,10 +387,10 @@ void TemplateClass::operator delete(void *ptr)
  * HISTORY:                                                                                    *
  *   05/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-TemplateClass::TemplateClass(TemplateType type, CELL pos) :
-	Class(&TemplateTypeClass::As_Reference(type))
+TemplateClass::TemplateClass(TemplateType type, CELL pos)
+    : Class(&TemplateTypeClass::As_Reference(type))
 {
-	if (pos != -1) {
-		Unlimbo(Cell_Coord(pos));
-	}
+    if (pos != -1) {
+        Unlimbo(Cell_Coord(pos));
+    }
 }

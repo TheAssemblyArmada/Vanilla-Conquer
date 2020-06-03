@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/STRAW.CPP 1     3/03/97 10:25a Joe_bostic $ */
@@ -35,11 +35,9 @@
  *   Straw::~Straw -- Destructor for a straw segment.                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#include	"straw.h"
-#include	<stddef.h>
-#include	<string.h>
-
+#include "straw.h"
+#include <stddef.h>
+#include <string.h>
 
 /***********************************************************************************************
  * Straw::~Straw -- Destructor for a straw segment.                                            *
@@ -59,17 +57,16 @@
  *=============================================================================================*/
 Straw::~Straw(void)
 {
-	if (ChainTo != NULL) {
-		ChainTo->ChainFrom = ChainFrom;
-	}
-	if (ChainFrom != NULL) {
-		ChainFrom->Get_From(ChainTo);
-	}
+    if (ChainTo != NULL) {
+        ChainTo->ChainFrom = ChainFrom;
+    }
+    if (ChainFrom != NULL) {
+        ChainFrom->Get_From(ChainTo);
+    }
 
-	ChainFrom = NULL;
-	ChainTo = NULL;
+    ChainFrom = NULL;
+    ChainTo = NULL;
 }
-
 
 /***********************************************************************************************
  * Straw::Get_From -- Connect one straw segment to another.                                    *
@@ -87,25 +84,24 @@ Straw::~Straw(void)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void Straw::Get_From(Straw * straw)
+void Straw::Get_From(Straw* straw)
 {
-	if (ChainTo != straw) {
-		if (straw != NULL && straw->ChainFrom != NULL) {
-			straw->ChainFrom->Get_From(NULL);
-			straw->ChainFrom = NULL;
-		}
+    if (ChainTo != straw) {
+        if (straw != NULL && straw->ChainFrom != NULL) {
+            straw->ChainFrom->Get_From(NULL);
+            straw->ChainFrom = NULL;
+        }
 
-		if (ChainTo != NULL) {
-			ChainTo->ChainFrom = NULL;
-		}
+        if (ChainTo != NULL) {
+            ChainTo->ChainFrom = NULL;
+        }
 
-		ChainTo = straw;
-		if (ChainTo != NULL) {
-			ChainTo->ChainFrom = this;
-		}
-	}
+        ChainTo = straw;
+        if (ChainTo != NULL) {
+            ChainTo->ChainFrom = this;
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * Straw::Get -- Fetch some data from the straw chain.                                         *
@@ -127,12 +123,10 @@ void Straw::Get_From(Straw * straw)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Straw::Get(void * source, int slen)
+int Straw::Get(void* source, int slen)
 {
-	if (ChainTo != NULL) {
-		return(ChainTo->Get(source, slen));
-	}
-	return(0);
+    if (ChainTo != NULL) {
+        return (ChainTo->Get(source, slen));
+    }
+    return (0);
 }
-
-

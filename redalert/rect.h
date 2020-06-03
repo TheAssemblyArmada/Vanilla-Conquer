@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/RECT.H 1     3/03/97 10:25a Joe_bostic $ */
@@ -32,7 +32,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #ifndef RECT_H
 #define RECT_H
 
@@ -44,31 +43,36 @@
 #ifndef __BORLANDC__
 #ifndef TRUE_FALSE_DEFINED
 #define TRUE_FALSE_DEFINED
-enum {false=0,true=1};
+enum
+{
+    false = 0,
+    true = 1
+};
 typedef int bool;
 #endif
 #endif
 
-#include	<stddef.h>
+#include <stddef.h>
 
 class Rect
 {
-	public:
-		Rect(int x=0, int y=0, int w=0, int h=0);
+public:
+    Rect(int x = 0, int y = 0, int w = 0, int h = 0);
 
-		Rect const Intersect(Rect const & rectangle, int * x=NULL, int * y=NULL) const;
-		friend Rect const Union(Rect const & rect1, Rect const & rect2);
+    Rect const Intersect(Rect const& rectangle, int* x = NULL, int* y = NULL) const;
+    friend Rect const Union(Rect const& rect1, Rect const& rect2);
 
-		bool Is_Valid(void) const;
-		int Size(void) const {return(Width*Height);}
+    bool Is_Valid(void) const;
+    int Size(void) const
+    {
+        return (Width * Height);
+    }
 
-//	private:
-		int X;
-		int Y;
-		int Width;
-		int Height;
+    //	private:
+    int X;
+    int Y;
+    int Width;
+    int Height;
 };
 
-
 #endif
-

@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /***************************************************************************
@@ -32,13 +32,12 @@
  *   Load_Font -- Loads a font from disk.                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "font.h"
 #include <file.h>
 #include <wwmem.h>
 #include <wwstd.h>
 
-#if(IBM)
+#if (IBM)
 #include <fcntl.h>
 #include <io.h>
 
@@ -46,14 +45,12 @@
 
 int FontXSpacing = 0;
 int FontYSpacing = 0;
-void const *FontPtr = NULL;
-char FontWidth  = 8;
+void const* FontPtr = NULL;
+char FontWidth = 8;
 char FontHeight = 8;
 
 // only font.c and set_font.c use the following
-char *FontWidthBlockPtr = NULL;
-
-
+char* FontWidthBlockPtr = NULL;
 
 /***************************************************************************
  * LOAD_FONT -- Loads a font from disk.                                    *
@@ -79,59 +76,57 @@ char *FontWidthBlockPtr = NULL;
  *   02/01/1992 DRD : Added font file verification.                        *
  *   06/29/1994 SKB : modified for 32 bit library                          *
  *=========================================================================*/
-void * __cdecl Load_Font(char const *name)
+void* __cdecl Load_Font(char const* name)
 {
-	char	valid;
-	int		fh;		// DOS file handle for font file.
-	unsigned short	size;		// Size of the data in the file (-2);
-	char	*ptr = NULL;		// Pointer to newly loaded font.
+    char valid;
+    int fh;              // DOS file handle for font file.
+    unsigned short size; // Size of the data in the file (-2);
+    char* ptr = NULL;    // Pointer to newly loaded font.
 
+    fh = Open_File(name, READ);
+    if (fh >= 0) {
+        if (Read_File(fh, (char*)&size, 2) != 2)
+            return (NULL);
 
-
-	fh=Open_File(name,READ);
-	if ( fh>=0 ){
-		if ( Read_File(fh, (char *) &size, 2) != 2) return(NULL);
-
-		ptr = (char *) Alloc(size , MEM_NORMAL );
-		*(short *)ptr = size;
-		Read_File(fh, ptr + 2, size - 2);
-		Close_File(fh);
-	} else {
-		return ((void*)errno);
-	}
-
-
+        ptr = (char*)Alloc(size, MEM_NORMAL);
+        *(short*)ptr = size;
+        Read_File(fh, ptr + 2, size - 2);
+        Close_File(fh);
+    } else {
+        return ((void*)errno);
+    }
 
 #ifdef cuts
-	if (Find_File(name)) {
-		fh = Open_File(name, READ);
-		if (Read_File(fh, (char *) &size, 2) != 2) return(NULL);
+    if (Find_File(name)) {
+        fh = Open_File(name, READ);
+        if (Read_File(fh, (char*)&size, 2) != 2)
+            return (NULL);
 
-		ptr = (char *) Alloc(size, MEM_NORMAL);
-		*(short *)ptr = size;
-		Read_File(fh, ptr + 2, size - 2);
-		Close_File(fh);
-	} else {
-		return (NULL);
-	}
+        ptr = (char*)Alloc(size, MEM_NORMAL);
+        *(short*)ptr = size;
+        Read_File(fh, ptr + 2, size - 2);
+        Close_File(fh);
+    } else {
+        return (NULL);
+    }
 #endif
 
-	//
-	// verify that the file loaded is a valid font file.
-	//
+    //
+    // verify that the file loaded is a valid font file.
+    //
 
-	valid = FALSE;
-	if (*(ptr + 2) == 0) {		// no compression
-		if (*(ptr + 3) == 5) {		// currently only 5 data blocks are used.
-			valid = TRUE;
-		}
-	}
+    valid = FALSE;
+    if (*(ptr + 2) == 0) {     // no compression
+        if (*(ptr + 3) == 5) { // currently only 5 data blocks are used.
+            valid = TRUE;
+        }
+    }
 
-	if ( !valid ) {
-		return (NULL);
-	}
+    if (!valid) {
+        return (NULL);
+    }
 
-   return(ptr);
+    return (ptr);
 }
 
 #endif

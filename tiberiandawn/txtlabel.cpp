@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\txtlabel.cpv   1.9   16 Oct 1995 16:49:44   JOE_BOSTIC  $ */
@@ -34,7 +34,6 @@
 
 #include "function.h"
 
-
 /***********************************************************************************************
  * TextLabelClass -- Constructor                                                               *
  *                                                                                             *
@@ -54,17 +53,16 @@
  * HISTORY:                                                                                    *
  *   03/24/1995 BRR : Created.                                                                 *
  *=============================================================================================*/
-TextLabelClass::TextLabelClass(char *txt, int x, int y, int color,
- TextPrintType style) : GadgetClass(x,y,1,1,0,0)
+TextLabelClass::TextLabelClass(char* txt, int x, int y, int color, TextPrintType style)
+    : GadgetClass(x, y, 1, 1, 0, 0)
 {
-	Text = txt;
-	Color = color;
-	Style = style;
-	UserData = 0;
-	PixWidth = -1;
-	Segments = 0;
+    Text = txt;
+    Color = color;
+    Style = style;
+    UserData = 0;
+    PixWidth = -1;
+    Segments = 0;
 }
-
 
 /***********************************************************************************************
  * Draw_Me -- Graphical update routine                                                         *
@@ -83,13 +81,13 @@ TextLabelClass::TextLabelClass(char *txt, int x, int y, int color,
  *=============================================================================================*/
 int TextLabelClass::Draw_Me(int forced)
 {
-	if (GadgetClass::Draw_Me(forced)) {
-		if (PixWidth == -1) {
-			Fancy_Text_Print("%s", X, Y, Color, TBLACK, Style, Text);
-		} else {
-			Conquer_Clip_Text_Print(Text, X, Y, Color, TBLACK, Style, PixWidth);
-		}
-		return(true);
-	}
-	return(false);
+    if (GadgetClass::Draw_Me(forced)) {
+        if (PixWidth == -1) {
+            Fancy_Text_Print("%s", X, Y, Color, TBLACK, Style, Text);
+        } else {
+            Conquer_Clip_Text_Print(Text, X, Y, Color, TBLACK, Style, PixWidth);
+        }
+        return (true);
+    }
+    return (false);
 }

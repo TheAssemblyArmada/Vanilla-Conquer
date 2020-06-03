@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /*
@@ -36,12 +36,12 @@
 
 #ifndef COORD_A_H
 
-//IDEAL
-//P386
-//MODEL USE32 FLAT
+// IDEAL
+// P386
+// MODEL USE32 FLAT
 
-//global C	Cardinal_To_Fixed	:NEAR
-//global C	Fixed_To_Cardinal	:NEAR
+// global C	Cardinal_To_Fixed	:NEAR
+// global C	Fixed_To_Cardinal	:NEAR
 
 //	CODESEG
 /*
@@ -73,69 +73,68 @@
 unsigned int __cdecl Cardinal_To_Fixed(unsigned base, unsigned cardinal);
 
 #if (0)
-	PROC	Cardinal_To_Fixed C near
-	USES	ebx, edx
+PROC Cardinal_To_Fixed C near USES ebx,
+    edx
 
-	ARG	base:DWORD
-	ARG	cardinal:DWORD
+        ARG base : DWORD ARG cardinal : DWORD
 
-	mov	eax,0FFFFh		; establish default return value
+                                            mov eax,
+                                        0FFFFh;
+establish default return value
 
-	mov	ebx,[base]
-	or	ebx,ebx
-	jz	near ??retneg1		; if base==0, return 65535
+    mov ebx,
+    [base] or ebx, ebx jz near ? ? retneg1;
+if base
+    == 0,
+        return 65535
 
-	mov	eax,[cardinal]		; otherwise, return (cardinal*256)/base
-	shl	eax,8
-	xor	edx,edx
-	div	ebx
+        mov eax,
+        [cardinal];
+otherwise, return (cardinal * 256) / base shl eax, 8 xor edx,
+    edx div ebx
 
-??retneg1:
-	ret
+    ? ? retneg1
+      : ret
 
-	ENDP	Cardinal_To_Fixed
+              ENDP Cardinal_To_Fixed
 #endif
 
-/*
-;***********************************************************************************************
-;* Fixed_To_Cardinal -- Converts a fixed point number into a cardinal number.                  *
-;*                                                                                             *
-;*    Use this routine to convert a fixed point number into a cardinal number.                 *
-;*                                                                                             *
-;* INPUT:   base     -- The base number that the original fixed point number was created from. *
-;*                                                                                             *
-;*          fixed    -- The fixed point number to convert.                                     *
-;*                                                                                             *
-;* OUTPUT:  Returns with the reconverted number.                                               *
-;*                                                                                             *
-;* WARNINGS:   none                                                                            *
-;*                                                                                             *
-;* HISTORY:                                                                                    *
-;*   02/17/1995 BWG : Created.                                                                 *
-;*=============================================================================================*/
+          /*
+          ;***********************************************************************************************
+          ;* Fixed_To_Cardinal -- Converts a fixed point number into a cardinal number.                  *
+          ;*                                                                                             *
+          ;*    Use this routine to convert a fixed point number into a cardinal number.                 *
+          ;*                                                                                             *
+          ;* INPUT:   base     -- The base number that the original fixed point number was created from. *
+          ;*                                                                                             *
+          ;*          fixed    -- The fixed point number to convert.                                     *
+          ;*                                                                                             *
+          ;* OUTPUT:  Returns with the reconverted number.                                               *
+          ;*                                                                                             *
+          ;* WARNINGS:   none                                                                            *
+          ;*                                                                                             *
+          ;* HISTORY:                                                                                    *
+          ;*   02/17/1995 BWG : Created.                                                                 *
+          ;*=============================================================================================*/
 
-unsigned int __cdecl Fixed_To_Cardinal(unsigned base, unsigned fixed);
+          unsigned int __cdecl Fixed_To_Cardinal(unsigned base, unsigned fixed);
 
 #if (0)
-	mov	eax,[base]
-	mul	[fixed]
-	add	eax,080h		; eax = (base * fixed) + 0x80
+mov eax, [base] mul[fixed] add eax, 080h;
+eax = (base * fixed)
+      + 0x80
 
-	test	eax,0FF000000h		; if high byte set, return FFFF
-	jnz	??rneg1
-	shr	eax,8			; else, return eax/256
-	ret
-??rneg1	:
-	mov	eax,0FFFFh		; establish default return value
-	ret
+      test eax,
+    0FF000000h;
+if high
+    byte set, return FFFF jnz ? ? rneg1 shr eax, 8;
+else
+    , return eax / 256 ret ? ? rneg1 : mov eax, 0FFFFh;
+establish default return value ret
 
-	ENDP	Fixed_To_Cardinal
+    ENDP Fixed_To_Cardinal
 
-	END
+        END
 #endif
-
-
-
-
 
 #endif COORD_A_H

@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\cheklist.cpv   2.18   16 Oct 1995 16:48:36   JOE_BOSTIC  $ */
@@ -38,7 +38,6 @@
 
 #include "function.h"
 
-
 /***************************************************************************
  * CheckListClass::CheckListClass -- constructor                           *
  *                                                                         *
@@ -61,13 +60,18 @@
  * HISTORY:                                                                *
  *   02/16/1995 BR : Created.                                              *
  *=========================================================================*/
-CheckListClass::CheckListClass(int id, int x, int y, int w, int h, TextPrintType flags,
-	void const * up, void const * down) :
-	ListClass (id, x, y, w, h, flags, up, down)
+CheckListClass::CheckListClass(int id,
+                               int x,
+                               int y,
+                               int w,
+                               int h,
+                               TextPrintType flags,
+                               void const* up,
+                               void const* down)
+    : ListClass(id, x, y, w, h, flags, up, down)
 {
-	IsReadOnly = false;
+    IsReadOnly = false;
 }
-
 
 /***************************************************************************
  * CheckListClass::Check_Item -- [un]checks an items                       *
@@ -87,11 +91,10 @@ CheckListClass::CheckListClass(int id, int x, int y, int w, int h, TextPrintType
  *=========================================================================*/
 void CheckListClass::Check_Item(int index, int checked)
 {
-	if (List[index]) {
-		((char &)List[index][0]) = checked ? CHECK_CHAR : UNCHECK_CHAR;
-	}
+    if (List[index]) {
+        ((char&)List[index][0]) = checked ? CHECK_CHAR : UNCHECK_CHAR;
+    }
 }
-
 
 /***************************************************************************
  * CheckListClass::Is_Checked -- returns checked state of an item          *
@@ -110,12 +113,11 @@ void CheckListClass::Check_Item(int index, int checked)
  *=========================================================================*/
 int CheckListClass::Is_Checked(int index) const
 {
-	if (List[index]) {
-		return(List[index][0] == CHECK_CHAR);
-	}
-	return(false);
+    if (List[index]) {
+        return (List[index][0] == CHECK_CHAR);
+    }
+    return (false);
 }
-
 
 /***************************************************************************
  * CheckListClass::Action -- action function for this class                *
@@ -133,33 +135,33 @@ int CheckListClass::Is_Checked(int index) const
  * HISTORY:                                                                *
  *   02/16/1995 BR : Created.                                              *
  *=========================================================================*/
-int CheckListClass::Action(unsigned flags, KeyNumType &key)
+int CheckListClass::Action(unsigned flags, KeyNumType& key)
 {
-	int rc;
+    int rc;
 
-	/*
-	** If this is a read-only list, it's a display-only device
-	*/
-	if (IsReadOnly) {
-		return(false);
-	}
+    /*
+    ** If this is a read-only list, it's a display-only device
+    */
+    if (IsReadOnly) {
+        return (false);
+    }
 
-	/*
-	**	Invoke parents Action first, so it can set the SelectedIndex if needed.
-	*/
-	rc =  ListClass::Action(flags, key);
+    /*
+    **	Invoke parents Action first, so it can set the SelectedIndex if needed.
+    */
+    rc = ListClass::Action(flags, key);
 
-	/*
-	**	Now, if this event was a left-press, toggle the checked state of the
-	**	current item.
-	*/
-	if (flags & LEFTPRESS) {
-		if (Is_Checked(SelectedIndex)) {
-			Check_Item(SelectedIndex,0);
-		} else {
-			Check_Item(SelectedIndex,1);
-		}
-	}
+    /*
+    **	Now, if this event was a left-press, toggle the checked state of the
+    **	current item.
+    */
+    if (flags & LEFTPRESS) {
+        if (Is_Checked(SelectedIndex)) {
+            Check_Item(SelectedIndex, 0);
+        } else {
+            Check_Item(SelectedIndex, 1);
+        }
+    }
 
-	return(rc);
+    return (rc);
 }

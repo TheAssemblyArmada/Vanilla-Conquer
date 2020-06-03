@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\object.cpv   2.17   16 Oct 1995 16:49:22   JOE_BOSTIC  $ */
@@ -77,22 +77,18 @@
 
 #include "function.h"
 
-
 /*
 **	Selected objects have a special marking box around them. This is the shapes that are
 **	used for this purpose.
 */
-void const * ObjectTypeClass::SelectShapes = 0;
+void const* ObjectTypeClass::SelectShapes = 0;
 
-void const * ObjectTypeClass::PipShapes = 0;
-
+void const* ObjectTypeClass::PipShapes = 0;
 
 bool ObjectClass::Is_Infantry(void) const
 {
-	return(false);
+    return (false);
 }
-
-
 
 /***********************************************************************************************
  * ObjectTypeClass::ObjectTypeClass -- Normal constructor for object type class objects.       *
@@ -110,35 +106,33 @@ bool ObjectClass::Is_Infantry(void) const
  * HISTORY:                                                                                    *
  *   03/23/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-ObjectTypeClass::ObjectTypeClass(
-						bool is_sentient,
-						bool is_flammable,
-						bool is_crushable,
-						bool is_stealthy,
-						bool is_selectable,
-						bool is_legal_target,
-						bool is_insignificant,
-						bool is_immune,
-						int name,
-						char const *ini,
-						ArmorType armor,
-						unsigned short strength) :
-	AbstractTypeClass(name, ini)
+ObjectTypeClass::ObjectTypeClass(bool is_sentient,
+                                 bool is_flammable,
+                                 bool is_crushable,
+                                 bool is_stealthy,
+                                 bool is_selectable,
+                                 bool is_legal_target,
+                                 bool is_insignificant,
+                                 bool is_immune,
+                                 int name,
+                                 char const* ini,
+                                 ArmorType armor,
+                                 unsigned short strength)
+    : AbstractTypeClass(name, ini)
 {
-	IsSentient = is_sentient;
-	IsFlammable = is_flammable;
-	IsCrushable = is_crushable;
-	IsStealthy = is_stealthy;
-	IsSelectable = is_selectable;
-	IsLegalTarget = is_legal_target;
-	IsInsignificant = is_insignificant;
-	IsImmune = is_immune;
-	Armor = armor;
-	MaxStrength = strength;
-	ImageData = NULL;
-	//RadarIcon = NULL;
+    IsSentient = is_sentient;
+    IsFlammable = is_flammable;
+    IsCrushable = is_crushable;
+    IsStealthy = is_stealthy;
+    IsSelectable = is_selectable;
+    IsLegalTarget = is_legal_target;
+    IsInsignificant = is_insignificant;
+    IsImmune = is_immune;
+    Armor = armor;
+    MaxStrength = strength;
+    ImageData = NULL;
+    // RadarIcon = NULL;
 }
-
 
 /***********************************************************************************************
  * ObjectTypeClass::Max_Pips -- Fetches the maximum pips allowed for this object.              *
@@ -157,9 +151,8 @@ ObjectTypeClass::ObjectTypeClass(
  *=============================================================================================*/
 int ObjectTypeClass::Max_Pips(void) const
 {
-	return(0);
+    return (0);
 }
-
 
 /***********************************************************************************************
  * ObjectTypeClass::Dimensions -- Gets the dimensions of the object in pixels.                 *
@@ -179,12 +172,11 @@ int ObjectTypeClass::Max_Pips(void) const
  * HISTORY:                                                                                    *
  *   07/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void ObjectTypeClass::Dimensions(int &width, int &height) const
+void ObjectTypeClass::Dimensions(int& width, int& height) const
 {
-	width = 10;
-	height = 10;
+    width = 10;
+    height = 10;
 }
-
 
 /***********************************************************************************************
  * ObjectTypeClass::Cost_Of -- Returns the cost to buy this unit.                              *
@@ -204,9 +196,8 @@ void ObjectTypeClass::Dimensions(int &width, int &height) const
  *=============================================================================================*/
 int ObjectTypeClass::Cost_Of(void) const
 {
-	return(0);
+    return (0);
 }
-
 
 /***********************************************************************************************
  * ObjectTypeClass::Time_To_Build -- Fetches the time to construct this object.                *
@@ -223,11 +214,10 @@ int ObjectTypeClass::Cost_Of(void) const
  * HISTORY:                                                                                    *
  *   07/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int ObjectTypeClass::Time_To_Build(HousesType ) const
+int ObjectTypeClass::Time_To_Build(HousesType) const
 {
-	return(0);
+    return (0);
 }
-
 
 /***********************************************************************************************
  * ObjectTypeClass::Who_Can_Build_Me -- Finds the factory building that can build this object. *
@@ -243,11 +233,10 @@ int ObjectTypeClass::Time_To_Build(HousesType ) const
  * HISTORY:                                                                                    *
  *   07/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-BuildingClass * ObjectTypeClass::Who_Can_Build_Me(bool, bool, HousesType) const
+BuildingClass* ObjectTypeClass::Who_Can_Build_Me(bool, bool, HousesType) const
 {
-	return(NULL);
+    return (NULL);
 }
-
 
 /***********************************************************************************************
  * ObjectTypeClass::Get_Cameo_Data -- Fetches pointer to cameo data for this object type.      *
@@ -265,12 +254,10 @@ BuildingClass * ObjectTypeClass::Who_Can_Build_Me(bool, bool, HousesType) const
  * HISTORY:                                                                                    *
  *   07/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void const * ObjectTypeClass::Get_Cameo_Data(void) const
+void const* ObjectTypeClass::Get_Cameo_Data(void) const
 {
-	return(NULL);
+    return (NULL);
 }
-
-
 
 /***********************************************************************************************
  * ObjectClass::ObjectClass -- Default constructor for objects.                                *
@@ -291,19 +278,18 @@ void const * ObjectTypeClass::Get_Cameo_Data(void) const
  *=============================================================================================*/
 ObjectClass::ObjectClass(void)
 {
-	Coord = 0xFFFFFFFFL;				// Some bogus illegal value.
-	Next = 0;							// Not part of any object list.
-	Trigger = 0;						// No associated trigger.
-	IsToDamage = false;
-	IsToDisplay = false;				// Redraw is presumed unnecessary.
-	IsInLimbo = true;					// Always presumed to start in limbo state.
-	IsSelected = false;				// Limboed units cannot be selected.
-	IsDown = false;					// Limboed units cannot be on the map.
-	IsAnimAttached = false;			// Anim is not attached.
-	Strength = 255;					// nominal strength value
-	IsSelectedMask = 0;				// Mask showing who has selected this object
+    Coord = 0xFFFFFFFFL; // Some bogus illegal value.
+    Next = 0;            // Not part of any object list.
+    Trigger = 0;         // No associated trigger.
+    IsToDamage = false;
+    IsToDisplay = false;    // Redraw is presumed unnecessary.
+    IsInLimbo = true;       // Always presumed to start in limbo state.
+    IsSelected = false;     // Limboed units cannot be selected.
+    IsDown = false;         // Limboed units cannot be on the map.
+    IsAnimAttached = false; // Anim is not attached.
+    Strength = 255;         // nominal strength value
+    IsSelectedMask = 0;     // Mask showing who has selected this object
 }
-
 
 /***********************************************************************************************
  * ObjectClass::What_Am_I -- RTTI query of this object type.                                   *
@@ -323,9 +309,8 @@ ObjectClass::ObjectClass(void)
  *=============================================================================================*/
 RTTIType ObjectClass::What_Am_I(void) const
 {
-	return(RTTI_OBJECT);
+    return (RTTI_OBJECT);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::What_Action -- Deteremines what action to perform on specified object.         *
@@ -345,11 +330,10 @@ RTTIType ObjectClass::What_Am_I(void) const
  * HISTORY:                                                                                    *
  *   07/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-ActionType ObjectClass::What_Action(ObjectClass *) const
+ActionType ObjectClass::What_Action(ObjectClass*) const
 {
-	return(ACTION_NONE);
+    return (ACTION_NONE);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::What_Action -- Returns with the action to perform for this object.             *
@@ -372,9 +356,8 @@ ActionType ObjectClass::What_Action(ObjectClass *) const
  *=============================================================================================*/
 ActionType ObjectClass::What_Action(CELL) const
 {
-	return(ACTION_NONE);
+    return (ACTION_NONE);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::In_Which_Layer -- Fetches what layer this object is located in.                *
@@ -393,9 +376,8 @@ ActionType ObjectClass::What_Action(CELL) const
  *=============================================================================================*/
 LayerType ObjectClass::In_Which_Layer(void) const
 {
-	return(LAYER_GROUND);
+    return (LAYER_GROUND);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Is_Techno -- Checks to see if this object is a techno type.                    *
@@ -416,9 +398,8 @@ LayerType ObjectClass::In_Which_Layer(void) const
  *=============================================================================================*/
 bool ObjectClass::Is_Techno(void) const
 {
-	return(false);
+    return (false);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Get_Ownable -- Fetches the house owner legality options for this object.       *
@@ -437,9 +418,8 @@ bool ObjectClass::Is_Techno(void) const
  *=============================================================================================*/
 unsigned char ObjectClass::Get_Ownable(void) const
 {
-	return(0xff);
+    return (0xff);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Can_Repair -- Queries whether this object can be repaired.                     *
@@ -458,9 +438,8 @@ unsigned char ObjectClass::Get_Ownable(void) const
  *=============================================================================================*/
 bool ObjectClass::Can_Repair(void) const
 {
-	return(false);
+    return (false);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Can_Demolish -- Queries whether this object can be sold back.                  *
@@ -479,15 +458,13 @@ bool ObjectClass::Can_Repair(void) const
  *=============================================================================================*/
 bool ObjectClass::Can_Demolish(void) const
 {
-	return(false);
+    return (false);
 }
-
 
 bool ObjectClass::Can_Demolish_Unit(void) const
 {
-	return(false);
+    return (false);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Can_Player_Fire -- Can the player give this object an attack mission?          *
@@ -507,9 +484,8 @@ bool ObjectClass::Can_Demolish_Unit(void) const
  *=============================================================================================*/
 bool ObjectClass::Can_Player_Fire(void) const
 {
-	return(false);
+    return (false);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Can_Player_Move -- Can the player give this object a movement mission?         *
@@ -529,9 +505,8 @@ bool ObjectClass::Can_Player_Fire(void) const
  *=============================================================================================*/
 bool ObjectClass::Can_Player_Move(void) const
 {
-	return(false);
+    return (false);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Target_Coord -- Fetches the coordinate if this object is a target.             *
@@ -551,28 +526,58 @@ bool ObjectClass::Can_Player_Move(void) const
  *=============================================================================================*/
 COORDINATE ObjectClass::Target_Coord(void) const
 {
-	return(Center_Coord());
+    return (Center_Coord());
 }
 
-COORDINATE ObjectClass::Center_Coord(void) const {return Coord;};
-COORDINATE ObjectClass::Render_Coord(void) const {return(Center_Coord());}
-COORDINATE ObjectClass::Docking_Coord(void) const {return(Center_Coord());}
-COORDINATE ObjectClass::Sort_Y(void) const {return Coord;};
-COORDINATE ObjectClass::Fire_Coord(int ) const {return Coord;};
-void ObjectClass::Record_The_Kill(TechnoClass * ) {};
-void ObjectClass::Do_Shimmer(void) {};
-int ObjectClass::Exit_Object(TechnoClass *) {return 0;};
-void ObjectClass::Hidden(void) {};
-void ObjectClass::Look(bool ) {};
-void ObjectClass::Active_Click_With(ActionType , ObjectClass *) {};
-void ObjectClass::Active_Click_With(ActionType , CELL ) {};
-void ObjectClass::Clicked_As_Target(HousesType house, int) {}; // 2019/09/20 JAS - Added record of who clicked on the object
-bool ObjectClass::In_Range(COORDINATE , int) const {return false;};
-int ObjectClass::Weapon_Range(int) const {return 0x0000;};
-TARGET ObjectClass::As_Target(void) const {return TARGET_NONE;};
-void ObjectClass::Scatter(COORDINATE , bool, bool) {};
-bool ObjectClass::Catch_Fire(void) {return false;};
-
+COORDINATE ObjectClass::Center_Coord(void) const
+{
+    return Coord;
+};
+COORDINATE ObjectClass::Render_Coord(void) const
+{
+    return (Center_Coord());
+}
+COORDINATE ObjectClass::Docking_Coord(void) const
+{
+    return (Center_Coord());
+}
+COORDINATE ObjectClass::Sort_Y(void) const
+{
+    return Coord;
+};
+COORDINATE ObjectClass::Fire_Coord(int) const
+{
+    return Coord;
+};
+void ObjectClass::Record_The_Kill(TechnoClass*){};
+void ObjectClass::Do_Shimmer(void){};
+int ObjectClass::Exit_Object(TechnoClass*)
+{
+    return 0;
+};
+void ObjectClass::Hidden(void){};
+void ObjectClass::Look(bool){};
+void ObjectClass::Active_Click_With(ActionType, ObjectClass*){};
+void ObjectClass::Active_Click_With(ActionType, CELL){};
+void ObjectClass::Clicked_As_Target(HousesType house,
+                                    int){}; // 2019/09/20 JAS - Added record of who clicked on the object
+bool ObjectClass::In_Range(COORDINATE, int) const
+{
+    return false;
+};
+int ObjectClass::Weapon_Range(int) const
+{
+    return 0x0000;
+};
+TARGET ObjectClass::As_Target(void) const
+{
+    return TARGET_NONE;
+};
+void ObjectClass::Scatter(COORDINATE, bool, bool){};
+bool ObjectClass::Catch_Fire(void)
+{
+    return false;
+};
 
 /***********************************************************************************************
  * ObjectClass::Fire_Out -- Informs object that attached animation has finished.               *
@@ -592,7 +597,6 @@ bool ObjectClass::Catch_Fire(void) {return false;};
 void ObjectClass::Fire_Out(void)
 {
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Value -- Fetches the target value of this object.                              *
@@ -615,9 +619,8 @@ void ObjectClass::Fire_Out(void)
  *=============================================================================================*/
 int ObjectClass::Value(void) const
 {
-	return(0);
+    return (0);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Get_Mission -- Fetches the current mission of this object.                     *
@@ -637,9 +640,8 @@ int ObjectClass::Value(void) const
  *=============================================================================================*/
 MissionType ObjectClass::Get_Mission(void) const
 {
-	return(MISSION_NONE);
+    return (MISSION_NONE);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Repair -- Handles object repair control.                                       *
@@ -660,10 +662,9 @@ MissionType ObjectClass::Get_Mission(void) const
  * HISTORY:                                                                                    *
  *   07/24/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void ObjectClass::Repair(int )
+void ObjectClass::Repair(int)
 {
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Sell_Back -- Sells the object -- if possible.                                  *
@@ -684,10 +685,9 @@ void ObjectClass::Repair(int )
  * HISTORY:                                                                                    *
  *   07/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void ObjectClass::Sell_Back(int )
+void ObjectClass::Sell_Back(int)
 {
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Move -- Moves (by force) the object in the desired direction.                  *
@@ -707,18 +707,18 @@ void ObjectClass::Sell_Back(int )
  *=============================================================================================*/
 void ObjectClass::Move(FacingType facing)
 {
-	COORDINATE	coord;
+    COORDINATE coord;
 
-	Mark(MARK_UP);
-	coord = Adjacent_Cell(Coord, facing);
-	if (Can_Enter_Cell(Coord_Cell(coord)) == MOVE_OK) {
-		Coord = coord;
-	}
-	Mark(MARK_DOWN);
+    Mark(MARK_UP);
+    coord = Adjacent_Cell(Coord, facing);
+    if (Can_Enter_Cell(Coord_Cell(coord)) == MOVE_OK) {
+        Coord = coord;
+    }
+    Mark(MARK_DOWN);
 }
 
 // Object selection list is switched with player context for GlyphX. ST - 4/17/2019 9:42AM
-extern void Logic_Switch_Player_Context(ObjectClass *object);
+extern void Logic_Switch_Player_Context(ObjectClass* object);
 
 /***********************************************************************************************
  * ObjectClass::Unselect -- This will un-select the object if it was selected.                 *
@@ -737,30 +737,30 @@ extern void Logic_Switch_Player_Context(ObjectClass *object);
  *=============================================================================================*/
 void ObjectClass::Unselect(void)
 {
-	//if (IsSelected) { 
-	// Updated to function for multiplayer - 6/26/2019 JAS
-	if (Is_Selected_By_Player()) {
-		
-		if (In_Which_Layer()==LAYER_GROUND){
-			Mark(MARK_OVERLAP_UP);
-		}
+    // if (IsSelected) {
+    // Updated to function for multiplayer - 6/26/2019 JAS
+    if (Is_Selected_By_Player()) {
 
-		//IsSelected = false;
-		// Updated to function for multiplayer - 6/26/2019 JAS
-		Set_Unselected_By_Player();
+        if (In_Which_Layer() == LAYER_GROUND) {
+            Mark(MARK_OVERLAP_UP);
+        }
 
-		if (In_Which_Layer()==LAYER_GROUND){
-			Mark(MARK_OVERLAP_DOWN);
-		}
-	}
+        // IsSelected = false;
+        // Updated to function for multiplayer - 6/26/2019 JAS
+        Set_Unselected_By_Player();
+
+        if (In_Which_Layer() == LAYER_GROUND) {
+            Mark(MARK_OVERLAP_DOWN);
+        }
+    }
 }
 
 /***********************************************************************************************
  * ObjectClass::Unselect_All_Players --	This will un-select the object if it was selected    *
-*											from all players															  *
+ *											from all players *
  *                                                                                             *
  *    This routine brings a currently selected object into an unselected state for all players.*
-*		This is needed when  the object is destroyed.														  *
+ *		This is needed when  the object is destroyed.														  *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
@@ -773,26 +773,26 @@ void ObjectClass::Unselect(void)
  *=============================================================================================*/
 void ObjectClass::Unselect_All_Players(void)
 {
-	CurrentObject.Delete_All(this);
+    CurrentObject.Delete_All(this);
 
-	if (In_Which_Layer() == LAYER_GROUND) {
-		Mark(MARK_OVERLAP_UP);
-	}
+    if (In_Which_Layer() == LAYER_GROUND) {
+        Mark(MARK_OVERLAP_UP);
+    }
 
-	IsSelected = false;
-	IsSelectedMask = 0;
+    IsSelected = false;
+    IsSelectedMask = 0;
 
-	if (In_Which_Layer() == LAYER_GROUND) {
-		Mark(MARK_OVERLAP_DOWN);
-	}
+    if (In_Which_Layer() == LAYER_GROUND) {
+        Mark(MARK_OVERLAP_DOWN);
+    }
 }
 
 /***********************************************************************************************
  * ObjectClass::Unselect_All_Players_Except_Owner --	This will un-select the object if it was *
-*											selected for all players except for the object's owner		  *
+ *											selected for all players except for the object's owner		  *
  *                                                                                             *
  *    This routine brings a currently selected object into an unselected state for all players.*
-*		This is needed when the object cloaks.																	  *
+ *		This is needed when the object cloaks.																	  *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
@@ -805,29 +805,25 @@ void ObjectClass::Unselect_All_Players(void)
  *=============================================================================================*/
 void ObjectClass::Unselect_All_Players_Except_Owner(void)
 {
-	CurrentObject.Delete_All_Except(this, Owner());
+    CurrentObject.Delete_All_Except(this, Owner());
 
-	if (In_Which_Layer() == LAYER_GROUND) {
-		Mark(MARK_OVERLAP_UP);
-	}
+    if (In_Which_Layer() == LAYER_GROUND) {
+        Mark(MARK_OVERLAP_UP);
+    }
 
-	int owner_mask = 1 << Owner();
-	if (IsSelectedMask & owner_mask)
-	{
-		IsSelected = true;
-		IsSelectedMask = owner_mask;
-	}
-	else
-	{
-		IsSelected = false;
-		IsSelectedMask = 0;
-	}
+    int owner_mask = 1 << Owner();
+    if (IsSelectedMask & owner_mask) {
+        IsSelected = true;
+        IsSelectedMask = owner_mask;
+    } else {
+        IsSelected = false;
+        IsSelectedMask = 0;
+    }
 
-	if (In_Which_Layer() == LAYER_GROUND) {
-		Mark(MARK_OVERLAP_DOWN);
-	}
+    if (In_Which_Layer() == LAYER_GROUND) {
+        Mark(MARK_OVERLAP_DOWN);
+    }
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Select -- Try to make this object the "selected" object.                       *
@@ -849,44 +845,46 @@ void ObjectClass::Unselect_All_Players_Except_Owner(void)
  *=============================================================================================*/
 bool ObjectClass::Select(bool allow_mixed)
 {
-	//	if (!Debug_Map && (IsSelected || !Class_Of().IsSelectable)) return(false);
-	// Updated to function for multiplayer - 6/26/2019 JAS
-	if (!Debug_Map && (Is_Selected_By_Player() || !Class_Of().IsSelectable)) return(false);
+    //	if (!Debug_Map && (IsSelected || !Class_Of().IsSelectable)) return(false);
+    // Updated to function for multiplayer - 6/26/2019 JAS
+    if (!Debug_Map && (Is_Selected_By_Player() || !Class_Of().IsSelectable))
+        return (false);
 
-	if (Can_Player_Move() && Is_Techno() && ((TechnoClass *)this)->IsALoaner) return(false);
+    if (Can_Player_Move() && Is_Techno() && ((TechnoClass*)this)->IsALoaner)
+        return (false);
 
-	/*
-	**	Don't allow selection of object when in building placement mode.
-	*/
-	if (Map.PendingObject) return(false);
+    /*
+    **	Don't allow selection of object when in building placement mode.
+    */
+    if (Map.PendingObject)
+        return (false);
 
-	if (!allow_mixed) {
-		/*
-		**	If selecting an object of a different house than the player's, make sure that
-		**	the entire selection list is cleared.
-		*/
-		for (int i = 0; i < CurrentObject.Count(); i++) {
-			if (Owner() != CurrentObject[i]->Owner()) {
-				Unselect_All();
-				break;
-			}
-		}
-	}
+    if (!allow_mixed) {
+        /*
+        **	If selecting an object of a different house than the player's, make sure that
+        **	the entire selection list is cleared.
+        */
+        for (int i = 0; i < CurrentObject.Count(); i++) {
+            if (Owner() != CurrentObject[i]->Owner()) {
+                Unselect_All();
+                break;
+            }
+        }
+    }
 
-	if (In_Which_Layer()==LAYER_GROUND){
-		Mark(MARK_OVERLAP_UP);
-	}
+    if (In_Which_Layer() == LAYER_GROUND) {
+        Mark(MARK_OVERLAP_UP);
+    }
 
-	//IsSelected = true;
-	// Updated to function for multiplayer - 6/26/2019 JAS
-	Set_Selected_By_Player();
+    // IsSelected = true;
+    // Updated to function for multiplayer - 6/26/2019 JAS
+    Set_Selected_By_Player();
 
-	if (In_Which_Layer()==LAYER_GROUND){
-		Mark(MARK_OVERLAP_DOWN);
-	}
-	return(true);
+    if (In_Which_Layer() == LAYER_GROUND) {
+        Mark(MARK_OVERLAP_DOWN);
+    }
+    return (true);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Render -- Displays the object onto the map.                                    *
@@ -907,68 +905,70 @@ bool ObjectClass::Select(bool allow_mixed)
  *=============================================================================================*/
 bool ObjectClass::Render(bool forced)
 {
-	int	x,y;
-	COORDINATE	coord = Render_Coord();
-	CELL	cell = Coord_Cell(coord);
+    int x, y;
+    COORDINATE coord = Render_Coord();
+    CELL cell = Coord_Cell(coord);
 
-	if (Debug_Map || Debug_Unshroud || ((forced || IsToDisplay) && IsDown && !IsInLimbo)) {
-		IsToDisplay = false;
+    if (Debug_Map || Debug_Unshroud || ((forced || IsToDisplay) && IsDown && !IsInLimbo)) {
+        IsToDisplay = false;
 
-		/*
-		**	Draw the path as lines on the map if so directed and the object is one that
-		**	contains a path.
-		*/
+        /*
+        **	Draw the path as lines on the map if so directed and the object is one that
+        **	contains a path.
+        */
 
-		//if (Special.IsShowPath && IsSelected) {
-		// Updated to function for multiplayer - 6/26/2019 JAS
-		if (Special.IsShowPath && Is_Selected_By_Player()) {
-			switch (What_Am_I()) {
-				case RTTI_INFANTRY:
-				case RTTI_UNIT:
-					FootClass * foot = (FootClass *)this;
-					CELL cell;
-					int oldx, oldy;
+        // if (Special.IsShowPath && IsSelected) {
+        // Updated to function for multiplayer - 6/26/2019 JAS
+        if (Special.IsShowPath && Is_Selected_By_Player()) {
+            switch (What_Am_I()) {
+            case RTTI_INFANTRY:
+            case RTTI_UNIT:
+                FootClass* foot = (FootClass*)this;
+                CELL cell;
+                int oldx, oldy;
 
-					if (foot->Head_To_Coord() && foot->Path[0] != FACING_NONE) {
-						cell = Adjacent_Cell(Coord_Cell(foot->Head_To_Coord()), (FacingType)((foot->Path[0] + FACING_S) & FACING_NW));
-						Map.Coord_To_Pixel(Cell_Coord(cell), oldx, oldy);
-						for (int index = 0; index < MAX_PATH; index++) {
-							if (foot->Path[index] == FACING_NONE) break;
-							cell = Adjacent_Cell(cell, foot->Path[index]);
-							if (Map.Coord_To_Pixel(Cell_Coord(cell), x, y)) {
-								LogicPage->Draw_Line(oldx, 8+oldy, x, 8+y, BLACK);
-							}
-							oldx = x;
-							oldy = y;
-						}
-					}
-					break;
-			}
-		}
+                if (foot->Head_To_Coord() && foot->Path[0] != FACING_NONE) {
+                    cell = Adjacent_Cell(Coord_Cell(foot->Head_To_Coord()),
+                                         (FacingType)((foot->Path[0] + FACING_S) & FACING_NW));
+                    Map.Coord_To_Pixel(Cell_Coord(cell), oldx, oldy);
+                    for (int index = 0; index < MAX_PATH; index++) {
+                        if (foot->Path[index] == FACING_NONE)
+                            break;
+                        cell = Adjacent_Cell(cell, foot->Path[index]);
+                        if (Map.Coord_To_Pixel(Cell_Coord(cell), x, y)) {
+                            LogicPage->Draw_Line(oldx, 8 + oldy, x, 8 + y, BLACK);
+                        }
+                        oldx = x;
+                        oldy = y;
+                    }
+                }
+                break;
+            }
+        }
 
-		if (Map.Coord_To_Pixel(coord, x, y)) {
+        if (Map.Coord_To_Pixel(coord, x, y)) {
 
-			/*
-			**	Draw the object itself
-			*/
-			Draw_It(x, y, WINDOW_TACTICAL);
+            /*
+            **	Draw the object itself
+            */
+            Draw_It(x, y, WINDOW_TACTICAL);
 
 #ifdef SCENARIO_EDITOR
-			/*
-			**	Draw the trigger attached to the object. Draw_It is window-
-			**	relative, so add the window's x-coord to 'x'.
-			*/
-			if (Debug_Map && Trigger) {
-				Fancy_Text_Print(Trigger->Get_Name(), x + (WinX<<3), y, PINK, TBLACK, TPF_CENTER | TPF_NOSHADOW | TPF_6POINT);
-			}
+            /*
+            **	Draw the trigger attached to the object. Draw_It is window-
+            **	relative, so add the window's x-coord to 'x'.
+            */
+            if (Debug_Map && Trigger) {
+                Fancy_Text_Print(
+                    Trigger->Get_Name(), x + (WinX << 3), y, PINK, TBLACK, TPF_CENTER | TPF_NOSHADOW | TPF_6POINT);
+            }
 #endif
 
-			return(true);
-		}
-	}
-	return(false);
+            return (true);
+        }
+    }
+    return (false);
 }
-
 
 #ifdef CHEAT_KEYS
 /***********************************************************************************************
@@ -986,21 +986,22 @@ bool ObjectClass::Render(bool forced)
  * HISTORY:                                                                                    *
  *   06/02/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void ObjectClass::Debug_Dump(MonoClass *mono) const
+void ObjectClass::Debug_Dump(MonoClass* mono) const
 {
-	mono->Text_Print("X", 16 + (IsToDisplay?2:0), 18);
-	mono->Text_Print("X", 16 + (IsActive?2:0), 3);
-	mono->Text_Print("X", 16 + (IsInLimbo?2:0), 4);
-	//mono->Text_Print("X", 16 + (IsSelected?2:0), 7);
-	// Updated to function for multiplayer - 6/26/2019 JAS
-	mono->Text_Print("X", 16 + (Is_Selected_By_Player() ?2:0), 7);
-	mono->Set_Cursor(56, 1);
-	mono->Printf("%08lX", Coord);
-	mono->Set_Cursor(14, 1);mono->Printf("[%04X]", As_Target());
-	mono->Set_Cursor(20, 3);mono->Printf("%2d[%d]", Strength, Class_Of().MaxStrength);
+    mono->Text_Print("X", 16 + (IsToDisplay ? 2 : 0), 18);
+    mono->Text_Print("X", 16 + (IsActive ? 2 : 0), 3);
+    mono->Text_Print("X", 16 + (IsInLimbo ? 2 : 0), 4);
+    // mono->Text_Print("X", 16 + (IsSelected?2:0), 7);
+    // Updated to function for multiplayer - 6/26/2019 JAS
+    mono->Text_Print("X", 16 + (Is_Selected_By_Player() ? 2 : 0), 7);
+    mono->Set_Cursor(56, 1);
+    mono->Printf("%08lX", Coord);
+    mono->Set_Cursor(14, 1);
+    mono->Printf("[%04X]", As_Target());
+    mono->Set_Cursor(20, 3);
+    mono->Printf("%2d[%d]", Strength, Class_Of().MaxStrength);
 }
 #endif
-
 
 /***********************************************************************************************
  * ObjectTypeClass::Occupy_List -- Returns with simple occupation list for object.             *
@@ -1019,12 +1020,11 @@ void ObjectClass::Debug_Dump(MonoClass *mono) const
  * HISTORY:                                                                                    *
  *   05/28/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-short const * ObjectTypeClass::Occupy_List(bool) const
+short const* ObjectTypeClass::Occupy_List(bool) const
 {
-	static short const _list[] = {0, REFRESH_EOL};
-	return(_list);
+    static short const _list[] = {0, REFRESH_EOL};
+    return (_list);
 }
-
 
 /***********************************************************************************************
  * ObjectTypeClass::Overlap_List -- Returns a pointer to a simple overlap list.                *
@@ -1043,12 +1043,11 @@ short const * ObjectTypeClass::Occupy_List(bool) const
  * HISTORY:                                                                                    *
  *   05/28/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-short const * ObjectTypeClass::Overlap_List(void) const
+short const* ObjectTypeClass::Overlap_List(void) const
 {
-	static short const _list[] = {REFRESH_EOL};
-	return(_list);
+    static short const _list[] = {REFRESH_EOL};
+    return (_list);
 }
-
 
 /***********************************************************************************************
  * ObjectTypeClass::One_Time -- Handles one time processing for object types.                  *
@@ -1067,18 +1066,17 @@ short const * ObjectTypeClass::Overlap_List(void) const
  *=============================================================================================*/
 void ObjectTypeClass::One_Time(void)
 {
-	SelectShapes = MixFileClass::Retrieve("SELECT.SHP");
+    SelectShapes = MixFileClass::Retrieve("SELECT.SHP");
 #if (FRENCH)
-	PipShapes = Hires_Retrieve("PIPS_F.SHP");
+    PipShapes = Hires_Retrieve("PIPS_F.SHP");
 #else
 #if (GERMAN)
-	PipShapes = Hires_Retrieve("PIPS_G.SHP");
+    PipShapes = Hires_Retrieve("PIPS_G.SHP");
 #else
-	PipShapes = Hires_Retrieve("PIPS.SHP");
+    PipShapes = Hires_Retrieve("PIPS.SHP");
 #endif
 #endif
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Mark_For_Redraw -- Marks object and system for redraw.                         *
@@ -1103,18 +1101,17 @@ void ObjectTypeClass::One_Time(void)
  *=============================================================================================*/
 void ObjectClass::Mark_For_Redraw(void)
 {
-	if (!IsToDisplay) {
-		IsToDisplay = true;
+    if (!IsToDisplay) {
+        IsToDisplay = true;
 
-		/*
-		**	This tells the map rendering logic to "go through the motions" and call the
-		**	rendering function. In the rendering function, it will sort out what gets
-		**	rendered and what doesn't.
-		*/
-		Map.Flag_To_Redraw(false);
-	}
+        /*
+        **	This tells the map rendering logic to "go through the motions" and call the
+        **	rendering function. In the rendering function, it will sort out what gets
+        **	rendered and what doesn't.
+        */
+        Map.Flag_To_Redraw(false);
+    }
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Limbo -- Brings the object into a state of limbo.                              *
@@ -1134,35 +1131,34 @@ void ObjectClass::Mark_For_Redraw(void)
  *=============================================================================================*/
 bool ObjectClass::Limbo(void)
 {
-	if (GameActive && !IsInLimbo) {
+    if (GameActive && !IsInLimbo) {
 
-		//Unselect();
-		// Updated to function for multiplayer - 6/26/2019 JAS
-		Unselect_All_Players();
+        // Unselect();
+        // Updated to function for multiplayer - 6/26/2019 JAS
+        Unselect_All_Players();
 
-		Detach_All();
-		Mark(MARK_UP);
+        Detach_All();
+        Mark(MARK_UP);
 
-		/*
-		**	Remove the object from the appropriate display list.
-		*/
-		Map.Remove(this, In_Which_Layer());
+        /*
+        **	Remove the object from the appropriate display list.
+        */
+        Map.Remove(this, In_Which_Layer());
 
-		/*
-		**	Remove the object from the logic processing list.
-		*/
-		if (Class_Of().IsSentient) {
-			Logic.Delete(this);
-		}
+        /*
+        **	Remove the object from the logic processing list.
+        */
+        if (Class_Of().IsSentient) {
+            Logic.Delete(this);
+        }
 
-		Hidden();
-		IsInLimbo = true;
-		IsToDisplay = false;
-		return(true);
-	}
-	return(false);
+        Hidden();
+        IsInLimbo = true;
+        IsToDisplay = false;
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Unlimbo -- Brings the object into the game system.                             *
@@ -1183,36 +1179,35 @@ bool ObjectClass::Limbo(void)
  *   09/24/1994 JLB : Created.                                                                 *
  *   12/23/1994 JLB : Sets object strength.                                                    *
  *=============================================================================================*/
-bool ObjectClass::Unlimbo(COORDINATE coord, DirType )
+bool ObjectClass::Unlimbo(COORDINATE coord, DirType)
 {
-	if (GameActive && IsInLimbo && !IsDown) {
-		if (ScenarioInit || Can_Enter_Cell(Coord_Cell(coord), FACING_NONE) == MOVE_OK) {
-			IsInLimbo = false;
-			IsToDisplay = false;
-			Coord = Class_Of().Coord_Fixup(coord);
+    if (GameActive && IsInLimbo && !IsDown) {
+        if (ScenarioInit || Can_Enter_Cell(Coord_Cell(coord), FACING_NONE) == MOVE_OK) {
+            IsInLimbo = false;
+            IsToDisplay = false;
+            Coord = Class_Of().Coord_Fixup(coord);
 
-			if (Mark(MARK_DOWN)) {
-				if (IsActive) {
+            if (Mark(MARK_DOWN)) {
+                if (IsActive) {
 
-					/*
-					**	Add the object to the appropriate map layer. This layer is used
-					**	for rendering purposes.
-					*/
-					if (In_Which_Layer() != LAYER_NONE) {
-						Map.Submit(this, In_Which_Layer());
-					}
+                    /*
+                    **	Add the object to the appropriate map layer. This layer is used
+                    **	for rendering purposes.
+                    */
+                    if (In_Which_Layer() != LAYER_NONE) {
+                        Map.Submit(this, In_Which_Layer());
+                    }
 
-					if (Class_Of().IsSentient) {
-						Logic.Submit(this);
-					}
-				}
-				return(true);
-			}
-		}
-	}
-	return(false);
+                    if (Class_Of().IsSentient) {
+                        Logic.Submit(this);
+                    }
+                }
+                return (true);
+            }
+        }
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Detach_All -- Removes the object from all tracking systems.                    *
@@ -1234,33 +1229,30 @@ bool ObjectClass::Unlimbo(COORDINATE coord, DirType )
  *=============================================================================================*/
 void ObjectClass::Detach_All(bool all)
 {
-	/*
-	**	Unselect this object if it was selected.
-	*/
-	//if (all || Owner() != PlayerPtr->Class->House) {
-	//	Unselect();
-	//}
+    /*
+    **	Unselect this object if it was selected.
+    */
+    // if (all || Owner() != PlayerPtr->Class->House) {
+    //	Unselect();
+    //}
 
-	//Added some error handling incase there was an issue removing the object - JAS 6/28/2019
-	if (all) {
-		//Unselect();
-		// Updated to function for multiplayer - 6/28/2019 JAS
-		Unselect_All_Players();
-	}
-	else
-	{
-		Unselect_All_Players_Except_Owner();
-	}
-	//End of change - JAS 6/28/2019
+    // Added some error handling incase there was an issue removing the object - JAS 6/28/2019
+    if (all) {
+        // Unselect();
+        // Updated to function for multiplayer - 6/28/2019 JAS
+        Unselect_All_Players();
+    } else {
+        Unselect_All_Players_Except_Owner();
+    }
+    // End of change - JAS 6/28/2019
 
-	Map.Detach(this);
+    Map.Detach(this);
 
-	/*
-	**	Remove from targeting computers.
-	*/
-	Detach_This_From_All(As_Target(), all);
+    /*
+    **	Remove from targeting computers.
+    */
+    Detach_This_From_All(As_Target(), all);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Detach_This_From_All -- Detatches this object from all others.                 *
@@ -1280,36 +1272,35 @@ void ObjectClass::Detach_All(bool all)
  *=============================================================================================*/
 void ObjectClass::Detach_This_From_All(TARGET target, bool all)
 {
-	int index;
-	if (Target_Legal(target)) {
+    int index;
+    if (Target_Legal(target)) {
 
-		for (index = 0; index < Houses.Count(); index++) {
-			Houses.Ptr(index)->Detach(target, all);
-		}
-		for (index = 0; index < Teams.Count(); index++) {
-			Teams.Ptr(index)->Detach(target, all);
-		}
-		for (index = 0; index < Units.Count(); index++) {
-			Units.Ptr(index)->Detach(target, all);
-		}
-		for (index = 0; index < Infantry.Count(); index++) {
-			Infantry.Ptr(index)->Detach(target, all);
-		}
-		for (index = 0; index < Aircraft.Count(); index++) {
-			Aircraft.Ptr(index)->Detach(target, all);
-		}
-		for (index = 0; index < Buildings.Count(); index++) {
-			Buildings.Ptr(index)->Detach(target, all);
-		}
-		for (index = 0; index < Bullets.Count(); index++) {
-			Bullets.Ptr(index)->Detach(target, all);
-		}
-		for (index = 0; index < Anims.Count(); index++) {
-			Anims.Ptr(index)->Detach(target, all);
-		}
-	}
+        for (index = 0; index < Houses.Count(); index++) {
+            Houses.Ptr(index)->Detach(target, all);
+        }
+        for (index = 0; index < Teams.Count(); index++) {
+            Teams.Ptr(index)->Detach(target, all);
+        }
+        for (index = 0; index < Units.Count(); index++) {
+            Units.Ptr(index)->Detach(target, all);
+        }
+        for (index = 0; index < Infantry.Count(); index++) {
+            Infantry.Ptr(index)->Detach(target, all);
+        }
+        for (index = 0; index < Aircraft.Count(); index++) {
+            Aircraft.Ptr(index)->Detach(target, all);
+        }
+        for (index = 0; index < Buildings.Count(); index++) {
+            Buildings.Ptr(index)->Detach(target, all);
+        }
+        for (index = 0; index < Bullets.Count(); index++) {
+            Bullets.Ptr(index)->Detach(target, all);
+        }
+        for (index = 0; index < Anims.Count(); index++) {
+            Anims.Ptr(index)->Detach(target, all);
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Receive_Message -- Processes an incoming radio message.                        *
@@ -1328,26 +1319,25 @@ void ObjectClass::Detach_This_From_All(TARGET target, bool all)
  * HISTORY:                                                                                    *
  *   09/24/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-RadioMessageType ObjectClass::Receive_Message(RadioClass *, RadioMessageType message, long & )
+RadioMessageType ObjectClass::Receive_Message(RadioClass*, RadioMessageType message, long&)
 {
-	switch (message) {
+    switch (message) {
 
-		/*
-		**	This message serves as a rendering convenience. It lets the system
-		**	know that there might be a visual conflict and the unit in radio
-		**	contact should be redrawn. This typically occurs when a vehicle
-		**	is being unloaded from a hover lander.
-		*/
-		case RADIO_REDRAW:
-			Mark(MARK_CHANGE);
-			return(RADIO_ROGER);
+    /*
+    **	This message serves as a rendering convenience. It lets the system
+    **	know that there might be a visual conflict and the unit in radio
+    **	contact should be redrawn. This typically occurs when a vehicle
+    **	is being unloaded from a hover lander.
+    */
+    case RADIO_REDRAW:
+        Mark(MARK_CHANGE);
+        return (RADIO_ROGER);
 
-		default:
-			break;
-	}
-	return(RADIO_STATIC);
+    default:
+        break;
+    }
+    return (RADIO_STATIC);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Take_Damage -- Applies damage to the object.                                   *
@@ -1375,92 +1365,92 @@ RadioMessageType ObjectClass::Receive_Message(RadioClass *, RadioMessageType mes
  *   12/27/1994 JLB : Trigger event processing for attacked or destroyed.                      *
  *   01/01/1995 JLB : Reduces damage greatly depending on range.                               *
  *=============================================================================================*/
-ResultType ObjectClass::Take_Damage(int & damage, int distance, WarheadType warhead, TechnoClass * source)
+ResultType ObjectClass::Take_Damage(int& damage, int distance, WarheadType warhead, TechnoClass* source)
 {
-	ResultType result = RESULT_NONE;
-	int oldstrength = Strength;
+    ResultType result = RESULT_NONE;
+    int oldstrength = Strength;
 
-	if (oldstrength && damage && !Class_Of().IsImmune) {
-		int maxstrength = Class_Of().MaxStrength;
+    if (oldstrength && damage && !Class_Of().IsImmune) {
+        int maxstrength = Class_Of().MaxStrength;
 
-		/*
-		**	Modify damage based on the warhead type and the armor of the object. This results
-		**	in a reduced damage value, but never below 1 damage point.
-		*/
-		damage = Modify_Damage(damage, warhead, Class_Of().Armor, distance);
-		if (!damage) return(RESULT_NONE);
+        /*
+        **	Modify damage based on the warhead type and the armor of the object. This results
+        **	in a reduced damage value, but never below 1 damage point.
+        */
+        damage = Modify_Damage(damage, warhead, Class_Of().Armor, distance);
+        if (!damage)
+            return (RESULT_NONE);
 
-		/*
-		**	At this point, we KNOW that at least light damage has occurred.
-		*/
-		result = RESULT_LIGHT;
+        /*
+        **	At this point, we KNOW that at least light damage has occurred.
+        */
+        result = RESULT_LIGHT;
 
-		/*
-		**	A non-fatal blow has occurred. Check to see if the object transitioned to below
-		**	half strength or if it is now down to one hit point.
-		*/
-		if (oldstrength > damage) {
+        /*
+        **	A non-fatal blow has occurred. Check to see if the object transitioned to below
+        **	half strength or if it is now down to one hit point.
+        */
+        if (oldstrength > damage) {
 
-			if (oldstrength >= (maxstrength >> 1) && (oldstrength-damage) < (maxstrength >> 1)) {
-				result = RESULT_HALF;
-			}
-		} else {
+            if (oldstrength >= (maxstrength >> 1) && (oldstrength - damage) < (maxstrength >> 1)) {
+                result = RESULT_HALF;
+            }
+        } else {
 
-			/*
-			**	When an object is damaged to destruction, it will instead stop at one
-			**	damage point. This will prolong the damage state as well as
-			**	give greater satisfaction when it is finally destroyed.
-			*/
-			damage = oldstrength;
-		}
+            /*
+            **	When an object is damaged to destruction, it will instead stop at one
+            **	damage point. This will prolong the damage state as well as
+            **	give greater satisfaction when it is finally destroyed.
+            */
+            damage = oldstrength;
+        }
 
-		/*
-		**	Apply the damage to the object.
-		*/
-		Strength = oldstrength - damage;
+        /*
+        **	Apply the damage to the object.
+        */
+        Strength = oldstrength - damage;
 
-		/*
-		**	Check to see if the object is majorly damaged or destroyed.
-		*/
-		switch (Strength) {
-			case 0:
-				Record_The_Kill(source);
-				result = RESULT_DESTROYED;
-				Detach_All();
-				break;
+        /*
+        **	Check to see if the object is majorly damaged or destroyed.
+        */
+        switch (Strength) {
+        case 0:
+            Record_The_Kill(source);
+            result = RESULT_DESTROYED;
+            Detach_All();
+            break;
 
-			case 1:
-				result = RESULT_MAJOR;
-				break;
+        case 1:
+            result = RESULT_MAJOR;
+            break;
 
-			default:
-				break;
-		}
+        default:
+            break;
+        }
 
-		/*
-		**	Handle any trigger event associated with this object.
-		*/
-		if (source && Trigger && result != RESULT_DESTROYED) {
-			Trigger->Spring(EVENT_ATTACKED, this);
-		}
+        /*
+        **	Handle any trigger event associated with this object.
+        */
+        if (source && Trigger && result != RESULT_DESTROYED) {
+            Trigger->Spring(EVENT_ATTACKED, this);
+        }
 
-		/*
-		**	If any damage was assessed and this object is selected, then flag
-		**	the object to be redrawn so that the health bar will be updated.
-		*/
-		//if (result != RESULT_NONE && IsSelected) {
-		// Updated to function for multiplayer - 6/26/2019 JAS
-		if (result != RESULT_NONE && Is_Selected_By_Player()) {
-			Mark(MARK_CHANGE);
-		}
-	}
+        /*
+        **	If any damage was assessed and this object is selected, then flag
+        **	the object to be redrawn so that the health bar will be updated.
+        */
+        // if (result != RESULT_NONE && IsSelected) {
+        // Updated to function for multiplayer - 6/26/2019 JAS
+        if (result != RESULT_NONE && Is_Selected_By_Player()) {
+            Mark(MARK_CHANGE);
+        }
+    }
 
-	/*
-	**	Return with the result of the damage taken.
-	*/
-	return(result);
+    /*
+    **	Return with the result of the damage taken.
+    */
+    return (result);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Mark -- Handles basic marking logic.                                           *
@@ -1483,86 +1473,86 @@ ResultType ObjectClass::Take_Damage(int & damage, int distance, WarheadType warh
  *=============================================================================================*/
 bool ObjectClass::Mark(MarkType mark)
 {
-	TechnoClass *tech;
-	CELL			cell;
-	int			threat;
-	HousesType	house;
+    TechnoClass* tech;
+    CELL cell;
+    int threat;
+    HousesType house;
 
-	if (!IsInLimbo && IsActive) {
+    if (!IsInLimbo && IsActive) {
 
-		/*
-		**	A mark for change is always successful UNLESS the object
-		**	is not placed down or has already been flagged as changed
-		**	this game frame.
-		*/
-		if (mark == MARK_CHANGE) {
-			if (IsToDisplay) return(false);
-			if (IsDown == true) {
-				Mark_For_Redraw();
-				return(true);
-			}
-			return(false);
-		}
+        /*
+        **	A mark for change is always successful UNLESS the object
+        **	is not placed down or has already been flagged as changed
+        **	this game frame.
+        */
+        if (mark == MARK_CHANGE) {
+            if (IsToDisplay)
+                return (false);
+            if (IsDown == true) {
+                Mark_For_Redraw();
+                return (true);
+            }
+            return (false);
+        }
 
-		/*
-		** Handle adding or removing the object in the cells' overlap lists
-		*/
-		if (mark == MARK_OVERLAP_UP) {
-			if (IsDown == true) {
-				Map.Overlap_Up(Coord_Cell(Coord),this);
-				Mark_For_Redraw();
-				return(true);
-			}
-		}
-		if (mark == MARK_OVERLAP_DOWN) {
-			if (IsDown == true) {
-				Map.Overlap_Down(Coord_Cell(Coord),this);
-				Mark_For_Redraw();
-				return(true);
-			}
-		}
+        /*
+        ** Handle adding or removing the object in the cells' overlap lists
+        */
+        if (mark == MARK_OVERLAP_UP) {
+            if (IsDown == true) {
+                Map.Overlap_Up(Coord_Cell(Coord), this);
+                Mark_For_Redraw();
+                return (true);
+            }
+        }
+        if (mark == MARK_OVERLAP_DOWN) {
+            if (IsDown == true) {
+                Map.Overlap_Down(Coord_Cell(Coord), this);
+                Mark_For_Redraw();
+                return (true);
+            }
+        }
 
-		/*
-		** It is important to know whether the object is a techno class
-		** or not to see if we have to adjust the regional threat ratings
-		*/
-		if (Is_Techno()) {
-			tech 	 = (TechnoClass *)this;
-			threat = tech->Risk();
-			house  = tech->Owner();
-			cell   = Coord_Cell(Coord);
-		} else
-			tech = NULL;
+        /*
+        ** It is important to know whether the object is a techno class
+        ** or not to see if we have to adjust the regional threat ratings
+        */
+        if (Is_Techno()) {
+            tech = (TechnoClass*)this;
+            threat = tech->Risk();
+            house = tech->Owner();
+            cell = Coord_Cell(Coord);
+        } else
+            tech = NULL;
 
-		/*
-		**	Marking down is only successful if the object isn't already
-		**	placed down.
-		*/
-		if (mark == MARK_DOWN && !IsDown) {
-			if (tech && GameToPlay == GAME_NORMAL) {
-				Map[cell].Adjust_Threat(house, threat);
-			}
-			IsDown = true;
-			Mark_For_Redraw();
-			return(true);
-		}
+        /*
+        **	Marking down is only successful if the object isn't already
+        **	placed down.
+        */
+        if (mark == MARK_DOWN && !IsDown) {
+            if (tech && GameToPlay == GAME_NORMAL) {
+                Map[cell].Adjust_Threat(house, threat);
+            }
+            IsDown = true;
+            Mark_For_Redraw();
+            return (true);
+        }
 
-		/*
-		**	Lifting up is only successful if the object isn't already
-		**	lifted up from the map.
-		*/
-		if (mark == MARK_UP && IsDown) {
-			if (tech && GameToPlay == GAME_NORMAL) {
-				Map[cell].Adjust_Threat(house, -threat);
-			}
-			Map.Overlap_Up(Coord_Cell(Coord), this);
-			IsDown = false;
-			return(true);
-		}
-	}
-	return(false);
+        /*
+        **	Lifting up is only successful if the object isn't already
+        **	lifted up from the map.
+        */
+        if (mark == MARK_UP && IsDown) {
+            if (tech && GameToPlay == GAME_NORMAL) {
+                Map[cell].Adjust_Threat(house, -threat);
+            }
+            Map.Overlap_Up(Coord_Cell(Coord), this);
+            IsDown = false;
+            return (true);
+        }
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Init -- Initializes the basic object system.                                   *
@@ -1581,9 +1571,8 @@ bool ObjectClass::Mark(MarkType mark)
  *=============================================================================================*/
 void ObjectClass::Init(void)
 {
-	CurrentObject.Clear_All();
+    CurrentObject.Clear_All();
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Revealed -- Reveals this object to the house specified.                        *
@@ -1600,9 +1589,9 @@ void ObjectClass::Init(void)
  * HISTORY:                                                                                    *
  *   07/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool ObjectClass::Revealed(HouseClass * house)
+bool ObjectClass::Revealed(HouseClass* house)
 {
-	return(house != NULL);
+    return (house != NULL);
 }
 
 /***********************************************************************************************
@@ -1616,28 +1605,27 @@ bool ObjectClass::Revealed(HouseClass * house)
  * WARNINGS:   none                                                                            *
  *                                                                                             *
  * HISTORY:                                                                                    *
- *   6/25/2019 - JAS																									  *
+ *   6/25/2019 - JAS *
  *=============================================================================================*/
-void ObjectClass::Set_Selected_By_Player(HouseClass *player)
+void ObjectClass::Set_Selected_By_Player(HouseClass* player)
 {
-	if (!player || !player->Class) {
-		player = PlayerPtr;
-	}
+    if (!player || !player->Class) {
+        player = PlayerPtr;
+    }
 
-	HousesType house = player->Class->House;
-	if (((TechnoTypeClass const &)Class_Of()).IsLeader) {
-		CurrentObject.Add_Head(house, this);
-	}
-	else {
-		CurrentObject.Add(house, this);
-	}
+    HousesType house = player->Class->House;
+    if (((TechnoTypeClass const&)Class_Of()).IsLeader) {
+        CurrentObject.Add_Head(house, this);
+    } else {
+        CurrentObject.Add(house, this);
+    }
 
-	int shift = (int)house;
-	IsSelectedMask |= (1 << shift);
+    int shift = (int)house;
+    IsSelectedMask |= (1 << shift);
 
-	if (GameToPlay == GAME_NORMAL && player == PlayerPtr) {
-		IsSelected = true;
-	}
+    if (GameToPlay == GAME_NORMAL && player == PlayerPtr) {
+        IsSelected = true;
+    }
 }
 
 /***********************************************************************************************
@@ -1651,23 +1639,23 @@ void ObjectClass::Set_Selected_By_Player(HouseClass *player)
  * WARNINGS:   none                                                                            *
  *                                                                                             *
  * HISTORY:                                                                                    *
- *   6/25/2019 - JAS																									  *
+ *   6/25/2019 - JAS *
  *=============================================================================================*/
-void ObjectClass::Set_Unselected_By_Player(HouseClass *player)
+void ObjectClass::Set_Unselected_By_Player(HouseClass* player)
 {
-	if (!player || !player->Class) {
-		player = PlayerPtr;
-	}
+    if (!player || !player->Class) {
+        player = PlayerPtr;
+    }
 
-	HousesType house = player->Class->House;
-	CurrentObject.Delete(house, this);
+    HousesType house = player->Class->House;
+    CurrentObject.Delete(house, this);
 
-	int shift = (int)house;
-	IsSelectedMask &= ~(1 << shift);
+    int shift = (int)house;
+    IsSelectedMask &= ~(1 << shift);
 
-	if (GameToPlay == GAME_NORMAL && player == PlayerPtr) {
-		IsSelected = false;
-	}
+    if (GameToPlay == GAME_NORMAL && player == PlayerPtr) {
+        IsSelected = false;
+    }
 }
 
 /***********************************************************************************************
@@ -1682,25 +1670,36 @@ void ObjectClass::Set_Unselected_By_Player(HouseClass *player)
  * HISTORY:                                                                                    *
  *   6/25/2019	- JAS 																								  *
  *=============================================================================================*/
-bool ObjectClass::Is_Selected_By_Player(HouseClass *player) const
+bool ObjectClass::Is_Selected_By_Player(HouseClass* player) const
 {
-	if (player && player->Class) {
-		int shift = (int)player->Class->House;
-		return (IsSelectedMask & (1 << shift)) ? true : false;
-	}
-	else {
-		int shift = (int)PlayerPtr->Class->House;
-		return (IsSelectedMask & (1 << shift)) ? true : false;
-	}
-	return false;
+    if (player && player->Class) {
+        int shift = (int)player->Class->House;
+        return (IsSelectedMask & (1 << shift)) ? true : false;
+    } else {
+        int shift = (int)PlayerPtr->Class->House;
+        return (IsSelectedMask & (1 << shift)) ? true : false;
+    }
+    return false;
 }
 
-
-
 // These can't be made inline (for various reasons).
-short const * ObjectClass::Occupy_List(bool placement) const {return(Class_Of().Occupy_List(placement));};
-short const * ObjectClass::Overlap_List(void) const {return(Class_Of().Overlap_List());};
-BuildingClass * ObjectClass::Who_Can_Build_Me(bool intheory, bool legal) const {return(Class_Of().Who_Can_Build_Me(intheory, legal, Owner()));};
-unsigned ObjectClass::Health_Ratio(void) const {return(Cardinal_To_Fixed(Class_Of().MaxStrength, Strength));};
-int ObjectClass::Full_Name(void) const {return Class_Of().Full_Name();};
-
+short const* ObjectClass::Occupy_List(bool placement) const
+{
+    return (Class_Of().Occupy_List(placement));
+};
+short const* ObjectClass::Overlap_List(void) const
+{
+    return (Class_Of().Overlap_List());
+};
+BuildingClass* ObjectClass::Who_Can_Build_Me(bool intheory, bool legal) const
+{
+    return (Class_Of().Who_Can_Build_Me(intheory, legal, Owner()));
+};
+unsigned ObjectClass::Health_Ratio(void) const
+{
+    return (Cardinal_To_Fixed(Class_Of().MaxStrength, Strength));
+};
+int ObjectClass::Full_Name(void) const
+{
+    return Class_Of().Full_Name();
+};

@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/BUFF.CPP 1     3/03/97 10:24a Joe_bostic $ */
@@ -38,10 +38,8 @@
  *   Buffer::~Buffer -- Destructor for buffer object.                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#include	"buff.h"
-#include	<stddef.h>
-
+#include "buff.h"
+#include <stddef.h>
 
 /***********************************************************************************************
  * Buffer::Buffer -- Constructor for buffer object.                                            *
@@ -62,31 +60,28 @@
  * HISTORY:                                                                                    *
  *   07/29/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Buffer::Buffer(void * buffer, long size) :
-	BufferPtr(buffer),
-	Size(size),
-	IsAllocated(false)
+Buffer::Buffer(void* buffer, long size)
+    : BufferPtr(buffer)
+    , Size(size)
+    , IsAllocated(false)
 {
 }
-
 
 // Alternate constructor for char * pointer.
-Buffer::Buffer(char * buffer, long size) :
-	BufferPtr(buffer),
-	Size(size),
-	IsAllocated(false)
+Buffer::Buffer(char* buffer, long size)
+    : BufferPtr(buffer)
+    , Size(size)
+    , IsAllocated(false)
 {
 }
-
 
 // Alternate constructor for void const * pointer.
-Buffer::Buffer(void const * buffer, long size) :
-	BufferPtr((void*)buffer),
-	Size(size),
-	IsAllocated(false)
+Buffer::Buffer(void const* buffer, long size)
+    : BufferPtr((void*)buffer)
+    , Size(size)
+    , IsAllocated(false)
 {
 }
-
 
 /***********************************************************************************************
  * Buffer::Buffer -- Self-allocating constructor for buffer object.                            *
@@ -105,17 +100,16 @@ Buffer::Buffer(void const * buffer, long size) :
  * HISTORY:                                                                                    *
  *   07/29/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Buffer::Buffer(long size) :
-	BufferPtr(NULL),
-	Size(size),
-	IsAllocated(false)
+Buffer::Buffer(long size)
+    : BufferPtr(NULL)
+    , Size(size)
+    , IsAllocated(false)
 {
-	if (size > 0) {
-		BufferPtr = new char[size];
-		IsAllocated = true;
-	}
+    if (size > 0) {
+        BufferPtr = new char[size];
+        IsAllocated = true;
+    }
 }
-
 
 /***********************************************************************************************
  * Buffer::Buffer -- Copy constructor for buffer object.                                       *
@@ -132,13 +126,12 @@ Buffer::Buffer(long size) :
  * HISTORY:                                                                                    *
  *   08/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Buffer::Buffer(Buffer const & buffer) :
-	IsAllocated(false)
+Buffer::Buffer(Buffer const& buffer)
+    : IsAllocated(false)
 {
-	BufferPtr = buffer.BufferPtr;
-	Size = buffer.Size;
+    BufferPtr = buffer.BufferPtr;
+    Size = buffer.Size;
 }
-
 
 /***********************************************************************************************
  * Buffer::operator = -- Assignment operator for the buffer object.                            *
@@ -155,19 +148,18 @@ Buffer::Buffer(Buffer const & buffer) :
  * HISTORY:                                                                                    *
  *   08/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Buffer & Buffer::operator = (Buffer const & buffer)
+Buffer& Buffer::operator=(Buffer const& buffer)
 {
-	if (buffer != this) {
-		if (IsAllocated) {
-			delete [] BufferPtr;
-		}
-		IsAllocated = false;
-		BufferPtr = buffer.BufferPtr;
-		Size = buffer.Size;
-	}
-	return(*this);
+    if (buffer != this) {
+        if (IsAllocated) {
+            delete[] BufferPtr;
+        }
+        IsAllocated = false;
+        BufferPtr = buffer.BufferPtr;
+        Size = buffer.Size;
+    }
+    return (*this);
 }
-
 
 /***********************************************************************************************
  * Buffer::~Buffer -- Destructor for buffer object.                                            *
@@ -185,9 +177,8 @@ Buffer & Buffer::operator = (Buffer const & buffer)
  *=============================================================================================*/
 Buffer::~Buffer(void)
 {
-	Reset();
+    Reset();
 }
-
 
 /***********************************************************************************************
  * Buffer::Reset -- Clears the buffer object to null state.                                    *
@@ -208,10 +199,10 @@ Buffer::~Buffer(void)
  *=============================================================================================*/
 void Buffer::Reset(void)
 {
-	if (IsAllocated) {
-		delete [] BufferPtr;
-	}
-	BufferPtr = NULL;
-	Size = 0;
-	IsAllocated = false;
+    if (IsAllocated) {
+        delete[] BufferPtr;
+    }
+    BufferPtr = NULL;
+    Size = 0;
+    IsAllocated = false;
 }

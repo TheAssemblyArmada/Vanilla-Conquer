@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/LINK.CPP 1     3/03/97 10:25a Joe_bostic $ */
@@ -47,7 +47,6 @@
 #include "function.h"
 #include "link.h"
 
-
 /***********************************************************************************************
  * LinkClass::LinkClass -- Copy constructor for linked list object.                            *
  *                                                                                             *
@@ -64,16 +63,16 @@
  * HISTORY:                                                                                    *
  *   01/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass::LinkClass(LinkClass const & link) :
-	Next(0), Prev(0)
+LinkClass::LinkClass(LinkClass const& link)
+    : Next(0)
+    , Prev(0)
 {
-	/*
-	**	Add this object to the same list that the copy object
-	**	resides in.
-	*/
-	Add((LinkClass &)link);
+    /*
+    **	Add this object to the same list that the copy object
+    **	resides in.
+    */
+    Add((LinkClass&)link);
 }
-
 
 /***********************************************************************************************
  * LinkClass::~LinkClass -- Default destructor for linked list object.                         *
@@ -91,9 +90,8 @@ LinkClass::LinkClass(LinkClass const & link) :
  *=============================================================================================*/
 LinkClass::~LinkClass(void)
 {
-	Remove();
+    Remove();
 }
-
 
 /***********************************************************************************************
  * LinkClass::Zap -- Forces the link pointers to NULL.                                         *
@@ -114,10 +112,9 @@ LinkClass::~LinkClass(void)
  *=============================================================================================*/
 void LinkClass::Zap(void)
 {
-	Next = 0;
-	Prev = 0;
+    Next = 0;
+    Prev = 0;
 }
-
 
 /***********************************************************************************************
  * LinkClass::operator= -- Assignment operator for linked list class object.                   *
@@ -141,16 +138,16 @@ void LinkClass::Zap(void)
  * HISTORY:                                                                                    *
  *   01/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass & LinkClass::operator = (LinkClass const & link)
+LinkClass& LinkClass::operator=(LinkClass const& link)
 {
-	if (&link == this) return(*this);
+    if (&link == this)
+        return (*this);
 
-	Remove();
-	Add((LinkClass &)link);
+    Remove();
+    Add((LinkClass&)link);
 
-	return(*this);
+    return (*this);
 }
-
 
 /***********************************************************************************************
  * LinkClass::Get_Next -- Fetches the next object in list.                                     *
@@ -167,11 +164,10 @@ LinkClass & LinkClass::operator = (LinkClass const & link)
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass * LinkClass::Get_Next(void) const
+LinkClass* LinkClass::Get_Next(void) const
 {
-	return(Next);
+    return (Next);
 }
-
 
 /***********************************************************************************************
  * LinkClass::Get_Prev -- Fetches previous object in linked list.                              *
@@ -188,11 +184,10 @@ LinkClass * LinkClass::Get_Next(void) const
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass * LinkClass::Get_Prev(void) const
+LinkClass* LinkClass::Get_Prev(void) const
 {
-	return(Prev);
+    return (Prev);
 }
-
 
 /***********************************************************************************************
  * LinkClass::Head_Of_List -- Finds the head of the list.                                      *
@@ -209,16 +204,16 @@ LinkClass * LinkClass::Get_Prev(void) const
  * HISTORY:                                                                                    *
  *   01/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass & LinkClass::Head_Of_List(void)
+LinkClass& LinkClass::Head_Of_List(void)
 {
-	LinkClass * link = this;
-	while (link->Prev) {
-		link = link->Prev;
-		if (link == this) break;		// Safety check
-	}
-	return(*link);
+    LinkClass* link = this;
+    while (link->Prev) {
+        link = link->Prev;
+        if (link == this)
+            break; // Safety check
+    }
+    return (*link);
 }
-
 
 /***********************************************************************************************
  * LinkClass::Tail_Of_List -- Scans for the object at the end of the list.                     *
@@ -235,16 +230,16 @@ LinkClass & LinkClass::Head_Of_List(void)
  * HISTORY:                                                                                    *
  *   01/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass & LinkClass::Tail_Of_List(void)
+LinkClass& LinkClass::Tail_Of_List(void)
 {
-	LinkClass * link = this;
-	while (link->Next) {
-		link = link->Next;
-		if (link == this) break;		// Safety check
-	}
-	return(*link);
+    LinkClass* link = this;
+    while (link->Next) {
+        link = link->Next;
+        if (link == this)
+            break; // Safety check
+    }
+    return (*link);
 }
-
 
 /***********************************************************************************************
  * LinkClass::Add -- This object adds itself to the given list                                 *
@@ -262,32 +257,31 @@ LinkClass & LinkClass::Tail_Of_List(void)
  * HISTORY:                                                                                    *
  *   01/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass & LinkClass::Add(LinkClass & list)
+LinkClass& LinkClass::Add(LinkClass& list)
 {
-	LinkClass * ptr;
+    LinkClass* ptr;
 
-	/*
-	**	Save ptr to next gadget.
-	*/
-	ptr = list.Next;
+    /*
+    **	Save ptr to next gadget.
+    */
+    ptr = list.Next;
 
-	/*
-	**	Link myself in after 'list'.
-	*/
-	list.Next = this;
-	Prev = &list;
+    /*
+    **	Link myself in after 'list'.
+    */
+    list.Next = this;
+    Prev = &list;
 
-	/*
-	**	Link myself to next gadget, if there is one.
-	*/
-	Next = ptr;
-	if (ptr) {
-		ptr->Prev = this;
-	}
+    /*
+    **	Link myself to next gadget, if there is one.
+    */
+    Next = ptr;
+    if (ptr) {
+        ptr->Prev = this;
+    }
 
-	return(Head_Of_List());
+    return (Head_Of_List());
 }
-
 
 /***********************************************************************************************
  * LinkClass::Add_Head -- This gadget makes itself the head of the given list.                 *
@@ -302,25 +296,24 @@ LinkClass & LinkClass::Add(LinkClass & list)
  * HISTORY:                                                                                    *
  *   01/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass & LinkClass::Add_Head(LinkClass & list)
+LinkClass& LinkClass::Add_Head(LinkClass& list)
 {
-	LinkClass * ptr;
+    LinkClass* ptr;
 
-	/*
-	**	Get head of given list.
-	*/
-	ptr = &list.Head_Of_List();
+    /*
+    **	Get head of given list.
+    */
+    ptr = &list.Head_Of_List();
 
-	/*
-	**	Link myself in front of it.
-	*/
-	ptr->Prev = this;
-	Next = ptr;
-	Prev = NULL;
+    /*
+    **	Link myself in front of it.
+    */
+    ptr->Prev = this;
+    Next = ptr;
+    Prev = NULL;
 
-	return(*this);
+    return (*this);
 }
-
 
 /***********************************************************************************************
  * LinkClass::Add_Tail -- Add myself to the end of the given list.                             *
@@ -335,25 +328,24 @@ LinkClass & LinkClass::Add_Head(LinkClass & list)
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass & LinkClass::Add_Tail(LinkClass & list)
+LinkClass& LinkClass::Add_Tail(LinkClass& list)
 {
-	LinkClass * ptr;
+    LinkClass* ptr;
 
-	/*
-	**	Get head of given list.
-	*/
-	ptr = &list.Tail_Of_List();
+    /*
+    **	Get head of given list.
+    */
+    ptr = &list.Tail_Of_List();
 
-	/*
-	**	Link myself in front of it.
-	*/
-	ptr->Next = this;
-	Prev = ptr;
-	Next = NULL;
+    /*
+    **	Link myself in front of it.
+    */
+    ptr->Next = this;
+    Prev = ptr;
+    Next = NULL;
 
-	return(Head_Of_List());
+    return (Head_Of_List());
 }
-
 
 /***********************************************************************************************
  * LinkClass::Remove -- Removes the specified object from the list.                            *
@@ -372,27 +364,25 @@ LinkClass & LinkClass::Add_Tail(LinkClass & list)
  * HISTORY:                                                                                    *
  *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass * LinkClass::Remove(void)
+LinkClass* LinkClass::Remove(void)
 {
-	LinkClass * head = &Head_Of_List();
-	LinkClass * tail = &Tail_Of_List();
+    LinkClass* head = &Head_Of_List();
+    LinkClass* tail = &Tail_Of_List();
 
-	if (Prev) {
-		Prev->Next = Next;
-	}
-	if (Next) {
-		Next->Prev = Prev;
-	}
-	Prev = 0;
-	Next = 0;
+    if (Prev) {
+        Prev->Next = Next;
+    }
+    if (Next) {
+        Next->Prev = Prev;
+    }
+    Prev = 0;
+    Next = 0;
 
-	if (head==this) {
-		if (tail==this) {
-			return(0);
-		}
-		return(&tail->Head_Of_List());
-	}
-	return(head);
+    if (head == this) {
+        if (tail == this) {
+            return (0);
+        }
+        return (&tail->Head_Of_List());
+    }
+    return (head);
 }
-
-

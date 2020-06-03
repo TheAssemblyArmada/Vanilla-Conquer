@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/B64STRAW.CPP 1     3/03/97 10:24a Joe_bostic $ */
@@ -33,11 +33,9 @@
  *   Base64Straw::Get -- Fetch data and convert it to/from base 64 encoding.                   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-#include	"b64straw.h"
-#include	"base64.h"
-#include	<string.h>
-
+#include "b64straw.h"
+#include "base64.h"
+#include <string.h>
 
 /***********************************************************************************************
  * Base64Straw::Get -- Fetch data and convert it to/from base 64 encoding.                     *
@@ -58,57 +56,59 @@
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Base64Straw::Get(void * source, int slen)
+int Base64Straw::Get(void* source, int slen)
 {
-	int total = 0;
+    int total = 0;
 
-	char * from;
-	int fromsize;
-	char * to;
-	int tosize;
+    char* from;
+    int fromsize;
+    char* to;
+    int tosize;
 
-	if (Control == ENCODE) {
-		from = PBuffer;
-		fromsize = sizeof(PBuffer);
-		to = CBuffer;
-		tosize = sizeof(CBuffer);
-	} else {
-		from = CBuffer;
-		fromsize = sizeof(CBuffer);
-		to = PBuffer;
-		tosize = sizeof(PBuffer);
-	}
+    if (Control == ENCODE) {
+        from = PBuffer;
+        fromsize = sizeof(PBuffer);
+        to = CBuffer;
+        tosize = sizeof(CBuffer);
+    } else {
+        from = CBuffer;
+        fromsize = sizeof(CBuffer);
+        to = PBuffer;
+        tosize = sizeof(PBuffer);
+    }
 
-	/*
-	**	Process the byte request in code blocks until there are either
-	**	no more source bytes available or the request has been fulfilled.
-	*/
-	while (slen > 0) {
+    /*
+    **	Process the byte request in code blocks until there are either
+    **	no more source bytes available or the request has been fulfilled.
+    */
+    while (slen > 0) {
 
-		/*
-		**	Transfer any processed bytes available to the request buffer.
-		*/
-		if (Counter > 0) {
-			int len = (slen < Counter) ? slen : Counter;
-			memmove(source, &to[tosize-Counter], len);
-			Counter -= len;
-			slen -= len;
-			source = ((char *)source) + len;
-			total += len;
-		}
-		if (slen == 0) break;
+        /*
+        **	Transfer any processed bytes available to the request buffer.
+        */
+        if (Counter > 0) {
+            int len = (slen < Counter) ? slen : Counter;
+            memmove(source, &to[tosize - Counter], len);
+            Counter -= len;
+            slen -= len;
+            source = ((char*)source) + len;
+            total += len;
+        }
+        if (slen == 0)
+            break;
 
-		/*
-		**	More bytes are needed, so fetch and process another base 64 block.
-		*/
-		int incount = Straw::Get(from, fromsize);
-		if (Control == ENCODE) {
-			Counter = Base64_Encode(from, incount, to, tosize);
-		} else {
-			Counter = Base64_Decode(from, incount, to, tosize);
-		}
-		if (Counter == 0) break;
-	}
+        /*
+        **	More bytes are needed, so fetch and process another base 64 block.
+        */
+        int incount = Straw::Get(from, fromsize);
+        if (Control == ENCODE) {
+            Counter = Base64_Encode(from, incount, to, tosize);
+        } else {
+            Counter = Base64_Decode(from, incount, to, tosize);
+        }
+        if (Counter == 0)
+            break;
+    }
 
-	return(total);
+    return (total);
 }

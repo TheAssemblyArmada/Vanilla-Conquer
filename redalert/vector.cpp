@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/VECTOR.CPP 1     3/03/97 10:26a Joe_bostic $ */
@@ -50,14 +50,14 @@
  *   VectorClass<T>::~VectorClass -- Default destructor for vector class.                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
+#include "function.h"
 #ifdef WINSOCK_IPX
-#include	"WSProto.h"
-#include	"WSPUDP.h"
-#endif	//WINSOCK_IPX
+#include "WSProto.h"
+#include "WSPUDP.h"
+#endif // WINSOCK_IPX
 #include "vector.h"
 //#include	<mem.h>
-#include	<stdio.h>
+#include <stdio.h>
 
 /*
 **	The following template function can be located here ONLY if all the instantiations are
@@ -85,26 +85,25 @@
  * HISTORY:                                                                                    *
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-VectorClass<T>::VectorClass(unsigned size, T const * array) :
-	Vector(0),
-	VectorMax(size),
-	IsAllocated(false)
+template <class T>
+VectorClass<T>::VectorClass(unsigned size, T const* array)
+    : Vector(0)
+    , VectorMax(size)
+    , IsAllocated(false)
 {
-	/*
-	**	Allocate the vector. The default constructor will be called for every
-	**	object in this vector.
-	*/
-	if (size) {
-		if (array) {
-			Vector = new((void*)array) T[size];
-		} else {
-			Vector = new T[size];
-			IsAllocated = true;
-		}
-	}
+    /*
+    **	Allocate the vector. The default constructor will be called for every
+    **	object in this vector.
+    */
+    if (size) {
+        if (array) {
+            Vector = new ((void*)array) T[size];
+        } else {
+            Vector = new T[size];
+            IsAllocated = true;
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * VectorClass<T>::~VectorClass -- Default destructor for vector class.                        *
@@ -121,12 +120,10 @@ VectorClass<T>::VectorClass(unsigned size, T const * array) :
  * HISTORY:                                                                                    *
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-VectorClass<T>::~VectorClass(void)
+template <class T> VectorClass<T>::~VectorClass(void)
 {
-	VectorClass<T>::Clear();
+    VectorClass<T>::Clear();
 }
-
 
 /***********************************************************************************************
  * VectorClass<T>::VectorClass -- Copy constructor for vector object.                          *
@@ -143,15 +140,14 @@ VectorClass<T>::~VectorClass(void)
  * HISTORY:                                                                                    *
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-VectorClass<T>::VectorClass(VectorClass<T> const & vector) :
-	Vector(0),
-	VectorMax(0),
-	IsAllocated(false)
+template <class T>
+VectorClass<T>::VectorClass(VectorClass<T> const& vector)
+    : Vector(0)
+    , VectorMax(0)
+    , IsAllocated(false)
 {
-	*this = vector;
+    *this = vector;
 }
-
 
 /***********************************************************************************************
  * VectorClass<T>::operator = -- The assignment operator.                                      *
@@ -168,28 +164,26 @@ VectorClass<T>::VectorClass(VectorClass<T> const & vector) :
  * HISTORY:                                                                                    *
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-VectorClass<T> & VectorClass<T>::operator =(VectorClass<T> const & vector)
+template <class T> VectorClass<T>& VectorClass<T>::operator=(VectorClass<T> const& vector)
 {
-	if (this != &vector) {
-		Clear();
-		VectorMax = vector.Length();
-		if (VectorMax) {
-			Vector = new T[VectorMax];
-			if (Vector) {
-				IsAllocated = true;
-				for (int index = 0; index < (int)VectorMax; index++) {
-					Vector[index] = vector[index];
-				}
-			}
-		} else {
-			Vector = 0;
-			IsAllocated = false;
-		}
-	}
-	return(*this);
+    if (this != &vector) {
+        Clear();
+        VectorMax = vector.Length();
+        if (VectorMax) {
+            Vector = new T[VectorMax];
+            if (Vector) {
+                IsAllocated = true;
+                for (int index = 0; index < (int)VectorMax; index++) {
+                    Vector[index] = vector[index];
+                }
+            }
+        } else {
+            Vector = 0;
+            IsAllocated = false;
+        }
+    }
+    return (*this);
 }
-
 
 /***********************************************************************************************
  * VectorClass<T>::operator == -- Equality operator for vector objects.                        *
@@ -207,20 +201,18 @@ VectorClass<T> & VectorClass<T>::operator =(VectorClass<T> const & vector)
  * HISTORY:                                                                                    *
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-int VectorClass<T>::operator == (VectorClass<T> const & vector) const
+template <class T> int VectorClass<T>::operator==(VectorClass<T> const& vector) const
 {
-	if (VectorMax == vector.Length()) {
-		for (int index = 0; index < (int)VectorMax; index++) {
-			if (Vector[index] != vector[index]) {
-				return(false);
-			}
-		}
-		return(true);
-	}
-	return(false);
+    if (VectorMax == vector.Length()) {
+        for (int index = 0; index < (int)VectorMax; index++) {
+            if (Vector[index] != vector[index]) {
+                return (false);
+            }
+        }
+        return (true);
+    }
+    return (false);
 }
-
 
 /***********************************************************************************************
  * VectorClass<T>::ID -- Pointer based conversion to index number.                             *
@@ -240,12 +232,10 @@ int VectorClass<T>::operator == (VectorClass<T> const & vector) const
  * HISTORY:                                                                                    *
  *   03/13/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-inline int VectorClass<T>::ID(T const * ptr)
+template <class T> inline int VectorClass<T>::ID(T const* ptr)
 {
-	return(((unsigned long)ptr - (unsigned long)&(*this)[0]) / sizeof(T));
+    return (((unsigned long)ptr - (unsigned long)&(*this)[0]) / sizeof(T));
 }
-
 
 /***********************************************************************************************
  * VectorClass<T>::ID -- Finds object ID based on value.                                       *
@@ -263,17 +253,15 @@ inline int VectorClass<T>::ID(T const * ptr)
  * HISTORY:                                                                                    *
  *   03/13/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-int VectorClass<T>::ID(T const & object)
+template <class T> int VectorClass<T>::ID(T const& object)
 {
-	for (int index = 0; index < (int)VectorMax; index++) {
-		if ((*this)[index] == object) {
-			return(index);
-		}
-	}
-	return(-1);
+    for (int index = 0; index < (int)VectorMax; index++) {
+        if ((*this)[index] == object) {
+            return (index);
+        }
+    }
+    return (-1);
 }
-
 
 /***********************************************************************************************
  * VectorClass<T>::Clear -- Frees and clears the vector.                                       *
@@ -291,17 +279,15 @@ int VectorClass<T>::ID(T const & object)
  * HISTORY:                                                                                    *
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-void VectorClass<T>::Clear(void)
+template <class T> void VectorClass<T>::Clear(void)
 {
-	if (Vector && IsAllocated) {
-		delete[] Vector;
-		Vector = 0;
-	}
-	IsAllocated = false;
-	VectorMax = 0;
+    if (Vector && IsAllocated) {
+        delete[] Vector;
+        Vector = 0;
+    }
+    IsAllocated = false;
+    VectorMax = 0;
 }
-
 
 /***********************************************************************************************
  * VectorClass<T>::Resize -- Changes the size of the vector.                                   *
@@ -322,68 +308,67 @@ void VectorClass<T>::Clear(void)
  * HISTORY:                                                                                    *
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template<class T>
-int VectorClass<T>::Resize(unsigned newsize, T const * array)
+template <class T> int VectorClass<T>::Resize(unsigned newsize, T const* array)
 {
-	if (newsize) {
+    if (newsize) {
 
-		/*
-		**	Allocate a new vector of the size specified. The default constructor
-		**	will be called for every object in this vector.
-		*/
-		T * newptr;
-		if (!array) {
-			newptr = new T[newsize];
-		} else {
-			newptr = new((void*)array) T[newsize];
-		}
-		if (!newptr) {
-			return(false);
-		}
+        /*
+        **	Allocate a new vector of the size specified. The default constructor
+        **	will be called for every object in this vector.
+        */
+        T* newptr;
+        if (!array) {
+            newptr = new T[newsize];
+        } else {
+            newptr = new ((void*)array) T[newsize];
+        }
+        if (!newptr) {
+            return (false);
+        }
 
-		/*
-		**	If there is an old vector, then it must be copied (as much as is feasible)
-		**	to the new vector.
-		*/
-		if (Vector) {
+        /*
+        **	If there is an old vector, then it must be copied (as much as is feasible)
+        **	to the new vector.
+        */
+        if (Vector) {
 
-			/*
-			**	Copy as much of the old vector into the new vector as possible. This
-			**	presumes that there is a functional assignment operator for each
-			**	of the objects in the vector.
-			*/
-			int copycount = (newsize < VectorMax) ? newsize : VectorMax;
-			for (int index = 0; index < copycount; index++) {
-				newptr[index] = Vector[index];
-			}
+            /*
+            **	Copy as much of the old vector into the new vector as possible. This
+            **	presumes that there is a functional assignment operator for each
+            **	of the objects in the vector.
+            */
+            int copycount = (newsize < VectorMax) ? newsize : VectorMax;
+            for (int index = 0; index < copycount; index++) {
+                newptr[index] = Vector[index];
+            }
 
-			/*
-			**	Delete the old vector. This might cause the destructors to be called
-			**	for all of the old elements. This makes the implementation of suitable
-			**	assignment operator very important. The default assignment operator will
-			**	only work for the simplest of objects.
-			*/
-			if (IsAllocated) {
-				delete[] Vector;
-				Vector = 0;
-			}
-		}
+            /*
+            **	Delete the old vector. This might cause the destructors to be called
+            **	for all of the old elements. This makes the implementation of suitable
+            **	assignment operator very important. The default assignment operator will
+            **	only work for the simplest of objects.
+            */
+            if (IsAllocated) {
+                delete[] Vector;
+                Vector = 0;
+            }
+        }
 
-		/*
-		**	Assign the new vector data to this class.
-		*/
-		Vector = newptr;
-		VectorMax = newsize;
-		IsAllocated = (Vector && !array);
+        /*
+        **	Assign the new vector data to this class.
+        */
+        Vector = newptr;
+        VectorMax = newsize;
+        IsAllocated = (Vector && !array);
 
-	} else {
+    } else {
 
-		/*
-		**	Resizing to zero is the same as clearing the vector.
-		*/
-		Clear();
-	}
-	return(true);
+        /*
+        **	Resizing to zero is the same as clearing the vector.
+        */
+        Clear();
+    }
+    return (true);
 }
 #endif
 //----------------------------------------------------------------------------------------------
@@ -406,13 +391,12 @@ int VectorClass<T>::Resize(unsigned newsize, T const * array)
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-BooleanVectorClass::BooleanVectorClass(unsigned size, unsigned char * array)
+BooleanVectorClass::BooleanVectorClass(unsigned size, unsigned char* array)
 {
-	BitArray.Resize(((size + (8-1)) / 8), array);
-	LastIndex = -1;
-	BitCount = size;
+    BitArray.Resize(((size + (8 - 1)) / 8), array);
+    LastIndex = -1;
+    BitCount = size;
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::BooleanVectorClass -- Copy constructor of boolean array.                *
@@ -429,12 +413,11 @@ BooleanVectorClass::BooleanVectorClass(unsigned size, unsigned char * array)
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-BooleanVectorClass::BooleanVectorClass(BooleanVectorClass const & vector)
+BooleanVectorClass::BooleanVectorClass(BooleanVectorClass const& vector)
 {
-	LastIndex = -1;
-	*this = vector;
+    LastIndex = -1;
+    *this = vector;
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::operator = -- Assignment operator.                                      *
@@ -452,16 +435,15 @@ BooleanVectorClass::BooleanVectorClass(BooleanVectorClass const & vector)
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-BooleanVectorClass & BooleanVectorClass::operator =(BooleanVectorClass const & vector)
+BooleanVectorClass& BooleanVectorClass::operator=(BooleanVectorClass const& vector)
 {
-	Fixup();
-	Copy = vector.Copy;
-	LastIndex = vector.LastIndex;
-	BitArray = vector.BitArray;
-	BitCount = vector.BitCount;
-	return(*this);
+    Fixup();
+    Copy = vector.Copy;
+    LastIndex = vector.LastIndex;
+    BitArray = vector.BitArray;
+    BitCount = vector.BitCount;
+    return (*this);
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::operator == -- Comparison operator for boolean vector.                  *
@@ -478,12 +460,11 @@ BooleanVectorClass & BooleanVectorClass::operator =(BooleanVectorClass const & v
  * HISTORY:                                                                                    *
  *   07/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int BooleanVectorClass::operator == (const BooleanVectorClass & vector)
+int BooleanVectorClass::operator==(const BooleanVectorClass& vector)
 {
-	Fixup(LastIndex);
-	return(BitCount == vector.BitCount && BitArray == vector.BitArray);
+    Fixup(LastIndex);
+    return (BitCount == vector.BitCount && BitArray == vector.BitArray);
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::Resize -- Resizes a boolean vector object.                              *
@@ -502,45 +483,44 @@ int BooleanVectorClass::operator == (const BooleanVectorClass & vector)
  *=============================================================================================*/
 int BooleanVectorClass::Resize(unsigned size)
 {
-	Fixup();
+    Fixup();
 
-	if (size) {
+    if (size) {
 
-		/*
-		**	Record the previous bit count of the boolean vector. This is used
-		**	to determine if the array has grown in size and thus clearing is
-		**	necessary.
-		*/
-		int oldsize = BitCount;
+        /*
+        **	Record the previous bit count of the boolean vector. This is used
+        **	to determine if the array has grown in size and thus clearing is
+        **	necessary.
+        */
+        int oldsize = BitCount;
 
-		/*
-		**	Actually resize the bit array. Since this is a bit packed array,
-		**	there are 8 elements per byte (rounded up).
-		*/
-		int success = BitArray.Resize(((size + (8-1)) / 8));
+        /*
+        **	Actually resize the bit array. Since this is a bit packed array,
+        **	there are 8 elements per byte (rounded up).
+        */
+        int success = BitArray.Resize(((size + (8 - 1)) / 8));
 
-		/*
-		**	Since there is no default constructor for bit packed integers, a manual
-		**	clearing of the bits is required.
-		*/
-		BitCount = size;
-		if (success && oldsize < (int)size) {
-			for (int index = oldsize; index < (int)size; index++) {
-				(*this)[index] = 0;
-			}
-		}
+        /*
+        **	Since there is no default constructor for bit packed integers, a manual
+        **	clearing of the bits is required.
+        */
+        BitCount = size;
+        if (success && oldsize < (int)size) {
+            for (int index = oldsize; index < (int)size; index++) {
+                (*this)[index] = 0;
+            }
+        }
 
-		return(success);
-	}
+        return (success);
+    }
 
-	/*
-	**	Resizing to zero is the same as clearing and deallocating the array.
-	**	This is always successful.
-	*/
-	Clear();
-	return(true);
+    /*
+    **	Resizing to zero is the same as clearing and deallocating the array.
+    **	This is always successful.
+    */
+    Clear();
+    return (true);
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::Clear -- Resets boolean vector to empty state.                          *
@@ -560,11 +540,10 @@ int BooleanVectorClass::Resize(unsigned size)
  *=============================================================================================*/
 void BooleanVectorClass::Clear(void)
 {
-	Fixup();
-	BitCount = 0;
-	BitArray.Clear();
+    Fixup();
+    BitCount = 0;
+    BitArray.Clear();
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::Reset -- Clear all boolean values in array.                             *
@@ -582,12 +561,11 @@ void BooleanVectorClass::Clear(void)
  *=============================================================================================*/
 void BooleanVectorClass::Reset(void)
 {
-	LastIndex = -1;
-	if (BitArray.Length()) {
-		memset(&BitArray[0], '\0', BitArray.Length());
-	}
+    LastIndex = -1;
+    if (BitArray.Length()) {
+        memset(&BitArray[0], '\0', BitArray.Length());
+    }
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::Set -- Forces all boolean elements to true.                             *
@@ -605,12 +583,11 @@ void BooleanVectorClass::Reset(void)
  *=============================================================================================*/
 void BooleanVectorClass::Set(void)
 {
-	LastIndex = -1;
-	if (BitArray.Length()) {
-		memset(&BitArray[0], '\xFF', BitArray.Length());
-	}
+    LastIndex = -1;
+    if (BitArray.Length()) {
+        memset(&BitArray[0], '\xFF', BitArray.Length());
+    }
 }
-
 
 /***********************************************************************************************
  * BooleanVectorClass::Fixup -- Updates the boolean vector to a known state.                   *
@@ -635,38 +612,36 @@ void BooleanVectorClass::Set(void)
  *=============================================================================================*/
 void BooleanVectorClass::Fixup(int index) const
 {
-	/*
-	**	If the requested index value is illegal, then force the index
-	**	to be -1. This is the default non-index value.
-	*/
-	if (index >= BitCount) {
-		index = -1;
-	}
+    /*
+    **	If the requested index value is illegal, then force the index
+    **	to be -1. This is the default non-index value.
+    */
+    if (index >= BitCount) {
+        index = -1;
+    }
 
-	/*
-	**	If the new index is different than the previous index, there might
-	**	be some fixing up required.
-	*/
-	if (index != LastIndex) {
+    /*
+    **	If the new index is different than the previous index, there might
+    **	be some fixing up required.
+    */
+    if (index != LastIndex) {
 
-		/*
-		**	If the previously fetched boolean value was changed, then update
-		**	the boolean array accordingly.
-		*/
-		if (LastIndex != -1) {
-			Set_Bit((void*)&BitArray[0], LastIndex, Copy);
-		}
+        /*
+        **	If the previously fetched boolean value was changed, then update
+        **	the boolean array accordingly.
+        */
+        if (LastIndex != -1) {
+            Set_Bit((void*)&BitArray[0], LastIndex, Copy);
+        }
 
-		/*
-		**	If this new current index is valid, then fill in the reference boolean
-		**	value with the appropriate data from the bit array.
-		*/
-		if (index != -1) {
-			((unsigned char&)Copy) = Get_Bit(&BitArray[0], index);
-		}
+        /*
+        **	If this new current index is valid, then fill in the reference boolean
+        **	value with the appropriate data from the bit array.
+        */
+        if (index != -1) {
+            ((unsigned char&)Copy) = Get_Bit(&BitArray[0], index);
+        }
 
-		((int &)LastIndex) = index;
-	}
+        ((int&)LastIndex) = index;
+    }
 }
-
-

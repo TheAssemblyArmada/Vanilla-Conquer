@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/RGB.CPP 1     3/03/97 10:25a Joe_bostic $ */
@@ -36,13 +36,12 @@
  *   RGBClass::operator HSVClass -- Conversion operator for RGB to HSV object.                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"watcom.h"
+#include "watcom.h"
 #include "rgb.h"
-#include	"hsv.h"
-#include	"palettec.h"
+#include "hsv.h"
+#include "palettec.h"
 
 RGBClass const BlackColor(0, 0, 0);
-
 
 /***********************************************************************************************
  * RGBClass::Adjust -- Adjust one RGB value toward another.                                    *
@@ -64,28 +63,27 @@ RGBClass const BlackColor(0, 0, 0);
  * HISTORY:                                                                                    *
  *   12/02/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void RGBClass::Adjust(int ratio, RGBClass const & rgb)
+void RGBClass::Adjust(int ratio, RGBClass const& rgb)
 {
-	/*
-	**	Ratio conversion is limited to 0 through 100%. This is
-	**	the range of 0 to 255.
-	*/
-	ratio &= 0x00FF;
+    /*
+    **	Ratio conversion is limited to 0 through 100%. This is
+    **	the range of 0 to 255.
+    */
+    ratio &= 0x00FF;
 
-	/*
-	**	Adjust the color guns by the ratio specified toward the
-	**	destination color.
-	*/
-	int value = (int)rgb.Red - (int)Red;
-	Red = (int)Red + (value * ratio) / 256;
+    /*
+    **	Adjust the color guns by the ratio specified toward the
+    **	destination color.
+    */
+    int value = (int)rgb.Red - (int)Red;
+    Red = (int)Red + (value * ratio) / 256;
 
-	value = (int)rgb.Green - (int)Green;
-	Green = (int)Green + (value * ratio) / 256;
+    value = (int)rgb.Green - (int)Green;
+    Green = (int)Green + (value * ratio) / 256;
 
-	value = (int)rgb.Blue - (int)Blue;
-	Blue = (int)Blue + (value * ratio) / 256;
+    value = (int)rgb.Blue - (int)Blue;
+    Blue = (int)Blue + (value * ratio) / 256;
 }
-
 
 /***********************************************************************************************
  * RGBClass::Difference -- Determines the "distance" between two colors.                       *
@@ -106,20 +104,22 @@ void RGBClass::Adjust(int ratio, RGBClass const & rgb)
  * HISTORY:                                                                                    *
  *   12/02/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int RGBClass::Difference(RGBClass const & rgb) const
+int RGBClass::Difference(RGBClass const& rgb) const
 {
-	int r = (int)Red - (int)rgb.Red;
-	if (r < 0) r = -r;
+    int r = (int)Red - (int)rgb.Red;
+    if (r < 0)
+        r = -r;
 
-	int g = (int)Green - (int)rgb.Green;
-	if (g < 0) g = -g;
+    int g = (int)Green - (int)rgb.Green;
+    if (g < 0)
+        g = -g;
 
-	int b = (int)Blue - (int)rgb.Blue;
-	if (b < 0) b = -b;
+    int b = (int)Blue - (int)rgb.Blue;
+    if (b < 0)
+        b = -b;
 
-	return(r*r + g*g + b*b);
+    return (r * r + g * g + b * b);
 }
-
 
 /***********************************************************************************************
  * RGBClass::operator HSVClass -- Conversion operator for RGB to HSV object.                   *
@@ -136,90 +136,91 @@ int RGBClass::Difference(RGBClass const & rgb) const
  * HISTORY:                                                                                    *
  *   02/20/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-RGBClass::operator HSVClass (void) const
+RGBClass::operator HSVClass(void) const
 {
-	int hue;
-	int saturation;
-	int value;
+    int hue;
+    int saturation;
+    int value;
 
-	/*
-	**	Fetch working component values for the color guns.
-	*/
-	int red = Red_Component();
-	int green = Green_Component();
-	int blue = Blue_Component();
+    /*
+    **	Fetch working component values for the color guns.
+    */
+    int red = Red_Component();
+    int green = Green_Component();
+    int blue = Blue_Component();
 
-	/*
-	**	The hue defaults to none. Only if there is a saturation value will the
-	**	hue be calculated.
-	*/
-	hue = 0;
+    /*
+    **	The hue defaults to none. Only if there is a saturation value will the
+    **	hue be calculated.
+    */
+    hue = 0;
 
-	/*
-	**	Set the value (brightness) to match the brightest color gun.
-	*/
-	value = (red > green) ? red : green;
-	if (blue > value) value = blue;
+    /*
+    **	Set the value (brightness) to match the brightest color gun.
+    */
+    value = (red > green) ? red : green;
+    if (blue > value)
+        value = blue;
 
-	/*
-	**	Determine the amount of true white present in the color. This is the
-	**	minimum color gun value. The white component is used to determine
-	**	color saturation.
-	*/
-	int white = (red < green) ? red : green;
-	if (blue < white) white = blue;
+    /*
+    **	Determine the amount of true white present in the color. This is the
+    **	minimum color gun value. The white component is used to determine
+    **	color saturation.
+    */
+    int white = (red < green) ? red : green;
+    if (blue < white)
+        white = blue;
 
-	/*
-	**	Determine the saturation (intensity) of the color by comparing the
-	**	ratio of true white as a component of the overall color. The more
-	**	white component, the less saturation.
-	*/
-	saturation = 0;
-	if (value) {
-		saturation = ((value - white) * 255) / value;
-	}
+    /*
+    **	Determine the saturation (intensity) of the color by comparing the
+    **	ratio of true white as a component of the overall color. The more
+    **	white component, the less saturation.
+    */
+    saturation = 0;
+    if (value) {
+        saturation = ((value - white) * 255) / value;
+    }
 
-	/*
-	** If there is any saturation at all, then the hue must be calculated. The
-	**	hue is based on a six sided color wheel.
-	*/
-	if (saturation != 0) {
-		unsigned int tmp = value - white;
-	 	unsigned int r1 = ((value - red) * 255) / tmp;
-	 	unsigned int g1 = ((value - green) * 255) / tmp;
-	 	unsigned int b1 = ((value - blue) * 255) / tmp;
+    /*
+    ** If there is any saturation at all, then the hue must be calculated. The
+    **	hue is based on a six sided color wheel.
+    */
+    if (saturation != 0) {
+        unsigned int tmp = value - white;
+        unsigned int r1 = ((value - red) * 255) / tmp;
+        unsigned int g1 = ((value - green) * 255) / tmp;
+        unsigned int b1 = ((value - blue) * 255) / tmp;
 
-		// Find effect of second most predominant color.
-		// In which section of the hexagon of colors does the color lie?
-		if (value == red) {
-		 	if (white == green) {
-				tmp = 5 * 256 + b1;
-			} else {
-				tmp = 1 * 256 - g1;
-			}
-		} else {
-			if (value == green) {
-			 	if (white == blue) {
-					tmp = 1 * 256 + r1;
-				} else {
-					tmp = 3 * 256 - b1;
-				}
-			} else {
-			 	if (white == red) {
-					tmp = 3 * 256 + g1;
-				} else {
-					tmp = 5 * 256 - r1;
-				}
-			}
-		}
+        // Find effect of second most predominant color.
+        // In which section of the hexagon of colors does the color lie?
+        if (value == red) {
+            if (white == green) {
+                tmp = 5 * 256 + b1;
+            } else {
+                tmp = 1 * 256 - g1;
+            }
+        } else {
+            if (value == green) {
+                if (white == blue) {
+                    tmp = 1 * 256 + r1;
+                } else {
+                    tmp = 3 * 256 - b1;
+                }
+            } else {
+                if (white == red) {
+                    tmp = 3 * 256 + g1;
+                } else {
+                    tmp = 5 * 256 - r1;
+                }
+            }
+        }
 
-		// Divide by six and round.
-		hue = tmp / 6;
-	}
+        // Divide by six and round.
+        hue = tmp / 6;
+    }
 
-	return(HSVClass(hue, saturation, value));
+    return (HSVClass(hue, saturation, value));
 }
-
 
 /***********************************************************************************************
  * RGBClass::Set -- Set the color index to the RGB object specified.                           *
@@ -238,9 +239,8 @@ RGBClass::operator HSVClass (void) const
  *=============================================================================================*/
 void RGBClass::Set(int color) const
 {
-	Raw_Color_Prep(color);
-	Raw_Set();
+    Raw_Color_Prep(color);
+    Raw_Set();
 
-	((RGBClass &)PaletteClass::CurrentPalette[color]) = *this;
+    ((RGBClass&)PaletteClass::CurrentPalette[color]) = *this;
 }
-

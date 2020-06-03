@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /***************************************************************************
@@ -42,33 +42,32 @@
 /*	The machine can be in one of the following graphic modes.  The global	*/
 /*	GraphicMode is set to one of these values.										*/
 /*=========================================================================*/
-#define	CGA_MODE					4			// DOS 320x200 4 color mode
-#define	TGA_MODE					9			// TANDY 320x200 16 color mode
-#define	EGA_MODE					13			// DOS 320x200 16 color mode
-#define	MCGA_MODE				0x13		// DOS 320x200 256 color mode
-#define	VGA_MODE					0x13		// DOS 320x200 256 color mode
-#define	EEGA_MODE				14			// DOS 640x400 16 color mode
-#define	ETGA_MODE				9			// TANDY 640x400 16 color mode
-#define	HGA_MODE					7			// DOS 768x400 2 color mode
-#define	TXT_MODE					3			// DOS plain old color text mode
-#define	VESA_640X400_256		0x100		// VESA 640x400 256 color mode
-#define	VESA_640X480_256		0x101		// VESA 640x480 256 color mode
-#define	VESA_800X600_256		0x103		// VESA 800x600 256 color mode
-#define	VESA_1024X768_256		0x105		//	VESA 1024x768 256 color mode
-#define	VESA_1280X400_256		0x107		// VESA 1280x400 256 color mode
-#define	VESA_TEXT_80X60		0x108		// VESA 80x60 text mode
-#define	VESA_TEXT_132X25		0x109		// VESA 132x25 text mode
-#define	VESA_TEXT_132X60		0x10C		// VESA 132x60 text mode
-#define	RESET_MODE				-1
-#define	UNINITIALIZED_MODE	-1
-#define	VESA_MIN 				VESA_640X400_256
-#define	VESA_MAX					VESA_TEXT_132X60
+#define CGA_MODE           4     // DOS 320x200 4 color mode
+#define TGA_MODE           9     // TANDY 320x200 16 color mode
+#define EGA_MODE           13    // DOS 320x200 16 color mode
+#define MCGA_MODE          0x13  // DOS 320x200 256 color mode
+#define VGA_MODE           0x13  // DOS 320x200 256 color mode
+#define EEGA_MODE          14    // DOS 640x400 16 color mode
+#define ETGA_MODE          9     // TANDY 640x400 16 color mode
+#define HGA_MODE           7     // DOS 768x400 2 color mode
+#define TXT_MODE           3     // DOS plain old color text mode
+#define VESA_640X400_256   0x100 // VESA 640x400 256 color mode
+#define VESA_640X480_256   0x101 // VESA 640x480 256 color mode
+#define VESA_800X600_256   0x103 // VESA 800x600 256 color mode
+#define VESA_1024X768_256  0x105 //	VESA 1024x768 256 color mode
+#define VESA_1280X400_256  0x107 // VESA 1280x400 256 color mode
+#define VESA_TEXT_80X60    0x108 // VESA 80x60 text mode
+#define VESA_TEXT_132X25   0x109 // VESA 132x25 text mode
+#define VESA_TEXT_132X60   0x10C // VESA 132x60 text mode
+#define RESET_MODE         -1
+#define UNINITIALIZED_MODE -1
+#define VESA_MIN           VESA_640X400_256
+#define VESA_MAX           VESA_TEXT_132X60
 
 /*=========================================================================*/
 /* Define the maximum number of bank entries											*/
 /*=========================================================================*/
-#define	MAX_BANK_ENTRIES		((1280L*1024L)/65536L)
-
+#define MAX_BANK_ENTRIES ((1280L * 1024L) / 65536L)
 
 /*=========================================================================*
  * VesaInfoType - General info about this VESA implementation					*
@@ -83,17 +82,18 @@
  * Reserved     - Pads structure to 256 bytes total								*
  *=========================================================================*/
 #ifdef NOT_FOR_WIN95
-typedef struct {
-	char    Signature[4];
-	short   Version;
-	REALPTR OEMString;
-	long    Capabilities;
-	REALPTR AvailModes;
-	short   TotalMemory;
-	char    Reserved[236];
+typedef struct
+{
+    char Signature[4];
+    short Version;
+    REALPTR OEMString;
+    long Capabilities;
+    REALPTR AvailModes;
+    short TotalMemory;
+    char Reserved[236];
 } VesaInfoType;
 
-#endif //NOT_FOR_WIN95
+#endif // NOT_FOR_WIN95
 
 /*=========================================================================*
  * VesaModeInfoType - Info about this VESA mode										*
@@ -135,52 +135,52 @@ typedef struct {
  * BankSize         - Bank size in KB													*
  *=========================================================================*/
 #ifdef NOT_FOR_WIN95
-typedef struct {
-	short   Attributes;
-	char    WinA_Attributes;
-	char    WinB_Attributes;
-	short   WinGranularity;
-	short   WinSize;
-	short   WinA_Segment;
-	short   WinB_Segment;
-	REALPTR WinFunc;
-	short   BytesPerScanline;
-	short   XRes;
-	short   YRes;
-	char    XCharSize;
-	char    YCharSize;
-	char    NumPlanes;
-	char    BitsPerPixel;
-	char    NumBanks;
-	char    MemoryModel;
-	char    BankSize;
-	char    NumInputPages;
-	char    Reserved;
-	char    RedMaskSize;
-	char    RedFieldPosition;
-	char    GreenMaskSize;
-	char    GreenFieldPosition;
-	char    BlueMaskSize;
-	char    BlueFieldPosition;
-	char    RsvdMaskSize;
-	char    RsvdFieldPosition;
-	char    DirectColorModeInfo;
-	char    pad[216];
+typedef struct
+{
+    short Attributes;
+    char WinA_Attributes;
+    char WinB_Attributes;
+    short WinGranularity;
+    short WinSize;
+    short WinA_Segment;
+    short WinB_Segment;
+    REALPTR WinFunc;
+    short BytesPerScanline;
+    short XRes;
+    short YRes;
+    char XCharSize;
+    char YCharSize;
+    char NumPlanes;
+    char BitsPerPixel;
+    char NumBanks;
+    char MemoryModel;
+    char BankSize;
+    char NumInputPages;
+    char Reserved;
+    char RedMaskSize;
+    char RedFieldPosition;
+    char GreenMaskSize;
+    char GreenFieldPosition;
+    char BlueMaskSize;
+    char BlueFieldPosition;
+    char RsvdMaskSize;
+    char RsvdFieldPosition;
+    char DirectColorModeInfo;
+    char pad[216];
 } VesaModeInfoType;
 
-extern REALPTR	 VesaFunc;
+extern REALPTR VesaFunc;
 
-#endif //NOT_FOR_WIN95
-
+#endif // NOT_FOR_WIN95
 
 extern "C" {
-extern	int	GraphicMode;
-extern	long	XRes;
-extern	long	YRes;
+extern int GraphicMode;
+extern long XRes;
+extern long YRes;
 
-extern long		 BankTable [];
-extern unsigned long RMVesaVector ;
-extern unsigned long RMVesaRegs ;
+extern long BankTable[];
+extern unsigned long RMVesaVector;
+extern unsigned long RMVesaRegs;
 }
 
 /*=========================================================================*/
@@ -189,7 +189,7 @@ extern unsigned long RMVesaRegs ;
 
 extern "C" int Set_Video_Mode(int mode);
 int Get_Video_Mode(void);
-void Update_Video_Mode (void) ;
+void Update_Video_Mode(void);
 void Vesa_Info(void);
 void Vesa_Set_Window(long grain_num);
 int Get_Original_Video_Mode(void);
@@ -207,8 +207,8 @@ extern BOOL VertBlank;
 /*=========================================================================*/
 
 extern "C" {
-	extern WORD Get_Vert_Blank(VOID);
-	extern VOID Wait_Vert_Blank(BOOL blank);
+extern WORD Get_Vert_Blank(VOID);
+extern VOID Wait_Vert_Blank(BOOL blank);
 }
 
 /*=========================================================================*/

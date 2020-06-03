@@ -1,21 +1,21 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\jshell.cpv   2.18   16 Oct 1995 16:51:12   JOE_BOSTIC  $ */
 /***********************************************************************************************
- ***             C O N F I D E N T I A L  ---  W E S T W O O D   S T U D I O S               *** 
+ ***             C O N F I D E N T I A L  ---  W E S T W O O D   S T U D I O S               ***
  ***********************************************************************************************
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
@@ -36,93 +36,89 @@
  *   Load_Alloc_Data -- Allocates a buffer and loads the file into it.                         *
  *   Load_Uncompress -- Loads and uncompresses data to a buffer.                               *
  *   Fatal -- General purpose fatal error handler.                                             *
- *   Set_Window -- Sets the window dimensions to that specified.                               * 
- *   Small_Icon -- Create a small icon from a big one.                                         * 
+ *   Set_Window -- Sets the window dimensions to that specified.                               *
+ *   Small_Icon -- Create a small icon from a big one.                                         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
-#include	"wwfile.h"
+#include "function.h"
+#include "wwfile.h"
 
 #include <assert.h>
 
-/*********************************************************************************************** 
- * Small_Icon -- Create a small icon from a big one.                                           * 
- *                                                                                             * 
- *    This routine will extract the specified icon from the icon data file and convert that    * 
- *    incon into a small (3x3) representation. Typicall use of this mini-icon is for the radar * 
- *    map.                                                                                     * 
- *                                                                                             * 
- * INPUT:   iconptr  -- Pointer to the icon data file.                                         * 
- *                                                                                             * 
- *          iconnum  -- The embedded icon number to convert into a small image.                * 
- *                                                                                             * 
- * OUTPUT:  Returns with a pointer to the small icon imagery. This is exactly 9 bytes long.    * 
- *                                                                                             * 
- * WARNINGS:   none                                                                            * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   05/11/1995 JLB : Created.                                                                 * 
+/***********************************************************************************************
+ * Small_Icon -- Create a small icon from a big one.                                           *
+ *                                                                                             *
+ *    This routine will extract the specified icon from the icon data file and convert that    *
+ *    incon into a small (3x3) representation. Typicall use of this mini-icon is for the radar *
+ *    map.                                                                                     *
+ *                                                                                             *
+ * INPUT:   iconptr  -- Pointer to the icon data file.                                         *
+ *                                                                                             *
+ *          iconnum  -- The embedded icon number to convert into a small image.                *
+ *                                                                                             *
+ * OUTPUT:  Returns with a pointer to the small icon imagery. This is exactly 9 bytes long.    *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   05/11/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void * Small_Icon(void const * iconptr, int iconnum)
+void* Small_Icon(void const* iconptr, int iconnum)
 {
-	static unsigned char _icon[9];
-	IControl_Type const * iptr = (IControl_Type const *)iconptr;
-	unsigned char * data;
+    static unsigned char _icon[9];
+    IControl_Type const* iptr = (IControl_Type const*)iconptr;
+    unsigned char* data;
 
-	if (iconptr) {
-		iconnum = iptr->Map[iconnum];
-		data = &iptr->Icons[iconnum*(24*24)];
+    if (iconptr) {
+        iconnum = iptr->Map[iconnum];
+        data = &iptr->Icons[iconnum * (24 * 24)];
 
-		for (int index = 0; index < 9; index++) {
-			int _offsets[9] = {
-				4+4*24,
-				12+4*24,
-				20+4*24,
-				4+12*24,
-				12+12*24,
-				20+12*24,
-				4+20*24,
-				12+20*24,
-				20+20*24
-			};
-			_icon[index] = data[_offsets[index]];
-		}
-	}
+        for (int index = 0; index < 9; index++) {
+            int _offsets[9] = {4 + 4 * 24,
+                               12 + 4 * 24,
+                               20 + 4 * 24,
+                               4 + 12 * 24,
+                               12 + 12 * 24,
+                               20 + 12 * 24,
+                               4 + 20 * 24,
+                               12 + 20 * 24,
+                               20 + 20 * 24};
+            _icon[index] = data[_offsets[index]];
+        }
+    }
 
-	return(_icon);
-}	
+    return (_icon);
+}
 
-
-/*********************************************************************************************** 
- * Set_Window -- Sets the window dimensions to that specified.                                 * 
- *                                                                                             * 
- *    Use this routine to set the windows dimensions to the coordinates and dimensions         * 
- *    specified.                                                                               * 
- *                                                                                             * 
- * INPUT:   x     -- Window X pixel position.                                                  * 
- *                                                                                             * 
- *          y     -- Window Y pixel position.                                                  * 
- *                                                                                             * 
- *          w     -- Window width in pixels.                                                   * 
- *                                                                                             * 
- *          h     -- Window height in pixels.                                                  * 
- *                                                                                             * 
- * OUTPUT:  none                                                                               * 
- *                                                                                             * 
- * WARNINGS:   The X and width values are truncated to an even 8 pixel boundary. This is       * 
- *             the same as stripping off the lower 3 bits.                                     * 
- *                                                                                             * 
- * HISTORY:                                                                                    * 
- *   01/15/1995 JLB : Created.                                                                 * 
+/***********************************************************************************************
+ * Set_Window -- Sets the window dimensions to that specified.                                 *
+ *                                                                                             *
+ *    Use this routine to set the windows dimensions to the coordinates and dimensions         *
+ *    specified.                                                                               *
+ *                                                                                             *
+ * INPUT:   x     -- Window X pixel position.                                                  *
+ *                                                                                             *
+ *          y     -- Window Y pixel position.                                                  *
+ *                                                                                             *
+ *          w     -- Window width in pixels.                                                   *
+ *                                                                                             *
+ *          h     -- Window height in pixels.                                                  *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   The X and width values are truncated to an even 8 pixel boundary. This is       *
+ *             the same as stripping off the lower 3 bits.                                     *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   01/15/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
 void Set_Window(int window, int x, int y, int w, int h)
 {
-	WindowList[window][WINDOWWIDTH] = w >> 3; 
-	WindowList[window][WINDOWHEIGHT] = h;
-	WindowList[window][WINDOWX] = x >> 3;
-	WindowList[window][WINDOWY] = y;
-}	
-
+    WindowList[window][WINDOWWIDTH] = w >> 3;
+    WindowList[window][WINDOWHEIGHT] = h;
+    WindowList[window][WINDOWX] = x >> 3;
+    WindowList[window][WINDOWY] = y;
+}
 
 /***********************************************************************************************
  * Fatal -- General purpose fatal error handler.                                               *
@@ -141,37 +137,34 @@ void Set_Window(int window, int x, int y, int w, int h)
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void Fatal(char const *message, ...)
+void Fatal(char const* message, ...)
 {
-	va_list	va;
+    va_list va;
 
-	va_start(va, message);
-	Prog_End();
-	vfprintf(stderr, message, va);
-	Mono_Printf(message);
-	GlyphX_Debug_Print("Fatal");
-	GlyphX_Debug_Print(message);
+    va_start(va, message);
+    Prog_End();
+    vfprintf(stderr, message, va);
+    Mono_Printf(message);
+    GlyphX_Debug_Print("Fatal");
+    GlyphX_Debug_Print(message);
 
-	if (!RunningAsDLL) {
-		exit(EXIT_FAILURE);
-	} else {
-		*((int*)0) = 0;
-	}	
+    if (!RunningAsDLL) {
+        exit(EXIT_FAILURE);
+    } else {
+        *((int*)0) = 0;
+    }
 }
-
 
 #ifdef NEVER
-void File_Fatal(char const *message)
+void File_Fatal(char const* message)
 {
-	Prog_End();
-	perror(message);
-	if (!RunningAsDLL) {
-		exit(EXIT_FAILURE);
-	}
+    Prog_End();
+    perror(message);
+    if (!RunningAsDLL) {
+        exit(EXIT_FAILURE);
+    }
 }
 #endif
-
-
 
 /***********************************************************************************************
  * Load_Uncompress -- Loads and uncompresses data to a buffer.                                 *
@@ -196,82 +189,81 @@ void File_Fatal(char const *message)
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-long Load_Uncompress(FileClass &file, BuffType &uncomp_buff, BuffType &dest_buff, void *reserved_data)
+long Load_Uncompress(FileClass& file, BuffType& uncomp_buff, BuffType& dest_buff, void* reserved_data)
 {
-	unsigned short	size;
-	void	*sptr = uncomp_buff.Get_Buffer();
-	void	*dptr = dest_buff.Get_Buffer();
-	int	opened = false;
-	CompHeaderType	header;
+    unsigned short size;
+    void* sptr = uncomp_buff.Get_Buffer();
+    void* dptr = dest_buff.Get_Buffer();
+    int opened = false;
+    CompHeaderType header;
 
-	/*
-	**	The file must be opened in order to be read from. If the file 
-	**	isn't opened, then open it. Record this fact so that it can be
-	**	restored to its closed state at the end.
-	*/
-	if (!file.Is_Open()) {
-		if (!file.Open()) {
-			return(0);
-		}
-		opened = true;
-	}
+    /*
+    **	The file must be opened in order to be read from. If the file
+    **	isn't opened, then open it. Record this fact so that it can be
+    **	restored to its closed state at the end.
+    */
+    if (!file.Is_Open()) {
+        if (!file.Open()) {
+            return (0);
+        }
+        opened = true;
+    }
 
-	/*
-	**	Read in the size of the file (supposedly).
-	*/
-	file.Read(&size, sizeof(size));
+    /*
+    **	Read in the size of the file (supposedly).
+    */
+    file.Read(&size, sizeof(size));
 
-	/*
-	**	Read in the header block. This block contains the compression type
-	**	and skip data (among other things).
-	*/
-	file.Read(&header, sizeof(header));
-	size -= sizeof(header);
+    /*
+    **	Read in the header block. This block contains the compression type
+    **	and skip data (among other things).
+    */
+    file.Read(&header, sizeof(header));
+    size -= sizeof(header);
 
-	/*
-	**	If there are skip bytes then they must be processed. Either read
-	**	them into the buffer provided or skip past them. No check is made
-	**	to ensure that the reserved data buffer is big enough (watch out!).
-	*/
-	if (header.Skip) {
-		size -= header.Skip;
-		if (reserved_data) {
-			file.Read(reserved_data, header.Skip);
-		} else {
-			file.Seek(header.Skip, SEEK_CUR);
-		}
-		header.Skip = 0;
-	}
+    /*
+    **	If there are skip bytes then they must be processed. Either read
+    **	them into the buffer provided or skip past them. No check is made
+    **	to ensure that the reserved data buffer is big enough (watch out!).
+    */
+    if (header.Skip) {
+        size -= header.Skip;
+        if (reserved_data) {
+            file.Read(reserved_data, header.Skip);
+        } else {
+            file.Seek(header.Skip, SEEK_CUR);
+        }
+        header.Skip = 0;
+    }
 
-	/*
-	**	Determine where is the proper place to load the data. If both buffers
-	**	specified are identical, then the data should be loaded at the end of
-	**	the buffer and decompressed at the beginning.
-	*/
-	if (uncomp_buff.Get_Buffer() == dest_buff.Get_Buffer()) {
-		sptr = Add_Long_To_Pointer(sptr, uncomp_buff.Get_Size()-(size+sizeof(header)));
-	}
+    /*
+    **	Determine where is the proper place to load the data. If both buffers
+    **	specified are identical, then the data should be loaded at the end of
+    **	the buffer and decompressed at the beginning.
+    */
+    if (uncomp_buff.Get_Buffer() == dest_buff.Get_Buffer()) {
+        sptr = Add_Long_To_Pointer(sptr, uncomp_buff.Get_Size() - (size + sizeof(header)));
+    }
 
-	/*
-	**	Read in the bulk of the data.
-	*/
-	Mem_Copy(&header, sptr, sizeof(header));
-	file.Read(Add_Long_To_Pointer(sptr, sizeof(header)), size);
+    /*
+    **	Read in the bulk of the data.
+    */
+    Mem_Copy(&header, sptr, sizeof(header));
+    file.Read(Add_Long_To_Pointer(sptr, sizeof(header)), size);
 
-	/*
-	**	Decompress the data.
-	*/
-	size = (unsigned int) Uncompress_Data(sptr, dptr);
+    /*
+    **	Decompress the data.
+    */
+    size = (unsigned int)Uncompress_Data(sptr, dptr);
 
-	/*
-	**	Close the file if necessary.
-	*/
-	if (opened) {
-		file.Close();
-	}
-	return((long)size);
+    /*
+    **	Close the file if necessary.
+    */
+    if (opened) {
+        file.Close();
+    }
+    return ((long)size);
 }
-
 
 /***********************************************************************************************
  * Load_Alloc_Data -- Allocates a buffer and loads the file into it.                           *
@@ -290,18 +282,17 @@ long Load_Uncompress(FileClass &file, BuffType &uncomp_buff, BuffType &dest_buff
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void * Load_Alloc_Data(FileClass &file)
+void* Load_Alloc_Data(FileClass& file)
 {
-	void *ptr = 0;
-	long size = file.Size();
+    void* ptr = 0;
+    long size = file.Size();
 
-	ptr = new char [size];
-	if (ptr) {
-		file.Read(ptr, size);
-	}
-	return(ptr);
+    ptr = new char[size];
+    if (ptr) {
+        file.Read(ptr, size);
+    }
+    return (ptr);
 }
-
 
 /***********************************************************************************************
  * Translucent_Table_Size -- Determines the size of a translucent table.                       *
@@ -321,9 +312,8 @@ void * Load_Alloc_Data(FileClass &file)
  *=============================================================================================*/
 long Translucent_Table_Size(int count)
 {
-	return(256L + (256L * count));
+    return (256L + (256L * count));
 }
-
 
 /***********************************************************************************************
  * Build_Translucent_Table -- Creates a translucent control table.                             *
@@ -352,33 +342,32 @@ long Translucent_Table_Size(int count)
  * HISTORY:                                                                                    *
  *   04/02/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void *Build_Translucent_Table(void const *palette, TLucentType const *control, int count, void *buffer)
+void* Build_Translucent_Table(void const* palette, TLucentType const* control, int count, void* buffer)
 {
-	unsigned char	const *table;		// Remap table pointer.
-	int			index;		// Working color index.
+    unsigned char const* table; // Remap table pointer.
+    int index;                  // Working color index.
 
-	if (count && control && palette) {
-		if (!buffer) {
-			buffer = new char [Translucent_Table_Size(count)];
-		}
+    if (count && control && palette) {
+        if (!buffer) {
+            buffer = new char[Translucent_Table_Size(count)];
+        }
 
-		if (buffer) {
-			memset(buffer, -1, 256);
-			table = (unsigned char*)Add_Long_To_Pointer((void*)buffer, 256);
+        if (buffer) {
+            memset(buffer, -1, 256);
+            table = (unsigned char*)Add_Long_To_Pointer((void*)buffer, 256);
 
-			/*
-			**	Build the individual remap tables for each translucent color.
-			*/
-			for (index = 0; index < count; index++) {
-				((unsigned char*)buffer)[control[index].SourceColor] = index;
-				Build_Fading_Table(palette, (void*)table, control[index].DestColor, control[index].Fading);
-				table = (unsigned char*)Add_Long_To_Pointer((void*)table, 256);
-			}
-		}
-	}
-	return(buffer);
+            /*
+            **	Build the individual remap tables for each translucent color.
+            */
+            for (index = 0; index < count; index++) {
+                ((unsigned char*)buffer)[control[index].SourceColor] = index;
+                Build_Fading_Table(palette, (void*)table, control[index].DestColor, control[index].Fading);
+                table = (unsigned char*)Add_Long_To_Pointer((void*)table, 256);
+            }
+        }
+    }
+    return (buffer);
 }
-
 
 /***********************************************************************************************
  * Conquer_Build_Translucent_Table -- Builds fading table for shadow colors only.              *
@@ -406,29 +395,29 @@ void *Build_Translucent_Table(void const *palette, TLucentType const *control, i
  * HISTORY:                                                                                    *
  *   06/27/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void *Conquer_Build_Translucent_Table(void const *palette, TLucentType const *control, int count, void *buffer)
+void* Conquer_Build_Translucent_Table(void const* palette, TLucentType const* control, int count, void* buffer)
 {
-	unsigned char	const *table;		// Remap table pointer.
-	int			index;		// Working color index.
+    unsigned char const* table; // Remap table pointer.
+    int index;                  // Working color index.
 
-	if (count && control && palette) {
-		if (!buffer) {
-			buffer = new char [Translucent_Table_Size(count)];
-		}
+    if (count && control && palette) {
+        if (!buffer) {
+            buffer = new char[Translucent_Table_Size(count)];
+        }
 
-		if (buffer) {
-			memset(buffer, -1, 256);
-			table = (unsigned char*)Add_Long_To_Pointer((void*)buffer, 256);
+        if (buffer) {
+            memset(buffer, -1, 256);
+            table = (unsigned char*)Add_Long_To_Pointer((void*)buffer, 256);
 
-			/*
-			**	Build the individual remap tables for each translucent color.
-			*/
-			for (index = 0; index < count; index++) {
-				((unsigned char*)buffer)[control[index].SourceColor] = index;
-				Conquer_Build_Fading_Table(palette, (void*)table, control[index].DestColor, control[index].Fading);
-				table = (unsigned char*)Add_Long_To_Pointer((void*)table, 256);
-			}
-		}
-	}
-	return(buffer);
+            /*
+            **	Build the individual remap tables for each translucent color.
+            */
+            for (index = 0; index < count; index++) {
+                ((unsigned char*)buffer)[control[index].SourceColor] = index;
+                Conquer_Build_Fading_Table(palette, (void*)table, control[index].DestColor, control[index].Fading);
+                table = (unsigned char*)Add_Long_To_Pointer((void*)table, 256);
+            }
+        }
+    }
+    return (buffer);
 }

@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/SCROLL.CPP 1     3/03/97 10:25a Joe_bostic $ */
@@ -35,16 +35,15 @@
  *   ScrollClass::Set_Autoscroll -- Turns autoscrolling on or off.                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"function.h"
+#include "function.h"
 
 #ifdef WIN32
-#define	SCROLL_DELAY	1
+#define SCROLL_DELAY 1
 #else
-#define	SCROLL_DELAY	2
+#define SCROLL_DELAY 2
 #endif
 
 CDTimerClass<SystemTimerClass> ScrollClass::Counter;
-
 
 /***********************************************************************************************
  * ScrollClass::ScrollClass -- Constructor for the scroll class object.                        *
@@ -60,13 +59,12 @@ CDTimerClass<SystemTimerClass> ScrollClass::Counter;
  * HISTORY:                                                                                    *
  *   08/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-ScrollClass::ScrollClass(void) :
-	IsAutoScroll(true)
+ScrollClass::ScrollClass(void)
+    : IsAutoScroll(true)
 {
-	Counter = SCROLL_DELAY;
-	Inertia = 0;
+    Counter = SCROLL_DELAY;
+    Inertia = 0;
 }
-
 
 /***********************************************************************************************
  * ScrollClass::AI -- Handles scroll AI processing.                                            *
@@ -86,8 +84,8 @@ ScrollClass::ScrollClass(void) :
  *   08/10/1995 JLB : Revamped for free smooth scrolling.                                      *
  *   08/25/1995 JLB : Handles new scrolling option.                                            *
  *=============================================================================================*/
-#define	EVA_WIDTH		80
-void ScrollClass::AI(KeyNumType &input, int x, int y)
+#define EVA_WIDTH 80
+void ScrollClass::AI(KeyNumType& input, int x, int y)
 {
 #if 0
 	bool		player_scrolled=false;
@@ -225,9 +223,8 @@ void ScrollClass::AI(KeyNumType &input, int x, int y)
 		}
 	}
 #endif
-	HelpClass::AI(input, x, y);
+    HelpClass::AI(input, x, y);
 }
-
 
 /***********************************************************************************************
  * ScrollClass::Set_Autoscroll -- Turns autoscrolling on or off.                               *
@@ -250,18 +247,16 @@ void ScrollClass::AI(KeyNumType &input, int x, int y)
  *=============================================================================================*/
 bool ScrollClass::Set_Autoscroll(int control)
 {
-	bool old = IsAutoScroll;
+    bool old = IsAutoScroll;
 
-	switch (control) {
-		case -1:
-			IsAutoScroll = !IsAutoScroll;
-			break;
+    switch (control) {
+    case -1:
+        IsAutoScroll = !IsAutoScroll;
+        break;
 
-		default:
-			IsAutoScroll = control;
-			break;
-	}
-	return(old);
+    default:
+        IsAutoScroll = control;
+        break;
+    }
+    return (old);
 }
-
-

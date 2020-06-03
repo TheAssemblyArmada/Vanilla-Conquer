@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/CHECKBOX.H 1     3/03/97 10:24a Joe_bostic $ */
@@ -35,19 +35,18 @@
 #ifndef CHECKBOX_H
 #define CHECKBOX_H
 
-#include	"toggle.h"
+#include "toggle.h"
 
 class CheckBoxClass : public ToggleClass
 {
-	public:
-		CheckBoxClass(unsigned id, int x, int y) :
-			ToggleClass(id, x, y, 7, 7)
-		{};
+public:
+    CheckBoxClass(unsigned id, int x, int y)
+        : ToggleClass(id, x, y, 7, 7){};
 
-		virtual int Draw_Me(int forced=false);
-		virtual int Action(unsigned flags, KeyNumType & key);
+    virtual int Draw_Me(int forced = false);
+    virtual int Action(unsigned flags, KeyNumType& key);
 
-	protected:
+protected:
 };
 
 #endif

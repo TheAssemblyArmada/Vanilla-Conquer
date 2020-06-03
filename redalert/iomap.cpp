@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header: /CounterStrike/IOMAP.CPP 1     3/03/97 10:24a Joe_bostic $ */
@@ -47,7 +47,6 @@
 
 #include "function.h"
 
-
 /***********************************************************************************************
  * CellClass::Should_Save -- Should the cell be written to disk?                               *
  *                                                                                             *
@@ -65,11 +64,10 @@
  *=============================================================================================*/
 bool CellClass::Should_Save(void) const
 {
-	static CellClass const _identity_cell;
+    static CellClass const _identity_cell;
 
-	return(memcmp(&_identity_cell, this, sizeof(*this)) != 0);
+    return (memcmp(&_identity_cell, this, sizeof(*this)) != 0);
 }
-
 
 /***********************************************************************************************
  * CellClass::Load -- Loads from a save game file.                                             *
@@ -83,12 +81,11 @@ bool CellClass::Should_Save(void) const
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool CellClass::Load(Straw & file)
+bool CellClass::Load(Straw& file)
 {
-	file.Get(this, sizeof(*this));
-	return(true);
+    file.Get(this, sizeof(*this));
+    return (true);
 }
-
 
 /***********************************************************************************************
  * CellClass::Save -- Write to a save game file.                                               *
@@ -102,12 +99,11 @@ bool CellClass::Load(Straw & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool CellClass::Save(Pipe & file) const
+bool CellClass::Save(Pipe& file) const
 {
-	file.Put(this, sizeof(*this));
-	return(true);
+    file.Put(this, sizeof(*this));
+    return (true);
 }
-
 
 /***********************************************************************************************
  * CellClass::Code_Pointers -- codes class's pointers for load/save                            *
@@ -131,19 +127,18 @@ bool CellClass::Save(Pipe & file) const
  *=============================================================================================*/
 void CellClass::Code_Pointers(void)
 {
-	if (Cell_Occupier() != NULL) {
-		OccupierPtr = (ObjectClass *)OccupierPtr->As_Target();
-	}
+    if (Cell_Occupier() != NULL) {
+        OccupierPtr = (ObjectClass*)OccupierPtr->As_Target();
+    }
 
-	for (int index = 0; index < ARRAY_SIZE(Overlapper); index++) {
-		if (Overlapper[index] != NULL && Overlapper[index]->IsActive) {
-			Overlapper[index] = (ObjectClass *)Overlapper[index]->As_Target();
-		} else {
-			Overlapper[index] = NULL;
-		}
-	}
+    for (int index = 0; index < ARRAY_SIZE(Overlapper); index++) {
+        if (Overlapper[index] != NULL && Overlapper[index]->IsActive) {
+            Overlapper[index] = (ObjectClass*)Overlapper[index]->As_Target();
+        } else {
+            Overlapper[index] = NULL;
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * CellClass::Decode_Pointers -- decodes pointers for load/save                                *
@@ -166,19 +161,18 @@ void CellClass::Code_Pointers(void)
  *=============================================================================================*/
 void CellClass::Decode_Pointers(void)
 {
-	if (OccupierPtr != NULL) {
-		OccupierPtr = As_Object((TARGET)OccupierPtr, false);
-		assert(OccupierPtr != NULL);
-	}
+    if (OccupierPtr != NULL) {
+        OccupierPtr = As_Object((TARGET)OccupierPtr, false);
+        assert(OccupierPtr != NULL);
+    }
 
-	for (int index = 0; index < ARRAY_SIZE(Overlapper); index++) {
-		if (Overlapper[index] != NULL) {
-			Overlapper[index] = As_Object((TARGET)Overlapper[index], false);
-			assert(Overlapper[index] != NULL);
-		}
-	}
+    for (int index = 0; index < ARRAY_SIZE(Overlapper); index++) {
+        if (Overlapper[index] != NULL) {
+            Overlapper[index] = As_Object((TARGET)Overlapper[index], false);
+            assert(Overlapper[index] != NULL);
+        }
+    }
 }
-
 
 /***********************************************************************************************
  * MouseClass::Load -- Loads from a save game file.                                            *
@@ -205,103 +199,102 @@ void CellClass::Decode_Pointers(void)
  *   09/19/1994 JLB : Created.                                                                 *
  *   03/12/1996 JLB : Simplified.                                                              *
  *=============================================================================================*/
-bool MouseClass::Load(Straw & file)
+bool MouseClass::Load(Straw& file)
 {
-	/*
-	**	Load Theater:  Even though this value is located in the DisplayClass,
-	**	it must be loaded first so initialization can be done before any other
-	**	map data is loaded.  If initialization isn't done first, data read from
-	**	disk will be over-written when initialization occurs.  This code must
-	**	go in the most-derived Map class.
-	*/
-	TheaterType theater;
-	if (file.Get(&theater, sizeof(theater)) != sizeof(theater)) {
-		return(false);
-	}
+    /*
+    **	Load Theater:  Even though this value is located in the DisplayClass,
+    **	it must be loaded first so initialization can be done before any other
+    **	map data is loaded.  If initialization isn't done first, data read from
+    **	disk will be over-written when initialization occurs.  This code must
+    **	go in the most-derived Map class.
+    */
+    TheaterType theater;
+    if (file.Get(&theater, sizeof(theater)) != sizeof(theater)) {
+        return (false);
+    }
 
 #ifdef WIN32
-LastTheater = THEATER_NONE;
+    LastTheater = THEATER_NONE;
 #endif
 
-	/*
-	** Remove any old theater specific uncompressed shapes
-	*/
+    /*
+    ** Remove any old theater specific uncompressed shapes
+    */
 #ifdef WIN32
-//	if (theater != LastTheater) {
-		Reset_Theater_Shapes();
+    //	if (theater != LastTheater) {
+    Reset_Theater_Shapes();
 //	}
-#endif	//WIN32
+#endif // WIN32
 
-	/*
-	**	Init display mixfiles
-	*/
-	Init_Theater(theater);
-	TerrainTypeClass::Init(Scen.Theater);
-	TemplateTypeClass::Init(Scen.Theater);
-	OverlayTypeClass::Init(Scen.Theater);
-	UnitTypeClass::Init(Scen.Theater);
-	InfantryTypeClass::Init(Scen.Theater);
-	BuildingTypeClass::Init(Scen.Theater);
-	BulletTypeClass::Init(Scen.Theater);
-	AnimTypeClass::Init(Scen.Theater);
-	AircraftTypeClass::Init(Scen.Theater);
-	VesselTypeClass::Init(Scen.Theater);
-	SmudgeTypeClass::Init(Scen.Theater);
+    /*
+    **	Init display mixfiles
+    */
+    Init_Theater(theater);
+    TerrainTypeClass::Init(Scen.Theater);
+    TemplateTypeClass::Init(Scen.Theater);
+    OverlayTypeClass::Init(Scen.Theater);
+    UnitTypeClass::Init(Scen.Theater);
+    InfantryTypeClass::Init(Scen.Theater);
+    BuildingTypeClass::Init(Scen.Theater);
+    BulletTypeClass::Init(Scen.Theater);
+    AnimTypeClass::Init(Scen.Theater);
+    AircraftTypeClass::Init(Scen.Theater);
+    VesselTypeClass::Init(Scen.Theater);
+    SmudgeTypeClass::Init(Scen.Theater);
 
-	//LastTheater = Scen.Theater;
+    // LastTheater = Scen.Theater;
 
-	/*
-	** Free the cell array, because we're about to overwrite its pointers
-	*/
-	Free_Cells();
+    /*
+    ** Free the cell array, because we're about to overwrite its pointers
+    */
+    Free_Cells();
 
-	/*
-	** Read the entire map object in.  Only read in sizeof(MouseClass), so if we're
-	** in editor mode, none of the map editor object is read in.
-	*/
-	file.Get(this, sizeof(*this));
+    /*
+    ** Read the entire map object in.  Only read in sizeof(MouseClass), so if we're
+    ** in editor mode, none of the map editor object is read in.
+    */
+    file.Get(this, sizeof(*this));
 #ifdef SCENARIO_EDITOR
-	new(this) MapEditClass(NoInitClass());
+    new (this) MapEditClass(NoInitClass());
 #else
-	new(this) MouseClass(NoInitClass());
+    new (this) MouseClass(NoInitClass());
 #endif
 
-	/*
-	** Reallocate the cell array
-	*/
-	Alloc_Cells();
+    /*
+    ** Reallocate the cell array
+    */
+    Alloc_Cells();
 
-	/*
-	** Init all cells to empty
-	*/
-	Init_Cells();
+    /*
+    ** Init all cells to empty
+    */
+    Init_Cells();
 
-	/*
-	**	Read # cells saved
-	*/
-	int count;
-	if (file.Get(&count, sizeof(count)) != sizeof(count)) {
-		return(false);
-	}
+    /*
+    **	Read # cells saved
+    */
+    int count;
+    if (file.Get(&count, sizeof(count)) != sizeof(count)) {
+        return (false);
+    }
 
-	/*
-	**	Read cells
-	*/
-	for (int index = 0; index < count; index++) {
-		CELL cell = 0;
-		if (file.Get(&cell, sizeof(cell)) != sizeof(cell)) {
-			return(false);
-		}
+    /*
+    **	Read cells
+    */
+    for (int index = 0; index < count; index++) {
+        CELL cell = 0;
+        if (file.Get(&cell, sizeof(cell)) != sizeof(cell)) {
+            return (false);
+        }
 
-		if (!(*this)[cell].Load(file)) {
-			return(false);
-		}
-	}
+        if (!(*this)[cell].Load(file)) {
+            return (false);
+        }
+    }
 
-	LastTheater = Scen.Theater;
-	return(true);
+    LastTheater = Scen.Theater;
+    return (true);
 }
-
 
 /***********************************************************************************************
  * MouseClass::Save -- Save to a save game file.                                               *
@@ -316,51 +309,51 @@ LastTheater = THEATER_NONE;
  *   09/19/1994 JLB : Created.                                                                 *
  *   02/26/1996 JLB : Cleaned up.                                                              *
  *=============================================================================================*/
-bool MouseClass::Save(Pipe & file) const
+bool MouseClass::Save(Pipe& file) const
 {
-	/*
-	**	Save Theater >first<
-	*/
-	TheaterType theater = Scen.Theater;
-	file.Put(&theater, sizeof(theater));
+    /*
+    **	Save Theater >first<
+    */
+    TheaterType theater = Scen.Theater;
+    file.Put(&theater, sizeof(theater));
 
-	file.Put(this, sizeof(*this));
+    file.Put(this, sizeof(*this));
 
-	/*
-	**	Count how many cells will be saved.
-	*/
-	int count = 0;
-	CellClass const * cellptr = &(*this)[(CELL)0];
-	for (CELL cell = 0; cell < MAP_CELL_TOTAL; cell++) {
-		if (cellptr->Should_Save()) {
-			count++;
-		}
-		cellptr++;
-	}
+    /*
+    **	Count how many cells will be saved.
+    */
+    int count = 0;
+    CellClass const* cellptr = &(*this)[(CELL)0];
+    for (CELL cell = 0; cell < MAP_CELL_TOTAL; cell++) {
+        if (cellptr->Should_Save()) {
+            count++;
+        }
+        cellptr++;
+    }
 
-	/*
-	**	write out count of the cells.
-	*/
-	file.Put(&count, sizeof(count));
+    /*
+    **	write out count of the cells.
+    */
+    file.Put(&count, sizeof(count));
 
-	/*
-	**	Save cells that need it
-	*/
-	cellptr = &(*this)[(CELL)0];
-	for (CELL cell = 0; cell < MAP_CELL_TOTAL; cell++) {
-		if (cellptr->Should_Save()) {
-			file.Put(&cell, sizeof(cell));
-			cellptr->Save(file);
-			count--;
-		}
-		cellptr++;
-	}
+    /*
+    **	Save cells that need it
+    */
+    cellptr = &(*this)[(CELL)0];
+    for (CELL cell = 0; cell < MAP_CELL_TOTAL; cell++) {
+        if (cellptr->Should_Save()) {
+            file.Put(&cell, sizeof(cell));
+            cellptr->Save(file);
+            count--;
+        }
+        cellptr++;
+    }
 
-	if (count != 0) return(false);
+    if (count != 0)
+        return (false);
 
-	return(true);
+    return (true);
 }
-
 
 /***********************************************************************************************
  * DisplayClass::Code_Pointers -- codes class's pointers for load/save                         *
@@ -384,36 +377,35 @@ bool MouseClass::Save(Pipe & file) const
  *=============================================================================================*/
 void DisplayClass::Code_Pointers(void)
 {
-	/*
-	**	Code PendingObjectPtr.
-	*/
-	if (PendingObjectPtr) {
-		PendingObjectPtr = (ObjectClass *)PendingObjectPtr->As_Target();
-	}
+    /*
+    **	Code PendingObjectPtr.
+    */
+    if (PendingObjectPtr) {
+        PendingObjectPtr = (ObjectClass*)PendingObjectPtr->As_Target();
+    }
 
-	/*
-	** Fix for saving game while in structure placement mode. ST - 4/15/2020 2:41PM
-	*/
-	memset(CursorShapeSave, 0, sizeof(CursorShapeSave));
-	if (CursorSize && CursorSize != CursorShapeSave) {
+    /*
+    ** Fix for saving game while in structure placement mode. ST - 4/15/2020 2:41PM
+    */
+    memset(CursorShapeSave, 0, sizeof(CursorShapeSave));
+    if (CursorSize && CursorSize != CursorShapeSave) {
 
-		int save_buffer_element_size = sizeof(CursorShapeSave) / sizeof(CursorShapeSave[0]);
-		
-		int index = 0;
+        int save_buffer_element_size = sizeof(CursorShapeSave) / sizeof(CursorShapeSave[0]);
 
-		while (index < save_buffer_element_size - 2 && CursorSize[index] != REFRESH_EOL) {
-			CursorShapeSave[index] = CursorSize[index];
-			index++;
-		}
-		CursorShapeSave[index] = REFRESH_EOL;
-	}
+        int index = 0;
 
-	/*
-	**	Chain to parent.
-	*/
-	MapClass::Code_Pointers();
+        while (index < save_buffer_element_size - 2 && CursorSize[index] != REFRESH_EOL) {
+            CursorShapeSave[index] = CursorSize[index];
+            index++;
+        }
+        CursorShapeSave[index] = REFRESH_EOL;
+    }
+
+    /*
+    **	Chain to parent.
+    */
+    MapClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * DisplayClass::Decode_Pointers -- decodes pointers for load/save                             *
@@ -435,28 +427,27 @@ void DisplayClass::Code_Pointers(void)
  *=============================================================================================*/
 void DisplayClass::Decode_Pointers(void)
 {
-	/*
-	**	Decode PendingObjectPtr.  We can't decode PendingObject here, because we'd
-	**	have to reference PendingObjectPtr->Class_Of(), and the object that
-	**	PendingObjectPtr is pointing to hasn't been decoded yet.  Since we can't
-	**	decode PendingObjectPtr, we can't set the placement cursor shape here
-	**	either.  These have to be done as last-minute fixups.
-	*/
-	if (PendingObjectPtr) {
-		PendingObjectPtr = As_Object((TARGET)PendingObjectPtr, false);
-		assert(PendingObjectPtr != NULL);
-	}
+    /*
+    **	Decode PendingObjectPtr.  We can't decode PendingObject here, because we'd
+    **	have to reference PendingObjectPtr->Class_Of(), and the object that
+    **	PendingObjectPtr is pointing to hasn't been decoded yet.  Since we can't
+    **	decode PendingObjectPtr, we can't set the placement cursor shape here
+    **	either.  These have to be done as last-minute fixups.
+    */
+    if (PendingObjectPtr) {
+        PendingObjectPtr = As_Object((TARGET)PendingObjectPtr, false);
+        assert(PendingObjectPtr != NULL);
+    }
 
-	if (CursorSize) {
-		CursorSize = CursorShapeSave;
-	}
+    if (CursorSize) {
+        CursorSize = CursorShapeSave;
+    }
 
-	/*
-	**	Chain to parent.
-	*/
-	MapClass::Decode_Pointers();
+    /*
+    **	Chain to parent.
+    */
+    MapClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * MapClass::Code_Pointers -- codes class's pointers for load/save                             *
@@ -480,13 +471,12 @@ void DisplayClass::Decode_Pointers(void)
  *=============================================================================================*/
 void MapClass::Code_Pointers(void)
 {
-	CellClass * cellptr = &(*this)[(CELL)0];
-	for (CELL cell = 0; cell < MAP_CELL_TOTAL; cell++) {
-		cellptr->Code_Pointers();
-		cellptr++;
-	}
+    CellClass* cellptr = &(*this)[(CELL)0];
+    for (CELL cell = 0; cell < MAP_CELL_TOTAL; cell++) {
+        cellptr->Code_Pointers();
+        cellptr++;
+    }
 }
-
 
 /***********************************************************************************************
  * MapClass::Decode_Pointers -- decodes pointers for load/save                                 *
@@ -508,10 +498,9 @@ void MapClass::Code_Pointers(void)
  *=============================================================================================*/
 void MapClass::Decode_Pointers(void)
 {
-	CellClass * cellptr = &(*this)[(CELL)0];
-	for (CELL cell = 0; cell < MAP_CELL_TOTAL; cell++) {
-		cellptr->Decode_Pointers();
-		cellptr++;
-	}
+    CellClass* cellptr = &(*this)[(CELL)0];
+    for (CELL cell = 0; cell < MAP_CELL_TOTAL; cell++) {
+        cellptr->Decode_Pointers();
+        cellptr++;
+    }
 }
-

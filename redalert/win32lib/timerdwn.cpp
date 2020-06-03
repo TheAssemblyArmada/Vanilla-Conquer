@@ -1,16 +1,16 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /***************************************************************************
@@ -46,7 +46,6 @@
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////// Code ////////////////////////////////////////
 
-
 /***************************************************************************
  * TC::CountDownTimerClass -- Construct a timer class object.              *
  *                                                                         *
@@ -61,18 +60,18 @@
  *   07/12/1994 SKB : Created.                                             *
  *=========================================================================*/
 CountDownTimerClass::CountDownTimerClass(BaseTimerEnum timer, long set, int on)
-							:TimerClass(timer, on)
+    : TimerClass(timer, on)
 {
-	Set(set, on);
+    Set(set, on);
 }
 
 CountDownTimerClass::CountDownTimerClass(BaseTimerEnum timer, int on)
-							:TimerClass(timer, FALSE)
+    : TimerClass(timer, FALSE)
 {
-	DelayTime = 0;
-	if (on) Start();
+    DelayTime = 0;
+    if (on)
+        Start();
 }
-
 
 /***************************************************************************
  * CDTC::TIME -- Return the time on the timer.                             *
@@ -89,14 +88,13 @@ CountDownTimerClass::CountDownTimerClass(BaseTimerEnum timer, int on)
  *=========================================================================*/
 long CountDownTimerClass::Time()
 {
-	long ticks = DelayTime - TimerClass::Time();
+    long ticks = DelayTime - TimerClass::Time();
 
-	if (ticks < 0) {
-		ticks = 0;
-	}
-	return(ticks);
+    if (ticks < 0) {
+        ticks = 0;
+    }
+    return (ticks);
 }
-
 
 /***************************************************************************
  * CDTC::SET -- Set the time of a timer.                             		*
@@ -114,10 +112,7 @@ long CountDownTimerClass::Time()
  *=========================================================================*/
 long CountDownTimerClass::Set(long value, BOOL start)
 {
-	DelayTime = value;
-	TimerClass::Reset(start);
-	return(Time());
+    DelayTime = value;
+    TimerClass::Reset(start);
+    return (Time());
 }
-
-
-

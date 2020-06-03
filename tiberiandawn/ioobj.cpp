@@ -1,21 +1,21 @@
 //
 // Copyright 2020 Electronic Arts Inc.
 //
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free 
-// software: you can redistribute it and/or modify it under the terms of 
-// the GNU General Public License as published by the Free Software Foundation, 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
+// software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation,
 // either version 3 of the License, or (at your option) any later version.
 
-// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed 
-// in the hope that it will be useful, but with permitted additional restrictions 
-// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT 
-// distributed with this program. You should have received a copy of the 
-// GNU General Public License along with permitted additional restrictions 
+// TiberianDawn.DLL and RedAlert.dll and corresponding source code is distributed
+// in the hope that it will be useful, but with permitted additional restrictions
+// under Section 7 of the GPL. See the GNU General Public License in LICENSE.TXT
+// distributed with this program. You should have received a copy of the
+// GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c\vcs\code\ioobj.cpv   2.18   16 Oct 1995 16:51:22   JOE_BOSTIC  $ */
 /***********************************************************************************************
- ***             C O N F I D E N T I A L  ---  W E S T W O O D   S T U D I O S               *** 
+ ***             C O N F I D E N T I A L  ---  W E S T W O O D   S T U D I O S               ***
  ***********************************************************************************************
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
@@ -132,8 +132,7 @@
 
 #include "function.h"
 
-#pragma warning (disable : 4302)			// Truncation from pointer to TARGET
-
+#pragma warning(disable : 4302) // Truncation from pointer to TARGET
 
 /***********************************************************************************************
  * TeamTypeClass::Load -- Loads from a save game file.                                         *
@@ -147,14 +146,13 @@
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool TeamTypeClass::Load(FileClass & file)
+bool TeamTypeClass::Load(FileClass& file)
 {
-	::new (this) TeamTypeClass();
-	return(Read_Object(this, sizeof(*this), file, true));
-	
-	//return(Read_Object(this, sizeof(AbstractTypeClass), sizeof(*this), file, VTable));
-}
+    ::new (this) TeamTypeClass();
+    return (Read_Object(this, sizeof(*this), file, true));
 
+    // return(Read_Object(this, sizeof(AbstractTypeClass), sizeof(*this), file, VTable));
+}
 
 /***********************************************************************************************
  * TeamTypeClass::Save -- Write to a save game file.                                           *
@@ -168,11 +166,10 @@ bool TeamTypeClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool TeamTypeClass::Save(FileClass & file)
+bool TeamTypeClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * TeamTypeClass::Code_Pointers -- codes class's pointers for load/save                        *
@@ -196,14 +193,13 @@ bool TeamTypeClass::Save(FileClass & file)
  *=============================================================================================*/
 void TeamTypeClass::Code_Pointers(void)
 {
-	/*
-	-------------------------- Code the Class array --------------------------
-	*/
-	for (int i = 0; i < ClassCount; i++) {
-		Class[i] = (TechnoTypeClass *)TechnoType_To_Target(Class[i]);
-	}
+    /*
+    -------------------------- Code the Class array --------------------------
+    */
+    for (int i = 0; i < ClassCount; i++) {
+        Class[i] = (TechnoTypeClass*)TechnoType_To_Target(Class[i]);
+    }
 }
-
 
 /***********************************************************************************************
  * TeamTypeClass::Decode_Pointers -- decodes pointers for load/save                            *
@@ -225,15 +221,14 @@ void TeamTypeClass::Code_Pointers(void)
  *=============================================================================================*/
 void TeamTypeClass::Decode_Pointers(void)
 {
-	/*
-	------------------------- Decode the Class array -------------------------
-	*/
-	for (int i = 0; i < ClassCount; i++) {
-		Class[i] =  Target_To_TechnoType((TARGET)Class[i]);
-		Check_Ptr((void *)Class[i],__FILE__,__LINE__);
-	}
+    /*
+    ------------------------- Decode the Class array -------------------------
+    */
+    for (int i = 0; i < ClassCount; i++) {
+        Class[i] = Target_To_TechnoType((TARGET)Class[i]);
+        Check_Ptr((void*)Class[i], __FILE__, __LINE__);
+    }
 }
-
 
 /***********************************************************************************************
  * TeamClass::Load -- Loads from a save game file.                                             *
@@ -247,14 +242,13 @@ void TeamTypeClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool TeamClass::Load(FileClass & file)
+bool TeamClass::Load(FileClass& file)
 {
-	::new (this) TeamClass();
-	return(Read_Object(this, sizeof(*this), file, true));
-	
-	//return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
+    ::new (this) TeamClass();
+    return (Read_Object(this, sizeof(*this), file, true));
 
+    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
+}
 
 /***********************************************************************************************
  * TeamClass::Save -- Write to a save game file.                                               *
@@ -268,11 +262,10 @@ bool TeamClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool TeamClass::Save(FileClass & file)
+bool TeamClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * TeamClass::Code_Pointers -- codes class's pointers for load/save                            *
@@ -296,23 +289,22 @@ bool TeamClass::Save(FileClass & file)
  *=============================================================================================*/
 void TeamClass::Code_Pointers(void)
 {
-	TeamTypeClass const * cls;
+    TeamTypeClass const* cls;
 
-	/*
-	-------------------- Code Class & House for this team --------------------
-	*/
-	cls = Class;
-	((TeamTypeClass *&)Class) = (TeamTypeClass *)cls->As_Target();
-	((HouseClass *&)House) = (HouseClass *)House->Class->House;
+    /*
+    -------------------- Code Class & House for this team --------------------
+    */
+    cls = Class;
+    ((TeamTypeClass*&)Class) = (TeamTypeClass*)cls->As_Target();
+    ((HouseClass*&)House) = (HouseClass*)House->Class->House;
 
-	/*
-	--------------------------- Code the 'Member' ----------------------------
-	*/
-	if (Member) {
-		Member = (FootClass *)Member->As_Target();
-	}
+    /*
+    --------------------------- Code the 'Member' ----------------------------
+    */
+    if (Member) {
+        Member = (FootClass*)Member->As_Target();
+    }
 }
-
 
 /***********************************************************************************************
  * TeamClass::Decode_Pointers -- decodes pointers for load/save                                *
@@ -334,40 +326,39 @@ void TeamClass::Code_Pointers(void)
  *=============================================================================================*/
 void TeamClass::Decode_Pointers(void)
 {
-	/*
-	------------------- Decode Class & House for this team -------------------
-	*/
-	((TeamTypeClass *&)Class) = As_TeamType((TARGET)Class);
-	Check_Ptr((void *)Class,__FILE__,__LINE__);
-	((HouseClass *&)House) = HouseClass::As_Pointer(*((HousesType*)&House));
-	Check_Ptr((void *)House,__FILE__,__LINE__);
+    /*
+    ------------------- Decode Class & House for this team -------------------
+    */
+    ((TeamTypeClass*&)Class) = As_TeamType((TARGET)Class);
+    Check_Ptr((void*)Class, __FILE__, __LINE__);
+    ((HouseClass*&)House) = HouseClass::As_Pointer(*((HousesType*)&House));
+    Check_Ptr((void*)House, __FILE__, __LINE__);
 
-	/*
-	-------------------------- Decode the 'Member' ---------------------------
-	*/
-	if (Member) {
-		switch (Target_Kind((TARGET)Member)) {
-			case KIND_INFANTRY:
-				Member = As_Infantry((TARGET)Member, false);
-				break;
+    /*
+    -------------------------- Decode the 'Member' ---------------------------
+    */
+    if (Member) {
+        switch (Target_Kind((TARGET)Member)) {
+        case KIND_INFANTRY:
+            Member = As_Infantry((TARGET)Member, false);
+            break;
 
-			case KIND_UNIT:
-				Member = As_Unit((TARGET)Member, false);
-				break;
+        case KIND_UNIT:
+            Member = As_Unit((TARGET)Member, false);
+            break;
 
-			case KIND_AIRCRAFT:
-				Member = As_Aircraft((TARGET)Member, false);
-				break;
+        case KIND_AIRCRAFT:
+            Member = As_Aircraft((TARGET)Member, false);
+            break;
 
-			default:
-				Member = 0;
-				break;
-		}
+        default:
+            Member = 0;
+            break;
+        }
 
-		Check_Ptr((void *)Member,__FILE__,__LINE__);
-	}
+        Check_Ptr((void*)Member, __FILE__, __LINE__);
+    }
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Load -- Loads from a save game file.                                          *
@@ -381,25 +372,24 @@ void TeamClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool TriggerClass::Load(FileClass & file)
+bool TriggerClass::Load(FileClass& file)
 {
-	::new (this) TriggerClass();
-	int rc = Read_Object(this, sizeof(*this), file, false);
-	
-	//int rc = Read_Object(this, sizeof(*this), sizeof(*this), file, 0);
+    ::new (this) TriggerClass();
+    int rc = Read_Object(this, sizeof(*this), file, false);
 
-	/*
-	-------------------------- Add to HouseTriggers --------------------------
-	*/
-	if (rc) {
-		if (House != HOUSE_NONE) {
-			HouseTriggers[House].Add(this);
-		}
-	}
+    // int rc = Read_Object(this, sizeof(*this), sizeof(*this), file, 0);
 
-	return(rc);
+    /*
+    -------------------------- Add to HouseTriggers --------------------------
+    */
+    if (rc) {
+        if (House != HOUSE_NONE) {
+            HouseTriggers[House].Add(this);
+        }
+    }
+
+    return (rc);
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Save -- Write to a save game file.                                            *
@@ -413,11 +403,10 @@ bool TriggerClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool TriggerClass::Save(FileClass & file)
+bool TriggerClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Code_Pointers -- codes class's pointers for load/save                         *
@@ -441,11 +430,10 @@ bool TriggerClass::Save(FileClass & file)
  *=============================================================================================*/
 void TriggerClass::Code_Pointers(void)
 {
-	if (Team) {
-		Team = (TeamTypeClass *)Team->As_Target();
-	}
+    if (Team) {
+        Team = (TeamTypeClass*)Team->As_Target();
+    }
 }
-
 
 /***********************************************************************************************
  * TriggerClass::Decode_Pointers -- decodes pointers for load/save                             *
@@ -467,12 +455,11 @@ void TriggerClass::Code_Pointers(void)
  *=============================================================================================*/
 void TriggerClass::Decode_Pointers(void)
 {
-	if (Team) {
-		Team = As_TeamType((TARGET)Team);
-		Check_Ptr((void *)Team,__FILE__,__LINE__);
-	}
+    if (Team) {
+        Team = As_TeamType((TARGET)Team);
+        Check_Ptr((void*)Team, __FILE__, __LINE__);
+    }
 }
-
 
 /***********************************************************************************************
  * AircraftClass::Load -- Loads from a save game file.                                         *
@@ -486,14 +473,13 @@ void TriggerClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool AircraftClass::Load(FileClass & file)
+bool AircraftClass::Load(FileClass& file)
 {
-	::new (this) AircraftClass();
-	return(Read_Object(this, sizeof(*this), file, true));
-	
-	//return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
+    ::new (this) AircraftClass();
+    return (Read_Object(this, sizeof(*this), file, true));
 
+    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
+}
 
 /***********************************************************************************************
  * AircraftClass::Save -- Write to a save game file.                                           *
@@ -507,11 +493,10 @@ bool AircraftClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool AircraftClass::Save(FileClass & file)
+bool AircraftClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * AircraftClass::Code_Pointers -- codes class's pointers for load/save                        *
@@ -535,18 +520,17 @@ bool AircraftClass::Save(FileClass & file)
  *=============================================================================================*/
 void AircraftClass::Code_Pointers(void)
 {
-	/*
-	------------------------------ Code 'Class' ------------------------------
-	*/
-	((AircraftTypeClass *&)Class) = (AircraftTypeClass *)Class->Type;
+    /*
+    ------------------------------ Code 'Class' ------------------------------
+    */
+    ((AircraftTypeClass*&)Class) = (AircraftTypeClass*)Class->Type;
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	FootClass::Code_Pointers();
-	FlyClass::Code_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    FootClass::Code_Pointers();
+    FlyClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * AircraftClass::Decode_Pointers -- decodes pointers for load/save                            *
@@ -568,19 +552,18 @@ void AircraftClass::Code_Pointers(void)
  *=============================================================================================*/
 void AircraftClass::Decode_Pointers(void)
 {
-	/*
-	----------------------------- Decode 'Class' -----------------------------
-	*/
-	((AircraftTypeClass const *&)Class) = &AircraftTypeClass::As_Reference(*((AircraftType*)&Class));
-	Check_Ptr((void *)Class,__FILE__,__LINE__);
+    /*
+    ----------------------------- Decode 'Class' -----------------------------
+    */
+    ((AircraftTypeClass const*&)Class) = &AircraftTypeClass::As_Reference(*((AircraftType*)&Class));
+    Check_Ptr((void*)Class, __FILE__, __LINE__);
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	FootClass::Decode_Pointers();
-	FlyClass::Decode_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    FootClass::Decode_Pointers();
+    FlyClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * AnimClass::Load -- Loads from a save game file.                                             *
@@ -594,14 +577,13 @@ void AircraftClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool AnimClass::Load(FileClass & file)
+bool AnimClass::Load(FileClass& file)
 {
-	::new (this) AnimClass();
-	return(Read_Object(this, sizeof(*this), file, true));
-	
-	//return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
+    ::new (this) AnimClass();
+    return (Read_Object(this, sizeof(*this), file, true));
 
+    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
+}
 
 /***********************************************************************************************
  * AnimClass::Save -- Write to a save game file.                                               *
@@ -615,11 +597,10 @@ bool AnimClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool AnimClass::Save(FileClass & file)
+bool AnimClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * AnimClass::Code_Pointers -- codes class's pointers for load/save                            *
@@ -643,32 +624,31 @@ bool AnimClass::Save(FileClass & file)
  *=============================================================================================*/
 void AnimClass::Code_Pointers(void)
 {
-	/*
-	------------------------------ Code 'Class' ------------------------------
-	*/
-	((AnimTypeClass *&)Class) = (AnimTypeClass *)Class->Type;
+    /*
+    ------------------------------ Code 'Class' ------------------------------
+    */
+    ((AnimTypeClass*&)Class) = (AnimTypeClass*)Class->Type;
 
-	/*
-	----------------------------- Code 'Object' ------------------------------
-	*/
-	if (Object) {
-		Object = (ObjectClass *)Object->As_Target();
-	}
+    /*
+    ----------------------------- Code 'Object' ------------------------------
+    */
+    if (Object) {
+        Object = (ObjectClass*)Object->As_Target();
+    }
 
-	/*
-	----------------------------- Code 'VirtualAnim' -------------------------
-	*/
-	if (VirtualAnim) {
-		VirtualAnim = (AnimClass *)VirtualAnim->As_Target();
-	}
+    /*
+    ----------------------------- Code 'VirtualAnim' -------------------------
+    */
+    if (VirtualAnim) {
+        VirtualAnim = (AnimClass*)VirtualAnim->As_Target();
+    }
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	ObjectClass::Code_Pointers();
-	StageClass::Code_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    ObjectClass::Code_Pointers();
+    StageClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * AnimClass::Decode_Pointers -- decodes pointers for load/save                                *
@@ -690,35 +670,34 @@ void AnimClass::Code_Pointers(void)
  *=============================================================================================*/
 void AnimClass::Decode_Pointers(void)
 {
-	/*
-	----------------------------- Decode 'Class' -----------------------------
-	*/
-	((AnimTypeClass const *&)Class) = &AnimTypeClass::As_Reference(*((AnimType*)&Class));
-	Check_Ptr((void *)Class,__FILE__,__LINE__);
+    /*
+    ----------------------------- Decode 'Class' -----------------------------
+    */
+    ((AnimTypeClass const*&)Class) = &AnimTypeClass::As_Reference(*((AnimType*)&Class));
+    Check_Ptr((void*)Class, __FILE__, __LINE__);
 
-	/*
-	---------------------------- Decode 'Object' -----------------------------
-	*/
-	if (Object) {
-		Object = As_Object((TARGET)Object, false);
-		Check_Ptr((void *)Object,__FILE__,__LINE__);
-	}
+    /*
+    ---------------------------- Decode 'Object' -----------------------------
+    */
+    if (Object) {
+        Object = As_Object((TARGET)Object, false);
+        Check_Ptr((void*)Object, __FILE__, __LINE__);
+    }
 
-	/*
-	---------------------------- Decode 'VirtualAnim' ------------------------
-	*/
-	if (VirtualAnim) {
-		VirtualAnim = As_Animation((TARGET)VirtualAnim, false);
-		Check_Ptr((void *)VirtualAnim, __FILE__, __LINE__);
-	}
+    /*
+    ---------------------------- Decode 'VirtualAnim' ------------------------
+    */
+    if (VirtualAnim) {
+        VirtualAnim = As_Animation((TARGET)VirtualAnim, false);
+        Check_Ptr((void*)VirtualAnim, __FILE__, __LINE__);
+    }
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	ObjectClass::Decode_Pointers();
-	StageClass::Decode_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    ObjectClass::Decode_Pointers();
+    StageClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * BuildingClass::Load -- Loads from a save game file.                                         *
@@ -732,14 +711,13 @@ void AnimClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool BuildingClass::Load(FileClass & file)
+bool BuildingClass::Load(FileClass& file)
 {
-	::new (this) BuildingClass();
-	return(Read_Object(this, sizeof(*this), file, true));
-	
-	//return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
+    ::new (this) BuildingClass();
+    return (Read_Object(this, sizeof(*this), file, true));
 
+    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
+}
 
 /***********************************************************************************************
  * BuildingClass::Save -- Write to a save game file.                                           *
@@ -753,11 +731,10 @@ bool BuildingClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool BuildingClass::Save(FileClass & file)
+bool BuildingClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * BuildingClass::Code_Pointers -- codes class's pointers for load/save                        *
@@ -781,26 +758,25 @@ bool BuildingClass::Save(FileClass & file)
  *=============================================================================================*/
 void BuildingClass::Code_Pointers(void)
 {
-	/*
-	------------------------------ Code 'Class' ------------------------------
-	*/
-	((BuildingTypeClass const *&)Class) = (BuildingTypeClass *)Class->Type;
+    /*
+    ------------------------------ Code 'Class' ------------------------------
+    */
+    ((BuildingTypeClass const*&)Class) = (BuildingTypeClass*)Class->Type;
 
-	/*------------------------------------------------------------------------
-	Code the Factory value; there's not target conversion routine for factories, 
-	so just use its Array ID, plus 1 so it doesn't look like a NULL value when 
-	it's converted back
-	------------------------------------------------------------------------*/
-	if (Factory) {
-		Factory = (FactoryClass *)(Factories.ID(Factory) + 1);
-	}
+    /*------------------------------------------------------------------------
+    Code the Factory value; there's not target conversion routine for factories,
+    so just use its Array ID, plus 1 so it doesn't look like a NULL value when
+    it's converted back
+    ------------------------------------------------------------------------*/
+    if (Factory) {
+        Factory = (FactoryClass*)(Factories.ID(Factory) + 1);
+    }
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	TechnoClass::Code_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    TechnoClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * BuildingClass::Decode_Pointers -- decodes pointers for load/save                            *
@@ -822,26 +798,25 @@ void BuildingClass::Code_Pointers(void)
  *=============================================================================================*/
 void BuildingClass::Decode_Pointers(void)
 {
-	/*
-	----------------------------- Decode 'Class' -----------------------------
-	*/
-	((BuildingTypeClass const *&)Class) = &BuildingTypeClass::As_Reference(*((StructType*)&Class));
-	Check_Ptr((void *)Class,__FILE__,__LINE__);
+    /*
+    ----------------------------- Decode 'Class' -----------------------------
+    */
+    ((BuildingTypeClass const*&)Class) = &BuildingTypeClass::As_Reference(*((StructType*)&Class));
+    Check_Ptr((void*)Class, __FILE__, __LINE__);
 
-	/*------------------------------------------------------------------------
-	Decode the Factory value, subtracting off the '1' we added when coding it
-	------------------------------------------------------------------------*/
-	if (Factory) {
-		Factory = Factories.Raw_Ptr((int)Factory - 1);
-		Check_Ptr((void *)Factory,__FILE__,__LINE__);
-	}
+    /*------------------------------------------------------------------------
+    Decode the Factory value, subtracting off the '1' we added when coding it
+    ------------------------------------------------------------------------*/
+    if (Factory) {
+        Factory = Factories.Raw_Ptr((int)Factory - 1);
+        Check_Ptr((void*)Factory, __FILE__, __LINE__);
+    }
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	TechnoClass::Decode_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    TechnoClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * BulletClass::Load -- Loads from a save game file.                                           *
@@ -855,14 +830,13 @@ void BuildingClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool BulletClass::Load(FileClass & file)
+bool BulletClass::Load(FileClass& file)
 {
-	::new (this) BulletClass();
-	return(Read_Object(this, sizeof(*this), file, true));
-	
-	//return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
+    ::new (this) BulletClass();
+    return (Read_Object(this, sizeof(*this), file, true));
 
+    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
+}
 
 /***********************************************************************************************
  * BulletClass::Save -- Write to a save game file.                                             *
@@ -876,11 +850,10 @@ bool BulletClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool BulletClass::Save(FileClass & file)
+bool BulletClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * BulletClass::Code_Pointers -- codes class's pointers for load/save                          *
@@ -904,25 +877,24 @@ bool BulletClass::Save(FileClass & file)
  *=============================================================================================*/
 void BulletClass::Code_Pointers(void)
 {
-	/*
-	------------------------------ Code 'Class' ------------------------------
-	*/
-	((BulletTypeClass *&)Class) = (BulletTypeClass *)Class->Type;
+    /*
+    ------------------------------ Code 'Class' ------------------------------
+    */
+    ((BulletTypeClass*&)Class) = (BulletTypeClass*)Class->Type;
 
-	/*
-	----------------------------- Code 'Payback' -----------------------------
-	*/
-	if (Payback)
-		Payback = (TechnoClass *)Payback->As_Target();
+    /*
+    ----------------------------- Code 'Payback' -----------------------------
+    */
+    if (Payback)
+        Payback = (TechnoClass*)Payback->As_Target();
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	ObjectClass::Code_Pointers();
-	FlyClass::Code_Pointers();
-	FuseClass::Code_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    ObjectClass::Code_Pointers();
+    FlyClass::Code_Pointers();
+    FuseClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * BulletClass::Decode_Pointers -- decodes pointers for load/save                              *
@@ -944,28 +916,27 @@ void BulletClass::Code_Pointers(void)
  *=============================================================================================*/
 void BulletClass::Decode_Pointers(void)
 {
-	/*
-	----------------------------- Decode 'Class' -----------------------------
-	*/
-	((BulletTypeClass const *&)Class) = &BulletTypeClass::As_Reference(*((BulletType*)&Class));
-	Check_Ptr((void *)Class,__FILE__,__LINE__);
+    /*
+    ----------------------------- Decode 'Class' -----------------------------
+    */
+    ((BulletTypeClass const*&)Class) = &BulletTypeClass::As_Reference(*((BulletType*)&Class));
+    Check_Ptr((void*)Class, __FILE__, __LINE__);
 
-	/*
-	---------------------------- Decode 'Payback' ----------------------------
-	*/
-	if (Payback) {
-		Payback = As_Techno((TARGET)Payback, false);
-		Check_Ptr((void *)Payback,__FILE__,__LINE__);
-	}
+    /*
+    ---------------------------- Decode 'Payback' ----------------------------
+    */
+    if (Payback) {
+        Payback = As_Techno((TARGET)Payback, false);
+        Check_Ptr((void*)Payback, __FILE__, __LINE__);
+    }
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	ObjectClass::Decode_Pointers();
-	FlyClass::Decode_Pointers();
-	FuseClass::Decode_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    ObjectClass::Decode_Pointers();
+    FlyClass::Decode_Pointers();
+    FuseClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * InfantryClass::Load -- Loads from a save game file.                                         *
@@ -979,14 +950,13 @@ void BulletClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool InfantryClass::Load(FileClass & file)
+bool InfantryClass::Load(FileClass& file)
 {
-	::new (this) InfantryClass();
-	return(Read_Object(this, sizeof(*this), file, true));
-	
-	//return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
+    ::new (this) InfantryClass();
+    return (Read_Object(this, sizeof(*this), file, true));
 
+    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
+}
 
 /***********************************************************************************************
  * InfantryClass::Save -- Write to a save game file.                                           *
@@ -1000,11 +970,10 @@ bool InfantryClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool InfantryClass::Save(FileClass & file)
+bool InfantryClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * InfantryClass::Code_Pointers -- codes class's pointers for load/save                        *
@@ -1028,17 +997,16 @@ bool InfantryClass::Save(FileClass & file)
  *=============================================================================================*/
 void InfantryClass::Code_Pointers(void)
 {
-	/*
-	------------------------------ Code 'Class' ------------------------------
-	*/
-	((InfantryTypeClass *&)Class) = (InfantryTypeClass *)Class->Type;
+    /*
+    ------------------------------ Code 'Class' ------------------------------
+    */
+    ((InfantryTypeClass*&)Class) = (InfantryTypeClass*)Class->Type;
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	FootClass::Code_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    FootClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * InfantryClass::Decode_Pointers -- decodes pointers for load/save                            *
@@ -1060,18 +1028,17 @@ void InfantryClass::Code_Pointers(void)
  *=============================================================================================*/
 void InfantryClass::Decode_Pointers(void)
 {
-	/*
-	----------------------------- Decode 'Class' -----------------------------
-	*/
-	((InfantryTypeClass const *&)Class) = &InfantryTypeClass::As_Reference(*((InfantryType*)&Class));
-	Check_Ptr((void *)Class,__FILE__,__LINE__);
+    /*
+    ----------------------------- Decode 'Class' -----------------------------
+    */
+    ((InfantryTypeClass const*&)Class) = &InfantryTypeClass::As_Reference(*((InfantryType*)&Class));
+    Check_Ptr((void*)Class, __FILE__, __LINE__);
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	FootClass::Decode_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    FootClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * OverlayClass::Load -- Loads from a save game file.                                          *
@@ -1085,14 +1052,13 @@ void InfantryClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool OverlayClass::Load(FileClass & file)
+bool OverlayClass::Load(FileClass& file)
 {
-	::new (this) OverlayClass();
-	return(Read_Object(this, sizeof(*this), file, true));
-	
-	//return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
+    ::new (this) OverlayClass();
+    return (Read_Object(this, sizeof(*this), file, true));
 
+    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
+}
 
 /***********************************************************************************************
  * OverlayClass::Save -- Write to a save game file.                                            *
@@ -1106,11 +1072,10 @@ bool OverlayClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool OverlayClass::Save(FileClass & file)
+bool OverlayClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * OverlayClass::Code_Pointers -- codes class's pointers for load/save                         *
@@ -1134,17 +1099,16 @@ bool OverlayClass::Save(FileClass & file)
  *=============================================================================================*/
 void OverlayClass::Code_Pointers(void)
 {
-	/*
-	------------------------------ Code 'Class' ------------------------------
-	*/
-	((OverlayTypeClass *&)Class) = (OverlayTypeClass *)Class->Type;
+    /*
+    ------------------------------ Code 'Class' ------------------------------
+    */
+    ((OverlayTypeClass*&)Class) = (OverlayTypeClass*)Class->Type;
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	ObjectClass::Code_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    ObjectClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * OverlayClass::Decode_Pointers -- decodes pointers for load/save                             *
@@ -1166,18 +1130,17 @@ void OverlayClass::Code_Pointers(void)
  *=============================================================================================*/
 void OverlayClass::Decode_Pointers(void)
 {
-	/*
-	----------------------------- Decode 'Class' -----------------------------
-	*/
-	((OverlayTypeClass const *&)Class) = &OverlayTypeClass::As_Reference(*((OverlayType*)&Class));
-	Check_Ptr((void *)Class,__FILE__,__LINE__);
+    /*
+    ----------------------------- Decode 'Class' -----------------------------
+    */
+    ((OverlayTypeClass const*&)Class) = &OverlayTypeClass::As_Reference(*((OverlayType*)&Class));
+    Check_Ptr((void*)Class, __FILE__, __LINE__);
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	ObjectClass::Decode_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    ObjectClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * SmudgeClass::Load -- Loads from a save game file.                                           *
@@ -1191,14 +1154,13 @@ void OverlayClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool SmudgeClass::Load(FileClass & file)
+bool SmudgeClass::Load(FileClass& file)
 {
-	::new (this) SmudgeClass();
-	return(Read_Object(this, sizeof(*this), file, true));
-	
-	//return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
+    ::new (this) SmudgeClass();
+    return (Read_Object(this, sizeof(*this), file, true));
 
+    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
+}
 
 /***********************************************************************************************
  * SmudgeClass::Save -- Write to a save game file.                                             *
@@ -1212,11 +1174,10 @@ bool SmudgeClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool SmudgeClass::Save(FileClass & file)
+bool SmudgeClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * SmudgeClass::Code_Pointers -- codes class's pointers for load/save                          *
@@ -1240,17 +1201,16 @@ bool SmudgeClass::Save(FileClass & file)
  *=============================================================================================*/
 void SmudgeClass::Code_Pointers(void)
 {
-	/*
-	------------------------------ Code 'Class' ------------------------------
-	*/
-	((SmudgeTypeClass const *&)Class) = (SmudgeTypeClass *)Class->Type;
+    /*
+    ------------------------------ Code 'Class' ------------------------------
+    */
+    ((SmudgeTypeClass const*&)Class) = (SmudgeTypeClass*)Class->Type;
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	ObjectClass::Code_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    ObjectClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * SmudgeClass::Decode_Pointers -- decodes pointers for load/save                              *
@@ -1272,18 +1232,17 @@ void SmudgeClass::Code_Pointers(void)
  *=============================================================================================*/
 void SmudgeClass::Decode_Pointers(void)
 {
-	/*
-	----------------------------- Decode 'Class' -----------------------------
-	*/
-	((SmudgeTypeClass const *&)Class) = &SmudgeTypeClass::As_Reference(*((SmudgeType*)&Class));
-	Check_Ptr((void *)Class,__FILE__,__LINE__);
+    /*
+    ----------------------------- Decode 'Class' -----------------------------
+    */
+    ((SmudgeTypeClass const*&)Class) = &SmudgeTypeClass::As_Reference(*((SmudgeType*)&Class));
+    Check_Ptr((void*)Class, __FILE__, __LINE__);
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	ObjectClass::Decode_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    ObjectClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * TemplateClass::Load -- Loads from a save game file.                                         *
@@ -1297,14 +1256,13 @@ void SmudgeClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool TemplateClass::Load(FileClass & file)
+bool TemplateClass::Load(FileClass& file)
 {
-	::new (this) TemplateClass();
-	return(Read_Object(this, sizeof(*this), file, true));
-	
-	//return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
+    ::new (this) TemplateClass();
+    return (Read_Object(this, sizeof(*this), file, true));
 
+    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
+}
 
 /***********************************************************************************************
  * TemplateClass::Save -- Write to a save game file.                                           *
@@ -1318,11 +1276,10 @@ bool TemplateClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool TemplateClass::Save(FileClass & file)
+bool TemplateClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * TemplateClass::Code_Pointers -- codes class's pointers for load/save                        *
@@ -1346,17 +1303,16 @@ bool TemplateClass::Save(FileClass & file)
  *=============================================================================================*/
 void TemplateClass::Code_Pointers(void)
 {
-	/*
-	------------------------------ Code 'Class' ------------------------------
-	*/
-	((TemplateTypeClass *&)Class) = (TemplateTypeClass *)Class->Type;
+    /*
+    ------------------------------ Code 'Class' ------------------------------
+    */
+    ((TemplateTypeClass*&)Class) = (TemplateTypeClass*)Class->Type;
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	ObjectClass::Code_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    ObjectClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * TemplateClass::Decode_Pointers -- decodes pointers for load/save                            *
@@ -1378,18 +1334,17 @@ void TemplateClass::Code_Pointers(void)
  *=============================================================================================*/
 void TemplateClass::Decode_Pointers(void)
 {
-	/*
-	----------------------------- Decode 'Class' -----------------------------
-	*/
-	((TemplateTypeClass const *&)Class) = &TemplateTypeClass::As_Reference(*((TemplateType*)&Class));
-	Check_Ptr((void *)Class,__FILE__,__LINE__);
+    /*
+    ----------------------------- Decode 'Class' -----------------------------
+    */
+    ((TemplateTypeClass const*&)Class) = &TemplateTypeClass::As_Reference(*((TemplateType*)&Class));
+    Check_Ptr((void*)Class, __FILE__, __LINE__);
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	ObjectClass::Decode_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    ObjectClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Load -- Loads from a save game file.                                          *
@@ -1403,14 +1358,13 @@ void TemplateClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool TerrainClass::Load(FileClass & file)
+bool TerrainClass::Load(FileClass& file)
 {
-	::new (this) TerrainClass();
-	return(Read_Object(this, sizeof(*this), file, true));
-	
-	//return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
+    ::new (this) TerrainClass();
+    return (Read_Object(this, sizeof(*this), file, true));
 
+    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
+}
 
 /***********************************************************************************************
  * TerrainClass::Save -- Write to a save game file.                                            *
@@ -1424,11 +1378,10 @@ bool TerrainClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool TerrainClass::Save(FileClass & file)
+bool TerrainClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Code_Pointers -- codes class's pointers for load/save                         *
@@ -1452,18 +1405,17 @@ bool TerrainClass::Save(FileClass & file)
  *=============================================================================================*/
 void TerrainClass::Code_Pointers(void)
 {
-	/*
-	------------------------------ Code 'Class' ------------------------------
-	*/
-	((TerrainTypeClass *&)Class) = (TerrainTypeClass *)Class->Type;
+    /*
+    ------------------------------ Code 'Class' ------------------------------
+    */
+    ((TerrainTypeClass*&)Class) = (TerrainTypeClass*)Class->Type;
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	ObjectClass::Code_Pointers();
-	StageClass::Code_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    ObjectClass::Code_Pointers();
+    StageClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * TerrainClass::Decode_Pointers -- decodes pointers for load/save                             *
@@ -1485,19 +1437,18 @@ void TerrainClass::Code_Pointers(void)
  *=============================================================================================*/
 void TerrainClass::Decode_Pointers(void)
 {
-	/*
-	----------------------------- Decode 'Class' -----------------------------
-	*/
-	((TerrainTypeClass const *&)Class) = &TerrainTypeClass::As_Reference(*((TerrainType*)&Class));
-	Check_Ptr((void *)Class,__FILE__,__LINE__);
+    /*
+    ----------------------------- Decode 'Class' -----------------------------
+    */
+    ((TerrainTypeClass const*&)Class) = &TerrainTypeClass::As_Reference(*((TerrainType*)&Class));
+    Check_Ptr((void*)Class, __FILE__, __LINE__);
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	ObjectClass::Decode_Pointers();
-	StageClass::Decode_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    ObjectClass::Decode_Pointers();
+    StageClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * UnitClass::Load -- Loads from a save game file.                                             *
@@ -1511,14 +1462,13 @@ void TerrainClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool UnitClass::Load(FileClass & file)
+bool UnitClass::Load(FileClass& file)
 {
-	::new (this) UnitClass();
-	return(Read_Object(this, sizeof(*this), file, true));
-	
-	//return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
+    ::new (this) UnitClass();
+    return (Read_Object(this, sizeof(*this), file, true));
 
+    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
+}
 
 /***********************************************************************************************
  * UnitClass::Save -- Write to a save game file.                                               *
@@ -1532,11 +1482,10 @@ bool UnitClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool UnitClass::Save(FileClass & file)
+bool UnitClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * UnitClass::Code_Pointers -- codes class's pointers for load/save                            *
@@ -1560,9 +1509,8 @@ bool UnitClass::Save(FileClass & file)
  *=============================================================================================*/
 void UnitClass::Code_Pointers(void)
 {
-	TarComClass::Code_Pointers();
+    TarComClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * UnitClass::Decode_Pointers -- decodes pointers for load/save                                *
@@ -1584,9 +1532,8 @@ void UnitClass::Code_Pointers(void)
  *=============================================================================================*/
 void UnitClass::Decode_Pointers(void)
 {
-	TarComClass::Decode_Pointers();
+    TarComClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * FactoryClass::Load -- Loads from a save game file.                                          *
@@ -1600,14 +1547,13 @@ void UnitClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool FactoryClass::Load(FileClass & file)
+bool FactoryClass::Load(FileClass& file)
 {
-	::new (this) FactoryClass();
-	return(Read_Object(this, sizeof(*this), file, false));
-	
-	//return(Read_Object(this, sizeof(StageClass), sizeof(*this), file, 0));
-}
+    ::new (this) FactoryClass();
+    return (Read_Object(this, sizeof(*this), file, false));
 
+    // return(Read_Object(this, sizeof(StageClass), sizeof(*this), file, 0));
+}
 
 /***********************************************************************************************
  * FactoryClass::Save -- Write to a save game file.                                            *
@@ -1621,11 +1567,10 @@ bool FactoryClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool FactoryClass::Save(FileClass & file)
+bool FactoryClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * FactoryClass::Code_Pointers -- codes class's pointers for load/save                         *
@@ -1649,15 +1594,14 @@ bool FactoryClass::Save(FileClass & file)
  *=============================================================================================*/
 void FactoryClass::Code_Pointers(void)
 {
-	if (Object) {
-		Object = (TechnoClass *)Object->As_Target();
-	}
+    if (Object) {
+        Object = (TechnoClass*)Object->As_Target();
+    }
 
-	((HouseClass *&)House) = (HouseClass *)House->Class->House;
+    ((HouseClass*&)House) = (HouseClass*)House->Class->House;
 
-	StageClass::Code_Pointers();
+    StageClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * FactoryClass::Decode_Pointers -- decodes pointers for load/save                             *
@@ -1679,17 +1623,16 @@ void FactoryClass::Code_Pointers(void)
  *=============================================================================================*/
 void FactoryClass::Decode_Pointers(void)
 {
-	if (Object) {
-		Object = As_Techno((TARGET)Object, false);
-		Check_Ptr((void *)Object,__FILE__,__LINE__);
-	}
+    if (Object) {
+        Object = As_Techno((TARGET)Object, false);
+        Check_Ptr((void*)Object, __FILE__, __LINE__);
+    }
 
-	((HouseClass *&)House) = HouseClass::As_Pointer(*((HousesType*)&House));
-	Check_Ptr((void *)House,__FILE__,__LINE__);
+    ((HouseClass*&)House) = HouseClass::As_Pointer(*((HousesType*)&House));
+    Check_Ptr((void*)House, __FILE__, __LINE__);
 
-	StageClass::Decode_Pointers();
+    StageClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * LayerClass::Load -- Loads from a save game file.                                            *
@@ -1703,37 +1646,36 @@ void FactoryClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool LayerClass::Load(FileClass & file)
+bool LayerClass::Load(FileClass& file)
 {
-	int count;
-	int i;
-	ObjectClass * ptr;
+    int count;
+    int i;
+    ObjectClass* ptr;
 
-	/*
-	---------------------- Read # elements in the layer ----------------------
-	*/
-	if (file.Read(&count,sizeof(count)) != sizeof(count)) {
-		return(false);
-	}
+    /*
+    ---------------------- Read # elements in the layer ----------------------
+    */
+    if (file.Read(&count, sizeof(count)) != sizeof(count)) {
+        return (false);
+    }
 
-	/*
-	---------------------------- Clear the array -----------------------------
-	*/
-	Clear();
+    /*
+    ---------------------------- Clear the array -----------------------------
+    */
+    Clear();
 
-	/*
-	----------------------- Read in all array elements -----------------------
-	*/
-	for (i = 0; i < count; i++) {
-		if (file.Read(&ptr, sizeof(ObjectClass *)) != sizeof(ObjectClass *)) {
-			return(false);
-		}
-		Add(ptr);
-	}
-	
-	return(true);
+    /*
+    ----------------------- Read in all array elements -----------------------
+    */
+    for (i = 0; i < count; i++) {
+        if (file.Read(&ptr, sizeof(ObjectClass*)) != sizeof(ObjectClass*)) {
+            return (false);
+        }
+        Add(ptr);
+    }
+
+    return (true);
 }
-
 
 /***********************************************************************************************
  * LayerClass::Save -- Write to a save game file.                                              *
@@ -1747,31 +1689,30 @@ bool LayerClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool LayerClass::Save(FileClass & file)
+bool LayerClass::Save(FileClass& file)
 {
-	int count;
-	int i;
-	ObjectClass * ptr;
+    int count;
+    int i;
+    ObjectClass* ptr;
 
-	/*
-	------------------------- Save # array elements --------------------------
-	*/
-	count = Count();
-	if (file.Write(&count, sizeof(count)) != sizeof(count))
-		return(false);
+    /*
+    ------------------------- Save # array elements --------------------------
+    */
+    count = Count();
+    if (file.Write(&count, sizeof(count)) != sizeof(count))
+        return (false);
 
-	/*
-	--------------------------- Save all elements ----------------------------
-	*/
-	for (i = 0; i < count; i++) {
-		ptr = (*this)[i];
-		if (file.Write(&ptr, sizeof(ObjectClass *)) != sizeof(ObjectClass *))
-			return(false);
-	}
+    /*
+    --------------------------- Save all elements ----------------------------
+    */
+    for (i = 0; i < count; i++) {
+        ptr = (*this)[i];
+        if (file.Write(&ptr, sizeof(ObjectClass*)) != sizeof(ObjectClass*))
+            return (false);
+    }
 
-	return(true);
+    return (true);
 }
-
 
 /***********************************************************************************************
  * LayerClass::Code_Pointers -- codes class's pointers for load/save                           *
@@ -1795,14 +1736,13 @@ bool LayerClass::Save(FileClass & file)
  *=============================================================================================*/
 void LayerClass::Code_Pointers(void)
 {
-	ObjectClass *obj;
+    ObjectClass* obj;
 
-	for (int i = 0; i < Count(); i++) {
-		obj = (*this)[i];
-		(*this)[i] = (ObjectClass *)(obj->As_Target());
-	}
+    for (int i = 0; i < Count(); i++) {
+        obj = (*this)[i];
+        (*this)[i] = (ObjectClass*)(obj->As_Target());
+    }
 }
-
 
 /***********************************************************************************************
  * LayerClass::Decode_Pointers -- decodes pointers for load/save                               *
@@ -1824,15 +1764,14 @@ void LayerClass::Code_Pointers(void)
  *=============================================================================================*/
 void LayerClass::Decode_Pointers(void)
 {
-	TARGET target;
+    TARGET target;
 
-	for (int i = 0; i < Count(); i++) {
-		target = (TARGET)(*this)[i];
-		(*this)[i] = (ObjectClass *)As_Object(target, false);
-		Check_Ptr((*this)[i],__FILE__,__LINE__);
-	}
+    for (int i = 0; i < Count(); i++) {
+        target = (TARGET)(*this)[i];
+        (*this)[i] = (ObjectClass*)As_Object(target, false);
+        Check_Ptr((*this)[i], __FILE__, __LINE__);
+    }
 }
-
 
 /***********************************************************************************************
  * HouseClass::Load -- Loads from a save game file.                                            *
@@ -1846,14 +1785,13 @@ void LayerClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool HouseClass::Load(FileClass & file)
+bool HouseClass::Load(FileClass& file)
 {
-	::new (this) HouseClass();
-	return(Read_Object(this, sizeof(*this), file, false));
-	
-	//return(Read_Object(this, sizeof(*this), sizeof(*this), file, 0));
-}
+    ::new (this) HouseClass();
+    return (Read_Object(this, sizeof(*this), file, false));
 
+    // return(Read_Object(this, sizeof(*this), sizeof(*this), file, 0));
+}
 
 /***********************************************************************************************
  * HouseClass::Save -- Write to a save game file.                                              *
@@ -1867,11 +1805,10 @@ bool HouseClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool HouseClass::Save(FileClass & file)
+bool HouseClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * HouseClass::Code_Pointers -- codes class's pointers for load/save                           *
@@ -1895,12 +1832,11 @@ bool HouseClass::Save(FileClass & file)
  *=============================================================================================*/
 void HouseClass::Code_Pointers(void)
 {
-	/*
-	------------------------------ Code 'Class' ------------------------------
-	*/
-	((HouseTypeClass const *&)Class) = (HouseTypeClass const *)Class->House;
+    /*
+    ------------------------------ Code 'Class' ------------------------------
+    */
+    ((HouseTypeClass const*&)Class) = (HouseTypeClass const*)Class->House;
 }
-
 
 /***********************************************************************************************
  * HouseClass::Decode_Pointers -- decodes pointers for load/save                               *
@@ -1922,13 +1858,12 @@ void HouseClass::Code_Pointers(void)
  *=============================================================================================*/
 void HouseClass::Decode_Pointers(void)
 {
-	/*
-	----------------------------- Decode 'Class' -----------------------------
-	*/
-	((HouseTypeClass const *&)Class) = &HouseTypeClass::As_Reference(*((HousesType*)&Class));
-	Check_Ptr((void *)Class,__FILE__,__LINE__);
+    /*
+    ----------------------------- Decode 'Class' -----------------------------
+    */
+    ((HouseTypeClass const*&)Class) = &HouseTypeClass::As_Reference(*((HousesType*)&Class));
+    Check_Ptr((void*)Class, __FILE__, __LINE__);
 }
-
 
 /***********************************************************************************************
  * ScoreClass::Load -- Loads from a save game file.                                            *
@@ -1942,14 +1877,13 @@ void HouseClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool ScoreClass::Load(FileClass & file)
+bool ScoreClass::Load(FileClass& file)
 {
-	::new (this) ScoreClass();
-	return(Read_Object(this, sizeof(*this), file, false));
-	
-	//return(Read_Object(this, sizeof(*this), sizeof(*this), file, 0));
-}
+    ::new (this) ScoreClass();
+    return (Read_Object(this, sizeof(*this), file, false));
 
+    // return(Read_Object(this, sizeof(*this), sizeof(*this), file, 0));
+}
 
 /***********************************************************************************************
  * ScoreClass::Save -- Write to a save game file.                                              *
@@ -1963,11 +1897,10 @@ bool ScoreClass::Load(FileClass & file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool ScoreClass::Save(FileClass & file)
+bool ScoreClass::Save(FileClass& file)
 {
-	return(Write_Object(this, sizeof(*this), file));
+    return (Write_Object(this, sizeof(*this), file));
 }
-
 
 /***********************************************************************************************
  * ScoreClass::Code_Pointers -- codes class's pointers for load/save                           *
@@ -1988,7 +1921,6 @@ void ScoreClass::Code_Pointers(void)
 {
 }
 
-
 /***********************************************************************************************
  * ScoreClass::Decode_Pointers -- decodes pointers for load/save                               *
  *                                                                                             *
@@ -2007,7 +1939,6 @@ void ScoreClass::Code_Pointers(void)
 void ScoreClass::Decode_Pointers(void)
 {
 }
-
 
 /***********************************************************************************************
  * FlyClass::Code_Pointers -- codes class's pointers for load/save                             *
@@ -2033,7 +1964,6 @@ void FlyClass::Code_Pointers(void)
 {
 }
 
-
 /***********************************************************************************************
  * FlyClass::Decode_Pointers -- decodes pointers for load/save                                 *
  *                                                                                             *
@@ -2055,7 +1985,6 @@ void FlyClass::Code_Pointers(void)
 void FlyClass::Decode_Pointers(void)
 {
 }
-
 
 /***********************************************************************************************
  * FuseClass::Code_Pointers -- codes class's pointers for load/save                            *
@@ -2081,7 +2010,6 @@ void FuseClass::Code_Pointers(void)
 {
 }
 
-
 /***********************************************************************************************
  * FuseClass::Decode_Pointers -- decodes pointers for load/save                                *
  *                                                                                             *
@@ -2103,7 +2031,6 @@ void FuseClass::Code_Pointers(void)
 void FuseClass::Decode_Pointers(void)
 {
 }
-
 
 /***********************************************************************************************
  * TarComClass::Code_Pointers -- codes class's pointers for load/save                          *
@@ -2127,9 +2054,8 @@ void FuseClass::Decode_Pointers(void)
  *=============================================================================================*/
 void TarComClass::Code_Pointers(void)
 {
-	TurretClass::Code_Pointers();
+    TurretClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * TarComClass::Decode_Pointers -- decodes pointers for load/save                              *
@@ -2151,9 +2077,8 @@ void TarComClass::Code_Pointers(void)
  *=============================================================================================*/
 void TarComClass::Decode_Pointers(void)
 {
-	TurretClass::Decode_Pointers();
+    TurretClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * TurretClass::Code_Pointers -- codes class's pointers for load/save                          *
@@ -2177,9 +2102,8 @@ void TarComClass::Decode_Pointers(void)
  *=============================================================================================*/
 void TurretClass::Code_Pointers(void)
 {
-	DriveClass::Code_Pointers();
+    DriveClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * TurretClass::Decode_Pointers -- decodes pointers for load/save                              *
@@ -2201,9 +2125,8 @@ void TurretClass::Code_Pointers(void)
  *=============================================================================================*/
 void TurretClass::Decode_Pointers(void)
 {
-	DriveClass::Decode_Pointers();
+    DriveClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * DriveClass::Code_Pointers -- codes class's pointers for load/save                           *
@@ -2227,17 +2150,16 @@ void TurretClass::Decode_Pointers(void)
  *=============================================================================================*/
 void DriveClass::Code_Pointers(void)
 {
-	/*
-	------------------------------ Code 'Class' ------------------------------
-	*/
-	((UnitTypeClass *&)Class) = (UnitTypeClass *)Class->Type;
+    /*
+    ------------------------------ Code 'Class' ------------------------------
+    */
+    ((UnitTypeClass*&)Class) = (UnitTypeClass*)Class->Type;
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	FootClass::Code_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    FootClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * DriveClass::Decode_Pointers -- decodes pointers for load/save                               *
@@ -2259,18 +2181,17 @@ void DriveClass::Code_Pointers(void)
  *=============================================================================================*/
 void DriveClass::Decode_Pointers(void)
 {
-	/*
-	----------------------------- Decode 'Class' -----------------------------
-	*/
-	((UnitTypeClass const *&)Class) = &UnitTypeClass::As_Reference(*((UnitType*)&Class));
-	Check_Ptr((void *)Class,__FILE__,__LINE__);
+    /*
+    ----------------------------- Decode 'Class' -----------------------------
+    */
+    ((UnitTypeClass const*&)Class) = &UnitTypeClass::As_Reference(*((UnitType*)&Class));
+    Check_Ptr((void*)Class, __FILE__, __LINE__);
 
-	/*
-	---------------------------- Chain to parent -----------------------------
-	*/
-	FootClass::Decode_Pointers();
+    /*
+    ---------------------------- Chain to parent -----------------------------
+    */
+    FootClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * FootClass::Code_Pointers -- codes class's pointers for load/save                            *
@@ -2294,16 +2215,15 @@ void DriveClass::Decode_Pointers(void)
  *=============================================================================================*/
 void FootClass::Code_Pointers(void)
 {
-	if (Team)
-		Team = (TeamClass *)Team->As_Target();
+    if (Team)
+        Team = (TeamClass*)Team->As_Target();
 
-	if (Member) {
-		Member = (FootClass *)Member->As_Target();
-	}
+    if (Member) {
+        Member = (FootClass*)Member->As_Target();
+    }
 
-	TechnoClass::Code_Pointers();
+    TechnoClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * FootClass::Decode_Pointers -- decodes pointers for load/save                                *
@@ -2325,19 +2245,18 @@ void FootClass::Code_Pointers(void)
  *=============================================================================================*/
 void FootClass::Decode_Pointers(void)
 {
-	if (Team) {
-		Team = As_Team((TARGET)Team, false);
-		Check_Ptr((void *)Team,__FILE__,__LINE__);
-	}
+    if (Team) {
+        Team = As_Team((TARGET)Team, false);
+        Check_Ptr((void*)Team, __FILE__, __LINE__);
+    }
 
-	if (Member) {
-		Member = (FootClass *)As_Techno((TARGET)Member, false);
-		Check_Ptr((void *)Member,__FILE__,__LINE__);
-	}
+    if (Member) {
+        Member = (FootClass*)As_Techno((TARGET)Member, false);
+        Check_Ptr((void*)Member, __FILE__, __LINE__);
+    }
 
-	TechnoClass::Decode_Pointers();
+    TechnoClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * RadioClass::Code_Pointers -- codes class's pointers for load/save                           *
@@ -2361,16 +2280,15 @@ void FootClass::Decode_Pointers(void)
  *=============================================================================================*/
 void RadioClass::Code_Pointers(void)
 {
-	/*
-	------------------------------ Code 'Radio' ------------------------------
-	*/
-	if (Radio) {
-		Radio = (RadioClass *)Radio->As_Target();
-	}
+    /*
+    ------------------------------ Code 'Radio' ------------------------------
+    */
+    if (Radio) {
+        Radio = (RadioClass*)Radio->As_Target();
+    }
 
-	MissionClass::Code_Pointers();
+    MissionClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * RadioClass::Decode_Pointers -- decodes pointers for load/save                               *
@@ -2392,17 +2310,16 @@ void RadioClass::Code_Pointers(void)
  *=============================================================================================*/
 void RadioClass::Decode_Pointers(void)
 {
-	/*
-	----------------------------- Decode 'Radio' -----------------------------
-	*/
-	if (Radio) {
-		Radio = As_Techno((TARGET)Radio, false);
-		Check_Ptr((void *)Radio,__FILE__,__LINE__);
-	}
+    /*
+    ----------------------------- Decode 'Radio' -----------------------------
+    */
+    if (Radio) {
+        Radio = As_Techno((TARGET)Radio, false);
+        Check_Ptr((void*)Radio, __FILE__, __LINE__);
+    }
 
-	MissionClass::Decode_Pointers();
+    MissionClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * TechnoClass::Code_Pointers -- codes class's pointers for load/save                          *
@@ -2426,19 +2343,18 @@ void RadioClass::Decode_Pointers(void)
  *=============================================================================================*/
 void TechnoClass::Code_Pointers(void)
 {
-	/*
-	------------------------------ Code 'House' ------------------------------
-	*/
-	((HouseClass *&)House) = (HouseClass *)(House->Class->House);
+    /*
+    ------------------------------ Code 'House' ------------------------------
+    */
+    ((HouseClass*&)House) = (HouseClass*)(House->Class->House);
 
-	FlasherClass::Code_Pointers();
-	StageClass::Code_Pointers();
-	CargoClass::Code_Pointers();
-	DoorClass::Code_Pointers();
+    FlasherClass::Code_Pointers();
+    StageClass::Code_Pointers();
+    CargoClass::Code_Pointers();
+    DoorClass::Code_Pointers();
 
-	RadioClass::Code_Pointers();
+    RadioClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * TechnoClass::Decode_Pointers -- decodes pointers for load/save                              *
@@ -2460,20 +2376,19 @@ void TechnoClass::Code_Pointers(void)
  *=============================================================================================*/
 void TechnoClass::Decode_Pointers(void)
 {
-	/*
-	----------------------------- Decode 'House' -----------------------------
-	*/
-	((HouseClass *&)House) = HouseClass::As_Pointer(*((HousesType*)&House));
-	Check_Ptr((void *)House,__FILE__,__LINE__);
+    /*
+    ----------------------------- Decode 'House' -----------------------------
+    */
+    ((HouseClass*&)House) = HouseClass::As_Pointer(*((HousesType*)&House));
+    Check_Ptr((void*)House, __FILE__, __LINE__);
 
-	FlasherClass::Decode_Pointers();
-	StageClass::Decode_Pointers();
-	CargoClass::Decode_Pointers();
-	DoorClass::Decode_Pointers();
+    FlasherClass::Decode_Pointers();
+    StageClass::Decode_Pointers();
+    CargoClass::Decode_Pointers();
+    DoorClass::Decode_Pointers();
 
-	RadioClass::Decode_Pointers();
+    RadioClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * FlasherClass::Code_Pointers -- codes class's pointers for load/save                         *
@@ -2499,7 +2414,6 @@ void FlasherClass::Code_Pointers(void)
 {
 }
 
-
 /***********************************************************************************************
  * FlasherClass::Decode_Pointers -- decodes pointers for load/save                             *
  *                                                                                             *
@@ -2521,7 +2435,6 @@ void FlasherClass::Code_Pointers(void)
 void FlasherClass::Decode_Pointers(void)
 {
 }
-
 
 /***********************************************************************************************
  * CargoClass::Code_Pointers -- codes class's pointers for load/save                           *
@@ -2545,14 +2458,13 @@ void FlasherClass::Decode_Pointers(void)
  *=============================================================================================*/
 void CargoClass::Code_Pointers(void)
 {
-	/*
-	---------------------------- Code 'CargoHold' ----------------------------
-	*/
-	if (CargoHold) {
-		CargoHold = (FootClass *)CargoHold->As_Target();
-	}
+    /*
+    ---------------------------- Code 'CargoHold' ----------------------------
+    */
+    if (CargoHold) {
+        CargoHold = (FootClass*)CargoHold->As_Target();
+    }
 }
-
 
 /***********************************************************************************************
  * CargoClass::Decode_Pointers -- decodes pointers for load/save                               *
@@ -2574,15 +2486,14 @@ void CargoClass::Code_Pointers(void)
  *=============================================================================================*/
 void CargoClass::Decode_Pointers(void)
 {
-	/*
-	--------------------------- Decode 'CargoHold' ---------------------------
-	*/
-	if (CargoHold) {
-		CargoHold = (FootClass *)As_Techno((TARGET)CargoHold, false);
-		Check_Ptr((void *)CargoHold,__FILE__,__LINE__);
-	}
+    /*
+    --------------------------- Decode 'CargoHold' ---------------------------
+    */
+    if (CargoHold) {
+        CargoHold = (FootClass*)As_Techno((TARGET)CargoHold, false);
+        Check_Ptr((void*)CargoHold, __FILE__, __LINE__);
+    }
 }
-
 
 /***********************************************************************************************
  * MissionClass::Code_Pointers -- codes class's pointers for load/save                         *
@@ -2606,9 +2517,8 @@ void CargoClass::Decode_Pointers(void)
  *=============================================================================================*/
 void MissionClass::Code_Pointers(void)
 {
-	ObjectClass::Code_Pointers();
+    ObjectClass::Code_Pointers();
 }
-
 
 /***********************************************************************************************
  * MissionClass::Decode_Pointers -- decodes pointers for load/save                             *
@@ -2630,9 +2540,8 @@ void MissionClass::Code_Pointers(void)
  *=============================================================================================*/
 void MissionClass::Decode_Pointers(void)
 {
-	ObjectClass::Decode_Pointers();
+    ObjectClass::Decode_Pointers();
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Code_Pointers -- codes class's pointers for load/save                          *
@@ -2656,15 +2565,14 @@ void MissionClass::Decode_Pointers(void)
  *=============================================================================================*/
 void ObjectClass::Code_Pointers(void)
 {
-	if (Next) {
-		Next = (ObjectClass *)Next->As_Target();
-	}
+    if (Next) {
+        Next = (ObjectClass*)Next->As_Target();
+    }
 
-	if (Trigger) {
-		Trigger = (TriggerClass *)Trigger->As_Target();
-	}
+    if (Trigger) {
+        Trigger = (TriggerClass*)Trigger->As_Target();
+    }
 }
-
 
 /***********************************************************************************************
  * ObjectClass::Decode_Pointers -- decodes pointers for load/save                              *
@@ -2686,13 +2594,13 @@ void ObjectClass::Code_Pointers(void)
  *=============================================================================================*/
 void ObjectClass::Decode_Pointers(void)
 {
-	if (Next) {
-		Next = As_Object((TARGET)Next, false);
-		Check_Ptr((void *)Next,__FILE__,__LINE__);
-	}
+    if (Next) {
+        Next = As_Object((TARGET)Next, false);
+        Check_Ptr((void*)Next, __FILE__, __LINE__);
+    }
 
-	if (Trigger) {
-		Trigger = As_Trigger((TARGET)Trigger, false);
-		Check_Ptr((void *)Trigger,__FILE__,__LINE__);
-	}
+    if (Trigger) {
+        Trigger = As_Trigger((TARGET)Trigger, false);
+        Check_Ptr((void*)Trigger, __FILE__, __LINE__);
+    }
 }
