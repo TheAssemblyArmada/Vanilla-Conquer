@@ -14,7 +14,7 @@ No extras. No bloat. No major changes. Just the games and libraries.
 Goals in order
 --------------
 0. [X] Clean upstream fork to preserve history, README
-1. [ ] Lowercase TIBERIANDAWN and REDALERT directories including contents (portability)
+1. [X] Lowercase TIBERIANDAWN and REDALERT directories including contents (portability)
 2. [ ] Add proper .clang-format, reformat all files
 3. [ ] Change build system from VS to CMake VS (portability)
 4. [ ] Replace x86 assembly with plain C (portability)
