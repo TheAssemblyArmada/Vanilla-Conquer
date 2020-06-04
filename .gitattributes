@@ -1,0 +1,6 @@
+*.txt   eol=lf
+*.c     eol=lf
+*.cpp   eol=lf
+*.h     eol=lf
+*.asm   eol=lf
+*.inc   eol=lf
