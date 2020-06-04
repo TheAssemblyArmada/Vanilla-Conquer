@@ -47,6 +47,8 @@
 #ifndef __DDE_H
 #define __DDE_H
 
+#include <ddeml.h>
+
 //#if (0)
 
 #define DDE_ADVISE_CONNECT    -1 // advisory "client has connected"
