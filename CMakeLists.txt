@@ -7,7 +7,31 @@ add_definitions(-DWINDOWS_IGNORE_PACKING_MISMATCH)
 
 project(VanillaConquer)
 
-add_library(TiberianDawn SHARED
+# For now build the dll files by default only for windows while there is only the proprietary GlyphX frontend for them.
+if(WIN32)
+    set(DEFAULT_REMASTER ON)
+else()
+    set(DEFAULT_REMASTER OFF)
+endif()
+
+option(BUILD_REMASTERTD "Build Tiberian Dawn remaster dll." ${DEFAULT_REMASTER})
+option(BUILD_REMASTERRA "Build Red Alert remaster dll." ${DEFAULT_REMASTER})
+option(BUILD_VANILLATD "Build Tiberian Dawn executable." ON)
+option(BUILD_VANILLARA "Build Red Alert executable." ON)
+option(MAP_EDITORTD "Include internal scenario editor in Tiberian Dawn build." OFF)
+option(MAP_EDITORRA "Include internal scenario editor in Red Alert build." OFF)
+
+if(NOT BUILD_VANILLATD AND MAP_EDTITORTD)
+    message(WARNING "Internal scenario editor requires a Tiberian Dawn executable to be built, but it was not enabled.")
+    set(BUILD_VANILLATD TRUE)
+endif()
+
+if(NOT BUILD_VANILLARA AND MAP_EDTITORRA)
+    message(WARNING "Internal scenario editor requires a Red Alert executable to be built, but it is not enabled.")
+    set(BUILD_VANILLARA TRUE)
+endif()
+
+set(TIBDAWN_SRC
     tiberiandawn/win32lib/tobuff.asm
     tiberiandawn/win32lib/xordelta.asm
     tiberiandawn/keyfbuff.asm
@@ -207,11 +231,47 @@ add_library(TiberianDawn SHARED
     tiberiandawn/winstub.cpp
 )
 
-target_compile_definitions(TiberianDawn PUBLIC TRUE_FALSE_DEFINED WIN32 _DEBUG _WINDOWS _USRDLL TIBERIANDAWN_EXPORTS)
-target_include_directories(TiberianDawn PUBLIC tiberiandawn/win32lib tiberiandawn)
-target_link_libraries(TiberianDawn wsock32 ws2_32 winmm)
+if(CMAKE_CONFIGURATION_TYPES)
+    # Glob all the header files together to add to the project for msvc/xcode.
+    # Not ideal as CMake won't notice if you add any until something else prompts a CMake run
+    # but this is largely a convenience feature for MSVC/XCode users.
+    file(GLOB_RECURSE TIBDAWN_HEADERS "tiberiandawn/*.h")
+    set(_TIBDAWN_SOURCES ${TIBDAWN_SRC})
 
-add_library(RedAlert SHARED
+    foreach(_TIBDAWN_SOURCE IN ITEMS ${_TIBDAWN_SOURCES})
+        get_filename_component(_TIBDAWN_SOURCE_PATH "${_TIBDAWN_SOURCE}" PATH)
+        string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/tiberiandawn" "" _TIBDAWN_GROUP_PATH "${_TIBDAWN_SOURCE_PATH}")
+        string(REPLACE "/" "\\" _TIBDAWN_GROUP_PATH "${_TIBDAWN_GROUP_PATH}")
+        source_group("Source Files\\${_TIBDAWN_GROUP_PATH}" FILES "${_TIBDAWN_SOURCE}")
+    endforeach()
+
+    foreach(_TIBDAWN_HEADER IN ITEMS ${TIBDAWN_HEADERS})
+        get_filename_component(_TIBDAWN_HEADER_PATH "${_TIBDAWN_HEADER}" PATH)
+        string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/tiberiandawn" "" _TIBDAWN_HGROUP_PATH "${_TIBDAWN_HEADER_PATH}")
+        string(REPLACE "/" "\\" _TIBDAWN_HGROUP_PATH "${_TIBDAWN_HGROUP_PATH}")
+        source_group("Header Files\\${_TIBDAWN_HGROUP_PATH}" FILES "${_TIBDAWN_HEADER}")
+    endforeach()
+endif()
+
+if(BUILD_REMASTERTD)
+    add_library(TiberianDawn SHARED ${TIBDAWN_SRC} ${TIBDAWN_HEADERS})
+    target_compile_definitions(TiberianDawn PUBLIC TRUE_FALSE_DEFINED WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _USRDLL TIBERIANDAWN_EXPORTS REMASTER_BUILD)
+    target_include_directories(TiberianDawn PUBLIC tiberiandawn/win32lib tiberiandawn)
+    target_link_libraries(TiberianDawn wsock32 ws2_32 winmm)
+endif()
+
+if(BUILD_VANILLATD)
+    add_executable(VanillaTD ${TIBDAWN_SRC} ${TIBDAWN_HEADERS})
+    target_compile_definitions(VanillaTD PUBLIC TRUE_FALSE_DEFINED WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
+    target_include_directories(VanillaTD PUBLIC tiberiandawn/win32lib tiberiandawn)
+    target_link_libraries(VanillaTD wsock32 ws2_32 winmm)
+    set_target_properties(VanillaTD PROPERTIES OUTPUT_NAME vanillatd)
+    if(MAP_EDITORTD)
+        target_compile_definitions(VanillaTD PUBLIC SCENARIO_EDITOR CHEAT_KEYS VIRGIN_CHEAT_KEYS)
+    endif()
+endif()
+
+set(REDALERT_SRC
     redalert/lcwcomp.asm
     redalert/mmx.asm
     redalert/txtprnt.asm
@@ -512,6 +572,68 @@ add_library(RedAlert SHARED
     redalert/xstraw.cpp
 )
 
-target_compile_definitions(RedAlert PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 _DEBUG _WINDOWS _USRDLL REDALERT_EXPORTS)
-target_include_directories(RedAlert PUBLIC redalert/win32lib redalert)
-target_link_libraries(RedAlert wsock32 ws2_32 winmm)
+if(CMAKE_CONFIGURATION_TYPES)
+    # Glob all the header files together to add to the project for msvc/xcode.
+    # Not ideal as CMake won't notice if you add any until something else prompts a CMake run
+    # but this is largely a convenience feature for MSVC/XCode users.
+    file(GLOB_RECURSE REDALERT_HEADERS "tiberiandawn/*.h")
+    set(_REDALERT_SOURCES ${REDALERT_SRC})
+
+    foreach(_REDALERT_SOURCE IN ITEMS ${_REDALERT_SOURCES})
+        get_filename_component(_REDALERT_SOURCE_PATH "${_REDALERT_SOURCE}" PATH)
+        string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/redalert" "" _REDALERT_GROUP_PATH "${_REDALERT_SOURCE_PATH}")
+        string(REPLACE "/" "\\" _REDALERT_GROUP_PATH "${_REDALERT_GROUP_PATH}")
+        source_group("Source Files\\${_REDALERT_GROUP_PATH}" FILES "${_REDALERT_SOURCE}")
+    endforeach()
+
+    foreach(_REDALERT_HEADER IN ITEMS ${REDALERT_HEADERS})
+        get_filename_component(_REDALERT_HEADER_PATH "${_REDALERT_HEADER}" PATH)
+        string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/redalert" "" _REDALERT_HGROUP_PATH "${_REDALERT_HEADER_PATH}")
+        string(REPLACE "/" "\\" _REDALERT_HGROUP_PATH "${_REDALERT_HGROUP_PATH}")
+        source_group("Header Files\\${_REDALERT_HGROUP_PATH}" FILES "${_REDALERT_HEADER}")
+    endforeach()
+endif()
+
+if(BUILD_REMASTERRA)
+    add_library(RedAlert SHARED ${REDALERT_SRC} ${REDALERT_HEADERS})
+    target_compile_definitions(RedAlert PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _USRDLL REDALERT_EXPORTS REMASTER_BUILD)
+    target_include_directories(RedAlert PUBLIC redalert/win32lib redalert)
+    target_link_libraries(RedAlert wsock32 ws2_32 winmm)
+endif()
+
+if(BUILD_VANILLARA)
+    add_executable(VanillaRA ${REDALERT_SRC} ${REDALERT_HEADERS})
+    target_compile_definitions(VanillaRA PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
+    target_include_directories(VanillaRA PUBLIC redalert/win32lib redalert)
+    target_link_libraries(VanillaRA wsock32 ws2_32 winmm)
+    set_target_properties(VanillaRA PROPERTIES OUTPUT_NAME vanillara)
+    if(MAP_EDITORRA)
+        target_compile_definitions(VanillaRA PUBLIC SCENARIO_EDITOR INTERNAL_VERSION)
+    endif()
+endif()
+
+message(STATUS "VanillaConquer will be built with the following configuration:")
+
+if(BUILD_REMASTERTD)
+    message(STATUS "  Build a Tiberian Dawn Remastered dll.")
+endif()
+
+if(BUILD_REMASTERRA)
+    message(STATUS "  Build a Red Alert Remastered dll.")
+endif()
+
+if(BUILD_VANILLATD)
+    message(STATUS "  Build a Tiberian Dawn executable.")
+endif()
+
+if(BUILD_VANILLARA)
+    message(STATUS "  Build a Red Alert executable.")
+endif()
+
+if(MAP_EDITORTD)
+    message(STATUS "  Include scenario editor functionality in the Tiberian Dawn executable.")
+endif()
+
+if(MAP_EDITORRA)
+    message(STATUS "  Include scenario editor functionality in the Red Alert executable.")
+endif()
