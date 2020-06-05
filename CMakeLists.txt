@@ -3,6 +3,11 @@ cmake_minimum_required(VERSION 3.10)
 enable_language(ASM_MASM)
 set(CMAKE_ASM_MASM_FLAGS "/Zm /Cp /safeseh" CACHE INTERNAL "MASM flags")
 
+add_library(common STATIC
+    common/miscasm.cpp
+    common/misc.cpp
+)
+
 project(TiberianDawn)
 add_library(TiberianDawn SHARED
     tiberiandawn/win32lib/tobuff.asm
@@ -205,8 +210,8 @@ add_library(TiberianDawn SHARED
 )
 
 target_compile_definitions(TiberianDawn PUBLIC TRUE_FALSE_DEFINED WIN32 _DEBUG _WINDOWS _USRDLL TIBERIANDAWN_EXPORTS)
-target_include_directories(TiberianDawn PUBLIC tiberiandawn/win32lib tiberiandawn)
-target_link_libraries(TiberianDawn wsock32 ws2_32 winmm)
+target_include_directories(TiberianDawn PUBLIC . tiberiandawn/win32lib tiberiandawn)
+target_link_libraries(TiberianDawn common wsock32 ws2_32 winmm)
 
 project(RedAlert)
 add_library(RedAlert SHARED
@@ -511,5 +516,8 @@ add_library(RedAlert SHARED
 )
 
 target_compile_definitions(RedAlert PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 _DEBUG _WINDOWS _USRDLL REDALERT_EXPORTS)
-target_include_directories(RedAlert PUBLIC redalert/win32lib redalert)
-target_link_libraries(RedAlert wsock32 ws2_32 winmm)
+target_include_directories(RedAlert PUBLIC . redalert/win32lib redalert)
+target_link_libraries(RedAlert common wsock32 ws2_32 winmm)
+
+enable_testing()
+add_subdirectory(tests)
