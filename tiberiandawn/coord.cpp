@@ -371,65 +371,8 @@ COORDINATE Coord_Scatter(COORDINATE coord, unsigned distance, bool lock)
     return (newcoord);
 }
 
-int __cdecl calcx(signed short param1, short distance)
-{
-    __asm {
-
-        //#pragma aux calcx parm [ax] [bx] \
-	
-		movzx	eax, [param1]
-		mov	bx, [distance]
-		imul 	bx
-		shl	ax,1
-		rcl	dx,1
-		mov	al,ah
-		mov	ah,dl
-		cwd
-    }
-}
-
-int __cdecl calcy(signed short param1, short distance)
-{
-    __asm {
-
-        //#pragma aux calcy parm [ax] [bx] \
-	
-		movzx	eax, [param1]
-		mov	bx, [distance]
-		imul bx
-		shl	ax,1
-		rcl	dx,1
-		mov	al,ah
-		mov	ah,dl
-		cwd
-		neg	eax
-    }
-}
-
-#if (0)
-extern int calcx(signed short, short distance);
-#pragma aux calcx parm[ax][bx] modify[eax dx] value[eax] = "imul bx"                                                   \
-                                                           "shl	ax,1"                                                  \
-                                                           "rcl	dx,1"                                                  \
-                                                           "mov	al,ah"                                                 \
-                                                           "mov	ah,dl"                                                 \
-                                                           "cwd"
-//	"and	eax,0FFFFh";
-
-extern int calcy(signed short, short distance);
-#pragma aux calcy parm[ax][bx] modify[eax dx] value[eax] = "imul bx"                                                   \
-                                                           "shl	ax,1"                                                  \
-                                                           "rcl	dx,1"                                                  \
-                                                           "mov	al,ah"                                                 \
-                                                           "mov	ah,dl"                                                 \
-                                                           "cwd"                                                       \
-                                                           "neg	eax";
-//	"and	eax,0FFFFh"
-#endif
-
 void Move_Point(short& x, short& y, register DirType dir, unsigned short distance)
 {
-    //	static char const CosTable[256] = {
     static unsigned char const CosTable[256] = {
         0x00, 0x03, 0x06, 0x09, 0x0c, 0x0f, 0x12, 0x15, 0x18, 0x1b, 0x1e, 0x21, 0x24, 0x27, 0x2a, 0x2d,
         0x30, 0x33, 0x36, 0x39, 0x3b, 0x3e, 0x41, 0x43, 0x46, 0x49, 0x4b, 0x4e, 0x50, 0x52, 0x55, 0x57,
@@ -452,7 +395,6 @@ void Move_Point(short& x, short& y, register DirType dir, unsigned short distanc
         0xd0, 0xd3, 0xd6, 0xd9, 0xdc, 0xdf, 0xe2, 0xe5, 0xe8, 0xeb, 0xee, 0xf1, 0xf4, 0xf7, 0xfa, 0xfd,
     };
 
-    //	static char const SinTable[256] = {
     static unsigned char const SinTable[256] = {
         0x7f, 0x7e, 0x7e, 0x7e, 0x7e, 0x7e, 0x7d, 0x7d, 0x7c, 0x7b, 0x7b, 0x7a, 0x79, 0x78, 0x77, 0x76,
         0x75, 0x74, 0x72, 0x71, 0x70, 0x6e, 0x6c, 0x6b, 0x69, 0x67, 0x66, 0x64, 0x62, 0x60, 0x5e, 0x5b,
@@ -474,43 +416,7 @@ void Move_Point(short& x, short& y, register DirType dir, unsigned short distanc
         0x59, 0x5b, 0x5e, 0x60, 0x62, 0x64, 0x65, 0x67, 0x69, 0x6b, 0x6c, 0x6e, 0x6f, 0x71, 0x72, 0x74,
         0x75, 0x76, 0x77, 0x78, 0x79, 0x7a, 0x7b, 0x7b, 0x7c, 0x7d, 0x7d, 0x7e, 0x7e, 0x7e, 0x7e, 0x7e,
     };
-    distance = distance; // Keep LINT quiet.
 
-#ifdef OBSOLETE
-    /*
-    **	Calculate and add in the X component of the move.
-    */
-    _AX = CosTable[dir];
-    asm imul word ptr distance asm shl ax, 1 asm rcl dx, 1 asm mov al, ah asm mov ah, dl _DX = _AX;
-    x += _DX;
-#else
-    //
-    // Have to declare table as unsigned otherwise MSVC complains, but we need to treat the actual values as signed.
-    //
-    // ST - 1/10/2019 11:20AM
-    //
-    char* cos_table = (char*)&CosTable[0];
-    x += calcx(cos_table[dir], distance);
-#endif
-    //	asm add [word ptr start],ax
-
-#ifdef OBSOLETE
-    /*
-    **	Calculate and add in the Y component of the move.
-    */
-    _AX = SinTable[dir];
-    asm imul word ptr distance asm shl ax, 1 asm rcl dx, 1 asm mov al, ah asm mov ah,
-        dl asm neg ax // Subtraction needed because of inverted sine table.
-            _DX = _AX;
-    y += _DX;
-#else
-    //
-    // Have to declare table as unsigned otherwise MSVC complains, but we need to treat the actual values as signed.
-    //
-    // ST - 1/10/2019 11:20AM
-    //
-    char* sin_table = (char*)&SinTable[0];
-    y += calcy(sin_table[dir], distance);
-#endif
-    //	asm add [word ptr start+2],ax
+    x += calcx((char)CosTable[dir], distance);
+    y += calcy((char)SinTable[dir], distance);
 }
