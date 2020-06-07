@@ -33,7 +33,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include "COORDA.h"
+#include "common/miscasm.h"
 int SimRandIndex = 0;
 
 /***************************************************************************
