@@ -38,8 +38,8 @@
 #include "type.h"
 #include "region.h"
 #include "vector.h"
-#include "COORDA.h"
 #include "Credits.h"
+#include "common/miscasm.h"
 
 // extern "C" {
 // unsigned Cardinal_To_Fixed(unsigned base, unsigned cardinal);
