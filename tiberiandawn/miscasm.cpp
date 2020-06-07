@@ -30,48 +30,6 @@ extern "C" void __cdecl Mem_Copy(void const* source, void* dest, unsigned long b
     memcpy(dest, source, bytes_to_copy);
 }
 
-/***********************************************************************************************
- * Distance -- Determines the lepton distance between two coordinates.                         *
- *                                                                                             *
- *    This routine is used to determine the distance between two coordinates. It uses the      *
- *    Dragon Strike method of distance determination and thus it is very fast.                 *
- *                                                                                             *
- * INPUT:   coord1   -- First coordinate.                                                      *
- *                                                                                             *
- *          coord2   -- Second coordinate.                                                     *
- *                                                                                             *
- * OUTPUT:  Returns the lepton distance between the two coordinates.                           *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/27/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-int Distance_Coord(COORDINATE coord1, COORDINATE coord2)
-{
-    __asm {
-		mov	eax,[coord1]
-		mov	ebx,[coord2]
-		mov	dx,ax			
-		sub	dx,bx			
-		jg	okx				
-		neg	dx				
-		okx:					
-		shr	eax,16			
-		shr	ebx,16			
-		sub	ax,bx			
-		jg	oky				
-		neg	ax				
-oky:					
-		cmp	ax,dx			
-		jg	ok				
-		xchg	ax,dx			
-ok:						
-		shr	dx,1				
-		add	ax,dx
-    }
-}
-
 /*
 ;***************************************************************************
 ;* DESIRED_FACING16 -- Converts coordinates into a facing number.          *

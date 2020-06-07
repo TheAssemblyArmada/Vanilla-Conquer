@@ -138,6 +138,7 @@ set(TIBDAWN_SRC
     tiberiandawn/mapsel.cpp
     tiberiandawn/menus.cpp
     tiberiandawn/miscasm.cpp
+    tiberiandawn/miscasma.asm
     tiberiandawn/mission.cpp
     tiberiandawn/mixfile.cpp
     tiberiandawn/monoc.cpp

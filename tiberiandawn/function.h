@@ -190,6 +190,7 @@ __cdecl CELL Coord_Cell(COORDINATE coord);
 #endif
 CELL __cdecl Coord_Cell(COORDINATE coord);
 
+#include "miscasm.h"
 #include "rules.h"
 #include "utracker.h"
 #include "facing.h"
@@ -1009,45 +1010,6 @@ extern int Load_Interpolated_Palettes(char const* filename, BOOL add = FALSE);
 
 #define CELL_BLIT_ONLY 1
 #define CELL_DRAW_ONLY 2
-
-/***********************************************************************************************
- * Distance -- Determines the lepton distance between two coordinates.                         *
- *                                                                                             *
- *    This routine is used to determine the distance between two coordinates. It uses the      *
- *    Dragon Strike method of distance determination and thus it is very fast.                 *
- *                                                                                             *
- * INPUT:   coord1   -- First coordinate.                                                      *
- *                                                                                             *
- *          coord2   -- Second coordinate.                                                     *
- *                                                                                             *
- * OUTPUT:  Returns the lepton distance between the two coordinates.                           *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/27/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-int Distance_Coord(COORDINATE coord1, COORDINATE coord2);
-
-#if (0)
-#pragma aux Distance_Coord parm[eax][ebx] modify[edx ebx] value[eax] = "mov	dx,ax"                                     \
-                                                                       "sub	dx,bx"                                     \
-                                                                       "jg	okx"                                        \
-                                                                       "neg	dx"                                        \
-                                                                       "okx:"                                          \
-                                                                       "shr	eax,16"                                    \
-                                                                       "shr	ebx,16"                                    \
-                                                                       "sub	ax,bx"                                     \
-                                                                       "jg	oky"                                        \
-                                                                       "neg	ax"                                        \
-                                                                       "oky:"                                          \
-                                                                       "cmp	ax,dx"                                     \
-                                                                       "jg	ok"                                         \
-                                                                       "xchg	ax,dx"                                    \
-                                                                       "ok:"                                           \
-                                                                       "shr	dx,1"                                      \
-                                                                       "add	ax,dx"
-#endif
 
 inline int Distance(COORDINATE coord1, COORDINATE coord2)
 {
