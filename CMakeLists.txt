@@ -2,11 +2,21 @@ cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-enable_language(ASM_MASM)
-set(CMAKE_ASM_MASM_FLAGS "/Zm /Cp /safeseh" CACHE INTERNAL "MASM flags")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zp1")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Zp1")
-add_definitions(-DWINDOWS_IGNORE_PACKING_MISMATCH)
+if(WIN32)
+    enable_language(ASM_MASM)
+    set(CMAKE_ASM_MASM_FLAGS "/Zm /Cp /safeseh" CACHE INTERNAL "MASM flags")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zp1")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Zp1")
+    add_definitions(-DWINDOWS_IGNORE_PACKING_MISMATCH)
+else()
+    # until we are truly portable, assume MinGW
+    set(CMAKE_TOOLCHAIN_FILE "cmake/mingw-toolchain.cmake")
+    set(ASM_DIALECT "_JWASM")
+    enable_language(ASM_JWASM)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fpermissive -fpack-struct=1 -fdata-sections -ffunction-sections -Wl,--gc-sections")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fpermissive -fpack-struct=1 -fdata-sections -ffunction-sections -Wl,--gc-sections")
+    set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
+endif()
 
 project(VanillaConquer)
 
@@ -283,14 +293,15 @@ if(BUILD_REMASTERTD)
     )
     target_compile_definitions(TiberianDawn PUBLIC TRUE_FALSE_DEFINED WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _USRDLL TIBERIANDAWN_EXPORTS REMASTER_BUILD)
     target_include_directories(TiberianDawn PUBLIC . tiberiandawn/win32lib tiberiandawn)
-    target_link_libraries(TiberianDawn common wsock32 ws2_32 winmm)
+    target_link_libraries(TiberianDawn common wsock32 ws2_32 winmm ${STATIC_LIBS})
+    set_target_properties(TiberianDawn PROPERTIES PREFIX "")
 endif()
 
 if(BUILD_VANILLATD)
     add_executable(VanillaTD ${TIBDAWN_SRC} ${TIBDAWN_HEADERS})
     target_compile_definitions(VanillaTD PUBLIC TRUE_FALSE_DEFINED WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
     target_include_directories(VanillaTD PUBLIC . tiberiandawn/win32lib tiberiandawn)
-    target_link_libraries(VanillaTD common wsock32 ws2_32 winmm DirectX::ddraw DirectX::dxguid)
+    target_link_libraries(VanillaTD common wsock32 ws2_32 winmm DirectX::ddraw DirectX::dxguid ${STATIC_LIBS})
     set_target_properties(VanillaTD PROPERTIES OUTPUT_NAME vanillatd)
     if(MAP_EDITORTD)
         target_compile_definitions(VanillaTD PUBLIC SCENARIO_EDITOR CHEAT_KEYS VIRGIN_CHEAT_KEYS)
@@ -519,7 +530,6 @@ set(REDALERT_SRC
     redalert/statbtn.cpp
     redalert/stats.cpp
     redalert/straw.cpp
-    redalert/stub.cpp
     redalert/super.cpp
     redalert/surface.cpp
     redalert/tab.cpp
@@ -629,14 +639,15 @@ if(BUILD_REMASTERRA)
     )
     target_compile_definitions(RedAlert PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _USRDLL REDALERT_EXPORTS REMASTER_BUILD)
     target_include_directories(RedAlert PUBLIC . redalert/win32lib redalert)
-    target_link_libraries(RedAlert common wsock32 ws2_32 winmm)
+    target_link_libraries(RedAlert common wsock32 ws2_32 winmm ${STATIC_LIBS})
+    set_target_properties(RedAlert PROPERTIES PREFIX "")
 endif()
 
 if(BUILD_VANILLARA)
     add_executable(VanillaRA ${REDALERT_SRC} ${REDALERT_HEADERS})
     target_compile_definitions(VanillaRA PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE WINSOCK_IPX)
     target_include_directories(VanillaRA PUBLIC . redalert/win32lib redalert)
-    target_link_libraries(VanillaRA common wsock32 ws2_32 winmm DirectX::ddraw DirectX::dxguid)
+    target_link_libraries(VanillaRA common wsock32 ws2_32 winmm DirectX::ddraw DirectX::dxguid ${STATIC_LIBS})
     set_target_properties(VanillaRA PROPERTIES OUTPUT_NAME vanillara)
     if(MAP_EDITORRA)
         target_compile_definitions(VanillaRA PUBLIC SCENARIO_EDITOR INTERNAL_VERSION)
