@@ -739,18 +739,6 @@ okmax:
     }
 }
 
-CELL __cdecl Coord_Cell(COORDINATE coord)
-{
-    __asm {
-		mov	eax, coord
-		mov	ebx,eax
-		shr	eax,010h
-		xor	al,al
-		shr	eax,2
-		or		al,bh
-    }
-}
-
 /*
 ;***********************************************************
 ; SHAKE_SCREEN

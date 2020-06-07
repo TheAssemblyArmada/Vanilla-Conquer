@@ -178,17 +178,6 @@ inline CELL Coord_YCell(COORDINATE coord)
 {
     return (CELL)(*(((unsigned char*)&coord) + 3));
 }
-// inline CELL Coord_Cell(COORD coord){return (CELL)(((*(((unsigned short *)&coord)+1) & 0xFF00) >> 2) | *(((unsigned
-// char *)&coord)+1));}
-#if (0)
-__cdecl CELL Coord_Cell(COORDINATE coord);
-#pragma aux Coord_Cell parm[eax] modify[ebx] value[ax] = "mov	ebx,eax"                                                 \
-                                                         "shr	eax,010h"                                                \
-                                                         "xor	al,al"                                                   \
-                                                         "shr	eax,2"                                                   \
-                                                         "or	al,bh"
-#endif
-CELL __cdecl Coord_Cell(COORDINATE coord);
 
 #include "miscasm.h"
 #include "rules.h"

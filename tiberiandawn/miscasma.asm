@@ -18,6 +18,7 @@
 .model flat
 
 externdef C Distance_Coord:near
+externdef C Coord_Cell:near
 
 .code
 
@@ -64,5 +65,19 @@ ok:
     pop     ebx
     ret
 Distance_Coord endp
+
+; CELL __cdecl Coord_Cell(COORDINATE coord)
+Coord_Cell proc C coord:dword
+    push ebx
+    mov eax,coord
+    mov ebx,eax
+    shr eax,010h
+    xor al,al
+    shr eax,2
+    or  al,bh
+    pop ebx
+    ret
+Coord_Cell endp
+
 
 end
