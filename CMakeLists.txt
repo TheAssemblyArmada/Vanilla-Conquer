@@ -36,6 +36,10 @@ if(NOT BUILD_VANILLARA AND MAP_EDTITORRA)
     set(BUILD_VANILLARA TRUE)
 endif()
 
+add_library(common STATIC
+    common/miscasm.asm
+)
+
 set(TIBDAWN_SRC
     tiberiandawn/win32lib/tobuff.asm
     tiberiandawn/win32lib/xordelta.asm
@@ -263,15 +267,15 @@ if(BUILD_REMASTERTD)
         ${TIBDAWN_HEADERS}
     )
     target_compile_definitions(TiberianDawn PUBLIC TRUE_FALSE_DEFINED WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _USRDLL TIBERIANDAWN_EXPORTS REMASTER_BUILD)
-    target_include_directories(TiberianDawn PUBLIC tiberiandawn/win32lib tiberiandawn)
-    target_link_libraries(TiberianDawn wsock32 ws2_32 winmm)
+    target_include_directories(TiberianDawn PUBLIC . tiberiandawn/win32lib tiberiandawn)
+    target_link_libraries(TiberianDawn common wsock32 ws2_32 winmm)
 endif()
 
 if(BUILD_VANILLATD)
     add_executable(VanillaTD ${TIBDAWN_SRC} ${TIBDAWN_HEADERS})
     target_compile_definitions(VanillaTD PUBLIC TRUE_FALSE_DEFINED WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
-    target_include_directories(VanillaTD PUBLIC tiberiandawn/win32lib tiberiandawn)
-    target_link_libraries(VanillaTD wsock32 ws2_32 winmm)
+    target_include_directories(VanillaTD PUBLIC . tiberiandawn/win32lib tiberiandawn)
+    target_link_libraries(VanillaTD common wsock32 ws2_32 winmm)
     set_target_properties(VanillaTD PROPERTIES OUTPUT_NAME vanillatd)
     if(MAP_EDITORTD)
         target_compile_definitions(VanillaTD PUBLIC SCENARIO_EDITOR CHEAT_KEYS VIRGIN_CHEAT_KEYS)
@@ -609,15 +613,15 @@ if(BUILD_REMASTERRA)
         ${REDALERT_HEADERS}
     )
     target_compile_definitions(RedAlert PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _USRDLL REDALERT_EXPORTS REMASTER_BUILD)
-    target_include_directories(RedAlert PUBLIC redalert/win32lib redalert)
-    target_link_libraries(RedAlert wsock32 ws2_32 winmm)
+    target_include_directories(RedAlert PUBLIC . redalert/win32lib redalert)
+    target_link_libraries(RedAlert common wsock32 ws2_32 winmm)
 endif()
 
 if(BUILD_VANILLARA)
     add_executable(VanillaRA ${REDALERT_SRC} ${REDALERT_HEADERS})
     target_compile_definitions(VanillaRA PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
-    target_include_directories(VanillaRA PUBLIC redalert/win32lib redalert)
-    target_link_libraries(VanillaRA wsock32 ws2_32 winmm)
+    target_include_directories(VanillaRA PUBLIC . redalert/win32lib redalert)
+    target_link_libraries(VanillaRA common wsock32 ws2_32 winmm)
     set_target_properties(VanillaRA PROPERTIES OUTPUT_NAME vanillara)
     if(MAP_EDITORRA)
         target_compile_definitions(VanillaRA PUBLIC SCENARIO_EDITOR INTERNAL_VERSION)
