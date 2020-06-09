@@ -167,32 +167,6 @@ dx = 3B4H
 #endif
 
 
-extern "C" long __cdecl Reverse_Long(long number)
-{
-    __asm {
-		mov	eax,dword ptr [number]
-		xchg	al,ah
-		ror	eax,16
-		xchg	al,ah
-    }
-}
-
-extern "C" short __cdecl Reverse_Short(short number)
-{
-    __asm {
-		mov	ax,[number]
-		xchg	ah,al
-    }
-}
-
-extern "C" long __cdecl Swap_Long(long number)
-{
-    __asm {
-		mov	eax,dword ptr [number]
-		ror	eax,16
-    }
-}
-
 /*
 
 

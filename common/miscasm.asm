@@ -29,6 +29,9 @@ externdef C First_True_Bit:near
 externdef C First_False_Bit:near
 externdef C _Bound:near
 externdef C Conquer_Build_Fading_Table:near
+externdef C Reverse_Long:near
+externdef C Reverse_Short:near
+externdef C Swap_Long:near
 
 .data
 
@@ -607,5 +610,28 @@ fini1:
     pop     esi
     ret
 Conquer_Build_Fading_Table endp
+
+;extern "C" long __cdecl Reverse_Long(long number)
+Reverse_Long proc C number:dword
+    mov     eax,dword ptr [number]
+    xchg    al,ah
+    ror     eax,16
+    xchg    al,ah
+    ret
+Reverse_Long endp
+
+;extern "C" short __cdecl Reverse_Short(short number)
+Reverse_Short proc C number:word
+    mov     ax,[number]
+    xchg    ah,al
+    ret
+Reverse_Short endp
+
+;extern "C" long __cdecl Swap_Long(long number)
+Swap_Long proc C number:dword
+    mov     eax,dword ptr [number]
+    ror     eax,16
+    ret
+Swap_Long endp
 
 end
