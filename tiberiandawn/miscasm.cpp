@@ -30,68 +30,6 @@ extern "C" void __cdecl Mem_Copy(void const* source, void* dest, unsigned long b
     memcpy(dest, source, bytes_to_copy);
 }
 
-void __cdecl Set_Bit(void* array, int bit, int value)
-{
-    __asm {
-		mov	ecx, [bit]
-		mov	eax, [value]
-		mov	esi, [array]
-		mov	ebx,ecx					
-		shr	ebx,5					
-		and	ecx,01Fh				
-		btr	[esi+ebx*4],ecx		
-		or	eax,eax					
-		jz	ok						
-		bts	[esi+ebx*4],ecx		
-ok:
-    }
-}
-
-int __cdecl Get_Bit(void const* array, int bit)
-{
-    __asm {
-		mov	eax, [bit]
-		mov	esi, [array]
-		mov	ebx,eax					
-		shr	ebx,5					
-		and	eax,01Fh				
-		bt	[esi+ebx*4],eax		
-		setc	al
-    }
-}
-
-int __cdecl First_True_Bit(void const* array)
-{
-    __asm {
-		mov	esi, [array]
-		mov	eax,-32					
-again:							
-		add	eax,32					
-		mov	ebx,[esi]				
-		add	esi,4					
-		bsf	ebx,ebx					
-		jz	again					
-		add	eax,ebx
-    }
-}
-
-int __cdecl First_False_Bit(void const* array)
-{
-    __asm {
-		
-		mov	esi, [array]
-		mov	eax,-32					
-again:							
-		add	eax,32					
-		mov	ebx,[esi]				
-		not	ebx						
-		add	esi,4					
-		bsf	ebx,ebx					
-		jz	again					
-		add	eax,ebx
-    }
-}
-
 int __cdecl Bound(int original, int min, int max)
 {
     __asm {

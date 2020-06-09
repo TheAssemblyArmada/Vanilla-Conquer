@@ -240,10 +240,7 @@ inline ShapeFlags_Type operator|(ShapeFlags_Type, ShapeFlags_Type);
 inline ShapeFlags_Type operator&(ShapeFlags_Type, ShapeFlags_Type);
 inline ShapeFlags_Type operator~(ShapeFlags_Type);
 
-void __cdecl Set_Bit(void* array, int bit, int value);
-int __cdecl Get_Bit(void const* array, int bit);
-int __cdecl First_True_Bit(void const* array);
-int __cdecl First_False_Bit(void const* array);
+#include "common/miscasm.h"
 int __cdecl Bound(int original, int min, int max);
 
 #if (0)
