@@ -411,10 +411,14 @@ bool Read_Scenario_Ini(char* root, bool fresh)
         } else {
             Assign_Houses();
         }
-#endif
+#endif      
+#ifdef REMASTER_BUILD
         // Call new Assign_Houses function. ST - 6/25/2019 11:07AM
         // Assign_Houses();
         GlyphX_Assign_Houses();
+#else
+        Assign_Houses();
+#endif
     }
 
     /*
@@ -803,9 +807,13 @@ bool Read_Scenario_Ini_File(char* scenario_file_name, char* bin_file_name, const
             Assign_Houses();
         }
 #endif
+#ifdef REMASTER_BUILD
         // Call new Assign_Houses function. ST - 6/25/2019 11:07AM
         // Assign_Houses();
         GlyphX_Assign_Houses();
+#else
+        Assign_Houses();
+#endif
     }
 
     /*

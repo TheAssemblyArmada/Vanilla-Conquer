@@ -1793,7 +1793,7 @@ bool DisplayClass::Map_Cell(CELL cell, HouseClass* house, bool and_for_allies)
     // if (house != PlayerPtr || cell >= (CELL)Size) return(false);
     if (house == NULL || cell >= (CELL)Size)
         return (false);
-
+#ifdef REMASTER_BUILD
     if (!house->IsHuman) {
         if (!ShareAllyVisibility || !and_for_allies) {
             return false;
@@ -1813,7 +1813,7 @@ bool DisplayClass::Map_Cell(CELL cell, HouseClass* house, bool and_for_allies)
             }
         }
     }
-
+#endif
     /*
     **	Don't bother remapping this cell if it is already mapped.
     */
@@ -3394,6 +3394,7 @@ int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType& key)
  * HISTORY:                                                                                    *
  *   2019/09/17  JAS					                                                              *
  *=============================================================================================*/
+#ifdef REMASTER_BUILD
 int DisplayClass::TacticalClass::Selection_At_Mouse(unsigned flags, KeyNumType& key)
 {
     int x, y; // Sub cell pixel coordinates.
@@ -3449,7 +3450,7 @@ int DisplayClass::TacticalClass::Selection_At_Mouse(unsigned flags, KeyNumType& 
 
     return 0;
 }
-
+#endif
 /***********************************************************************************************
  * DisplayClass::TacticalClass::Command_Object --  Commanding Units								     *
  *																															  *
@@ -3467,6 +3468,7 @@ int DisplayClass::TacticalClass::Selection_At_Mouse(unsigned flags, KeyNumType& 
  * HISTORY:                                                                                    *
  *   2019/09/17  JAS					                                                              *
  *=============================================================================================*/
+#ifdef REMASTER_BUILD
 int DisplayClass::TacticalClass::Command_Object(unsigned flags, KeyNumType& key)
 {
     int x, y; // Sub cell pixel coordinates.
@@ -3522,7 +3524,7 @@ int DisplayClass::TacticalClass::Command_Object(unsigned flags, KeyNumType& key)
     }
     return 0;
 }
-
+#endif
 /***********************************************************************************************
  * DisplayClass::Mouse_Right_Press -- Handles the right mouse button press.                    *
  *                                                                                             *
@@ -4068,6 +4070,7 @@ void DisplayClass::Set_Tactical_Position(COORDINATE coord)
     /*
     **	Bound the desired location to fit the legal map edges.
     */
+#ifdef REMASTER_BUILD
     int xx = 0; // Coord_X(coord) - Cell_To_Lepton(MapCellX);
     int yy = 0; // Coord_Y(coord) - Cell_To_Lepton(MapCellY);
 
@@ -4077,6 +4080,17 @@ void DisplayClass::Set_Tactical_Position(COORDINATE coord)
                  TacLeptonHeight,
                  Cell_To_Lepton(MapCellWidth) + GlyphXClientSidebarWidthInLeptons,
                  Cell_To_Lepton(MapCellHeight)); // Needed to accomodate Glyphx client sidebar. ST - 4/12/2019 5:29PM
+#else
+    int xx = Coord_X(coord) - Cell_To_Lepton(MapCellX);
+    int yy = Coord_Y(coord) - Cell_To_Lepton(MapCellY);
+
+    Confine_Rect(&xx,
+                 &yy,
+                 TacLeptonWidth,
+                 TacLeptonHeight,
+                 Cell_To_Lepton(MapCellWidth),
+                 Cell_To_Lepton(MapCellHeight));
+#endif
     coord = XY_Coord(xx + Cell_To_Lepton(MapCellX), yy + Cell_To_Lepton(MapCellY));
 
     if (ScenarioInit) {

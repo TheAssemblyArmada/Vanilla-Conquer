@@ -111,6 +111,7 @@ void Move_Point(short& x, short& y, register DirType dir, unsigned short distanc
 void Check_Use_Compressed_Shapes(void);
 extern void DLL_Shutdown(void);
 
+#if defined REMASTER_BUILD && defined _WIN32
 BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserved)
 {
     lpvReserved;
@@ -141,12 +142,9 @@ BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserve
 
     return true;
 }
+#endif
 
-// int PASCAL WinMain ( HINSTANCE instance , HINSTANCE , char * command_line , int command_show )
-//{
-// Heap_Dump_Check( "first thing in main" );
-//	malloc(1);
-
+#ifdef REMASTER_BUILD
 int DLL_Startup(const char* command_line_in)
 {
     RunningAsDLL = true;
@@ -154,7 +152,12 @@ int DLL_Startup(const char* command_line_in)
     HINSTANCE instance = ProgramInstance;
     char command_line[1024];
     strcpy(command_line, command_line_in);
-
+#else
+int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int command_show)
+{
+    // Heap_Dump_Check( "first thing in main" );
+    // malloc(1);
+#endif
     CCDebugString("C&C95 - Starting up.\n");
 
     // WindowsTimer = new WinTimerClass(60,FALSE);
@@ -175,7 +178,7 @@ int DLL_Startup(const char* command_line_in)
         // MB_ICONEXCLAMATION|MB_OK);
 
         HWND ccwindow;
-        ccwindow = FindWindow("Command & Conquer", "Command & Conquer");
+        ccwindow = FindWindowA("Command & Conquer", "Command & Conquer");
         if (ccwindow) {
             SetForegroundWindow(ccwindow);
             ShowWindow(ccwindow, SW_RESTORE);
@@ -290,6 +293,18 @@ int DLL_Startup(const char* command_line_in)
         path[strlen(path) - 1] = '\0';
     }
     chdir(path);
+#elif defined _WIN32 // OmniBlade: Win32 version of the commented out dos/watcom code.
+    char path[MAX_PATH];
+    GetModuleFileNameA(GetModuleHandleA(nullptr), path, sizeof(path));
+
+    for (char* i = &path[strlen(path)]; i != path; --i) {
+        if (*i == '\\' || *i == '/') {
+            *i = '\0';
+            break;
+        }
+    }
+
+    SetCurrentDirectoryA(path);
 #endif
 
 #ifdef JAPANESE
@@ -303,20 +318,20 @@ int DLL_Startup(const char* command_line_in)
         Sleep(1000);
         if (WindowsTimer->Get_System_Tick_Count() == time_test) {
 #ifdef FRENCH
-            MessageBox(0,
+            MessageBoxA(0,
                        "Error - L'horloge systäme n'a pas pu s'initialiser en raison de l'instabilitÇ du sytäme. Vous "
                        "devez redÇmarrer Windows.",
                        "Command & Conquer",
                        MB_OK | MB_ICONSTOP);
 #else
 #ifdef GERMAN
-            MessageBox(0,
+            MessageBoxA(0,
                        "Fehler - das Timer-System konnte aufgrund einer InstabilitÑt des Systems nicht initialisiert "
                        "werden. Bitte starten Sie Windows neu.",
                        "Command & Conquer",
                        MB_OK | MB_ICONSTOP);
 #else
-            MessageBox(0,
+            MessageBoxA(0,
                        "Error - Timer system failed to start due to system instability. You need to restart Windows.",
                        "Command & Conquer",
                        MB_OK | MB_ICONSTOP);
@@ -355,7 +370,7 @@ int DLL_Startup(const char* command_line_in)
                     "Nicht genug Festplattenplatz fÅr Command & Conquer.\nSie brauchen %d MByte freien Platz auf der "
                     "Festplatte.",
                     (INIT_FREE_DISK_SPACE) / (1024 * 1024));
-            MessageBox(NULL, disk_space_message, "Command & Conquer", MB_ICONEXCLAMATION | MB_OK);
+            MessageBoxA(NULL, disk_space_message, "Command & Conquer", MB_ICONEXCLAMATION | MB_OK);
             if (WindowsTimer)
                 delete WindowsTimer;
             return (EXIT_FAILURE);
@@ -366,13 +381,13 @@ int DLL_Startup(const char* command_line_in)
                     "Espace disque insuffisant pour lancer Command & Conquer.\nVous devez disposer de %d Mo d'espace "
                     "disponsible sur disque dur.",
                     (INIT_FREE_DISK_SPACE) / (1024 * 1024));
-            MessageBox(NULL, disk_space_message, "Command & Conquer", MB_ICONEXCLAMATION | MB_OK);
+            MessageBoxA(NULL, disk_space_message, "Command & Conquer", MB_ICONEXCLAMATION | MB_OK);
             if (WindowsTimer)
                 delete WindowsTimer;
             return (EXIT_FAILURE);
 #endif
 #if !(FRENCH | GERMAN)
-            int reply = MessageBox(NULL,
+            int reply = MessageBoxA(NULL,
                                    "Warning - you are critically low on free disk space for virtual memory and save "
                                    "games. Do you want to play C&C anyway?",
                                    "Command & Conquer",
@@ -433,7 +448,7 @@ int DLL_Startup(const char* command_line_in)
 
             if (!video_success) {
                 CCDebugString("C&C95 - Failed to set video mode.\n");
-                MessageBox(MainWindow,
+                MessageBoxA(MainWindow,
                            Text_String(TXT_UNABLE_TO_SET_VIDEO_MODE),
                            "Command & Conquer",
                            MB_ICONEXCLAMATION | MB_OK);
@@ -469,7 +484,7 @@ int DLL_Startup(const char* command_line_in)
                     ** Aaaarrgghh!
                     */
                     CCDebugString("C&C95 - Unable to allocate primary surface.\n");
-                    MessageBox(MainWindow,
+                    MessageBoxA(MainWindow,
                                Text_String(TXT_UNABLE_TO_ALLOCATE_PRIMARY_VIDEO_BUFFER),
                                "Command & Conquer",
                                MB_ICONEXCLAMATION | MB_OK);

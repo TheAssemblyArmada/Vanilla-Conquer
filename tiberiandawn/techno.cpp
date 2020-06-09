@@ -2521,7 +2521,7 @@ ActionType TechnoClass::What_Action(ObjectClass* object) const
         if (object == this && CurrentObject.Count() == 1 && House == PlayerPtr) {
             return (ACTION_SELF);
         }
-
+#ifdef REMASTER_BUILD
         // bool altdown = (Keyboard::Down(KN_LALT) || Keyboard::Down(KN_RALT));
         // bool ctrldown = (Keyboard::Down(KN_LCTRL) || Keyboard::Down(KN_RCTRL));
         // bool shiftdown = (Keyboard::Down(KN_LSHIFT) || Keyboard::Down(KN_RSHIFT));
@@ -2530,7 +2530,11 @@ ActionType TechnoClass::What_Action(ObjectClass* object) const
         bool altdown = DLL_Export_Get_Input_Key_State(KN_LALT);
         bool ctrldown = DLL_Export_Get_Input_Key_State(KN_LCTRL);
         bool shiftdown = DLL_Export_Get_Input_Key_State(KN_LSHIFT);
-
+#else
+        bool altdown = (Keyboard::Down(KN_LALT) || Keyboard::Down(KN_RALT));
+        bool ctrldown = (Keyboard::Down(KN_LCTRL) || Keyboard::Down(KN_RCTRL));
+        bool shiftdown = (Keyboard::Down(KN_LSHIFT) || Keyboard::Down(KN_RSHIFT));
+#endif
         /*
         **	Special guard area mission is possible if both the control and the
         **	alt keys are held down.
@@ -2627,7 +2631,7 @@ ActionType TechnoClass::What_Action(CELL cell) const
 {
     CellClass const* cellptr = &Map[cell];
     OverlayTypeClass const* optr = NULL;
-
+#ifdef REMASTER_BUILD
     // bool ctrldown = Keyboard::Down(KN_LCTRL) || Keyboard::Down(KN_RCTRL);
     // bool shiftdown = Keyboard::Down(KN_LSHIFT) || Keyboard::Down(KN_RSHIFT);
     // bool altdown = (Keyboard::Down(KN_LALT) || Keyboard::Down(KN_RALT));
@@ -2636,7 +2640,11 @@ ActionType TechnoClass::What_Action(CELL cell) const
     bool altdown = DLL_Export_Get_Input_Key_State(KN_LALT);
     bool ctrldown = DLL_Export_Get_Input_Key_State(KN_LCTRL);
     bool shiftdown = DLL_Export_Get_Input_Key_State(KN_LSHIFT);
-
+#else
+    bool ctrldown = Keyboard::Down(KN_LCTRL) || Keyboard::Down(KN_RCTRL);
+    bool shiftdown = Keyboard::Down(KN_LSHIFT) || Keyboard::Down(KN_RSHIFT);
+    bool altdown = (Keyboard::Down(KN_LALT) || Keyboard::Down(KN_RALT));
+#endif
     /*
     **	Disable recognizing the <CTRL> key forced fire option when dealing with buildings.
     */
@@ -2986,7 +2994,7 @@ ResultType TechnoClass::Take_Damage(int& damage, int distance, WarheadType warhe
     case RESULT_DESTROYED:
         Transmit_Message(RADIO_OVER_OUT);
         Stun();
-
+#ifdef REMASTER_BUILD
         /*
         ** May trigger an achievement. ST - 11/14/2019 1:56PM
         */
@@ -2999,6 +3007,7 @@ ResultType TechnoClass::Take_Damage(int& damage, int distance, WarheadType warhe
                 }
             }
         }
+#endif
         break;
 
     /*

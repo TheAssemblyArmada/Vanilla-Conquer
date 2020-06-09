@@ -1211,7 +1211,7 @@ void BuildingClass::AI(void)
     **	Check for demolition timeout. When timeout has expired, the building explodes.
     */
     if (IsGoingToBlow && CountDown.Expired()) {
-
+#ifdef REMASTER_BUILD
         /*
         ** Maybe trigger an achivement. ST - 11/14/2019 1:53PM
         */
@@ -1222,7 +1222,7 @@ void BuildingClass::AI(void)
                 On_Achievement_Event(saboteur->House, "BUILDING_DESTROYED_C4", object_type->IniName);
             }
         }
-
+#endif
         SabotagedType = Class->Type;
         int damage = 5000;
         Take_Damage(damage, 0, WARHEAD_FIRE, As_Techno(WhomToRepay));
@@ -1536,7 +1536,7 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
             */
             if (*this == STRUCT_TEMPLE && warhead == WARHEAD_PB) {
                 TempleIoned = true;
-
+#ifdef REMASTER_BUILD
                 /*
                 ** Maybe trigger an achivement if the structure is owned by an AI house in campaign mode. ST -
                 *11/14/2019 1:53PM
@@ -1547,7 +1547,7 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
                         On_Achievement_Event(source->House, "ION_DESTROYS_TEMPLE", object_type->IniName);
                     }
                 }
-
+#endif
             } else {
                 TempleIoned = false;
             }
@@ -2404,7 +2404,9 @@ void BuildingClass::Update_Buildables(void)
                     //						if (BuildingTypeClass::As_Reference(i).Who_Can_Build_Me(true, true, ActLike))
                     //{
                     if (GameToPlay == GAME_GLYPHX_MULTIPLAYER) {
+#ifdef REMASTER_BUILD
                         Sidebar_Glyphx_Add(RTTI_BUILDINGTYPE, i, House, buildable_via_capture);
+#endif
                     } else {
                         Map.Add(RTTI_BUILDINGTYPE, i, buildable_via_capture);
                     }
@@ -2418,7 +2420,9 @@ void BuildingClass::Update_Buildables(void)
                 if (PlayerPtr->Can_Build(u, ActLike)) {
                     //						if (UnitTypeClass::As_Reference(u).Who_Can_Build_Me(true, true, ActLike)) {
                     if (GameToPlay == GAME_GLYPHX_MULTIPLAYER) {
+#ifdef REMASTER_BUILD
                         Sidebar_Glyphx_Add(RTTI_UNITTYPE, u, House, buildable_via_capture);
+#endif
                     } else {
                         Map.Add(RTTI_UNITTYPE, u, buildable_via_capture);
                     }
@@ -2433,7 +2437,9 @@ void BuildingClass::Update_Buildables(void)
                     //						if (InfantryTypeClass::As_Reference(f).Who_Can_Build_Me(true, true, ActLike))
                     //{
                     if (GameToPlay == GAME_GLYPHX_MULTIPLAYER) {
+#ifdef REMASTER_BUILD
                         Sidebar_Glyphx_Add(RTTI_INFANTRYTYPE, f, House, buildable_via_capture);
+#endif
                     } else {
                         Map.Add(RTTI_INFANTRYTYPE, f, buildable_via_capture);
                     }
@@ -2448,7 +2454,9 @@ void BuildingClass::Update_Buildables(void)
                     //						if (AircraftTypeClass::As_Reference(a).Who_Can_Build_Me(true, true, ActLike))
                     //{
                     if (GameToPlay == GAME_GLYPHX_MULTIPLAYER) {
+#ifdef REMASTER_BUILD
                         Sidebar_Glyphx_Add(RTTI_AIRCRAFTTYPE, a, House, buildable_via_capture);
+#endif
                     } else {
                         Map.Add(RTTI_AIRCRAFTTYPE, a, buildable_via_capture);
                     }
@@ -3539,7 +3547,7 @@ bool BuildingClass::Captured(HouseClass* newowner)
             Map.PowerClass::IsToRedraw = true;
             Map.Flag_To_Redraw(false);
         }
-
+#ifdef REMASTER_BUILD
         /*
         ** Maybe trigger an achivement. ST - 11/14/2019 1:53PM
         */
@@ -3553,7 +3561,7 @@ bool BuildingClass::Captured(HouseClass* newowner)
                 }
             }
         }
-
+#endif
         /*
         ** Add this building to the list of buildings captured this game. For internet stats purposes
         */

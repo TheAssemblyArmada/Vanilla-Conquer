@@ -74,8 +74,6 @@ set(TIBDAWN_SRC
     tiberiandawn/dial8.cpp
     tiberiandawn/dialog.cpp
     tiberiandawn/display.cpp
-    tiberiandawn/dllinterface.cpp
-    tiberiandawn/dllinterfaceeditor.cpp
     tiberiandawn/door.cpp
     tiberiandawn/dpmi.cpp
     tiberiandawn/drive.cpp
@@ -167,7 +165,6 @@ set(TIBDAWN_SRC
     tiberiandawn/shape.cpp
     tiberiandawn/shapebtn.cpp
     tiberiandawn/sidebar.cpp
-    tiberiandawn/sidebarglyphx.cpp
     tiberiandawn/slider.cpp
     tiberiandawn/smudge.cpp
     tiberiandawn/sounddlg.cpp
@@ -254,7 +251,13 @@ if(CMAKE_CONFIGURATION_TYPES)
 endif()
 
 if(BUILD_REMASTERTD)
-    add_library(TiberianDawn SHARED ${TIBDAWN_SRC} ${TIBDAWN_HEADERS})
+    add_library(TiberianDawn SHARED 
+        tiberiandawn/dllinterface.cpp
+        tiberiandawn/dllinterfaceeditor.cpp
+        tiberiandawn/sidebarglyphx.cpp
+        ${TIBDAWN_SRC}
+        ${TIBDAWN_HEADERS}
+    )
     target_compile_definitions(TiberianDawn PUBLIC TRUE_FALSE_DEFINED WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _USRDLL TIBERIANDAWN_EXPORTS REMASTER_BUILD)
     target_include_directories(TiberianDawn PUBLIC tiberiandawn/win32lib tiberiandawn)
     target_link_libraries(TiberianDawn wsock32 ws2_32 winmm)
@@ -268,6 +271,10 @@ if(BUILD_VANILLATD)
     set_target_properties(VanillaTD PROPERTIES OUTPUT_NAME vanillatd)
     if(MAP_EDITORTD)
         target_compile_definitions(VanillaTD PUBLIC SCENARIO_EDITOR CHEAT_KEYS VIRGIN_CHEAT_KEYS)
+    endif()
+    # Control if we auto generate a console and which "main" function we link using MSVC.
+    if(MSVC)
+        set_target_properties(VanillaTD PROPERTIES LINK_FLAGS "/subsystem:windows /ENTRY:WinMainCRTStartup")
     endif()
 endif()
 

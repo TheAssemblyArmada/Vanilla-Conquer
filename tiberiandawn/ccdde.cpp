@@ -63,7 +63,7 @@ BOOL CC95AlreadyRunning = FALSE; // Was there an instance of C&C 95 already runn
 extern HWND MainWindow;
 extern TimerClass GameTimer;
 extern bool GameTimerInUse;
-extern void CCDebugString(char* string);
+extern void CCDebugString(const char* string);
 
 /***********************************************************************************************
  * DDE_Callback -- DDE server callback function                                                *

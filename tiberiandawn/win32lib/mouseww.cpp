@@ -698,9 +698,11 @@ extern int DLLForceMouseY;
 
 int Get_Mouse_X(void)
 {
+#ifdef REMASTER_BUILD
     if (DLLForceMouseX >= 0) {
         return DLLForceMouseX;
     }
+#endif
     if (!_Mouse)
         return (0);
     return (_Mouse->Get_Mouse_X());
@@ -708,10 +710,11 @@ int Get_Mouse_X(void)
 
 int Get_Mouse_Y(void)
 {
+#ifdef REMASTER_BUILD
     if (DLLForceMouseY >= 0) {
         return DLLForceMouseY;
     }
-
+#endif
     if (!_Mouse)
         return (0);
     return (_Mouse->Get_Mouse_Y());
