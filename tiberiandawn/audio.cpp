@@ -327,12 +327,13 @@ extern void On_Ping(const HouseClass* player_ptr, COORDINATE coord);
  *=============================================================================================*/
 void Sound_Effect(VocType voc, COORDINATE coord, int variation)
 {
+#ifdef REMASTER_BUILD
     //
     // Intercept sound effect calls. ST - 2/20/2019 3:37PM
     //
     On_Sound_Effect((int)voc, variation, coord);
 
-#if (0)
+#else
     unsigned distance;
     CELL cell_pos;
     int pan_value;
@@ -554,6 +555,7 @@ static VoxType CurrentVoice = VOX_NONE;
  *=============================================================================================*/
 void Speak(VoxType voice, HouseClass* house, COORDINATE coord)
 {
+#ifdef REMASTER_BUILD
     // MBL 02.22.2019
     if (voice == VOX_NONE) {
         return;
@@ -568,7 +570,7 @@ void Speak(VoxType voice, HouseClass* house, COORDINATE coord)
         On_Ping(house, coord);
     }
 
-#if (0)
+#else
     if (Options.Volume && SampleType != 0 && voice != VOX_NONE && voice != SpeakQueue && voice != CurrentVoice
         && SpeakQueue == VOX_NONE) {
         SpeakQueue = voice;
@@ -595,7 +597,7 @@ void Speak(VoxType voice, HouseClass* house, COORDINATE coord)
 void Speak_AI(void)
 {
 // MBL 06.17.2019 KO
-#if 0
+#ifndef REMASTER_BUILD
 	static VoxType _last = VOX_NONE;
 	if (SampleType == 0) return;
 

@@ -599,12 +599,12 @@ void MapClass::Sight_From(HouseClass* house, CELL cell, int sightrange, bool inc
     int xx;         // Center cell X coordinate (bounds checking).
     int const* ptr; // Offset pointer.
     int count;      // Counter for number of offsets to process.
-
+#ifdef REMASTER_BUILD
     // Added. ST - 3/6/2019 1:50PM
     if ((house == NULL || house->IsHuman == false) && !ShareAllyVisibility) {
         return;
     }
-
+#endif
     /*
     **	Units that are off-map cannot sight.
     */

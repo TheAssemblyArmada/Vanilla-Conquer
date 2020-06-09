@@ -2286,7 +2286,9 @@ bool CellClass::Goodie_Check(FootClass* object)
                     // Add to Glyphx multiplayer sidebar. ST - 3/22/2019 1:50PM
                     if (GameToPlay == GAME_GLYPHX_MULTIPLAYER) {
                         if (object->House->IsHuman) {
+#ifdef REMASTER_BUILD
                             Sidebar_Glyphx_Add(RTTI_SPECIAL, SPC_NUCLEAR_BOMB, object->House);
+#endif
                         }
                     } else {
                         if (object->IsOwnedByPlayer) {
@@ -2306,7 +2308,9 @@ bool CellClass::Goodie_Check(FootClass* object)
                     // Add to Glyphx multiplayer sidebar. ST - 3/22/2019 1:50PM
                     if (GameToPlay == GAME_GLYPHX_MULTIPLAYER) {
                         if (object->House->IsHuman) {
+#ifdef REMASTER_BUILD
                             Sidebar_Glyphx_Add(RTTI_SPECIAL, SPC_ION_CANNON, object->House);
+#endif
                         }
                     } else {
                         if (object->IsOwnedByPlayer) {
@@ -2326,7 +2330,9 @@ bool CellClass::Goodie_Check(FootClass* object)
                     // Add to Glyphx multiplayer sidebar. ST - 3/22/2019 1:50PM
                     if (GameToPlay == GAME_GLYPHX_MULTIPLAYER) {
                         if (object->House->IsHuman) {
+#ifdef REMASTER_BUILD
                             Sidebar_Glyphx_Add(RTTI_SPECIAL, SPC_AIR_STRIKE, object->House);
+#endif
                         }
                     } else {
                         if (object->IsOwnedByPlayer) {

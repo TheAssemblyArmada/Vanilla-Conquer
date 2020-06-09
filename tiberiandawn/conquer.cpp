@@ -2306,14 +2306,14 @@ extern void Play_Movie_GlyphX(const char* movie_name, ThemeType theme);
 
 void Play_Movie(char const* name, ThemeType theme, bool clrscrn)
 {
-#if (1)
+#if REMASTER_BUILD
     if (strcmp(name, "x") == 0 || strcmp(name, "X") == 0) {
         return;
     }
 
     Play_Movie_GlyphX(name, theme);
     return;
-#else
+#elif 0
     /*
     ** Don't play movies in editor mode
     */
@@ -2720,13 +2720,14 @@ void CC_Draw_Shape(ObjectClass* object,
                    void const* ghostdata,
                    int scale)
 {
+#ifdef REMASTER_BUILD
     if (window == WINDOW_VIRTUAL) {
         int width = Get_Build_Frame_Width(shapefile);
         int height = Get_Build_Frame_Height(shapefile);
         DLL_Draw_Intercept(shapenum, x, y, width, height, (int)flags, object, NULL, -1, scale);
         return;
     }
-
+#endif
     CC_Draw_Shape(shapefile, shapenum, x, y, window, flags, fadingdata, ghostdata);
 }
 
@@ -2742,13 +2743,14 @@ void CC_Draw_Shape(ObjectClass* object,
                    void const* ghostdata,
                    char override_owner)
 {
+#ifdef REMASTER_BUILD
     if (window == WINDOW_VIRTUAL) {
         int width = Get_Build_Frame_Width(shapefile);
         int height = Get_Build_Frame_Height(shapefile);
         DLL_Draw_Intercept(shapenum, x, y, width, height, (int)flags, object, shape_file_name, override_owner, 0x100);
         return;
     }
-
+#endif
     CC_Draw_Shape(shapefile, shapenum, x, y, window, flags, fadingdata, ghostdata);
 }
 
@@ -2762,24 +2764,25 @@ void CC_Draw_Pip(ObjectClass* object,
                  void const* fadingdata,
                  void const* ghostdata)
 {
+#ifdef REMASTER_BUILD
     if (window == WINDOW_VIRTUAL) {
         DLL_Draw_Pip_Intercept(object, shapenum);
         return;
     }
-
+#endif
     CC_Draw_Shape(shapefile, shapenum, x, y, window, flags, fadingdata, ghostdata);
 }
 
 void CC_Draw_Line(int x, int y, int x1, int y1, unsigned char color, int frame, WindowNumberType window)
 {
+#ifdef REMASTER_BUILD
     if (window == WINDOW_VIRTUAL) {
         DLL_Draw_Line_Intercept(x, y, x1, y1, color, frame);
         return;
     }
-
+#endif
     LogicPage->Draw_Line(x, y, x1, y1, color);
 }
-
 /***********************************************************************************************
  * CC_Draw_Shape -- Custom draw shape handler.                                                 *
  *                                                                                             *
