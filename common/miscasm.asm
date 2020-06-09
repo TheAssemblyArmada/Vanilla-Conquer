@@ -22,6 +22,11 @@ externdef C calcy:near
 externdef C Cardinal_To_Fixed:near
 externdef C Fixed_To_Cardinal:near
 externdef C Desired_Facing256:near
+externdef C Desired_Facing8:near
+
+.data
+
+_new_facing8 db 1, 2, 1, 0, 7, 6, 7, 0, 3, 2, 3, 4, 5, 6, 5, 4
 
 .code
 
@@ -241,5 +246,76 @@ noneg:
     pop    ebx
     ret
 Desired_Facing256 endp
+
+;***************************************************************************
+;* DESIRED_FACING8 -- Determines facing to reach a position.               *
+;*                                                                         *
+;*    This routine will return with the most desirable facing to reach     *
+;*    one position from another.  It is accurate to a resolution of 0 to   *
+;*    7.                                                                   *
+;*                                                                         *
+;* INPUT:       x1,y1   -- Position of origin point.                       *
+;*                                                                         *
+;*              x2,y2   -- Position of target.                             *
+;*                                                                         *
+;* OUTPUT:      Returns desired facing as a number from 0..255 with an     *
+;*              accuracy of 32 degree increments.                          *
+;*                                                                         *
+;* WARNINGS:    If the two coordinates are the same, then -1 will be       *
+;*              returned.  It is up to you to handle this case.            *
+;*                                                                         *
+;* HISTORY:                                                                *
+;*   07/15/1991 JLB : Documented.                                          *
+;*   08/08/1991 JLB : Same position check.                                 *
+;*   08/14/1991 JLB : New algorithm                                        *
+;*   02/06/1995 BWG : Convert to 32-bit                                    *
+;*=========================================================================*
+;int __cdecl Desired_Facing8(long x1, long y1, long x2, long y2)
+Desired_Facing8 proc C x1:dword, y1:dword, x2:dword, y2:dword
+    push    ebx
+    xor     ebx,ebx ; Index byte (built).
+
+    ; Determine Y axis difference.
+    mov     edx,[y1]
+    mov     ecx,[y2]
+    sub     edx,ecx ; DX = Y axis (signed).
+    jns     short absy
+    inc     ebx ; Set the signed bit.
+    neg     edx ; ABS(y)
+absy:
+
+    ; Determine X axis difference.
+    shl     ebx,1
+    mov     eax,[x1]
+    mov     ecx,[x2]
+    sub     ecx,eax ; CX = X axis (signed).
+    jns     short absx
+    inc     ebx ; Set the signed bit.
+    neg     ecx ; ABS(x)
+absx:
+
+    ; Determine the greater axis.
+    cmp     ecx,edx
+    jb      short dxisbig
+    xchg    ecx,edx
+dxisbig:
+    rcl     ebx,1 ; Y > X flag bit.
+
+    ; Determine the closeness or farness of lesser axis.
+    mov     eax,edx
+    inc     eax ; Round up.
+    shr     eax,1
+
+    cmp     ecx,eax
+    rcl     ebx,1 ; Close to major axis bit.
+
+    xor     eax,eax
+    mov     al,[_new_facing8+ebx]
+
+    ; Normalize to 0..FF range.
+    shl     eax,5
+    pop     ebx
+    ret
+Desired_Facing8 endp
 
 end
