@@ -17,5 +17,6 @@ extern "C" void* __cdecl Conquer_Build_Fading_Table(void const* palette, void* d
 extern "C" long __cdecl Reverse_Long(long number);
 extern "C" short __cdecl Reverse_Short(short number);
 extern "C" long __cdecl Swap_Long(long number);
+extern "C" void __cdecl strtrim(char* buffer);
 
 #endif

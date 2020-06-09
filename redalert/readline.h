@@ -16,6 +16,6 @@
 #include "wwfile.h"
 #include "straw.h"
 
-void strtrim(char* buffer);
+extern "C" void __cdecl strtrim(char* buffer);
 int Read_Line(FileClass& file, char* buffer, int len, bool& eof);
 int Read_Line(Straw& file, char* buffer, int len, bool& eof);
