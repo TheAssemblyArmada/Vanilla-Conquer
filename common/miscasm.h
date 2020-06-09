@@ -13,5 +13,6 @@ extern "C" int __cdecl First_True_Bit(void const* array);
 extern "C" int __cdecl First_False_Bit(void const* array);
 extern "C" int __cdecl _Bound(int original, int min, int max);
 #define Bound _Bound
+extern "C" void* __cdecl Conquer_Build_Fading_Table(void const* palette, void* dest, int color, int frac);
 
 #endif
