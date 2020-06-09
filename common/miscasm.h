@@ -11,5 +11,7 @@ extern "C" void __cdecl Set_Bit(void* array, int bit, int value);
 extern "C" int __cdecl Get_Bit(void const* array, int bit);
 extern "C" int __cdecl First_True_Bit(void const* array);
 extern "C" int __cdecl First_False_Bit(void const* array);
+extern "C" int __cdecl _Bound(int original, int min, int max);
+#define Bound _Bound
 
 #endif

@@ -138,8 +138,6 @@ template <class T> inline T operator~(T t1)
 // inline ShapeFlags_Type operator ~(ShapeFlags_Type);
 
 #include "common/miscasm.h"
-//#pragma aux Bound parm [eax] [ebx] [ecx]
-int __cdecl Bound(int original, int min, int max);
 
 #if (0)
 void Set_Bit(void* array, int bit, int value);

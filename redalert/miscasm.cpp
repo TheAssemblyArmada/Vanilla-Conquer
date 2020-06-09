@@ -30,25 +30,6 @@ extern "C" void __cdecl Mem_Copy(void const* source, void* dest, unsigned long b
     memcpy(dest, source, bytes_to_copy);
 }
 
-int __cdecl Bound(int original, int min, int max)
-{
-    __asm {
-		mov	eax,[original]
-		mov	ebx,[min]
-		mov	ecx,[max]
-		cmp	ebx,ecx					
-		jl	okorder					
-		xchg	ebx,ecx					
-okorder: cmp	eax,ebx		
-		jg	okmin					
-		mov	eax,ebx					
-okmin: cmp	eax,ecx			
-		jl	okmax					
-		mov	eax,ecx					
-okmax:
-    }
-}
-
 /*
 
 CELL __cdecl Coord_Cell(COORDINATE coord)
