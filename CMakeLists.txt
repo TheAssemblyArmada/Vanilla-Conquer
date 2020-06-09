@@ -40,6 +40,7 @@ add_library(common STATIC
     common/miscasm.asm
     common/irandoma.asm
     common/irandom.cpp
+    common/iconcach.cpp
 )
 
 set(TIBDAWN_SRC

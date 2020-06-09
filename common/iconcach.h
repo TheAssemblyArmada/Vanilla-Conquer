@@ -38,7 +38,7 @@
 #ifndef ICONCACH_H
 #define ICONCACH_H
 
-#include <tile.h>
+#include <ddraw.h>
 
 #define ICON_WIDTH         24   // Icons must be this width to be cached
 #define ICON_HEIGHT        24   // Icons must be this height to be cached
@@ -94,8 +94,8 @@ private:
 
 typedef struct tIconSetType
 {
-    IControl_Type* IconSetPtr; // Ptr to icon set data
-    int IconListOffset;        // Offset into icon index table for this icon set
+    /*IControl_Type*/ void* IconSetPtr; // Ptr to icon set data
+    int IconListOffset;                 // Offset into icon index table for this icon set
 } IconSetType;
 
 extern IconCacheClass CachedIcons[MAX_CACHED_ICONS];
