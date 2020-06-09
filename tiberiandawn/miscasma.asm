@@ -19,6 +19,18 @@
 
 externdef C Distance_Coord:near
 externdef C Coord_Cell:near
+externdef C Fat_Put_Pixel:near
+
+GraphicViewPort struct
+    GVPOffset   DD ? ; offset to virtual viewport
+    GVPWidth    DD ? ; width of virtual viewport
+    GVPHeight   DD ? ; height of virtual viewport
+    GVPXAdd     DD ? ; x mod to get to next line
+    GVPXPos     DD ? ; x pos relative to Graphic Buff
+    GVPYPos     DD ? ; y pos relative to Graphic Buff
+    GVPPitch    DD ? ; modulo of graphic view port
+    GVPBuffPtr  DD ? ; ptr to associated Graphic Buff
+GraphicViewPort ends
 
 .code
 
@@ -79,5 +91,76 @@ Coord_Cell proc C coord:dword
     ret
 Coord_Cell endp
 
+;***************************************************************************
+;* Fat_Put_Pixel -- Draws a fat pixel.                                     *
+;*                                                                         *
+;*    Use this routine to draw a "pixel" that is bigger than 1 pixel       *
+;*    across.  This routine is faster than drawing a similar small shape   *
+;*    and faster than calling Fill_Rect.                                   *
+;*                                                                         *
+;* INPUT:   x,y       -- Screen coordinates to draw the pixel's upper      *
+;*                       left corner.                                      *
+;*                                                                         *
+;*          color     -- The color to render the pixel in.                 *
+;*                                                                         *
+;*          size      -- The number of pixels width of the big "pixel".    *
+;*                                                                         *
+;*          page      -- The pointer to a GraphicBuffer class or something *
+;*                                                                         *
+;* OUTPUT:  none                                                           *
+;*                                                                         *
+;* WARNINGS:   none                                                        *
+;*                                                                         *
+;* HISTORY:                                                                *
+;*   03/17/1994 JLB : Created.                                             *
+;*=========================================================================*
+;void __cdecl Fat_Put_Pixel(int x, int y, int color, int siz, GraphicViewPortClass& gpage)
+Fat_Put_Pixel proc C x:dword, y:dword, color:dword, siz:dword, gpage:dword
+    push    ebx
+    push    edi
+
+    cmp     [siz],0
+    je      short exit_label
+
+    ; Set EDI to point to start of logical page memory.
+    ;*===================================================================
+    ; Get the viewport information and put bytes per row in ecx
+    ;*===================================================================
+    mov     ebx,[gpage]                               ; get a pointer to viewport
+    mov     edi,(GraphicViewPort ptr [ebx]).GVPOffset ; get the correct offset
+
+    ; Verify the the Y pixel offset is legal.
+    mov     eax,[y]
+    cmp     eax,(GraphicViewPort ptr [ebx]).GVPHeight ; YPIXEL_MAX
+    jae     short exit_label
+    mov     ecx,(GraphicViewPort ptr [ebx]).GVPWidth
+    add     ecx,(GraphicViewPort ptr [ebx]).GVPXAdd
+    add     ecx,(GraphicViewPort ptr [ebx]).GVPPitch
+    mul     ecx
+    add     edi,eax
+
+    ; Verify the the X pixel offset is legal.
+    mov     edx,(GraphicViewPort ptr [ebx]).GVPWidth
+    cmp     edx,[x]
+    mov     edx,ecx
+    jbe     short exit_label
+    add     edi,[x]
+
+    ; Write the pixel to the screen.
+    mov     ebx,[siz]   ; Copy of pixel size.
+    sub     edx,ebx     ; Modulo to reach start of next row.
+    mov     eax,[color]
+again:
+    mov     ecx,ebx
+    rep stosb
+    add     edi,edx     ; EDI points to start of next row.
+    dec     [siz]
+    jnz     short again
+
+exit_label:
+    pop     edi
+    pop     ebx
+    ret
+Fat_Put_Pixel endp
 
 end
