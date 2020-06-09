@@ -27,6 +27,7 @@ externdef C Set_Bit:near
 externdef C Get_Bit:near
 externdef C First_True_Bit:near
 externdef C First_False_Bit:near
+externdef C _Bound:near
 
 .data
 
@@ -394,5 +395,27 @@ first_false_bit_again:
     pop     esi
     ret
 First_False_Bit endp
+
+;int __cdecl Bound(int original, int min, int max)
+_Bound proc C original:dword, min:dword, max:dword
+    push    ebx
+    mov     eax,[original]
+    mov     ebx,[min]
+    mov     ecx,[max]
+    cmp     ebx,ecx
+    jl      bound_okorder
+    xchg    ebx,ecx
+bound_okorder:
+    cmp     eax,ebx
+    jg      bound_okmin
+    mov     eax,ebx
+bound_okmin:
+    cmp     eax,ecx
+    jl      bound_okmax
+    mov     eax,ecx
+bound_okmax:
+    pop     ebx
+    ret
+_Bound endp
 
 end
