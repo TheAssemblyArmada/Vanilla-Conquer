@@ -363,7 +363,7 @@ bool Start_Scenario(char* name, bool briefing)
     /*
     ** If there's no briefing movie, restate the mission at the beginning.
     */
-#if 1 // 12/04/2019 - LLL
+#ifdef REMASTER_BUILD // #if 1 // 12/04/2019 - LLL
     if (Session.Type == GAME_NORMAL && Scen.BriefMovie == VQ_NONE) {
         Display_Briefing_Text_GlyphX();
     }
@@ -2396,9 +2396,13 @@ bool Read_Scenario_INI(char* fname, bool)
         PlayerPtr->Credits += carryover;
         PlayerPtr->Control.InitialCredits += carryover;
     } else {
+#ifdef REMASTER_BUILD
         // Call the new Assign_Houses function. ST - 8/8/2019 12:35PM
         // Assign_Houses();
         GlyphX_Assign_Houses();
+#else
+        Assign_Houses();
+#endif
     }
     PlayerPtr->IsHuman = true;
     PlayerPtr->IsPlayerControl = true;
@@ -3156,8 +3160,9 @@ static void Create_Units(bool official)
         **	one of the valid locations at random. The other houses pick the furthest
         **	wapoint from the existing houses.
         */
+#ifdef REMASTER_BUILD
         if (!UseGlyphXStartLocations) {
-
+#endif
             if (numtaken == 0) {
                 int pick = Random_Pick(0, num_waypts - 1);
                 centroid = waypts[pick];
@@ -3213,6 +3218,7 @@ static void Create_Units(bool official)
                 taken[best] = true;
                 numtaken++;
             }
+#ifdef REMASTER_BUILD
         } else {
 
             /*
@@ -3222,7 +3228,7 @@ static void Create_Units(bool official)
             */
             centroid = waypts[hptr->StartLocationOverride];
         }
-
+#endif
         /*
         **	Assign the center of this house to the waypoint location.
         */

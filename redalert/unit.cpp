@@ -2750,10 +2750,14 @@ int UnitClass::Mission_Unload(void)
         if (IsOwnedByPlayer) {
             Map.IsTargettingMode = SPC_CHRONO2;
             HouseClass* old_player_ptr = PlayerPtr;
+#ifdef REMASTER_BUILD
             Logic_Switch_Player_Context(this);
+#endif
             Unselect_All();
+#ifdef REMASTER_BUILD
             On_Special_Weapon_Targetting(PlayerPtr, Map.IsTargettingMode);
             Logic_Switch_Player_Context(old_player_ptr);
+#endif
         }
         House->UnitToTeleport = As_Target();
 

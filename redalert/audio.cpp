@@ -425,12 +425,13 @@ char const* Voc_Name(VocType voc)
  *=============================================================================================*/
 void Sound_Effect(VocType voc, COORDINATE coord, int variation, HousesType house)
 {
+#ifdef REMASTER_BUILD
     //
     // Intercept sound effect calls. MBL 06.17.2019
     //
     On_Sound_Effect((int)voc, variation, coord, (int)house);
 
-#if 0
+#else
 	CELL cell_pos = 0;
 	int pan_value;
 
@@ -494,14 +495,14 @@ void Sound_Effect(VocType voc, COORDINATE coord, int variation, HousesType house
  *=============================================================================================*/
 int Sound_Effect(VocType voc, fixed volume, int variation, signed short pan_value, HousesType house)
 {
+#ifdef REMASTER_BUILD
     //
     // Intercept sound effect calls. MBL 06.17.2019
     //
     pan_value;
     COORDINATE coord = 0;
     On_Sound_Effect((int)voc, variation, coord, (int)house);
-
-#if 0
+#else
 	char name[_MAX_FNAME+_MAX_EXT];				// Working filename of sound effect.
 
 	if (Debug_Quiet || Options.Volume == 0 || voc == VOC_NONE || !SoundOn || SampleType == SAMPLE_NONE) {
@@ -750,6 +751,7 @@ char const* Speech_Name(VoxType speech)
 // void Speak(VoxType voice) // MBL 02.06.2020
 void Speak(VoxType voice, HouseClass* house, COORDINATE coord)
 {
+#ifdef REMASTER_BUILD
     // MBL 06.17.2019
     if (voice == VOX_NONE) {
         return;
@@ -764,8 +766,7 @@ void Speak(VoxType voice, HouseClass* house, COORDINATE coord)
     if (coord) {
         On_Ping(house, coord);
     }
-
-#if 0
+#else
 	if (!Debug_Quiet && Options.Volume != 0 && SampleType != 0 && voice != VOX_NONE && voice != SpeakQueue && voice != CurrentVoice && SpeakQueue == VOX_NONE) {
 		SpeakQueue = voice;
 		Speak_AI();
@@ -793,7 +794,7 @@ void Speak(VoxType voice, HouseClass* house, COORDINATE coord)
 void Speak_AI(void)
 {
 // MBL 06.17.2019 KO
-#if 0
+#ifndef REMASTER_BUILD
 	static int _index = 0;
 	if (Debug_Quiet || SampleType == 0) return;
 
@@ -839,13 +840,14 @@ void Speak_AI(void)
 		}
 	}
 #endif
-
+#ifdef REMASTER_BUILD
     // MBL 06.18.2019
     if (SpeakQueue != VOX_NONE) {
         // On_Speech((int)SpeakQueue); // MBL 02.06.2020
         On_Speech((int)SpeakQueue, NULL);
         SpeakQueue = VOX_NONE;
     }
+#endif
 }
 
 /***********************************************************************************************

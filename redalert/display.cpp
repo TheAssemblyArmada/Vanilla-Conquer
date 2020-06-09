@@ -1546,13 +1546,13 @@ bool DisplayClass::Map_Cell(CELL cell, HouseClass* house, bool check_radar_spied
     // if (house != PlayerPtr || !In_Radar(cell)) return(false);
     if (house == NULL || !In_Radar(cell))
         return (false);
-
+#ifdef REMASTER_BUILD
     if (!house->IsHuman) {
         if (!ShareAllyVisibility || !and_for_allies && !check_radar_spied) {
             return false;
         }
     }
-
+#endif
     /*
     ** First check for the condition where we're spying on a house's radar
     ** facility, to see if his mapping is applicable to us.
@@ -1579,7 +1579,7 @@ bool DisplayClass::Map_Cell(CELL cell, HouseClass* house, bool check_radar_spied
             }
         }
     }
-
+#ifdef REMASTER_BUILD
     /*
     ** Maybe also recurse to map for allies
     */
@@ -1594,7 +1594,7 @@ bool DisplayClass::Map_Cell(CELL cell, HouseClass* house, bool check_radar_spied
             }
         }
     }
-
+#endif
     CellClass* cellptr = &(*this)[cell];
 
     /*
@@ -3411,6 +3411,7 @@ int DisplayClass::TacticalClass::Selection_At_Mouse(unsigned flags, KeyNumType& 
         }
 
         if (object != nullptr) {
+#ifdef REMASTER_BUILD
             bool shiftdown = DLL_Export_Get_Input_Key_State(KN_LSHIFT);
 
             if (shiftdown) {
@@ -3418,7 +3419,7 @@ int DisplayClass::TacticalClass::Selection_At_Mouse(unsigned flags, KeyNumType& 
             } else {
                 Map.Mouse_Left_Release(cell, x, y, object, ACTION_SELECT);
             }
-
+#endif
         } else {
             Unselect_All();
         }
@@ -4269,6 +4270,7 @@ void DisplayClass::Set_Tactical_Position(COORDINATE coord)
     /*
     **	Bound the desired location to fit the legal map edges.
     */
+#ifdef REMASTER_BUILD
     int xx = 0; // (int)Coord_X(coord) - (int)Cell_To_Lepton(MapCellX);
     int yy = 0; // (int)Coord_Y(coord) - (int)Cell_To_Lepton(MapCellY);
 
@@ -4279,7 +4281,18 @@ void DisplayClass::Set_Tactical_Position(COORDINATE coord)
                  Cell_To_Lepton(MapCellWidth) + GlyphXClientSidebarWidthInLeptons,
                  Cell_To_Lepton(MapCellHeight)); // Needed to accomodate Glyphx client sidebar. ST - 4/12/2019 5:29PM
     //	Confine_Rect(&xx, &yy, TacLeptonWidth, TacLeptonHeight, Cell_To_Lepton(MapCellWidth),
-    //Cell_To_Lepton(MapCellHeight));
+    // Cell_To_Lepton(MapCellHeight));
+#else
+    int xx = (int)Coord_X(coord) - (int)Cell_To_Lepton(MapCellX);
+    int yy = (int)Coord_Y(coord) - (int)Cell_To_Lepton(MapCellY);
+
+    Confine_Rect(&xx,
+                 &yy,
+                 TacLeptonWidth,
+                 TacLeptonHeight,
+                 Cell_To_Lepton(MapCellWidth),
+                 Cell_To_Lepton(MapCellHeight));
+#endif
     coord = XY_Coord(xx + Cell_To_Lepton(MapCellX), yy + Cell_To_Lepton(MapCellY));
 
     if (ScenarioInit) {

@@ -439,8 +439,9 @@ TextLabelClass* MessageListClass::Add_Message(char const* name,
     }
 
 #endif
-
+#ifdef REMASTER_BUILD
     On_Message(message, timeout * 60.0f / TICKS_PER_MINUTE, id);
+#endif
     // Sound_Effect(VOC_INCOMING_MESSAGE);
 
 #if (0)

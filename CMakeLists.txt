@@ -348,8 +348,6 @@ set(REDALERT_SRC
     redalert/dibfile.cpp
     redalert/dibutil.cpp
     redalert/display.cpp
-    redalert/dllinterface.cpp
-    redalert/dllinterfaceeditor.cpp
     redalert/door.cpp
     redalert/dpmi.cpp
     redalert/drive.cpp
@@ -489,7 +487,6 @@ set(REDALERT_SRC
     redalert/shapipe.cpp
     redalert/shastraw.cpp
     redalert/sidebar.cpp
-    redalert/sidebarglyphx.cpp
     redalert/slider.cpp
     redalert/smudge.cpp
     redalert/sounddlg.cpp
@@ -602,7 +599,13 @@ if(CMAKE_CONFIGURATION_TYPES)
 endif()
 
 if(BUILD_REMASTERRA)
-    add_library(RedAlert SHARED ${REDALERT_SRC} ${REDALERT_HEADERS})
+    add_library(RedAlert SHARED 
+        redalert/dllinterface.cpp
+        redalert/dllinterfaceeditor.cpp
+        redalert/sidebarglyphx.cpp
+        ${REDALERT_SRC}
+        ${REDALERT_HEADERS}
+    )
     target_compile_definitions(RedAlert PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _USRDLL REDALERT_EXPORTS REMASTER_BUILD)
     target_include_directories(RedAlert PUBLIC redalert/win32lib redalert)
     target_link_libraries(RedAlert wsock32 ws2_32 winmm)
@@ -616,6 +619,10 @@ if(BUILD_VANILLARA)
     set_target_properties(VanillaRA PROPERTIES OUTPUT_NAME vanillara)
     if(MAP_EDITORRA)
         target_compile_definitions(VanillaRA PUBLIC SCENARIO_EDITOR INTERNAL_VERSION)
+    endif()
+    # Control if we auto generate a console and which "main" function we link using MSVC.
+    if(MSVC)
+        set_target_properties(VanillaRA PROPERTIES LINK_FLAGS "/subsystem:windows /ENTRY:WinMainCRTStartup")
     endif()
 endif()
 

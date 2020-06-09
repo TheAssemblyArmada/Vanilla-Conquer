@@ -97,6 +97,7 @@ extern bool IsTheaterShape;
 extern void Free_Heaps(void);
 extern void DLL_Shutdown(void);
 
+#if defined REMASTER_BUILD && defined _WIN32
 BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserved)
 {
     lpvReserved;
@@ -144,6 +145,7 @@ BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserve
 
     return true;
 }
+#endif
 
 /***********************************************************************************************
  * main -- Initial startup routine (preps library systems).                                    *
@@ -162,23 +164,25 @@ BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserve
  * HISTORY:                                                                                    *
  *   03/20/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-#ifdef WIN32
+#ifdef REMASTER_BUILD
 // int PASCAL WinMain(HINSTANCE, HINSTANCE, char *, int )
 // PG int PASCAL WinMain ( HINSTANCE instance , HINSTANCE , char * command_line , int command_show )
-int DLL_Startup(const char* command_line_in)
-
-#else  // WIN32
-int main(int argc, char* argv[])
-#endif // WIN32
-
+int DLL_Startup(const char* command_line_in) 
 {
-#ifdef WIN32
-
     RunningAsDLL = true;
     int command_show = SW_HIDE;
     HINSTANCE instance = ProgramInstance;
     char command_line[1024];
     strcpy(command_line, command_line_in);
+#elif defined _WIN32
+int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int command_show)
+{
+#else
+int main(int argc, char* argv[])
+{
+#endif // WIN32
+
+#ifdef WIN32
 
 #ifndef MPEGMOVIE // Denzil 6/10/98
 // PG DDSCAPS	surface_capabilities;
@@ -195,7 +199,7 @@ int main(int argc, char* argv[])
         // MB_ICONEXCLAMATION|MB_OK);
 
         HWND ccwindow;
-        ccwindow = FindWindow(WINDOW_NAME, WINDOW_NAME);
+        ccwindow = FindWindowA(WINDOW_NAME, WINDOW_NAME);
         if (ccwindow) {
             SetForegroundWindow(ccwindow);
             ShowWindow(ccwindow, SW_RESTORE);
@@ -250,7 +254,7 @@ int main(int argc, char* argv[])
 #ifdef WIN32
 
     if (strstr(command_line, "f:\\projects\\c&c0") != NULL || strstr(command_line, "F:\\PROJECTS\\C&C0") != NULL) {
-        MessageBox(0, "Playing off of the network is not allowed.", "Red Alert", MB_OK | MB_ICONSTOP);
+        MessageBoxA(0, "Playing off of the network is not allowed.", "Red Alert", MB_OK | MB_ICONSTOP);
         return (EXIT_FAILURE);
     }
 
@@ -265,7 +269,7 @@ int main(int argc, char* argv[])
     /*
     ** Get the full path to the .EXE
     */
-    GetModuleFileName(instance, &path_to_exe[0], 132);
+    GetModuleFileNameA(instance, &path_to_exe[0], 132);
 
     /*
     ** First argument is supposed to be a pointer to the .EXE that is running
@@ -339,6 +343,18 @@ int main(int argc, char* argv[])
         path[strlen(path) - 1] = '\0';
     }
     chdir(path);
+#elif defined _WIN32 // OmniBlade: Win32 version of the commented out dos/watcom code.
+    char path[MAX_PATH];
+    GetModuleFileNameA(GetModuleHandleA(nullptr), path, sizeof(path));
+
+    for (char* i = &path[strlen(path)]; i != path; --i) {
+        if (*i == '\\' || *i == '/') {
+            *i = '\0';
+            break;
+        }
+    }
+
+    SetCurrentDirectoryA(path);
 #endif
 
 #ifdef WOLAPI_INTEGRATION
@@ -370,8 +386,8 @@ int main(int argc, char* argv[])
     //	directory for 1.08, but which must NOT be present for this version (Aftermath mix files provide the
     //	string overrides that the 1.08 separate conquer.eng did before Aftermath).
     //	Delete conquer.eng if it's found.
-    if (FindFirstFile("conquer.eng", &wfd) != INVALID_HANDLE_VALUE)
-        DeleteFile("conquer.eng");
+    if (FindFirstFileA("conquer.eng", &wfd) != INVALID_HANDLE_VALUE)
+        DeleteFileA("conquer.eng");
 
 #endif
 
@@ -384,7 +400,7 @@ int main(int argc, char* argv[])
         //
         if (Session.AllowSolo == 0 && Session.Type != GAME_TEN) {
 #ifdef WIN32
-            MessageBox(NULL, "Red Alert for TEN\n (c) 1996 Westwood Studios", "Red Alert", MB_OK);
+            MessageBoxA(NULL, "Red Alert for TEN\n (c) 1996 Westwood Studios", "Red Alert", MB_OK);
             exit(0);
 #else
             printf("\n");
@@ -403,7 +419,7 @@ int main(int argc, char* argv[])
         //
         if (Session.AllowSolo == 0 && Session.Type != GAME_MPATH) {
 #ifdef WIN32
-            MessageBox(NULL, "Red Alert for MPATH\n (c) 1996 Westwood Studios", "Red Alert", MB_OK);
+            MessageBoxA(NULL, "Red Alert for MPATH\n (c) 1996 Westwood Studios", "Red Alert", MB_OK);
             exit(0);
 #else
             printf("\n");
@@ -422,7 +438,7 @@ int main(int argc, char* argv[])
         int time_test = WindowsTimer->Get_System_Tick_Count();
         Sleep(1000);
         if (WindowsTimer->Get_System_Tick_Count() == time_test) {
-            MessageBox(0, TEXT_ERROR_TIMER, TEXT_SHORT_TITLE, MB_OK | MB_ICONSTOP);
+            MessageBoxA(0, TEXT_ERROR_TIMER, TEXT_SHORT_TITLE, MB_OK | MB_ICONSTOP);
             return (EXIT_FAILURE);
         }
 #endif
@@ -430,6 +446,7 @@ int main(int argc, char* argv[])
         Init_Timer_System(60, true);
 #endif // WIN32
 
+#ifdef REMASTER_BUILD
         ////////////////////////////////////////
         // The editor needs to load the Red Alert ini file from a different location than the real game. - 7/18/2019 JAS
         char* red_alert_file_path = nullptr;
@@ -443,7 +460,9 @@ int main(int argc, char* argv[])
         // RawFileClass cfile(CONFIG_FILE_NAME);
         // end of change - 7/18/2019 JAS
         ////////////////////////////////////////
-
+#else
+        RawFileClass cfile(CONFIG_FILE_NAME);
+#endif
 #ifndef WIN32
         Install_Keyboard_Interrupt(Get_RM_Keyboard_Address(), Get_RM_Keyboard_Size());
 #endif // WIN32
@@ -473,7 +492,7 @@ int main(int argc, char* argv[])
 #if (0) // PG
             char disk_space_message[512];
             sprintf(disk_space_message, TEXT_CRITICALLY_LOW); // PG , (INIT_FREE_DISK_SPACE) / (1024 * 1024));
-            int reply = MessageBox(NULL, disk_space_message, TEXT_SHORT_TITLE, MB_ICONQUESTION | MB_YESNO);
+            int reply = MessageBoxA(NULL, disk_space_message, TEXT_SHORT_TITLE, MB_ICONQUESTION | MB_YESNO);
             if (reply == IDNO) {
                 if (WindowsTimer)
                     delete WindowsTimer;
@@ -550,7 +569,7 @@ int main(int argc, char* argv[])
             }
 
             if (!video_success) {
-                MessageBox(MainWindow, TEXT_VIDEO_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
+                MessageBoxA(MainWindow, TEXT_VIDEO_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
                 if (WindowsTimer)
                     delete WindowsTimer;
                 // if (Palette) delete Palette;
@@ -581,7 +600,7 @@ int main(int argc, char* argv[])
                     */
                     WWDebugString(TEXT_DDRAW_ERROR);
                     WWDebugString("\n");
-                    MessageBox(MainWindow, TEXT_DDRAW_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
+                    MessageBoxA(MainWindow, TEXT_DDRAW_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
                     if (WindowsTimer)
                         delete WindowsTimer;
                     return (EXIT_FAILURE);
@@ -832,7 +851,7 @@ bool InitDDraw(void)
     }
 
     if (!video_success) {
-        MessageBox(MainWindow, TEXT_VIDEO_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
+        MessageBoxA(MainWindow, TEXT_VIDEO_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
 
         if (WindowsTimer)
             delete WindowsTimer;
@@ -854,7 +873,7 @@ bool InitDDraw(void)
             /* Aaaarrgghh! */
             WWDebugString(TEXT_DDRAW_ERROR);
             WWDebugString("\n");
-            MessageBox(MainWindow, TEXT_DDRAW_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
+            MessageBoxA(MainWindow, TEXT_DDRAW_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
 
             if (WindowsTimer)
                 delete WindowsTimer;

@@ -369,14 +369,14 @@ bool Save_Game(const char* file_name, const char* descr)
     BufferIOFileClass file(file_name);
 
     FilePipe fpipe(&file);
-
+#ifdef REMASTER_BUILD
     /*
     ** Save the DLLs variables first, so we can do a version check in the DLL when we begin the load
     */
     if (RunningAsDLL) {
         DLLSave(fpipe);
     }
-
+#endif
     /*
     **	Save the description, scenario #, and house
     **	(scenario # & house are saved separately from the actual Scenario &
@@ -527,14 +527,14 @@ bool Load_Game(const char* file_name)
     FileStraw fstraw(file);
 
     Call_Back();
-
+#ifdef REMASTER_BUILD
     /*
     ** Load the DLLs variables first, in case we need to do something different based on version
     */
     if (RunningAsDLL) {
         DLLLoad(fstraw);
     }
-
+#endif
     /*
     **	Read & discard the save-game's header info
     */
@@ -1310,12 +1310,12 @@ void Code_All_Pointers(void)
             selection[j] = (ObjectClass*)selection[j]->As_Target();
         }
     }
-
+#ifdef REMASTER_BUILD
     /*
     ** DLL data
     */
     DLL_Code_Pointers();
-
+#endif
     /*
     ** Houses must be coded last, because the Class->House member of the HouseClass
     ** is used to code HouseClass pointers for all other objects, and if Class is
@@ -1348,12 +1348,12 @@ void Decode_All_Pointers(void)
     ** House pointers
     */
     Houses.Decode_Pointers();
-
+#ifdef REMASTER_BUILD
     /*
     ** DLL data
     */
     DLL_Decode_Pointers();
-
+#endif
     /*
     **	The ArrayOf's.
     */

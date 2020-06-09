@@ -975,10 +975,10 @@ extern void Recalculate_Placement_Distances();
 void HouseClass::AI(void)
 {
     assert(Houses.ID(this) == ID);
-
+#ifdef REMASTER_BUILD
     // Set PlayerPtr to be this house. ST - 8/7/2019 10:12AM
     Logic_Switch_Player_Context(this);
-
+#endif
     /*
     **	If base building has been turned on by a trigger, then force the house to begin
     **	production and team creation as well. This is also true if the IQ is high enough to
@@ -1218,11 +1218,13 @@ void HouseClass::AI(void)
     /*
     **	Process any super weapon logic required.
     */
-
+#ifdef REMASTER_BUILD
     if (Session.Type != GAME_GLYPHX_MULTIPLAYER || !MPSuperWeaponDisable) {
         Super_Weapon_Handler();
     }
-
+#else
+    Super_Weapon_Handler();
+#endif
 #ifdef FIXIT_VERSION_3 //	For endgame auto-sonar pulse.
     if (Scen.AutoSonarTimer == 0) {
         //	If house has nothing but subs left, do an automatic sonar pulse to reveal them.
@@ -1401,8 +1403,9 @@ void HouseClass::AI(void)
                 }
             }
         }
-
+#ifdef REMASTER_BUILD
         Recalculate_Placement_Distances();
+#endif
         Check_Pertinent_Structures();
     }
 
@@ -1554,7 +1557,9 @@ void HouseClass::Super_Weapon_Handler(void)
                 // Add to Glyphx multiplayer sidebar. ST - 8/7/2019 10:13AM
                 if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
                     if (IsHuman) {
+#ifdef REMASTER_BUILD
                         Sidebar_Glyphx_Add(RTTI_SPECIAL, SPC_GPS, this);
+#endif
                     }
                 } else {
                     if (this == PlayerPtr) {
@@ -1622,7 +1627,9 @@ void HouseClass::Super_Weapon_Handler(void)
             // Add to Glyphx multiplayer sidebar. ST - 8/7/2019 10:13AM
             if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
                 if (IsHuman) {
+#ifdef REMASTER_BUILD
                     Sidebar_Glyphx_Add(RTTI_SPECIAL, SPC_CHRONOSPHERE, this);
+#endif
                 }
             } else {
                 if (this == PlayerPtr) {
@@ -1672,7 +1679,9 @@ void HouseClass::Super_Weapon_Handler(void)
             // Add to Glyphx multiplayer sidebar. ST - 8/7/2019 10:13AM
             if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
                 if (IsHuman) {
+#ifdef REMASTER_BUILD
                     Sidebar_Glyphx_Add(RTTI_SPECIAL, SPC_IRON_CURTAIN, this);
+#endif
                 }
             } else {
                 if (this == PlayerPtr) {
@@ -1762,7 +1771,9 @@ void HouseClass::Super_Weapon_Handler(void)
             // Add to Glyphx multiplayer sidebar. ST - 8/7/2019 10:13AM
             if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
                 if (IsHuman) {
+#ifdef REMASTER_BUILD
                     Sidebar_Glyphx_Add(RTTI_SPECIAL, SPC_NUCLEAR_BOMB, this);
+#endif
                 }
             } else {
                 if (this == PlayerPtr) {
@@ -1795,7 +1806,9 @@ void HouseClass::Super_Weapon_Handler(void)
             // Add to Glyphx multiplayer sidebar. ST - 8/7/2019 10:13AM
             if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
                 if (IsHuman) {
+#ifdef REMASTER_BUILD
                     Sidebar_Glyphx_Add(RTTI_SPECIAL, SPC_SPY_MISSION, this);
+#endif
                 }
             } else {
                 if (this == PlayerPtr) {
@@ -1825,7 +1838,9 @@ void HouseClass::Super_Weapon_Handler(void)
             // Add to Glyphx multiplayer sidebar. ST - 8/7/2019 10:13AM
             if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
                 if (IsHuman) {
+#ifdef REMASTER_BUILD
                     Sidebar_Glyphx_Add(RTTI_SPECIAL, SPC_PARA_BOMB, this);
+#endif
                 }
             } else {
                 if (this == PlayerPtr) {
@@ -1854,7 +1869,9 @@ void HouseClass::Super_Weapon_Handler(void)
             // Add to Glyphx multiplayer sidebar. ST - 8/7/2019 10:13AM
             if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
                 if (IsHuman) {
+#ifdef REMASTER_BUILD
                     Sidebar_Glyphx_Add(RTTI_SPECIAL, SPC_PARA_INFANTRY, this);
+#endif
                 }
             } else {
                 if (this == PlayerPtr) {
@@ -2563,7 +2580,9 @@ ProdFailType HouseClass::Begin_Production(RTTIType type, int id)
         // Handle Glyphx multiplayer sidebar. ST - 8/14/2019 1:26PM
         if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
             if (IsHuman) {
+#ifdef REMASTER_BUILD
                 Sidebar_Glyphx_Factory_Link(fptr->ID, type, id, this);
+#endif
             }
         } else {
             if (PlayerPtr == this) {
@@ -2660,8 +2679,9 @@ ProdFailType HouseClass::Abandon_Production(RTTIType type)
     // Handle Glyphx multiplayer sidebar. ST - 8/7/2019 10:18AM
     if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
         if (IsHuman) {
+#ifdef REMASTER_BUILD
             Sidebar_Glyphx_Abandon_Production(type, fptr->ID, this);
-
+#endif
             // Need to clear pending object here if legacy renderer enabled
 
             if (type == RTTI_BUILDINGTYPE || type == RTTI_BUILDING && Map.PendingObjectPtr) {
@@ -2975,11 +2995,15 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
                         }
                         if (porthim) {
 #endif
+#ifdef REMASTER_BUILD
                             HouseClass* old_player_ptr = PlayerPtr;
                             Logic_Switch_Player_Context(this);
+#endif
                             Map.IsTargettingMode = SPC_CHRONO2;
+#ifdef REMASTER_BUILD
                             On_Special_Weapon_Targetting(PlayerPtr, Map.IsTargettingMode);
                             Logic_Switch_Player_Context(old_player_ptr);
+#endif
                             UnitToTeleport = tech->As_Target();
                             fired = true;
                             what = "CHRONO";
@@ -3095,14 +3119,14 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
         break;
     }
     }
-
+#ifdef REMASTER_BUILD
     /*
     ** Maybe trigger an achivement. ST - 12/2/2019 11:25AM
     */
     if (IsHuman && fired && what) {
         On_Achievement_Event(this, "SUPERWEAPON_FIRED", what);
     }
-
+#endif
     return (true);
 }
 
@@ -3185,7 +3209,7 @@ bool HouseClass::Place_Object(RTTIType type, CELL cell)
                     factory->Set_Is_Blocked(false);
                     factory->Completed();
                     Abandon_Production(type);
-
+#ifdef REMASTER_BUILD
                     /*
                     ** Could be tied to an achievement. ST - 11/11/2019 11:56AM
                     */
@@ -3197,7 +3221,7 @@ bool HouseClass::Place_Object(RTTIType type, CELL cell)
                             On_Ping(this, pending->Center_Coord());
                         }
                     }
-
+#endif
                     switch (pending->What_Am_I()) {
                     case RTTI_UNIT:
                         JustBuiltUnit = ((UnitClass*)pending)->Class->Type;
@@ -3848,12 +3872,13 @@ void HouseClass::MPlayer_Defeated(void)
                                          Rule.MessageDelay * TICKS_PER_MINUTE);
         }
         Map.Flag_To_Redraw(false);
+#ifdef REMASTER_BUILD
         if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
             int timeout = Rule.MessageDelay * TICKS_PER_MINUTE;
             On_Defeated_Message(txt, timeout * 60.0f / TICKS_PER_MINUTE);
             Sound_Effect(VOC_INCOMING_MESSAGE);
         }
-
+#endif
     } else {
 
         /*
@@ -3866,9 +3891,10 @@ void HouseClass::MPlayer_Defeated(void)
             //	TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW, Rule.MessageDelay * TICKS_PER_MINUTE);
             Map.Flag_To_Redraw(false);
             RedrawOptionsMenu = true;
-
+#ifdef REMASTER_BUILD
             int timeout = Rule.MessageDelay * TICKS_PER_MINUTE;
             On_Defeated_Message(txt, timeout * 60.0f / TICKS_PER_MINUTE);
+#endif
             Sound_Effect(VOC_INCOMING_MESSAGE);
         }
     }
