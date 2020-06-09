@@ -20,6 +20,7 @@
 externdef C Distance_Coord:near
 externdef C Coord_Cell:near
 externdef C Fat_Put_Pixel:near
+externdef C Calculate_CRC:near
 
 GraphicViewPort struct
     GVPOffset   DD ? ; offset to virtual viewport
@@ -162,5 +163,74 @@ exit_label:
     pop     ebx
     ret
 Fat_Put_Pixel endp
+
+;extern "C" long __cdecl Calculate_CRC(void* buffer, long length)
+Calculate_CRC proc C buffer:dword, len:dword
+    local crc:dword
+
+    push    esi
+    push    ebx
+
+    ; Load pointer to data block.
+    mov     [crc],0
+    pushad
+    mov     esi,[buffer]
+    cld
+
+    ; Clear CRC to default (NULL) value.
+    xor     ebx,ebx
+
+    ; Fetch the length of the data block to CRC.
+    mov     ecx,[len]
+
+    jecxz   short fini
+
+    ; Prepare the length counters.
+    mov     edx,ecx
+    and     dl,011b
+    shr     ecx,2
+
+    ; Perform the bulk of the CRC scanning.
+    jecxz   short remainder2
+accumloop:
+    lodsd
+    rol     ebx,1
+    add     ebx,eax
+    loop    accumloop
+
+    ; Handle the remainder bytes.
+remainder2:
+    or      dl,dl
+    jz      short fini
+    mov     ecx,edx
+    xor     eax,eax
+
+    and     ecx,0FFFFh
+    push    ecx
+nextbyte:
+    lodsb
+    ror     eax,8
+    loop    nextbyte
+    pop     ecx
+    neg     ecx
+    add     ecx,4
+    shl     ecx,3
+    ror     eax,cl
+
+;nextbyte:
+;   shl     eax,8
+;   lodsb
+;   loop    nextbyte
+    rol     ebx,1
+    add     ebx,eax
+
+fini:
+    mov     [crc],ebx
+    popad
+    mov     eax,[crc]
+    pop     ebx
+    pop     esi
+    ret
+Calculate_CRC endp
 
 end
