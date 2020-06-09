@@ -23,6 +23,10 @@ externdef C Cardinal_To_Fixed:near
 externdef C Fixed_To_Cardinal:near
 externdef C Desired_Facing256:near
 externdef C Desired_Facing8:near
+externdef C Set_Bit:near
+externdef C Get_Bit:near
+externdef C First_True_Bit:near
+externdef C First_False_Bit:near
 
 .data
 
@@ -317,5 +321,78 @@ dxisbig:
     pop     ebx
     ret
 Desired_Facing8 endp
+
+;void __cdecl Set_Bit(void* array, int bit, int value)
+Set_Bit proc C array:dword, bit:dword, value:dword
+    push    esi
+    push    ebx
+    mov     ecx, [bit]
+    mov     eax, [value]
+    mov     esi, [array]
+    mov     ebx,ecx
+    shr     ebx,5
+    and     ecx,01Fh
+    btr     [esi+ebx*4],ecx
+    or      eax,eax
+    jz      set_bit_ok
+    bts     [esi+ebx*4],ecx
+set_bit_ok:
+    pop     ebx
+    pop     esi
+    ret
+Set_Bit endp
+
+;int __cdecl Get_Bit(void const* array, int bit)
+Get_Bit proc C array:dword, bit:dword
+    push    esi
+    push    ebx
+    mov     eax, [bit]
+    mov     esi, [array]
+    mov     ebx,eax
+    shr     ebx,5
+    and     eax,01Fh
+    bt      [esi+ebx*4],eax
+    setc    al
+    pop     ebx
+    pop     esi
+    ret
+Get_Bit endp
+
+;int __cdecl First_True_Bit(void const* array)
+First_True_Bit proc C array:dword
+    push    esi
+    push    ebx
+    mov     esi, [array]
+    mov     eax,-32
+first_true_bit_again:
+    add     eax,32
+    mov     ebx,[esi]
+    add     esi,4
+    bsf     ebx,ebx
+    jz      first_true_bit_again
+    add     eax,ebx
+    pop     ebx
+    pop     esi
+    ret
+First_True_Bit endp
+
+;int __cdecl First_False_Bit(void const* array)
+First_False_Bit proc C array:dword
+    push    esi
+    push    ebx
+    mov     esi, [array]
+    mov     eax,-32
+first_false_bit_again:
+    add     eax,32
+    mov     ebx,[esi]
+    not     ebx
+    add     esi,4
+    bsf     ebx,ebx
+    jz      first_false_bit_again
+    add     eax,ebx
+    pop     ebx
+    pop     esi
+    ret
+First_False_Bit endp
 
 end

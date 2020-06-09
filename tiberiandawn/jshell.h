@@ -137,18 +137,7 @@ template <class T> inline T operator~(T t1)
 // inline ShapeFlags_Type operator &(ShapeFlags_Type, ShapeFlags_Type);
 // inline ShapeFlags_Type operator ~(ShapeFlags_Type);
 
-//#pragma aux Set_Bit parm [esi] [ecx] [eax]
-void __cdecl Set_Bit(void* array, int bit, int value);
-
-//#pragma aux Get_Bit parm [esi] [eax]
-int __cdecl Get_Bit(void const* array, int bit);
-
-//#pragma aux First_True_Bit parm [esi]
-int __cdecl First_True_Bit(void const* array);
-
-//#pragma aux First_False_Bit parm [esi]
-int __cdecl First_False_Bit(void const* array);
-
+#include "common/miscasm.h"
 //#pragma aux Bound parm [eax] [ebx] [ecx]
 int __cdecl Bound(int original, int min, int max);
 
