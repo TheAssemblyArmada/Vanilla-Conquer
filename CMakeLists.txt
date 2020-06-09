@@ -38,6 +38,8 @@ endif()
 
 add_library(common STATIC
     common/miscasm.asm
+    common/irandoma.asm
+    common/irandom.cpp
 )
 
 set(TIBDAWN_SRC
@@ -214,7 +216,6 @@ set(TIBDAWN_SRC
     tiberiandawn/win32lib/getshape.cpp
     tiberiandawn/win32lib/iconset.cpp
     tiberiandawn/win32lib/iff.cpp
-    tiberiandawn/win32lib/irandom.cpp
     tiberiandawn/win32lib/keyboard.cpp
     tiberiandawn/win32lib/load.cpp
     tiberiandawn/win32lib/loadfont.cpp
@@ -552,7 +553,6 @@ set(REDALERT_SRC
     redalert/win32lib/getshape.cpp
     redalert/win32lib/iconset.cpp
     redalert/win32lib/iff.cpp
-    redalert/win32lib/irandom.cpp
     redalert/win32lib/load.cpp
     redalert/win32lib/loadfont.cpp
     redalert/win32lib/mouseww.cpp
