@@ -444,7 +444,10 @@ void Do_Vortex(int x, int y, int frame);
 extern int ReadyToQuit;          // Are we about to exit cleanly
 extern bool InDebugger;          // Are we being run from a debugger
 void Memory_Error_Handler(void); // Memory error handler function
-void WWDebugString(char* string);
+void WWDebugString(const char* string);
+#ifndef REMASTER_BUILD
+#define GlyphX_Debug_Print(x) WWDebugString(x)
+#endif
 #else
 extern bool IsTheaterShape;
 #endif // WIN32

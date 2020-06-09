@@ -559,7 +559,9 @@ bool TActionClass::operator()(HousesType house, ObjectClass* object, int id, CEL
         // Add to Glyphx multiplayer sidebar. ST - 8/7/2019 10:13AM
         if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
             if (hptr->IsHuman) {
+#ifdef REMASTER_BUILD
                 Sidebar_Glyphx_Add(RTTI_SPECIAL, Data.Special, hptr);
+#endif
             }
         } else {
             if (PlayerPtr == hptr) {

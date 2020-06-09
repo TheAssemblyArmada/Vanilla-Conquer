@@ -692,16 +692,20 @@ void InfantryClass::Per_Cell_Process(PCPType why)
                             if (build == STRUCT_RADAR /* || build == STRUCT_EYE */) {
                                 tech->House->RadarSpied |= housespy;
                             }
-
+#ifdef REMASTER_BUILD
                             if (Session.Type == GAME_NORMAL || !MPSuperWeaponDisable) {
-
+#else
+                            if (Session.Type == GAME_NORMAL) {
+#endif
                                 // If they're spying on a sub pen, give 'em a sonar pulse
                                 if (build == STRUCT_SUB_PEN) {
                                     House->SuperWeapon[SPC_SONAR_PULSE].Enable(true, true, false);
                                     // Add to Glyphx multiplayer sidebar. ST - 8/7/2019 10:13AM
                                     if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
                                         if (House->IsHuman) {
+#ifdef REMASTER_BUILD
                                             Sidebar_Glyphx_Add(RTTI_SPECIAL, SPC_SONAR_PULSE, House);
+#endif
                                         }
                                     } else {
                                         if (IsOwnedByPlayer) {
@@ -716,7 +720,9 @@ void InfantryClass::Per_Cell_Process(PCPType why)
                                     // Add to Glyphx multiplayer sidebar. ST - 8/7/2019 10:13AM
                                     if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
                                         if (House->IsHuman) {
+#ifdef REMASTER_BUILD
                                             Sidebar_Glyphx_Add(RTTI_SPECIAL, SPC_PARA_BOMB, House);
+#endif
                                         }
                                     } else {
                                         if (IsOwnedByPlayer) {

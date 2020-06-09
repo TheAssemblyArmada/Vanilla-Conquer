@@ -2818,14 +2818,14 @@ extern void Play_Movie_GlyphX(const char* movie_name, ThemeType theme, bool imme
 
 void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
 {
-#if (1)
+#ifdef REMASTER_BUILD
     if (strcmp(name, "x") == 0 || strcmp(name, "X") == 0) {
         return;
     }
 
     Play_Movie_GlyphX(name, theme, immediate);
     return;
-#else
+#elif 0 // Needs VQALib
 #ifdef MPEGMOVIE
     // theme = theme;
     // clrscrn = clrscrn;
@@ -3413,13 +3413,14 @@ void CC_Draw_Shape(const ObjectClass* object,
                    DirType rotation,
                    long virtualscale)
 {
+#ifdef REMASTER_BUILD
     if (window == WINDOW_VIRTUAL) {
         int width = Get_Build_Frame_Width(shapefile);
         int height = Get_Build_Frame_Height(shapefile);
         DLL_Draw_Intercept(shapenum, x, y, width, height, (int)flags, object, rotation, virtualscale, NULL, HOUSE_NONE);
         return;
     }
-
+#endif
     CC_Draw_Shape(shapefile, shapenum, x, y, window, flags, fadingdata, ghostdata, rotation);
 }
 
@@ -3437,6 +3438,7 @@ void CC_Draw_Shape(const ObjectClass* object,
                    long virtualscale,
                    char override_owner)
 {
+#ifdef REMASTER_BUILD
     if (window == WINDOW_VIRTUAL) {
         int width = Get_Build_Frame_Width(shapefile);
         int height = Get_Build_Frame_Height(shapefile);
@@ -3444,7 +3446,7 @@ void CC_Draw_Shape(const ObjectClass* object,
             shapenum, x, y, width, height, (int)flags, object, rotation, virtualscale, shape_file_name, override_owner);
         return;
     }
-
+#endif
     CC_Draw_Shape(shapefile, shapenum, x, y, window, flags, fadingdata, ghostdata, rotation);
 }
 
@@ -3459,11 +3461,12 @@ void CC_Draw_Pip(const ObjectClass* object,
                  void const* ghostdata,
                  DirType rotation)
 {
+#ifdef REMASTER_BUILD
     if (window == WINDOW_VIRTUAL) {
         DLL_Draw_Pip_Intercept(object, shapenum);
         return;
     }
-
+#endif
     CC_Draw_Shape(shapefile, shapenum, x, y, window, flags, fadingdata, ghostdata, rotation);
 }
 

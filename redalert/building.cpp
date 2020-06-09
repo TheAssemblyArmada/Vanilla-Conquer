@@ -987,7 +987,7 @@ void BuildingClass::AI(void)
     **	Check for demolition timeout. When timeout has expired, the building explodes.
     */
     if (IsGoingToBlow && CountDown == 0) {
-
+#ifdef REMASTER_BUILD
         /*
         ** Maybe trigger an achivement. ST - 11/14/2019 1:53PM
         */
@@ -998,7 +998,7 @@ void BuildingClass::AI(void)
                 On_Achievement_Event(saboteur->House, "BUILDING_DESTROYED_C4", object_type->IniName);
             }
         }
-
+#endif
         int damage = Strength;
         Take_Damage(damage, 0, WARHEAD_FIRE, As_Techno(WhomToRepay), true);
         if (!IsActive) {
@@ -2209,6 +2209,7 @@ int BuildingClass::Exit_Object(TechnoClass* base)
     return (0);
 }
 
+#ifdef REMASTER_BUILD
 /***********************************************************************************************
  * BuildingClass::Update_Buildables -- Informs sidebar of additional construction options.     *
  *                                                                                             *
@@ -2253,7 +2254,9 @@ void BuildingClass::Update_Buildables(void)
             for (v = VESSEL_FIRST; v < VESSEL_COUNT; v++) {
                 if (PlayerPtr->Can_Build(&VesselTypeClass::As_Reference((VesselType)v), ActLike)) {
                     if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
+#ifdef REMASTER_BUILD
                         Sidebar_Glyphx_Add(RTTI_VESSELTYPE, v, House, buildable_via_capture);
+#endif
                     } else {
                         Map.Add(RTTI_VESSELTYPE, v, buildable_via_capture);
                     }
@@ -2265,7 +2268,9 @@ void BuildingClass::Update_Buildables(void)
             for (i = STRUCT_FIRST; i < STRUCT_COUNT; i++) {
                 if (PlayerPtr->Can_Build(&BuildingTypeClass::As_Reference((StructType)i), ActLike)) {
                     if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
+#ifdef REMASTER_BUILD
                         Sidebar_Glyphx_Add(RTTI_BUILDINGTYPE, i, House, buildable_via_capture);
+#endif
                     } else {
                         Map.Add(RTTI_BUILDINGTYPE, i, buildable_via_capture);
                     }
@@ -2277,7 +2282,9 @@ void BuildingClass::Update_Buildables(void)
             for (u = UNIT_FIRST; u < UNIT_COUNT; u++) {
                 if (PlayerPtr->Can_Build(&UnitTypeClass::As_Reference((UnitType)u), ActLike)) {
                     if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
+#ifdef REMASTER_BUILD
                         Sidebar_Glyphx_Add(RTTI_UNITTYPE, u, House, buildable_via_capture);
+#endif
                     } else {
                         Map.Add(RTTI_UNITTYPE, u, buildable_via_capture);
                     }
@@ -2291,7 +2298,9 @@ void BuildingClass::Update_Buildables(void)
                     if (InfantryTypeClass::As_Reference((InfantryType)f).IsDog) {
                         if (*this == STRUCT_KENNEL) {
                             if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
+#ifdef REMASTER_BUILD
                                 Sidebar_Glyphx_Add(RTTI_INFANTRYTYPE, f, House, buildable_via_capture);
+#endif
                             } else {
                                 Map.Add(RTTI_INFANTRYTYPE, f, buildable_via_capture);
                             }
@@ -2299,7 +2308,9 @@ void BuildingClass::Update_Buildables(void)
                     } else {
                         if (*this != STRUCT_KENNEL) {
                             if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
+#ifdef REMASTER_BUILD
                                 Sidebar_Glyphx_Add(RTTI_INFANTRYTYPE, f, House, buildable_via_capture);
+#endif
                             } else {
                                 Map.Add(RTTI_INFANTRYTYPE, f, buildable_via_capture);
                             }
@@ -2313,7 +2324,9 @@ void BuildingClass::Update_Buildables(void)
             for (a = AIRCRAFT_FIRST; a < AIRCRAFT_COUNT; a++) {
                 if (PlayerPtr->Can_Build(&AircraftTypeClass::As_Reference((AircraftType)a), ActLike)) {
                     if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
+#ifdef REMASTER_BUILD
                         Sidebar_Glyphx_Add(RTTI_AIRCRAFTTYPE, a, House, buildable_via_capture);
+#endif
                     } else {
                         Map.Add(RTTI_AIRCRAFTTYPE, a, buildable_via_capture);
                     }
@@ -2327,7 +2340,7 @@ void BuildingClass::Update_Buildables(void)
     }
 }
 
-#if (0) // Old code for reference. ST - 8/2/2019 2:41PM
+#else // Old code for reference. ST - 8/2/2019 2:41PM
 /***********************************************************************************************
  * BuildingClass::Update_Buildables -- Informs sidebar of additional construction options.     *
  *                                                                                             *
@@ -3188,7 +3201,7 @@ bool BuildingClass::Captured(HouseClass* newowner)
             break;
         }
 #endif
-
+#ifdef REMASTER_BUILD
         /*
         ** Maybe trigger an achivement. ST - 11/14/2019 1:53PM
         */
@@ -3202,7 +3215,7 @@ bool BuildingClass::Captured(HouseClass* newowner)
                 }
             }
         }
-
+#endif
         /*
         ** Make sure the capturer isn't spying on his own building, and if
         ** it was a radar facility, update the target house's RadarSpied field.

@@ -3590,7 +3590,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             if (object == this && CurrentObject.Count() == 1 && House->IsPlayerControl) {
                 return (ACTION_SELF);
             }
-
+#ifdef REMASTER_BUILD
             // bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
             // bool ctrldown = (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
             // bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
@@ -3599,7 +3599,11 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             bool altdown = DLL_Export_Get_Input_Key_State(KN_LALT);
             bool ctrldown = DLL_Export_Get_Input_Key_State(KN_LCTRL);
             bool shiftdown = DLL_Export_Get_Input_Key_State(KN_LSHIFT);
-
+#else
+            bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
+            bool ctrldown = (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
+            bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
+#endif
             /*
             **	Special guard area mission is possible if both the control and the
             **	alt keys are held down.
@@ -3717,7 +3721,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
 
         CellClass const* cellptr = &Map[cell];
         OverlayTypeClass const* optr = NULL;
-
+#ifdef REMASTER_BUILD
         // bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
         // bool ctrldown = (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
         // bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
@@ -3726,7 +3730,11 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         bool altdown = DLL_Export_Get_Input_Key_State(KN_LALT);
         bool ctrldown = DLL_Export_Get_Input_Key_State(KN_LCTRL);
         bool shiftdown = DLL_Export_Get_Input_Key_State(KN_LSHIFT);
-
+#else
+        bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
+        bool ctrldown = (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
+        bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
+#endif
         /*
         **	Disable recognizing the <CTRL> key forced fire option when dealing with buildings.
         */
@@ -4150,7 +4158,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                     Map.AI(input, 0, 0);
                 }
             }
-
+#ifdef REMASTER_BUILD
             /*
             ** May trigger an achievement. ST - 11/14/2019 1:56PM
             */
@@ -4164,6 +4172,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                     }
                 }
             }
+#endif
             break;
 
         /*

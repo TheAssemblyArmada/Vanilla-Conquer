@@ -2327,9 +2327,11 @@ bool CellClass::Goodie_Check(FootClass* object)
             case CRATE_PARA_BOMB:
             case CRATE_SONAR:
                 if (Session.Type != GAME_NORMAL) {
+#ifdef REMASTER_BUILD
                     if (MPSuperWeaponDisable) {
                         powerup = CRATE_MONEY;
                     }
+#endif
                 }
                 break;
 
@@ -2607,7 +2609,9 @@ bool CellClass::Goodie_Check(FootClass* object)
                 // Changes for client/server multiplayer. ST - 8/2/2019 2:56PM
                 if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
                     if (object->House->IsHuman) {
+#ifdef REMASTER_BUILD
                         Sidebar_Glyphx_Add(RTTI_SPECIAL, SPC_PARA_BOMB, object->House);
+#endif
                     }
                 } else {
                     if (object->IsOwnedByPlayer) {
@@ -2626,7 +2630,9 @@ bool CellClass::Goodie_Check(FootClass* object)
                 // Changes for client/server multiplayer. ST - 8/2/2019 2:56PM
                 if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
                     if (object->House->IsHuman) {
+#ifdef REMASTER_BUILD
                         Sidebar_Glyphx_Add(RTTI_SPECIAL, SPC_SONAR_PULSE, object->House);
+#endif
                     }
                 } else {
                     if (object->IsOwnedByPlayer) {
@@ -2701,7 +2707,9 @@ bool CellClass::Goodie_Check(FootClass* object)
                 // Changes for client/server multiplayer. ST - 8/2/2019 2:56PM
                 if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
                     if (object->House->IsHuman) {
+#ifdef REMASTER_BUILD
                         Sidebar_Glyphx_Add(RTTI_SPECIAL, SPC_NUCLEAR_BOMB, object->House);
+#endif
                     }
                 } else {
                     if (object->IsOwnedByPlayer) {

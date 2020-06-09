@@ -2372,11 +2372,13 @@ bool MapClass::Destroy_Bridge_At(CELL cell)
                     if (Map.In_Radar(newcell)) {
                         CellClass* newcellptr = &Map[newcell];
                         if (newcellptr->Get_Template_Info(cell_name, icon, image_data)) {
+#ifdef REMASTER_BUILD
                             itoa(icon, icon_number, 10);
                             strncat(cell_name, "_i", 32);
                             strncat(cell_name, icon_number, 32);
                             strncat(cell_name, ".tga", 32);
                             On_Update_Map_Cell(Cell_X(newcell), Cell_Y(newcell), cell_name);
+#endif
                         }
                     }
                 }
