@@ -22,6 +22,7 @@ externdef C Buffer_Draw_Line:near
 externdef C Buffer_Fill_Rect:near
 externdef C Buffer_Clear:near
 externdef C Linear_Blit_To_Linear:near
+externdef C Linear_Scale_To_Linear:near
 
 GraphicViewPort struct
     GVPOffset   DD ? ; offset to virtual viewport
@@ -1158,5 +1159,727 @@ Linear_Blit_To_Linear proc C this_object:dword, dest:dword, x_pixel:dword, y_pix
             ret
 
 Linear_Blit_To_Linear endp
+
+;***************************************************************************
+;* VVC::SCALE -- Scales a virtual viewport to another virtual viewport     *
+;*                                                                         *
+;* INPUT:                                                                  *
+;*                                                                         *
+;* OUTPUT:                                                                 *
+;*                                                                         *
+;* WARNINGS:                                                               *
+;*                                                                         *
+;* HISTORY:                                                                *
+;*   06/16/1994 PWG : Created.                                             *
+;*=========================================================================*
+
+;BOOL __cdecl Linear_Scale_To_Linear(void* this_object, void* dest, int src_x, int src_y, int dst_x, int dst_y, int src_width, int src_height, int dst_width, int dst_height, BOOL trans, char* remap)
+
+Linear_Scale_To_Linear proc C this_object:dword, dest:dword, src_x:dword, src_y:dword, dst_x:dword, dst_y:dword, src_width:dword, src_height:dword, dst_width:dword, dst_height:dword, trans:dword, remap:dword
+        ;*===================================================================
+        ;* Define local variables to hold the viewport characteristics
+        ;*===================================================================
+        local	src_x0 : dword
+        local	src_y0 : dword
+        local	src_x1 : dword
+        local	src_y1 : dword
+
+        local	dst_x0 : dword
+        local	dst_y0 : dword
+        local	dst_x1 : dword
+        local	dst_y1 : dword
+
+        local	src_win_width : dword
+        local	dst_win_width : dword
+        local	dy_intr : dword
+        local	dy_frac : dword
+        local	dy_acc  : dword
+        local	dx_frac : dword
+
+        local	counter_x     : dword
+        local	counter_y     : dword
+        local	remap_counter :dword
+        local	entry : dword
+
+        push ebx
+        push esi
+        push edi
+        
+        ;*===================================================================
+        ;* Check for scale error when to or from size 0,0
+        ;*===================================================================
+        cmp    [dst_width],0
+        je    all_done
+        cmp    [dst_height],0
+        je    all_done
+        cmp    [src_width],0
+        je    all_done
+        cmp    [src_height],0
+        je    all_done
+
+        mov    eax , [ src_x ]
+        mov    ebx , [ src_y ]
+        mov    [ src_x0 ] , eax
+        mov    [ src_y0 ] , ebx
+        add    eax , [ src_width ]
+        add    ebx , [ src_height ]
+        mov    [ src_x1 ] , eax
+        mov    [ src_y1 ] , ebx
+
+        mov    eax , [ dst_x ]
+        mov    ebx , [ dst_y ]
+        mov    [ dst_x0 ] , eax
+        mov    [ dst_y0 ] , ebx
+        add    eax , [ dst_width ]
+        add    ebx , [ dst_height ]
+        mov    [ dst_x1 ] , eax
+        mov    [ dst_y1 ] , ebx
+
+    ; Clip Source Rectangle against source Window boundaries.
+        mov      esi , [ this_object ]        ; get ptr to src
+        xor     ecx , ecx
+        xor     edx , edx
+        mov    edi , (GraphicViewPort ptr [esi]).GVPWidth  ; get width into register
+        mov    eax , [ src_x0 ]
+        mov    ebx , [ src_x1 ]
+        shld    ecx , eax , 1
+        inc    edi
+        shld    edx , ebx , 1
+        sub    eax , edi
+        sub    ebx , edi
+        shld    ecx , eax , 1
+        shld    edx , ebx , 1
+
+        mov    edi,(GraphicViewPort ptr [esi]).GVPHeight ; get height into register
+        mov    eax , [ src_y0 ]
+        mov    ebx , [ src_y1 ]
+        shld    ecx , eax , 1
+        inc    edi
+        shld    edx , ebx , 1
+        sub    eax , edi
+        sub    ebx , edi
+        shld    ecx , eax , 1
+        shld    edx , ebx , 1
+
+        xor    cl , 5
+        xor    dl , 5
+        mov    al , cl
+        test    dl , cl
+        jnz    all_done
+        or    al , dl
+        jz    clip_against_dest2
+        mov    bl , dl
+        test    cl , 1000b
+        jz    src_left_ok
+        xor    eax , eax
+        mov    [ src_x0 ] , eax
+        sub    eax , [ src_x ]
+        imul    [ dst_width ]
+        idiv    [ src_width ]
+        add    eax , [ dst_x ]
+        mov    [ dst_x0 ] , eax
+
+    src_left_ok:
+        test    cl , 0010b
+        jz    src_bottom_ok
+        xor    eax , eax
+        mov    [ src_y0 ] , eax
+        sub    eax , [ src_y ]
+        imul    [ dst_height ]
+        idiv    [ src_height ]
+        add    eax , [ dst_y ]
+        mov    [ dst_y0 ] , eax
+
+    src_bottom_ok:
+        test    bl , 0100b
+        jz    src_right_ok
+        mov    eax , (GraphicViewPort ptr [esi]).GVPWidth  ; get width into register
+        mov    [ src_x1 ] , eax
+        sub    eax , [ src_x ]
+        imul    [ dst_width ]
+        idiv    [ src_width ]
+        add    eax , [ dst_x ]
+        mov    [ dst_x1 ] , eax
+
+    src_right_ok:
+        test    bl , 0001b
+        jz    clip_against_dest2
+        mov    eax , (GraphicViewPort ptr [esi]).GVPHeight  ; get width into register
+        mov    [ src_y1 ] , eax
+        sub    eax , [ src_y ]
+        imul    [ dst_height ]
+        idiv    [ src_height ]
+        add    eax , [ dst_y ]
+        mov    [ dst_y1 ] , eax
+
+    ; Clip destination Rectangle against source Window boundaries.
+    clip_against_dest2:
+        mov      esi , [ dest ]        ; get ptr to src
+        xor     ecx , ecx
+        xor     edx , edx
+        mov    edi , (GraphicViewPort ptr [esi]).GVPWidth  ; get width into register
+        mov    eax , [ dst_x0 ]
+        mov    ebx , [ dst_x1 ]
+        shld    ecx , eax , 1
+        inc    edi
+        shld    edx , ebx , 1
+        sub    eax , edi
+        sub    ebx , edi
+        shld    ecx , eax , 1
+        shld    edx , ebx , 1
+
+        mov    edi,(GraphicViewPort ptr [esi]).GVPHeight ; get height into register
+        mov    eax , [ dst_y0 ]
+        mov    ebx , [ dst_y1 ]
+        shld    ecx , eax , 1
+        inc    edi
+        shld    edx , ebx , 1
+        sub    eax , edi
+        sub    ebx , edi
+        shld    ecx , eax , 1
+        shld    edx , ebx , 1
+
+        xor    cl , 5
+        xor    dl , 5
+        mov    al , cl
+        test    dl , cl
+        jnz    all_done
+        or    al , dl
+        jz    do_scaling
+        mov    bl , dl
+        test    cl , 1000b
+        jz    dst_left_ok
+        xor    eax , eax
+        mov    [ dst_x0 ] , eax
+        sub    eax , [ dst_x ]
+        imul    [ src_width ]
+        idiv    [ dst_width ]
+        add    eax , [ src_x ]
+        mov    [ src_x0 ] , eax
+
+    dst_left_ok:
+        test    cl , 0010b
+        jz    dst_bottom_ok
+        xor    eax , eax
+        mov    [ dst_y0 ] , eax
+        sub    eax , [ dst_y ]
+        imul    [ src_height ]
+        idiv    [ dst_height ]
+        add    eax , [ src_y ]
+        mov    [ src_y0 ] , eax
+
+    dst_bottom_ok:
+        test    bl , 0100b
+        jz    dst_right_ok
+        mov    eax , (GraphicViewPort ptr [esi]).GVPWidth  ; get width into register
+        mov    [ dst_x1 ] , eax
+        sub    eax , [ dst_x ]
+        imul    [ src_width ]
+        idiv    [ dst_width ]
+        add    eax , [ src_x ]
+        mov    [ src_x1 ] , eax
+
+    dst_right_ok:
+        test    bl , 0001b
+        jz    do_scaling
+
+        mov    eax , (GraphicViewPort ptr [esi]).GVPHeight  ; get width into register
+        mov    [ dst_y1 ] , eax
+        sub    eax , [ dst_y ]
+        imul    [ src_height ]
+        idiv    [ dst_height ]
+        add    eax , [ src_y ]
+        mov    [ src_y1 ] , eax
+
+    do_scaling:
+
+           cld
+           mov    ebx , [ this_object ]
+           mov    esi , (GraphicViewPort ptr [ebx]).GVPOffset
+           mov    eax , (GraphicViewPort ptr [ebx]).GVPXAdd
+           add    eax , (GraphicViewPort ptr [ebx]).GVPWidth
+           add    eax , (GraphicViewPort ptr [ebx]).GVPPitch
+           mov    [ src_win_width ] , eax
+           mul    [ src_y0 ]
+           add    esi , [ src_x0 ]
+           add    esi , eax
+
+           mov    ebx , [ dest ]
+           mov    edi , (GraphicViewPort ptr [ebx]).GVPOffset
+           mov    eax , (GraphicViewPort ptr [ebx]).GVPXAdd
+           add    eax , (GraphicViewPort ptr [ebx]).GVPWidth
+           add    eax , (GraphicViewPort ptr [ebx]).GVPPitch
+           mov    [ dst_win_width ] , eax
+           mul    [ dst_y0 ]
+           add    edi , [ dst_x0 ]
+           add    edi , eax
+
+           mov    eax , [ src_height ]
+           xor    edx , edx
+           mov    ebx , [ dst_height ]
+           idiv    [ dst_height ]
+           imul    eax , [ src_win_width ]
+           neg    ebx
+           mov    [ dy_intr ] , eax
+           mov    [ dy_frac ] , edx
+           mov    [ dy_acc ]  , ebx
+
+           mov    eax , [ src_width ]
+           xor    edx , edx
+           shl    eax , 16
+           idiv    [ dst_width ]
+           xor    edx , edx
+           shld    edx , eax , 16
+           shl    eax , 16
+
+           mov    ecx , [ dst_y1 ]
+           mov    ebx , [ dst_x1 ]
+           sub    ecx , [ dst_y0 ]
+           jle    all_done
+           sub    ebx , [ dst_x0 ]
+           jle    all_done
+
+           mov    [ counter_y ] , ecx
+
+           cmp    [ trans ] , 0
+           jnz    transparency
+
+           cmp    [ remap ] , 0
+           jnz    normal_remap
+
+    ; *************************************************************************
+    ; normal scale
+           mov    ecx , ebx
+           and    ecx , 01fh
+           lea    ecx , [ ecx + ecx * 2 ]
+           shr    ebx , 5
+           neg    ecx
+           mov    [ counter_x ] , ebx
+           lea    ecx , [ ref_point + ecx + ecx * 2 ]
+           mov    [ entry ] , ecx
+
+     outter_loop:
+           push    esi
+           push    edi
+           xor    ecx , ecx
+           mov    ebx , [ counter_x ]
+           jmp    [ entry ]
+     inner_loop:
+           ;/ REPT not supported for inline asm. ST - 12/19/2018 6:11PM
+             ;/REPT    32
+                 push ebx        ;/ST - 12/19/2018 6:11PM
+                mov ebx,32    ;/ST - 12/19/2018 6:11PM
+rept_loop3:
+               mov    cl , [ esi ]
+               add    ecx , eax
+               adc    esi , edx
+               mov    [ edi ] , cl
+               inc    edi
+
+                dec ebx                ;/ST - 12/19/2018 6:11PM
+                jnz rept_loop3       ;/ST - 12/19/2018 6:11PM
+                pop ebx                ;/ST - 12/19/2018 6:11PM
+           ;/ENDM
+     ref_point:
+           dec    ebx
+           jge    inner_loop
+
+           pop    edi
+           pop    esi
+           add    edi , [ dst_win_width ]
+           add    esi , [ dy_intr ]
+
+           mov    ebx , [ dy_acc ]
+           add    ebx , [ dy_frac ]
+           jle    skip_line
+           add    esi , [ src_win_width ]
+           sub    ebx , [ dst_height ]
+    skip_line:
+        dec    [ counter_y ]
+        mov    [ dy_acc ] , ebx
+        jnz    outter_loop
+        jmp    all_done    ;ret
+
+
+    ; *************************************************************************
+    ; normal scale with remap
+
+    normal_remap:
+           mov    ecx , ebx
+           mov    [ dx_frac ], eax
+           and    ecx , 01fh
+           mov    eax , [ remap ]
+           shr    ebx , 5
+           imul    ecx , - 13
+           mov    [ counter_x ] , ebx
+           lea    ecx , [ remapref_point + ecx ]
+           mov    [ entry ] , ecx
+
+     remapoutter_loop:
+           mov    ebx , [ counter_x ]
+           push    esi
+           mov    [ remap_counter ] , ebx
+           push    edi
+           xor    ecx , ecx
+           xor    ebx , ebx
+           jmp    [ entry ]
+     remapinner_loop:
+           ;/ REPT not supported for inline asm. ST - 12/19/2018 6:11PM
+             ;/REPT    32
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+               mov    bl , [ esi ]
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+               inc    edi
+
+           ;ENDM
+     remapref_point:
+           dec    [ remap_counter ]
+           jge    remapinner_loop
+
+           pop    edi
+           pop    esi
+           add    edi , [ dst_win_width ]
+           add    esi , [ dy_intr ]
+
+           mov    ebx , [ dy_acc ]
+           add    ebx , [ dy_frac ]
+           jle    remapskip_line
+           add    esi , [ src_win_width ]
+           sub    ebx , [ dst_height ]
+    remapskip_line:
+        dec    [ counter_y ]
+        mov    [ dy_acc ] , ebx
+        jnz    remapoutter_loop
+        jmp    all_done    ;ret
+
+
+    ;****************************************************************************
+    ; scale with trnsparency
+
+    transparency:
+           cmp    [ remap ] , 0
+           jnz    trans_remap
+
+    ; *************************************************************************
+    ; normal scale with transparency
+           mov    ecx , ebx
+           and    ecx , 01fh
+           imul    ecx , -13
+           shr    ebx , 5
+           mov    [ counter_x ] , ebx
+           lea    ecx , [ trans_ref_point + ecx ]
+           mov    [ entry ] , ecx
+
+     trans_outter_loop:
+           xor    ecx , ecx
+           push    esi
+           push    edi
+           mov    ebx , [ counter_x ]
+           jmp    [ entry ]
+     trans_inner_loop:
+           
+           ;/ REPT not supported for inline asm. ST - 12/19/2018 6:11PM
+             ;/REPT    32
+                 push ebx        ;/ST - 12/19/2018 6:11PM
+                mov ebx,32    ;/ST - 12/19/2018 6:11PM
+rept_loop4:
+             
+               mov    cl , [ esi ]
+               test    cl , cl
+               jz    trans_pixel
+               mov    [ edi ] , cl
+           trans_pixel:
+               add    ecx , eax
+               adc    esi , edx
+               inc    edi
+                
+                dec ebx                ;/ST - 12/19/2018 6:11PM
+                jnz rept_loop4        ;/ST - 12/19/2018 6:11PM
+                pop ebx               ;//ST - 12/19/2018 6:11PM
+           
+             ;/ENDM
+     trans_ref_point:
+           dec    ebx
+           jge    trans_inner_loop
+
+           pop    edi
+           pop    esi
+           add    edi , [ dst_win_width ]
+           add    esi , [ dy_intr ]
+
+           mov    ebx , [ dy_acc ]
+           add    ebx , [ dy_frac ]
+           jle    trans_skip_line
+           add    esi , [ src_win_width ]
+           sub    ebx , [ dst_height ]
+    trans_skip_line:
+        dec    [ counter_y ]
+        mov    [ dy_acc ] , ebx
+        jnz    trans_outter_loop
+        jmp    all_done    ;/ret
+
+
+    ; *************************************************************************
+    ; normal scale with remap
+
+    trans_remap:
+           mov    ecx , ebx
+           mov    [ dx_frac ], eax
+           and    ecx , 01fh
+           mov    eax , [ remap ]
+           shr    ebx , 5
+           imul    ecx , - 17
+           mov    [ counter_x ] , ebx
+           lea    ecx , [ trans_remapref_point + ecx ]
+           mov    [ entry ] , ecx
+
+     trans_remapoutter_loop:
+           mov    ebx , [ counter_x ]
+           push    esi
+           mov    [ remap_counter ] , ebx
+           push    edi
+           xor    ecx , ecx
+           xor    ebx , ebx
+           jmp    [ entry ]
+     
+    
+    trans_remapinner_loop:
+           ;/ REPT not supported for inline asm. ST - 12/19/2018 6:11PM
+             ;/REPT    32
+             ;/ Run out of registers so use ebp
+                 push ebp        ;/ST - 12/19/2018 6:11PM
+                mov ebp,32    ;/ST - 12/19/2018 6:11PM
+rept_loop5:
+               mov    bl , [ esi ]
+               test    bl , bl
+               jz    trans_pixel2
+               mov    cl , [ eax + ebx ]
+               mov    [ edi ] , cl
+          trans_pixel2:
+               add    ecx , [ dx_frac ]
+               adc    esi , edx
+               inc    edi
+                
+                dec ebp                ;/ST - 12/19/2018 6:11PM
+                jnz rept_loop5        ;/ST - 12/19/2018 6:11PM
+                pop ebp                ;/ST - 12/19/2018 6:11PM
+
+           ;ENDM
+
+     trans_remapref_point:
+           dec    [ remap_counter ]
+           jge    trans_remapinner_loop
+
+           pop    edi
+           pop    esi
+           add    edi , [ dst_win_width ]
+           add    esi , [ dy_intr ]
+
+           mov    ebx , [ dy_acc ]
+           add    ebx , [ dy_frac ]
+           jle    trans_remapskip_line
+           add    esi , [ src_win_width ]
+           sub    ebx , [ dst_height ]
+    trans_remapskip_line:
+        dec    [ counter_y ]
+        mov    [ dy_acc ] , ebx
+        jnz    trans_remapoutter_loop
+        ;ret
+
+
+    all_done:
+        pop edi
+        pop esi
+        pop ebx
+        ret
+Linear_Scale_To_Linear endp
 
 end

@@ -13,5 +13,17 @@ extern "C" BOOL __cdecl Linear_Blit_To_Linear(void* this_object,
                                               int pixel_width,
                                               int pixel_height,
                                               BOOL trans);
+extern "C" BOOL __cdecl Linear_Scale_To_Linear(void* this_object,
+                                               void* dest,
+                                               int src_x,
+                                               int src_y,
+                                               int dst_x,
+                                               int dst_y,
+                                               int src_width,
+                                               int src_height,
+                                               int dst_width,
+                                               int dst_height,
+                                               BOOL trans,
+                                               char* remap);
 
 #endif
