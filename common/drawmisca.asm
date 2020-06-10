@@ -20,6 +20,7 @@
 
 externdef C Buffer_Draw_Line:near
 externdef C Buffer_Fill_Rect:near
+externdef C Buffer_Clear:near
 
 GraphicViewPort struct
     GVPOffset   DD ? ; offset to virtual viewport
@@ -635,5 +636,95 @@ Buffer_Fill_Rect proc C this_object:dword, x1_pixel:dword, y1_pixel:dword, x2_pi
         pop ebx
         ret
 Buffer_Fill_Rect endp
+
+;***************************************************************************
+;* VVPC::CLEAR -- Clears a virtual viewport instance                       *
+;*                                                                         *
+;* INPUT:	UBYTE the color (optional) to clear the view port to	   *
+;*                                                                         *
+;* OUTPUT:      none                                                       *
+;*                                                                         *
+;* NOTE:	This function is optimized to handle viewport with no XAdd *
+;*		value.  It also handles DWORD aligning the destination	   *
+;*		when speed can be gained by doing it.			   *
+;* HISTORY:                                                                *
+;*   06/07/1994 PWG : Created.                                             *
+;*   08/23/1994 SKB : Clear the direction flag to always go forward.       *
+;*=========================================================================*
+;void __cdecl Buffer_Clear(void* this_object, unsigned char color)
+Buffer_Clear proc C this_object:dword, color:byte
+        push ebx
+        push esi
+        push edi
+
+        cld                          ; always go forward
+
+        mov    ebx,[this_object]            ; get a pointer to viewport
+        mov    edi,(GraphicViewPort ptr [ebx]).GVPOffset    ; get the correct offset
+        mov    edx,(GraphicViewPort ptr [ebx]).GVPHeight    ; get height from viewport
+        mov    esi,(GraphicViewPort ptr [ebx]).GVPWidth        ; get width from viewport
+        ;push    [dword (GraphicViewPort ebx).GVPPitch]    ; extra pitch of direct draw surface
+        push    (GraphicViewPort ptr [ebx]).GVPPitch
+
+        mov    ebx,(GraphicViewPort ptr [ebx]).GVPXAdd        ; esi = add for each line
+        add    ebx,[esp]                ; Yes, I know its nasty but
+        add    esp,4                    ;      it works!
+
+        ;*===================================================================
+        ; Convert the color byte to a DWORD for fast storing
+        ;*===================================================================
+        mov    al,[color]                ; get color to clear to
+        mov    ah,al                    ; extend across WORD
+        mov    ecx,eax                    ; extend across DWORD in
+        shl    eax,16                    ;   several steps
+        mov    ax,cx
+
+        ;*===================================================================
+        ; Find out if we should bother to align the row.
+        ;*===================================================================
+
+        cmp    esi , OPTIMAL_BYTE_COPY            ; is it worth aligning them?
+        jl    byte_by_byte                ;   if not then skip
+
+        ;*===================================================================
+        ; Figure out the alignment offset if there is any
+        ;*===================================================================
+        push    ebx
+    
+    dword_aligned_loop:
+            mov    ecx , edi
+            mov    ebx , esi
+            neg    ecx
+            and    ecx , 3
+            sub    ebx , ecx
+            rep    stosb
+            mov    ecx , ebx
+            shr    ecx , 2
+            rep    stosd
+            mov    ecx , ebx
+            and    ecx , 3
+            rep    stosb
+            add    edi , [ esp ]
+            dec    edx                    ; decrement the height
+            jnz    dword_aligned_loop                ; if more to do than do it
+            pop    eax
+            jmp buffer_clear_cleanup
+
+        ;*===================================================================
+        ; If not enough bytes to bother aligning copy each line across a byte
+        ;    at a time.
+        ;*===================================================================
+    byte_by_byte:
+        mov    ecx,esi                    ; get total width in bytes
+        rep    stosb                    ; store the width
+        add    edi,ebx                    ; handle the xadd
+        dec    edx                    ; decrement the height
+        jnz    byte_by_byte                ; if any left then next line
+    buffer_clear_cleanup:
+        pop edi
+        pop esi
+        pop ebx
+        ret
+Buffer_Clear endp
 
 end
