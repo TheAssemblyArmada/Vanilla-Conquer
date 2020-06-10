@@ -26,4 +26,15 @@ extern "C" BOOL __cdecl Linear_Scale_To_Linear(void* this_object,
                                                BOOL trans,
                                                char* remap);
 
+extern "C" extern int LastIconset;
+extern "C" extern int StampPtr;
+extern "C" extern int IsTrans;
+extern "C" extern int MapPtr;
+extern "C" extern int IconWidth;
+extern "C" extern int IconHeight;
+extern "C" extern int IconSize;
+extern "C" extern int IconCount;
+
+extern "C" void __cdecl Init_Stamps(unsigned int icondata);
+
 #endif
