@@ -21,6 +21,7 @@
 externdef C Buffer_Draw_Line:near
 externdef C Buffer_Fill_Rect:near
 externdef C Buffer_Clear:near
+externdef C Linear_Blit_To_Linear:near
 
 GraphicViewPort struct
     GVPOffset   DD ? ; offset to virtual viewport
@@ -726,5 +727,436 @@ Buffer_Clear proc C this_object:dword, color:byte
         pop ebx
         ret
 Buffer_Clear endp
+
+;BOOL __cdecl Linear_Blit_To_Linear(void* this_object, void* dest, int x_pixel, int y_pixel, int dest_x0, int dest_y0, int pixel_width, int pixel_height, BOOL trans)
+Linear_Blit_To_Linear proc C this_object:dword, dest:dword, x_pixel:dword, y_pixel:dword, dest_x0:dword, dest_y0:dword, pixel_width:dword, pixel_height:dword, trans:dword
+        ;*===================================================================
+        ; Define some locals so that we can handle things quickly
+        ;*===================================================================
+        LOCAL     x1_pixel :dword
+        LOCAL    y1_pixel :dword
+        LOCAL    dest_x1 : dword
+        LOCAL    dest_y1 : dword
+        LOCAL    scr_adjust_width:DWORD
+        LOCAL    dest_adjust_width:DWORD
+        LOCAL    source_area :  dword
+        LOCAL    dest_area :  dword
+
+        push ebx
+        push esi
+        push edi
+    
+        ;This Clipping algorithm is a derivation of the very well known
+        ;Cohen-Sutherland Line-Clipping test. Due to its simplicity and efficiency
+        ;it is probably the most commontly implemented algorithm both in software
+        ;and hardware for clipping lines, rectangles, and convex polygons against
+        ;a rectagular clipping window. For reference see
+        ;"COMPUTER GRAPHICS principles and practice by Foley, Vandam, Feiner, Hughes
+        ; pages 113 to 177".
+        ; Briefly consist in computing the Sutherland code for both end point of
+        ; the rectangle to find out if the rectangle is:
+        ; - trivially accepted (no further clipping test, display rectangle)
+        ; - trivially rejected (return with no action)
+        ; - retangle must be iteratively clipped again edges of the clipping window
+        ;   and the remaining retangle is display.
+
+        ; Clip Source Rectangle against source Window boundaries.
+            mov      esi,[this_object]    ; get ptr to src
+            xor     ecx,ecx            ; Set sutherland code to zero
+            xor     edx,edx            ; Set sutherland code to zero
+
+           ; compute the difference in the X axis and get the bit signs into ecx , edx
+            mov    edi,(GraphicViewPort ptr [esi]).GVPWidth  ; get width into register
+            mov    ebx,[x_pixel]        ; Get first end point x_pixel into register
+            mov    eax,[x_pixel]        ; Get second end point x_pixel into register
+            add    ebx,[pixel_width]   ; second point x1_pixel = x + width
+            shld    ecx, eax,1        ; the sign bit of x_pixel is sutherland code0 bit4
+            mov    [x1_pixel],ebx        ; save second for future use
+            inc    edi            ; move the right edge by one unit
+            shld    edx,ebx,1        ; the sign bit of x1_pixel is sutherland code0 bit4
+            sub    eax,edi            ; compute the difference x0_pixel - width
+            sub    ebx,edi            ; compute the difference x1_pixel - width
+            shld    ecx,eax,1        ; the sign bit of the difference is sutherland code0 bit3
+            shld    edx,ebx,1        ; the sign bit of the difference is sutherland code0 bit3
+
+           ; the following code is just a repeticion of the above code
+           ; in the Y axis.
+            mov    edi,(GraphicViewPort ptr [esi]).GVPHeight ; get height into register
+            mov    ebx,[y_pixel]
+            mov    eax,[y_pixel]
+            add    ebx,[pixel_height]
+            shld    ecx,eax,1
+            mov    [y1_pixel ],ebx
+            inc    edi
+            shld    edx,ebx,1
+            sub    eax,edi
+            sub    ebx,edi
+            shld    ecx,eax,1
+            shld    edx,ebx,1
+
+            ; Here we have the to Sutherland code into cl and dl
+            xor    cl,5               ; bit 2 and 0 are complented, reverse then
+            xor    dl,5               ; bit 2 and 0 are complented, reverse then
+            mov    al,cl               ; save code1 in case we have to clip iteratively
+            test    dl,cl               ; if any bit in code0 and its counter bit
+            jnz    real_out           ; in code1 is set then the rectangle in outside
+            or    al,dl               ; if all bit of code0 the counter bit in
+            jz    clip_against_dest    ; in code1 is set to zero, then all
+                               ; end points of the rectangle are
+                               ; inside the clipping window
+
+             ; if we are here the polygon have to be clip iteratively
+            test    cl,1000b           ; if bit 4 in code0 is set then
+            jz    scr_left_ok           ; x_pixel is smaller than zero
+            mov    [x_pixel],0           ; set x_pixel to cero.
+
+        scr_left_ok:
+            test    cl,0010b           ; if bit 2 in code0 is set then
+            jz    scr_bottom_ok           ; y_pixel is smaller than zero
+            mov    [ y_pixel ],0           ; set y_pixel to cero.
+
+        scr_bottom_ok:
+            test    dl,0100b           ; if bit 3 in code1 is set then
+            jz    scr_right_ok           ; x1_pixel is greater than the width
+            mov    eax,(GraphicViewPort ptr [esi]).GVPWidth ; get width into register
+            mov    [ x1_pixel ],eax       ; set x1_pixel to width.
+        scr_right_ok:
+            test    dl,0001b           ; if bit 0 in code1 is set then
+            jz    clip_against_dest    ; y1_pixel is greater than the width
+            mov    eax,(GraphicViewPort ptr [esi]).GVPHeight  ; get height into register
+            mov    [ y1_pixel ],eax       ; set y1_pixel to height.
+
+        ; Clip Source Rectangle against destination Window boundaries.
+        clip_against_dest:
+
+           ; build the destination rectangle before clipping
+           ; dest_x1 = dest_x0 + ( x1_pixel - x_pixel )
+           ; dest_y1 = dest_y0 + ( y1_pixel - y_pixel )
+            mov    eax,[dest_x0]         ; get dest_x0 into eax
+            mov    ebx,[dest_y0]         ; get dest_y0 into ebx
+            sub    eax,[x_pixel]         ; subtract x_pixel from eax
+            sub    ebx,[y_pixel]         ; subtract y_pixel from ebx
+            add    eax,[x1_pixel]         ; add x1_pixel to eax
+            add    ebx,[y1_pixel]         ; add y1_pixel to ebx
+            mov    [dest_x1],eax         ; save eax into dest_x1
+            mov    [dest_y1],ebx         ; save eax into dest_y1
+
+
+          ; The followin code is a repeticion of the Sutherland clipping
+          ; descrived above.
+            mov      esi,[dest]        ; get ptr to src
+            xor     ecx,ecx
+            xor     edx,edx
+            mov    edi,(GraphicViewPort ptr [esi]).GVPWidth  ; get width into register
+            mov    eax,[dest_x0]
+            mov    ebx,[dest_x1]
+            shld    ecx,eax,1
+            inc    edi
+            shld    edx,ebx,1
+            sub    eax,edi
+            sub    ebx,edi
+            shld    ecx,eax,1
+            shld    edx,ebx,1
+
+            mov    edi,(GraphicViewPort ptr [esi]).GVPHeight ; get height into register
+            mov    eax,[dest_y0]
+            mov    ebx,[dest_y1]
+            shld    ecx,eax,1
+            inc    edi
+            shld    edx,ebx,1
+            sub    eax,edi
+            sub    ebx,edi
+            shld    ecx,eax,1
+            shld    edx,ebx,1
+
+            xor    cl,5
+            xor    dl,5
+            mov    al,cl
+            test    dl,cl
+            jnz    real_out
+            or    al,dl
+            jz    do_blit
+
+            test    cl,1000b
+            jz    dest_left_ok
+            mov    eax,[ dest_x0 ]
+            mov    [ dest_x0 ],0
+            sub    [ x_pixel ],eax
+
+        dest_left_ok:
+            test    cl,0010b
+            jz    dest_bottom_ok
+            mov    eax,[ dest_y0 ]
+            mov    [ dest_y0 ],0
+            sub    [ y_pixel ],eax
+
+
+        dest_bottom_ok:
+            test    dl,0100b
+            jz    dest_right_ok
+            mov    ebx,(GraphicViewPort ptr [esi]).GVPWidth  ; get width into register
+            mov    eax,[ dest_x1 ]
+            mov    [ dest_x1 ],ebx
+            sub    eax,ebx
+            sub    [ x1_pixel ],eax
+
+        dest_right_ok:
+            test    dl,0001b
+            jz    do_blit
+            mov    ebx,(GraphicViewPort ptr [esi]).GVPHeight  ; get width into register
+            mov    eax,[ dest_y1 ]
+            mov    [ dest_y1 ],ebx
+            sub    eax,ebx
+            sub    [ y1_pixel ],eax
+
+
+        ; Here is where    we do the actual blit
+        do_blit:
+               cld
+               mov    ebx,[this_object]
+               mov    esi,(GraphicViewPort ptr [ebx]).GVPOffset
+               mov    eax,(GraphicViewPort ptr [ebx]).GVPXAdd
+               add    eax,(GraphicViewPort ptr [ebx]).GVPWidth
+               add    eax,(GraphicViewPort ptr [ebx]).GVPPitch
+               mov    ecx,eax
+               mul    [y_pixel]
+               add    esi,[x_pixel]
+               mov    [source_area],ecx
+               add    esi,eax
+
+               add    ecx,[x_pixel ]
+               sub    ecx,[x1_pixel ]
+               mov    [scr_adjust_width ],ecx
+
+               mov    ebx,[dest]
+               mov    edi,(GraphicViewPort ptr [ebx]).GVPOffset
+               mov    eax,(GraphicViewPort ptr [ebx]).GVPXAdd
+               add    eax,(GraphicViewPort ptr [ebx]).GVPWidth
+               add    eax,(GraphicViewPort ptr [ebx]).GVPPitch
+               mov    ecx,eax
+               mul    [ dest_y0 ]
+               add    edi,[ dest_x0 ]
+               mov    [ dest_area ],ecx
+               add    edi,eax
+
+               mov    eax,[ dest_x1 ]
+               sub    eax,[ dest_x0 ]
+               jle    real_out
+               sub    ecx,eax
+               mov    [ dest_adjust_width ],ecx
+
+               mov    edx,[ dest_y1 ]
+               sub    edx,[ dest_y0 ]
+               jle    real_out
+
+               cmp    esi,edi
+               jz    real_out
+               jl    backupward_blit
+
+        ; ********************************************************************
+        ; Forward bitblit
+
+               test    [ trans ],1
+               jnz    forward_Blit_trans
+
+
+        ; the inner loop is so efficient that
+        ; the optimal consept no longer apply because
+        ; the optimal byte have to by a number greather than 9 bytes
+               cmp    eax,10
+               jl    forward_loop_bytes
+
+        forward_loop_dword:
+               mov    ecx,edi
+               mov    ebx,eax
+               neg    ecx
+               and    ecx,3
+               sub    ebx,ecx
+               rep    movsb
+               mov    ecx,ebx
+               shr    ecx,2
+               rep    movsd
+               mov    ecx,ebx
+               and    ecx,3
+               rep    movsb
+               add    esi,[ scr_adjust_width ]
+               add    edi,[ dest_adjust_width ]
+               dec    edx
+               jnz    forward_loop_dword
+               jmp    real_out    ;ret
+
+        forward_loop_bytes:
+               mov    ecx,eax
+               rep    movsb
+               add    esi,[ scr_adjust_width ]
+               add    edi,[ dest_adjust_width ]
+               dec    edx
+               jnz    forward_loop_bytes
+               jmp    real_out
+
+        forward_Blit_trans:
+               mov    ecx,eax
+               and    ecx,01fh
+               lea    ecx,[ ecx + ecx * 4 ]
+               neg    ecx
+               shr    eax,5
+               lea    ecx,[ transp_reference + ecx * 2 ]
+               mov    [ y1_pixel ],ecx
+
+        forward_loop_trans:
+               mov    ecx,eax
+               jmp    [ y1_pixel ]
+        forward_trans_line:
+               ;REPT    32
+               ;local    transp_pixel
+                 ;No REPT in msvc inline assembly.
+                 ; Save ECX and use as counter instead. ST - 12/19/2018 5:41PM
+                 push    ecx
+                 mov    ecx, 32
+
+        rept_loop:
+                mov    bl,[ esi ]
+                test    bl,bl
+                jz        transp_pixel
+                mov    [ edi ],bl
+        transp_pixel:
+                inc    esi
+                inc    edi
+
+                dec    ecx            ;ST - 12/19/2018 5:44PM
+                jnz    rept_loop    ;ST - 12/19/2018 5:44PM
+
+                pop    ecx            ;ST - 12/19/2018 5:44PM
+
+            ;ENDM
+            transp_reference:
+               dec    ecx
+               jge    forward_trans_line
+               add    esi,[ scr_adjust_width ]
+               add    edi,[ dest_adjust_width ]
+               dec    edx
+               jnz    forward_loop_trans
+               jmp    real_out        ;ret
+
+
+        ; ************************************************************************
+        ; backward bitblit
+
+        backupward_blit:
+
+            mov    ebx,[ source_area ]
+            dec    edx
+            add    esi,eax
+            imul    ebx,edx
+            std
+            lea    esi,[ esi + ebx - 1 ]
+
+            mov    ebx,[ dest_area ]
+            add    edi,eax
+            imul    ebx,edx
+            lea    edi,[ edi + ebx - 1]
+
+               test    [ trans ],1
+               jnz    backward_Blit_trans
+
+                cmp    eax,15
+                jl    backward_loop_bytes
+
+        backward_loop_dword:
+            push    edi
+            push    esi
+            lea    ecx,[edi+1]
+            mov    ebx,eax
+            and    ecx,3        ; Get non aligned bytes.
+            sub    ebx,ecx        ; remove that from the total size to be copied later.
+            rep    movsb        ; do the copy.
+            sub    esi,3
+            mov    ecx,ebx        ; Get number of bytes left.
+             sub    edi,3
+            shr    ecx,2        ; Do 4 bytes at a time.
+            rep    movsd        ; do the dword copy.
+            mov    ecx,ebx
+            add    esi,3
+            add    edi,3
+            and    ecx,03h
+            rep    movsb        ; finnish the remaining bytes.
+            pop    esi
+            pop    edi
+                sub    esi,[ source_area ]
+                sub    edi,[ dest_area ]
+            dec    edx
+            jge    backward_loop_dword
+            cld
+            jmp    real_out        ;ret
+
+        backward_loop_bytes:
+            push    edi
+            mov    ecx,eax        ; remove that from the total size to be copied later.
+            push    esi
+            rep    movsb        ; do the copy.
+            pop    esi
+            pop    edi
+                sub    esi,[ source_area ]
+                sub    edi,[ dest_area ]
+            dec    edx
+            jge    backward_loop_bytes
+            cld
+            ret
+
+        backward_Blit_trans:
+               mov    ecx,eax
+               and    ecx,01fh
+               lea    ecx,[ ecx + ecx * 4 ]
+               neg    ecx
+               shr    eax,5
+               lea    ecx,[ back_transp_reference + ecx * 2 ]
+               mov    [ y1_pixel ],ecx
+
+        backward_loop_trans:
+               mov    ecx,eax
+               push    edi
+               push    esi
+               jmp    [ y1_pixel ]
+        backward_trans_line:
+               ;REPT    32
+               ;local    transp_pixel2
+                 ;No REPT in msvc inline assembly.
+                 ; Save ECX and use as counter instead. ST - 12/19/2018 5:41PM
+                 push    ecx
+                 mov    ecx, 32
+        rept_loop2:
+                 mov    bl,[ esi ]
+                 test    bl,bl
+                 jz    transp_pixel2
+                 mov    [ edi ],bl
+        transp_pixel2:
+                 dec    esi
+                 dec    edi
+
+                 dec    ecx                ;ST - 12/19/2018 5:44PM
+                 jnz    rept_loop2        ;ST - 12/19/2018 5:44PM
+
+                 pop    ecx                ;ST - 12/19/2018 5:44PM
+            
+            ;ENDM
+            
+             back_transp_reference:
+               dec    ecx
+               jge    backward_trans_line
+               pop    esi
+               pop    edi
+               sub    esi,[ source_area ]
+               sub    edi,[ dest_area ]
+               dec    edx
+               jge    backward_loop_trans
+               cld
+
+        real_out:
+            pop edi
+            pop esi
+            pop ebx
+            ret
+
+Linear_Blit_To_Linear endp
 
 end
