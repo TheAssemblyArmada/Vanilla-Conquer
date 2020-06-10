@@ -35,106 +35,10 @@
 #include <tile.h>
 #include "MISC.H"
 #include "WSA.H"
+#include "common/drawmisc.h"
 
 extern "C" void __cdecl Set_Font_Palette_Range(void const* palette, INT start_idx, INT end_idx)
 {
-}
-
-unsigned int LastIconset = 0;
-unsigned int StampPtr = 0; //	DD	0	; Pointer to icon data.
-
-unsigned int IsTrans = 0; //		DD	0	; Pointer to transparent icon flag table.
-
-unsigned int MapPtr = 0;     //		DD	0	; Pointer to icon map.
-unsigned int IconWidth = 0;  //	DD	0	; Width of icon in pixels.
-unsigned int IconHeight = 0; //	DD	0	; Height of icon in pixels.
-unsigned int IconSize = 0;   //	DD	0	; Number of bytes for each icon data.
-unsigned int IconCount = 0;  //	DD	0	; Number of icons in the set.
-
-#if (0)
-LastIconset DD 0;
-Pointer to last iconset initialized.StampPtr DD 0;
-Pointer to icon data.
-
-    IsTrans DD 0;
-Pointer to transparent icon flag table.
-
-    MapPtr DD 0;
-Pointer to icon map.IconWidth DD 0;
-Width of icon in pixels.IconHeight DD 0;
-Height of icon in pixels.IconSize DD 0; Number of bytes for each icon data.
-IconCount	DD	0	;
-Number of icons in the set.
-
-    GLOBAL C Buffer_Draw_Stamp : near GLOBAL C Buffer_Draw_Stamp_Clip : near
-
-    ;
-256 color icon system.
-#endif
-
-    /*
-    ;***********************************************************
-    ; INIT_STAMPS
-    ;
-    ; VOID cdecl Init_Stamps(VOID *icondata);
-    ;
-    ; This routine initializes the stamp data.
-    ; Bounds Checking: NONE
-    ;
-    ;*
-    */
-    extern "C" void __cdecl Init_Stamps(unsigned int icondata)
-{
-
-    __asm {
-		pushad // ST - 12/20/2018 10:30AM
-		
-		; Verify legality of parameter.
-		cmp	[icondata],0
-		je	short fini
-
-		; Don't initialize if already initialized to this set (speed reasons).
-		mov	edi,[icondata]
-		cmp	[LastIconset],edi
-		je	short fini
-		mov	[LastIconset],edi
-
-		; Record number of icons in set.
-		movzx	eax,[edi]IControl_Type.Count
-		mov	[IconCount],eax
-
-		; Record width of icon.
-		movzx	eax,[edi]IControl_Type.Width
-		mov	[IconWidth],eax
-
-		; Record height of icon.
-		movzx	ebx,[edi]IControl_Type.Height
-		mov	[IconHeight],ebx
-
-		; Record size of icon (in bytes).
-		mul	ebx
-		mov	[IconSize],eax
-
-		; Record hard pointer to icon map data.
-		mov	eax,[edi]IControl_Type.Map
-		add	eax,edi
-		mov	[MapPtr],eax
-
-        // nomap:
-		; Record hard pointer to icon data.
-		mov	eax,edi
-		add	eax,[edi]IControl_Type.Icons
-		mov	[StampPtr],eax
-
-		; Record the transparent table.
-		mov	eax,edi
-		add	eax,[edi]IControl_Type.TransFlag
-		mov	[IsTrans],eax
-
-fini:
-		popad // ST - 12/20/2018 10:30AM
-
-    }
 }
 
 /*

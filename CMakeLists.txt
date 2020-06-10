@@ -182,6 +182,7 @@ set(TIBDAWN_SRC
     tiberiandawn/smudge.cpp
     tiberiandawn/sounddlg.cpp
     tiberiandawn/special.cpp
+    tiberiandawn/stamp.asm
     tiberiandawn/startup.cpp
     tiberiandawn/stats.cpp
     tiberiandawn/super.cpp
@@ -501,6 +502,7 @@ set(REDALERT_SRC
     redalert/smudge.cpp
     redalert/sounddlg.cpp
     redalert/special.cpp
+    redalert/stamp.asm
     redalert/sprite.cpp
     redalert/startup.cpp
     redalert/statbtn.cpp
