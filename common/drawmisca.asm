@@ -27,6 +27,8 @@ externdef C Linear_Blit_To_Linear:near
 externdef C Linear_Scale_To_Linear:near
 externdef C Buffer_Remap:near
 externdef C Build_Fading_Table:near
+externdef C Buffer_Put_Pixel:near
+externdef C Buffer_Get_Pixel:near
 
 .code
 
@@ -2196,5 +2198,144 @@ Build_Fading_Table proc C palette:dword, dest:dword, color:dword, frac:dword
         pop ebx
         ret
 Build_Fading_Table endp
+
+;***************************************************************************
+;**     C O N F I D E N T I A L --- W E S T W O O D   S T U D I O S       **
+;***************************************************************************
+;*                                                                         *
+;*                 Project Name : GraphicViewPortClass			   *
+;*                                                                         *
+;*                    File Name : PUTPIXEL.ASM                             *
+;*                                                                         *
+;*                   Programmer : Phil Gorrow				   *
+;*                                                                         *
+;*                   Start Date : June 7, 1994				   *
+;*                                                                         *
+;*                  Last Update : June 8, 1994   [PWG]                     *
+;*                                                                         *
+;*-------------------------------------------------------------------------*
+;* Functions:                                                              *
+;*   VVPC::Put_Pixel -- Puts a pixel on a virtual viewport                 *
+;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
+
+;***************************************************************************
+;* VVPC::PUT_PIXEL -- Puts a pixel on a virtual viewport                   *
+;*                                                                         *
+;* INPUT:	WORD the x position for the pixel relative to the upper    *
+;*			left corner of the viewport			   *
+;*		WORD the y pos for the pixel relative to the upper left	   *
+;*			corner of the viewport				   *
+;*		UBYTE the color of the pixel to write			   *
+;*                                                                         *
+;* OUTPUT:      none                                                       *
+;*                                                                         *
+;* WARNING:	If pixel is to be placed outside of the viewport then	   *
+;*		this routine will abort.				   *
+;*									   *
+;* HISTORY:                                                                *
+;*   06/08/1994 PWG : Created.                                             *
+;*=========================================================================*
+;void __cdecl Buffer_Put_Pixel(void* this_object, int x_pixel, int y_pixel, unsigned char color)
+Buffer_Put_Pixel proc C this_object:dword, x_pixel:dword, y_pixel:dword, color:byte
+            push ebx
+            push edi
+
+            ;*===================================================================
+            ; Get the viewport information and put bytes per row in ecx
+            ;*===================================================================
+            mov    ebx,[this_object]                ; get a pointer to viewport
+            xor    eax,eax
+            mov    edi,(GraphicViewPort ptr [ebx]).GVPOffset    ; get the correct offset
+            mov    ecx,(GraphicViewPort ptr [ebx]).GVPHeight    ; edx = height of viewport
+            mov    edx,(GraphicViewPort ptr [ebx]).GVPWidth    ; ecx = width of viewport
+
+            ;*===================================================================
+            ; Verify that the X pixel offset if legal
+            ;*===================================================================
+            mov    eax,[x_pixel]                ; find the x position
+            cmp    eax,edx                    ;   is it out of bounds
+            jae    short putpix_done                ; if so then get out
+            add    edi,eax                    ; otherwise add in offset
+
+            ;*===================================================================
+            ; Verify that the Y pixel offset if legal
+            ;*===================================================================
+            mov    eax,[y_pixel]                ; get the y position
+            cmp    eax,ecx                    ;  is it out of bounds
+            jae    putpix_done                    ; if so then get out
+            add    edx,(GraphicViewPort ptr [ebx]).GVPXAdd    ; otherwise find bytes per row
+            add    edx,(GraphicViewPort ptr [ebx]).GVPPitch    ; add in direct draw pitch
+            mul    edx                    ; offset = bytes per row * y
+            add    edi,eax                    ; add it into the offset
+
+            ;*===================================================================
+            ; Write the pixel to the screen
+            ;*===================================================================
+            mov    al,[color]                ; read in color value
+            mov    [edi],al                ; write it to the screen
+        putpix_done:
+            pop edi
+            pop ebx
+            ret
+Buffer_Put_Pixel endp
+
+;***************************************************************************
+;* VVPC::GET_PIXEL -- Gets a pixel from the current view port           *
+;*                                                                         *
+;* INPUT:    WORD the x pixel on the screen.                   *
+;*        WORD the y pixel on the screen.                   *
+;*                                                                         *
+;* OUTPUT:      UBYTE the pixel at the specified location           *
+;*                                                                         *
+;* WARNING:    If pixel is to be placed outside of the viewport then       *
+;*        this routine will abort.                   *
+;*                                                                         *
+;* HISTORY:                                                                *
+;*   06/07/1994 PWG : Created.                                             *
+;*=========================================================================*
+
+;extern "C" int __cdecl Buffer_Get_Pixel(void* this_object, int x_pixel, int y_pixel)
+Buffer_Get_Pixel proc C this_object:dword, x_pixel:dword, y_pixel:dword
+        push ebx
+        push edi
+
+        ;*===================================================================
+        ; Get the viewport information and put bytes per row in ecx
+        ;*===================================================================
+        mov    ebx,[this_object]                ; get a pointer to viewport
+        xor    eax,eax
+        mov    edi,(GraphicViewPort ptr [ebx]).GVPOffset    ; get the correct offset
+        mov    ecx,(GraphicViewPort ptr [ebx]).GVPHeight    ; edx = height of viewport
+        mov    edx,(GraphicViewPort ptr [ebx]).GVPWidth    ; ecx = width of viewport
+
+        ;*===================================================================
+        ; Verify that the X pixel offset if legal
+        ;*===================================================================
+        mov    eax,[x_pixel]                ; find the x position
+        cmp    eax,edx                    ;   is it out of bounds
+        jae    short exit_label                ; if so then get out
+        add    edi,eax                    ; otherwise add in offset
+
+        ;*===================================================================
+        ; Verify that the Y pixel offset if legal
+        ;*===================================================================
+        mov    eax,[y_pixel]                ; get the y position
+        cmp    eax,ecx                    ;  is it out of bounds
+        jae    exit_label                    ; if so then get out
+        add    edx,(GraphicViewPort ptr [ebx]).GVPXAdd    ; otherwise find bytes per row
+        add    edx,(GraphicViewPort ptr [ebx]).GVPPitch    ; otherwise find bytes per row
+        mul    edx                    ; offset = bytes per row * y
+        add    edi,eax                    ; add it into the offset
+
+        ;*===================================================================
+        ; Write the pixel to the screen
+        ;*===================================================================
+        xor    eax,eax                    ; clear the word
+        mov    al,[edi]                ; read in the pixel
+    exit_label:
+        pop edi
+        pop ebx
+        ret
+Buffer_Get_Pixel endp
 
 end
