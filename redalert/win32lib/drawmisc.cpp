@@ -37,10 +37,6 @@
 #include "WSA.H"
 #include "common/drawmisc.h"
 
-extern "C" void __cdecl Set_Font_Palette_Range(void const* palette, INT start_idx, INT end_idx)
-{
-}
-
 /*
 ;***********************************************************
 
