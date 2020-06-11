@@ -18,22 +18,13 @@
 
 .model flat
 
+include graphicviewport.inc
+
 externdef C Buffer_Draw_Line:near
 externdef C Buffer_Fill_Rect:near
 externdef C Buffer_Clear:near
 externdef C Linear_Blit_To_Linear:near
 externdef C Linear_Scale_To_Linear:near
-
-GraphicViewPort struct
-    GVPOffset   DD ? ; offset to virtual viewport
-    GVPWidth    DD ? ; width of virtual viewport
-    GVPHeight   DD ? ; height of virtual viewport
-    GVPXAdd     DD ? ; x mod to get to next line
-    GVPXPos     DD ? ; x pos relative to Graphic Buff
-    GVPYPos     DD ? ; y pos relative to Graphic Buff
-    GVPPitch    DD ? ; modulo of graphic view port
-    GVPBuffPtr  DD ? ; ptr to associated Graphic Buff
-GraphicViewPort ends
 
 .code
 
