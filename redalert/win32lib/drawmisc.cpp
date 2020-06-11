@@ -888,9 +888,6 @@ ENDIF
     CODESEG
 */
 
-extern "C" unsigned char CurrentPalette[768] = {255}; //	DB	768 DUP(255)	; copy of current values of DAC regs
-extern "C" unsigned char PaletteTable[1024] = {0};    //	DB	1024 DUP(0)
-
 /*
 ;***************************************************************************
 ;* SET_PALETTE_RANGE -- Sets a palette range to the new pal                *
