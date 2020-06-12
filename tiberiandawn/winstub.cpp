@@ -114,7 +114,10 @@ VOID* __cdecl Extract_Shape(VOID const* buffer, int shape)
 
 unsigned long CCFocusMessage = WM_USER + 50; // Private message for receiving application focus
 extern void VQA_PauseAudio(void);
-extern void VQA_ResumeAudio(void);
+void VQA_ResumeAudio(void)
+{
+    // Temp, needs real VQALib implementing
+}
 
 ThemeType OldTheme = THEME_NONE;
 
@@ -176,18 +179,18 @@ void Check_For_Focus_Loss(void)
 {
 
 // ST - 1/3/2019 10:40AM
-#if (0)
+#ifndef REMASTER_BUILD
     static BOOL focus_last_time = 1;
     MSG msg;
 
     if (!GameInFocus) {
         Focus_Loss();
-        while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE | PM_NOYIELD)) {
-            if (!GetMessage(&msg, NULL, 0, 0)) {
+        while (PeekMessageA(&msg, NULL, 0, 0, PM_NOREMOVE | PM_NOYIELD)) {
+            if (!GetMessageA(&msg, NULL, 0, 0)) {
                 return;
             }
             TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            DispatchMessageA(&msg);
         }
     }
 
@@ -198,12 +201,12 @@ void Check_For_Focus_Loss(void)
         cd.Set(60 * 1);
 
         do {
-            while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) {
-                if (!GetMessage(&msg, NULL, 0, 0)) {
+            while (PeekMessageA(&msg, NULL, 0, 0, PM_NOREMOVE)) {
+                if (!GetMessageA(&msg, NULL, 0, 0)) {
                     return;
                 }
                 TranslateMessage(&msg);
-                DispatchMessage(&msg);
+                DispatchMessageA(&msg);
             }
 
         } while (cd.Time());
@@ -212,7 +215,7 @@ void Check_For_Focus_Loss(void)
         // VisiblePage.Clear();
         // HiddenPage.Clear();
         // Map.Flag_To_Redraw(true);
-        PostMessage(MainWindow, CCFocusMessage, 0, 0);
+        PostMessageA(MainWindow, CCFocusMessage, 0, 0);
     }
 
     focus_last_time = GameInFocus;
@@ -220,8 +223,8 @@ void Check_For_Focus_Loss(void)
 }
 
 extern BOOL InMovie;
-#if (0) // PG_TO_FIX
-long FAR PASCAL _export Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+#ifndef REMASTER_BUILD // PG_TO_FIX
+long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 {
 
     int low_param = LOWORD(wParam);
@@ -374,9 +377,10 @@ int ShowCommand;
 void Create_Main_Window(HANDLE instance, int command_show, int width, int height)
 
 {
+#ifdef REMASTER_BUILD
     MainWindow = NULL;
     return;
-#if (0)
+#else
     HWND hwnd;
     WNDCLASS wndclass;
     //
@@ -387,8 +391,8 @@ void Create_Main_Window(HANDLE instance, int command_show, int width, int height
     wndclass.lpfnWndProc = Windows_Procedure;
     wndclass.cbClsExtra = 0;
     wndclass.cbWndExtra = 0;
-    wndclass.hInstance = instance;
-    wndclass.hIcon = LoadIcon(instance, MAKEINTRESOURCE(CC_ICON));
+    wndclass.hInstance = (HINSTANCE)instance;
+    wndclass.hIcon = LoadIconA((HINSTANCE)instance, MAKEINTRESOURCE(CC_ICON));
     wndclass.hCursor = NULL;
     wndclass.hbrBackground = NULL;
     wndclass.lpszMenuName = "Command & Conquer"; // NULL
@@ -399,18 +403,18 @@ void Create_Main_Window(HANDLE instance, int command_show, int width, int height
     //
     // Create our main window
     //
-    hwnd = CreateWindowEx(WS_EX_TOPMOST,
-                          "Command & Conquer",
-                          "Command & Conquer",
-                          WS_POPUP | WS_MAXIMIZE,
-                          0,
-                          0,
-                          width,
-                          height,
-                          NULL,
-                          NULL,
-                          instance,
-                          NULL);
+    hwnd = CreateWindowExA(WS_EX_TOPMOST,
+                           "Command & Conquer",
+                           "Command & Conquer",
+                           WS_POPUP | WS_MAXIMIZE,
+                           0,
+                           0,
+                           width,
+                           height,
+                           NULL,
+                           NULL,
+                           (HINSTANCE)instance,
+                           NULL);
 
     ShowWindow(hwnd, command_show);
     ShowCommand = command_show;
@@ -419,7 +423,7 @@ void Create_Main_Window(HANDLE instance, int command_show, int width, int height
     MainWindow = hwnd; // Save the handle to our main window
     hInstance = instance;
 
-    CCFocusMessage = RegisterWindowMessage("CC_GOT_FOCUS");
+    CCFocusMessage = RegisterWindowMessageA("CC_GOT_FOCUS");
 
     Audio_Focus_Loss_Function = &Focus_Loss;
     Misc_Focus_Loss_Function = &Focus_Loss;

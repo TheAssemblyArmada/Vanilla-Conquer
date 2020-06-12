@@ -182,8 +182,9 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
         return (EXIT_SUCCESS);
     }
 
-    // ST - 3/6/2019 1:36PM
-    // DDSCAPS	surface_capabilities;
+#ifndef REMASTER_BUILD
+    DDSCAPS surface_capabilities;
+#endif
 
     if (Ram_Free(MEM_NORMAL) < 5000000) {
 #ifdef GERMAN
@@ -215,7 +216,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
     /*
     ** Get the full path to the .EXE
     */
-    GetModuleFileName(instance, &path_to_exe[0], 280);
+    GetModuleFileNameA(instance, &path_to_exe[0], 280);
 
     /*
     ** First argument is supposed to be a pointer to the .EXE that is running
@@ -263,6 +264,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
     /*
     **	Remember the current working directory and drive.
     */
+#ifndef REMSATER_BUILD
 #if (0) // PG_TO_FIX
     unsigned olddrive;
     char oldpath[MAX_PATH];
@@ -301,6 +303,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 
     SetCurrentDirectoryA(path);
 #endif
+#endif // REMASTER_BUILD
 
 #ifdef JAPANESE
     ForceEnglish = false;
@@ -388,7 +391,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 #endif
         }
 
-#if (0) // ST - 1/2/2019 5:50PM
+#ifndef REMASTER_BUILD
         CDFileClass::Set_CD_Drive(CDList.Get_First_CD_Drive());
 #endif
         if (cfile.Is_Available()) {
@@ -452,7 +455,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
                 ModeXBuff.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VISIBLE | GBC_VIDEOMEM));
             } else {
 
-#if (1) // ST - 1/3/2019 2:11PM
+#ifdef REMASTER_BUILD
 
                 VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
                 HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
@@ -625,7 +628,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
             CCDebugString("C&C95 - About to exit.\n");
             ReadyToQuit = 1;
 
-            PostMessage(MainWindow, WM_DESTROY, 0, 0);
+            PostMessageA(MainWindow, WM_DESTROY, 0, 0);
             do {
                 Keyboard::Check();
             } while (ReadyToQuit == 1);
