@@ -945,7 +945,7 @@ WWMouseClass* WWMouse = NULL;
 HANDLE hInstance;
 int AllDone;
 BOOL InMovie = FALSE; // Are we currently playing a VQ movie?
-// GetCDClass		CDList;
+GetCDClass CDList;
 bool GameStatisticsPacketSent;
 bool ConnectionLost;
 

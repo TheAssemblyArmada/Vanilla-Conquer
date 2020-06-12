@@ -733,7 +733,7 @@ int ReadyToQuit = 0;
 bool IsTheaterShape = false; // must be defined only if not Win32
 #endif // WIN32
 
-// PG GetCDClass		CDList;
+GetCDClass CDList;
 int UnitBuildPenalty = 100;
 
 #ifdef MPEGMOVIE // Denzil 6/15/98
