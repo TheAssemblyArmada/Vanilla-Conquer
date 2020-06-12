@@ -50,6 +50,7 @@
 **
 **
 */
+void (*Audio_Focus_Loss_Function)(void) = nullptr;
 
 SFX_Type SoundType;
 Sample_Type SampleType;

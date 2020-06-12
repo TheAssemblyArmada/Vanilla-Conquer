@@ -301,6 +301,7 @@ set(REDALERT_SRC
     redalert/txtprnt.asm
     redalert/win32lib/tobuff.asm
     redalert/keyfbuff.asm
+    redalert/_wsproto.cpp
     redalert/2keyfram.cpp
     redalert/aadata.cpp
     redalert/abstract.cpp
@@ -628,7 +629,7 @@ endif()
 
 if(BUILD_VANILLARA)
     add_executable(VanillaRA ${REDALERT_SRC} ${REDALERT_HEADERS})
-    target_compile_definitions(VanillaRA PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
+    target_compile_definitions(VanillaRA PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE WINSOCK_IPX)
     target_include_directories(VanillaRA PUBLIC . redalert/win32lib redalert)
     target_link_libraries(VanillaRA common wsock32 ws2_32 winmm DirectX::ddraw DirectX::dxguid)
     set_target_properties(VanillaRA PROPERTIES OUTPUT_NAME vanillara)
