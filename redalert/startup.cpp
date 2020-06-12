@@ -60,7 +60,7 @@ void Print_Error_Exit(char* string);
 #ifdef WIN32
 // WinTimerClass * WinTimer;
 extern void Create_Main_Window(HANDLE instance, int command_show, int width, int height);
-extern bool RA95AlreadyRunning;
+extern BOOL RA95AlreadyRunning;
 HINSTANCE ProgramInstance;
 void Check_Use_Compressed_Shapes(void);
 void Read_Setup_Options(RawFileClass* config_file);
@@ -185,7 +185,9 @@ int main(int argc, char* argv[])
 #ifdef WIN32
 
 #ifndef MPEGMOVIE // Denzil 6/10/98
-// PG DDSCAPS	surface_capabilities;
+#ifndef REMASTER_BUILD
+    DDSCAPS surface_capabilities;
+#endif
 #endif
 
     /*
@@ -193,7 +195,7 @@ int main(int argc, char* argv[])
     **  and if so, switch to the existing instance and terminate ourselves.
     */
     SpawnedFromWChat = false;
-#if (0)                       // PG
+#ifndef REMASTER_BUILD
     if (RA95AlreadyRunning) { // Set in the DDEServer constructor
         // MessageBox (NULL, "Error - attempt to restart Red Alert 95 when already running.", "Red Alert",
         // MB_ICONEXCLAMATION|MB_OK);
@@ -434,7 +436,7 @@ int main(int argc, char* argv[])
 #ifdef WIN32
 
         WindowsTimer = new WinTimerClass(60, FALSE);
-#if (0) // PG
+#ifndef REMASTER_BUILD
         int time_test = WindowsTimer->Get_System_Tick_Count();
         Sleep(1000);
         if (WindowsTimer->Get_System_Tick_Count() == time_test) {
@@ -581,7 +583,7 @@ int main(int argc, char* argv[])
                 ModeXBuff.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VISIBLE | GBC_VIDEOMEM));
             } else {
 
-#if (1) // ST - 1/3/2019 2:11PM
+#ifdef REMASTER_BUILD // ST - 1/3/2019 2:11PM
 
                 VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
                 HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
@@ -676,7 +678,9 @@ int main(int argc, char* argv[])
                 MouseInstalled = TRUE;
             }
 
-            // PG CDFileClass::Set_CD_Drive (CDList.Get_First_CD_Drive());
+#ifndef REMASTER_BUILD
+            CDFileClass::Set_CD_Drive(CDList.Get_First_CD_Drive());
+#endif
 
 #else  // WIN32
 

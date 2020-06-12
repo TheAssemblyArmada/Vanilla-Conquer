@@ -57,7 +57,10 @@ void output(short, short)
 
 unsigned long CCFocusMessage = WM_USER + 50; // Private message for receiving application focus
 extern void VQA_PauseAudio(void);
-extern void VQA_ResumeAudio(void);
+void VQA_ResumeAudio(void)
+{
+    // Temp, needs real VQA lib.
+}
 
 //#include "WolDebug.h"
 
@@ -112,18 +115,18 @@ void Focus_Restore(void)
 
 void Check_For_Focus_Loss(void)
 {
-#if (0) // PG
+#ifndef REMASTER_BUILD // PG
     static BOOL focus_last_time = 1;
     MSG msg;
 
     if (!GameInFocus) {
         Focus_Loss();
-        while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE | PM_NOYIELD)) {
-            if (!GetMessage(&msg, NULL, 0, 0)) {
+        while (PeekMessageA(&msg, NULL, 0, 0, PM_NOREMOVE | PM_NOYIELD)) {
+            if (!GetMessageA(&msg, NULL, 0, 0)) {
                 return;
             }
             TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            DispatchMessageA(&msg);
         }
     }
 
@@ -134,17 +137,17 @@ void Check_For_Focus_Loss(void)
         cd.Set(60 * 1);
 
         do {
-            while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) {
-                if (!GetMessage(&msg, NULL, 0, 0)) {
+            while (PeekMessageA(&msg, NULL, 0, 0, PM_NOREMOVE)) {
+                if (!GetMessageA(&msg, NULL, 0, 0)) {
                     return;
                 }
                 TranslateMessage(&msg);
-                DispatchMessage(&msg);
+                DispatchMessageA(&msg);
             }
 
         } while (cd.Time());
         VQA_ResumeAudio();
-        PostMessage(MainWindow, CCFocusMessage, 0, 0);
+        PostMessageA(MainWindow, CCFocusMessage, 0, 0);
         //		AllSurfaces.Restore_Surfaces();
         //		VisiblePage.Clear();
         //		HiddenPage.Clear();
@@ -156,8 +159,8 @@ void Check_For_Focus_Loss(void)
 }
 
 extern bool InMovie;
-#if (0) // PG
-long FAR PASCAL _export Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+#ifndef REMASTER_BUILD // PG
+long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 {
 
     int low_param = LOWORD(wParam);
@@ -241,7 +244,8 @@ long FAR PASCAL _export Windows_Procedure(HWND hwnd, UINT message, UINT wParam, 
             break;
 
         case 0:
-            Shutdown_Network();
+            // Stubbed out until further work done to restore network stuff. - OmniBlade
+            // Shutdown_Network();
 #ifndef WINSOCK_IPX
             if (Winsock.Get_Connected())
                 Winsock.Close();
@@ -253,7 +257,8 @@ long FAR PASCAL _export Windows_Procedure(HWND hwnd, UINT message, UINT wParam, 
             ExitProcess(0);
             break;
         case 3:
-            Shutdown_Network();
+            // Stubbed out until further work done to restore network stuff. - OmniBlade
+            // Shutdown_Network();
 #ifndef WINSOCK_IPX
             /*
             ** Call the function to disable the IPX callback as horrible things can
@@ -411,9 +416,10 @@ void WWDebugString(const char* string)
 void Create_Main_Window(HANDLE instance, int command_show, int width, int height)
 
 {
+#ifdef REMASTER_BUILD
     MainWindow = NULL;
     return;
-#if (0) // PG
+#else // PG
     HWND hwnd;
     WNDCLASS wndclass;
     //
@@ -424,33 +430,33 @@ void Create_Main_Window(HANDLE instance, int command_show, int width, int height
     wndclass.lpfnWndProc = Windows_Procedure;
     wndclass.cbClsExtra = 0;
     wndclass.cbWndExtra = 0;
-    wndclass.hInstance = instance;
-    wndclass.hIcon = LoadIcon(instance, MAKEINTRESOURCE(CC_ICON));
+    wndclass.hInstance = (HINSTANCE)instance;
+    wndclass.hIcon = LoadIconA((HINSTANCE)instance, MAKEINTRESOURCE(CC_ICON));
     wndclass.hCursor = NULL;
     wndclass.hbrBackground = NULL;
     wndclass.lpszMenuName = WINDOW_NAME; // NULL
     wndclass.lpszClassName = WINDOW_NAME;
 
-    RegisterClass(&wndclass);
+    RegisterClassA(&wndclass);
 
     //
     // Create our main window
     //
-    hwnd = CreateWindowEx(WS_EX_TOPMOST,
-                          WINDOW_NAME,
-                          WINDOW_NAME,
-                          WS_POPUP, // Denzil | WS_MAXIMIZE,
-                          0,
-                          0,
-                          // Denzil 5/18/98 - Making window fullscreen prevents other apps
-                          // from getting WM_PAINT messages
-                          GetSystemMetrics(SM_CXSCREEN), // width,
-                          GetSystemMetrics(SM_CYSCREEN), // height,
-                          // End Denzil
-                          NULL,
-                          NULL,
-                          instance,
-                          NULL);
+    hwnd = CreateWindowExA(WS_EX_TOPMOST,
+                           WINDOW_NAME,
+                           WINDOW_NAME,
+                           WS_POPUP, // Denzil | WS_MAXIMIZE,
+                           0,
+                           0,
+                           // Denzil 5/18/98 - Making window fullscreen prevents other apps
+                           // from getting WM_PAINT messages
+                           GetSystemMetrics(SM_CXSCREEN), // width,
+                           GetSystemMetrics(SM_CYSCREEN), // height,
+                           // End Denzil
+                           NULL,
+                           NULL,
+                           (HINSTANCE)instance,
+                           NULL);
     // Denzil
     width = width;
     height = height;
@@ -463,7 +469,7 @@ void Create_Main_Window(HANDLE instance, int command_show, int width, int height
     MainWindow = hwnd; // Save the handle to our main window
     hInstance = instance;
 
-    CCFocusMessage = RegisterWindowMessage("CC_GOT_FOCUS");
+    CCFocusMessage = RegisterWindowMessageA("CC_GOT_FOCUS");
 
     Audio_Focus_Loss_Function = &Focus_Loss;
     Misc_Focus_Loss_Function = &Focus_Loss;
