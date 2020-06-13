@@ -2366,14 +2366,6 @@ bool Parse_Command_Line(int argc, char* argv[])
             SpawnedFromWChat = true;
         }
 
-        /*
-        ** Allow use of MMX instructions
-        */
-        if (strstr(string, "-MMX")) {
-            MMXAvailable = true;
-            continue;
-        }
-
 #ifdef CHEAT_KEYS
         /*
         **	Allow solo net play

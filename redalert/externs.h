@@ -498,8 +498,6 @@ extern MCIMovie* MciMovie;
 extern MPGSettings* MpgSettings;
 #endif
 
-extern "C" bool MMXAvailable;
-
 extern bool ShareAllyVisibility;
 
 #endif

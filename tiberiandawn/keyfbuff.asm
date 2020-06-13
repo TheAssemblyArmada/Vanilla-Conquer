@@ -210,8 +210,6 @@ BFPredTable	DW	1, 3, 2, 5, 2, 3, 4, 1
 		extern	C IsTheaterShape:dword
 		;extern	C Single_Line_Trans_Entry:near
 		;extern	C Next_Line:near
-		extern	C MMX_Done:near
-		extern	C MMXAvailable:dword
 		;extern	C EndNewShapeJumpTable:byte
 		;extern	C NewShapeJumpTable:dword
 
@@ -1600,12 +1598,6 @@ use_old_stuff:
 	jmp	[ BufferFrameRout ]	; buffer frame to viewport routine
 
 real_out:
-
-	cmp	[MMXAvailable],0
-	jz	no_mmx_cleanup
-	call	MMX_Done
-
-no_mmx_cleanup:
 	epilogue
 
 	ret

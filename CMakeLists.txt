@@ -40,7 +40,6 @@ set(TIBDAWN_SRC
     tiberiandawn/win32lib/tobuff.asm
     tiberiandawn/win32lib/xordelta.asm
     tiberiandawn/keyfbuff.asm
-    tiberiandawn/mmx.asm
     tiberiandawn/txtprnt.asm
     tiberiandawn/aadata.cpp
     tiberiandawn/abstract.cpp
@@ -285,7 +284,6 @@ endif()
 
 set(REDALERT_SRC
     redalert/lcwcomp.asm
-    redalert/mmx.asm
     redalert/txtprnt.asm
     redalert/win32lib/tobuff.asm
     redalert/keyfbuff.asm
@@ -377,7 +375,6 @@ set(REDALERT_SRC
     redalert/gadget.cpp
     redalert/gamedlg.cpp
     redalert/gauge.cpp
-    redalert/getcpu.cpp
     redalert/globals.cpp
     redalert/goptions.cpp
     redalert/gscreen.cpp
