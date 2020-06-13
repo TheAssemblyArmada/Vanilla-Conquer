@@ -213,7 +213,6 @@ set(TIBDAWN_SRC
     tiberiandawn/win32lib/buffglbl.cpp
     tiberiandawn/win32lib/ddraw.cpp
     tiberiandawn/win32lib/dipthong.cpp
-    tiberiandawn/win32lib/drawmisc.cpp
     tiberiandawn/win32lib/drawrect.cpp
     tiberiandawn/win32lib/font.cpp
     tiberiandawn/win32lib/gbuffer.cpp
@@ -551,7 +550,6 @@ set(REDALERT_SRC
     redalert/win32lib/ddraw.cpp
     redalert/win32lib/delay.cpp
     redalert/win32lib/dipthong.cpp
-    redalert/win32lib/drawmisc.cpp
     redalert/win32lib/drawrect.cpp
     redalert/win32lib/font.cpp
     redalert/win32lib/gbuffer.cpp
