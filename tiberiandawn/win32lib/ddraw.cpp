@@ -658,16 +658,15 @@ void Check_Overlapped_Blit_Capability(void)
  *=============================================================================================*/
 BOOL Set_Video_Mode(HWND hwnd, int w, int h, int bits_per_pixel)
 {
+#ifdef REMASTER_BUILD
     // ST - 1/3/2019 10:41AM
     return TRUE;
-#if (0)
+#else
     HRESULT result;
     //
     // If there is not currently a direct draw object then we need to define one.
     //
     if (DirectDrawObject == NULL) {
-        // MessageBox(MainWindow, "In Set_Video_Mode. About to call DirectDrawCreate.","Note",
-        // MB_ICONEXCLAMATION|MB_OK);
         result = DirectDrawCreate(NULL, &DirectDrawObject, NULL);
         Process_DD_Result(result, FALSE);
         if (result == DD_OK) {
@@ -675,8 +674,6 @@ BOOL Set_Video_Mode(HWND hwnd, int w, int h, int bits_per_pixel)
                 result =
                     DirectDrawObject->SetCooperativeLevel(hwnd, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_ALLOWMODEX);
             } else {
-                // MessageBox(MainWindow, "In Set_Video_Mode. About to call SetCooperativeLevel.","Note",
-                // MB_ICONEXCLAMATION|MB_OK);
                 result = DirectDrawObject->SetCooperativeLevel(hwnd, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
             }
             Process_DD_Result(result, FALSE);
@@ -688,10 +685,8 @@ BOOL Set_Video_Mode(HWND hwnd, int w, int h, int bits_per_pixel)
     //
     // Set the required display mode with 8 bits per pixel
     //
-    // MessageBox(MainWindow, "In Set_Video_Mode. About to call call SetDisplayMode.","Note", MB_ICONEXCLAMATION|MB_OK);
     result = DirectDrawObject->SetDisplayMode(w, h, bits_per_pixel);
     if (result != DD_OK) {
-        //		Process_DD_Result(result, FALSE);
         DirectDrawObject->Release();
         DirectDrawObject = NULL;
         return (FALSE);
@@ -700,7 +695,6 @@ BOOL Set_Video_Mode(HWND hwnd, int w, int h, int bits_per_pixel)
     //
     // Create a direct draw palette object
     //
-    // MessageBox(MainWindow, "In Set_Video_Mode. About to call CreatePalette.","Note", MB_ICONEXCLAMATION|MB_OK);
     result = DirectDrawObject->CreatePalette(DDPCAPS_8BIT | DDPCAPS_ALLOW256, &PaletteEntries[0], &PalettePtr, NULL);
     Process_DD_Result(result, FALSE);
     if (result != DD_OK) {
@@ -709,8 +703,6 @@ BOOL Set_Video_Mode(HWND hwnd, int w, int h, int bits_per_pixel)
 
     Check_Overlapped_Blit_Capability();
 
-    // MessageBox(MainWindow, "In Set_Video_Mode. About to return success.","Note", MB_ICONEXCLAMATION|MB_OK);
-#if (0)
     /*
     ** Find out if DirectX 2 extensions are available
     */
@@ -737,9 +729,6 @@ BOOL Set_Video_Mode(HWND hwnd, int w, int h, int bits_per_pixel)
             SystemToSystemBlits = (capabilities.dwSSBCaps & DDCAPS_BLT) ? TRUE : FALSE;
         }
     }
-#endif //(0)
-
-    // MessageBox(MainWindow, "In Set_Video_Mode. About to return success.","Note", MB_ICONEXCLAMATION|MB_OK);
 
     return (TRUE);
 #endif
