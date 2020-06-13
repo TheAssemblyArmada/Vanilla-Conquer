@@ -49,6 +49,16 @@
 #include "options.h"
 #include "infantry.H"
 
+#ifdef REMASTER_BUILD
+#define GBUFF_INIT_WIDTH     1536
+#define GBUFF_INIT_HEIGHT    1536
+#define GBUFF_INIT_ALTHEIGHT 1536
+#else
+#define GBUFF_INIT_WIDTH     640
+#define GBUFF_INIT_HEIGHT    400
+#define GBUFF_INIT_ALTHEIGHT 480
+#endif
+
 #ifdef JAPANESE
 extern bool ForceEnglish;
 #endif

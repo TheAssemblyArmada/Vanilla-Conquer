@@ -50,6 +50,16 @@
 #include "infantry.H"
 #include "DSOUND.H"
 
+#ifdef REMASTER_BUILD
+#define GBUFF_INIT_WIDTH     3072
+#define GBUFF_INIT_HEIGHT    3072
+#define GBUFF_INIT_ALTHEIGHT 3072
+#else
+#define GBUFF_INIT_WIDTH     640
+#define GBUFF_INIT_HEIGHT    400
+#define GBUFF_INIT_ALTHEIGHT 480
+#endif
+
 extern char _staging_buffer[32000];
 extern "C" {
 void _PRO(void);
