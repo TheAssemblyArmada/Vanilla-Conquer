@@ -648,14 +648,14 @@ int main(int argc, char* argv[])
 #endif
             }
 
-            ScreenHeight = 3072;
+            ScreenHeight = GBUFF_INIT_HEIGHT;
 
             if (VisiblePage.Get_Height() == 480) {
-                SeenBuff.Attach(&VisiblePage, 0, 40, 3072, 3072);
-                HidPage.Attach(&HiddenPage, 0, 40, 3072, 3072);
+                SeenBuff.Attach(&VisiblePage, 0, 40, GBUFF_INIT_WIDTH, GBUFF_INIT_ALTHEIGHT);
+                HidPage.Attach(&HiddenPage, 0, 40, GBUFF_INIT_WIDTH, GBUFF_INIT_ALTHEIGHT);
             } else {
-                SeenBuff.Attach(&VisiblePage, 0, 0, 3072, 3072);
-                HidPage.Attach(&HiddenPage, 0, 0, 3072, 3072);
+                SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+                HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
             }
 #endif // MPEGMOVIE - Denzil 6/10/98
 
@@ -827,14 +827,14 @@ int main(int argc, char* argv[])
 /* Initialize DirectDraw and surfaces */
 bool InitDDraw(void)
 {
-
+#ifdef REMASTER_BUILD
     VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VISIBLE | GBC_VIDEOMEM));
     HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)GBC_VIDEOMEM);
     VisiblePage.Attach_DD_Surface(&HiddenPage);
     SeenBuff.Attach(&VisiblePage, 0, 0, 3072, 3072);
     HidPage.Attach(&HiddenPage, 0, 0, 3072, 3072);
 
-#if (0) // PG
+#else
     DDSCAPS surface_capabilities;
     BOOL video_success = FALSE;
 
@@ -924,11 +924,11 @@ bool InitDDraw(void)
     ScreenHeight = 400;
 
     if (VisiblePage.Get_Height() == 480) {
-        SeenBuff.Attach(&VisiblePage, 0, 40, 3072, 3072);
-        HidPage.Attach(&HiddenPage, 0, 40, 3072, 3072);
+        SeenBuff.Attach(&VisiblePage, 0, 40, GBUFF_INIT_WIDTH, GBUFF_INIT_ALTHEIGHT);
+        HidPage.Attach(&HiddenPage, 0, 40, GBUFF_INIT_WIDTH, GBUFF_INIT_ALTHEIGHT);
     } else {
-        SeenBuff.Attach(&VisiblePage, 0, 0, 3072, 3072);
-        HidPage.Attach(&HiddenPage, 0, 0, 3072, 3072);
+        SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+        HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
     }
 #endif
     return true;
@@ -1099,7 +1099,7 @@ void Read_Setup_Options(RawFileClass* config_file)
         */
         VideoBackBufferAllowed = ini.Get_Bool("Options", "VideoBackBuffer", true);
         AllowHardwareBlitFills = ini.Get_Bool("Options", "HardwareFills", true);
-        ScreenHeight = ini.Get_Bool("Options", "Resolution", false) ? 3072 : 3072;
+        ScreenHeight = ini.Get_Bool("Options", "Resolution", false) ? GBUFF_INIT_ALTHEIGHT : GBUFF_INIT_HEIGHT;
 
         /*
         ** See if an alternative socket number has been specified
