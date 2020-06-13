@@ -55,11 +55,6 @@ void Check_From_WChat(char* wchat_name);
 bool SpawnedFromWChat = false;
 bool ProgEndCalled = false;
 
-extern "C" {
-bool __cdecl Detect_MMX_Availability(void);
-void __cdecl Init_MMX(void);
-}
-
 #if (0)
 char WibbleBuffer[1024 * 1024];
 
@@ -347,15 +342,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 #endif
 
         /*
-        ** Check for existance of MMX support on the processor
-        */
-        if (Detect_MMX_Availability()) {
-            // MessageBox(NULL, "MMX extensions detected - enabling MMX support.", "Command &
-            // Conquer",MB_ICONEXCLAMATION|MB_OK);
-            MMXAvailable = true;
-        }
-
-        /*
         ** If there is loads of memory then use uncompressed shapes
         */
         Check_Use_Compressed_Shapes();
@@ -558,14 +544,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
             ** Install the memory error handler
             */
             Memory_Error = &Memory_Error_Handler;
-
-            /*
-            ** Initialise MMX support if its available
-            */
-            CCDebugString("C&C95 - Entering MMX detection.\n");
-            if (MMXAvailable) {
-                Init_MMX();
-            }
 
             CCDebugString("C&C95 - Creating mouse class.\n");
             WWMouse = new WWMouseClass(&SeenBuff, 32, 32);

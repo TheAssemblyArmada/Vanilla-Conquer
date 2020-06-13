@@ -750,8 +750,6 @@ MPGSettings* MpgSettings = NULL;
 bool bAutoSonarPulse = false;
 #endif
 
-bool MMXAvailable = false;
-
 // ST - 5/14/2019
 bool RunningAsDLL = false;
 bool RunningFromEditor = false;
