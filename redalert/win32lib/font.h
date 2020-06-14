@@ -39,6 +39,8 @@
 #include <gbuffer.h>
 #endif
 
+#include "common/setfpal.h"
+
 //////////////////////////////////////// Defines //////////////////////////////////////////
 
 // defines for font header, offsets to block offsets
@@ -79,16 +81,6 @@ void* __cdecl Load_Font(char const* name);
 /*=========================================================================*/
 /* The following prototypes are for the file: TEXTPRNT.ASM	  					*/
 /*=========================================================================*/
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void __cdecl Set_Font_Palette_Range(void const* palette, INT start_idx, INT end_idx);
-
-#ifdef __cplusplus
-}
-#endif
 
 /*=========================================================================*/
 
