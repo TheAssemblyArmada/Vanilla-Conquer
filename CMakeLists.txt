@@ -43,11 +43,11 @@ add_library(common STATIC
     common/iconcach.cpp
     common/drawmisca.asm
     common/drawmisc.cpp
+    common/xordelta.asm
 )
 
 set(TIBDAWN_SRC
     tiberiandawn/win32lib/tobuff.asm
-    tiberiandawn/win32lib/xordelta.asm
     tiberiandawn/keyfbuff.asm
     tiberiandawn/txtprnt.asm
     tiberiandawn/aadata.cpp
