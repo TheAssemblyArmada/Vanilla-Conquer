@@ -44,6 +44,7 @@ add_library(common STATIC
     common/drawmisca.asm
     common/drawmisc.cpp
     common/xordelta.asm
+    common/setfpal.c
 )
 
 # These options currently require directx components from the aug 2007 SDK.
