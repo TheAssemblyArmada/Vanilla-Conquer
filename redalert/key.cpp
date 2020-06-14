@@ -309,7 +309,7 @@ char WWKeyboardClass::To_ASCII(unsigned short key)
     int result = 1;
     int scancode = 0;
 
-    scancode = MapVirtualKey(key & 0xFF, 0);
+    scancode = MapVirtualKeyA(key & 0xFF, 0);
     result = ToAscii((UINT)(key & 0xFF), (UINT)scancode, (PBYTE)KeyState, (LPWORD)buffer, (UINT)0);
 
     /*
@@ -356,7 +356,9 @@ bool WWKeyboardClass::Down(unsigned short key)
 }
 
 extern "C" {
-void __cdecl Stop_Execution(void);
+void __cdecl Stop_Execution(void)
+{
+}
 }
 
 /***********************************************************************************************
@@ -503,12 +505,12 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
 {
     if (!Is_Buffer_Full()) {
         MSG msg;
-        while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) {
-            if (!GetMessage(&msg, NULL, 0, 0)) {
+        while (PeekMessageA(&msg, NULL, 0, 0, PM_NOREMOVE)) {
+            if (!GetMessageA(&msg, NULL, 0, 0)) {
                 return;
             }
             TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            DispatchMessageA(&msg);
         }
     }
 }
@@ -570,7 +572,7 @@ void WWKeyboardClass::Clear(void)
 bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LONG lParam)
 {
 // ST - 5/13/2019
-#if (0)
+#ifndef REMASTER_BUILD // #if (0)
     bool processed = false;
 
     /*
@@ -698,7 +700,7 @@ bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LO
     **	directly.
     */
     if (processed) {
-        DefWindowProc(window, message, wParam, lParam);
+        DefWindowProcA(window, message, wParam, lParam);
         return (true);
     }
 #endif

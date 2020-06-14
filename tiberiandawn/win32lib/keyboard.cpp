@@ -305,14 +305,15 @@ VOID WWKeyboardClass::Split(int& key, int& shift, int& ctrl, int& alt, int& rls,
 }
 
 extern "C" {
-void __cdecl Stop_Execution(void);
+void __cdecl Stop_Execution(void)
+{
+}
 }
 
 //#pragma off(unreferenced)
 void WWKeyboardClass::Message_Handler(HWND, UINT message, UINT wParam, LONG lParam)
 {
-    return;
-#if (0) //   ST - 12/20/2018 11:27AM
+#ifndef REMASTER_BUILD // #if (0) //   ST - 12/20/2018 11:27AM
     switch (message) {
     case WM_SYSKEYDOWN:
     case WM_KEYDOWN:
@@ -383,7 +384,7 @@ void WWKeyboardClass::Message_Handler(HWND, UINT message, UINT wParam, LONG lPar
         break;
     case WM_MOUSEMOVE:
         if (CurrentCursor)
-            SetCursor(CurrentCursor);
+            SetCursor((HCURSOR)CurrentCursor);
         break;
     }
 #endif
@@ -395,12 +396,12 @@ void Message_Loop(void)
 
     MSG msg;
 
-    while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) {
-        if (!GetMessage(&msg, NULL, 0, 0)) {
+    while (PeekMessageA(&msg, NULL, 0, 0, PM_NOREMOVE)) {
+        if (!GetMessageA(&msg, NULL, 0, 0)) {
             return;
         }
         TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        DispatchMessageA(&msg);
     }
 }
 
