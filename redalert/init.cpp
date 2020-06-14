@@ -3062,10 +3062,10 @@ static void Init_Bootstrap_Mixfiles(void)
 
 #ifdef FIXIT_CSII //	Ok. ajw
     bool ok1;
-#if 0
-	new MFCD("HIRES1.MIX", &FastKey);
-	ok1 = MFCD::Cache("HIRES1.MIX");
-	assert(ok1);
+#ifndef REMASTER_BUILD
+    new MFCD("HIRES1.MIX", &FastKey);
+    ok1 = MFCD::Cache("HIRES1.MIX");
+    assert(ok1);
 #else
     new MFCD("LORES1.MIX", &FastKey);
     ok1 = MFCD::Cache("LORES1.MIX");
@@ -3092,12 +3092,12 @@ static void Init_Bootstrap_Mixfiles(void)
     bool ok = MFCD::Cache("LOCAL.MIX");
     assert(ok);
 
-#if 0
-	new MFCD("HIRES.MIX", &FastKey);
-	ok = MFCD::Cache("HIRES.MIX");
-	assert(ok);
+#ifndef REMASTER_BUILD
+    new MFCD("HIRES.MIX", &FastKey);
+    ok = MFCD::Cache("HIRES.MIX");
+    assert(ok);
 
-	new MFCD("NCHIRES.MIX", &FastKey);		//Non-cached hires stuff incl VQ palettes
+    new MFCD("NCHIRES.MIX", &FastKey); //Non-cached hires stuff incl VQ palettes
 #else
     new MFCD("LORES.MIX", &FastKey);
     ok = MFCD::Cache("LORES.MIX");
