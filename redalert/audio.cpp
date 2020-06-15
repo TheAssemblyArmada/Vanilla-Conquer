@@ -432,36 +432,36 @@ void Sound_Effect(VocType voc, COORDINATE coord, int variation, HousesType house
     On_Sound_Effect((int)voc, variation, coord, (int)house);
 
 #else
-	CELL cell_pos = 0;
-	int pan_value;
+    CELL cell_pos = 0;
+    int pan_value;
 
-	if (Debug_Quiet || Options.Volume == 0 || voc == VOC_NONE || !SoundOn || SampleType == SAMPLE_NONE) {
-		return;
-	}
-	if (coord) {
-		cell_pos = Coord_Cell(coord);
-	}
+    if (Debug_Quiet || Options.Volume == 0 || voc == VOC_NONE || !SoundOn || SampleType == SAMPLE_NONE) {
+        return;
+    }
+    if (coord) {
+        cell_pos = Coord_Cell(coord);
+    }
 
-	fixed volume = 1;
-	pan_value = 0;
-	if (coord && !Map.In_View(cell_pos)) {
-		int distance = Distance(coord, Map.TacticalCoord) / CELL_LEPTON_W;
-		fixed dfixed = fixed(distance, 128+64);
-		dfixed.Sub_Saturate(1);
-		volume = fixed(1) - dfixed;
+    fixed volume = 1;
+    pan_value = 0;
+    if (coord && !Map.In_View(cell_pos)) {
+        int distance = Distance(coord, Map.TacticalCoord) / CELL_LEPTON_W;
+        fixed dfixed = fixed(distance, 128 + 64);
+        dfixed.Sub_Saturate(1);
+        volume = fixed(1) - dfixed;
 
-		pan_value  = Cell_X(cell_pos);
-		pan_value -= Coord_XCell(Map.TacticalCoord) + (Lepton_To_Cell(Map.TacLeptonWidth) / 2);
-		if (ABS(pan_value) > Lepton_To_Cell(Map.TacLeptonWidth / 2)) {
-			pan_value *= 0x8000;
-			pan_value /= (MAP_CELL_W >> 2);
-			pan_value = Bound(pan_value, -0x7FFF, 0x7FFF);
-		} else {
-			pan_value  = 0;
-		}
-	}
+        pan_value = Cell_X(cell_pos);
+        pan_value -= Coord_XCell(Map.TacticalCoord) + (Lepton_To_Cell(Map.TacLeptonWidth) / 2);
+        if (ABS(pan_value) > Lepton_To_Cell(Map.TacLeptonWidth / 2)) {
+            pan_value *= 0x8000;
+            pan_value /= (MAP_CELL_W >> 2);
+            pan_value = Bound(pan_value, -0x7FFF, 0x7FFF);
+        } else {
+            pan_value = 0;
+        }
+    }
 
-	Sound_Effect(voc, volume, variation, pan_value, house);
+    Sound_Effect(voc, volume, variation, pan_value, house);
 #endif
 }
 
@@ -503,79 +503,79 @@ int Sound_Effect(VocType voc, fixed volume, int variation, signed short pan_valu
     COORDINATE coord = 0;
     On_Sound_Effect((int)voc, variation, coord, (int)house);
 #else
-	char name[_MAX_FNAME+_MAX_EXT];				// Working filename of sound effect.
+    char name[_MAX_FNAME + _MAX_EXT]; // Working filename of sound effect.
 
-	if (Debug_Quiet || Options.Volume == 0 || voc == VOC_NONE || !SoundOn || SampleType == SAMPLE_NONE) {
-		return(-1);
-	}
+    if (Debug_Quiet || Options.Volume == 0 || voc == VOC_NONE || !SoundOn || SampleType == SAMPLE_NONE) {
+        return (-1);
+    }
 
-	/*
+    /*
 	**	Alter the volume according to the game volume setting.
 	*/
-	volume = volume * Options.Volume;
+    volume = volume * Options.Volume;
 
-	/*
+    /*
 	**	Fetch a pointer to the sound effect data. Modify the sound as appropriate and desired.
 	*/
-	char const * ext = ".AUD";
-	if (SoundEffectName[voc].Where == IN_VAR) {
+    char const* ext = ".AUD";
+    if (SoundEffectName[voc].Where == IN_VAR) {
 
-		/*
+        /*
 		**	If there is no forced house, then use the current player
 		**	act like house.
 		*/
-		if (house == HOUSE_NONE) {
-			house = PlayerPtr->ActLike;
-		}
+        if (house == HOUSE_NONE) {
+            house = PlayerPtr->ActLike;
+        }
 
-		/*
+        /*
 		**	Change the extension based on the variation and house accent requested.
 		*/
-		if (((1 << house) & HOUSEF_ALLIES) != 0) {
+        if (((1 << house) & HOUSEF_ALLIES) != 0) {
 
-			/*
+            /*
 			**	For infantry, use a variation on the response. For vehicles, always
 			**	use the vehicle response table.
 			*/
-			if (variation < 0) {
-				if (ABS(variation) % 2) {
-					ext = ".V00";
-				} else {
-					ext = ".V02";
-				}
-			} else {
-				if (variation % 2) {
-					ext = ".V01";
-				} else {
-					ext = ".V03";
-				}
-			}
-		} else {
-			if (variation < 0) {
-				if (ABS(variation) % 2) {
-					ext = ".R00";
-				} else {
-					ext = ".R02";
-				}
-			} else {
-				if (variation % 2) {
-					ext = ".R01";
-				} else {
-					ext = ".R03";
-				}
-			}
-		}
-	}
-	_makepath(name, NULL, NULL, SoundEffectName[voc].Name, ext);
-	void const * ptr = MFCD::Retrieve(name);
+            if (variation < 0) {
+                if (ABS(variation) % 2) {
+                    ext = ".V00";
+                } else {
+                    ext = ".V02";
+                }
+            } else {
+                if (variation % 2) {
+                    ext = ".V01";
+                } else {
+                    ext = ".V03";
+                }
+            }
+        } else {
+            if (variation < 0) {
+                if (ABS(variation) % 2) {
+                    ext = ".R00";
+                } else {
+                    ext = ".R02";
+                }
+            } else {
+                if (variation % 2) {
+                    ext = ".R01";
+                } else {
+                    ext = ".R03";
+                }
+            }
+        }
+    }
+    _makepath(name, NULL, NULL, SoundEffectName[voc].Name, ext);
+    void const* ptr = MFCD::Retrieve(name);
 
-	/*
+    /*
 	**	If the sound data pointer is not null, then presume that it is valid.
 	*/
-	if (ptr != NULL) {
-		volume.Sub_Saturate(1);
-		return(Play_Sample(ptr, SoundEffectName[voc].Priority * volume, volume*256, pan_value));
-	}
+    if (ptr != NULL) {
+        volume.Sub_Saturate(1);
+        return (Play_Sample(ptr, SoundEffectName[voc].Priority * volume, volume * 256, pan_value));
+    }
 #endif
 
     return (-1);
@@ -767,10 +767,11 @@ void Speak(VoxType voice, HouseClass* house, COORDINATE coord)
         On_Ping(house, coord);
     }
 #else
-	if (!Debug_Quiet && Options.Volume != 0 && SampleType != 0 && voice != VOX_NONE && voice != SpeakQueue && voice != CurrentVoice && SpeakQueue == VOX_NONE) {
-		SpeakQueue = voice;
-		Speak_AI();
-	}
+    if (!Debug_Quiet && Options.Volume != 0 && SampleType != 0 && voice != VOX_NONE && voice != SpeakQueue
+        && voice != CurrentVoice && SpeakQueue == VOX_NONE) {
+        SpeakQueue = voice;
+        Speak_AI();
+    }
 #endif
 }
 
@@ -795,50 +796,52 @@ void Speak_AI(void)
 {
 // MBL 06.17.2019 KO
 #ifndef REMASTER_BUILD
-	static int _index = 0;
-	if (Debug_Quiet || SampleType == 0) return;
+    static int _index = 0;
+    if (Debug_Quiet || SampleType == 0)
+        return;
 
-	if (!Is_Sample_Playing(SpeechBuffer[_index])) {
-		CurrentVoice = VOX_NONE;
-		if (SpeakQueue != VOX_NONE) {
+    if (!Is_Sample_Playing(SpeechBuffer[_index])) {
+        CurrentVoice = VOX_NONE;
+        if (SpeakQueue != VOX_NONE) {
 
-			/*
+            /*
 			**	Try to find a previously loaded copy of the EVA speech in one of the
 			**	speech buffers.
 			*/
-			void const * speech = NULL;
-			for (int index = 0; index < ARRAY_SIZE(SpeechRecord); index++) {
-				if (SpeechRecord[index] == SpeakQueue) break;
-			}
+            void const* speech = NULL;
+            for (int index = 0; index < ARRAY_SIZE(SpeechRecord); index++) {
+                if (SpeechRecord[index] == SpeakQueue)
+                    break;
+            }
 
-			/*
+            /*
 			**	If a previous copy could not be located, then load the requested
 			**	voice into the oldest buffer available.
 			*/
-			if (speech == NULL) {
-				_index = (_index + 1) % ARRAY_SIZE(SpeechRecord);
+            if (speech == NULL) {
+                _index = (_index + 1) % ARRAY_SIZE(SpeechRecord);
 
-				char name[_MAX_FNAME+_MAX_EXT];
+                char name[_MAX_FNAME + _MAX_EXT];
 
-				_makepath(name, NULL, NULL, Speech[SpeakQueue], ".AUD");
-				CCFileClass file(name);
-				if (file.Is_Available() && file.Read(SpeechBuffer[_index], SPEECH_BUFFER_SIZE)) {
-					speech = SpeechBuffer[_index];
-					SpeechRecord[_index] = SpeakQueue;
-				}
-			}
+                _makepath(name, NULL, NULL, Speech[SpeakQueue], ".AUD");
+                CCFileClass file(name);
+                if (file.Is_Available() && file.Read(SpeechBuffer[_index], SPEECH_BUFFER_SIZE)) {
+                    speech = SpeechBuffer[_index];
+                    SpeechRecord[_index] = SpeakQueue;
+                }
+            }
 
-			/*
+            /*
 			**	Since the speech file was loaded, play it.
 			*/
-			if (speech != NULL) {
-				Play_Sample(speech, 254, Options.Volume * 256);
-				CurrentVoice = SpeakQueue;
-			}
+            if (speech != NULL) {
+                Play_Sample(speech, 254, Options.Volume * 256);
+                CurrentVoice = SpeakQueue;
+            }
 
-			SpeakQueue = VOX_NONE;
-		}
-	}
+            SpeakQueue = VOX_NONE;
+        }
+    }
 #endif
 #ifdef REMASTER_BUILD
     // MBL 06.18.2019

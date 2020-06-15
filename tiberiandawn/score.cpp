@@ -1034,10 +1034,11 @@ void Cycle_Wait_Click(void)
 
         if (GameToPlay == GAME_NULL_MODEM || GameToPlay == GAME_MODEM) {
             // GameToPlay == GAME_INTERNET) {
-#if (0) // PG_TO_FIX
-        //
-        // send a timing packet if enough time has gone by.
-        //
+// PG_TO_FIX
+#if (0)
+            //
+            // send a timing packet if enough time has gone by.
+            //
             if ((TickCount.Time() - timingtime) > PACKET_TIMING_TIMEOUT) {
                 sendpacket.Command = SERIAL_SCORE_SCREEN;
                 sendpacket.ResponseTime = NullModem.Response_Time();

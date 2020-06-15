@@ -319,22 +319,22 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
         if (WindowsTimer->Get_System_Tick_Count() == time_test) {
 #ifdef FRENCH
             MessageBoxA(0,
-                       "Error - L'horloge systŠme n'a pas pu s'initialiser en raison de l'instabilit‚ du sytŠme. Vous "
-                       "devez red‚marrer Windows.",
-                       "Command & Conquer",
-                       MB_OK | MB_ICONSTOP);
+                        "Error - L'horloge systŠme n'a pas pu s'initialiser en raison de l'instabilit‚ du sytŠme. Vous "
+                        "devez red‚marrer Windows.",
+                        "Command & Conquer",
+                        MB_OK | MB_ICONSTOP);
 #else
 #ifdef GERMAN
             MessageBoxA(0,
-                       "Fehler - das Timer-System konnte aufgrund einer Instabilit„t des Systems nicht initialisiert "
-                       "werden. Bitte starten Sie Windows neu.",
-                       "Command & Conquer",
-                       MB_OK | MB_ICONSTOP);
+                        "Fehler - das Timer-System konnte aufgrund einer Instabilit„t des Systems nicht initialisiert "
+                        "werden. Bitte starten Sie Windows neu.",
+                        "Command & Conquer",
+                        MB_OK | MB_ICONSTOP);
 #else
             MessageBoxA(0,
-                       "Error - Timer system failed to start due to system instability. You need to restart Windows.",
-                       "Command & Conquer",
-                       MB_OK | MB_ICONSTOP);
+                        "Error - Timer system failed to start due to system instability. You need to restart Windows.",
+                        "Command & Conquer",
+                        MB_OK | MB_ICONSTOP);
 #endif // GERMAN
 #endif // FRENCH
             return (EXIT_FAILURE);
@@ -388,10 +388,10 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 #endif
 #if !(FRENCH | GERMAN)
             int reply = MessageBoxA(NULL,
-                                   "Warning - you are critically low on free disk space for virtual memory and save "
-                                   "games. Do you want to play C&C anyway?",
-                                   "Command & Conquer",
-                                   MB_ICONQUESTION | MB_YESNO);
+                                    "Warning - you are critically low on free disk space for virtual memory and save "
+                                    "games. Do you want to play C&C anyway?",
+                                    "Command & Conquer",
+                                    MB_ICONQUESTION | MB_YESNO);
             if (reply == IDNO) {
 
                 if (WindowsTimer)
@@ -449,9 +449,9 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
             if (!video_success) {
                 CCDebugString("C&C95 - Failed to set video mode.\n");
                 MessageBoxA(MainWindow,
-                           Text_String(TXT_UNABLE_TO_SET_VIDEO_MODE),
-                           "Command & Conquer",
-                           MB_ICONEXCLAMATION | MB_OK);
+                            Text_String(TXT_UNABLE_TO_SET_VIDEO_MODE),
+                            "Command & Conquer",
+                            MB_ICONEXCLAMATION | MB_OK);
                 if (WindowsTimer)
                     delete WindowsTimer;
                 if (Palette)
@@ -485,9 +485,9 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
                     */
                     CCDebugString("C&C95 - Unable to allocate primary surface.\n");
                     MessageBoxA(MainWindow,
-                               Text_String(TXT_UNABLE_TO_ALLOCATE_PRIMARY_VIDEO_BUFFER),
-                               "Command & Conquer",
-                               MB_ICONEXCLAMATION | MB_OK);
+                                Text_String(TXT_UNABLE_TO_ALLOCATE_PRIMARY_VIDEO_BUFFER),
+                                "Command & Conquer",
+                                MB_ICONEXCLAMATION | MB_OK);
                     if (WindowsTimer)
                         delete WindowsTimer;
                     if (Palette)

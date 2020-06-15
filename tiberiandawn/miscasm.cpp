@@ -625,8 +625,8 @@ establish default return value
 
     mov ebx,
     [base] or ebx, ebx jz near ? ? retneg1;
-if base
-    == 0,
+if
+    base == 0,
         return 65535
 
         mov eax,
@@ -688,8 +688,8 @@ all_done:
 
           test eax,
     0FF000000h;
-    if high
-        byte set, return FFFF jnz ? ? rneg1 shr eax, 8;
+    if
+        high byte set, return FFFF jnz ? ? rneg1 shr eax, 8;
     else
         , return eax / 256 ret ? ? rneg1 : mov eax, 0FFFFh;
     establish default return value ret

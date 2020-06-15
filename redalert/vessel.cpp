@@ -612,7 +612,7 @@ void VesselClass::AI(void)
     }
 #endif
 
-#ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
+#ifdef FIXIT_CARRIER //	checked - ajw 9/28/98                                                                          \
                      // Re-stock the ammo of any on-board helicopters on an aircraft carrier.
     if (*this == VESSEL_CARRIER && How_Many()) {
         if (!MoebiusCountDown) {

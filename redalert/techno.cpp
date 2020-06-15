@@ -729,8 +729,8 @@ int TechnoClass::Time_To_Build(void) const
 
     int divisor = House->Factory_Count(What_Am_I());
     if (divisor != 0) {
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-                  // Hack: allow the multiple-factory bonus, but only up to two factories if
+#ifdef FIXIT_CSII //	checked - ajw 9/28/98                                                                             \
+                  // Hack: allow the multiple-factory bonus, but only up to two factories if                           \
                   //			this is an AM<->AM game.
         if (NewUnitsEnabled) {
             val /= min(divisor, 2);
@@ -2972,9 +2972,9 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         **	If cloaked, then firing is disabled.
         */
         if (Cloak != UNCLOAKED) {
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-                  // Special hack for John Archer's Hunt-The-Wumpus multiplayer mission... if
-                  // the object firing is a cloaked civilian, don't require uncloaking before
+#ifdef FIXIT_CSII //	checked - ajw 9/28/98                                                                             \
+                  // Special hack for John Archer's Hunt-The-Wumpus multiplayer mission... if                          \
+                  // the object firing is a cloaked civilian, don't require uncloaking before                          \
                   // allowing firing.
             if (What_Am_I() == RTTI_INFANTRY && ((InfantryClass*)this)->Class->IsCivilian) {
                 return (FIRE_OK);
@@ -3600,9 +3600,9 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             bool ctrldown = DLL_Export_Get_Input_Key_State(KN_LCTRL);
             bool shiftdown = DLL_Export_Get_Input_Key_State(KN_LSHIFT);
 #else
-            bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
-            bool ctrldown = (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
-            bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
+        bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
+        bool ctrldown = (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
+        bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
 #endif
             /*
             **	Special guard area mission is possible if both the control and the
@@ -3731,9 +3731,9 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         bool ctrldown = DLL_Export_Get_Input_Key_State(KN_LCTRL);
         bool shiftdown = DLL_Export_Get_Input_Key_State(KN_LSHIFT);
 #else
-        bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
-        bool ctrldown = (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
-        bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
+    bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
+    bool ctrldown = (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
+    bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
 #endif
         /*
         **	Disable recognizing the <CTRL> key forced fire option when dealing with buildings.
@@ -4239,8 +4239,8 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             */
             source->House->PointTotal += points;
         }
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-                  // Hack check: if they were trying to teleport this unit when it died, take
+#ifdef FIXIT_CSII //	checked - ajw 9/28/98                                                                             \
+                  // Hack check: if they were trying to teleport this unit when it died, take                          \
                   //	the map mode out of teleportation mode.
         if (IsOwnedByPlayer && Map.IsTargettingMode == SPC_CHRONO2 && House->UnitToTeleport == As_Target()) {
             Map.IsTargettingMode = SPC_NONE;

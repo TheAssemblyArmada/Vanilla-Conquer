@@ -896,35 +896,36 @@ static BuildingTypeClass const ClassSAM(STRUCT_SAM,
                                         (short const*)OListSAM // OVERLAPLIST:List of overlap cell offset.
 );
 
-static BuildingTypeClass const
-    ClassMissileSilo(STRUCT_MSLO,
-                     TXT_MSLO,              // NAME:			Short name of the structure.
-                     "MSLO",                // NAME:			Short name of the structure.
-                     FACING_NONE,           // Foundation direction from center of building.
-                     XYP_COORD(0, 0),       // Exit point for produced units.
-                     REMAP_ALTERNATE,       // Sidebar remap logic.
-                     0x0000,                //	Vertical offset.
-                     0x0000,                // Primary weapon offset along turret centerline.
-                     0x0000,                // Primary weapon lateral offset along turret centerline.
-                     false,                 // Is this building a fake (decoy?)
-                     true,                  // Animation rate is regulated for constant speed?
-                     false,                 // Always use the given name for the building?
-                     false,                 // Is this a wall type structure?
-                     false,                 // Simple (one frame) damage imagery?
-                     false,                 // Is it invisible to radar?
-                     true,                  // Can the player select this?
-                     true,                  // Is this a legal target for attack or move?
-                     false,                 // Is this an insignificant building?
-                     true,                  // Theater specific graphic image?
-                     false,                 // Does it have a rotating turret?
-                     true,                  // Can the building be color remapped to indicate owner?
-                     RTTI_NONE,             // The object type produced at this factory.
-                     DIR_N,                 // Starting idle frame to match construction.
-                     BSIZE_21,              // SIZE:			Building size.
-                     NULL,                  // Preferred exit cell list.
-                     (short const*)List21,  // OCCUPYLIST:	List of active foundation squares.
-                     (short const*)OListSAM // OVERLAPLIST:List of overlap cell offset.
-    );
+// clang-format off
+static BuildingTypeClass const ClassMissileSilo(STRUCT_MSLO,
+                                                TXT_MSLO,        // NAME:			Short name of the structure.
+                                                "MSLO",          // NAME:			Short name of the structure.
+                                                FACING_NONE,     // Foundation direction from center of building.
+                                                XYP_COORD(0, 0), // Exit point for produced units.
+                                                REMAP_ALTERNATE, // Sidebar remap logic.
+                                                0x0000,          //	Vertical offset.
+                                                0x0000,          // Primary weapon offset along turret centerline.
+                                                0x0000,    // Primary weapon lateral offset along turret centerline.
+                                                false,     // Is this building a fake (decoy?)
+                                                true,      // Animation rate is regulated for constant speed?
+                                                false,     // Always use the given name for the building?
+                                                false,     // Is this a wall type structure?
+                                                false,     // Simple (one frame) damage imagery?
+                                                false,     // Is it invisible to radar?
+                                                true,      // Can the player select this?
+                                                true,      // Is this a legal target for attack or move?
+                                                false,     // Is this an insignificant building?
+                                                true,      // Theater specific graphic image?
+                                                false,     // Does it have a rotating turret?
+                                                true,      // Can the building be color remapped to indicate owner?
+                                                RTTI_NONE, // The object type produced at this factory.
+                                                DIR_N,     // Starting idle frame to match construction.
+                                                BSIZE_21,  // SIZE:			Building size.
+                                                NULL,      // Preferred exit cell list.
+                                                (short const*)List21,  // OCCUPYLIST:	List of active foundation squares.
+                                                (short const*)OListSAM // OVERLAPLIST:List of overlap cell offset.
+);
+// clang-format on
 
 static BuildingTypeClass const ClassAirStrip(STRUCT_AIRSTRIP,
                                              TXT_AIRSTRIP,    // NAME:			Short name of the structure.

@@ -4959,8 +4959,8 @@ bool Force_CD_Available(int cd)
             */
             cd_index = Get_CD_Index(last_drive, 10 * 60);
 
-#ifdef DVD // Denzil
-            // Ignore CD1 and CD2 disks, force DVD
+#ifdef DVD // Denzil                                                                                                   \
+           // Ignore CD1 and CD2 disks, force DVD
             if (cd_index == 0 || cd_index == 1)
                 cd_index = -1;
 #endif
@@ -4976,8 +4976,8 @@ bool Force_CD_Available(int cd)
                 }
 #endif
 
-#ifdef DVD // Denzil
-                // If DVD is in drive
+#ifdef DVD // Denzil                                                                                                   \
+           // If DVD is in drive
                 if (cd_index == 4) {
                     // CD1, CD2 and DVD requests are all on the DVD
                     if ((cd == 0) || (cd == 1) || (cd == 5)) {
@@ -5015,8 +5015,8 @@ bool Force_CD_Available(int cd)
                 cd_drive = CDList.Get_Next_CD_Drive();
                 cd_index = Get_CD_Index(cd_drive, drive_search_timeout);
 
-#ifdef DVD // Denzil
-                // Ignore CD1 and CD2, force the DVD
+#ifdef DVD // Denzil                                                                                                   \
+           // Ignore CD1 and CD2, force the DVD
                 if (cd_index == 0 || cd_index == 1)
                     cd_index = -1;
 #endif
@@ -5025,8 +5025,8 @@ bool Force_CD_Available(int cd)
 /*
 ** We found a C&C cd - lets see if it was the one we were looking for
 */
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-                    // Require CS or AM
+#ifdef FIXIT_CSII //	checked - ajw 9/28/98                                                                             \
+                  // Require CS or AM
                     if (cd == 4) {
                         // If the disk is CS or AM then request it
                         if (cd_index == 2 || cd_index == 3) {

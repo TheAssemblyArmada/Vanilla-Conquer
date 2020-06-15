@@ -6259,7 +6259,7 @@ int Com_Show_Scenario_Dialog(void)
                                 }
                             }
                         } else {
-#ifndef FIXIT_VERSION_3     //	Removed restriction on downloading official maps.
+#ifndef FIXIT_VERSION_3 //	Removed restriction on downloading official maps.
                             /*
                              ** Oh dear. Thats a scenario I dont have. Request that the host sends the
                              **	scenario to me provided it isnt an official Westwood scenario.

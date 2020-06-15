@@ -707,15 +707,15 @@ void SidebarClass::Draw_It(bool complete)
                      SideHeight - TopHeight,
                      BOXSTYLE_RAISED,
                      false);
-#endif //(0)
-       // Repair.Draw_Me(true);
-       // Upgrade.Draw_Me(true);
-       // Zoom.Draw_Me(true);
-            //	} else {
-            //		if (IsToRedraw || complete) {
-            //			LogicPage->Fill_Rect(TacPixelX + Lepton_To_Pixel(TacLeptonWidth), SIDE_Y, 319, SIDE_Y+TOP_HEIGHT,
-            //BLACK);
-            //		}
+#endif //(0)                                                                                                           \
+       // Repair.Draw_Me(true);                                                                                        \
+       // Upgrade.Draw_Me(true);                                                                                       \
+       // Zoom.Draw_Me(true);                                                                                          \
+    //	} else {                                                                                                        \
+    //		if (IsToRedraw || complete) {                                                                                  \
+    //			LogicPage->Fill_Rect(TacPixelX + Lepton_To_Pixel(TacLeptonWidth), SIDE_Y, 319, SIDE_Y+TOP_HEIGHT,             \
+    //BLACK);                                                                                                          \
+    //		}
 
             LogicPage->Unlock();
         }

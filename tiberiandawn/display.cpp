@@ -768,7 +768,7 @@ bool DisplayClass::Passes_Proximity_Check(ObjectTypeClass const* object)
 
     return Passes_Proximity_Check(object, PendingHouse, CursorSize, ZoneCell + ZoneOffset);
 
-#else // USE_RA_AI		                            // Replaced by more generic function from RA, for RA AI. ST -
+#else // USE_RA_AI		                            // Replaced by more generic function from RA, for RA AI. ST -          \
       // 7/24/2019 5:46PM
 
     short const* ptr;
@@ -4084,12 +4084,8 @@ void DisplayClass::Set_Tactical_Position(COORDINATE coord)
     int xx = Coord_X(coord) - Cell_To_Lepton(MapCellX);
     int yy = Coord_Y(coord) - Cell_To_Lepton(MapCellY);
 
-    Confine_Rect(&xx,
-                 &yy,
-                 TacLeptonWidth,
-                 TacLeptonHeight,
-                 Cell_To_Lepton(MapCellWidth),
-                 Cell_To_Lepton(MapCellHeight));
+    Confine_Rect(
+        &xx, &yy, TacLeptonWidth, TacLeptonHeight, Cell_To_Lepton(MapCellWidth), Cell_To_Lepton(MapCellHeight));
 #endif
     coord = XY_Coord(xx + Cell_To_Lepton(MapCellX), yy + Cell_To_Lepton(MapCellY));
 

@@ -237,10 +237,11 @@ int Check_Menu(int menu, char const* text[], char*, long field, int index)
     UnknownKey = 0;
     if (Keyboard->Check()) {
 #ifdef WIN32
-        key = (Keyboard->Get()
-               & ~(WWKEY_SHIFT_BIT | WWKEY_ALT_BIT | WWKEY_CTRL_BIT)); /* mask off all but release bit	*/
+        /* mask off all but release bit	*/
+        key = (Keyboard->Get() & ~(WWKEY_SHIFT_BIT | WWKEY_ALT_BIT | WWKEY_CTRL_BIT));
 #else
-        key = (Keyboard->Get() & 0x08FF); /* mask off all but release bit	*/
+        /* mask off all but release bit	*/
+        key = (Keyboard->Get() & 0x08FF);
 #endif
     }
 
@@ -470,7 +471,7 @@ int Main_Menu(unsigned long)
 #ifdef FIXIT_VERSION_3
     int d_dialog_h = 100 * RESFACTOR;
 #else
-                                          //#ifdef WIN32	//Extra 'Internet' option on WIN32 menu
+    //#ifdef WIN32	//Extra 'Internet' option on WIN32 menu
 #if defined(WIN32) && !defined(INTERNET_OFF) // Denzil 5/1/98 - No internet play
     int d_dialog_h = 100 * RESFACTOR;
 #else

@@ -1,11 +1,16 @@
 cmake_minimum_required(VERSION 3.10)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
 enable_language(ASM_MASM)
 set(CMAKE_ASM_MASM_FLAGS "/Zm /Cp /safeseh" CACHE INTERNAL "MASM flags")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zp1")
 add_definitions(-DWINDOWS_IGNORE_PACKING_MISMATCH)
 
 project(VanillaConquer)
+
+find_package(ClangFormat)
+include(ClangFormat)
 
 # For now build the dll files by default only for windows while there is only the proprietary GlyphX frontend for them.
 if(WIN32)

@@ -178,7 +178,7 @@ public:
 #if defined(CHEAT_KEYS) || defined(SCENARIO_EDITOR)
     char const* Member_Description(void) const;
     char const* Description(void) const;
-    operator const char*(void) const
+    operator const char*(void)const
     {
         return (Description());
     };

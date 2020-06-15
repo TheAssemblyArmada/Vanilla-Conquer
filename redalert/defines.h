@@ -1596,7 +1596,7 @@ typedef enum InfantryType : char
     INFANTRY_DELPHI,   // Agent "Delphi"
     INFANTRY_CHAN,     // Dr. Chan
 
-#ifdef FIXIT_CSII   //	checked - ajw 9/28/98
+#ifdef FIXIT_CSII   //	checked - ajw 9/28/98                                                                           \
                     // CounterStrike II only!
     INFANTRY_SHOCK, // Shock Trooper
     INFANTRY_MECHANIC,
@@ -1642,7 +1642,7 @@ typedef enum UnitType : char
     UNIT_ANT3, // Warrior ant.
 #endif
 
-#ifdef FIXIT_CSII           //	checked - ajw 9/28/98
+#ifdef FIXIT_CSII           //	checked - ajw 9/28/98                                                                   \
                             // CS II ONLY!
     UNIT_CHRONOTANK,        // Chrono-shifting tank
     UNIT_TESLATANK,         // Tesla-equipped tank
@@ -1687,7 +1687,7 @@ typedef enum VesselType : char
     VESSEL_CA,         // Heavy weapon patrol craft
     VESSEL_TRANSPORT,  // Unit transporter
     VESSEL_PT,         // Light weapon patrol craft
-#ifdef FIXIT_CSII      //	checked - ajw 9/28/98
+#ifdef FIXIT_CSII      //	checked - ajw 9/28/98                                                                        \
                        // CS II ONLY
     VESSEL_MISSILESUB, // Missile-equipped submarine
 #endif
