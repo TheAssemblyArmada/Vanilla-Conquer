@@ -188,9 +188,10 @@ void Enable_Uncompressed_Shapes(void)
 
 void Check_Use_Compressed_Shapes(void)
 {
-#if (1) // Uncompressed shapes enabled for performance reasons. We don't need to worry about memory.
-        // Uncompressed shapes don't seem to work in RA for rotated/scaled objects so wherever scale/rotate is used,
-        // we will need to disable it (like in Techno_Draw_Object). ST - 11/6/2019 2:09PM
+#if (1)
+    // Uncompressed shapes enabled for performance reasons. We don't need to worry about memory.
+    // Uncompressed shapes don't seem to work in RA for rotated/scaled objects so wherever scale/rotate is used,
+    // we will need to disable it (like in Techno_Draw_Object). ST - 11/6/2019 2:09PM
     UseBigShapeBuffer = true;
     OriginalUseBigShapeBuffer = true;
 

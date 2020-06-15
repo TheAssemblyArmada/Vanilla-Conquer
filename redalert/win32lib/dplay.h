@@ -214,7 +214,7 @@ DECLARE_INTERFACE_(IDirectPlay, IUnknown)
 #define DPCAPS_GUARANTEED  0x00000004 // SP's don't have to implement guarantees.
 
 #define DPENUMSESSIONS_AVAILABLE                                                                                       \
-    0x00000001 // All games that match password (if given)
+    0x00000001 // All games that match password (if given)                                                             \
                // and have openings.
 #define DPENUMSESSIONS_ALL      0x00000002
 #define DPENUMSESSIONS_PREVIOUS 0x00000004

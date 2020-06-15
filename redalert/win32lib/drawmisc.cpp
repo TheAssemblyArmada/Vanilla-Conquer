@@ -5266,7 +5266,7 @@ extern "C" long __cdecl Buffer_To_Page(int x_pixel,
    		    add	edi , [ dest_ajust_width ]
    		    dec	edx					; decrement the height
    		    jnz	forward_loop_bytes
-            //  ret
+                                                                       //  ret
 
             // IF  TRANSP
             //

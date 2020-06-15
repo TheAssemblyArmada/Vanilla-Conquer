@@ -507,7 +507,7 @@ public:
         Pointer = 0;
     }
 
-    operator T*(void) const
+    operator T*(void)const
     {
         return (Pointer);
     }
@@ -549,12 +549,12 @@ public:
         Pointer = rvalue.Pointer;
         return (*this);
     }
-    T* operator->(void) const
+    T* operator->(void)const
     {
         assert(Pointer != 0);
         return (Pointer);
     }
-    T& operator*(void) const
+    T& operator*(void)const
     {
         assert(Pointer != 0);
         return (*Pointer);

@@ -598,26 +598,27 @@ void Speak_AI(void)
 {
 // MBL 06.17.2019 KO
 #ifndef REMASTER_BUILD
-	static VoxType _last = VOX_NONE;
-	if (SampleType == 0) return;
+    static VoxType _last = VOX_NONE;
+    if (SampleType == 0)
+        return;
 
-	if (!Is_Sample_Playing(SpeechBuffer)) {
-		CurrentVoice = VOX_NONE;
-		if (SpeakQueue != VOX_NONE) {
-			if (SpeakQueue != _last) {
-				char name[_MAX_FNAME+_MAX_EXT];
+    if (!Is_Sample_Playing(SpeechBuffer)) {
+        CurrentVoice = VOX_NONE;
+        if (SpeakQueue != VOX_NONE) {
+            if (SpeakQueue != _last) {
+                char name[_MAX_FNAME + _MAX_EXT];
 
-				_makepath(name, NULL, NULL, Speech[SpeakQueue], ".AUD");
-				if (CCFileClass(name).Read(SpeechBuffer, SPEECH_BUFFER_SIZE)) {
-					Play_Sample(SpeechBuffer, 254, Options.Volume);
-				}
-				_last = SpeakQueue;
-			} else {
-				Play_Sample(SpeechBuffer, 254, Options.Volume);
-			}
-			SpeakQueue = VOX_NONE;
-		}
-	}
+                _makepath(name, NULL, NULL, Speech[SpeakQueue], ".AUD");
+                if (CCFileClass(name).Read(SpeechBuffer, SPEECH_BUFFER_SIZE)) {
+                    Play_Sample(SpeechBuffer, 254, Options.Volume);
+                }
+                _last = SpeakQueue;
+            } else {
+                Play_Sample(SpeechBuffer, 254, Options.Volume);
+            }
+            SpeakQueue = VOX_NONE;
+        }
+    }
 #endif
 }
 

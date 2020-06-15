@@ -263,7 +263,6 @@ CELL __cdecl Coord_Cell(COORDINATE coord);
 //#include "phone.h"
 #include "loaddlg.h"
 #include "ipxaddr.h"
-#include "FACINGFF.h"
 /****************************************************************************
 **	This is a "node", used for the lists of available games & players.  The
 **	'Game' structure is used for games; the 'Player' structure for players.
