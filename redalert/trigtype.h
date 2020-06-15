@@ -150,7 +150,7 @@ public:
     bool Edit(void);
 #if defined(CHEAT_KEYS) || defined(SCENARIO_EDITOR)
     char const* Description(void) const;
-    operator const char*(void) const
+    operator const char*(void)const
     {
         return (Description());
     };

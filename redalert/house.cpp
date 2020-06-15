@@ -3100,7 +3100,7 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
         **	might appear where the object teleported to or it might appear
         **	where it teleported from -- random chance.
         */
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
+#ifdef FIXIT_CSII //	checked - ajw 9/28/98                                                                             \
                   // Don't allow a vortex if the teleportation was due to a chrono tank.
         if (tech && tech->IsActive && (tech->What_Am_I() != RTTI_UNIT || *(UnitClass*)tech != UNIT_CHRONOTANK))
 #endif
@@ -6437,7 +6437,7 @@ int HouseClass::AI_Infantry(void)
             if (Can_Build(&InfantryTypeClass::As_Reference(index), ActLike)
                 && InfantryTypeClass::As_Reference(index).Level <= (unsigned)Control.TechLevel) {
                 typetrack[count].Value = 0;
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98 This looks like a potential bug. It is prob. for save game format
+#ifdef FIXIT_CSII //	checked - ajw 9/28/98 This looks like a potential bug. It is prob. for save game format           \
                   //compatibility.
                 int clipindex = index;
                 if (clipindex >= INFANTRY_RA_COUNT)

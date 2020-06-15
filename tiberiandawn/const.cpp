@@ -108,9 +108,13 @@ WarheadTypeClass const Warheads[WARHEAD_COUNT] = {
      false,
      false,
      false,
-     {0x100, 0x80, 0x90, 0x40, 0x40}},                      //	WARHEAD_SA					Small arms -- good against infantry.
-    {6, true, true, true, {0xE0, 0xC0, 0x90, 0x40, 0x100}}, //	WARHEAD_HE					High explosive -- good against
-                                                            //buildings & infantry.
+     {0x100, 0x80, 0x90, 0x40, 0x40}}, //	WARHEAD_SA					Small arms -- good against infantry.
+    {6,
+     true,
+     true,
+     true,
+     {0xE0, 0xC0, 0x90, 0x40, 0x100}}, //	WARHEAD_HE					High explosive -- good against
+                                       //buildings & infantry.
     {6,
      true,
      true,
@@ -121,8 +125,12 @@ WarheadTypeClass const Warheads[WARHEAD_COUNT] = {
      true,
      true,
      {0xE0, 0x100, 0xB0, 0x40, 0x80}}, //	WARHEAD_FIRE				Incendiary -- Good against flammables.
-    {4, false, false, false, {0x100, 0x100, 0x100, 0x100, 0x100}}, //	WARHEAD_LASER				Light Amplification of
-                                                                   //Stimulated Emission by Radiation.
+    {4,
+     false,
+     false,
+     false,
+     {0x100, 0x100, 0x100, 0x100, 0x100}}, //	WARHEAD_LASER				Light Amplification of
+                                           //Stimulated Emission by Radiation.
     {7,
      true,
      true,

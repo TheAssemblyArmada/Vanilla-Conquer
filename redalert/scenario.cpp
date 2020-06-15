@@ -1972,7 +1972,7 @@ void ScenarioClass::Set_Scenario_Name(int scenario, ScenarioPlayerType player, S
     /*
     ** generate the filename
     */
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
+#ifdef FIXIT_CSII //	checked - ajw 9/28/98                                                                             \
                   // Mono_Printf("In set_scenario_name, scenario # = %d\n",scenario);Keyboard->Get();Keyboard->Get();
     if (scenario < 100) {
         sprintf(ScenarioName, "SC%c%02d%c%c.INI", c_player, scenario, c_dir, c_var);
@@ -2144,7 +2144,8 @@ bool Read_Scenario_INI(char* fname, bool)
                 }
             }
         }
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
+#ifdef FIXIT_CSII
+        // checked - ajw 9/28/98
         // If we're asking for a CD swap, check to see if we need to set the palette
         // to avoid a black screen.  If this is a normal RA game, and the CD being
         // requested is an RA CD, then don't set the palette, leave the map screen up.

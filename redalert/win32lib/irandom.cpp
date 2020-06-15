@@ -156,8 +156,8 @@ For our example case, that AND mask would be 0x3F. It does this by scanning; for
 bit position down to bit 0. bsr ecx, [maxval];
 put bit position of highest bit in ecx mov eax, 1;
 set one bit on in eax jz ? ? invalid;
-if BSR
-    shows maxval == 0, return eax = 1 inc ecx;
+if
+    BSR shows maxval == 0, return eax = 1 inc ecx;
 get one bit higher than count showed shl eax, cl;
 move our EAX bit into position dec eax;
 dec it to create the mask.? ? invalid : ret ENDP Get_Random_Mask;

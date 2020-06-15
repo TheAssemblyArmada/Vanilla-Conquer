@@ -167,7 +167,7 @@ BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserve
 #ifdef REMASTER_BUILD
 // int PASCAL WinMain(HINSTANCE, HINSTANCE, char *, int )
 // PG int PASCAL WinMain ( HINSTANCE instance , HINSTANCE , char * command_line , int command_show )
-int DLL_Startup(const char* command_line_in) 
+int DLL_Startup(const char* command_line_in)
 {
     RunningAsDLL = true;
     int command_show = SW_HIDE;

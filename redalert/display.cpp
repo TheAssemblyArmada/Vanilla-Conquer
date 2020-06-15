@@ -4286,12 +4286,8 @@ void DisplayClass::Set_Tactical_Position(COORDINATE coord)
     int xx = (int)Coord_X(coord) - (int)Cell_To_Lepton(MapCellX);
     int yy = (int)Coord_Y(coord) - (int)Cell_To_Lepton(MapCellY);
 
-    Confine_Rect(&xx,
-                 &yy,
-                 TacLeptonWidth,
-                 TacLeptonHeight,
-                 Cell_To_Lepton(MapCellWidth),
-                 Cell_To_Lepton(MapCellHeight));
+    Confine_Rect(
+        &xx, &yy, TacLeptonWidth, TacLeptonHeight, Cell_To_Lepton(MapCellWidth), Cell_To_Lepton(MapCellHeight));
 #endif
     coord = XY_Coord(xx + Cell_To_Lepton(MapCellX), yy + Cell_To_Lepton(MapCellY));
 

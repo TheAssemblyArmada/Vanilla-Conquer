@@ -3549,7 +3549,7 @@ int AircraftClass::Mission_Enter(void)
             Assign_Destination(TARGET_NONE);
             Enter_Idle_Mode();
         }
-#ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
+#ifdef FIXIT_CARRIER //	checked - ajw 9/28/98                                                                          \
                      // If we were trying to land on a carrier and it moved, take off again
         if (As_Vessel(NavCom) && !In_Radio_Contact()) {
             Status = INITIAL;

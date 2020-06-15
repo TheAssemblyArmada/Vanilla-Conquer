@@ -6918,7 +6918,7 @@ int HouseClass::AI_Infantry(void)
             if (Can_Build(&InfantryTypeClass::As_Reference(index), ActLike)
                 && InfantryTypeClass::As_Reference(index).Level <= (unsigned)BuildLevel) {
                 typetrack[count].Value = 0;
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98 This looks like a potential bug. It is prob. for save game format
+#ifdef FIXIT_CSII //	checked - ajw 9/28/98 This looks like a potential bug. It is prob. for save game format           \
                   //compatibility.
                 int clipindex = index;
                 if (clipindex >= INFANTRY_RA_COUNT)
