@@ -31,6 +31,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "mouse.h"
+#include "common/wwmouse.h"
 #include <mmsystem.h>
 
 static WWMouseClass* _Mouse = NULL;
@@ -90,8 +91,10 @@ WWMouseClass::WWMouseClass(GraphicViewPortClass* scr, int mouse_max_width, int m
 
     // Add TIME_KILL_SYNCHRONOUS flag. ST - 2/13/2019 5:07PM
     // TimerHandle = timeSetEvent( 1000/60 , 1 , ::Process_Mouse, 0 , TIME_PERIODIC);
-    // TimerHandle = timeSetEvent( 1000/60 , 1 , ::Process_Mouse, 0 , TIME_PERIODIC | TIME_KILL_SYNCHRONOUS);		//
+#ifndef REMASTER_BUILD
+    TimerHandle = timeSetEvent(1000 / 60, 1, ::Process_Mouse, 0, TIME_PERIODIC | TIME_KILL_SYNCHRONOUS);
     // Removed. ST - 2/13/2019 5:12PM
+#endif
 
     /*
     ** Force the windows mouse pointer to stay withing the graphic view port region
@@ -150,7 +153,7 @@ void WWMouseClass::Unblock_Mouse(GraphicBufferClass* buffer)
 
 void WWMouseClass::Set_Cursor_Clip(void)
 {
-#if (0) // Not needed. ST - 1/3/2019 2:18PM
+#ifndef REMASTER_BUILD // Not needed. ST - 1/3/2019 2:18PM
     if (Screen) {
         RECT region;
 
@@ -166,7 +169,7 @@ void WWMouseClass::Set_Cursor_Clip(void)
 
 void WWMouseClass::Clear_Cursor_Clip(void)
 {
-#if (0)
+#ifndef REMASTER_BUILD
     ClipCursor(NULL);
 #endif
 }
@@ -174,8 +177,7 @@ void WWMouseClass::Clear_Cursor_Clip(void)
 void WWMouseClass::Process_Mouse(void)
 {
     // ST - 1/3/2019 10:50AM
-    return;
-#if (0)
+#ifndef REMASTER_BUILD
     POINT pt; // define a structure to hold current cursor pos
 
     //
@@ -189,7 +191,7 @@ void WWMouseClass::Process_Mouse(void)
     // Make sure there are no conflicts with other
     // threads that may try and lock the screen buffer
     //
-    // Block_Mouse(Screen->Get_Graphic_Buffer());
+    Block_Mouse(Screen->Get_Graphic_Buffer());
 
     //
     // If the screen is already locked by another thread then just exit
@@ -244,19 +246,20 @@ void WWMouseClass::Process_Mouse(void)
     //
     // Allow other threads to lock the screen again
     //
-    // Unblock_Mouse(Screen->Get_Graphic_Buffer());
+    Unblock_Mouse(Screen->Get_Graphic_Buffer());
 #endif
 }
 
 void* WWMouseClass::Set_Cursor(int xhotspot, int yhotspot, void* cursor)
 {
+#ifdef REMASTER_BUILD
     // ST - 1/3/2019 10:50AM
     xhotspot;
     yhotspot;
     cursor;
     return cursor;
 
-#if (0)
+#else
 
     //
     // If the pointer to the cursor we got is invalid, or its the same as the
@@ -298,7 +301,7 @@ void* WWMouseClass::Set_Cursor(int xhotspot, int yhotspot, void* cursor)
 void WWMouseClass::Low_Hide_Mouse()
 {
 // ST - 1/3/2019 10:50AM
-#if (0)
+#ifndef REMASTER_BUILD
     if (!State) {
         if (MouseBuffX != -1 || MouseBuffY != -1) {
             if (Screen->Lock()) {
@@ -332,7 +335,7 @@ void WWMouseClass::Low_Show_Mouse(int x, int y)
     State--;
 
 // ST - 1/3/2019 10:50AM
-#if (0)
+#ifndef REMASTER_BUILD
 
     //
     //	If the mouse is completely visible then draw it at its current
@@ -463,10 +466,11 @@ void WWMouseClass::Conditional_Show_Mouse(void)
 
 void WWMouseClass::Draw_Mouse(GraphicViewPortClass* scr)
 {
+#ifdef REMASTER_BUILD
     scr;
     return;
 // ST - 1/3/2019 10:50AM
-#if (0)
+#else
 
     POINT pt;
 
@@ -524,11 +528,12 @@ void WWMouseClass::Draw_Mouse(GraphicViewPortClass* scr)
 
 void WWMouseClass::Erase_Mouse(GraphicViewPortClass* scr, int forced)
 {
+#ifdef REMASTER_BUILD
     // ST - 1/3/2019 10:50AM
     scr;
     forced;
     return;
-#if (0)
+#else
     //
     // If we are forcing the redraw of a mouse we already managed to
     // restore then just get outta here.
@@ -550,7 +555,7 @@ void WWMouseClass::Erase_Mouse(GraphicViewPortClass* scr, int forced)
             // restoration coordinates so we don't accidentally do it twice.
             //
             if (EraseBuffX != -1 || EraseBuffY != -1) {
-                Mouse_Shadow_Buffer(this, scr, EraseBuffer, EraseBuffX, EraseBuffY, 0);
+                Mouse_Shadow_Buffer(this, scr, EraseBuffer, EraseBuffX, EraseBuffY, EraseBuffHotX, EraseBuffHotY, 0);
                 EraseBuffX = -1;
                 EraseBuffY = -1;
             }
