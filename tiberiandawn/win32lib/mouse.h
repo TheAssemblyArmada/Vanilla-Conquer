@@ -106,19 +106,6 @@ private:
     unsigned TimerHandle;
 };
 
-extern "C" {
-void __cdecl Mouse_Shadow_Buffer(void* thisptr,
-                                 GraphicViewPortClass* srcdst,
-                                 void* buffer,
-                                 int x,
-                                 int y,
-                                 int hotx,
-                                 int hoty,
-                                 int store);
-void __cdecl Draw_Mouse(void* thisptr, GraphicViewPortClass* srcdst, int x, int y);
-void* __cdecl ASM_Set_Mouse_Cursor(void* thisptr, int hotspotx, int hotspoty, VOID* cursor);
-};
-
 void Hide_Mouse(void);
 void Show_Mouse(void);
 void Conditional_Hide_Mouse(int x1, int y1, int x2, int y2);
