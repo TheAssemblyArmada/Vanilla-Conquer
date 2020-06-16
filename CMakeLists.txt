@@ -5,6 +5,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 enable_language(ASM_MASM)
 set(CMAKE_ASM_MASM_FLAGS "/Zm /Cp /safeseh" CACHE INTERNAL "MASM flags")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zp1")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Zp1")
 add_definitions(-DWINDOWS_IGNORE_PACKING_MISMATCH)
 
 project(VanillaConquer)
@@ -45,6 +46,7 @@ add_library(common STATIC
     common/drawmisc.cpp
     common/xordelta.asm
     common/setfpal.c
+    common/wwmouse.c
 )
 
 # These options currently require directx components from the aug 2007 SDK.
