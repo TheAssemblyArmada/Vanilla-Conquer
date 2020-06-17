@@ -72,7 +72,12 @@ typedef __int64 int64;
 #pragma warning(disable : 4091)
 
 // From RedAlert\Audio.cpp
-enum ContextType;
+typedef enum
+{
+    IN_NOVAR, // No variation or alterations allowed.
+    IN_VAR    // Infantry variance response modification.
+} ContextType;
+
 extern struct SoundEffectNameStruct
 {
     char const* Name;  // Digitized voice file name.
@@ -82,13 +87,6 @@ extern struct SoundEffectNameStruct
 
 // From RedAlert\Audio.cpp
 extern char const* Speech[VOX_COUNT];
-
-// From RedAlert\Audio.cpp
-typedef enum
-{
-    IN_NOVAR, // No variation or alterations allowed.
-    IN_VAR    // Infantry variance response modification.
-};
 
 /*
 ** Misc defines
@@ -3710,7 +3708,7 @@ bool DLLExportClass::Get_Layer_State(uint64 player_id, unsigned char* buffer_in,
                             BuildingClass* building = (BuildingClass*)root_object.CNCInternalObjectPointer;
                             FactoryClass* factory = building->House->IsHuman
                                                         ? building->House->Fetch_Factory(building->Class->ToBuild)
-                                                        : building->Factory;
+                                                        : (FactoryClass*)building->Factory;
                             if (factory != nullptr) {
                                 for (int i = CurrentDrawCount - 1; i > 0; --i) {
                                     CNCObjectStruct& base_object = ObjectList->Objects[TotalObjectCount + i];

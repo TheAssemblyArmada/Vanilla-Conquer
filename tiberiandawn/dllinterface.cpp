@@ -68,7 +68,12 @@ typedef __int64 int64;
 #pragma warning(disable : 4091)
 
 // From TiberianDawn\Audio.cpp
-enum ContextType;
+typedef enum
+{
+    IN_NOVAR, // No variation or alterations allowed.
+    IN_JUV,   // Juvenile sound effect alternate option.
+    IN_VAR,   // Infantry variance response modification.
+} ContextType;
 extern struct SoundEffectNameStruct
 {
     char const* Name;  // Digitized voice file name.
@@ -78,14 +83,6 @@ extern struct SoundEffectNameStruct
 
 // From TiberianDawn\Audio.cpp
 extern char const* Speech[VOX_COUNT];
-
-// From TiberianDawn\Audio.cpp
-typedef enum
-{
-    IN_NOVAR, // No variation or alterations allowed.
-    IN_JUV,   // Juvenile sound effect alternate option.
-    IN_VAR,   // Infantry variance response modification.
-};
 
 /*
 ** Misc defines

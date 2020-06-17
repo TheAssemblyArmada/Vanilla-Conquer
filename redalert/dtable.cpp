@@ -13,7 +13,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-long DiffTable[] = {
+static long DiffTable[] = {
     0,      // Index = 0, Token = 0
     1,      // Index = 0, Token = 1
     3,      // Index = 0, Token = 2

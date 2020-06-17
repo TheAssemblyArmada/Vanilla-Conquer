@@ -69,11 +69,11 @@ extern "C" {
 
 extern void __cdecl Set_Palette_Range(void* palette);
 extern BOOL __cdecl Bump_Color(void* palette, int changable, int target);
+extern unsigned char CurrentPalette[]; /* in pal.asm */
 
 #ifdef __cplusplus
 }
 #endif
-extern "C" extern unsigned char CurrentPalette[]; /* in pal.asm */
 
 #endif // PALETTE_H
 

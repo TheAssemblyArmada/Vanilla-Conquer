@@ -207,10 +207,10 @@ protected:
 /**************************************************************************
 **	A fixed-size array of dynamic vectors.
 */
-template <class T, int COUNT, int FIRST = 0, int DEFAULT = FIRST> class DynamicVectorArrayClass
+template <class T, int TCOUNT, int FIRST = 0, int DEFAULT = FIRST> class DynamicVectorArrayClass
 {
 public:
-    static const int COUNT = COUNT;
+    static const int COUNT = TCOUNT;
 
     DynamicVectorArrayClass()
         : Active(DEFAULT)
