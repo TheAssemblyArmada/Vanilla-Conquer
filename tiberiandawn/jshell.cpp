@@ -282,14 +282,14 @@ long Load_Uncompress(FileClass& file, BuffType& uncomp_buff, BuffType& dest_buff
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void* Load_Alloc_Data(FileClass& file)
+void* Load_Alloc_Data(FileClass* file)
 {
     void* ptr = 0;
-    long size = file.Size();
+    long size = file->Size();
 
     ptr = new char[size];
     if (ptr) {
-        file.Read(ptr, size);
+        file->Read(ptr, size);
     }
     return (ptr);
 }

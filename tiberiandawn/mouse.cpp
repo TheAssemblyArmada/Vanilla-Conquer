@@ -274,7 +274,7 @@ void MouseClass::One_Time(void)
     */
     RawFileClass file("MOUSE.SHP");
     if (file.Is_Available()) {
-        MouseShapes = Load_Alloc_Data(file);
+        MouseShapes = Load_Alloc_Data(&file);
     } else {
         MouseShapes = MixFileClass::Retrieve("MOUSE.SHP");
     }

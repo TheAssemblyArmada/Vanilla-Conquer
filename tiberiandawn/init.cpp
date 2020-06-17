@@ -197,21 +197,21 @@ bool Init_Game(int, char*[])
 
 #endif
     CCDebugString("C&C95 - About to load fonts\n");
-    Green12FontPtr = Load_Alloc_Data(CCFileClass("12GREEN.FNT"));
-    Green12GradFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
-    MapFontPtr = Load_Alloc_Data(CCFileClass("8FAT.FNT"));
+    Green12FontPtr = Load_Alloc_Data(&CCFileClass("12GREEN.FNT"));
+    Green12GradFontPtr = Load_Alloc_Data(&CCFileClass("12GRNGRD.FNT"));
+    MapFontPtr = Load_Alloc_Data(&CCFileClass("8FAT.FNT"));
     Font8Ptr = MixFileClass::Retrieve(FONT8);
     FontPtr = (char*)Font8Ptr;
     Set_Font(FontPtr);
     Font3Ptr = MixFileClass::Retrieve(FONT3);
     //	Font6Ptr = MixFileClass::Retrieve(FONT6);
-    Font6Ptr = Load_Alloc_Data(CCFileClass("6POINT.FNT"));
+    Font6Ptr = Load_Alloc_Data(&CCFileClass("6POINT.FNT"));
     // ScoreFontPtr = MixFileClass::Retrieve("12GRNGRD.FNT");	//GRAD12FN");	//("SCOREFNT.FNT");
-    ScoreFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
+    ScoreFontPtr = Load_Alloc_Data(&CCFileClass("12GRNGRD.FNT"));
     FontLEDPtr = MixFileClass::Retrieve("LED.FNT");
     VCRFontPtr = MixFileClass::Retrieve("VCR.FNT");
     //	GradFont6Ptr = MixFileClass::Retrieve("GRAD6FNT.FNT");
-    GradFont6Ptr = Load_Alloc_Data(CCFileClass("GRAD6FNT.FNT"));
+    GradFont6Ptr = Load_Alloc_Data(&CCFileClass("GRAD6FNT.FNT"));
     BlackPalette = new (MEM_CLEAR | MEM_REAL) unsigned char[768];
     GamePalette = new (MEM_CLEAR | MEM_REAL) unsigned char[768];
     OriginalPalette = new (MEM_CLEAR | MEM_REAL) unsigned char[768];
@@ -263,7 +263,7 @@ bool Init_Game(int, char*[])
     **	found on the hard drive, then look for it in the mixfile.
     */
     if (RawFileClass(Language_Name("CONQUER")).Is_Available()) {
-        SystemStrings = (char const*)Load_Alloc_Data(RawFileClass(Language_Name("CONQUER")));
+        SystemStrings = (char const*)Load_Alloc_Data(&RawFileClass(Language_Name("CONQUER")));
     } else {
         SystemStrings = (char const*)MixFileClass::Retrieve(Language_Name("CONQUER"));
     }

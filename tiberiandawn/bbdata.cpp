@@ -605,7 +605,7 @@ void BulletTypeClass::One_Time(void)
             RawFileClass file(fullname);
 
             if (file.Is_Available()) {
-                ((void const*&)bullet.ImageData) = Load_Alloc_Data(file);
+                ((void const*&)bullet.ImageData) = Load_Alloc_Data(&file);
             } else {
                 ((void const*&)bullet.ImageData) = MixFileClass::Retrieve(fullname);
             }
