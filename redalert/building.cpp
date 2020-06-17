@@ -109,7 +109,7 @@
 /*
 ** New sidebar for GlyphX multiplayer. ST - 8/2/2019 2:35PM
 */
-#include "SidebarGlyphx.h"
+#include "sidebarglyphx.h"
 
 enum SAMState
 {

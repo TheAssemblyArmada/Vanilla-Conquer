@@ -89,7 +89,7 @@ B<A> test;
 #include "function.h"
 #ifdef WIN32
 #ifdef WINSOCK_IPX
-#include "WSProto.h"
+#include "wsproto.h"
 #else // WINSOCK_IPX
 #include "tcpip.h"
 #endif // WINSOCK_IPX

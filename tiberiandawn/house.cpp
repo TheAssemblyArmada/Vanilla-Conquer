@@ -102,7 +102,7 @@
 /*
 ** New sidebar for GlyphX multiplayer. ST - 3/26/2019 12:24PM
 */
-#include "SidebarGlyphx.h"
+#include "sidebarglyphx.h"
 #include "defines.h"
 
 /***********************************************************************************************

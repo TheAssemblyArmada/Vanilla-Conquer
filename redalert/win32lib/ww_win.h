@@ -90,4 +90,3 @@ extern char* TXT_MoreText;
 extern void (*Window_More_Ptr)(char const*, int, int, int);
 
 #endif // WINDOWS_H
-

@@ -59,4 +59,3 @@
 #include <profile.h>
 
 #endif // WWLIB32_H
-

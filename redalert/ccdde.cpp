@@ -50,7 +50,7 @@
 
 #ifdef WIN32
 
-#include <WINDOWS.H>
+#include <windows.h>
 #include "ccdde.h"
 #include <stdio.h>
 #include <timer.h>

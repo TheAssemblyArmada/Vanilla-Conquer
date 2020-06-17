@@ -138,7 +138,7 @@
 /*
 ** New sidebar for GlyphX multiplayer. ST - 8/7/2019 10:10AM
 */
-#include "SidebarGlyphx.h"
+#include "sidebarglyphx.h"
 
 TFixedIHeapClass<HouseClass::BuildChoiceClass> HouseClass::BuildChoice;
 

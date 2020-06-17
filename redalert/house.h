@@ -38,7 +38,7 @@
 #include "type.h"
 #include "region.h"
 #include "vector.h"
-#include "Credits.h"
+#include "credits.h"
 
 class TriggerClass;
 class FootClass;

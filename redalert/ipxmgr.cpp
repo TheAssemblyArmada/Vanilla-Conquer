@@ -73,8 +73,8 @@
 
 #ifdef WINSOCK_IPX
 
-#include "WSProto.h"
-#include "WSPIPX.h"
+#include "wsproto.h"
+#include "wspipx.h"
 
 #else // WINSOCK_IPX
 

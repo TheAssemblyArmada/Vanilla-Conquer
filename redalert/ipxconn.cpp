@@ -50,7 +50,7 @@
 #include "ipxconn.h"
 
 #ifdef WINSOCK_IPX
-#include "WSProto.h"
+#include "wsproto.h"
 
 #else
 

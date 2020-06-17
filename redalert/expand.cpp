@@ -36,7 +36,7 @@
 #include "function.h"
 
 #ifdef FIXIT_VERSION_3
-#include "WolStrng.h"
+#include "wolstrng.h"
 #endif
 
 //#define CS_DEBUG

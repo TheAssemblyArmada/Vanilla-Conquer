@@ -39,7 +39,7 @@
 #include "function.h"
 
 #ifdef WWLIB32_H
-#include "TIMER.H"
+#include "timer.h"
 #else
 #include <sys\timeb.h>
 #endif

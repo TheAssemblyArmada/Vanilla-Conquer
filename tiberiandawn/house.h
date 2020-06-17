@@ -38,7 +38,7 @@
 #include "type.h"
 #include "region.h"
 #include "vector.h"
-#include "Credits.h"
+#include "credits.h"
 #include "common/miscasm.h"
 
 // extern "C" {

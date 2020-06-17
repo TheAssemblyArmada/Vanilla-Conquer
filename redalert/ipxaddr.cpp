@@ -48,7 +48,7 @@
 #include "ipxaddr.h"
 
 #ifdef WINSOCK_IPX
-#include "WSProto.h"
+#include "wsproto.h"
 #endif // WINSOCK_IPX
 
 /***************************************************************************

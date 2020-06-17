@@ -32,7 +32,7 @@
 */
 
 #include "gbuffer.h"
-#include "MISC.H"
+#include "misc.h"
 #include <tile.h>
 #include "common/drawmisc.h"
 
