@@ -43,7 +43,7 @@
 
 #include "function.h"
 #include "internet.h"
-#include "WSPUDP.h"
+#include "wspudp.h"
 
 #include <assert.h>
 #include <stdio.h>

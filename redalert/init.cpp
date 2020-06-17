@@ -60,9 +60,9 @@
 #include "loaddlg.h"
 #ifdef WIN32
 #ifdef WINSOCK_IPX
-#include "WSProto.h"
-#include "WSPUDP.h"
-#include "WSPIPX.h"
+#include "wsproto.h"
+#include "wspudp.h"
+#include "wspipx.h"
 #include "internet.h"
 #else // WINSOCK_IPX
 #include "tcpip.h"

@@ -76,7 +76,7 @@ extern bool UseGlyphXStartLocations;    // ST - 3/31/2020 9:54AM
 //#include "WolDebug.h"
 
 #ifdef FIXIT_VERSION_3 //	Stalemate games.
-#include "WolStrng.h"
+#include "wolstrng.h"
 #endif
 
 static void Remove_AI_Players(void);

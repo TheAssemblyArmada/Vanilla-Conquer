@@ -17,7 +17,7 @@
 
 //#ifdef WOLAPI_INTEGRATION
 #include "function.h"
-#include "WolStrng.h"
+#include "wolstrng.h"
 
 //#undef ENGLISH
 //#define GERMAN

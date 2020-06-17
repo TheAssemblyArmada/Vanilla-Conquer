@@ -167,4 +167,3 @@ PRIVATE int cdecl Palette_To_Palette(void* src_palette,
 } /* end of Palette_To_Palette */
 
 /*************************** End of morphpal.cpp ***************************/
-

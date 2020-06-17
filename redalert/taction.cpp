@@ -47,7 +47,7 @@
 /*
 ** New sidebar for GlyphX multiplayer. ST - 8/7/2019 10:10AM
 */
-#include "SidebarGlyphx.h"
+#include "sidebarglyphx.h"
 
 /*
 **	These are the text names for the various actions. If the action name ends with "..." then

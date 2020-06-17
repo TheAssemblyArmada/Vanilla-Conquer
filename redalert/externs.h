@@ -47,8 +47,8 @@
 #include "credits.h"
 #include "goptions.h"
 #include "options.h"
-#include "infantry.H"
-#include "DSOUND.H"
+#include "infantry.h"
+#include "dsound.h"
 
 #ifdef REMASTER_BUILD
 #define GBUFF_INIT_WIDTH     3072

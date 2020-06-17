@@ -23,7 +23,7 @@
 **
 */
 
-#include "FUNCTION.H"
+#include "function.h"
 
 extern "C" void __cdecl Mem_Copy(void const* source, void* dest, unsigned long bytes_to_copy)
 {

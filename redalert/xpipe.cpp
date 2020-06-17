@@ -35,7 +35,7 @@
  *   FilePipe::End -- End the file pipe handler.                                               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "FUNCTION.H"
+#include "function.h"
 #include "xpipe.h"
 #include <stddef.h>
 #include <string.h>

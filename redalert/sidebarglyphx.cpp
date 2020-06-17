@@ -32,7 +32,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include "SidebarGlyphx.h"
+#include "sidebarglyphx.h"
 
 /*
 **  ST - 3/14/2019 10:49AM

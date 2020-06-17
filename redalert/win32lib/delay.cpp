@@ -56,4 +56,3 @@ void Vsync()
     Wait_Vert_Blank(VertBlank);
 }
 #endif
-

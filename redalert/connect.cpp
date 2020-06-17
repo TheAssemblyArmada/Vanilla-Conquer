@@ -45,7 +45,7 @@
 #include "function.h"
 #include <stdio.h>
 //#include <mem.h>
-#include <sys\timeb.h>
+#include <sys/timeb.h>
 #include "connect.h"
 
 //#include "WolDebug.h"

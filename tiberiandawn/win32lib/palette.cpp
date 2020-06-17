@@ -370,4 +370,3 @@ PRIVATE BOOL __cdecl Bump_Palette(void* palette1, unsigned int step)
 void (*cb_ptr)(void); // callback function pointer
 
 /**************************** End of palette.cpp ***************************/
-

@@ -39,6 +39,7 @@
 // enum {false=0,true=1};
 // typedef int bool;
 
+#include "function.h"
 #include "packet.h"
 
 /**************************************************************************

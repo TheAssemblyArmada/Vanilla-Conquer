@@ -18,12 +18,12 @@
 
 #include "function.h"
 #include "externs.h"
-#include "DLLInterface.h"
-#include "Gadget.h"
+#include "dllinterface.h"
+#include "gadget.h"
 #include "defines.h" // VOC_COUNT, VOX_COUNT
-#include "SidebarGlyphx.h"
+#include "sidebarglyphx.h"
 #include "mixfile.h"
-#include "ccini.H"
+#include "ccini.h"
 
 extern "C" __declspec(dllexport) int __cdecl CNC_Editor_Startup();
 extern "C" __declspec(dllexport) int __cdecl CNC_Editor_Cleanup();
