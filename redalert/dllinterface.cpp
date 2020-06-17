@@ -479,11 +479,15 @@ bool UseGlyphXStartLocations = true;
 
 int GetRandSeed()
 {
+#if 0
     using namespace std::chrono;
     time_point<system_clock> time_since_epoch = system_clock::now();
     auto microseconds_since_epoch = floor<std::chrono::microseconds>(time_since_epoch);
 
     return abs(static_cast<int>(microseconds_since_epoch.time_since_epoch().count()));
+#endif
+    // for mingw compatility
+    return GetTickCount();
 }
 
 void Play_Movie_GlyphX(const char* movie_name, ThemeType theme, bool immediate = false)
