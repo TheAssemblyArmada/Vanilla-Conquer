@@ -916,6 +916,7 @@ private:
     CDTimerClass<FrameTimerClass> SpeakMoneyDelay;
     CDTimerClass<FrameTimerClass> SpeakMaxedDelay;
 
+public:
     /*
     **	This structure is used to record a build request as determined by
     **	the house AI processing. Higher priority build requests take precidence.
@@ -950,7 +951,6 @@ private:
     /*
     ** These values are for multiplay only.
     */
-public:
     /*
     ** For multiplayer games, each house instance has a remap table; the table
     ** in the HousesTypeClass isn't used.  This variable is set to the remap

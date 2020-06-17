@@ -13,7 +13,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-unsigned short IndexTable[] = {
+static unsigned short IndexTable[] = {
     0,    // Index = 0, Token = 0
     0,    // Index = 0, Token = 1
     0,    // Index = 0, Token = 2
