@@ -104,6 +104,18 @@ typedef int bool;
 #endif // TRUE_FALSE_DEFINED
 #endif
 
+#ifdef NOMINMAX
+inline int min(int a, int b)
+{
+    return a < b ? a : b;
+}
+
+inline int max(int a, int b)
+{
+    return a > b ? a : b;
+}
+#endif
+
 //#define _WIN32
 //#define WIN32 =1	//_LEAN_AND_MEAN
 #include <windows.h>

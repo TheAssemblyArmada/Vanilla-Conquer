@@ -129,6 +129,18 @@ typedef int bool;
 #endif
 #endif
 
+#ifdef NOMINMAX
+inline int min(int a, int b)
+{
+    return a < b ? a : b;
+}
+
+inline int max(int a, int b)
+{
+    return a > b ? a : b;
+}
+#endif
+
 #ifndef BITMAPCLASS
 #define BITMAPCLASS
 class BitmapClass
