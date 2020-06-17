@@ -2295,7 +2295,7 @@ void AnimTypeClass::One_Time(void)
 
         RawFileClass file(fullname);
         if (file.Is_Available()) {
-            ((void const*&)As_Reference(index).ImageData) = Load_Alloc_Data(file);
+            ((void const*&)As_Reference(index).ImageData) = Load_Alloc_Data(&file);
         } else {
             ((void const*&)As_Reference(index).ImageData) = MixFileClass::Retrieve(fullname);
         }

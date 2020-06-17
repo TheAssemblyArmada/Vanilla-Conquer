@@ -397,11 +397,11 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
         if (cfile.Is_Available()) {
 
 #ifndef NOMEMCHECK
-            char* cdata = (char*)Load_Alloc_Data(cfile);
+            char* cdata = (char*)Load_Alloc_Data(&cfile);
             Read_Private_Config_Struct(cdata, &NewConfig);
             delete[] cdata;
 #else
-            Read_Private_Config_Struct((char*)Load_Alloc_Data(cfile), &NewConfig);
+            Read_Private_Config_Struct((char*)Load_Alloc_Data(&cfile), &NewConfig);
 #endif
             Read_Setup_Options(&cfile);
 

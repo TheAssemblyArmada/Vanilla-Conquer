@@ -548,7 +548,7 @@ VOID* __cdecl Load_Alloc_Data(char const* name, int)
 {
     CCFileClass file(name);
 
-    return (Load_Alloc_Data(file));
+    return (Load_Alloc_Data(&file));
 }
 
 ULONG __cdecl File_Size(int handle)
