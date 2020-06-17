@@ -934,7 +934,8 @@ bool Load_Game(const char* file_name)
     **	Rescan the scenario file for any rules updates.
     */
     CCINIClass ini;
-    int result = ini.Load(CCFileClass(Scen.ScenarioName), true);
+    CCFileClass scenarioFile(Scen.ScenarioName);
+    int result = ini.Load(scenarioFile, true);
 
     /*
     **	Reset the rules values to their initial settings.
@@ -1013,7 +1014,8 @@ bool Load_Game(const char* file_name)
                 }
             }
             CCINIClass mpini;
-            if (mpini.Load(CCFileClass("MPLAYER.INI"), false)) {
+            CCFileClass mplayerIniFile("MPLAYER.INI");
+            if (mpini.Load(mplayerIniFile, false)) {
                 Rule.General(mpini);
                 Rule.Recharge(mpini);
                 Rule.AI(mpini);

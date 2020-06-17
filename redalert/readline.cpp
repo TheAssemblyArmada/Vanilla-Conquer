@@ -53,7 +53,8 @@ void strtrimcpp(char* buffer)
 
 int Read_Line(FileClass& file, char* buffer, int len, bool& eof)
 {
-    return (Read_Line(FileStraw(file), buffer, len, eof));
+    FileStraw fs(file);
+    return (Read_Line(fs, buffer, len, eof));
 }
 
 int Read_Line(Straw& file, char* buffer, int len, bool& eof)
