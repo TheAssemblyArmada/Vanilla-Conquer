@@ -74,7 +74,7 @@ public:
     {
     }
 
-    operator char const*()
+    operator char const *()
     {
         return File_Name();
     }

@@ -68,11 +68,11 @@ public:
     ~Buffer(void);
 
     Buffer& operator=(Buffer const& buffer);
-    operator void*(void)const
+    operator void*(void) const
     {
         return (BufferPtr);
     }
-    operator char*(void)const
+    operator char*(void) const
     {
         return ((char*)BufferPtr);
     }
