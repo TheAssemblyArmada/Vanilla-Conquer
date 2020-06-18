@@ -563,7 +563,7 @@ template <class T> int DynamicVectorClass<T>::ID(T const& object)
 template <class T> int DynamicVectorClass<T>::Add(T const& object)
 {
     if (ActiveCount >= (int)Length()) {
-        if ((IsAllocated || !VectorMax) && GrowthStep > 0) {
+        if ((this->IsAllocated || !this->VectorMax) && GrowthStep > 0) {
             if (!Resize(Length() + GrowthStep)) {
 
                 /*
@@ -607,7 +607,7 @@ template <class T> int DynamicVectorClass<T>::Add(T const& object)
 template <class T> int DynamicVectorClass<T>::Add_Head(T const& object)
 {
     if (ActiveCount >= (int)Length()) {
-        if ((IsAllocated || !VectorMax) && GrowthStep > 0) {
+        if ((this->IsAllocated || !this->VectorMax) && GrowthStep > 0) {
             if (!Resize(Length() + GrowthStep)) {
 
                 /*
