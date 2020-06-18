@@ -96,7 +96,7 @@ public:
     }
     virtual void Error(int error, int canretry = false, char const* filename = NULL) = 0;
 
-    operator char const*()
+    operator char const *()
     {
         return File_Name();
     };

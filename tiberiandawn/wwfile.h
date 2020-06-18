@@ -67,7 +67,7 @@ public:
     virtual long Write(void const* buffer, long size) = 0;
     virtual void Close(void) = 0;
 
-    operator char const*()
+    operator char const *()
     {
         return File_Name();
     };

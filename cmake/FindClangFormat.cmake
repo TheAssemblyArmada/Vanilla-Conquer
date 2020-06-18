@@ -11,9 +11,9 @@ if(CLANG_FORMAT_EXECUTABLE)
                         OUTPUT_VARIABLE clang_format_version
                         ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-        if(clang_format_version MATCHES "^clang-format version .*")
+        if(clang_format_version MATCHES "^.*clang-format version .*")
             string(REGEX
-                   REPLACE "clang-format version ([.0-9]+).*"
+                   REPLACE ".*clang-format version ([.0-9]+).*"
                            "\\1"
                            clang_format_version_parsed
                            "${clang_format_version}")

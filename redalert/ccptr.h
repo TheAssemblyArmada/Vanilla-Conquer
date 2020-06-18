@@ -48,19 +48,19 @@ public:
     CCPtr(NoInitClass const&){};
     CCPtr(T* ptr);
 
-    operator T*(void)const
+    operator T*(void) const
     {
         if (ID == -1)
             return (NULL);
         assert(Heap != NULL && ID < Heap->Length());
         return ((T*)(*Heap)[ID]);
     }
-    T& operator*(void)const
+    T& operator*(void) const
     {
         assert(Heap != NULL && ID < Heap->Length());
         return (*(T*)(*Heap)[ID]);
     }
-    T* operator->(void)const
+    T* operator->(void) const
     {
         if (ID == -1)
             return (NULL);
