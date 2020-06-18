@@ -223,6 +223,8 @@ template <class T> inline unsigned long BasicTimerClass<T>::operator()(void) con
 */
 template <class T> class TTimerClass : public BasicTimerClass<T>
 {
+    using BasicTimerClass<T>::Started;
+
 public:
     // Constructor allows assignment as if class was integral 'long' type.
     TTimerClass(unsigned long set = 0);
@@ -433,6 +435,8 @@ template <class T> inline bool TTimerClass<T>::Is_Active(void) const
 */
 template <class T> class CDTimerClass : public BasicTimerClass<T>
 {
+    using BasicTimerClass<T>::Started;
+
 public:
     // Constructor allows assignment as if class was integral 'long' type.
     CDTimerClass(unsigned long set = 0);
