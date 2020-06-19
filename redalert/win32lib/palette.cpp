@@ -178,8 +178,8 @@ void Fade_Palette_To(void* palette1, unsigned int delay, void (*callback)())
     */
     Determine_Bump_Rate(palette1, delay, &ticksper, &jump);
 
-    tickaccum = 0;            // init accumulated elapsed time
-    timer = TickCount.Time(); // timer = current time
+    tickaccum = 0;               // init accumulated elapsed time
+    timer = WinTickCount.Time(); // timer = current time
     do {
         changed = FALSE;
 
@@ -193,7 +193,7 @@ void Fade_Palette_To(void* palette1, unsigned int delay, void (*callback)())
         .................. Wait for time increment to elapse ..................
         */
         if (changed) {
-            while (TickCount.Time() < (int)timer) {
+            while (WinTickCount.Time() < (int)timer) {
                 /*
                 ................. Update callback while waiting .................
                 */
