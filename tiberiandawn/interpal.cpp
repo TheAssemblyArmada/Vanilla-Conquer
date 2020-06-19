@@ -39,27 +39,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-
+#include "common/winasm.h"
 BOOL InterpolationPaletteChanged = FALSE;
-extern "C" {
-extern void __cdecl Asm_Interpolate(unsigned char* src_ptr,
-                                    unsigned char* dest_ptr,
-                                    int lines,
-                                    int src_width,
-                                    int dest_width);
-
-extern void __cdecl Asm_Interpolate_Line_Double(unsigned char* src_ptr,
-                                                unsigned char* dest_ptr,
-                                                int lines,
-                                                int src_width,
-                                                int dest_width);
-
-extern void __cdecl Asm_Interpolate_Line_Interpolate(unsigned char* src_ptr,
-                                                     unsigned char* dest_ptr,
-                                                     int lines,
-                                                     int src_width,
-                                                     int dest_width);
-}
 
 extern "C" {
 unsigned char PaletteInterpolationTable[SIZE_OF_PALETTE][SIZE_OF_PALETTE];
@@ -137,7 +118,7 @@ void Create_Palette_Interpolation_Table(void)
     // Don't think we need this. ST - 12/20/2018 2:25PM
     // Asm_Create_Palette_Interpolation_Table();
 
-#if (0)
+#ifndef REMASTER_BUILD
 
     int i;
     int j;
@@ -279,7 +260,6 @@ void Increase_Palette_Luminance(unsigned char* palette,
 
 int CopyType = 0;
 
-#if (1)
 /***************************************************************************
  * INTERPOLATE_2X_SCALE                                                    *
  *                                                                         *
@@ -295,7 +275,7 @@ int CopyType = 0;
 void Interpolate_2X_Scale(GraphicBufferClass* source, GraphicViewPortClass* dest, char const* palette_file_name)
 {
 // Don't think we need this. ST - 12/20/2018 2:25PM
-#if (0)
+#ifndef REMASTER_BUILD
     unsigned char* src_ptr;
     unsigned char* dest_ptr;
     unsigned char* last_dest_ptr;
@@ -429,4 +409,3 @@ void Interpolate_2X_Scale(GraphicBufferClass* source, GraphicViewPortClass* dest
         Show_Mouse();
 #endif
 }
-#endif
