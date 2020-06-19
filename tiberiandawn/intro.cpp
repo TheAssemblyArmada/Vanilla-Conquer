@@ -74,6 +74,7 @@ VQAHandle* Open_Movie(char* name)
  *=============================================================================================*/
 void Choose_Side(void)
 {
+#ifdef REMASTER_BUILD
     // static char const _yellowpal[]={0x0,0x0,0xC9,0x0,0xBA,0x0,0x93,0x0,0x61,0x0,0x0,0x0,0x0,0x0,0xEE,0x0};
     // static char const _redpal[]   ={0x0,0x0,0xA8,0x0,0xD9,0x0,0xDA,0x0,0xE1,0x0,0x0,0x0,0x0,0x0,0xD4,0x0};
     // static char const _graypal[]  ={0x0,0x0,0x17,0x0,0x10,0x0,0x12,0x0,0x14,0x0,0x0,0x0,0x0,0x0,0x1C,0x0};
@@ -84,7 +85,7 @@ void Choose_Side(void)
     ScenPlayer = SCEN_PLAYER_GDI;
     return;
 
-#if (0)
+#else
 
     static char const _yellowpal[] = {
         0x0, 0xC9, 0xBA, 0x93, 0x61, 0xEE, 0xee, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
@@ -94,7 +95,8 @@ void Choose_Side(void)
         0x0, 0x17, 0x10, 0x12, 0x14, 0x1c, 0x12, 0x1c, 0x14, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1C, 0x0};
 
     void* anim;
-    VQAHandle *gdibrief = 0, *nodbrief = 0;
+    // TODO: For now until we implement a VQA decoding lib.
+    // VQAHandle *gdibrief = 0, *nodbrief = 0;
     void const *staticaud, *oldfont;
     void const *speechg, *speechn, *speech;
     int statichandle, speechhandle, speechplaying = 0;
@@ -102,9 +104,9 @@ void Choose_Side(void)
     int setpalette = 0;
     int gdi_start_palette;
 
-    MEMORYSTATUS mem_info;
+    MEMORYSTATUSEX mem_info;
     mem_info.dwLength = sizeof(mem_info);
-    GlobalMemoryStatus(&mem_info);
+    GlobalMemoryStatusEx(&mem_info);
 
     TextPrintBuffer = new GraphicBufferClass(SeenBuff.Get_Width(), SeenBuff.Get_Height(), (void*)NULL);
     TextPrintBuffer->Clear();
@@ -127,7 +129,7 @@ void Choose_Side(void)
     //	speechn = MixFileClass::Retrieve("NOD_SLCT.AUD");
 
     if (Special.IsFromInstall) {
-        if (mem_info.dwTotalPhys >= 12 * 1024 * 1024) {
+        if (mem_info.ullTotalPhys >= 12 * 1024 * 1024) {
             VisiblePage.Clear();
             PreserveVQAScreen = 1;
             Play_Movie("INTRO2", THEME_NONE, false);
@@ -142,10 +144,11 @@ void Choose_Side(void)
     InterpolationPalette = Palette;
     Read_Interpolation_Palette("SIDES.PAL");
 
-    nodbrief = Open_Movie("NOD1PRE.VQA");
+    // TODO: requires vqa lib
+    // nodbrief = Open_Movie("NOD1PRE.VQA");
     gdi_start_palette = Load_Interpolated_Palettes("NOD1PRE.VQP");
     Call_Back();
-    gdibrief = Open_Movie("GDI1.VQA");
+    // gdibrief = Open_Movie("GDI1.VQA");
     Load_Interpolated_Palettes("GDI1.VQP", TRUE);
 
     WWMouse->Erase_Mouse(&HidPage, TRUE);
@@ -190,6 +193,7 @@ void Choose_Side(void)
             setpalette = 0;
         }
         SysMemPage.Blit(*PseudoSeenBuff, 0, 22, 0, 22, 320, 156);
+        Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "SIDES.PAL");
 
         /*
         ** If the sample has stopped or is about to then restart it
@@ -244,10 +248,6 @@ void Choose_Side(void)
     Hide_Mouse();
     Close_Animation(anim);
 
-    // erase the "choose side" text
-    PseudoSeenBuff->Fill_Rect(0, 180, 319, 199, 0);
-    SeenBuff.Fill_Rect(0, 180 * 2, 319 * 2, 199 * 2, 0);
-    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "SIDES.PAL");
     Keyboard::Clear();
     SysMemPage.Clear();
 
@@ -255,7 +255,8 @@ void Choose_Side(void)
     ** Skip the briefings if we're in special mode.
     */
     if (Special.IsJurassic && AreThingiesEnabled) {
-        if (nodbrief) {
+        // TODO: Requires VQA lib.
+        /* if (nodbrief) {
             VQA_Close(nodbrief);
             VQA_Free(nodbrief);
             nodbrief = NULL;
@@ -264,11 +265,11 @@ void Choose_Side(void)
             VQA_Close(gdibrief);
             VQA_Free(gdibrief);
             gdibrief = NULL;
-        }
+        }*/
     }
 
     /* play the scenario 1 briefing movie */
-    if (Whom == HOUSE_GOOD) {
+    /*if (Whom == HOUSE_GOOD) {
         if (nodbrief) {
             VQA_Close(nodbrief);
             VQA_Free(nodbrief);
@@ -289,7 +290,7 @@ void Choose_Side(void)
             VQA_Close(nodbrief);
             VQA_Free(nodbrief);
         }
-    }
+    }*/
 
     Free_Interpolated_Palettes();
     Set_Primary_Buffer_Format();
