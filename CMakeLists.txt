@@ -60,6 +60,7 @@ add_library(common STATIC
     common/xordelta.asm
     common/bitblit.c
     common/setfpal.c
+    common/soscodec.c
     common/winasm.c
     common/wwmouse.c
 )
@@ -325,7 +326,6 @@ set(REDALERT_SRC
     redalert/aadata.cpp
     redalert/abstract.cpp
     redalert/adata.cpp
-    redalert/adpcm.cpp
     redalert/aircraft.cpp
     redalert/anim.cpp
     redalert/audio.cpp
@@ -389,7 +389,6 @@ set(REDALERT_SRC
     redalert/dpmi.cpp
     redalert/drive.cpp
     redalert/drop.cpp
-    redalert/dtable.cpp
     redalert/dynavec.cpp
     redalert/edit.cpp
     redalert/egos.cpp
@@ -436,7 +435,6 @@ set(REDALERT_SRC
     redalert/ipxconn.cpp
     redalert/ipxgconn.cpp
     redalert/ipxmgr.cpp
-    redalert/itable.cpp
     redalert/jshell.cpp
     redalert/key.cpp
     redalert/layer.cpp
