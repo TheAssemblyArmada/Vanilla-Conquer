@@ -58,7 +58,7 @@
 **  Define this to allow play of the bonus missions for the Gateway
 **  bundle deal.
 */
-#define BONUS_MISSIONS
+//#define BONUS_MISSIONS
 
 /**********************************************************************
 ** Handle expansion scnearios as a set of single missions with all
