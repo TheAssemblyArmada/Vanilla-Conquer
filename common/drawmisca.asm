@@ -23,7 +23,7 @@ include graphicviewport.inc
 externdef C Buffer_Draw_Line:near
 externdef C Buffer_Fill_Rect:near
 externdef C Buffer_Clear:near
-externdef C Linear_Blit_To_Linear:near
+externdef C Linear_Blit_To_Linear_ASM:near
 externdef C Linear_Scale_To_Linear:near
 externdef C Buffer_Remap:near
 externdef C Build_Fading_Table:near
@@ -728,7 +728,7 @@ Buffer_Clear proc C this_object:dword, color:byte
 Buffer_Clear endp
 
 ;BOOL __cdecl Linear_Blit_To_Linear(void* this_object, void* dest, int x_pixel, int y_pixel, int dest_x0, int dest_y0, int pixel_width, int pixel_height, BOOL trans)
-Linear_Blit_To_Linear proc C this_object:dword, dest:dword, x_pixel:dword, y_pixel:dword, dest_x0:dword, dest_y0:dword, pixel_width:dword, pixel_height:dword, trans:dword
+Linear_Blit_To_Linear_ASM proc C this_object:dword, dest:dword, x_pixel:dword, y_pixel:dword, dest_x0:dword, dest_y0:dword, pixel_width:dword, pixel_height:dword, trans:dword
         ;*===================================================================
         ; Define some locals so that we can handle things quickly
         ;*===================================================================
@@ -1156,7 +1156,7 @@ Linear_Blit_To_Linear proc C this_object:dword, dest:dword, x_pixel:dword, y_pix
             pop ebx
             ret
 
-Linear_Blit_To_Linear endp
+Linear_Blit_To_Linear_ASM endp
 
 ;***************************************************************************
 ;* VVC::SCALE -- Scales a virtual viewport to another virtual viewport     *
