@@ -1,5 +1,5 @@
-#ifndef WWMOUSE_H
-#define WWMOUSE_H
+#ifndef WINASM_H
+#define WINASM_H
 
 #ifdef __cplusplus
 extern "C" {
