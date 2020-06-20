@@ -45,6 +45,7 @@ add_library(common STATIC
     common/drawmisca.asm
     common/drawmisc.cpp
     common/xordelta.asm
+    common/bitblit.c
     common/setfpal.c
     common/winasm.c
     common/wwmouse.c
