@@ -48,6 +48,7 @@
 **
 **
 */
+#ifdef REMASTER_BUILD // TODO: Remaster build uses this null audio engine, move to common implementation.
 void (*Audio_Focus_Loss_Function)(void) = nullptr;
 
 SFX_Type SoundType;
@@ -130,6 +131,7 @@ BOOL Start_Primary_Sound_Buffer(BOOL forced)
     return 0;
 };
 void Stop_Primary_Sound_Buffer(void){};
+#endif
 
 /***************************************************************************
 **	Controls what special effects may occur on the sound effect.

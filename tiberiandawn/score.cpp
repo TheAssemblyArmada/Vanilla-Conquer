@@ -186,8 +186,12 @@ char* ScreenNames[2] = {"S-GDIIN2.WSA", "SCRSCN1.WSA"};
 
 // extern short StreamLowImpact;
 
+#ifdef REMASTER_BUILD // TODO: Move to a null audio engine implementation in common for remaster builds.
 // ST - 1/3/2019 10:38AM
 int StreamLowImpact = FALSE;
+#else
+extern int StreamLowImpact;
+#endif
 
 struct Fame
 {
