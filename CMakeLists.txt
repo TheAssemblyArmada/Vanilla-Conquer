@@ -68,7 +68,12 @@ add_library(common STATIC
 
 # These options currently require directx components from the aug 2007 SDK.
 if(BUILD_VANILLATD OR BUILD_VANILLARA)
-    find_package(DirectX REQUIRED ddraw dxguid)
+    find_package(DirectX REQUIRED ddraw dxguid dsound)
+    add_library(commonv STATIC
+        common/soundio.cpp
+    )
+
+    target_link_libraries(commonv PUBLIC common DirectX::dsound)
 endif()
 
 set(TIBDAWN_SRC
@@ -306,7 +311,7 @@ if(BUILD_VANILLATD)
     add_executable(VanillaTD ${TIBDAWN_SRC} ${TIBDAWN_HEADERS})
     target_compile_definitions(VanillaTD PUBLIC TRUE_FALSE_DEFINED WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
     target_include_directories(VanillaTD PUBLIC . tiberiandawn/win32lib tiberiandawn)
-    target_link_libraries(VanillaTD common wsock32 ws2_32 winmm DirectX::ddraw DirectX::dxguid ${STATIC_LIBS})
+    target_link_libraries(VanillaTD commonv wsock32 ws2_32 winmm DirectX::ddraw DirectX::dxguid ${STATIC_LIBS})
     set_target_properties(VanillaTD PROPERTIES OUTPUT_NAME vanillatd)
     if(MAP_EDITORTD)
         target_compile_definitions(VanillaTD PUBLIC SCENARIO_EDITOR CHEAT_KEYS VIRGIN_CHEAT_KEYS)
@@ -649,7 +654,7 @@ if(BUILD_VANILLARA)
     add_executable(VanillaRA ${REDALERT_SRC} ${REDALERT_HEADERS})
     target_compile_definitions(VanillaRA PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE WINSOCK_IPX)
     target_include_directories(VanillaRA PUBLIC . redalert/win32lib redalert)
-    target_link_libraries(VanillaRA common wsock32 ws2_32 winmm DirectX::ddraw DirectX::dxguid ${STATIC_LIBS})
+    target_link_libraries(VanillaRA commonv wsock32 ws2_32 winmm DirectX::ddraw DirectX::dxguid ${STATIC_LIBS})
     set_target_properties(VanillaRA PROPERTIES OUTPUT_NAME vanillara)
     if(MAP_EDITORRA)
         target_compile_definitions(VanillaRA PUBLIC SCENARIO_EDITOR INTERNAL_VERSION)
