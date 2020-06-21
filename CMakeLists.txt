@@ -58,6 +58,7 @@ add_library(common STATIC
     common/drawmisca.asm
     common/drawmisc.cpp
     common/xordelta.asm
+    common/auduncmp.c
     common/bitblit.c
     common/setfpal.c
     common/soscodec.c
