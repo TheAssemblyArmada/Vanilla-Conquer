@@ -50,14 +50,10 @@ public:
     AnimClass(void)
         : Class(0)
     {
-        Owner = HOUSE_NONE;
+        OwnerHouse = HOUSE_NONE;
         Object = 0;
     }; // Default constructor does nothing.
-    AnimClass(AnimType animnum,
-              COORDINATE coord,
-              unsigned char timedelay = 0,
-              unsigned char loop = 1,
-              bool alt = false);
+    AnimClass(AnimType animnum, COORDINATE coord, unsigned char timedelay = 0, char loop = 1, bool alt = false);
     virtual ~AnimClass(void);
     operator AnimType(void) const
     {
@@ -66,6 +62,10 @@ public:
     virtual RTTIType What_Am_I(void) const
     {
         return RTTI_ANIM;
+    };
+    virtual HousesType Owner(void) const
+    {
+        return OwnerHouse;
     };
 
     /*---------------------------------------------------------------------
@@ -147,13 +147,13 @@ public:
     **	is used when damage is caused by this animation during the middle of its
     **	animation.
     */
-    HousesType Owner;
+    HousesType OwnerHouse;
 
     /*
     **	This counter tells how many more times the animation should loop before it
     **	terminates.
     */
-    unsigned char Loops;
+    char Loops;
 
 protected:
     void Middle(void);
@@ -179,7 +179,9 @@ private:
     */
     unsigned IsBrandNew : 1;
 
-    // Use alternate color when drawing?
+    /*
+     **	Use alternate color when drawing
+     */
     unsigned IsAlternate : 1;
 
     /*

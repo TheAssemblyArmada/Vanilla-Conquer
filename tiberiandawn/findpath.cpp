@@ -97,6 +97,8 @@
 #define MAX_MLIST_SIZE   300
 #define THREAT_THRESHOLD 5
 
+#define MAX_PATH_EDGE_FOLLOW 400
+
 #ifdef NEVER
 typedef enum
 {
@@ -738,17 +740,16 @@ PathType* FootClass::Find_Path(CELL dest, FacingType* final_moves, int maxlen, M
                 pleft.Overlap = LeftOverlap;
                 Mem_Copy(path.Command, pleft.Command, path.Length);
                 Mem_Copy(path.Overlap, pleft.Overlap, sizeof(LeftOverlap));
-                left = Follow_Edge(startcell,
-                                   next,
-                                   &pleft,
-                                   COUNTERCLOCK,
-                                   direction,
-                                   threat,
-                                   threat_stage,
-                                   sizeof(moves_left),
-                                   threshhold);
-                //				left = Follow_Edge(startcell, next, &pleft, COUNTERCLOCK, direction, threat, threat_stage,
-                //follow_len, threshhold);
+// MBL 09.30.2019: We hit a runtime bounds crash where END (-1 / 0xFF) was being poked into +1 just past the end of the
+// moves_right[] array; The FacingType moves_left[] and moves_right[] arrays already have MAX_MLIST_SIZE+2 as their
+// size, which may have been a previous attempted fix; We are now passing MAX_MLIST_SIZE, since the sizeof calculations
+// included the +2 buffering;
+#if 0
+				left = Follow_Edge(startcell, next, &pleft, COUNTERCLOCK, direction, threat, threat_stage, sizeof(moves_left), threshhold);
+//				left = Follow_Edge(startcell, next, &pleft, COUNTERCLOCK, direction, threat, threat_stage, follow_len, threshhold);
+#endif
+                left = Follow_Edge(
+                    startcell, next, &pleft, COUNTERCLOCK, direction, threat, threat_stage, MAX_MLIST_SIZE, threshhold);
 
                 if (left) {
                     follow_len = MIN(maxlen, pleft.Length + (pleft.Length >> 1));
@@ -774,10 +775,16 @@ PathType* FootClass::Find_Path(CELL dest, FacingType* final_moves, int maxlen, M
                 pright.Overlap = RightOverlap;
                 Mem_Copy(path.Command, pright.Command, path.Length);
                 Mem_Copy(path.Overlap, pright.Overlap, sizeof(RightOverlap));
+// MBL 09.30.2019: We hit a runtime bounds crash where END (-1 / 0xFF) was being poked into +1 just past the end of the
+// moves_right[] array; The FacingType moves_left[] and moves_right[] arrays already have MAX_MLIST_SIZE+2 as their
+// size, which may have been a previous attempted fix; We are now passing MAX_MLIST_SIZE, since the sizeof calculations
+// included the +2 buffering;
+#if 0
+				right = Follow_Edge(startcell, next, &pright, CLOCK, direction, threat, threat_stage, sizeof(moves_right), threshhold);
+//				right = Follow_Edge(startcell, next, &pright, CLOCK, direction, threat, threat_stage, follow_len, threshhold);
+#endif
                 right = Follow_Edge(
-                    startcell, next, &pright, CLOCK, direction, threat, threat_stage, sizeof(moves_right), threshhold);
-                //				right = Follow_Edge(startcell, next, &pright, CLOCK, direction, threat, threat_stage,
-                //follow_len, threshhold);
+                    startcell, next, &pright, CLOCK, direction, threat, threat_stage, MAX_MLIST_SIZE, threshhold);
 
                 /*
                 ** If we are in debug mode then let us know how well our right path
@@ -1144,7 +1151,7 @@ bool FootClass::Follow_Edge(CELL start,
                 online = true;
             }
             cellcount++;
-            if (cellcount == 100) {
+            if (cellcount == MAX_PATH_EDGE_FOLLOW) {
                 //				DrawPath = true;
                 //				Debug_Find_Path = true;
                 //				Debug_Draw_Map("Loop failure", start, target, false);

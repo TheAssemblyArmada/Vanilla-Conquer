@@ -319,7 +319,7 @@ public:
     virtual void Dimensions(int& width, int& height) const;
     virtual bool Create_And_Place(CELL, HousesType = HOUSE_NONE) const = 0;
     virtual int Cost_Of(void) const;
-    virtual int Time_To_Build(void) const;
+    virtual int Time_To_Build(HousesType house) const;
     virtual ObjectClass* Create_One_Of(HouseClass*) const = 0;
     virtual short const* Occupy_List(bool placement = false) const;
     virtual short const* Overlap_List(void) const;
@@ -607,7 +607,7 @@ public:
     virtual int Repair_Step(void) const;
     virtual void const* Get_Cameo_Data(void) const;
     virtual int Cost_Of(void) const;
-    virtual int Time_To_Build(void) const;
+    virtual int Time_To_Build(HousesType house) const;
     virtual int Get_Ownable(void) const;
     virtual bool Read_INI(CCINIClass& ini);
 
@@ -1861,7 +1861,7 @@ public:
     **	This is the normal loop count for this animation. Usually this is one, but
     **	for some animations, it may be larger.
     */
-    unsigned Loops;
+    int Loops;
 
     /*
     **	This is the sound effect to play when this animation starts. Usually, this

@@ -994,6 +994,7 @@ int FootClass::Mission_Guard_Area(void)
         Coord = old;
         if (Target_Legal(TarCom))
             return (1);
+        Random_Animate();
     } else {
         Approach_Target();
     }
@@ -1238,7 +1239,7 @@ void FootClass::Active_Click_With(ActionType action, ObjectClass* object)
         break;
 
     case ACTION_ENTER:
-        if (Can_Player_Move() && object && object->Is_Techno() && !((RadioClass*)object)->In_Radio_Contact()) {
+        if (Can_Player_Move() && object && object->Is_Techno() /*&& !((RadioClass *)object)->In_Radio_Contact()*/) {
             Player_Assign_Mission(MISSION_ENTER, TARGET_NONE, object->As_Target());
         }
         break;
@@ -1477,6 +1478,18 @@ RadioMessageType FootClass::Receive_Message(RadioClass* from, RadioMessageType m
     switch (message) {
 
     /*
+     **	Answers if this object is located on top of a service depot.
+     */
+    case RADIO_ON_DEPOT:
+        if (Map[Coord_Cell(Center_Coord())].Cell_Building() != NULL) {
+            BuildingClass const* building = Map[Coord_Cell(Center_Coord())].Cell_Building();
+            if (*building == STRUCT_REPAIR) {
+                return (RADIO_ROGER);
+            }
+        }
+        return (RADIO_NEGATIVE);
+
+    /*
     **	Intercept the repair request and if this object is moving, then no repair
     **	is possible.
     */
@@ -1503,7 +1516,7 @@ RadioMessageType FootClass::Receive_Message(RadioClass* from, RadioMessageType m
             Assign_Mission(MISSION_GUARD);
         }
         if (!IsRotating && !Target_Legal(NavCom)) {
-            Scatter(0, true);
+            Scatter(0, true, true);
         }
         break;
 
@@ -1568,37 +1581,40 @@ RadioMessageType FootClass::Receive_Message(RadioClass* from, RadioMessageType m
 int FootClass::Mission_Enter(void)
 {
     /*
-    **	If radio contact has not yet been established with the transport, try to
-    **	establish contact now.
+    **	Find out who to coordinate with. If in radio contact, then this the transporter is
+    **	defined. If not in radio contact, then try the archive target value to see if that
+    **	is suitable.
     */
-    if (!In_Radio_Contact()) {
-        TechnoClass* techno = As_Techno(ArchiveTarget);
-        if (!techno)
-            techno = As_Techno(NavCom);
-        if (techno) {
+    TechnoClass* contact = Contact_With_Whom();
+    if (contact == NULL) {
+        contact = As_Techno(ArchiveTarget);
+    }
+    if (contact == NULL) {
+        contact = As_Techno(NavCom);
+    }
 
-            /*
-            **	If the transport is already in radio contact, do nothing. Try to
-            **	establish radio contact later.
-            */
-            if (Transmit_Message(RADIO_HELLO, techno) == RADIO_ROGER) {
-                Assign_Destination(TARGET_NONE);
-            }
-        } else {
-            ArchiveTarget = TARGET_NONE;
+    /*
+    **	If in contact, then let the transporter handle the movement coordination.
+    */
+    if (contact != NULL) {
+
+        /*
+        **	If the transport says to "bug off", then abort the enter mission. The transport may
+        **	likely say all is 'ok' with the "RADIO ROGER", then try again later.
+        */
+        if (Transmit_Message(RADIO_DOCKING, contact) != RADIO_ROGER && !IsTethered) {
+            Transmit_Message(RADIO_OVER_OUT);
             Enter_Idle_Mode();
         }
 
     } else {
 
         /*
-        **	Since radio contact exists with the transport, maintain a dialogue so that
-        **	the transport can give proper instructions to the passenger.
+        **	Since there is no potential object to enter, then abort this
+        **	mission with some default standby mission.
         */
-        if (Transmit_Message(RADIO_DOCKING) != RADIO_ROGER) {
-            Transmit_Message(RADIO_OVER_OUT);
-            Enter_Idle_Mode();
-        }
+        ArchiveTarget = TARGET_NONE;
+        Enter_Idle_Mode();
     }
     return (TICKS_PER_SECOND / 2);
 }

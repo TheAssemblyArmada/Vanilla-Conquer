@@ -1383,7 +1383,7 @@ void DriveClass::AI(void)
                     }
                     if (IsLocked && Mission != MISSION_ENTER && Target_Legal(NavCom)
                         && !Is_In_Same_Zone(As_Cell(NavCom)) && land != LAND_ROCK && land != LAND_WATER
-                        && land != LAND_RIVER) {
+                        && land != LAND_RIVER && !Team) {
                         Stop_Driver();
                         Assign_Destination(TARGET_NONE);
                     } else {

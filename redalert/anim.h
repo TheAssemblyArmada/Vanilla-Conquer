@@ -50,7 +50,7 @@ class AnimClass : public ObjectClass, public StageClass
     CCPtr<AnimTypeClass> Class;
 
 public:
-    AnimClass(AnimType animnum, COORDINATE coord, unsigned char timedelay = 0, unsigned char loop = 1);
+    AnimClass(AnimType animnum, COORDINATE coord, unsigned char timedelay = 0, char loop = 1);
     AnimClass(NoInitClass const& x)
         : ObjectClass(x)
         , Class(x)
@@ -99,6 +99,10 @@ public:
         return (Delay == 0) ? VisibleFlags : 0;
     }
 
+    virtual HousesType Owner(void) const
+    {
+        return OwnerHouse;
+    };
     virtual bool Can_Place_Here(COORDINATE) const
     {
         return true;
@@ -147,7 +151,7 @@ public:
     **	This counter tells how many more times the animation should loop before it
     **	terminates.
     */
-    unsigned char Loops;
+    char Loops;
 
 protected:
     void Middle(void);

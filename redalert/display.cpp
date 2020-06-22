@@ -4055,7 +4055,7 @@ void DisplayClass::Mouse_Left_Release(CELL cell, int x, int y, ObjectClass* obje
                             /*
                             **	Only consider objects that are owned by the player.
                             */
-                            if (!foot->IsOwnedByPlayer)
+                            if (!foot->Is_Owned_By_Player())
                                 continue;
 
                             /*

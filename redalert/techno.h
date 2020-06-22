@@ -304,7 +304,6 @@ public:
     int Anti_Air(void) const;
     int Anti_Armor(void) const;
     int Anti_Infantry(void) const;
-    int Time_To_Build(void) const;
     int What_Weapon_Should_I_Use(TARGET target) const;
     virtual ActionType What_Action(CELL cell) const;
     virtual ActionType What_Action(ObjectClass const* target) const;

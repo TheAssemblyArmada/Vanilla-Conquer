@@ -1251,6 +1251,17 @@ void UnitClass::Active_Click_With(ActionType action, CELL cell)
 #endif
 }
 
+void UnitClass::Player_Assign_Mission(MissionType mission, TARGET target, TARGET destination)
+{
+    assert(Units.ID(this) == ID);
+    assert(IsActive);
+
+    if (mission == MISSION_HARVEST) {
+        ArchiveTarget = TARGET_NONE;
+    }
+    DriveClass::Player_Assign_Mission(mission, target, destination);
+}
+
 /***********************************************************************************************
  * UnitClass::Enter_Idle_Mode -- Unit enters idle mode state.                                  *
  *                                                                                             *
@@ -2129,12 +2140,15 @@ void UnitClass::Draw_It(int x, int y, WindowNumberType window) const
     **	If this unit is carrying the flag, then draw that on top of everything else.
     */
     if (Flagged != HOUSE_NONE) {
+        shapefile = MFCD::Retrieve("FLAGFLY.SHP");
+        int flag_x = x + (ICON_PIXEL_W / 2) - 2;
+        int flag_y = y + (3 * ICON_PIXEL_H / 4) - Get_Build_Frame_Height(shapefile);
         CC_Draw_Shape(this,
                       "FLAGFLY",
-                      MFCD::Retrieve("FLAGFLY.SHP"),
+                      shapefile,
                       Frame % 14,
-                      x,
-                      y,
+                      flag_x,
+                      flag_y,
                       window,
                       SHAPE_CENTER | SHAPE_FADING | SHAPE_GHOST,
                       HouseClass::As_Pointer(Flagged)->Remap_Table(false, Class->Remap),
@@ -2159,14 +2173,14 @@ void UnitClass::Draw_It(int x, int y, WindowNumberType window) const
  *                                                                                             *
  *          x,y      -- Relative offset from the center cell to perform the check upon.        *
  *                                                                                             *
- * OUTPUT:  bool; Is it located directly over a Tiberium patch?                                *
+ * OUTPUT:  int; Amount of Tiberium at this location.                                          *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   07/18/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool UnitClass::Tiberium_Check(CELL& center, int x, int y)
+int UnitClass::Tiberium_Check(CELL& center, int x, int y)
 {
     assert(Units.ID(this) == ID);
     assert(IsActive);
@@ -2176,24 +2190,24 @@ bool UnitClass::Tiberium_Check(CELL& center, int x, int y)
     **	to spill past the map edge, then abort this cell check.
     */
     if (Cell_X(center) + x < Map.MapCellX)
-        return (false);
+        return (0);
     if (Cell_X(center) + x >= Map.MapCellX + Map.MapCellWidth)
-        return (false);
+        return (0);
     if (Cell_Y(center) + y < Map.MapCellY)
-        return (false);
+        return (0);
     if (Cell_Y(center) + y >= Map.MapCellY + Map.MapCellHeight)
-        return (false);
+        return (0);
 
     center = XY_Cell(Cell_X(center) + x, Cell_Y(center) + y);
 
     if ((Session.Type != GAME_NORMAL || (!IsOwnedByPlayer || Map[center].IsMapped))) {
         if (Map[Coord].Zones[Class->MZone] != Map[center].Zones[Class->MZone])
-            return (false);
+            return (0);
         if (!Map[center].Cell_Techno() && Map[center].Land_Type() == LAND_TIBERIUM) {
-            return (true);
+            return (Map[center].OverlayData);
         }
     }
-    return (false);
+    return (0);
 }
 
 /***********************************************************************************************
@@ -2228,30 +2242,41 @@ bool UnitClass::Goto_Tiberium(int rad)
             **	Perform a ring search outward from the center.
             */
             for (int radius = 1; radius < rad; radius++) {
+                CELL cell = center;
+                CELL bestcell = 0;
+                int tiberium = 0;
+                int besttiberium = 0;
                 for (int x = -radius; x <= radius; x++) {
-                    CELL cell = center;
-                    if (Tiberium_Check(cell, x, -radius)) {
-                        Assign_Destination(::As_Target(cell));
-                        return (false);
+                    tiberium = Tiberium_Check(cell, x, -radius);
+                    if (tiberium > besttiberium) {
+                        bestcell = cell;
+                        besttiberium = tiberium;
                     }
 
                     cell = center;
-                    if (Tiberium_Check(cell, x, +radius)) {
-                        Assign_Destination(::As_Target(cell));
-                        return (false);
+                    tiberium = Tiberium_Check(cell, x, +radius);
+                    if (tiberium > besttiberium) {
+                        bestcell = cell;
+                        besttiberium = tiberium;
                     }
 
                     cell = center;
-                    if (Tiberium_Check(cell, -radius, x)) {
-                        Assign_Destination(::As_Target(cell));
-                        return (false);
+                    tiberium = Tiberium_Check(cell, -radius, x);
+                    if (tiberium > besttiberium) {
+                        bestcell = cell;
+                        besttiberium = tiberium;
                     }
 
                     cell = center;
-                    if (Tiberium_Check(cell, +radius, x)) {
-                        Assign_Destination(::As_Target(cell));
-                        return (false);
+                    tiberium = Tiberium_Check(cell, +radius, x);
+                    if (tiberium > besttiberium) {
+                        bestcell = cell;
+                        besttiberium = tiberium;
                     }
+                }
+                if (bestcell) {
+                    Assign_Destination(::As_Target(bestcell));
+                    return (false);
                 }
             }
         }
@@ -2845,6 +2870,7 @@ int UnitClass::Mission_Harvest(void)
             Set_Rate(2);
             Set_Stage(0);
             Status = HARVESTING;
+            ArchiveTarget = ::As_Target(Coord_Cell(Coord));
             return (1);
         } else {
 
@@ -2893,7 +2919,6 @@ int UnitClass::Mission_Harvest(void)
             IsHarvesting = false;
             if (Tiberium_Load() == 1) {
                 Status = FINDHOME;
-                ArchiveTarget = ::As_Target(Coord_Cell(Coord));
             } else {
                 if (!Goto_Tiberium(Rule.TiberiumShortScan / CELL_LEPTON_W) && !Target_Legal(NavCom)) {
                     ArchiveTarget = TARGET_NONE;
@@ -2904,6 +2929,8 @@ int UnitClass::Mission_Harvest(void)
                 }
             }
             return (1);
+        } else if (!Target_Legal(NavCom) && ArchiveTarget == TARGET_NONE) {
+            ArchiveTarget = ::As_Target(Coord_Cell(Coord));
         }
         return (1);
         //			return(TICKS_PER_SECOND*Rule.OreDumpRate);
@@ -3537,17 +3564,16 @@ ActionType UnitClass::What_Action(ObjectClass const* object) const
     /*
     **	Special return to friendly refinery action.
     */
-    if (House->IsPlayerControl && object->Is_Techno() && ((TechnoClass const*)object)->House->Is_Ally(this)) {
-        if (object->What_Am_I() == RTTI_BUILDING
-            && ((UnitClass*)this)->Transmit_Message(RADIO_CAN_LOAD, (TechnoClass*)object) == RADIO_ROGER) {
-            action = ACTION_ENTER;
-        }
+    if (Is_Owned_By_Player() && House->Class->House == object->Owner() && object->What_Am_I() == RTTI_BUILDING
+        && ((UnitClass*)this)->Transmit_Message(RADIO_CAN_LOAD, (TechnoClass*)object) == RADIO_ROGER) {
+        action = ACTION_ENTER;
     }
 
     /*
     **	Special return to friendly repair factory action.
     */
-    if (House->IsPlayerControl && action == ACTION_SELECT && object->What_Am_I() == RTTI_BUILDING) {
+    if (Is_Owned_By_Player() && House->Class->House == object->Owner() && action == ACTION_SELECT
+        && object->What_Am_I() == RTTI_BUILDING) {
         BuildingClass* building = (BuildingClass*)object;
         if (building->Class->Type == STRUCT_REPAIR
             && ((UnitClass*)this)->Transmit_Message(RADIO_CAN_LOAD, building) == RADIO_ROGER
