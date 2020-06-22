@@ -94,6 +94,8 @@ extern char const* Speech[VOX_COUNT];
 */
 #define RANDOM_START_POSITION 0x7f
 
+#define KILL_PLAYER_ON_DISCONNECT 1
+
 /*
 **  DLL Interface
 **
@@ -1817,16 +1819,32 @@ extern "C" __declspec(dllexport) void __cdecl CNC_Handle_Player_Switch_To_AI(uin
         return;
     }
 
-    HousesType house;
-    HouseClass* ptr;
-
     GlyphX_Debug_Print("CNC_Handle_Player_Switch_To_AI");
 
     if (GameToPlay == GAME_NORMAL) {
         return;
     }
 
+#ifdef KILL_PLAYER_ON_DISCONNECT
+
+    /*
+    ** Kill player's units on disconnect.
+    */
     if (player_id != 0) {
+        DLLExportClass::Set_Player_Context(player_id);
+
+        if (PlayerPtr) {
+            PlayerPtr->Flag_To_Die();
+        }
+    }
+
+#else // KILL_PLAYER_ON_DISCONNECT
+
+    if (player_id != 0) {
+
+        HousesType house;
+        HouseClass* ptr;
+
         DLLExportClass::Set_Player_Context(player_id);
 
         if (PlayerPtr) {
@@ -1872,6 +1890,8 @@ extern "C" __declspec(dllexport) void __cdecl CNC_Handle_Player_Switch_To_AI(uin
             }
         }
     }
+
+#endif // KILL_PLAYER_ON_DISCONNECT
 }
 
 /**************************************************************************************************
@@ -2526,16 +2546,26 @@ void DLLExportClass::On_Multiplayer_Game_Over(void)
     event.GameOver.SabotagedStructureType = 0;
     event.GameOver.TimerRemaining = -1;
 
-    // Trigger an event for each human player
+    // Trigger an event for each human player, winner first (even if it's an AI)
     for (int i = 0; i < MPlayerCount; i++) {
         HouseClass* player_ptr = HouseClass::As_Pointer(MPlayerHouses[i]); // HouseClass::As_Pointer(HOUSE_MULTI2);
-        if (player_ptr != NULL) {
-            if (player_ptr->IsHuman == true) {
-                event.GlyphXPlayerID = Get_GlyphX_Player_ID(player_ptr);
-                event.GameOver.PlayerWins = !player_ptr->IsDefeated;
-                event.GameOver.RemainingCredits = player_ptr->Available_Money();
-                EventCallback(event);
-            }
+        if (player_ptr != NULL && !player_ptr->IsDefeated) {
+            event.GlyphXPlayerID = Get_GlyphX_Player_ID(player_ptr);
+            event.GameOver.IsHuman = player_ptr->IsHuman;
+            event.GameOver.PlayerWins = true;
+            event.GameOver.RemainingCredits = player_ptr->Available_Money();
+            EventCallback(event);
+        }
+    }
+
+    for (int i = 0; i < MPlayerCount; i++) {
+        HouseClass* player_ptr = HouseClass::As_Pointer(MPlayerHouses[i]); // HouseClass::As_Pointer(HOUSE_MULTI2);
+        if (player_ptr != NULL && player_ptr->IsHuman && player_ptr->IsDefeated) {
+            event.GlyphXPlayerID = Get_GlyphX_Player_ID(player_ptr);
+            event.GameOver.IsHuman = true;
+            event.GameOver.PlayerWins = false;
+            event.GameOver.RemainingCredits = player_ptr->Available_Money();
+            EventCallback(event);
         }
     }
 }
@@ -3780,6 +3810,11 @@ extern "C" __declspec(dllexport) void __cdecl CNC_Handle_Sidebar_Request(Sidebar
     }
 
     switch (request_type) {
+
+    // MBL 06.02.2020 - Changing right-click support for first put building on hold, and then subsequenct right-clicks
+    // to decrement that queue count for 1x or 5x; Then, 1x or 5x Left click will resume from hold Handle and fall
+    // through to start construction (from hold state) below
+    case SIDEBAR_REQUEST_START_CONSTRUCTION_MULTI:
 
     case SIDEBAR_REQUEST_START_CONSTRUCTION:
         DLLExportClass::Start_Construction(player_id, buildable_type, buildable_id);
@@ -6567,8 +6602,12 @@ void DLLExportClass::Selected_Guard_Mode(uint64 player_id)
         for (int index = 0; index < CurrentObject.Count(); index++) {
             ObjectClass const* tech = CurrentObject[index];
 
-            if (tech && tech->Can_Player_Move() && tech->Can_Player_Fire()) {
-                OutList.Add(EventClass(tech->As_Target(), MISSION_GUARD_AREA));
+            if (tech && tech->Can_Player_Fire()) {
+                if (tech->Can_Player_Move()) {
+                    OutList.Add(EventClass(tech->As_Target(), MISSION_GUARD_AREA));
+                } else {
+                    OutList.Add(EventClass(tech->As_Target(), MISSION_GUARD));
+                }
             }
         }
     }
@@ -7078,7 +7117,7 @@ void DLLExportClass::Debug_Heal_Unit(int x, int y)
                     CellClass* cells[cellcount];
                     cells[0] = cellptr;
                     for (FacingType index = FACING_N; index < FACING_COUNT; index++) {
-                        cells[(int)index + 1] = &cellptr->Adjacent_Cell(index);
+                        cells[(int)index + 1] = cellptr->Adjacent_Cell(index);
                     }
 
                     for (int index = 0; index < cellcount; index++) {

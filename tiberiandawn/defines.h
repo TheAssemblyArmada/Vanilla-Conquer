@@ -1496,6 +1496,7 @@ typedef enum AnimType : char
     ANIM_STEG_DIE,
     ANIM_RAPT_DIE,
     ANIM_CHEM_BALL, // Chemical warrior explosion.
+    ANIM_FLAG,      // CTF flag.
 
     ANIM_FIRE_SMALL_VIRTUAL, // Small flame animation (virtual).
     ANIM_FIRE_MED_VIRTUAL,   // Medium flame animation (virtual).
@@ -1618,6 +1619,9 @@ typedef enum RadioMessageType : unsigned char
     RADIO_KICK,           // "Take this kick, you.. you.."
     RADIO_PUNCH,          // "Take this punch, you.. you.."
     RADIO_PREPARE_TO_BOX, //	"Fancy a little fisticuffs, eh?"
+
+    RADIO_NEED_REPAIR, // "Are you in need of service depot work?"
+    RADIO_ON_DEPOT,    // "Are you sitting on a service depot?"
 
     RADIO_COUNT
 } RadioMessageType;

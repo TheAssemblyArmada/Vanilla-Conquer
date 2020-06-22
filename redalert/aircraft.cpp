@@ -1689,10 +1689,13 @@ ResultType AircraftClass::Take_Damage(int& damage, int distance, WarheadType war
     **	as well.
     */
     switch (res) {
-    case RESULT_DESTROYED:
+    case RESULT_DESTROYED: {
         Kill_Cargo(source);
         Death_Announcement();
-        new AnimClass(ANIM_FBALL1, Target_Coord());
+        COORDINATE coord = Target_Coord();
+        if (!(coord & HIGH_COORD_MASK)) {
+            new AnimClass(ANIM_FBALL1, coord);
+        }
 
         /*
         **	Parachute a survivor if possible.
@@ -1707,7 +1710,7 @@ ResultType AircraftClass::Take_Damage(int& damage, int distance, WarheadType war
         }
 
         delete this;
-        break;
+    } break;
 
     default:
     case RESULT_HALF:

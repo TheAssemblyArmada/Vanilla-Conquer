@@ -466,6 +466,11 @@ bool ObjectClass::Can_Demolish_Unit(void) const
     return (false);
 }
 
+bool ObjectClass::Can_Capture(void) const
+{
+    return (false);
+}
+
 /***********************************************************************************************
  * ObjectClass::Can_Player_Fire -- Can the player give this object an attack mission?          *
  *                                                                                             *

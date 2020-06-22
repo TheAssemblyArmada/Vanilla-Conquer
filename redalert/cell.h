@@ -248,11 +248,11 @@ public:
     {
         return Closest_Free_Spot(Cell_Coord());
     }
-    CellClass& Adjacent_Cell(FacingType face)
+    CellClass* Adjacent_Cell(FacingType face)
     {
-        return (CellClass&)((*((CellClass const*)this)).Adjacent_Cell(face));
+        return (CellClass*)((*((CellClass const*)this)).Adjacent_Cell(face));
     }
-    CellClass const& Adjacent_Cell(FacingType face) const;
+    CellClass const* Adjacent_Cell(FacingType face) const;
     InfantryClass* Cell_Infantry(void) const;
     LandType Land_Type(void) const
     {
@@ -298,6 +298,9 @@ public:
     void Overlap_Up(ObjectClass* object);
     bool Flag_Place(HousesType house);
     bool Flag_Remove(void);
+    void Flag_Update(void);
+    void Flag_Create(void);
+    void Flag_Destroy(void);
 
     /*
     **	File I/O.
@@ -361,10 +364,15 @@ private:
     LandType OverrideLand; // The overriden land type of this cell.
 
     /*
+     **	Points to the flag animation on this cell in CTF games.
+     */
+    AnimClass* CTFFlag;
+
+    /*
     ** Some additional padding in case we need to add data to the class and maintain backwards compatibility for
     *save/load
     */
-    unsigned char SaveLoadPadding[32];
+    unsigned char SaveLoadPadding[28];
 };
 
 #endif

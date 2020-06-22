@@ -525,7 +525,7 @@ static InfantryTypeClass const Commando(INFANTRY_RAMBO,     // Infantry type num
                                         false,              // Is this a civlian?
                                         false,              // Always use the given name for the infantry?
                                         false,              // Is this a "fraidycat" run-away type infantry?
-                                        true,               // Can this infantry type capture a building?
+                                        false,              // Can this infantry type capture a building?
                                         false,              // Theater specific graphic image?
                                         -1,                 // Number of shots it has (default).
                                         &CommandoDos[0][0], // ptr to DO table
@@ -1528,6 +1528,7 @@ InfantryTypeClass::InfantryTypeClass(InfantryType type,
     IsCapture = is_capture;
     IsFraidyCat = is_fraidycat;
     IsCivilian = is_civilian;
+    IsAvoidingTiberium = false;
     Type = type;
     FireLaunch = firelaunch;
     ProneLaunch = pronelaunch;

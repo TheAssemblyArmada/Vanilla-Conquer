@@ -76,7 +76,7 @@ public:
     bool Goto_Clear_Spot(void);
     bool Try_To_Deploy(void);
 
-    bool Tiberium_Check(CELL& center, int x, int y);
+    int Tiberium_Check(CELL& center, int x, int y);
     bool Flag_Attach(HousesType house);
     bool Flag_Remove(void);
     void Find_LZ(void);
@@ -126,6 +126,8 @@ public:
     virtual ActionType What_Action(ObjectClass* object) const;
     virtual void Active_Click_With(ActionType action, ObjectClass* object);
     virtual void Active_Click_With(ActionType action, CELL cell);
+    virtual void
+    Player_Assign_Mission(MissionType mission, TARGET target = TARGET_NONE, TARGET destination = TARGET_NONE);
     virtual void Response_Select(void);
     virtual void Response_Move(void);
     virtual void Response_Attack(void);
