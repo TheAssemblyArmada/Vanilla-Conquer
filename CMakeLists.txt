@@ -2,23 +2,26 @@ cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-if(WIN32)
+if(NOT WIN32)
+    # until we are truly portable, assume MinGW
+    set(CMAKE_TOOLCHAIN_FILE "cmake/mingw-toolchain.cmake")
+endif()
+
+project(VanillaConquer)
+
+if(MSVC)
     enable_language(ASM_MASM)
     set(CMAKE_ASM_MASM_FLAGS "/Zm /Cp /safeseh" CACHE INTERNAL "MASM flags")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zp1")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Zp1")
     add_definitions(-DWINDOWS_IGNORE_PACKING_MISMATCH)
 else()
-    # until we are truly portable, assume MinGW
-    set(CMAKE_TOOLCHAIN_FILE "cmake/mingw-toolchain.cmake")
     set(ASM_DIALECT "_JWASM")
     enable_language(ASM_JWASM)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fpermissive -fpack-struct=1 -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fpermissive -fpack-struct=1 -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
     set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
 endif()
-
-project(VanillaConquer)
 
 find_package(ClangFormat)
 include(ClangFormat)
