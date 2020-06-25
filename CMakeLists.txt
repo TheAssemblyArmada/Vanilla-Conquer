@@ -60,6 +60,11 @@ option(MAP_EDITORTD "Include internal scenario editor in Tiberian Dawn build." O
 option(MAP_EDITORRA "Include internal scenario editor in Red Alert build." OFF)
 option(NETWORKING "Enable network play." ON)
 option(DSOUND "Enable DirectSound audio." ON)
+option(USE_ASM "Use x86 assembly optimizations." ON)
+
+if(NOT USE_ASM)
+    add_definitions(-DNOASM)
+endif()
 
 if(NOT BUILD_VANILLATD AND MAP_EDTITORTD)
     message(WARNING "Internal scenario editor requires a Tiberian Dawn executable to be built, but it was not enabled.")
@@ -78,6 +83,7 @@ endif()
 
 set(COMMON_SRC
     common/miscasm.asm
+    common/misc.c
     common/irandoma.asm
     common/irandom.cpp
     common/drawmisca.asm
@@ -716,4 +722,10 @@ if(DSOUND)
     message(STATUS "  DirectSound is enabled.")
 else()
     message(STATUS "  DirectSound is disabled.")
+endif()
+
+if(USE_ASM)
+    message(STATUS "  Using x86 assembly optimizations.")
+else()
+    message(STATUS "  Using C replacements for x86 assembly.")
 endif()
