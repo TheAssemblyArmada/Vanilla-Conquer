@@ -17,8 +17,10 @@
 
 .model flat
 
+IFNDEF NOASM
 externdef C calcx:near
 externdef C calcy:near
+ENDIF
 externdef C Cardinal_To_Fixed:near
 externdef C Fixed_To_Cardinal:near
 externdef C Desired_Facing256:near
@@ -40,6 +42,7 @@ _new_facing8 db 1, 2, 1, 0, 7, 6, 7, 0, 3, 2, 3, 4, 5, 6, 5, 4
 
 .code
 
+IFNDEF NOASM
 ; int __cdecl calcx(signed short param1, short distance)
 calcx proc C param1:word, distance:word
     push    ebx
@@ -70,6 +73,7 @@ calcy proc C param1:word, distance:word
     pop     ebx
     ret
 calcy endp
+ENDIF
 
 ;***********************************************************************************************
 ;* Cardinal_To_Fixed -- Converts cardinal numbers into a fixed point number.                   *

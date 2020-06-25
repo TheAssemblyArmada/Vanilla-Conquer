@@ -48,6 +48,11 @@ option(BUILD_VANILLATD "Build Tiberian Dawn executable." ON)
 option(BUILD_VANILLARA "Build Red Alert executable." ON)
 option(MAP_EDITORTD "Include internal scenario editor in Tiberian Dawn build." OFF)
 option(MAP_EDITORRA "Include internal scenario editor in Red Alert build." OFF)
+option(USE_ASM "Use x86 assembly optimizations." ON)
+
+if(NOT USE_ASM)
+    add_definitions(-DNOASM)
+endif()
 
 if(NOT BUILD_VANILLATD AND MAP_EDTITORTD)
     message(WARNING "Internal scenario editor requires a Tiberian Dawn executable to be built, but it was not enabled.")
@@ -61,6 +66,7 @@ endif()
 
 add_library(common STATIC
     common/miscasm.asm
+    common/misc.c
     common/irandoma.asm
     common/irandom.cpp
     common/iconcach.cpp
@@ -697,4 +703,10 @@ endif()
 
 if(MAP_EDITORRA)
     message(STATUS "  Include scenario editor functionality in the Red Alert executable.")
+endif()
+
+if(USE_ASM)
+    message(STATUS "  Using x86 assembly optimizations.")
+else()
+    message(STATUS "  Using C replacements for x86 assembly.")
 endif()
