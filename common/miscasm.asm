@@ -20,9 +20,9 @@
 IFNDEF NOASM
 externdef C calcx:near
 externdef C calcy:near
-ENDIF
 externdef C Cardinal_To_Fixed:near
 externdef C Fixed_To_Cardinal:near
+ENDIF
 externdef C Desired_Facing256:near
 externdef C Desired_Facing8:near
 externdef C Set_Bit:near
@@ -73,7 +73,6 @@ calcy proc C param1:word, distance:word
     pop     ebx
     ret
 calcy endp
-ENDIF
 
 ;***********************************************************************************************
 ;* Cardinal_To_Fixed -- Converts cardinal numbers into a fixed point number.                   *
@@ -151,6 +150,7 @@ all_done:
     pop     ebx
     ret
 Fixed_To_Cardinal endp
+ENDIF
 
 ;***************************************************************************
 ;* Desired_Facing256 -- Desired facing algorithm 0..255 resolution.        *
