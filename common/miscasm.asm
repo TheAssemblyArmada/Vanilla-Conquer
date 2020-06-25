@@ -22,9 +22,9 @@ externdef C calcx:near
 externdef C calcy:near
 externdef C Cardinal_To_Fixed:near
 externdef C Fixed_To_Cardinal:near
-ENDIF
 externdef C Desired_Facing256:near
 externdef C Desired_Facing8:near
+ENDIF
 externdef C Set_Bit:near
 externdef C Get_Bit:near
 externdef C First_True_Bit:near
@@ -149,7 +149,7 @@ all_done:
     pop     ebx
     ret
 Fixed_To_Cardinal endp
-ENDIF
+
 ;***************************************************************************
 ;* Desired_Facing256 -- Desired facing algorithm 0..255 resolution.        *
 ;*                                                                         *
@@ -329,6 +329,8 @@ dxisbig:
     pop     ebx
     ret
 Desired_Facing8 endp
+
+ENDIF
 
 ;void __cdecl Set_Bit(void* array, int bit, int value)
 Set_Bit proc C array:dword, bit:dword, value:dword

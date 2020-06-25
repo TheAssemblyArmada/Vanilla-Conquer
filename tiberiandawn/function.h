@@ -271,6 +271,7 @@ inline CELL Coord_YCell(COORDINATE coord)
 #include "loaddlg.h"
 #include "ipxaddr.h"
 #include "common/miscasm.h"
+#include "common/face.h"
 /****************************************************************************
 **	This is a "node", used for the lists of available games & players.  The
 **	'Game' structure is used for games; the 'Player' structure for players.
