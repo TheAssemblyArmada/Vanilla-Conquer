@@ -99,6 +99,7 @@ set(COMMON_SRC
     common/buffer.cpp
     common/gbuffer.cpp
     common/tobuff.asm
+    common/face.cpp
     common/font.cpp
     common/timer.cpp
     common/timerdwn.cpp
