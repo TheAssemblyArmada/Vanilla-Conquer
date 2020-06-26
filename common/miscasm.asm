@@ -29,8 +29,8 @@ externdef C Get_Bit:near
 externdef C First_True_Bit:near
 externdef C First_False_Bit:near
 externdef C _Bound:near
-ENDIF
 externdef C Conquer_Build_Fading_Table:near
+ENDIF
 externdef C Reverse_Long:near
 externdef C Reverse_Short:near
 externdef C Swap_Long:near
@@ -425,7 +425,6 @@ bound_okmax:
     pop     ebx
     ret
 _Bound endp
-ENDIF
 
 ;***************************************************************************
 ;* Conquer_Build_Fading_Table -- Builds custom shadow/light fading table.  *
@@ -615,6 +614,7 @@ fini1:
     pop     esi
     ret
 Conquer_Build_Fading_Table endp
+ENDIF
 
 ;extern "C" long __cdecl Reverse_Long(long number)
 Reverse_Long proc C number:dword
