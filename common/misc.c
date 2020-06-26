@@ -203,4 +203,17 @@ int __cdecl First_False_Bit(void const* array)
     return 8 * bytenum + bitnum;
 }
 
+int __cdecl _Bound(int original, int min, int max)
+{
+    if (original < min) {
+        return min;
+    }
+
+    if (original > max) {
+        return max;
+    }
+
+    return original;
+}
+
 #endif

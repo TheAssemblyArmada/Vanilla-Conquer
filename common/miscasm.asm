@@ -28,8 +28,8 @@ externdef C Set_Bit:near
 externdef C Get_Bit:near
 externdef C First_True_Bit:near
 externdef C First_False_Bit:near
-ENDIF
 externdef C _Bound:near
+ENDIF
 externdef C Conquer_Build_Fading_Table:near
 externdef C Reverse_Long:near
 externdef C Reverse_Short:near
@@ -403,7 +403,6 @@ first_false_bit_again:
     pop     esi
     ret
 First_False_Bit endp
-ENDIF
 
 ;int __cdecl Bound(int original, int min, int max)
 _Bound proc C original:dword, min:dword, max:dword
@@ -426,6 +425,7 @@ bound_okmax:
     pop     ebx
     ret
 _Bound endp
+ENDIF
 
 ;***************************************************************************
 ;* Conquer_Build_Fading_Table -- Builds custom shadow/light fading table.  *
