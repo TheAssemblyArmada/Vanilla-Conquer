@@ -44,7 +44,7 @@ void output(short, short)
 }
 
 bool InDebugger = false;
-bool ReadyToQuit = false;
+int ReadyToQuit = 0;
 
 #if (0)
 /***************************************************************************
