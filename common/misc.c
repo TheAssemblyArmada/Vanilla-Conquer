@@ -216,4 +216,81 @@ int __cdecl _Bound(int original, int min, int max)
     return original;
 }
 
+struct RGB {
+    uint8_t Red, Green, Blue;
+};
+
+static void RGB_Adjust(struct RGB *_this, int ratio, const struct RGB *rgb)
+{
+    /*
+    **	Ratio conversion is limited to 0 through 100%. This is
+    **	the range of 0 to 255.
+    */
+    ratio &= 0x00FF;
+
+    /*
+    **	Adjust the color guns by the ratio specified toward the
+    **	destination color.
+    */
+    int value = (int)rgb->Red - (int)_this->Red;
+    _this->Red = (int)_this->Red + (value * ratio) / 256;
+
+    value = (int)rgb->Green - (int)_this->Green;
+    _this->Green = (int)_this->Green + (value * ratio) / 256;
+
+    value = (int)rgb->Blue - (int)_this->Blue;
+    _this->Blue = (int)_this->Blue + (value * ratio) / 256;
+}
+
+static int RGB_Difference(struct RGB *_this, const struct RGB *rgb)
+{
+    int r = (int)_this->Red - (int)rgb->Red;
+    if (r < 0)
+        r = -r;
+
+    int g = (int)_this->Green - (int)rgb->Green;
+    if (g < 0)
+        g = -g;
+
+    int b = (int)_this->Blue - (int)rgb->Blue;
+    if (b < 0)
+        b = -b;
+
+    return (r * r + g * g + b * b);
+}
+
+void* __cdecl Conquer_Build_Fading_Table(void const* palette, void* fade_table, int color, int frac)
+{
+    if (fade_table) {
+        const struct RGB *rgb_palette = palette;
+        uint8_t *dst = (uint8_t *)(fade_table);
+        struct RGB const *target_col = &rgb_palette[color];
+
+        for (int i = 0; i < 256; ++i) {
+            if (i <= 240 && i) {
+                struct RGB *tmp = &rgb_palette[i];
+                RGB_Adjust(tmp, frac, target_col);
+
+                int index = 0;
+                int prevdiff = -1;
+
+                for (int j = 240; j < 255; ++j) {
+                    int difference = RGB_Difference(&rgb_palette[j], tmp);
+
+                    if (prevdiff == -1 || difference < prevdiff) {
+                        index = j;
+                        prevdiff = difference;
+                    }
+                }
+
+                dst[i] = index;
+            } else {
+                dst[i] = i;
+            }
+        }
+    }
+
+    return fade_table;
+}
+
 #endif
