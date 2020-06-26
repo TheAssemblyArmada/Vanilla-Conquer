@@ -48,7 +48,7 @@ option(BUILD_VANILLATD "Build Tiberian Dawn executable." ON)
 option(BUILD_VANILLARA "Build Red Alert executable." ON)
 option(MAP_EDITORTD "Include internal scenario editor in Tiberian Dawn build." OFF)
 option(MAP_EDITORRA "Include internal scenario editor in Red Alert build." OFF)
-option(USE_ASM "Use x86 assembly optimizations." ON)
+option(USE_ASM "Use x86 assembly optimizations." OFF)
 
 if(NOT USE_ASM)
     add_definitions(-DNOASM)
