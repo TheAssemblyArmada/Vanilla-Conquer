@@ -290,7 +290,7 @@ xskip1c:
 
             pop    ecx
             add    edi,[modulo]
-         add esi,[skip]
+            add esi,[skip]
             loop    xrowloopc
             jmp    short proc_out
 
@@ -317,26 +317,13 @@ istranscheck2:
             ;
 loop1c:
             push    eax
-         ;/rept 3                    // No rept in inline asm. ST - 12/20/2018 10:43AM
+            rept 3
             test    edi,3
             jz    aligned
             movsb
             dec    eax
             jz    finishedit
-
-            test    edi,3
-            jz    aligned
-            movsb
-            dec    eax
-            jz    finishedit
-
-            test    edi,3
-            jz    aligned
-            movsb
-            dec    eax
-            jz    finishedit
-
-         ;endm
+            endm
 aligned:
             mov    ecx,eax
             shr    ecx,2
@@ -374,7 +361,7 @@ skip1c:
 
             pop    ecx
             add    edi,[modulo]
-         add esi,[skip]
+            add esi,[skip]
             loop    rowloopc
 
             ; Cleanup and exit icon drawing routine.

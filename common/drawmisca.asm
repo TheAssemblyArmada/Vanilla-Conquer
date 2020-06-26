@@ -727,7 +727,7 @@ Buffer_Clear proc C this_object:dword, color:byte
         ret
 Buffer_Clear endp
 
-;BOOL __cdecl Linear_Blit_To_Linear(void* this_object, void* dest, int x_pixel, int y_pixel, int dest_x0, int dest_y0, int pixel_width, int pixel_height, BOOL trans)
+;BOOL __cdecl Linear_Blit_To_Linear_ASM(void* this_object, void* dest, int x_pixel, int y_pixel, int dest_x0, int dest_y0, int pixel_width, int pixel_height, BOOL trans)
 Linear_Blit_To_Linear_ASM proc C this_object:dword, dest:dword, x_pixel:dword, y_pixel:dword, dest_x0:dword, dest_y0:dword, pixel_width:dword, pixel_height:dword, trans:dword
         ;*===================================================================
         ; Define some locals so that we can handle things quickly
@@ -1006,14 +1006,8 @@ Linear_Blit_To_Linear_ASM proc C this_object:dword, dest:dword, x_pixel:dword, y
                mov    ecx,eax
                jmp    [ y1_pixel ]
         forward_trans_line:
-               ;REPT    32
-               ;local    transp_pixel
-                 ;No REPT in msvc inline assembly.
-                 ; Save ECX and use as counter instead. ST - 12/19/2018 5:41PM
-                 push    ecx
-                 mov    ecx, 32
-
-        rept_loop:
+                REPT    32
+                local    transp_pixel
                 mov    bl,[ esi ]
                 test    bl,bl
                 jz        transp_pixel
@@ -1021,13 +1015,8 @@ Linear_Blit_To_Linear_ASM proc C this_object:dword, dest:dword, x_pixel:dword, y
         transp_pixel:
                 inc    esi
                 inc    edi
+                ENDM
 
-                dec    ecx            ;ST - 12/19/2018 5:44PM
-                jnz    rept_loop    ;ST - 12/19/2018 5:44PM
-
-                pop    ecx            ;ST - 12/19/2018 5:44PM
-
-            ;ENDM
             transp_reference:
                dec    ecx
                jge    forward_trans_line
@@ -1117,13 +1106,8 @@ Linear_Blit_To_Linear_ASM proc C this_object:dword, dest:dword, x_pixel:dword, y
                push    esi
                jmp    [ y1_pixel ]
         backward_trans_line:
-               ;REPT    32
-               ;local    transp_pixel2
-                 ;No REPT in msvc inline assembly.
-                 ; Save ECX and use as counter instead. ST - 12/19/2018 5:41PM
-                 push    ecx
-                 mov    ecx, 32
-        rept_loop2:
+                 REPT    32
+                 local    transp_pixel2
                  mov    bl,[ esi ]
                  test    bl,bl
                  jz    transp_pixel2
@@ -1131,14 +1115,8 @@ Linear_Blit_To_Linear_ASM proc C this_object:dword, dest:dword, x_pixel:dword, y
         transp_pixel2:
                  dec    esi
                  dec    edi
+                ENDM
 
-                 dec    ecx                ;ST - 12/19/2018 5:44PM
-                 jnz    rept_loop2        ;ST - 12/19/2018 5:44PM
-
-                 pop    ecx                ;ST - 12/19/2018 5:44PM
-            
-            ;ENDM
-            
              back_transp_reference:
                dec    ecx
                jge    backward_trans_line
@@ -1463,21 +1441,13 @@ Linear_Scale_To_Linear proc C this_object:dword, dest:dword, src_x:dword, src_y:
            mov    ebx , [ counter_x ]
            jmp    [ entry ]
      inner_loop:
-           ;/ REPT not supported for inline asm. ST - 12/19/2018 6:11PM
-             ;/REPT    32
-                 push ebx        ;/ST - 12/19/2018 6:11PM
-                mov ebx,32    ;/ST - 12/19/2018 6:11PM
-rept_loop3:
+               REPT    32
                mov    cl , [ esi ]
                add    ecx , eax
                adc    esi , edx
                mov    [ edi ] , cl
                inc    edi
-
-                dec ebx                ;/ST - 12/19/2018 6:11PM
-                jnz rept_loop3       ;/ST - 12/19/2018 6:11PM
-                pop ebx                ;/ST - 12/19/2018 6:11PM
-           ;/ENDM
+               ENDM
      ref_point:
            dec    ebx
            jge    inner_loop
@@ -1522,202 +1492,15 @@ rept_loop3:
            xor    ebx , ebx
            jmp    [ entry ]
      remapinner_loop:
-           ;/ REPT not supported for inline asm. ST - 12/19/2018 6:11PM
-             ;/REPT    32
+               REPT    32
                mov    bl , [ esi ]
                add    ecx , [ dx_frac ]
                adc    esi , edx
                mov    cl , [ eax + ebx ]
                mov    [ edi ] , cl
                inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
-               mov    bl , [ esi ]
-               add    ecx , [ dx_frac ]
-               adc    esi , edx
-               mov    cl , [ eax + ebx ]
-               mov    [ edi ] , cl
-               inc    edi
+               ENDM
 
-           ;ENDM
      remapref_point:
            dec    [ remap_counter ]
            jge    remapinner_loop
@@ -1763,13 +1546,8 @@ rept_loop3:
            mov    ebx , [ counter_x ]
            jmp    [ entry ]
      trans_inner_loop:
-           
-           ;/ REPT not supported for inline asm. ST - 12/19/2018 6:11PM
-             ;/REPT    32
-                 push ebx        ;/ST - 12/19/2018 6:11PM
-                mov ebx,32    ;/ST - 12/19/2018 6:11PM
-rept_loop4:
-             
+               REPT    32
+               local trans_pixel
                mov    cl , [ esi ]
                test    cl , cl
                jz    trans_pixel
@@ -1778,12 +1556,8 @@ rept_loop4:
                add    ecx , eax
                adc    esi , edx
                inc    edi
-                
-                dec ebx                ;/ST - 12/19/2018 6:11PM
-                jnz rept_loop4        ;/ST - 12/19/2018 6:11PM
-                pop ebx               ;//ST - 12/19/2018 6:11PM
-           
-             ;/ENDM
+               ENDM
+
      trans_ref_point:
            dec    ebx
            jge    trans_inner_loop
@@ -1828,14 +1602,9 @@ rept_loop4:
            xor    ebx , ebx
            jmp    [ entry ]
      
-    
     trans_remapinner_loop:
-           ;/ REPT not supported for inline asm. ST - 12/19/2018 6:11PM
-             ;/REPT    32
-             ;/ Run out of registers so use ebp
-                 push ebp        ;/ST - 12/19/2018 6:11PM
-                mov ebp,32    ;/ST - 12/19/2018 6:11PM
-rept_loop5:
+               REPT    32
+               local trans_pixel2
                mov    bl , [ esi ]
                test    bl , bl
                jz    trans_pixel2
@@ -1845,12 +1614,7 @@ rept_loop5:
                add    ecx , [ dx_frac ]
                adc    esi , edx
                inc    edi
-                
-                dec ebp                ;/ST - 12/19/2018 6:11PM
-                jnz rept_loop5        ;/ST - 12/19/2018 6:11PM
-                pop ebp                ;/ST - 12/19/2018 6:11PM
-
-           ;ENDM
+               ENDM
 
      trans_remapref_point:
            dec    [ remap_counter ]
