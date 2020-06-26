@@ -47,7 +47,7 @@ void Print_Error_Exit(char* string);
 WinTimerClass* WinTimer;
 extern void Create_Main_Window(HANDLE instance, int command_show, int width, int height);
 
-extern bool ReadyToQuit;
+extern int ReadyToQuit;
 void Read_Setup_Options(RawFileClass* config_file);
 
 bool VideoBackBufferAllowed = true;
