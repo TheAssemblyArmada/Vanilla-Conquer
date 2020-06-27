@@ -293,4 +293,22 @@ void* __cdecl Conquer_Build_Fading_Table(void const* palette, void* fade_table, 
     return fade_table;
 }
 
+long __cdecl Reverse_Long(long number)
+{
+    return ((number >> 24) & 0xFF) |
+           ((number >> 8)  & 0xFF00) |
+           ((number << 8)  & 0xFF0000) |
+           ((number << 24) & 0xFF000000);
+}
+
+short __cdecl Reverse_Short(short number)
+{
+    return (number >> 8) | (number << 8);
+}
+
+long __cdecl Swap_Long(long number)
+{
+    return (number >> 16) | (number << 16);
+}
+
 #endif
