@@ -33,7 +33,6 @@ externdef C Conquer_Build_Fading_Table:near
 externdef C Reverse_Long:near
 externdef C Reverse_Short:near
 externdef C Swap_Long:near
-ENDIF
 externdef C strtrim:near
 
 .data
@@ -42,7 +41,6 @@ _new_facing8 db 1, 2, 1, 0, 7, 6, 7, 0, 3, 2, 3, 4, 5, 6, 5, 4
 
 .code
 
-IFNDEF NOASM
 ; int __cdecl calcx(signed short param1, short distance)
 calcx proc C param1:word, distance:word
     push    ebx
@@ -637,7 +635,6 @@ Swap_Long proc C number:dword
     ror     eax,16
     ret
 Swap_Long endp
-ENDIF
 
 ;***************************************************************************
 ;* strtrim -- Remove the trailing white space from a string.               *
@@ -698,5 +695,6 @@ fini:
     pop     esi
     ret
 strtrim endp
+ENDIF
 
 end

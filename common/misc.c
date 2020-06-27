@@ -311,4 +311,23 @@ long __cdecl Swap_Long(long number)
     return (number >> 16) | (number << 16);
 }
 
+void __cdecl strtrim(char* buffer)
+{
+    char *start = buffer;
+    char *end = start + strlen(start) - 1;
+
+    if (end <= start)
+        return;
+
+    while (end > start && (*end == '\t' || *end == ' '))
+        end--;
+
+    while (start < end && (*start == '\t' || *start == ' '))
+        start++;
+
+    *++end = '\0';
+
+    memmove(buffer, start, strlen(start) + 1);
+}
+
 #endif
