@@ -24,8 +24,6 @@ The following components are needed:
  - Windows 10 SDK
  - CMake
 
-For Vanilla executables you also need [DirectX SDK August 2007](https://archive.org/details/dxsdk_aug2007).
-
 #### Building
 
 From an x86 VS command line window:
