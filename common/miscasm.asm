@@ -30,10 +30,10 @@ externdef C First_True_Bit:near
 externdef C First_False_Bit:near
 externdef C _Bound:near
 externdef C Conquer_Build_Fading_Table:near
-ENDIF
 externdef C Reverse_Long:near
 externdef C Reverse_Short:near
 externdef C Swap_Long:near
+ENDIF
 externdef C strtrim:near
 
 .data
@@ -614,7 +614,6 @@ fini1:
     pop     esi
     ret
 Conquer_Build_Fading_Table endp
-ENDIF
 
 ;extern "C" long __cdecl Reverse_Long(long number)
 Reverse_Long proc C number:dword
@@ -638,6 +637,7 @@ Swap_Long proc C number:dword
     ror     eax,16
     ret
 Swap_Long endp
+ENDIF
 
 ;***************************************************************************
 ;* strtrim -- Remove the trailing white space from a string.               *
