@@ -940,12 +940,14 @@ void SidebarClass::Recalc(void)
  *=============================================================================================*/
 bool SidebarClass::Activate(int control)
 {
+#ifdef REMASTER_BUILD
     //
     // We don't want the original sidebar to be visible. ST - 1/31/2019 11:28AM
     //
     if (control < 100) {
         return IsSidebarActive;
     }
+#endif
 
     bool old = IsSidebarActive;
 

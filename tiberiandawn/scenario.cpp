@@ -208,7 +208,7 @@ bool Read_Scenario(char* root)
 
         Fill_In_Data();
 
-        Map.Set_View_Dimensions(0, Map.Get_Tab_Height(), Map.MapCellWidth, Map.MapCellHeight);
+        //        Map.Set_View_Dimensions(0, Map.Get_Tab_Height(), Map.MapCellWidth, Map.MapCellHeight);
 
         /*
         **	SPECIAL CASE:
