@@ -89,38 +89,44 @@ void TabClass::Draw_It(bool complete)
     }
 
 // Disable tab drawing. ST - 3/1/2019 11:35AM
-#if 0
-	/*
+#ifndef REMASTER_BUILD
+    /*
 	**	Redraw the top bar imagery if flagged to do so or if the entire display needs
 	**	to be redrawn.
 	*/
-	int width  = SeenBuff.Get_Width();
-	int rightx = width - 1;
+    int width = SeenBuff.Get_Width();
+    int rightx = width - 1;
 
-	if (complete || IsToRedraw) {
-		
-		if (Tab_Height != 0) {
-		
+    if (complete || IsToRedraw) {
 
-			if (LogicPage->Lock()){
+        if (Tab_Height != 0) {
 
-				LogicPage->Fill_Rect(0, 0, rightx, Tab_Height-2, BLACK);
-				CC_Draw_Shape(TabShape, 0, 0, 0, WINDOW_MAIN, SHAPE_NORMAL);
-				CC_Draw_Shape(TabShape, 0, width-Eva_Width, 0, WINDOW_MAIN, SHAPE_NORMAL);
-				Draw_Credits_Tab();
-				LogicPage->Draw_Line(0, Tab_Height-1, rightx, Tab_Height-1, BLACK);
+            if (LogicPage->Lock()) {
 
-				Fancy_Text_Print(TXT_TAB_BUTTON_CONTROLS, Eva_Width/2, 0, 11, TBLACK, TPF_GREEN12_GRAD|TPF_CENTER | TPF_USE_GRAD_PAL);
-				Fancy_Text_Print(TXT_TAB_SIDEBAR, width-(Eva_Width/2), 0, 11, TBLACK, TPF_GREEN12_GRAD|TPF_CENTER | TPF_USE_GRAD_PAL);
-			}
-			LogicPage->Unlock();
+                LogicPage->Fill_Rect(0, 0, rightx, Tab_Height - 2, BLACK);
+                CC_Draw_Shape(TabShape, 0, 0, 0, WINDOW_MAIN, SHAPE_NORMAL);
+                CC_Draw_Shape(TabShape, 0, width - Eva_Width, 0, WINDOW_MAIN, SHAPE_NORMAL);
+                Draw_Credits_Tab();
+                LogicPage->Draw_Line(0, Tab_Height - 1, rightx, Tab_Height - 1, BLACK);
 
+                Fancy_Text_Print(TXT_TAB_BUTTON_CONTROLS,
+                                 Eva_Width / 2,
+                                 0,
+                                 11,
+                                 TBLACK,
+                                 TPF_GREEN12_GRAD | TPF_CENTER | TPF_USE_GRAD_PAL);
+                Fancy_Text_Print(TXT_TAB_SIDEBAR,
+                                 width - (Eva_Width / 2),
+                                 0,
+                                 11,
+                                 TBLACK,
+                                 TPF_GREEN12_GRAD | TPF_CENTER | TPF_USE_GRAD_PAL);
+            }
+            LogicPage->Unlock();
+        }
+    }
 
-		}
-
-	}
-
-	Credits.Graphic_Logic(complete || IsToRedraw);
+    Credits.Graphic_Logic(complete || IsToRedraw);
 #endif
     IsToRedraw = false;
 }
@@ -248,8 +254,12 @@ void TabClass::One_Time(void)
 {
     int factor = (SeenBuff.Get_Width() == 320) ? 1 : 2;
     Eva_Width = 80 * factor;
-    // Tab_Height	= 8 * factor;
+
+#ifdef REMASTER_BUILD
     Tab_Height = 0; // Disable tab drawing. ST - 3/1/2019 11:35AM
+#else
+    Tab_Height = 8 * factor;
+#endif
 
     SidebarClass::One_Time();
     TabShape = Hires_Retrieve("TABS.SHP");

@@ -322,7 +322,8 @@ void RadarClass::Draw_It(bool forced)
     DisplayClass::Draw_It(forced);
     //	if (!In_Debugger)	while (!HidPage.Lock()) {}
 
-#if (0) // Legacy radar rendering not used. ST - 2/26/2020 3:53PM
+#ifndef REMASTER_BUILD
+    // Legacy radar rendering not used. ST - 2/26/2020 3:53PM
 
     /*
     **	Don't perform any rendering if none is requested.

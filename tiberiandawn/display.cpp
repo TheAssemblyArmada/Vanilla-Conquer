@@ -610,7 +610,8 @@ short const* DisplayClass::Text_Overlap_List(char const* text, int x, int y, int
  *=============================================================================================*/
 void DisplayClass::Set_View_Dimensions(int x, int y, int width, int height)
 {
-#if (1) // This code pulled in from RA1. ST - 1/9/2019 10:53AM
+#ifdef REMASTER_BUILD
+    // This code pulled in from RA1. ST - 1/9/2019 10:53AM
     if (width == -1) {
         TacLeptonWidth = Pixel_To_Lepton(SeenBuff.Get_Width() - x);
     } else {
@@ -684,9 +685,9 @@ void DisplayClass::Set_View_Dimensions(int x, int y, int width, int height)
 
     TacPixelX = x;
     TacPixelY = y;
-    WindowList[WINDOW_TACTICAL][WINDOWX] = x >> 3;
+    WindowList[WINDOW_TACTICAL][WINDOWX] = x;
     WindowList[WINDOW_TACTICAL][WINDOWY] = y;
-    WindowList[WINDOW_TACTICAL][WINDOWWIDTH] = width >> 3;
+    WindowList[WINDOW_TACTICAL][WINDOWWIDTH] = width;
     WindowList[WINDOW_TACTICAL][WINDOWHEIGHT] = height;
     if (Window == WINDOW_TACTICAL) {
         Change_Window(0);
@@ -1911,6 +1912,7 @@ bool DisplayClass::Map_Cell(CELL cell, HouseClass* house, bool and_for_allies)
  *   08/09/1995 JLB : Uses new coordinate system.                                              *
  *=============================================================================================*/
 #define EDGE_ZONE (CELL_LEPTON_W * 2)
+#ifdef REMASTER_BUILD
 bool DisplayClass::Coord_To_Pixel(COORDINATE coord, int& x, int& y)
 {
     int xtac = Pixel_To_Lepton(Lepton_To_Pixel(Coord_X(TacticalCoord)));
@@ -1930,7 +1932,7 @@ bool DisplayClass::Coord_To_Pixel(COORDINATE coord, int& x, int& y)
                 || ((xoff <= TacLeptonWidth + EDGE_ZONE * 2) && (yoff <= TacLeptonHeight + EDGE_ZONE * 2))));
 }
 
-#if (0) // reference. ST - 4/17/2019 9:07AM
+#else
 bool DisplayClass::Coord_To_Pixel(COORDINATE coord, int& x, int& y)
 {
     if (coord) {
