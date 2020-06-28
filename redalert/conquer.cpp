@@ -4321,22 +4321,22 @@ int Get_CD_Index(int cd_drive, int timeout)
     for (;;) {
         sprintf(buffer, "%c:\\", 'A' + cd_drive);
 
-        if (GetVolumeInformation((char const*)buffer,
-                                 &volume_name[0],
-                                 (unsigned long)sizeof(volume_name),
-                                 (unsigned long*)NULL,
-                                 (unsigned long*)&filename_length,
-                                 (unsigned long*)&misc_dword,
-                                 (char*)NULL,
-                                 (unsigned long)0)) {
+        if (GetVolumeInformationA((char const*)buffer,
+                                  &volume_name[0],
+                                  (unsigned long)sizeof(volume_name),
+                                  (unsigned long*)NULL,
+                                  (unsigned long*)&filename_length,
+                                  (unsigned long*)&misc_dword,
+                                  (char*)NULL,
+                                  (unsigned long)0)) {
             /*
-            ** Try opening 'movies.mix' to verify that the CD is really there and is what
+            ** Try opening 'main.mix' to verify that the CD is really there and is what
             ** it says it is.
             */
             sprintf(buffer, "%c:\\main.mix", 'A' + cd_drive);
 
             HANDLE handle =
-                CreateFile(buffer, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+                CreateFileA(buffer, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
             if (handle != INVALID_HANDLE_VALUE) {
                 CloseHandle(handle);
@@ -4462,7 +4462,7 @@ int Get_CD_Index(int cd_drive, int)
  *   01/20/1997 V.Grippi added expansion cd message
  *=============================================================================================*/
 
-#if (1) // ST - 5/13/2019
+#ifdef REMASTER_BUILD // ST - 5/13/2019
 bool Force_CD_Available(int cd)
 {
     static int _last = -1;
@@ -4506,9 +4506,7 @@ bool Force_CD_Available(int cd)
     return true;
 }
 
-#endif
-
-#if (0) // ST - 5/13/2019
+#else
 
 typedef enum
 {
