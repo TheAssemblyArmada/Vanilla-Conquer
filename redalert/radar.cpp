@@ -356,7 +356,7 @@ void RadarClass::Draw_It(bool forced)
 {
     DisplayClass::Draw_It(forced);
 
-#if (0) // Legacy radar rendering not used. ST - 2/26/2020 3:53PM
+#ifndef REMASTER_BUILD // Legacy radar rendering not used. ST - 2/26/2020 3:53PM
 
     static char* _hiresradarnames[] = {
         "natoradr.shp", // HOUSE_SPAIN,
@@ -458,7 +458,8 @@ void RadarClass::Draw_It(bool forced)
         }
     }
 
-    if (IsRadarActivating || IsRadarDeactivating || IsRadarJammed) {
+    int shift = (int)_house;
+    if (IsRadarActivating || IsRadarDeactivating || (IsRadarJammedByPlayerMask & (1 << shift))) {
         Radar_Anim();
         Map.Repair.Draw_Me(true);
         Map.Upgrade.Draw_Me(true);

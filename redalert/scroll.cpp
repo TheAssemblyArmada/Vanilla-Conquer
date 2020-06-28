@@ -87,141 +87,141 @@ ScrollClass::ScrollClass(void)
 #define EVA_WIDTH 80
 void ScrollClass::AI(KeyNumType& input, int x, int y)
 {
-#if 0
-	bool		player_scrolled=false;
-	static 	DirType	direction;
-	int		rate;
+#ifndef REMASTER_BUILD
+    bool player_scrolled = false;
+    static DirType direction;
+    int rate;
 
-
-	/*
+    /*
 	**	If rubber band mode is in progress, then don't allow scrolling of the tactical map.
 	*/
-	if (!IsRubberBand /*&& !IsTentative*/) {
+    if (!IsRubberBand /*&& !IsTentative*/) {
 
-		/*
+        /*
 		**	Special check to not scroll within the special no-scroll regions.
 		*/
-		bool noscroll = false;
+        bool noscroll = false;
 
-		if (!noscroll) {
-			bool at_screen_edge = (y == 0 || x == 0 || x >= SeenBuff.Get_Width()-1 || y >= SeenBuff.Get_Height()-1);
+        if (!noscroll) {
+            bool at_screen_edge = (y == 0 || x == 0 || x >= SeenBuff.Get_Width() - 1 || y >= SeenBuff.Get_Height() - 1);
 
-			/*
+            /*
 			**	Verify that the mouse is over a scroll region.
 			*/
-			if (Inertia || at_screen_edge) {
-				if (at_screen_edge) {
+            if (Inertia || at_screen_edge) {
+                if (at_screen_edge) {
 
-					player_scrolled=true;
+                    player_scrolled = true;
 
-					/*
+                    /*
 					**	Adjust the mouse coordinates to emphasize the
 					**	cardinal directions over the diagonals.
 					*/
-					int altx = x;
-					if (altx < 50 * RESFACTOR) altx -= ((50 * RESFACTOR)-altx);
-					altx = max(altx, 0);
-					if (altx > ((320-50) * RESFACTOR)) altx += altx-((320-50) * RESFACTOR);
-					altx = min(altx, (320 * RESFACTOR));
-					if (altx > (50 * RESFACTOR) && altx < ((320-50) * RESFACTOR)) {
-						altx += (((320/2) * RESFACTOR)-altx)/2;
-					}
+                    int altx = x;
+                    if (altx < 50 * RESFACTOR)
+                        altx -= ((50 * RESFACTOR) - altx);
+                    altx = max(altx, 0);
+                    if (altx > ((320 - 50) * RESFACTOR))
+                        altx += altx - ((320 - 50) * RESFACTOR);
+                    altx = min(altx, (320 * RESFACTOR));
+                    if (altx > (50 * RESFACTOR) && altx < ((320 - 50) * RESFACTOR)) {
+                        altx += (((320 / 2) * RESFACTOR) - altx) / 2;
+                    }
 
-					int alty = y;
-					if (alty < (50 * RESFACTOR)) alty -= (50 * RESFACTOR)-alty;
-					alty = max(alty, 0);
-					if (alty > (150 * RESFACTOR)) alty += alty-(150 * RESFACTOR);
-					alty = min(alty, 200 * RESFACTOR);
+                    int alty = y;
+                    if (alty < (50 * RESFACTOR))
+                        alty -= (50 * RESFACTOR) - alty;
+                    alty = max(alty, 0);
+                    if (alty > (150 * RESFACTOR))
+                        alty += alty - (150 * RESFACTOR);
+                    alty = min(alty, 200 * RESFACTOR);
 
-					direction = (DirType)Desired_Facing256((320/2) * RESFACTOR, (200/2) * RESFACTOR, altx, alty);
-				}
+                    direction = (DirType)Desired_Facing256((320 / 2) * RESFACTOR, (200 / 2) * RESFACTOR, altx, alty);
+                }
 
-				int control = Dir_Facing(direction);
+                int control = Dir_Facing(direction);
 
-				/*
+                /*
 				**	The mouse is over a scroll region so set the mouse shape accordingly if the map
 				**	can be scrolled in the direction indicated.
 				*/
-				static int _rate[9] = {
-					0x00E0*RESFACTOR,
-					0x00C0*RESFACTOR,
-					0x00A0*RESFACTOR,
-					0x0080*RESFACTOR,
-					0x0060*RESFACTOR,
-					0x0040*RESFACTOR,
-					0x0020*RESFACTOR,
-					0x0010*RESFACTOR,
-					0x0008*RESFACTOR
-				};
-				if (Debug_Map) {
-					rate = Options.ScrollRate+1;
-				} else {
-					rate = 8-Inertia;
-				}
+                static int _rate[9] = {0x00E0 * RESFACTOR,
+                                       0x00C0 * RESFACTOR,
+                                       0x00A0 * RESFACTOR,
+                                       0x0080 * RESFACTOR,
+                                       0x0060 * RESFACTOR,
+                                       0x0040 * RESFACTOR,
+                                       0x0020 * RESFACTOR,
+                                       0x0010 * RESFACTOR,
+                                       0x0008 * RESFACTOR};
+                if (Debug_Map) {
+                    rate = Options.ScrollRate + 1;
+                } else {
+                    rate = 8 - Inertia;
+                }
 
-				if (rate < Options.ScrollRate+1) {
-					rate = Options.ScrollRate+1;
-					Inertia = 8-rate;
-				}
+                if (rate < Options.ScrollRate + 1) {
+                    rate = Options.ScrollRate + 1;
+                    Inertia = 8 - rate;
+                }
 
-				/*
+                /*
 				**	Increase the scroll rate if the mouse button is held down.
 				*/
-	//			if (Keyboard->Down(KN_LMOUSE)) {
-	//				rate = Bound(rate-3, 0, 4);
-	//			}
-				if (Keyboard->Down(KN_RMOUSE)) {
-					rate = Bound(rate+1, 4, (int)(sizeof(_rate)/sizeof(_rate[0]))-1);
-				}
+                //			if (Keyboard->Down(KN_LMOUSE)) {
+                //				rate = Bound(rate-3, 0, 4);
+                //			}
+                if (Keyboard->Down(KN_RMOUSE)) {
+                    rate = Bound(rate + 1, 4, (int)(sizeof(_rate) / sizeof(_rate[0])) - 1);
+                }
 
-				/*
+                /*
 				**	If options indicate that scrolling should be forced to
 				**	one of the 8 facings, then adjust the direction value
 				**	accordingly.
 				*/
-				direction = Facing_Dir(Dir_Facing(direction));
+                direction = Facing_Dir(Dir_Facing(direction));
 
-				int distance = _rate[rate]/2;
+                int distance = _rate[rate] / 2;
 
-				if (!Scroll_Map(direction, distance, false)) {
-					Override_Mouse_Shape((MouseType)(MOUSE_NO_N+control), false);
-				} else {
-					Override_Mouse_Shape((MouseType)(MOUSE_N+control), false);
+                if (!Scroll_Map(direction, distance, false)) {
+                    Override_Mouse_Shape((MouseType)(MOUSE_NO_N + control), false);
+                } else {
+                    Override_Mouse_Shape((MouseType)(MOUSE_N + control), false);
 
-					/*
+                    /*
 					**	If the mouse button is pressed or auto scrolling is active, then scroll
 					**	the map if the delay counter indicates.
 					*/
-					if (Keyboard->Down(KN_LMOUSE) || IsAutoScroll) {
-						distance = _rate[rate];
+                    if (Keyboard->Down(KN_LMOUSE) || IsAutoScroll) {
+                        distance = _rate[rate];
 
-						if (Debug_Map) {
-							Scroll_Map(direction, distance, true);
-							Counter = SCROLL_DELAY;
-						} else {
-							distance = _rate[rate];
-							Scroll_Map(direction, distance, true);
+                        if (Debug_Map) {
+                            Scroll_Map(direction, distance, true);
+                            Counter = SCROLL_DELAY;
+                        } else {
+                            distance = _rate[rate];
+                            Scroll_Map(direction, distance, true);
 
-							if (Counter == 0 && player_scrolled) {
-								Counter = SCROLL_DELAY;
-								Inertia++;
-							}
-						}
-					}
-				}
+                            if (Counter == 0 && player_scrolled) {
+                                Counter = SCROLL_DELAY;
+                                Inertia++;
+                            }
+                        }
+                    }
+                }
+            }
 
-			}
-
-			if (!Debug_Map && !player_scrolled) {
-				if (!Counter) {
-					Inertia--;
-					if (Inertia<0) Inertia++;
-					Counter = SCROLL_DELAY;
-				}
-			}
-
-		}
-	}
+            if (!Debug_Map && !player_scrolled) {
+                if (!Counter) {
+                    Inertia--;
+                    if (Inertia < 0)
+                        Inertia++;
+                    Counter = SCROLL_DELAY;
+                }
+            }
+        }
+    }
 #endif
     HelpClass::AI(input, x, y);
 }

@@ -237,8 +237,12 @@ void DisplayClass::One_Time(void)
     ShadowShapes = MFCD::Retrieve("SHADOW.SHP");
 #endif
 
+#ifdef REMASTER_BUILD
     // PG Set_View_Dimensions(0, 8 * RESFACTOR);
     Set_View_Dimensions(0, 0);
+#else
+    Set_View_Dimensions(0, 8 * RESFACTOR);
+#endif
 }
 
 /***********************************************************************************************
@@ -562,8 +566,13 @@ void DisplayClass::Set_View_Dimensions(int x, int y, int width, int height)
     **	Adjust the tactical cell if it is now in an invalid position
     **	because of the changed dimensions.
     */
+#ifdef REMASTER_BUILD
     int xx = 0; // Coord_X(TacticalCoord) - (MapCellX * CELL_LEPTON_W);
     int yy = 0; // Coord_Y(TacticalCoord) - (MapCellY * CELL_LEPTON_H);
+#else
+    int xx = Coord_X(TacticalCoord) - (MapCellX * CELL_LEPTON_W);
+    int yy = Coord_Y(TacticalCoord) - (MapCellY * CELL_LEPTON_H);
+#endif
 
     Confine_Rect(
         &xx, &yy, TacLeptonWidth, TacLeptonHeight, MapCellWidth * CELL_LEPTON_W, MapCellHeight * CELL_LEPTON_H);
@@ -1726,6 +1735,7 @@ bool DisplayClass::Map_Cell(CELL cell, HouseClass* house, bool check_radar_spied
  *   08/09/1995 JLB : Uses new coordinate system.                                              *
  *=============================================================================================*/
 #define EDGE_ZONE (CELL_LEPTON_W * 2)
+#ifdef REMASTER_BUILD
 bool DisplayClass::Coord_To_Pixel(COORDINATE coord, int& x, int& y) const
 {
     int xtac = Pixel_To_Lepton(Lepton_To_Pixel(Coord_X(TacticalCoord)));
@@ -1745,7 +1755,7 @@ bool DisplayClass::Coord_To_Pixel(COORDINATE coord, int& x, int& y) const
                 || ((xoff <= TacLeptonWidth + EDGE_ZONE * 2) && (yoff <= TacLeptonHeight + EDGE_ZONE * 2))));
 }
 
-#if (0) // reference. ST - 5/8/2019
+#else
 bool DisplayClass::Coord_To_Pixel(COORDINATE coord, int& x, int& y) const
 {
     if (coord) {

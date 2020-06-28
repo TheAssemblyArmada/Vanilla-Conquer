@@ -227,7 +227,7 @@ bool Init_Game(int, char*[])
     **	Initialize access to the CD-ROM and ensure that the CD is inserted. This can, and
     **	most likely will, result in a visible prompt.
     */
-#if (0) // PG
+#ifndef REMASTER_BUILD
     Init_CDROM_Access();
 #endif
 
@@ -3219,7 +3219,7 @@ static void Bootstrap(void)
     ** Process the message loop until we are in focus. We need to be in focus to read pixels from
     ** the screen.
     */
-#if (0) // PG
+#ifndef REMASTER_BUILD
 #ifdef WIN32
     do {
         Keyboard->Check();

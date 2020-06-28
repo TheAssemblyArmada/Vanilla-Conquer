@@ -110,10 +110,13 @@ void CreditClass::Graphic_Logic(bool forced)
         /*
         **	Display the new current value.
         */
-        // PG TabClass::Draw_Credits_Tab();
+#ifndef REMASTER_BUILD
+        TabClass::Draw_Credits_Tab();
+#endif
 #ifdef WIN32
-        // PG Fancy_Text_Print("%ld", xx, 0, &MetalScheme, TBLACK, TPF_METAL12 | TPF_CENTER | TPF_USE_GRAD_PAL,
-        // Current);
+#ifndef REMASTER_BUILD
+        Fancy_Text_Print("%ld", xx, 0, &MetalScheme, TBLACK, TPF_METAL12 | TPF_CENTER | TPF_USE_GRAD_PAL, Current);
+#endif
 #else
         Fancy_Text_Print("%ld",
                          xx,
@@ -159,7 +162,7 @@ void CreditClass::Graphic_Logic(bool forced)
             }
 #endif
 #ifdef WIN32
-#if (0) // PG
+#ifndef REMASTER_BUILD
             if (hours) {
                 Fancy_Text_Print(TXT_TIME_FORMAT_HOURS,
                                  200 * RESFACTOR,
