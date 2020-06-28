@@ -181,13 +181,34 @@ struct StopType
 
 class GetCDClass
 {
-
 protected:
     int CDDrives[MAX_CD_DRIVES]; // Array containing CD drive letters
     int CDCount;                 // Number of available CD drives
     int CDIndex;
 
 public:
+    GetCDClass(VOID)
+    {
+        char* _path = "a:\\";
+        char drive[4];
+
+        memset(CDDrives, NO_CD_DRIVE, sizeof(CDDrives));
+
+        strcpy(drive, _path);
+
+        for (char i = 'A'; i <= 'Z'; ++i) {
+            drive[0] = i;
+
+            int drive_type = GetDriveTypeA(drive);
+            if (drive_type == DRIVE_CDROM) {
+                CDDrives[CDCount++] = i - 'A';
+            }
+        }
+    }
+
+    ~GetCDClass(VOID)
+    {
+    }
     inline int Get_First_CD_Drive(void);
     inline int Get_Next_CD_Drive(void);
     inline int Get_Number_Of_Drives(void)
