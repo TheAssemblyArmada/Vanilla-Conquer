@@ -1502,7 +1502,7 @@ static int Net_Join_Dialog(void)
             .................. Force user to enter a name ...................
             */
             if (strlen(namebuf) == 0) {
-                CCMessageBox().Process(TXT_NAME_ERROR);
+                WWMessageBox().Process(TXT_NAME_ERROR);
                 display = REDRAW_ALL;
                 break;
             }
@@ -1513,7 +1513,7 @@ static int Net_Join_Dialog(void)
             for (i = 0; i < Games.Count(); i++) {
                 if (!stricmp(Games[i]->Name, namebuf)) {
                     found = 1;
-                    CCMessageBox().Process(TXT_GAMENAME_MUSTBE_UNIQUE);
+                    WWMessageBox().Process(TXT_GAMENAME_MUSTBE_UNIQUE);
                     display = REDRAW_ALL;
                     break;
                 }
@@ -1843,7 +1843,7 @@ static int Net_Join_Dialog(void)
         play.  Try to bail gracefully.
         .....................................................................*/
         if (ScenarioIdx == -1) {
-            CCMessageBox().Process(TXT_UNABLE_PLAY_WAAUGH);
+            WWMessageBox().Process(TXT_UNABLE_PLAY_WAAUGH);
 
             //
             // Remove myself from the player list box
@@ -2100,7 +2100,7 @@ static int Request_To_Join(char* playername, int join_index, ListClass* playerli
     --------------------------- Validate join_index --------------------------
     */
     if ((Games.Count() == 0) || join_index > Games.Count() || join_index < 0) {
-        CCMessageBox().Process(TXT_NOTHING_TO_JOIN);
+        WWMessageBox().Process(TXT_NOTHING_TO_JOIN);
         return (false);
     }
 
@@ -2108,7 +2108,7 @@ static int Request_To_Join(char* playername, int join_index, ListClass* playerli
     ----------------------- Force user to enter a name -----------------------
     */
     if (strlen(playername) == 0) {
-        CCMessageBox().Process(TXT_NAME_ERROR);
+        WWMessageBox().Process(TXT_NAME_ERROR);
         return (false);
     }
 
@@ -2116,7 +2116,7 @@ static int Request_To_Join(char* playername, int join_index, ListClass* playerli
     ------------------------- The game must be open --------------------------
     */
     if (!Games[join_index]->Game.IsOpen) {
-        CCMessageBox().Process(TXT_GAME_IS_CLOSED);
+        WWMessageBox().Process(TXT_GAME_IS_CLOSED);
         return (false);
     }
 
@@ -2125,7 +2125,7 @@ static int Request_To_Join(char* playername, int join_index, ListClass* playerli
     */
     for (i = 0; i < Players.Count(); i++) {
         if (!stricmp(playername, Players[i]->Name)) {
-            CCMessageBox().Process(TXT_NAME_MUSTBE_UNIQUE);
+            WWMessageBox().Process(TXT_NAME_MUSTBE_UNIQUE);
             return (false);
         }
     }
@@ -2144,11 +2144,11 @@ static int Request_To_Join(char* playername, int join_index, ListClass* playerli
     v = Version_Number();
 #endif
     if (Games[join_index]->Game.Version > v) {
-        CCMessageBox().Process(TXT_YOURGAME_OUTDATED);
+        WWMessageBox().Process(TXT_YOURGAME_OUTDATED);
         return (false);
     } else {
         if (Games[join_index]->Game.Version < v) {
-            CCMessageBox().Process(TXT_DESTGAME_OUTDATED);
+            WWMessageBox().Process(TXT_DESTGAME_OUTDATED);
             return (false);
         }
     }
@@ -3286,12 +3286,12 @@ static int Net_New_Dialog(void)
         case (BUTTON_REJECT | KN_BUTTON):
             index = playerlist.Current_Index();
             if (index == 0) {
-                CCMessageBox().Process(TXT_CANT_REJECT_SELF, TXT_OOPS);
+                WWMessageBox().Process(TXT_CANT_REJECT_SELF, TXT_OOPS);
                 display = REDRAW_ALL;
                 break;
             } else {
                 if (index < 0 || index >= playerlist.Count()) {
-                    CCMessageBox().Process(TXT_SELECT_PLAYER_REJECT, TXT_OOPS);
+                    WWMessageBox().Process(TXT_SELECT_PLAYER_REJECT, TXT_OOPS);
                     display = REDRAW_ALL;
                     break;
                 }
@@ -3488,7 +3488,7 @@ static int Net_New_Dialog(void)
                 rc = TRUE;
                 process = FALSE;
             } else {
-                CCMessageBox().Process(TXT_ONLY_ONE, TXT_OOPS, NULL);
+                WWMessageBox().Process(TXT_ONLY_ONE, TXT_OOPS, NULL);
                 display = REDRAW_ALL;
             }
             break;
@@ -4625,7 +4625,7 @@ static int Net_Fake_New_Dialog(void)
                     rc = TRUE;
                     process = FALSE;
                 } else {
-                    CCMessageBox().Process(TXT_ONLY_ONE, TXT_OOPS, NULL);
+                    WWMessageBox().Process(TXT_ONLY_ONE, TXT_OOPS, NULL);
                     display = REDRAW_ALL;
                 }
             }
@@ -5372,7 +5372,7 @@ static int Net_Fake_Join_Dialog(void)
         play.  Try to bail gracefully.
         .....................................................................*/
         if (ScenarioIdx == -1) {
-            CCMessageBox().Process(TXT_UNABLE_PLAY_WAAUGH);
+            WWMessageBox().Process(TXT_UNABLE_PLAY_WAAUGH);
 
             //
             // Remove myself from the player list box

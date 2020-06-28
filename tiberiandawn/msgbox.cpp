@@ -13,9 +13,9 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\msgbox.cpv   2.18   16 Oct 1995 16:50:48   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/MSGBOX.CPP 1     3/03/97 10:25a Joe_bostic $ */
 /***********************************************************************************************
- ***             C O N F I D E N T I A L  ---  W E S T W O O D   S T U D I O S               ***
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
@@ -30,8 +30,8 @@
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
- *   CCMessageBox::Process -- Handles all the options graphic interface.                         *
- *   CCMessageBox::Process -- Displays message box.                                              *
+ *   WWMessageBox::Process -- Handles all the options graphic interface.                       *
+ *   WWMessageBox::Process -- Displays message box.                                            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
@@ -39,7 +39,7 @@
 #include "gadget.h"
 
 #ifdef JAPANESE
-CCMessageBox::CCMessageBox(int caption, bool pict)
+WWMessageBox::WWMessageBox(int caption, bool pict)
     : Caption(caption)
     , IsPicture(pict)
 {
@@ -47,7 +47,7 @@ CCMessageBox::CCMessageBox(int caption, bool pict)
 #endif
 
 /***********************************************************************************************
- * CCMessageBox::Process -- pops up a message with yes/no, etc                                   *
+ * WWMessageBox::Process -- pops up a message with yes/no, etc                                 *
  *                                                                                             *
  * This function displays a dialog box with a one-line message, and                            *
  * up to two buttons. The 2nd button is optional. The buttons default                          *
@@ -75,32 +75,31 @@ CCMessageBox::CCMessageBox(int caption, bool pict)
 #define BUTTON_2    2
 #define BUTTON_3    3
 #define BUTTON_FLAG 0x8000
-int CCMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt, const char* b3txt, bool preserve)
+int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt, const char* b3txt, bool preserve)
 {
 #define BUFFSIZE (511)
-    //#define BUFFSIZE (255)
-    char buffer[BUFFSIZE];
-    int retval;
-    bool process;     // loop while true
-    KeyNumType input; // user input
-    int selection;
-    bool pressed;
-    int curbutton;
-    TextButtonClass* buttons[3];
-    void* back;
-    BOOL display; // display level
-    int realval[5];
+    char buffer[BUFFSIZE] = {0};
+    int retval = 0;
+    bool process = false; // loop while true
+    KeyNumType input = 0; // user input
+    int selection = 0;
+    bool pressed = false;
+    int curbutton = 0;
+    TextButtonClass* buttons[3] = {nullptr};
+    void* back = nullptr;
+    bool display = false; // display level
+    int realval[5] = {0};
 
     GraphicBufferClass seen_buff_save(VisiblePage.Get_Width(), VisiblePage.Get_Height(), (void*)NULL);
 
     int factor = (SeenBuff.Get_Width() == 320) ? 1 : 2;
 
-    if (b1txt && *b1txt == '\0')
-        b1txt = 0;
-    if (b2txt && *b2txt == '\0')
-        b2txt = 0;
-    if (b3txt && *b3txt == '\0')
-        b3txt = 0;
+    if (b1txt != NULL && *b1txt == '\0')
+        b1txt = NULL;
+    if (b2txt != NULL && *b2txt == '\0')
+        b2txt = NULL;
+    if (b3txt != NULL && *b3txt == '\0')
+        b3txt = NULL;
 
     /*
     **	Examine the optional button parameters. Fetch the width and starting
@@ -110,7 +109,7 @@ int CCMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
     char b1char, b2char, b3char; // 1st char of each string
     int bwidth, bheight;         // button width and height
     int numbuttons = 0;
-    if (b1txt) {
+    if (b1txt != NULL) {
         b1char = toupper(b1txt[0]);
 
         /*
@@ -119,12 +118,12 @@ int CCMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
         bheight = FontHeight + FontYSpacing + (2 * factor);
         bwidth = MAX((String_Pixel_Width(b1txt) + (8 * factor)), 30U * (unsigned)factor);
 
-        if (b2txt) {
+        if (b2txt != NULL) {
             numbuttons = 2;
             b2char = toupper(b2txt[0]);
             bwidth = MAX((String_Pixel_Width(b2txt) + (8 * factor)), (unsigned)bwidth);
 
-            if (b3txt) {
+            if (b3txt != NULL) {
                 numbuttons = 3;
                 b3char = toupper(b3txt[0]);
             }
@@ -151,15 +150,8 @@ int CCMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
 #endif
         Format_Window_String(buffer, 255 * factor, width, height);
 
-    // BG #ifdef JAPANESE
-    // BG 	if(!IsPicture) {
-    // BG #else
     width = MAX(width, 50 * factor);
     width += 40 * factor;
-    // BG #endif
-    // BG #ifdef JAPANESE
-    // BG 	}
-    // BG #endif
     height += (numbuttons == 0) ? (30 * factor) : (60 * factor);
 
     int x = (SeenBuff.Get_Width() - width) / 2;
@@ -182,6 +174,9 @@ int CCMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
                             y + height - (bheight + (5 * factor)),
                             bwidth);
 
+    /*
+    **	Center button.
+    */
     TextButtonClass button2(BUTTON_2,
                             b2txt,
                             TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW,
@@ -189,6 +184,9 @@ int CCMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
                             y + height - (bheight + (5 * factor)),
                             bwidth);
 
+    /*
+    **	Right button.
+    */
     TextButtonClass button3(
         BUTTON_3, b3txt, TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW, 0, y + height - (bheight + (5 * factor)));
     button3.X = x + ((width - button3.Width) >> 1);
@@ -197,7 +195,7 @@ int CCMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
     curbutton = 0;
 
     /*
-    **	Add and inialize the buttons to the button list.
+    **	Add and initialize the buttons to the button list.
     */
     if (numbuttons) {
         buttonlist = &button1;
@@ -270,13 +268,13 @@ int CCMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
             ** we need to redraw.
             */
             if (AllSurfaces.SurfacesRestored) {
-                AllSurfaces.SurfacesRestored = FALSE;
+                AllSurfaces.SurfacesRestored = false;
                 seen_buff_save.Blit(VisiblePage);
-                display = TRUE;
+                display = true;
             }
 
             if (display) {
-                display = FALSE;
+                display = false;
 
                 Hide_Mouse();
 
@@ -320,11 +318,6 @@ int CCMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
             */
             input = buttonlist->Input();
             switch (input) {
-            case (BUTTON_1 | BUTTON_FLAG):
-                selection = realval[0];
-                pressed = true;
-                break;
-
             case (KN_ESC):
                 if (numbuttons > 2) {
                     selection = realval[1];
@@ -333,6 +326,11 @@ int CCMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
                     selection = realval[2];
                     pressed = true;
                 }
+                break;
+
+            case (BUTTON_1 | BUTTON_FLAG):
+                selection = realval[0];
+                pressed = true;
                 break;
 
             case (BUTTON_2 | BUTTON_FLAG):
@@ -442,6 +440,7 @@ int CCMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
             Buffer_To_Page(x, y, width, height, back, &SeenBuff);
         }
         SeenBuff.Unlock();
+
         delete[] back;
         back = NULL;
         Show_Mouse();
@@ -450,7 +449,7 @@ int CCMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
 }
 
 /***********************************************************************************************
- * CCMessageBox::Process -- this one takes integer text arguments                                *
+ * WWMessageBox::Process -- this one takes integer text arguments                              *
  *                                                                                             *
  * INPUT:                                                                                      *
  *      msg         message to display                                                         *
@@ -468,13 +467,13 @@ int CCMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
  *   12/12/1994 BR : Created.                                                                  *
  *   06/18/1995 JLB : Simplified.                                                              *
  *=============================================================================================*/
-int CCMessageBox::Process(int msg, int b1txt, int b2txt, int b3txt, bool preserve)
+int WWMessageBox::Process(int msg, int b1txt, int b2txt, int b3txt, bool preserve)
 {
     return (Process(Text_String(msg), b1txt, b2txt, b3txt, preserve));
 }
 
 /***********************************************************************************************
- * CCMessageBox::Process -- Displays message box.                                                *
+ * WWMessageBox::Process -- Displays message box.                                              *
  *                                                                                             *
  *    This routine will display a message box and wait for player input. It varies from the    *
  *    other message box functions only in the type of parameters it takes.                     *
@@ -493,7 +492,7 @@ int CCMessageBox::Process(int msg, int b1txt, int b2txt, int b3txt, bool preserv
  * HISTORY:                                                                                    *
  *   06/18/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int CCMessageBox::Process(char const* msg, int b1txt, int b2txt, int b3txt, bool preserve)
+int WWMessageBox::Process(char const* msg, int b1txt, int b2txt, int b3txt, bool preserve)
 {
     return (Process(msg, Text_String(b1txt), Text_String(b2txt), Text_String(b3txt), preserve));
 }

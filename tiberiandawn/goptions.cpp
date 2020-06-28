@@ -434,9 +434,9 @@ void GameOptionsClass::Process(void)
             case (BUTTON_QUIT):
                 if (GameToPlay == GAME_NORMAL) {
 #ifdef JAPANESE
-                    switch (CCMessageBox().Process(TXT_CONFIRM_EXIT, TXT_YES, TXT_NO, TXT_RESTART)) {
+                    switch (WWMessageBox().Process(TXT_CONFIRM_EXIT, TXT_YES, TXT_NO, TXT_RESTART)) {
 #else
-                    switch (CCMessageBox().Process(TXT_CONFIRM_EXIT, TXT_ABORT, TXT_CANCEL, TXT_RESTART)) {
+                    switch (WWMessageBox().Process(TXT_CONFIRM_EXIT, TXT_ABORT, TXT_CANCEL, TXT_RESTART)) {
 #endif
                     case 2:
                         display = true;

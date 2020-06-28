@@ -1708,7 +1708,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Advance_Instance(uint64 player
     if (!Map.Validate()) {
         GlyphX_Debug_Print("Map.Validate() failed");
 
-        // if (CCMessageBox().Process ("Map Error!","Stop","Continue")==0) {
+        // if (WWMessageBox().Process ("Map Error!","Stop","Continue")==0) {
         //	GameActive = false;
         //}
         Map.Validate(); // give debugger a chance to catch it

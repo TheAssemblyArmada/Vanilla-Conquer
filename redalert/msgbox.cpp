@@ -31,6 +31,7 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   WWMessageBox::Process -- Handles all the options graphic interface.                       *
+ *   WWMessageBox::Process -- Displays message box.                                            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
@@ -73,24 +74,18 @@ bool cancel_current_msgbox = false;
 int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt, const char* b3txt, bool preserve)
 {
 #define BUFFSIZE (511)
-    char buffer[BUFFSIZE];
-    int retval;
-    bool process; // loop while true
-    int selection;
-    bool pressed;
-    int curbutton;
-    TextButtonClass* buttons[3];
-    void* back;
-    BOOL display; // display level
-    int realval[5];
+    char buffer[BUFFSIZE] = {0};
+    int retval = 0;
+    bool process = false; // loop while true
+    int selection = 0;
+    bool pressed = false;
+    int curbutton = 0;
+    TextButtonClass* buttons[3] = {nullptr};
+    void* back = nullptr;
+    bool display = false; // display level
+    int realval[5] = {0};
 
-#ifndef WIN32
-    int preservex, preservey, preservew, preserveh;
-#endif
-
-#ifdef WIN32
     GraphicBufferClass seen_buff_save(VisiblePage.Get_Width(), VisiblePage.Get_Height(), (void*)NULL);
-#endif
 
     if (b1txt != NULL && *b1txt == '\0')
         b1txt = NULL;
@@ -98,9 +93,6 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
         b2txt = NULL;
     if (b3txt != NULL && *b3txt == '\0')
         b3txt = NULL;
-
-    // PG_TO_FIX
-    // Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, TPF_TEXT);
 
     /*
     **	Examine the optional button parameters. Fetch the width and starting
@@ -135,8 +127,6 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
     */
     buffer[BUFFSIZE - 1] = 0;
     strncpy(buffer, msg, BUFFSIZE - 1);
-    // PG_TO_FIX
-    // Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, TPF_TEXT);
     int width;
     int height;
     int lines = Format_Window_String(buffer, 255 * RESFACTOR, width, height);
@@ -162,15 +152,12 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
     **	Other inits.
     */
     Set_Logic_Page(SeenBuff);
-#ifdef WIN32
     VisiblePage.Blit(seen_buff_save);
-#endif
 
     /*
     **	Initialize the button structures. All are initialized, even though one (or none) may
     **	actually be added to the button list.
     */
-    // DOS BUILD GERMAN BUTTONS NEED TO ONE ON TOP OF THE OTHER  VG 11/6/96
     TextButtonClass button1(BUTTON_1,
                             b1txt,
                             TPF_BUTTON,
@@ -213,13 +200,11 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
             buttons[2] = &button2;
             realval[2] = BUTTON_2;
             buttons[curbutton]->Turn_On();
-        } else {
-            if (numbuttons == 2) {
-                button2.Add(*buttonlist);
-                buttons[1] = &button2;
-                realval[1] = BUTTON_2;
-                buttons[curbutton]->Turn_On();
-            }
+        } else if (numbuttons == 2) {
+            button2.Add(*buttonlist);
+            buttons[1] = &button2;
+            realval[1] = BUTTON_2;
+            buttons[curbutton]->Turn_On();
         }
     }
 
@@ -228,17 +213,8 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
     */
     Hide_Mouse();
     if (preserve) {
-#ifndef WIN32
-        preservex = max(0, x - 4);
-        preservey = max(0, y - 4);
-        preservew = min(width + 8, 320 - preservex);
-        preserveh = min(height + 8, 200 - preservey);
-        back = new char[preservew * preserveh];
-        SeenBuff.To_Buffer(preservex, preservey, preservew, preserveh, back, preservew * preserveh);
-#else
         back = new char[width * height];
         SeenBuff.To_Buffer(x, y, width, height, back, width * height);
-#endif
     }
     Dialog_Box(x, y, width, height);
     Draw_Caption(Caption, x, y, width);
@@ -264,7 +240,6 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
         pressed = false;
         while (process) {
 
-#ifdef WIN32
             /*
             ** If we have just received input focus again after running in the background then
             ** we need to redraw.
@@ -274,7 +249,6 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
                 seen_buff_save.Blit(VisiblePage);
                 display = true;
             }
-#endif
 
             if (display) {
                 display = false;

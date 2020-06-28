@@ -288,7 +288,7 @@ int LoadOptionsClass::Process(void)
     */
     if ((Style == LOAD || Style == WWDELETE) && listbtn.Count() == 0) {
         Clear_List(&listbtn);
-        CCMessageBox().Process(TXT_NO_SAVES);
+        WWMessageBox().Process(TXT_NO_SAVES);
         return (false);
     }
 
@@ -428,9 +428,9 @@ int LoadOptionsClass::Process(void)
             game_idx = listbtn.Current_Index();
             game_num = Files[game_idx]->Num;
             if (Files[game_idx]->Valid) {
-                CCMessageBox().Process(TXT_LOADING, TXT_NONE);
+                WWMessageBox().Process(TXT_LOADING, TXT_NONE);
                 if (!Load_Game(game_num)) {
-                    CCMessageBox().Process(TXT_ERROR_LOADING_GAME);
+                    WWMessageBox().Process(TXT_ERROR_LOADING_GAME);
                 } else {
                     Hide_Mouse();
                     VisiblePage.Clear();
@@ -439,7 +439,7 @@ int LoadOptionsClass::Process(void)
                     process = false;
                 }
             } else {
-                CCMessageBox().Process(TXT_OBSOLETE_SAVEGAME);
+                WWMessageBox().Process(TXT_OBSOLETE_SAVEGAME);
             }
             break;
 
@@ -448,16 +448,16 @@ int LoadOptionsClass::Process(void)
         */
         case (BUTTON_SAVE | KN_BUTTON):
             if (!strlen(game_descr)) {
-                CCMessageBox().Process(TXT_MUSTENTER_DESCRIPTION);
+                WWMessageBox().Process(TXT_MUSTENTER_DESCRIPTION);
                 firsttime = true;
                 display = true;
                 break;
             }
             game_idx = listbtn.Current_Index();
             if (Disk_Space_Available() < SAVE_GAME_DISK_SPACE && game_idx == 0) {
-                //					CCMessageBox().Process("Insuficent disk space to save a game.  Please delete a previous save
+                //					WWMessageBox().Process("Insuficent disk space to save a game.  Please delete a previous save
                 //to free up some disk space and try again.");
-                CCMessageBox().Process(TXT_SPACE_CANT_SAVE);
+                WWMessageBox().Process(TXT_SPACE_CANT_SAVE);
                 firsttime = true;
                 display = true;
                 break;
@@ -465,9 +465,9 @@ int LoadOptionsClass::Process(void)
 
             game_num = Files[game_idx]->Num;
             if (!Save_Game(game_num, game_descr)) {
-                CCMessageBox().Process(TXT_ERROR_SAVING_GAME);
+                WWMessageBox().Process(TXT_ERROR_SAVING_GAME);
             } else {
-                CCMessageBox().Process(TXT_GAME_WAS_SAVED, TXT_NONE, TXT_NONE);
+                WWMessageBox().Process(TXT_GAME_WAS_SAVED, TXT_NONE, TXT_NONE);
             }
             process = false;
             break;
@@ -479,7 +479,7 @@ int LoadOptionsClass::Process(void)
         case (BUTTON_DELETE | KN_BUTTON):
             game_idx = listbtn.Current_Index();
             game_num = Files[game_idx]->Num;
-            if (CCMessageBox().Process(TXT_DELETE_FILE_QUERY, TXT_YES, TXT_NO) == 0) {
+            if (WWMessageBox().Process(TXT_DELETE_FILE_QUERY, TXT_YES, TXT_NO) == 0) {
                 sprintf(fname, "SAVEGAME.%03d", game_num);
                 unlink(fname);
                 Clear_List(&listbtn);

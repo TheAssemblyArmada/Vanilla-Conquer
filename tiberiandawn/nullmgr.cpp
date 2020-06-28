@@ -1271,7 +1271,7 @@ int NullModemClass::Detect_Modem(SerialSettingsType* settings, bool reconnect)
             ** Handle error case.
             */
             if (status < ASSUCCESS) {
-                if (CCMessageBox().Process(TXT_ERROR_NO_INIT, TXT_IGNORE, TXT_CANCEL)) {
+                if (WWMessageBox().Process(TXT_ERROR_NO_INIT, TXT_IGNORE, TXT_CANCEL)) {
                     delete istr;
                     return (false);
                 }
@@ -1299,7 +1299,7 @@ int NullModemClass::Detect_Modem(SerialSettingsType* settings, bool reconnect)
                 strcpy(&send_string[2], ModemRegistry->Get_Modem_Hardware_Flow_Control());
                 status = Send_Modem_Command(send_string, '\r', buffer, 81, DEFAULT_TIMEOUT, 1);
                 if (status != MODEM_CMD_OK && status != MODEM_CMD_0) {
-                    if (CCMessageBox().Process(TXT_NO_FLOW_CONTROL_RESPONSE, TXT_IGNORE, TXT_CANCEL))
+                    if (WWMessageBox().Process(TXT_NO_FLOW_CONTROL_RESPONSE, TXT_IGNORE, TXT_CANCEL))
                         return (false);
                 }
             }
@@ -1311,7 +1311,7 @@ int NullModemClass::Detect_Modem(SerialSettingsType* settings, bool reconnect)
                 strcpy(&send_string[2], ModemRegistry->Get_Modem_No_Flow_Control());
                 status = Send_Modem_Command(send_string, '\r', buffer, 81, DEFAULT_TIMEOUT, 1);
                 if (status != MODEM_CMD_OK && status != MODEM_CMD_0) {
-                    if (CCMessageBox().Process(TXT_NO_FLOW_CONTROL_RESPONSE, TXT_IGNORE, TXT_CANCEL))
+                    if (WWMessageBox().Process(TXT_NO_FLOW_CONTROL_RESPONSE, TXT_IGNORE, TXT_CANCEL))
                         return (false);
                 }
             }
@@ -1326,7 +1326,7 @@ int NullModemClass::Detect_Modem(SerialSettingsType* settings, bool reconnect)
                 strcpy(&send_string[2], ModemRegistry->Get_Modem_Compression_Enable());
                 Send_Modem_Command(send_string, '\r', buffer, 81, DEFAULT_TIMEOUT, 1);
                 if (status != MODEM_CMD_OK && status != MODEM_CMD_0) {
-                    if (CCMessageBox().Process(TXT_NO_COMPRESSION_RESPONSE, TXT_IGNORE, TXT_CANCEL))
+                    if (WWMessageBox().Process(TXT_NO_COMPRESSION_RESPONSE, TXT_IGNORE, TXT_CANCEL))
                         return (false);
                 }
             }
@@ -1336,7 +1336,7 @@ int NullModemClass::Detect_Modem(SerialSettingsType* settings, bool reconnect)
                 strcpy(&send_string[2], ModemRegistry->Get_Modem_Compression_Disable());
                 Send_Modem_Command(send_string, '\r', buffer, 81, DEFAULT_TIMEOUT, 1);
                 if (status != MODEM_CMD_OK && status != MODEM_CMD_0) {
-                    if (CCMessageBox().Process(TXT_NO_COMPRESSION_RESPONSE, TXT_IGNORE, TXT_CANCEL))
+                    if (WWMessageBox().Process(TXT_NO_COMPRESSION_RESPONSE, TXT_IGNORE, TXT_CANCEL))
                         return (false);
                 }
             }
@@ -1351,7 +1351,7 @@ int NullModemClass::Detect_Modem(SerialSettingsType* settings, bool reconnect)
                 strcpy(&send_string[2], ModemRegistry->Get_Modem_Error_Correction_Enable());
                 Send_Modem_Command(send_string, '\r', buffer, 81, DEFAULT_TIMEOUT, 1);
                 if (status != MODEM_CMD_OK && status != MODEM_CMD_0) {
-                    if (CCMessageBox().Process(TXT_NO_ERROR_CORRECTION_RESPONSE, TXT_IGNORE, TXT_CANCEL))
+                    if (WWMessageBox().Process(TXT_NO_ERROR_CORRECTION_RESPONSE, TXT_IGNORE, TXT_CANCEL))
                         return (false);
                 }
             }
@@ -1360,7 +1360,7 @@ int NullModemClass::Detect_Modem(SerialSettingsType* settings, bool reconnect)
                 strcpy(&send_string[2], ModemRegistry->Get_Modem_Error_Correction_Disable());
                 Send_Modem_Command(send_string, '\r', buffer, 81, DEFAULT_TIMEOUT, 1);
                 if (status != MODEM_CMD_OK && status != MODEM_CMD_0) {
-                    if (CCMessageBox().Process(TXT_NO_ERROR_CORRECTION_RESPONSE, TXT_IGNORE, TXT_CANCEL))
+                    if (WWMessageBox().Process(TXT_NO_ERROR_CORRECTION_RESPONSE, TXT_IGNORE, TXT_CANCEL))
                         return (false);
                 }
             }
@@ -1371,7 +1371,7 @@ int NullModemClass::Detect_Modem(SerialSettingsType* settings, bool reconnect)
     */
     status = Send_Modem_Command("ATS0=0", '\r', buffer, 81, DEFAULT_TIMEOUT, INIT_COMMAND_RETRIES);
     if (status != MODEM_CMD_OK) {
-        if (CCMessageBox().Process(TXT_ERROR_NO_DISABLE, TXT_IGNORE, TXT_CANCEL))
+        if (WWMessageBox().Process(TXT_ERROR_NO_DISABLE, TXT_IGNORE, TXT_CANCEL))
             return (false);
         error_count++;
     }
@@ -1380,7 +1380,7 @@ int NullModemClass::Detect_Modem(SerialSettingsType* settings, bool reconnect)
     ** If we had an unreasonable number of ignored errors then return failure
     */
     if (error_count >= 3) {
-        CCMessageBox().Process(TXT_ERROR_TOO_MANY, TXT_OK);
+        WWMessageBox().Process(TXT_ERROR_TOO_MANY, TXT_OK);
         return (false);
     }
 
@@ -1845,7 +1845,7 @@ DialStatusType NullModemClass::Answer_Modem(bool reconnect)
                 process = false;
             } else if (strncmp(comm_buffer, "ERRO", 4) == 0) {
                 dialstatus = DIAL_ERROR;
-                CCMessageBox().Process("Error - Modem returned error status.", TXT_OK);
+                WWMessageBox().Process("Error - Modem returned error status.", TXT_OK);
                 process = false;
             }
         }
@@ -1857,7 +1857,7 @@ DialStatusType NullModemClass::Answer_Modem(bool reconnect)
                     dialstatus = DIAL_CONNECTED;
                 } else {
                     dialstatus = DIAL_ERROR;
-                    CCMessageBox().Process("Error - TIme out waiting for connect.", TXT_OK);
+                    WWMessageBox().Process("Error - TIme out waiting for connect.", TXT_OK);
                 }
                 process = false;
             } else {

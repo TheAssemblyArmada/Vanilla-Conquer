@@ -288,7 +288,7 @@ bool Init_Game(int, char*[])
         sprintf(buffer, "Command & Conquer is unable to detect your mouse driver.");
 #endif
 #endif
-        CCMessageBox().Process(buffer, TXT_OK);
+        WWMessageBox().Process(buffer, TXT_OK);
         Prog_End();
         exit(1);
     }
@@ -319,7 +319,7 @@ bool Init_Game(int, char*[])
             if (!CDList.Get_Number_Of_Drives()) {
                 Set_Palette(GamePalette);
                 Show_Mouse();
-                CCMessageBox().Process(TXT_CD_ERROR1, TXT_OK);
+                WWMessageBox().Process(TXT_CD_ERROR1, TXT_OK);
                 Prog_End();
                 exit(EXIT_FAILURE);
             }
@@ -330,14 +330,14 @@ bool Init_Game(int, char*[])
             case 1:
                 Set_Palette(GamePalette);
                 Show_Mouse();
-                CCMessageBox().Process(TXT_CD_ERROR1, TXT_OK);
+                WWMessageBox().Process(TXT_CD_ERROR1, TXT_OK);
                 Prog_End();
                 exit(EXIT_FAILURE);
 
             case 2:
                 Set_Palette(GamePalette);
                 Show_Mouse();
-                if (CCMessageBox().Process(TXT_CD_DIALOG_1, TXT_OK, TXT_CANCEL) == 1) {
+                if (WWMessageBox().Process(TXT_CD_DIALOG_1, TXT_OK, TXT_CANCEL) == 1) {
                     Prog_End();
                     exit(EXIT_FAILURE);
                 }

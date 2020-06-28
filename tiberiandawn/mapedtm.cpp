@@ -117,7 +117,7 @@ void MapEditClass::Handle_Teams(char const* caption)
                         /*
                         ................. Unable to create; issue warning ..................
                         */
-                        CCMessageBox().Process("No more teams available.");
+                        WWMessageBox().Process("No more teams available.");
                         HiddenPage.Clear();
                         Flag_To_Redraw(true);
                         Render();

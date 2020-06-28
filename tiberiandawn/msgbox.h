@@ -37,7 +37,7 @@
 
 #include "jshell.h"
 
-class CCMessageBox
+class WWMessageBox
 {
     int Caption;
 #ifdef JAPANESE
@@ -45,9 +45,9 @@ class CCMessageBox
 #endif
 public:
 #ifdef JAPANESE
-    CCMessageBox(int caption = TXT_NONE, bool pict = false);
+    WWMessageBox(int caption = TXT_NONE, bool pict = false);
 #else
-    CCMessageBox(int caption = TXT_NONE)
+    WWMessageBox(int caption = TXT_NONE)
     {
         Caption = caption;
     };

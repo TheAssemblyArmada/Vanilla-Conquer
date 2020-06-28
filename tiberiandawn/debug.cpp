@@ -305,7 +305,7 @@ void Debug_Key(unsigned input)
 
         case ((int)KN_F1 | (int)KN_SHIFT_BIT): // quick load/save for debugging
             if (!Save_Game(0, "Command & Conquer Save Game File")) {
-                CCMessageBox().Process("Error saving game!");
+                WWMessageBox().Process("Error saving game!");
                 Prog_End();
                 exit(EXIT_SUCCESS);
             }
@@ -313,7 +313,7 @@ void Debug_Key(unsigned input)
 
         case ((int)KN_F2 | (int)KN_SHIFT_BIT): // quick load/save for debugging
             if (!Load_Game(0)) {
-                CCMessageBox().Process("Error loading game!");
+                WWMessageBox().Process("Error loading game!");
                 Prog_End();
                 exit(EXIT_SUCCESS);
             }
