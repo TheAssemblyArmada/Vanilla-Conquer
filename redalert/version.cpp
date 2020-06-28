@@ -41,7 +41,7 @@
  *   VersionClass::Min_Version -- returns lowest version # to connect to   *
  *   VersionClass::Max_Version -- returns highest version # to connect to  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if (0) // PG
+#ifndef REMASTER_BUILD
 #include "function.h"
 
 #ifdef FIXIT_VERSION_3
@@ -66,6 +66,9 @@ static VersionProtocolType VersionProtocol[] = {
     {0x00002000, COMM_PROTOCOL_SINGLE_E_COMP},  // (obsolete)
     {0x00010000, COMM_PROTOCOL_MULTI_E_COMP},
 };
+
+#define GAME_VERSION 0x30003
+VersionClass VerNum;
 
 /***************************************************************************
  * VersionClass::VersionClass -- Class constructor                         *
