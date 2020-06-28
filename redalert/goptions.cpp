@@ -329,7 +329,7 @@ void GameOptionsClass::Process(void)
                              Version_Name());
 
 #else
-#if (0) // PG
+#ifndef REMASTER_BUILD
             Fancy_Text_Print("%s\rV%s",
                              (OptionX + OptionWidth) - (25 * RESFACTOR),
                              OptionY + OptionHeight

@@ -385,7 +385,7 @@ void SidebarClass::Init_Theater(TheaterType theater)
  *=============================================================================================*/
 void SidebarClass::Reload_Sidebar(void)
 {
-    static char* sidebarnames[] = {
+    static char sidebarnames[10][12] = {
         "SIDE?NA.SHP", // NATO
         "SIDE?NA.SHP",
         "SIDE?US.SHP", // USSR
@@ -404,7 +404,7 @@ void SidebarClass::Reload_Sidebar(void)
     }
 
     /*  Don't have write access to the static char array. ST - 5/20/2019 */
-#if (0)
+#ifndef REMASTER_BUILD // We do now. OmniBlade
     char* sidename = sidebarnames[houseloaded];
     *(sidename + 4) = '1';
     SidebarShape = (void*)MFCD::Retrieve(sidename);
@@ -970,12 +970,14 @@ void SidebarClass::Recalc(void)
  *=============================================================================================*/
 bool SidebarClass::Activate(int control)
 {
+#ifdef REMASTER_BUILD
     //
     // We don't want the original sidebar to be visible. ST - 1/31/2019 11:28AM
     //
     if (control < 100) {
         return IsSidebarActive;
     }
+#endif
 
     bool old = IsSidebarActive;
 

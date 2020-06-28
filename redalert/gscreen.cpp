@@ -421,7 +421,9 @@ void GScreenClass::Render(void)
         }
         Session.Messages.Draw();
 
-        // Blit_Display(); // 5/19/20 SKY - Skip copying to scene page, we can get the data directly from hidden page
+#ifndef REMASTER_BUILD
+        Blit_Display();
+#endif
         IsToUpdate = false;
         IsToRedraw = false;
 

@@ -91,7 +91,7 @@ void TabClass::Draw_It(bool complete)
     }
 
 // Disable tab drawing for menu, credits buttons etc. ST - 5/27/2019
-#if (0)
+#ifndef REMASTER_BUILD
     /*
     **	Redraw the top bar imagery if flagged to do so or if the entire display needs
     **	to be redrawn.

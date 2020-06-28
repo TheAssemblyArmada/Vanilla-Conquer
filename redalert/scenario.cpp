@@ -532,10 +532,13 @@ bool Read_Scenario(char* name)
         }
 #endif
         Fill_In_Data();
+#ifdef REMASTER_BUILD
+        // Sets view dimensions to whole map for the way the remaster works.
         Map.Set_View_Dimensions(0, 0, Map.MapCellWidth, Map.MapCellHeight);
+#endif
     } else {
 
-#if (1)
+#ifdef REMASTER_BUILD
         char message[200];
         if (name) {
             sprintf(message, "Failed to load scenario %s", name);
@@ -545,7 +548,6 @@ bool Read_Scenario(char* name)
         }
 #else
         GamePalette.Set(FADE_PALETTE_FAST, Call_Back);
-        //		Fade_Palette_To(GamePalette, FADE_PALETTE_FAST, Call_Back);
         Show_Mouse();
         WWMessageBox().Process(TXT_UNABLE_READ_SCENARIO);
         Hide_Mouse();
