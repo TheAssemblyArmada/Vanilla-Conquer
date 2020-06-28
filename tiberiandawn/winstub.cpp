@@ -526,7 +526,7 @@ HANDLE DebugFile = INVALID_HANDLE_VALUE;
  *=============================================================================================*/
 void CCDebugString(const char* string)
 {
-#if (0)
+#ifndef REMASTER_BUILD
 
     char outstr[256];
 
