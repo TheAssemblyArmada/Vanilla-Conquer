@@ -543,7 +543,7 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
             ** If we're in editor mode & Changed is set, prompt for saving changes
             */
             if (Debug_Map && Changed) {
-                rc = CCMessageBox().Process("Save Changes?", TXT_YES, TXT_NO);
+                rc = WWMessageBox().Process("Save Changes?", TXT_YES, TXT_NO);
                 HiddenPage.Clear();
                 Flag_To_Redraw(true);
                 Render();
@@ -747,7 +747,7 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
                 input = KN_NONE;
                 break;
             } else {
-                rc = CCMessageBox().Process("Exit Scenario Editor?", TXT_YES, TXT_NO);
+                rc = WWMessageBox().Process("Exit Scenario Editor?", TXT_YES, TXT_NO);
                 HiddenPage.Clear();
                 Flag_To_Redraw(true);
                 Render();
@@ -764,7 +764,7 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
                 ................. If changed, prompt for saving .................
                 */
                 if (Changed) {
-                    rc = CCMessageBox().Process("Save Changes?", TXT_YES, TXT_NO);
+                    rc = WWMessageBox().Process("Save Changes?", TXT_YES, TXT_NO);
                     HiddenPage.Clear();
                     Flag_To_Redraw(true);
                     Render();
@@ -1561,7 +1561,7 @@ void MapEditClass::Main_Menu(void)
         */
         case 0:
             if (Changed) {
-                rc = CCMessageBox().Process("Save Changes?", TXT_YES, TXT_NO);
+                rc = WWMessageBox().Process("Save Changes?", TXT_YES, TXT_NO);
                 HiddenPage.Clear();
                 Flag_To_Redraw(true);
                 Render();
@@ -1585,7 +1585,7 @@ void MapEditClass::Main_Menu(void)
         */
         case 1:
             if (Changed) {
-                rc = CCMessageBox().Process("Save Changes?", TXT_YES, TXT_NO);
+                rc = WWMessageBox().Process("Save Changes?", TXT_YES, TXT_NO);
                 HiddenPage.Clear();
                 Flag_To_Redraw(true);
                 Render();
@@ -1657,7 +1657,7 @@ void MapEditClass::Main_Menu(void)
         */
         case 7:
             if (Changed) {
-                rc = CCMessageBox().Process("Save Changes?", TXT_YES, TXT_NO);
+                rc = WWMessageBox().Process("Save Changes?", TXT_YES, TXT_NO);
                 HiddenPage.Clear();
                 Flag_To_Redraw(true);
                 Render();

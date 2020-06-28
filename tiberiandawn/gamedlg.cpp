@@ -424,7 +424,7 @@ void GameControlsClass::Process(void)
 
             case (BUTTON_SOUND):
                 if (!SoundType) {
-                    CCMessageBox().Process(Text_String(TXT_NO_SOUND_CARD));
+                    WWMessageBox().Process(Text_String(TXT_NO_SOUND_CARD));
                     process = true;
                     display = true;
                     refresh = true;

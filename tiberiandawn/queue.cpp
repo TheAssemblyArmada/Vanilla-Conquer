@@ -615,11 +615,11 @@ static void Queue_AI_Multiplayer(void)
 
         if (rc != RC_NORMAL) {
             if (rc == RC_NOT_RESPONDING) {
-                CCMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
+                WWMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
             } else if (rc == RC_SCENARIO_MISMATCH) {
-                CCMessageBox().Process(TXT_SCENARIOS_DO_NOT_MATCH);
+                WWMessageBox().Process(TXT_SCENARIOS_DO_NOT_MATCH);
             } else if (rc == RC_DOLIST_FULL) {
-                CCMessageBox().Process(TXT_QUEUE_FULL);
+                WWMessageBox().Process(TXT_QUEUE_FULL);
             }
             Stop_Game();
             return;
@@ -731,11 +731,11 @@ static void Queue_AI_Multiplayer(void)
 
     if (rc != RC_NORMAL) {
         if (rc == RC_NOT_RESPONDING) {
-            CCMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
+            WWMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
         } else if (rc == RC_SCENARIO_MISMATCH) {
-            CCMessageBox().Process(TXT_SCENARIOS_DO_NOT_MATCH);
+            WWMessageBox().Process(TXT_SCENARIOS_DO_NOT_MATCH);
         } else if (rc == RC_DOLIST_FULL) {
-            CCMessageBox().Process(TXT_QUEUE_FULL);
+            WWMessageBox().Process(TXT_QUEUE_FULL);
         }
         Stop_Game();
         return;
@@ -2874,7 +2874,7 @@ static int Execute_DoList(int,
 #ifndef DEMO
                     Dump_Packet_Too_Late_Stuff(&DoList[j]);
 #endif // DEMO
-                    CCMessageBox().Process(TXT_PACKET_TOO_LATE);
+                    WWMessageBox().Process(TXT_PACKET_TOO_LATE);
                     return (0);
                 }
 
@@ -2954,7 +2954,7 @@ static int Execute_DoList(int,
                         index = ((DoList[j].Frame - DoList[j].Data.FrameInfo.Delay) & 0x001f);
                         if (CRC[index] != DoList[j].Data.FrameInfo.CRC) {
                             Print_CRCs(&DoList[j]);
-                            if (CCMessageBox().Process(TXT_OUT_OF_SYNC, TXT_CONTINUE, TXT_STOP) == 0) {
+                            if (WWMessageBox().Process(TXT_OUT_OF_SYNC, TXT_CONTINUE, TXT_STOP) == 0) {
                                 if (GameToPlay == GAME_MODEM || GameToPlay == GAME_NULL_MODEM) {
 #if (0) // ST - 1/2/2019 5:29PM
                                     Destroy_Null_Connection(DoList[j].MPlayerID, -1);

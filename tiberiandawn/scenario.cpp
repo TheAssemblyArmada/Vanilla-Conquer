@@ -233,7 +233,7 @@ bool Read_Scenario(char* root)
 #else
         Fade_Palette_To(GamePalette, FADE_PALETTE_FAST, Call_Back);
         Show_Mouse();
-        CCMessageBox().Process(TXT_UNABLE_READ_SCENARIO);
+        WWMessageBox().Process(TXT_UNABLE_READ_SCENARIO);
         Hide_Mouse();
 #endif
         return (false);
@@ -649,7 +649,7 @@ void Do_Lose(void)
     */
     Set_Palette(GamePalette);
     Show_Mouse();
-    if (!PlaybackGame && !CCMessageBox().Process(TXT_TO_REPLAY, TXT_YES, TXT_NO)) {
+    if (!PlaybackGame && !WWMessageBox().Process(TXT_TO_REPLAY, TXT_YES, TXT_NO)) {
         Hide_Mouse();
         Keyboard::Clear();
         Start_Scenario(ScenarioName, false);
@@ -685,7 +685,7 @@ void Do_Restart(void)
 
     if (hidden)
         Show_Mouse();
-    CCMessageBox().Process(TXT_RESTARTING, TXT_NONE);
+    WWMessageBox().Process(TXT_RESTARTING, TXT_NONE);
     Map.Set_Default_Mouse(MOUSE_NORMAL);
     Keyboard::Clear();
     Start_Scenario(ScenarioName, false);
@@ -722,7 +722,7 @@ bool Restate_Mission(char const* name, int button1, int button2)
         strcat(fname, ".CPS");
 
         if (CCFileClass(fname).Is_Available()) {
-            CCMessageBox box(TXT_NONE, true);
+            WWMessageBox box(TXT_NONE, true);
             return (box.Process(fname, button1, button2));
         }
 #else
@@ -758,7 +758,7 @@ bool Restate_Mission(char const* name, int button1, int button2)
             if (hidden)
                 Show_Mouse();
 
-            if (CCMessageBox(TXT_OBJECTIVE).Process(_buff, button1, button2)) {
+            if (WWMessageBox(TXT_OBJECTIVE).Process(_buff, button1, button2)) {
                 if (hidden)
                     Hide_Mouse();
                 return (true);

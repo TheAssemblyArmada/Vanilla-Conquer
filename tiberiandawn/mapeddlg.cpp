@@ -231,7 +231,7 @@ int MapEditClass::Load_Scenario(void)
     ------------------------------ Read the INI ------------------------------
     */
     if (Read_Scenario_Ini(ScenarioName) == 0) {
-        CCMessageBox().Process("Unable to read scenario!");
+        WWMessageBox().Process("Unable to read scenario!");
         HiddenPage.Clear();
         Flag_To_Redraw(true);
         Render();
@@ -287,7 +287,7 @@ int MapEditClass::Save_Scenario(void)
     fp = fopen(fname, "rb");
     if (fp) {
         fclose(fp);
-        rc = CCMessageBox().Process("File exists. Replace?", TXT_YES, TXT_NO);
+        rc = WWMessageBox().Process("File exists. Replace?", TXT_YES, TXT_NO);
         HiddenPage.Clear();
         Flag_To_Redraw(true);
         Render();
@@ -2343,7 +2343,7 @@ void MapEditClass::Handle_Triggers(void)
                 /*
                 ................. Unable to create; issue warning ..................
                 */
-                CCMessageBox().Process("No more triggers available.");
+                WWMessageBox().Process("No more triggers available.");
                 HiddenPage.Clear();
                 Flag_To_Redraw(true);
                 Render();

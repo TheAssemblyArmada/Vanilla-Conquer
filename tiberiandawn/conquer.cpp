@@ -1668,12 +1668,12 @@ bool Main_Loop()
     if (Debug_Check_Map) {
         if (!Map.Validate()) {
 #ifdef GERMAN
-            if (CCMessageBox().Process("Kartenfehler!", "Halt", "Weiter") == 0)
+            if (WWMessageBox().Process("Kartenfehler!", "Halt", "Weiter") == 0)
 #else
 #ifdef FRENCH
-            if (CCMessageBox().Process("Erreur de carte!", "Stop", "Continuer") == 0)
+            if (WWMessageBox().Process("Erreur de carte!", "Stop", "Continuer") == 0)
 #else
-            if (CCMessageBox().Process("Map Error!", "Stop", "Continue") == 0)
+            if (WWMessageBox().Process("Map Error!", "Stop", "Continue") == 0)
 #endif
 #endif
                 GameActive = false;
@@ -3965,7 +3965,7 @@ bool Force_CD_Available(int cd)
             while (Get_Mouse_State())
                 Show_Mouse();
 
-            if (CCMessageBox().Process(buffer, TXT_OK, TXT_CANCEL, TXT_NONE, TRUE) == 1) {
+            if (WWMessageBox().Process(buffer, TXT_OK, TXT_CANCEL, TXT_NONE, TRUE) == 1) {
                 Set_Logic_Page(oldpage);
                 Hide_Mouse();
                 InMainLoop = old_in_main_loop;

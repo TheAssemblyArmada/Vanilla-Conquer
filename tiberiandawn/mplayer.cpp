@@ -378,7 +378,7 @@ GameType Select_MPlayer_Game(void)
                 Blit_Hid_Page_To_Seen_Buff();
                 Show_Mouse();
                 Call_Back();
-                CCMessageBox().Process("Error! - Unable to ping KANE.WESTWOOD.COM");
+                WWMessageBox().Process("Error! - Unable to ping KANE.WESTWOOD.COM");
 
                 buttons[curbutton]->IsPressed = false;
                 display = REDRAW_ALL;

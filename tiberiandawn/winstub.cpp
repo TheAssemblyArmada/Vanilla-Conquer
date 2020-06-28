@@ -678,7 +678,7 @@ void Memory_Error_Handler(void)
     while (Get_Mouse_State()) {
         Show_Mouse();
     };
-    CCMessageBox().Process("Error - out of memory.", "Abort", false);
+    WWMessageBox().Process("Error - out of memory.", "Abort", false);
     Invalidate_Cached_Icons();
 
     // Nope. ST - 1/10/2019 10:38AM

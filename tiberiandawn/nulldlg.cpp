@@ -696,7 +696,7 @@ static int Reconnect_Null_Modem(void)
                 // are we getting our own packets back??
 
                 if (ReceivePacket.ID == MPlayerLocalID) {
-                    CCMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
+                    WWMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
                     retval = false;
                     process = false;
                     break;
@@ -1170,7 +1170,7 @@ GameType Select_Serial_Dialog(void)
             case (BUTTON_DIAL):
 
                 if (selectsettings) {
-                    CCMessageBox().Process(TXT_SELECT_SETTINGS);
+                    WWMessageBox().Process(TXT_SELECT_SETTINGS);
                 }
 
                 /*
@@ -1209,7 +1209,7 @@ GameType Select_Serial_Dialog(void)
                             NullModem.Change_IRQ_Priority(0);
                         }
                     } else {
-                        CCMessageBox().Process(TXT_SELECT_SETTINGS);
+                        WWMessageBox().Process(TXT_SELECT_SETTINGS);
                     }
                 }
 
@@ -1224,7 +1224,7 @@ GameType Select_Serial_Dialog(void)
             case (BUTTON_ANSWER):
 
                 if (selectsettings) {
-                    CCMessageBox().Process(TXT_SELECT_SETTINGS);
+                    WWMessageBox().Process(TXT_SELECT_SETTINGS);
                 } else {
                     /*
                     ** Remote-connect
@@ -1249,7 +1249,7 @@ GameType Select_Serial_Dialog(void)
                             NullModem.Change_IRQ_Priority(0);
                         }
                     } else {
-                        CCMessageBox().Process(TXT_SELECT_SETTINGS);
+                        WWMessageBox().Process(TXT_SELECT_SETTINGS);
                     }
                 }
 
@@ -1264,7 +1264,7 @@ GameType Select_Serial_Dialog(void)
             case (BUTTON_NULLMODEM):
 
                 if (selectsettings) {
-                    CCMessageBox().Process(TXT_SELECT_SETTINGS);
+                    WWMessageBox().Process(TXT_SELECT_SETTINGS);
                 } else {
                     /*
                     ** Otherwise, remote-connect; save values if we're recording
@@ -1295,7 +1295,7 @@ GameType Select_Serial_Dialog(void)
                             break;
 
                         case (3):
-                            CCMessageBox().Process(TXT_MODEM_OR_LOOPBACK);
+                            WWMessageBox().Process(TXT_MODEM_OR_LOOPBACK);
                             break;
                         }
 
@@ -1303,7 +1303,7 @@ GameType Select_Serial_Dialog(void)
                             NullModem.Change_IRQ_Priority(0);
                         }
                     } else {
-                        CCMessageBox().Process(TXT_SELECT_SETTINGS);
+                        WWMessageBox().Process(TXT_SELECT_SETTINGS);
                     }
                 }
 
@@ -2593,7 +2593,7 @@ static int Com_Settings_Dialog(SerialSettingsType* settings)
                             }
                             break;
                         }
-                        CCMessageBox().Process(TXT_INVALID_PORT_ADDRESS);
+                        WWMessageBox().Process(TXT_INVALID_PORT_ADDRESS);
                         port_edt.Set_Focus();
                         display = REDRAW_ALL;
                         break;
@@ -2974,11 +2974,11 @@ static int Com_Settings_Dialog(SerialSettingsType* settings)
                 process = false;
                 rc = true;
             } else if (dpstatus == PORT_INVALID) {
-                CCMessageBox().Process(TXT_INVALID_SETTINGS);
+                WWMessageBox().Process(TXT_INVALID_SETTINGS);
                 firsttime = 1;
                 display = REDRAW_ALL;
             } else if (dpstatus == PORT_IRQ_INUSE) {
-                CCMessageBox().Process(TXT_IRQ_ALREADY_IN_USE);
+                WWMessageBox().Process(TXT_IRQ_ALREADY_IN_USE);
                 firsttime = 1;
                 display = REDRAW_ALL;
             }
@@ -4075,7 +4075,7 @@ int Com_Scenario_Dialog(void)
                     transmittime = 0;
 
                 } else {
-                    CCMessageBox().Process(TXT_ONLY_ONE, TXT_OOPS, NULL);
+                    WWMessageBox().Process(TXT_ONLY_ONE, TXT_OOPS, NULL);
                     display = REDRAW_ALL;
                 }
             }
@@ -4333,7 +4333,7 @@ int Com_Scenario_Dialog(void)
             if (ReceivePacket.Command >= SERIAL_CONNECT && ReceivePacket.Command < SERIAL_LAST_COMMAND
                 && ReceivePacket.Command != SERIAL_MESSAGE && ReceivePacket.ID == ModemGameToPlay) {
 
-                CCMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
+                WWMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
 
                 // to skip the other system not responding msg
                 lastmsgtime = TickCount.Time();
@@ -4370,7 +4370,7 @@ int Com_Scenario_Dialog(void)
                     starttime = TickCount.Time();
                     while (TickCount.Time() - starttime < 60)
                         NullModem.Service();
-                    CCMessageBox().Process(TXT_USER_SIGNED_OFF);
+                    WWMessageBox().Process(TXT_USER_SIGNED_OFF);
 
                     // to skip the other system not responding msg
                     lastmsgtime = TickCount.Time();
@@ -4414,7 +4414,7 @@ int Com_Scenario_Dialog(void)
                     version = Version_Number();
 #endif
                     if (ReceivePacket.Version > version) {
-                        CCMessageBox().Process(TXT_YOURGAME_OUTDATED);
+                        WWMessageBox().Process(TXT_YOURGAME_OUTDATED);
 
                         // to skip the other system not responding msg
                         lastmsgtime = TickCount.Time();
@@ -4423,7 +4423,7 @@ int Com_Scenario_Dialog(void)
                         rc = false;
                     } else {
                         if (ReceivePacket.Version < version) {
-                            CCMessageBox().Process(TXT_DESTGAME_OUTDATED);
+                            WWMessageBox().Process(TXT_DESTGAME_OUTDATED);
 
                             // to skip the other system not responding msg
                             lastmsgtime = TickCount.Time();
@@ -4493,7 +4493,7 @@ int Com_Scenario_Dialog(void)
         // if we haven't received a msg for 10 seconds exit
 
         if ((TickCount.Time() - lastmsgtime) > msg_timeout) {
-            CCMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
+            WWMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
             process = false;
             rc = false;
 
@@ -5572,7 +5572,7 @@ int Com_Show_Scenario_Dialog(void)
             if (ReceivePacket.Command >= SERIAL_CONNECT && ReceivePacket.Command < SERIAL_LAST_COMMAND
                 && ReceivePacket.Command != SERIAL_MESSAGE && ReceivePacket.ID == ModemGameToPlay) {
 
-                CCMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
+                WWMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
 
                 // to skip the other system not responding msg
                 lastmsgtime = TickCount.Time();
@@ -5611,7 +5611,7 @@ int Com_Show_Scenario_Dialog(void)
                     starttime = TickCount.Time();
                     while ((TickCount.Time() - starttime) < 60)
                         NullModem.Service();
-                    CCMessageBox().Process(TXT_USER_SIGNED_OFF);
+                    WWMessageBox().Process(TXT_USER_SIGNED_OFF);
 
                     // to skip the other system not responding msg
                     lastmsgtime = TickCount.Time();
@@ -5697,7 +5697,7 @@ int Com_Show_Scenario_Dialog(void)
                     version = Version_Number();
 #endif
                     if (ReceivePacket.Version > version) {
-                        CCMessageBox().Process(TXT_YOURGAME_OUTDATED);
+                        WWMessageBox().Process(TXT_YOURGAME_OUTDATED);
 
                         // to skip the other system not responding msg
                         lastmsgtime = TickCount.Time();
@@ -5706,7 +5706,7 @@ int Com_Show_Scenario_Dialog(void)
                         rc = false;
                     } else {
                         if (ReceivePacket.Version < version) {
-                            CCMessageBox().Process(TXT_DESTGAME_OUTDATED);
+                            WWMessageBox().Process(TXT_DESTGAME_OUTDATED);
 
                             // to skip the other system not responding msg
                             lastmsgtime = TickCount.Time();
@@ -5793,7 +5793,7 @@ int Com_Show_Scenario_Dialog(void)
         //(Winsock.Get_Connected() && Winsock.Get_Connection_Status == TcpipManagerClass::CONNECTION_LOST)) {
 
         if ((TickCount.Time() - lastmsgtime) > msg_timeout) {
-            CCMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
+            WWMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
             process = false;
             rc = false;
 
@@ -6974,7 +6974,7 @@ static bool Dial_Modem(SerialSettingsType* settings, bool reconnect)
                 NullModem.Remove_Modem_Echo();
                 NullModem.Print_EchoBuf();
                 NullModem.Reset_EchoBuf();
-                CCMessageBox().Process(TXT_UNABLE_FIND_MODEM);
+                WWMessageBox().Process(TXT_UNABLE_FIND_MODEM);
                 ModemService = true;
                 return (connected);
             }
@@ -6990,14 +6990,14 @@ static bool Dial_Modem(SerialSettingsType* settings, bool reconnect)
                 NullModem.Remove_Modem_Echo();
                 NullModem.Print_EchoBuf();
                 NullModem.Reset_EchoBuf();
-                CCMessageBox().Process(TXT_UNABLE_FIND_MODEM);
+                WWMessageBox().Process(TXT_UNABLE_FIND_MODEM);
                 ModemService = true;
                 return (connected);
             }
             break;
 
         default:
-            CCMessageBox().Process(TXT_UNABLE_FIND_MODEM);
+            WWMessageBox().Process(TXT_UNABLE_FIND_MODEM);
             ModemService = true;
             return (connected);
         }
@@ -7005,7 +7005,7 @@ static bool Dial_Modem(SerialSettingsType* settings, bool reconnect)
         NullModem.Remove_Modem_Echo();
         NullModem.Print_EchoBuf();
         NullModem.Reset_EchoBuf();
-        CCMessageBox().Process(TXT_ERROR_IN_INITSTRING);
+        WWMessageBox().Process(TXT_ERROR_IN_INITSTRING);
         ModemService = true;
         return (connected);
     }
@@ -7049,29 +7049,29 @@ static bool Dial_Modem(SerialSettingsType* settings, bool reconnect)
         break;
 
     case DIAL_NO_CARRIER:
-        CCMessageBox().Process(TXT_NO_CARRIER);
+        WWMessageBox().Process(TXT_NO_CARRIER);
         connected = false;
         break;
 
     case DIAL_BUSY:
-        CCMessageBox().Process(TXT_LINE_BUSY);
+        WWMessageBox().Process(TXT_LINE_BUSY);
         connected = false;
         break;
 
     case DIAL_ERROR:
-        CCMessageBox().Process(TXT_NUMBER_INVALID);
+        WWMessageBox().Process(TXT_NUMBER_INVALID);
         connected = false;
         break;
 
     case DIAL_NO_DIAL_TONE:
-        CCMessageBox().Process(TXT_NO_DIAL_TONE);
+        WWMessageBox().Process(TXT_NO_DIAL_TONE);
         connected = false;
         break;
 
     case DIAL_CANCELED:
         NullModem.Hangup_Modem();
         ModemService = false;
-        CCMessageBox().Process(TXT_DIALING_CANCELED);
+        WWMessageBox().Process(TXT_DIALING_CANCELED);
         connected = false;
         break;
     }
@@ -7147,7 +7147,7 @@ static bool Answer_Modem(SerialSettingsType* settings, bool reconnect)
                 NullModem.Remove_Modem_Echo();
                 NullModem.Print_EchoBuf();
                 NullModem.Reset_EchoBuf();
-                CCMessageBox().Process(TXT_UNABLE_FIND_MODEM);
+                WWMessageBox().Process(TXT_UNABLE_FIND_MODEM);
                 ModemService = true;
                 return (connected);
             }
@@ -7163,14 +7163,14 @@ static bool Answer_Modem(SerialSettingsType* settings, bool reconnect)
                 NullModem.Remove_Modem_Echo();
                 NullModem.Print_EchoBuf();
                 NullModem.Reset_EchoBuf();
-                CCMessageBox().Process(TXT_UNABLE_FIND_MODEM);
+                WWMessageBox().Process(TXT_UNABLE_FIND_MODEM);
                 ModemService = true;
                 return (connected);
             }
             break;
 
         default:
-            CCMessageBox().Process(TXT_UNABLE_FIND_MODEM);
+            WWMessageBox().Process(TXT_UNABLE_FIND_MODEM);
             ModemService = true;
             return (connected);
         }
@@ -7179,7 +7179,7 @@ static bool Answer_Modem(SerialSettingsType* settings, bool reconnect)
         NullModem.Remove_Modem_Echo();
         NullModem.Print_EchoBuf();
         NullModem.Reset_EchoBuf();
-        CCMessageBox().Process(TXT_ERROR_IN_INITSTRING);
+        WWMessageBox().Process(TXT_ERROR_IN_INITSTRING);
         ModemService = true;
         return (connected);
     }
@@ -7214,27 +7214,27 @@ static bool Answer_Modem(SerialSettingsType* settings, bool reconnect)
         break;
 
     case DIAL_NO_CARRIER:
-        CCMessageBox().Process(TXT_NO_CARRIER);
+        WWMessageBox().Process(TXT_NO_CARRIER);
         connected = false;
         break;
 
     case DIAL_BUSY:
-        CCMessageBox().Process(TXT_LINE_BUSY);
+        WWMessageBox().Process(TXT_LINE_BUSY);
         connected = false;
         break;
 
     case DIAL_ERROR:
-        CCMessageBox().Process(TXT_NUMBER_INVALID);
+        WWMessageBox().Process(TXT_NUMBER_INVALID);
         connected = false;
         break;
 
     case DIAL_NO_DIAL_TONE:
-        CCMessageBox().Process(TXT_NO_DIAL_TONE);
+        WWMessageBox().Process(TXT_NO_DIAL_TONE);
         connected = false;
         break;
 
     case DIAL_CANCELED:
-        CCMessageBox().Process(TXT_ANSWERING_CANCELED);
+        WWMessageBox().Process(TXT_ANSWERING_CANCELED);
         connected = false;
         break;
     }
@@ -7621,7 +7621,7 @@ int Com_Fake_Scenario_Dialog(void)
             if (ReceivePacket.Command >= SERIAL_CONNECT && ReceivePacket.Command < SERIAL_LAST_COMMAND
                 && ReceivePacket.Command != SERIAL_MESSAGE && ReceivePacket.ID == ModemGameToPlay) {
 
-                CCMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
+                WWMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
 
                 // to skip the other system not responding msg
                 lastmsgtime = TickCount.Time();
@@ -7651,7 +7651,7 @@ int Com_Fake_Scenario_Dialog(void)
                     starttime = TickCount.Time();
                     while (TickCount.Time() - starttime < 60)
                         NullModem.Service();
-                    CCMessageBox().Process(TXT_USER_SIGNED_OFF);
+                    WWMessageBox().Process(TXT_USER_SIGNED_OFF);
 
                     // to skip the other system not responding msg
                     lastmsgtime = TickCount.Time();
@@ -7690,7 +7690,7 @@ int Com_Fake_Scenario_Dialog(void)
                     version = Version_Number();
 #endif
                     if (ReceivePacket.Version > version) {
-                        CCMessageBox().Process(TXT_YOURGAME_OUTDATED);
+                        WWMessageBox().Process(TXT_YOURGAME_OUTDATED);
 
                         // to skip the other system not responding msg
                         lastmsgtime = TickCount.Time();
@@ -7699,7 +7699,7 @@ int Com_Fake_Scenario_Dialog(void)
                         rc = false;
                     } else {
                         if (ReceivePacket.Version < version) {
-                            CCMessageBox().Process(TXT_DESTGAME_OUTDATED);
+                            WWMessageBox().Process(TXT_DESTGAME_OUTDATED);
 
                             // to skip the other system not responding msg
                             lastmsgtime = TickCount.Time();
@@ -7746,7 +7746,7 @@ int Com_Fake_Scenario_Dialog(void)
         // if we haven't received a msg for 10 seconds exit
 
         if ((TickCount.Time() - lastmsgtime) > msg_timeout) {
-            CCMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
+            WWMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
             process = false;
             rc = false;
 
@@ -8087,7 +8087,7 @@ int Com_Show_Fake_Scenario_Dialog(void)
             if (ReceivePacket.Command >= SERIAL_CONNECT && ReceivePacket.Command < SERIAL_LAST_COMMAND
                 && ReceivePacket.Command != SERIAL_MESSAGE && ReceivePacket.ID == ModemGameToPlay) {
 
-                CCMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
+                WWMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
 
                 // to skip the other system not responding msg
                 lastmsgtime = TickCount.Time();
@@ -8118,7 +8118,7 @@ int Com_Show_Fake_Scenario_Dialog(void)
                     starttime = TickCount.Time();
                     while ((TickCount.Time() - starttime) < 60)
                         NullModem.Service();
-                    CCMessageBox().Process(TXT_USER_SIGNED_OFF);
+                    WWMessageBox().Process(TXT_USER_SIGNED_OFF);
 
                     // to skip the other system not responding msg
                     lastmsgtime = TickCount.Time();
@@ -8186,7 +8186,7 @@ int Com_Show_Fake_Scenario_Dialog(void)
                     version = Version_Number();
 #endif
                     if (ReceivePacket.Version > version) {
-                        CCMessageBox().Process(TXT_YOURGAME_OUTDATED);
+                        WWMessageBox().Process(TXT_YOURGAME_OUTDATED);
 
                         // to skip the other system not responding msg
                         lastmsgtime = TickCount.Time();
@@ -8195,7 +8195,7 @@ int Com_Show_Fake_Scenario_Dialog(void)
                         rc = false;
                     } else {
                         if (ReceivePacket.Version < version) {
-                            CCMessageBox().Process(TXT_DESTGAME_OUTDATED);
+                            WWMessageBox().Process(TXT_DESTGAME_OUTDATED);
 
                             // to skip the other system not responding msg
                             lastmsgtime = TickCount.Time();
@@ -8260,7 +8260,7 @@ int Com_Show_Fake_Scenario_Dialog(void)
         // if we haven't received a msg for 10 seconds exit
 
         if ((TickCount.Time() - lastmsgtime) > msg_timeout) {
-            CCMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
+            WWMessageBox().Process(TXT_SYSTEM_NOT_RESPONDING);
             process = false;
             rc = false;
 

@@ -976,7 +976,7 @@ void MapEditClass::Start_Placement(void)
     ------------------- Error if no more objects available -------------------
     */
     if (!PendingObjectPtr) {
-        CCMessageBox().Process("No more objects of this type available.");
+        WWMessageBox().Process("No more objects of this type available.");
         HiddenPage.Clear();
         Flag_To_Redraw(true);
         Render();
@@ -2043,7 +2043,7 @@ void MapEditClass::Build_Base_To(int percent)
         */
         if (!obj->Unlimbo(Base.Nodes[i].Coord)) {
             delete obj;
-            CCMessageBox().Process("Unable to build base!");
+            WWMessageBox().Process("Unable to build base!");
             return;
         }
     }

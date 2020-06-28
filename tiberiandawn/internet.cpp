@@ -723,7 +723,7 @@ bool Do_The_Internet_Menu_Thang(void)
                 Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
                 Blit_Hid_Page_To_Seen_Buff();
                 Set_Palette(Palette);
-                CCMessageBox().Process(TXT_ERROR_UNABLE_TO_RUN_WCHAT, TXT_OK);
+                WWMessageBox().Process(TXT_ERROR_UNABLE_TO_RUN_WCHAT, TXT_OK);
                 LogicPage->Clear();
                 return (false);
             }
@@ -732,7 +732,7 @@ bool Do_The_Internet_Menu_Thang(void)
             Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
             Blit_Hid_Page_To_Seen_Buff();
             Set_Palette(Palette);
-            if (CCMessageBox().Process(TXT_EXPLAIN_REGISTRATION, TXT_REGISTER, TXT_CANCEL)) {
+            if (WWMessageBox().Process(TXT_EXPLAIN_REGISTRATION, TXT_REGISTER, TXT_CANCEL)) {
                 LogicPage->Clear();
                 return (false);
             } else {
