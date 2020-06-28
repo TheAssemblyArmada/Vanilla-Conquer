@@ -163,7 +163,8 @@ int GadgetClass::Clicked_On(KeyNumType& key, unsigned flags, int mousex, int mou
     **	before calling the associated action function. This is the typical action for
     **	buttons.
     */
-    if (this == StuckOn || (flags & KEYBOARD) || (flags && (mousex - X) < Width && (mousey - Y) < Height)) {
+    if (this == StuckOn || (flags & KEYBOARD)
+        || (flags && (unsigned)(mousex - X) < (unsigned)Width && (unsigned)(mousey - Y) < (unsigned)Height)) {
 
         return (Action(flags, key));
     }
