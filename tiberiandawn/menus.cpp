@@ -719,7 +719,7 @@ int Main_Menu(unsigned long timeout)
     Set_Logic_Page(SeenBuff);
     Keyboard::Clear();
 #if (0) // PG_TO_FIX
-    starttime = TickCount.Time();
+    starttime = WinTickCount.Time();
 #endif
     /*
     **	Create the list
@@ -796,7 +796,7 @@ int Main_Menu(unsigned long timeout)
         */
 // PG_TO_FIX
 #if (0)
-        if (timeout && TickCount.Time() - starttime > timeout) {
+        if (timeout && WinTickCount.Time() - starttime > timeout) {
             retval = -1;
             process = false;
         }

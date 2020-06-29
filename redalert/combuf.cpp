@@ -51,8 +51,8 @@
 #include <stdio.h>
 //#include <mem.h>
 #include "combuf.h"
-#include "connect.h" // for command names for debug output
-#include "wwlib32.h" // to enable mono output
+#include "connect.h"        // for command names for debug output
+#include "common/wwlib32.h" // to enable mono output
 
 /***************************************************************************
  * CommBufferClass::CommBufferClass -- class constructor             		*

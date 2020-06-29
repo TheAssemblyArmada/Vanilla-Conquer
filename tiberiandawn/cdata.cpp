@@ -42,6 +42,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "tile.h"
 
 static char const _slope00000001[] = {7, -1};
 static char const _slope000000101[] = {6, 8, -1};

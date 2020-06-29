@@ -54,12 +54,7 @@ public:
 };
 #endif
 
-//#include	"function.h"
-#define FILE_H
-#define RAWFILE_H
-#define WWMEM_H
-#define WWFILE_Hx
-#include <wwlib32.h>
+#include "common/wwlib32.h"
 #include <stdio.h>
 //#include "gbuffer.h"
 //#include "math.h"

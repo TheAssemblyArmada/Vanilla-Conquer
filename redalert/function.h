@@ -103,8 +103,6 @@ Map(screen) class heirarchy.
 #ifdef WIN32
 //#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#define WWFILE_H
-#define RAWFILE_H
 #define MONOC_H
 
 #define _MAX_NAME _MAX_FNAME
@@ -141,36 +139,6 @@ inline int max(int a, int b)
 }
 #endif
 
-#ifndef BITMAPCLASS
-#define BITMAPCLASS
-class BitmapClass
-{
-public:
-    BitmapClass(int w, int h, unsigned char* data)
-        : Width(w)
-        , Height(h)
-        , Data(data){};
-
-    int Width;
-    int Height;
-    unsigned char* Data;
-};
-
-class TPoint2D
-{
-public:
-    TPoint2D(int xx, int yy)
-        : x(xx)
-        , y(yy){};
-    TPoint2D(void)
-        : x(0)
-        , y(0){};
-
-    int x;
-    int y;
-};
-#endif
-
 /**********************************************************************
 **	This class is solely used as a parameter to a constructor that does
 **	absolutely no initialization to the object being constructed. By using
@@ -200,7 +168,7 @@ public:
 #include "key.h"
 #endif
 
-#include <wwlib32.h>
+#include "common/wwlib32.h"
 #include "mpu.h"
 #include "bench.h"
 #include "rect.h"
@@ -306,7 +274,7 @@ CELL Coord_Cell(COORDINATE coord);
 #include "language.h"
 #include "hsv.h"
 #include "rgb.h"
-#include "palette.h"
+#include "common/palette.h"
 #include "palettec.h" //ST 5/13/2019
 #include "version.h"
 #include "facing.h"

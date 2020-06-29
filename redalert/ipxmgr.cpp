@@ -69,7 +69,7 @@
 //#include <mem.h> PG
 //#include <i86.h> PG
 #include "ipxmgr.h"
-#include "wwlib32.h" // to enable mono output
+#include "common/wwlib32.h" // to enable mono output
 
 #ifdef WINSOCK_IPX
 

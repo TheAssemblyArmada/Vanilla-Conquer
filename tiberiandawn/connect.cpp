@@ -39,7 +39,7 @@
 #include "function.h"
 
 #ifdef WWLIB32_H
-#include "timer.h"
+#include "common/timer.h"
 #else
 #include <sys\timeb.h>
 #endif
@@ -184,8 +184,8 @@ int ConnectionClass::Service(void)
 } /* end of Service */
 
 // ST = 12/17/2018 5:44PM
-#ifndef TickCount
-extern TimerClass TickCount;
+#ifndef WinTickCount
+extern TimerClass WinTickCount;
 #endif
 
 /***************************************************************************
@@ -205,7 +205,7 @@ extern TimerClass TickCount;
 unsigned long ConnectionClass::Time(void)
 {
 #ifdef WWLIB32_H
-    return (TickCount.Time()); // Westwood Library time
+    return (WinTickCount.Time()); // Westwood Library time
 #else
     static struct timeb mytime; // DOS time
     unsigned long msec;

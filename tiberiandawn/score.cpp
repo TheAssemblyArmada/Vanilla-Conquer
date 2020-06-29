@@ -1020,15 +1020,15 @@ void ScoreClass::Presentation(void)
 }
 
 // ST = 12/17/2018 5:44PM
-#ifndef TickCount
-extern TimerClass TickCount;
+#ifndef WinTickCount
+extern TimerClass WinTickCount;
 #endif
 
 void Cycle_Wait_Click(void)
 {
     int counter = 0;
     int minclicks = 20;
-    unsigned long timingtime = TickCount.Time();
+    unsigned long timingtime = WinTickCount.Time();
     // SerialPacketType sendpacket;
     // SerialPacketType receivepacket;
     // int packetlen;
@@ -1043,13 +1043,13 @@ void Cycle_Wait_Click(void)
             //
             // send a timing packet if enough time has gone by.
             //
-            if ((TickCount.Time() - timingtime) > PACKET_TIMING_TIMEOUT) {
+            if ((WinTickCount.Time() - timingtime) > PACKET_TIMING_TIMEOUT) {
                 sendpacket.Command = SERIAL_SCORE_SCREEN;
                 sendpacket.ResponseTime = NullModem.Response_Time();
                 sendpacket.ID = ModemGameToPlay;
 
                 NullModem.Send_Message(&sendpacket, sizeof(sendpacket), 0);
-                timingtime = TickCount.Time();
+                timingtime = WinTickCount.Time();
             }
 
             if (NullModem.Get_Message(&receivepacket, &packetlen) > 0) {

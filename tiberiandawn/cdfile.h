@@ -36,7 +36,7 @@
 #define CDFILE_H
 
 #include <dos.h>
-#include "rawfile.h"
+#include "common/rawfile.h"
 
 /*
 **	This class is derived from the raw file class. This class adds the functionality of searching

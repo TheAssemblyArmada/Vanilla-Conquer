@@ -46,8 +46,8 @@
  *   Edit_Phone_Dialog -- lets user edit a phone book entry                *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include "function.h"
-#include "wincomm.h"
-#include "modemreg.h"
+#include "common/wincomm.h"
+#include "common/modemreg.h"
 #include "tcpip.h"
 
 // PG_TO_FIX

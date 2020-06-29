@@ -41,7 +41,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include "wwfile.h"
+#include "common/wwfile.h"
+#include "tile.h"
 
 #include <assert.h>
 
@@ -70,8 +71,9 @@ void* Small_Icon(void const* iconptr, int iconnum)
     unsigned char* data;
 
     if (iconptr) {
-        iconnum = iptr->Map[iconnum];
-        data = &iptr->Icons[iconnum * (24 * 24)];
+        iconnum = ((char*)((char*)iptr + iptr->Map))[iconnum];
+        data = &((unsigned char*)((unsigned char*)iptr + iptr->Icons))[iconnum * (24 * 24)];
+        //		data = &iptr->Icons[iconnum*(24*24)];
 
         for (int index = 0; index < 9; index++) {
             int _offsets[9] = {4 + 4 * 24,
