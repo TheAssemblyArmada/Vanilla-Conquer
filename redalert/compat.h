@@ -35,6 +35,8 @@
 #ifndef COMPAT_H
 #define COMPAT_H
 
+#include "tile.h"
+
 #define BuffType BufferClass
 //#define movmem(a,b,c) memmove(b,a,c)
 #define ShapeBufferSize _ShapeBufferSize

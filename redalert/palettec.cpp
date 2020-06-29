@@ -50,43 +50,13 @@ public:
 
 void __cdecl Set_Palette(void* palette);
 
-#ifndef BITMAPCLASS
-#define BITMAPCLASS
-class BitmapClass
-{
-public:
-    BitmapClass(int w, int h, unsigned char* data)
-        : Width(w)
-        , Height(h)
-        , Data(data){};
-
-    int Width;
-    int Height;
-    unsigned char* Data;
-};
-
-class TPoint2D
-{
-public:
-    TPoint2D(int xx, int yy)
-        : x(xx)
-        , y(yy){};
-    TPoint2D(void)
-        : x(0)
-        , y(0){};
-
-    int x;
-    int y;
-};
-#endif
-
 #include "function.h"
 #include "watcom.h"
-#include "palette.h"
+#include "common/palette.h"
 #include "palettec.h"
 #include "ftimer.h"
 //#define TIMER_H
-#include "wwlib32.h"
+#include "common/wwlib32.h"
 //#include	"timer.h"
 #include <string.h>
 

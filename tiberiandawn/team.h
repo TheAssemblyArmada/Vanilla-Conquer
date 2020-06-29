@@ -35,7 +35,7 @@
 #ifndef TEAM_H
 #define TEAM_H
 
-#include <wwfile.h>
+#include "common/wwfile.h"
 #include "teamtype.h"
 #include "abstract.h"
 

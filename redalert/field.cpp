@@ -32,6 +32,9 @@
 #include <string.h>
 #include "field.h"
 
+// ST - 12/18/2018 10:14AM
+#pragma warning(disable : 4996)
+
 FieldClass::FieldClass(char* id, char data)
 {
     strncpy(ID, id, sizeof(ID));

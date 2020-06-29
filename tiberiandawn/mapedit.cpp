@@ -1093,7 +1093,7 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
                     ................. Select an object or a cell .................
                     .................. Check for double-click ....................
                     */
-                    if (CurrentObject.Count() && ((TickCount.Time() - LastClickTime) < 15)) {
+                    if (CurrentObject.Count() && ((WinTickCount.Time() - LastClickTime) < 15)) {
                         ; // stub
 
                     } else {
@@ -1115,7 +1115,7 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
                     }
                 }
             }
-            LastClickTime = TickCount.Time();
+            LastClickTime = WinTickCount.Time();
             input = KN_NONE;
         } else {
 

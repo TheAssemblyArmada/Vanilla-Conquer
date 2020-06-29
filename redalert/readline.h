@@ -13,7 +13,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-#include "wwfile.h"
+#include "common/wwfile.h"
 #include "straw.h"
 
 extern "C" void __cdecl strtrim(char* buffer);

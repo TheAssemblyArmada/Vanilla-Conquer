@@ -48,8 +48,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include "wincomm.h"
-#include "modemreg.h"
+#include "common/wincomm.h"
+#include "common/modemreg.h"
 //#include "i86.h"
 #include "tcpip.h"
 

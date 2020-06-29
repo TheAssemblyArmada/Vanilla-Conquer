@@ -130,8 +130,8 @@ inline int max(int a, int b)
 #define FILE_H
 #define WWMEM_H
 #include "compat.h"
-#include "rawfile.h"
-#include "wwlib32.h"
+#include "common/rawfile.h"
+#include "common/wwlib32.h"
 #include "jshell.h"
 
 // Should be part of WWLIB.H. This is used in JSHELL.CPP.

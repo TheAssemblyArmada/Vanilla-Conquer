@@ -38,7 +38,7 @@
 #include <stdlib.h>
 #include "listnode.h"
 #include "pipe.h"
-#include "wwfile.h"
+#include "common/wwfile.h"
 #include "pk.h"
 #include "fixed.h"
 #include "crc.h"

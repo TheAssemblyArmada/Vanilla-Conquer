@@ -96,8 +96,8 @@
 #define SHOW_MONO 0
 
 // ST = 12/17/2018 5:44PM
-#ifndef TickCount
-extern TimerClass TickCount;
+#ifndef WinTickCount
+extern TimerClass WinTickCount;
 #endif
 
 #ifndef DEMO
@@ -1813,7 +1813,7 @@ static int Net_Join_Dialog(void)
         - Send queries for the new selected game, if there is one
         ---------------------------------------------------------------------*/
         for (i = 0; i < Games.Count(); i++) {
-            if (TickCount.Time() - Games[i]->Game.LastTime > 400) {
+            if (WinTickCount.Time() - Games[i]->Game.LastTime > 400) {
                 Games.Delete(Games[i]);
                 item = (char*)(gamelist.Get_Item(i));
                 gamelist.Remove_Item(item);
@@ -1956,8 +1956,8 @@ static int Net_Join_Dialog(void)
         be waiting the whole time we load MIX files.
         ---------------------------------------------------------------------*/
         i = MAX(Ipx.Global_Response_Time() * 2, (unsigned long)60);
-        starttime = TickCount.Time();
-        while (TickCount.Time() - starttime < (unsigned)i) {
+        starttime = WinTickCount.Time();
+        while (WinTickCount.Time() - starttime < (unsigned)i) {
             Ipx.Service();
         }
     }
@@ -2208,8 +2208,8 @@ static void Send_Join_Queries(int curgame, int gamenow, int playernow)
     Send the game-name query if the time has expired, or we're told to do
     it right now
     ------------------------------------------------------------------------*/
-    if ((TickCount.Time() - lasttime1 > 120) || gamenow) {
-        lasttime1 = TickCount.Time();
+    if ((WinTickCount.Time() - lasttime1 > 120) || gamenow) {
+        lasttime1 = WinTickCount.Time();
 
         memset(&GPacket, 0, sizeof(GlobalPacketType));
 
@@ -2230,8 +2230,8 @@ static void Send_Join_Queries(int curgame, int gamenow, int playernow)
     expired and there is a currently-selected game, or we're told to do it
     right now
     ------------------------------------------------------------------------*/
-    if ((curgame != -1) && curgame < Games.Count() && ((TickCount.Time() - lasttime2 > 35) || playernow)) {
-        lasttime2 = TickCount.Time();
+    if ((curgame != -1) && curgame < Games.Count() && ((WinTickCount.Time() - lasttime2 > 35) || playernow)) {
+        lasttime2 = WinTickCount.Time();
 
         memset(&GPacket, 0, sizeof(GlobalPacketType));
 
@@ -2331,7 +2331,7 @@ Get_Join_Responses(JoinStateType* joinstate, ListClass* gamelist, ColorListClass
                 /*...............................................................
                 If name was found, update the node's time stamp & IsOpen flag.
                 ...............................................................*/
-                Games[i]->Game.LastTime = TickCount.Time();
+                Games[i]->Game.LastTime = WinTickCount.Time();
                 if (Games[i]->Game.IsOpen != GPacket.GameInfo.IsOpen) {
                     item = (char*)gamelist->Get_Item(i);
                     if (GPacket.GameInfo.IsOpen) {
@@ -2364,7 +2364,7 @@ Get_Join_Responses(JoinStateType* joinstate, ListClass* gamelist, ColorListClass
             who->Address = GAddress;
             who->Game.Version = GPacket.GameInfo.Version;
             who->Game.IsOpen = GPacket.GameInfo.IsOpen;
-            who->Game.LastTime = TickCount.Time();
+            who->Game.LastTime = WinTickCount.Time();
             Games.Add(who);
 
             /*..................................................................
@@ -3478,7 +3478,7 @@ static int Net_New_Dialog(void)
             a chance to know about this new guy)
             ...............................................................*/
             i = MAX(Ipx.Global_Response_Time() * 2, (unsigned long)60);
-            while (TickCount.Time() - ok_timer < i)
+            while (WinTickCount.Time() - ok_timer < i)
                 Ipx.Service();
 
             /*...............................................................
@@ -3699,7 +3699,7 @@ static int Net_New_Dialog(void)
         ---------------------------------------------------------------------*/
         whahoppa = Get_NewGame_Responses(&playerlist);
         if (whahoppa == EV_NEW_PLAYER) {
-            ok_timer = TickCount.Time();
+            ok_timer = WinTickCount.Time();
             transmit = 1;
         } else {
             if (whahoppa == EV_MESSAGE) {
@@ -3737,13 +3737,13 @@ static int Net_New_Dialog(void)
         Ping every player in my game, to force the Global Channel to measure
         the connection response time.
         ---------------------------------------------------------------------*/
-        if (TickCount.Time() - ping_timer > 15) {
+        if (WinTickCount.Time() - ping_timer > 15) {
             memset(&GPacket, 0, sizeof(GlobalPacketType));
             GPacket.Command = NET_PING;
             for (i = 0; i < Players.Count(); i++) {
                 Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 1, &(Players[i]->Address));
             }
-            ping_timer = TickCount.Time();
+            ping_timer = WinTickCount.Time();
         }
 
         /*---------------------------------------------------------------------
@@ -4615,7 +4615,7 @@ static int Net_Fake_New_Dialog(void)
                 a chance to know about this new guy)
                 ...............................................................*/
                 i = MAX(Ipx.Global_Response_Time() * 2, (unsigned long)120);
-                while (TickCount.Time() - ok_timer < i)
+                while (WinTickCount.Time() - ok_timer < i)
                     Ipx.Service();
 
                 /*...............................................................
@@ -4637,7 +4637,7 @@ static int Net_Fake_New_Dialog(void)
         ---------------------------------------------------------------------*/
         whahoppa = Get_NewGame_Responses(&playerlist);
         if (whahoppa == EV_NEW_PLAYER) {
-            ok_timer = TickCount.Time();
+            ok_timer = WinTickCount.Time();
             transmit = 1;
         } else {
             if (whahoppa == EV_MESSAGE) {
@@ -4674,13 +4674,13 @@ static int Net_Fake_New_Dialog(void)
         Ping every player in my game, to force the Global Channel to measure
         the connection response time.
         ---------------------------------------------------------------------*/
-        if (TickCount.Time() - ping_timer > 15) {
+        if (WinTickCount.Time() - ping_timer > 15) {
             memset(&GPacket, 0, sizeof(GlobalPacketType));
             GPacket.Command = NET_PING;
             for (i = 0; i < Players.Count(); i++) {
                 Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 1, &(Players[i]->Address));
             }
-            ping_timer = TickCount.Time();
+            ping_timer = WinTickCount.Time();
         }
 
         /*---------------------------------------------------------------------
@@ -5330,7 +5330,7 @@ static int Net_Fake_Join_Dialog(void)
         - Send queries for the new selected game, if there is one
         ---------------------------------------------------------------------*/
         for (i = 0; i < Games.Count(); i++) {
-            if (TickCount.Time() - Games[i]->Game.LastTime > 400) {
+            if (WinTickCount.Time() - Games[i]->Game.LastTime > 400) {
                 Games.Delete(Games[i]);
                 item = (char*)(gamelist.Get_Item(i));
                 gamelist.Remove_Item(item);
@@ -5497,8 +5497,8 @@ static int Net_Fake_Join_Dialog(void)
         be waiting the whole time we load MIX files.
         ---------------------------------------------------------------------*/
         i = MAX(Ipx.Global_Response_Time() * 2, (unsigned long)120);
-        starttime = TickCount.Time();
-        while (TickCount.Time() - starttime < (unsigned)i) {
+        starttime = WinTickCount.Time();
+        while (WinTickCount.Time() - starttime < (unsigned)i) {
             Ipx.Service();
         }
     }

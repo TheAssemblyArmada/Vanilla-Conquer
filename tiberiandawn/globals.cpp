@@ -821,7 +821,7 @@ long* RandSeedPtr;
 */
 int CustomSeed = 0;
 
-int WindowList[][8] = {
+int WindowList[][9] = {
     /* xbyte, ypixel, bytewid, pixelht, cursor color, bkgd color,	cursor x, cursor y */
 
     /* do not change the first 2 entries!! they are necc. to the system */
@@ -844,6 +844,9 @@ int WindowList[][8] = {
     {0, 0, 0, 0, 0, 0, 0, 0},
 
     // Virtual window for external rendering. ST - 1/15/2019 3:02PM
+    {0, 0, 0, 0, 0, 0, 0, 0},
+
+    // Stub for compat with RA
     {0, 0, 0, 0, 0, 0, 0, 0},
 };
 

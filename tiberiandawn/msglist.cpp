@@ -44,8 +44,8 @@
 #include "function.h"
 
 // ST = 12/17/2018 5:44PM
-#ifndef TickCount
-extern TimerClass TickCount;
+#ifndef WinTickCount
+extern TimerClass WinTickCount;
 #endif
 
 char MessageListClass::MessageBuffers[MAX_NUM_MESSAGES][MAX_MESSAGE_LENGTH + 30];
@@ -367,7 +367,7 @@ TextLabelClass* MessageListClass::Add_Message(char* txt,
     if (timeout == -1) {
         txtlabel->UserData = 0;
     } else {
-        txtlabel->UserData = TickCount.Time() + timeout;
+        txtlabel->UserData = WinTickCount.Time() + timeout;
     }
 
     /*------------------------------------------------------------------------
@@ -537,7 +537,7 @@ int MessageListClass::Manage(void)
         /*.....................................................................
         If this message's time is up, remove it from the list
         .....................................................................*/
-        if (txtlabel->UserData != 0 && (unsigned)TickCount.Time() > txtlabel->UserData) {
+        if (txtlabel->UserData != 0 && (unsigned)WinTickCount.Time() > txtlabel->UserData) {
             /*..................................................................
             If we're about to delete the edit message, clear our edit message
             values.

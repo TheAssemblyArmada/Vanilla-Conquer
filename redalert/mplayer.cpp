@@ -386,7 +386,7 @@ GameType Select_MPlayer_Game(void)
                 //............................................................
                 // Pop up the modem/serial/com port dialog
                 //............................................................
-                retval = Select_Serial_Dialog();
+                retval = GAME_NORMAL;
 
                 if (retval != GAME_NORMAL) {
                     process = false;
