@@ -23,8 +23,17 @@ else()
     set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
 endif()
 
+# this is a convenience on Linux to run tests with wine
+if(CMAKE_CROSSCOMPILING)
+    find_program(WINE_EXECUTABLE NAMES wine)
+    set(TARGET_SYSTEM_EMULATOR ${WINE_EXECUTABLE})
+endif()
+
 find_package(ClangFormat)
 include(ClangFormat)
+
+enable_testing()
+add_subdirectory(tests)
 
 # For now build the dll files by default only for windows while there is only the proprietary GlyphX frontend for them.
 if(WIN32)
