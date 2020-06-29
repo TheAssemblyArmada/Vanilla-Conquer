@@ -302,7 +302,7 @@ bool Init_Game(int, char*[])
     }
 #endif
 
-#if (0) // ST - 1/2/2019 5:49PM
+#ifndef REMASTER_BUILD
     CCDebugString("C&C95 - About to search for CD drives\n");
     /*
     **	Always try to look at the CD-ROM for data files.
@@ -395,26 +395,26 @@ bool Init_Game(int, char*[])
 
         WIN32_FIND_DATA find_data;
         memset(&find_data, 0, sizeof(find_data));
-        HANDLE file_handle = FindFirstFile(scan_path, &find_data);
+        HANDLE file_handle = FindFirstFileA(scan_path, &find_data);
         if (file_handle != INVALID_HANDLE_VALUE) {
             do {
                 char* ptr = strdup(find_data.cFileName);
                 new MixFileClass(ptr);
                 MixFileClass::Cache(ptr);
-            } while (FindNextFile(file_handle, &find_data));
+            } while (FindNextFileA(file_handle, &find_data));
             FindClose(file_handle);
         }
 
         memset(&find_data, 0, sizeof(find_data));
         strcpy(scan_path, search_path);
-        strcat(scan_path, "Ss*.MIX");
-        file_handle = FindFirstFile(scan_path, &find_data);
+        strcat(scan_path, "SS*.MIX");
+        file_handle = FindFirstFileA(scan_path, &find_data);
         if (file_handle != INVALID_HANDLE_VALUE) {
             do {
                 char* ptr = strdup(find_data.cFileName);
                 new MixFileClass(ptr);
                 MixFileClass::Cache(ptr);
-            } while (FindNextFile(file_handle, &find_data));
+            } while (FindNextFileA(file_handle, &find_data));
             FindClose(file_handle);
         }
 
