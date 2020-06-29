@@ -3745,7 +3745,7 @@ int Get_CD_Index(int cd_drive, int timeout)
 bool Force_CD_Available(int cd)
 {
 
-#if (1) // ST - 1/2/2019 5:44PM
+#ifdef REMASTER_BUILD
 
     static int _last = -1;
 
