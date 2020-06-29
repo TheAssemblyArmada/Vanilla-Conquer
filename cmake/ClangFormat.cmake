@@ -14,6 +14,8 @@ if(CLANG_FORMAT_FOUND)
         tiberiandawn/*.h
         redalert/*.cpp
         redalert/*.h
+        tests/*.cpp
+        tests/*.h
     )
 
     file(GLOB_RECURSE ALL_SOURCE_FILES RELATIVE ${CMAKE_SOURCE_DIR} ${GLOB_PATTERNS})
