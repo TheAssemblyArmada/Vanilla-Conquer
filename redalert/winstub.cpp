@@ -89,7 +89,6 @@ void Focus_Loss(void)
 
 void Focus_Restore(void)
 {
-    Restore_Cached_Icons();
     Map.Flag_To_Redraw(true);
     Start_Primary_Sound_Buffer(TRUE);
     if (WWMouse)
@@ -224,7 +223,6 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
         */
     case WM_DESTROY:
         Prog_End("WM_DESTROY", false);
-        Invalidate_Cached_Icons();
         VisiblePage.Un_Init();
         HiddenPage.Un_Init();
         AllSurfaces.Release();
@@ -718,7 +716,6 @@ void Assert_Failure(char* expression, int line, char* file)
     // Get_Key();
 
     Prog_End(assertbuf, false);
-    Invalidate_Cached_Icons();
     // PostQuitMessage( 0 );
     // ExitProcess(0);
 }

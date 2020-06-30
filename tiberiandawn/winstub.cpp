@@ -151,7 +151,6 @@ void Focus_Loss(void)
 
 void Focus_Restore(void)
 {
-    Restore_Cached_Icons();
     Map.Flag_To_Redraw(true);
     Start_Primary_Sound_Buffer(TRUE);
     if (WWMouse)
@@ -261,8 +260,6 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
         CCDebugString("C&C95 - WM_DESTROY message received.\n");
         CCDebugString("C&C95 - About to call Prog_End.\n");
         Prog_End();
-        CCDebugString("C&C95 - About to Invalidate_Cached_Icons.\n");
-        Invalidate_Cached_Icons();
         CCDebugString("C&C95 - About to release the video surfaces.\n");
         VisiblePage.Un_Init();
         HiddenPage.Un_Init();
@@ -679,7 +676,6 @@ void Memory_Error_Handler(void)
         Show_Mouse();
     };
     WWMessageBox().Process("Error - out of memory.", "Abort", false);
-    Invalidate_Cached_Icons();
 
     // Nope. ST - 1/10/2019 10:38AM
     // PostQuitMessage( 0 );

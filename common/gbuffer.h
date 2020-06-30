@@ -124,8 +124,6 @@
 
 #include <stdlib.h>
 
-#include "iconcach.h"
-
 class BitmapClass
 {
 public:
@@ -1155,45 +1153,17 @@ inline void GraphicViewPortClass::Draw_Stamp(void const* icondata,
                                              void const* remap,
                                              int clip_window)
 {
-    int cache_index = -1;
-
-    int drewit = 0;
-    if (IconCacheAllowed) {
-        if (IsDirectDraw) {
-            if (!remap) {
-                cache_index = Is_Icon_Cached(icondata, icon);
-            }
-
-            if (cache_index != -1) {
-                if (CachedIcons[cache_index].Get_Is_Cached()) {
-                    CachedIcons[cache_index].Draw_It(GraphicBuff->Get_DD_Surface(),
-                                                     x_pixel,
-                                                     y_pixel,
-                                                     WindowList[clip_window][WINDOWX] + XPos,
-                                                     WindowList[clip_window][WINDOWY] + YPos,
-                                                     WindowList[clip_window][WINDOWWIDTH],
-                                                     WindowList[clip_window][WINDOWHEIGHT]);
-                    CachedIconsDrawn++;
-                    drewit = 1;
-                }
-            }
-        }
-    }
-
-    if (drewit == 0) {
-        if (Lock()) {
-            UnCachedIconsDrawn++;
-            Buffer_Draw_Stamp_Clip(this,
-                                   icondata,
-                                   icon,
-                                   x_pixel,
-                                   y_pixel,
-                                   remap,
-                                   WindowList[clip_window][WINDOWX],
-                                   WindowList[clip_window][WINDOWY],
-                                   WindowList[clip_window][WINDOWWIDTH],
-                                   WindowList[clip_window][WINDOWHEIGHT]);
-        }
+    if (Lock()) {
+        Buffer_Draw_Stamp_Clip(this,
+                                icondata,
+                                icon,
+                                x_pixel,
+                                y_pixel,
+                                remap,
+                                WindowList[clip_window][WINDOWX],
+                                WindowList[clip_window][WINDOWY],
+                                WindowList[clip_window][WINDOWWIDTH],
+                                WindowList[clip_window][WINDOWHEIGHT]);
     }
     Unlock();
 }

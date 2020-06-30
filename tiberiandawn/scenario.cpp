@@ -340,8 +340,6 @@ void Clear_Scenario(void)
     Base.Init();
 
     CurrentObject.Clear_All();
-
-    Invalidate_Cached_Icons();
 }
 
 /***********************************************************************************************

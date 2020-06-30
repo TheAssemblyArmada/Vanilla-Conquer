@@ -54,7 +54,6 @@ set(COMMON_SRC
     common/miscasm.asm
     common/irandoma.asm
     common/irandom.cpp
-    common/iconcach.cpp
     common/drawmisca.asm
     common/drawmisc.cpp
     common/xordelta.asm
