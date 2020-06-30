@@ -555,6 +555,9 @@ int main(int argc, char* argv[])
             /*
             ** Set 640x400 video mode. If its not available then try for 640x480
             */
+#ifdef REMASTER_BUILD
+            video_success = TRUE;
+#else
             if (ScreenHeight == 400) {
                 if (Set_Video_Mode(MainWindow, ScreenWidth, ScreenHeight, 8)) {
                     video_success = TRUE;
@@ -569,6 +572,7 @@ int main(int argc, char* argv[])
                     video_success = TRUE;
                 }
             }
+#endif
 
             if (!video_success) {
                 MessageBoxA(MainWindow, TEXT_VIDEO_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
@@ -682,15 +686,6 @@ int main(int argc, char* argv[])
             CDFileClass::Set_CD_Drive(CDList.Get_First_CD_Drive());
 #endif
 
-#else  // WIN32
-
-            Options.Adjust_Variables_For_Resolution();
-            if (!Special.IsFromInstall) {
-                BlackPalette.Set();
-                //				Set_Palette(Palette);
-                Set_Video_Mode(MCGA_MODE);
-            }
-            MouseInstalled = Install_Mouse(32, 24, 320, 200);
 #endif // WIN32
 
             /*
@@ -763,13 +758,8 @@ int main(int argc, char* argv[])
 #endif
 #endif
 
-#ifdef WIN32
             VisiblePage.Clear();
             HiddenPage.Clear();
-#else  // WIN32
-            SeenPage.Clear();
-            Set_Video_Mode(RESET_MODE);
-#endif // WIN32
             Memory_Error_Exit = Print_Error_Exit;
 
 #ifdef WIN32
@@ -951,7 +941,6 @@ bool InitDDraw(void)
  *   03/20/1995 JLB : Created.                                                                 *
  *   08/07/2019  ST : Added why and fatal params                                               *
  *=============================================================================================*/
-#ifdef WIN32
 void __cdecl Prog_End(const char* why, bool fatal)
 {
     GlyphX_Debug_Print("Prog_End()");
@@ -975,21 +964,6 @@ void __cdecl Prog_End(const char* why, bool fatal)
 
     ProgEndCalled = true;
 }
-#else  // WIN32
-
-void Prog_End(void)
-{
-    if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
-        NullModem.Change_IRQ_Priority(0);
-    }
-
-    Set_Video_Mode(RESET_MODE);
-    Remove_Keyboard_Interrupt();
-    Remove_Mouse();
-    Sound_End();
-    Remove_Timer_System();
-}
-#endif // WIN32
 
 void Print_Error_End_Exit(char* string)
 {

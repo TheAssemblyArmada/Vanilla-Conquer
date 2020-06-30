@@ -2393,17 +2393,6 @@ bool Parse_Command_Line(int argc, char* argv[])
         }
 #endif
 
-#ifdef FIX_ME_LATER
-        /*
-        ** look for passed-in video mode to default to
-        */
-        if (strnicmp(string, "-V", strlen("-V")) == 0) {
-            Set_Video_Mode(MCGA_MODE); // do this to get around first_time variable...
-            Set_Original_Video_Mode(atoi(string + 2));
-            continue;
-        }
-#endif // FIX_ME_LATER
-
         /*
         **	Special command line control parsing.
         */

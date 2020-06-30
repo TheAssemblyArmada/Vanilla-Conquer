@@ -659,10 +659,6 @@ void Check_Overlapped_Blit_Capability(void)
  *=============================================================================================*/
 BOOL Set_Video_Mode(HWND hwnd, int w, int h, int bits_per_pixel)
 {
-#ifdef REMASTER_BUILD
-    // ST - 1/3/2019 10:41AM
-    return TRUE;
-#else
     HRESULT result;
     //
     // If there is not currently a direct draw object then we need to define one.
@@ -732,7 +728,6 @@ BOOL Set_Video_Mode(HWND hwnd, int w, int h, int bits_per_pixel)
     }
 
     return (TRUE);
-#endif
 }
 
 /***********************************************************************************************

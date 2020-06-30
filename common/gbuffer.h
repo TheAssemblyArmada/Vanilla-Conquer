@@ -1155,15 +1155,15 @@ inline void GraphicViewPortClass::Draw_Stamp(void const* icondata,
 {
     if (Lock()) {
         Buffer_Draw_Stamp_Clip(this,
-                                icondata,
-                                icon,
-                                x_pixel,
-                                y_pixel,
-                                remap,
-                                WindowList[clip_window][WINDOWX],
-                                WindowList[clip_window][WINDOWY],
-                                WindowList[clip_window][WINDOWWIDTH],
-                                WindowList[clip_window][WINDOWHEIGHT]);
+                               icondata,
+                               icon,
+                               x_pixel,
+                               y_pixel,
+                               remap,
+                               WindowList[clip_window][WINDOWX],
+                               WindowList[clip_window][WINDOWY],
+                               WindowList[clip_window][WINDOWWIDTH],
+                               WindowList[clip_window][WINDOWHEIGHT]);
     }
     Unlock();
 }
