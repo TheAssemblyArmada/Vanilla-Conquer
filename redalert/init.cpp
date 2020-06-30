@@ -2135,17 +2135,6 @@ bool Parse_Command_Line(int argc, char* argv[])
         }
 #endif
 
-        /*
-        ** look for passed-in video mode to default to
-        */
-#ifndef WIN32
-        if (strnicmp(string, "-V", strlen("-V")) == 0) {
-            Set_Video_Mode(MCGA_MODE); // do this to get around first_time variable...
-            Set_Original_Video_Mode(atoi(string + 2));
-            continue;
-        }
-#endif
-
 #ifdef CHEAT_KEYS
         if (strstr(string, "-NOMOVIES")) {
             bNoMovies = true;

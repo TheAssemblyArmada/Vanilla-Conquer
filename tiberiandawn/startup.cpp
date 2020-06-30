@@ -420,6 +420,10 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
             /*
             ** Set 640x400 video mode. If its not available then try for 640x480
             */
+#ifdef REMASTER_BUILD
+            video_success = TRUE;
+#else
+
             if (ScreenHeight == 400) {
                 if (Set_Video_Mode(MainWindow, ScreenWidth, ScreenHeight, 8)) {
                     video_success = TRUE;
@@ -434,6 +438,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
                     video_success = TRUE;
                 }
             }
+#endif
 
             if (!video_success) {
                 CCDebugString("C&C95 - Failed to set video mode.\n");
@@ -621,7 +626,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 
             VisiblePage.Clear();
             HiddenPage.Clear();
-            //			Set_Video_Mode(RESET_MODE);
 
             Memory_Error_Exit = Print_Error_Exit;
 
