@@ -1138,11 +1138,6 @@ void TemplateTypeClass::Init(TheaterType theater)
             _makepath(fullname, NULL, NULL, tplate.IniName, Theaters[theater].Suffix);
             ptr = MFCD::Retrieve(fullname);
             ((void const*&)tplate.ImageData) = ptr;
-
-#ifdef WIN32
-            Register_Icon_Set((void*)ptr, TRUE); // Register icon set for video memory caching
-#endif
-
             ((unsigned char&)tplate.Width) = Get_IconSet_MapWidth(ptr);
             ((unsigned char&)tplate.Height) = Get_IconSet_MapHeight(ptr);
         }
