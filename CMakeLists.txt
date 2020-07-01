@@ -95,15 +95,16 @@ set(COMMON_SRC
 file(GLOB_RECURSE COMMON_HEADERS "common/*.h")
 
 add_library(common STATIC ${COMMON_SRC} ${COMMON_HEADERS})
-target_link_libraries(common PUBLIC ddraw dxguid winmm)
+target_link_libraries(common PUBLIC winmm)
 
 # These options currently require directx components from the aug 2007 SDK.
 if(BUILD_VANILLATD OR BUILD_VANILLARA)
     add_library(commonv STATIC
         common/soundio.cpp
+        common/setvideomode.cpp
     )
 
-    target_link_libraries(commonv PUBLIC common dsound)
+    target_link_libraries(commonv PUBLIC common dsound ddraw dxguid)
 endif()
 
 set(TIBDAWN_SRC
