@@ -78,7 +78,9 @@ public:
     /*===================================================================*/
     /* Define the main hook for the message processing loop.					*/
     /*===================================================================*/
+#ifndef REMASTER_BUILD
     void Message_Handler(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+#endif
 
     /*===================================================================*/
     /* Define public routines which can be used on keys in general.		*/

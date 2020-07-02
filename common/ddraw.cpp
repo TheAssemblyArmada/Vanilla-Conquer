@@ -37,10 +37,13 @@
 
 /*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
 
+#include "compat.h"
 #include "misc.h"
 #include "gbuffer.h"
 #include "palette.h"
 #include <stdio.h>
+
+#ifdef _WIN32
 #include <ddraw.h>
 
 LPDIRECTDRAW DirectDrawObject = NULL;      // Pointer to the direct draw object
@@ -1085,3 +1088,4 @@ void SurfaceMonitorClass::Release(void)
         }
     }
 }
+#endif // _WIN32

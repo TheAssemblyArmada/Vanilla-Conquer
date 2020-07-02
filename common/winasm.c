@@ -1,3 +1,4 @@
+#include "compat.h"
 #include "winasm.h"
 #include <string.h>
 

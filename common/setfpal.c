@@ -1,3 +1,4 @@
+#include "compat.h"
 #include "setfpal.h"
 
 extern unsigned char ColorXlat[16][16];

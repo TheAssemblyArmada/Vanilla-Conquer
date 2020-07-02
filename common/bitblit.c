@@ -1,3 +1,4 @@
+#include "compat.h"
 #include "bitblit.h"
 #include <string.h>
 

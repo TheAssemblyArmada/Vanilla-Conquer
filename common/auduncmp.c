@@ -1,3 +1,4 @@
+#include "compat.h"
 #include "auduncmp.h"
 #include <string.h>
 

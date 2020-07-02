@@ -230,7 +230,9 @@ int __cdecl Find_File_Index(char const* filename);
 /* The following prototypes are for the file: FFIRST.ASM							*/
 /*=========================================================================*/
 
+#ifdef _WIN32
 #include <dos.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

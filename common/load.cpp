@@ -40,7 +40,9 @@
 #include "file.h"
 #include "misc.h"
 #include "wwstd.h"
+#ifdef _WIN32
 #include <dos.h>
+#endif
 #include "wwmem.h"
 
 /*=========================================================================*/

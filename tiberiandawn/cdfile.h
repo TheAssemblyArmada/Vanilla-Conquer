@@ -35,7 +35,9 @@
 #ifndef CDFILE_H
 #define CDFILE_H
 
+#ifdef _WIN32
 #include <dos.h>
+#endif
 #include "common/rawfile.h"
 
 /*

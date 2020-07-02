@@ -39,11 +39,14 @@
 #ifndef RAWFILE_H
 #define RAWFILE_H
 
+#include "compat.h"
 #include <limits.h>
 #include <errno.h>
 #include <stddef.h>
 #include <stdlib.h>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 #define NULL_HANDLE INVALID_HANDLE_VALUE
 #define HANDLE_TYPE HANDLE

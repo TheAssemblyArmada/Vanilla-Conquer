@@ -1,3 +1,4 @@
+#include "compat.h"
 #include "wwmouse.h"
 #include <string.h>
 

@@ -30,9 +30,14 @@
  *   WWMouseClass::WWMouseClass -- Constructor for the Mouse Class                                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include "compat.h"
 #include "mouseww.h"
 #include "wwmouse.h"
+#ifdef _WIN32
 #include <mmsystem.h>
+#else
+#include <cstring>
+#endif
 
 static WWMouseClass* _Mouse = NULL;
 void CALLBACK Process_Mouse(UINT event_id, UINT res1, DWORD user, DWORD res2, DWORD res3);
@@ -73,9 +78,11 @@ WWMouseClass::WWMouseClass(GraphicViewPortClass* scr, int mouse_max_width, int m
     PrevCursor = NULL;
     MouseUpdate = 0;
     State = 1;
+#ifndef REMASTER_BUILD
     timeBeginPeriod(1000 / 60);
 
     InitializeCriticalSection(&MouseCriticalSection);
+#endif
     //
     // Install the timer callback event handler
     //
@@ -111,11 +118,15 @@ WWMouseClass::~WWMouseClass()
     if (MouseBuffer)
         delete[] MouseBuffer;
     if (TimerHandle) {
+#ifndef REMASTER_BUILD
         timeKillEvent(TimerHandle);
+#endif
         TimerHandle = 0; // ST - 2/13/2019 5:12PM
     }
+#ifndef REMASTER_BUILD
     timeEndPeriod(1000 / 60);
     DeleteCriticalSection(&MouseCriticalSection);
+#endif
 
     /*
     ** Free up the windows mouse pointer movement
@@ -139,16 +150,20 @@ void Unblock_Mouse(GraphicBufferClass* buffer)
 
 void WWMouseClass::Block_Mouse(GraphicBufferClass* buffer)
 {
+#ifndef REMASTER_BUILD
     if (buffer == Screen->Get_Graphic_Buffer()) {
         EnterCriticalSection(&MouseCriticalSection);
     }
+#endif
 }
 
 void WWMouseClass::Unblock_Mouse(GraphicBufferClass* buffer)
 {
+#ifndef REMASTER_BUILD
     if (buffer == Screen->Get_Graphic_Buffer()) {
         LeaveCriticalSection(&MouseCriticalSection);
     }
+#endif
 }
 
 void WWMouseClass::Set_Cursor_Clip(void)
@@ -370,16 +385,19 @@ void WWMouseClass::Low_Show_Mouse(int x, int y)
 
 void WWMouseClass::Show_Mouse()
 {
+#ifndef REMASTER_BUILD
     POINT pt;
     GetCursorPos(&pt);
 
     MouseUpdate++;
     Low_Show_Mouse(pt.x, pt.y);
     MouseUpdate--;
+#endif
 }
 
 void WWMouseClass::Conditional_Hide_Mouse(int x1, int y1, int x2, int y2)
 {
+#ifndef REMASTER_BUILD
     POINT pt;
 
     MouseUpdate++;
@@ -439,6 +457,7 @@ void WWMouseClass::Conditional_Hide_Mouse(int x1, int y1, int x2, int y2)
     MCFlags |= CONDHIDE;
     MCCount++;
     MouseUpdate--;
+#endif
 }
 void WWMouseClass::Conditional_Show_Mouse(void)
 {
@@ -600,9 +619,13 @@ int WWMouseClass::Get_Mouse_State(void)
  *=============================================================================================*/
 int WWMouseClass::Get_Mouse_X(void)
 {
+#ifndef REMASTER_BUILD
     POINT pt;
     GetCursorPos(&pt);
     return (pt.x);
+#else
+    return 0;
+#endif
 }
 
 /***********************************************************************************************
@@ -617,9 +640,13 @@ int WWMouseClass::Get_Mouse_X(void)
  *=============================================================================================*/
 int WWMouseClass::Get_Mouse_Y(void)
 {
+#ifndef REMASTER_BUILD
     POINT pt;
     GetCursorPos(&pt);
     return (pt.y);
+#else
+    return 0;
+#endif
 }
 
 /***********************************************************************************************
@@ -635,11 +662,13 @@ int WWMouseClass::Get_Mouse_Y(void)
  *=============================================================================================*/
 void WWMouseClass::Get_Mouse_XY(int& x, int& y)
 {
+#ifndef REMASTER_BUILD
     POINT pt;
 
     GetCursorPos(&pt);
     x = pt.x;
     y = pt.y;
+#endif
 }
 
 //#pragma off(unreferenced)

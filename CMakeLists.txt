@@ -4,7 +4,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 if(NOT WIN32)
     # until we are truly portable, assume MinGW
-    set(CMAKE_TOOLCHAIN_FILE "cmake/mingw-toolchain.cmake")
+    #set(CMAKE_TOOLCHAIN_FILE "cmake/mingw-toolchain.cmake")
 endif()
 
 project(VanillaConquer)
@@ -51,6 +51,7 @@ if(NOT BUILD_VANILLARA AND MAP_EDTITORRA)
 endif()
 
 set(COMMON_SRC
+    common/compat.cpp
     common/miscasm.asm
     common/irandoma.asm
     common/irandom.cpp
@@ -65,7 +66,7 @@ set(COMMON_SRC
     common/wwmouse.c
     common/alloc.cpp
     common/buffer.cpp
-    common/gbuffer.cpp
+#   common/gbuffer.cpp
     common/tobuff.asm
     common/font.cpp
     common/timer.cpp
@@ -83,7 +84,7 @@ set(COMMON_SRC
     common/_diptabl.cpp
     common/drawrect.cpp
     common/set_font.cpp
-    common/rawfile.cpp
+#   common/rawfile.cpp
     common/getshape.cpp
     common/timerini.cpp
     common/windows.cpp
@@ -95,6 +96,7 @@ set(COMMON_SRC
 file(GLOB_RECURSE COMMON_HEADERS "common/*.h")
 
 add_library(common STATIC ${COMMON_SRC} ${COMMON_HEADERS})
+target_compile_definitions(common PUBLIC REMASTER_BUILD)
 target_link_libraries(common PUBLIC winmm)
 
 # These options currently require directx components from the aug 2007 SDK.
@@ -300,9 +302,9 @@ endif()
 
 if(BUILD_REMASTERTD)
     add_library(TiberianDawn SHARED 
-        tiberiandawn/dllinterface.cpp
-        tiberiandawn/dllinterfaceeditor.cpp
-        tiberiandawn/sidebarglyphx.cpp
+#       tiberiandawn/dllinterface.cpp
+#       tiberiandawn/dllinterfaceeditor.cpp
+#       tiberiandawn/sidebarglyphx.cpp
         ${TIBDAWN_SRC}
         ${TIBDAWN_HEADERS}
     )

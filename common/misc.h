@@ -34,21 +34,22 @@
 #ifndef MISC_H
 #define MISC_H
 
-#define WIN32_LEAN_AND_MEAN // eliminates unecessary definitions in windows.h
-#ifndef _WIN32              // Denzil 6/2/98 Watcom 11.0 complains without this check
-#define _WIN32
-#endif // _WIN32
+#ifdef _WIN32
 #include <windows.h>
 #include <windowsx.h>
 #include <ddraw.h>
 
 extern LPDIRECTDRAWSURFACE PaletteSurface;
+#else
+#include <cstddef>
+#endif
 
 /*========================= C++ Routines ==================================*/
 
 /*=========================================================================*/
 /* The following prototypes are for the file: DDRAW.CPP							*/
 /*=========================================================================*/
+#ifdef _WIN32
 void Process_DD_Result(HRESULT result, int display_ok_msg);
 BOOL Set_Video_Mode(HWND hwnd, int w, int h, int bits_per_pixel);
 void Reset_Video_Mode(void);
@@ -58,6 +59,7 @@ unsigned Get_Video_Hardware_Capabilities(void);
 
 extern "C" void Wait_Vert_Blank(void);
 extern "C" void Set_DD_Palette(void* palette);
+#endif
 
 /*
 ** Pointer to function to call if we detect a focus loss
@@ -98,6 +100,7 @@ extern void (*Misc_Focus_Restore_Function)(void);
 
 #define MAX_SURFACES 20
 
+#ifdef _WIN32
 class SurfaceMonitorClass
 {
 
@@ -130,6 +133,7 @@ extern BOOL SystemToVideoBlits;
 extern BOOL VideoToSystemBlits;
 extern BOOL SystemToSystemBlits;
 extern BOOL OverlappedVideoBlits; // Can video driver blit overlapped regions?
+#endif
 
 /*=========================================================================*/
 /* The following prototypes are for the file: EXIT.CPP							*/
@@ -144,12 +148,6 @@ VOID __cdecl Exit(INT errorval, const BYTE* message, ...);
 /*=========================================================================*/
 void Delay(int duration);
 void Vsync(void);
-
-/*=========================================================================*/
-/* The following prototypes are for the file: FINDARGV.CPP						*/
-/*=========================================================================*/
-
-BYTE __cdecl Find_Argv(BYTE const* str);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: LIB.CPP								*/
@@ -243,7 +241,9 @@ long __cdecl Calculate_CRC(void* buffer, long length);
 
 extern WORD __cdecl Processor(void);
 extern WORD __cdecl Operating_System(void);
+#ifdef _WIN32
 extern unsigned long random(unsigned long mod);
+#endif
 // extern void  randomize ( void ) ;
 
 extern int __cdecl Clip_Rect(int* x, int* y, int* dw, int* dh, int width, int height);

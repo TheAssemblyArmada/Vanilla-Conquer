@@ -39,7 +39,9 @@
 
 #if (IBM)
 #include <fcntl.h>
+#ifdef _WIN32
 #include <io.h>
+#endif
 
 #include <errno.h>
 

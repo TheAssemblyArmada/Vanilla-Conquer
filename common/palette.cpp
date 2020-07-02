@@ -46,6 +46,7 @@
 #include "palette.h"
 #include "timer.h"
 #include "wwstd.h"
+#include <cstring>
 
 /*
 ********************************* Constants *********************************

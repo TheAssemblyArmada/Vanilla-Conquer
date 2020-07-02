@@ -35,6 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "buffer.h"
+#include <cstddef>
 
 /*=========================================================================*/
 /* The following PRIVATE functions are in this file:                       */

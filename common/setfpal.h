@@ -1,6 +1,8 @@
 #ifndef SETFPAL_H
 #define SETFPAL_H
 
+#include "compat.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

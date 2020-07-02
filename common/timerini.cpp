@@ -34,7 +34,9 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "wwstd.h"
+#ifdef _WIN32
 #include <mmsystem.h>
+#endif
 #include "timer.h"
 #include "profile.h"
 #include <stdio.h>
@@ -99,12 +101,14 @@ WinTimerClass::WinTimerClass(UINT freq, BOOL partial)
     // Inform windows that we want a higher than normal
     // timer resolution
     //
+#ifdef _WIN32
 #ifdef __SW_EP
     timeBeginPeriod(1000 / PROFILE_RATE);
     Frequency = PROFILE_RATE;
 #else
     timeBeginPeriod(1000 / freq);
     Frequency = freq;
+#endif
 #endif
 
     SysTicks = 0;
@@ -115,7 +119,9 @@ WinTimerClass::WinTimerClass(UINT freq, BOOL partial)
     //
     // TimerHandle = timeSetEvent ( 1000/freq , 1 , Timer_Callback , 0 , TIME_PERIODIC);
     // Add TIME_KILL_SYNCHRONOUS flag. ST - 2/13/2019 5:07PM
+#ifdef _WIN32
     TimerHandle = timeSetEvent(1000 / freq, 1, Timer_Callback, 0, TIME_PERIODIC | TIME_KILL_SYNCHRONOUS);
+#endif
     TimerSystemOn = success = (TimerHandle != 0);
 
     if (success) {
@@ -125,8 +131,10 @@ WinTimerClass::WinTimerClass(UINT freq, BOOL partial)
         }
     } else {
         char error_str[128];
+#ifdef _WIN32
         sprintf(error_str, "Error - timer system failed to start. Error code %d\n", GetLastError());
         OutputDebugString(error_str);
+#endif
     }
 }
 
@@ -147,12 +155,16 @@ WinTimerClass::~WinTimerClass(void)
 {
 
     if (TimerHandle) {
+#ifdef _WIN32
         timeKillEvent(TimerHandle);
+#endif
         TimerHandle = 0; // ST - 2/13/2019 5:12PM
     }
 
     TimerSystemOn = FALSE;
+#ifdef _WIN32
     timeEndPeriod(1000 / Frequency);
+#endif
 }
 
 /***********************************************************************************************

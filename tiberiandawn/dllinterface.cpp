@@ -26,6 +26,7 @@
 
 #include <stdio.h>
 
+#include "compat.h"
 #include "function.h"
 #include "externs.h"
 #include "dllinterface.h"

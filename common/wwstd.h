@@ -31,11 +31,15 @@
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include "compat.h"
+
 #ifndef WWSTD_H
 #define WWSTD_H
 
+#ifdef _WIN32
 #include <windows.h>
 #include <windowsx.h>
+#endif
 
 #ifndef IBM
 #define IBM TRUE

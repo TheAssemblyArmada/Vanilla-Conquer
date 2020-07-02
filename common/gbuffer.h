@@ -102,12 +102,12 @@
  *   GVPC::Print -- stub function to print a long on a graphic view port   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef _WIN32 // Denzil 6/2/98 Watcom 11.0 complains without this check
-#define _WIN32
-#endif // _WIN32
-
-#define WIN32_LEAN_AND_MEAN
+#ifdef _WIN32
 #include <ddraw.h>
+#else
+#include <stdio.h>
+#include <stdlib.h>
+#endif
 
 #ifndef GBUFFER_H
 #define GBUFFER_H
@@ -156,8 +156,10 @@ public:
 // Defines for direct draw
 //
 //
+#ifdef _WIN32
 extern LPDIRECTDRAW DirectDrawObject; // pointer to direct draw object
 extern HWND MainWindow;               // handle to programs main window
+#endif
 
 /*
 ** Pointer to function to call if we detect a focus loss
@@ -421,12 +423,14 @@ public:
 
     void Scale_Rotate(BitmapClass& bmp, TPoint2D const& pt, long scale, unsigned char angle);
 
+#ifdef _WIN32
     // Member to get a pointer to a direct draw surface
     LPDIRECTDRAWSURFACE Get_DD_Surface(void);
 
 protected:
     LPDIRECTDRAWSURFACE VideoSurfacePtr;   // Pointer to the related direct draw surface
     DDSURFACEDESC VideoSurfaceDescription; // Description of the said surface
+#endif
 };
 
 inline int GraphicViewPortClass::Get_LockCount(void)
@@ -467,10 +471,12 @@ inline BOOL GraphicViewPortClass::Get_IsDirectDraw(void)
  * HISTORY:                                                                                    *
  *    9/29/95 9:43AM ST : Created                                                              *
  *=============================================================================================*/
+#ifdef _WIN32
 inline LPDIRECTDRAWSURFACE GraphicBufferClass::Get_DD_Surface(void)
 {
     return (VideoSurfacePtr);
 }
+#endif
 
 /***********************************************************************************************
  * GVPC::Lock -- lock the graphics buffer for reading or writing                               *
@@ -1202,6 +1208,7 @@ inline VOID GraphicViewPortClass::Draw_Line(int sx, int sy, int dx, int dy, unsi
  *=========================================================================*/
 inline VOID GraphicViewPortClass::Fill_Rect(int sx, int sy, int dx, int dy, unsigned char color)
 {
+#ifdef _WIN32
     if (AllowHardwareBlitFills && IsDirectDraw && ((dx - sx) * (dy - sy) >= (32 * 32))
         && GraphicBuff->Get_DD_Surface()->GetBltStatus(DDGBS_CANBLT) == DD_OK) {
         DDBLTFX blit_effects;
@@ -1241,11 +1248,14 @@ inline VOID GraphicViewPortClass::Fill_Rect(int sx, int sy, int dx, int dy, unsi
         GraphicBuff->Get_DD_Surface()->Blt(
             &dest_rectangle, NULL, NULL, DDBLT_WAIT | DDBLT_ASYNC | DDBLT_COLORFILL, &blit_effects);
     } else {
+#endif
         if (Lock()) {
             Buffer_Fill_Rect(this, sx, sy, dx, dy, color);
             Unlock();
         }
+#ifdef _WIN32
     }
+#endif
 }
 
 /***************************************************************************

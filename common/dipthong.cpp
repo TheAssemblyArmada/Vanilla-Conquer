@@ -41,6 +41,7 @@
 
 #include "wwkeyboard.h"
 #include "dipthong.h"
+#include <cstring>
 
 /***************************************************************************
  * Fixup_Text -- Converts dipthonged foreign text into normal text.        *

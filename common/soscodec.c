@@ -1,3 +1,4 @@
+#include "compat.h"
 #include "soscomp.h"
 #include <string.h>
 

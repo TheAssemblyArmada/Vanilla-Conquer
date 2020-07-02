@@ -32,11 +32,14 @@
  *   Get_Next_Text_Print_XY -- Calculates X and Y given ret value from Text_P*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include "compat.h"
 #include "font.h"
 #include <malloc.h>
+#ifdef _WIN32
 #include <dos.h>
-#include <fcntl.h>
 #include <io.h>
+#endif
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <string.h>
 #include "wwstd.h"

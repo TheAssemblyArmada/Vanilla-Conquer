@@ -102,7 +102,9 @@ private:
 
     int EraseFlags; // Records whether mutex has been released
 
+#ifndef REMASTER_BUILD
     CRITICAL_SECTION MouseCriticalSection; // Control for mouse re-enterancy
+#endif
     unsigned TimerHandle;
 };
 

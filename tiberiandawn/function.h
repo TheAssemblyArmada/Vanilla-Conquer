@@ -116,9 +116,9 @@ inline int max(int a, int b)
 }
 #endif
 
-//#define _WIN32
-//#define WIN32 =1	//_LEAN_AND_MEAN
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 /**********************************************************************
 **	If the following define is enabled, then the memory checking code
@@ -150,11 +150,15 @@ typedef struct
 #include <stddef.h>
 //#include	<mem.h>
 //#include	<dos.h>
+#ifdef _WIN32
 #include <direct.h>
+#endif
 #include <stdarg.h>
 #include <ctype.h>
 #include <assert.h>
+#ifdef _WIN32
 #include <process.h>
+#endif
 //#include	<new.h>
 
 /*

@@ -52,18 +52,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef _WIN32
 #include <direct.h>
 #include <share.h>
+#endif
 #include <stddef.h>
 
 #include "rawfile.h"
-
-#ifndef WIN32
-#include <fcntl.h>
-#include <io.h>
-#include <dos.h>
-extern short Hard_Error_Occured;
-#endif
 
 /***********************************************************************************************
  * RawFileClass::Error -- Handles displaying a file error message.                             *
