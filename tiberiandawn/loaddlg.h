@@ -13,30 +13,32 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\loaddlg.h_v   2.17   16 Oct 1995 16:48:02   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/LOADDLG.H 1     3/03/97 10:25a Joe_bostic $ */
 /***********************************************************************************************
  ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
- *                                                                         						  *
- *                 Project Name : Command & Conquer                        						  *
- *                                                                         						  *
- *                    File Name : LOADDLG.H 	                              						  *
- *                                                                         						  *
- *                   Programmer : Maria Legg, Joe Bostic, Bill Randolph     						  *
- *                                                                         						  *
- *                   Start Date : March 19, 1995															  *
- *                                                                         						  *
- *                  Last Update : March 19, 1995															  *
- *                                                                         						  *
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                    File Name : LOADDLG.H                                                    *
+ *                                                                                             *
+ *                   Programmer : Maria Legg, Joe Bostic, Bill Randolph                        *
+ *                                                                                             *
+ *                   Start Date : March 19, 1995                                               *
+ *                                                                                             *
+ *                  Last Update : March 19, 1995                                               *
+ *                                                                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #ifndef LOADDLG_H
 #define LOADDLG_H
 
+#include "defines.h"
+
 class FileEntryClass
 {
 public:
-    char Descr[40];         // save-game description
+    char Descr[80];         // save-game description
     unsigned Scenario;      // scenario #
     HousesType House;       // house
     int Num;                // save file number (from the extension)
@@ -55,7 +57,7 @@ public:
         NONE = 0,
         LOAD,
         SAVE,
-        WWDELETE,
+        WWDELETE
     } LoadStyleType;
 
     LoadOptionsClass(LoadStyleType style = LoadOptionsClass::NONE);
@@ -68,7 +70,7 @@ protected:
     */
     void Clear_List(ListClass* list);                   // clears the list & game # array
     void Fill_List(ListClass* list);                    // fills the list & game # array
-    int Num_From_Ext(char* fname);                      // translates filename to file #
+    int Num_From_Ext(const char* fname);                // translates filename to file #
     static int Compare(const void* p1, const void* p2); // for qsort()
 
     /*
@@ -83,7 +85,7 @@ protected:
     ** the vector list is cleared.  This list is used for sorting the files
     ** by date/time.
     */
-    DynamicVectorClass<class FileEntryClass*> Files;
+    DynamicVectorClass<FileEntryClass*> Files;
 };
 
 #endif

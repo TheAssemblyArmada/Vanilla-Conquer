@@ -1451,7 +1451,8 @@ void ScoreClass::Count_Up_Print(char* str, int percent, int maxval, int xpos, in
 void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
 {
     int key = 0;
-    int ascii, index = 0;
+    int ascii = 0;
+    int index = 0;
 
     void const* keystrok = MFCD::Retrieve("KEYSTROK.AUD");
 

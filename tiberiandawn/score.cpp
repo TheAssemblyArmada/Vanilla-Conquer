@@ -1568,7 +1568,9 @@ void ScoreClass::Count_Up_Print(char* str, int percent, int max, int xpos, int y
  *=============================================================================================*/
 void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
 {
-    int key, ascii, index = 0;
+    int key = 0;
+    int ascii = 0;
+    int index = 0;
 
     void const* keystrok = MixFileClass::Retrieve("KEYSTROK.AUD");
 

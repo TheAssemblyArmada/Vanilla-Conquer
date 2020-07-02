@@ -9,6 +9,9 @@ endif()
 
 project(VanillaConquer)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 if(MSVC)
     enable_language(ASM_MASM)
     set(CMAKE_ASM_MASM_FLAGS "/Zm /Cp /safeseh" CACHE INTERNAL "MASM flags")
@@ -90,6 +93,7 @@ set(COMMON_SRC
     common/winhide.cpp
     common/writepcx.cpp
     common/delay.cpp
+    common/file_helpers.cpp
 )
 
 file(GLOB_RECURSE COMMON_HEADERS "common/*.h")
