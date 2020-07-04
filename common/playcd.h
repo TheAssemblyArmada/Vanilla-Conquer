@@ -32,6 +32,8 @@
 #ifndef PLAYCD_H
 #define PLAYCD_H
 
+#include <string.h>
+
 #ifdef NOT_FOR_WIN95
 /* ==================================================================== */
 /* Defines */

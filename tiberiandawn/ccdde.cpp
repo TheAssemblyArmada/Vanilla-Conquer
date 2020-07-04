@@ -48,7 +48,9 @@
  *                                                                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#ifdef _WIN32
 #include <windows.h>
+#endif
 #include "ccdde.h"
 #include <stdio.h>
 #include "common/timer.h"

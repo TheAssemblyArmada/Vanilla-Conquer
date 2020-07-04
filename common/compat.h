@@ -12,8 +12,12 @@ char* ltoa(long value, char *str, int base);
 typedef uint32_t uint32;
 typedef uint64_t uint64;
 
+#define _MAX_FNAME 256
+#define _MAX_EXT 8
+
 #define HRESULT long
 #define HANDLE intptr_t
+#define HWND intptr_t
 #define CALLBACK
 
 #define INVALID_HANDLE_VALUE -1
@@ -29,3 +33,18 @@ typedef uint64_t uint64;
 
 #define TRUE true
 #define FALSE false
+
+#define DRIVE_CDROM 1
+
+#define LPCTSTR char*
+#define DLGPROC intptr_t
+
+#define stricmp strcasecmp
+
+void _makepath(char*, char*, char*, char*, char*);
+
+struct CRITICAL_SECTION
+{
+};
+
+int GetDriveTypeA(int);
