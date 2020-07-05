@@ -34,9 +34,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#ifdef WIN32
-#include "ccdde.h"
-#else // WIN32
+#ifndef WIN32
 #include <sys/timeb.h>
 #endif
 
@@ -825,19 +823,6 @@ int Main_Menu(unsigned long)
         **	Get and process player input.
         */
         input = commands->Input();
-
-#ifndef FIXIT_VERSION_3
-#if defined(WIN32) && !defined(INTERNET_OFF) // Denzil 5/1/98 - No Internet play
-        /*
-        ** Check to see if WChat has told us to start playing an internet game
-        */
-        if (DDEServer.Get_MPlayer_Game_Info()) {
-            retval = BUTTON_INTERNET - BUTTON_EXPAND;
-            process = false;
-            input = KN_NONE;
-        }
-#endif // WIN32
-#endif
 
         /*
         **	If there is input, then take this opportunity to seed some bits

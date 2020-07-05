@@ -122,7 +122,6 @@ set(TIBDAWN_SRC
     tiberiandawn/building.cpp
     tiberiandawn/bullet.cpp
     tiberiandawn/cargo.cpp
-    tiberiandawn/ccdde.cpp
     tiberiandawn/ccfile.cpp
     tiberiandawn/cdata.cpp
     tiberiandawn/cdfile.cpp
@@ -141,7 +140,6 @@ set(TIBDAWN_SRC
     tiberiandawn/coord.cpp
     tiberiandawn/credits.cpp
     tiberiandawn/crew.cpp
-    tiberiandawn/dde.cpp
     tiberiandawn/debug.cpp
     tiberiandawn/descdlg.cpp
     tiberiandawn/dial8.cpp
@@ -176,7 +174,6 @@ set(TIBDAWN_SRC
     tiberiandawn/infantry.cpp
     tiberiandawn/ini.cpp
     tiberiandawn/init.cpp
-    tiberiandawn/internet.cpp
     tiberiandawn/interpal.cpp
     tiberiandawn/intro.cpp
     tiberiandawn/iomap.cpp
@@ -357,7 +354,6 @@ set(REDALERT_SRC
     redalert/bullet.cpp
     redalert/cargo.cpp
     redalert/carry.cpp
-    redalert/ccdde.cpp
     redalert/ccfile.cpp
     redalert/ccini.cpp
     redalert/ccmpath.cpp
@@ -387,7 +383,6 @@ set(REDALERT_SRC
     redalert/credits.cpp
     redalert/crew.cpp
     redalert/cstraw.cpp
-    redalert/dde.cpp
     redalert/debug.cpp
     redalert/descdlg.cpp
     redalert/dial8.cpp
@@ -434,7 +429,6 @@ set(REDALERT_SRC
     redalert/inicode.cpp
     redalert/init.cpp
     redalert/int.cpp
-    redalert/internet.cpp
     redalert/interpal.cpp
     redalert/intro.cpp
     redalert/iomap.cpp

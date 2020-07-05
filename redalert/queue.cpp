@@ -2281,16 +2281,6 @@ static int Handle_Timeout(ConnManClass* net, long* their_frame, unsigned short* 
         }
 
         id = net->Connection_ID(oldest_index);
-#ifdef WIN32
-        /*
-        ** Send the game statistics packet now if the game is effectivly over
-        */
-        if (Session.Players.Count() == 2 && Session.Type == GAME_INTERNET && !GameStatisticsPacketSent) {
-            Register_Game_End_Time();
-            ConnectionLost = true;
-            Send_Statistics_Packet(); //	Disconnect, and I'll be the only one left.
-        }
-#endif // WIN32
 
         if (id != ConnManClass::CONNECTION_NONE) {
             for (i = oldest_index; i < net->Num_Connections() - 1; i++) {
@@ -3310,15 +3300,6 @@ static int Execute_DoList(int max_houses,
                                 quithptr->IsGiverUpper = true;
                                 break;
                             }
-                        }
-
-                        /*
-                        ** Send the game statistics packet now since the game is effectivly over
-                        */
-                        if (Session.Players.Count() == 2 && Session.Type == GAME_INTERNET
-                            && !GameStatisticsPacketSent) {
-                            Register_Game_End_Time();
-                            Send_Statistics_Packet(); //	Event - player aborted, and there were only 2 left.
                         }
                     }
 #endif // WIN32

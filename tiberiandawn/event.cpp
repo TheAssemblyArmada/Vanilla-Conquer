@@ -44,7 +44,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include "ccdde.h"
 
 /***************************************************************************
 ** Table of what data is really used in the EventClass struct for different
@@ -699,15 +698,6 @@ void EventClass::Execute(void)
         CCDebugString(flip);
         sprintf(flip, "C&C95 -  Timing packet: MaxAhead = %d\n", Data.Timing.MaxAhead);
         CCDebugString(flip);
-
-        /*
-        ** If spawned from WChat then we should be getting poked every minute. If not then
-        ** deliberately break the max ahead value
-        */
-        if (Special.IsFromWChat) {
-            MPlayerMaxAhead += DDEServer.Time_Since_Heartbeat() / (70 * 60);
-            // if (DDEServer.Time_Since_Heartbeat() >= 70*60) CCDebugString ("C&C95 - Missed a heartbeat\n");
-        }
         break;
 
     //

@@ -38,7 +38,6 @@
 #include "function.h"
 #include <conio.h>
 #include <io.h>
-#include "ccdde.h"
 
 bool Read_Private_Config_Struct(char* profile, NewConfigType* config);
 void Delete_Swap_Files(void);
@@ -52,7 +51,6 @@ void Read_Setup_Options(RawFileClass* config_file);
 
 bool VideoBackBufferAllowed = true;
 void Check_From_WChat(char* wchat_name);
-bool SpawnedFromWChat = false;
 bool ProgEndCalled = false;
 
 #if (0)
@@ -100,7 +98,6 @@ void CD_Test(void)
  *=============================================================================================*/
 
 HINSTANCE ProgramInstance;
-extern BOOL CC95AlreadyRunning;
 void Move_Point(short& x, short& y, register DirType dir, unsigned short distance);
 
 void Check_Use_Compressed_Shapes(void);
@@ -162,25 +159,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
     ** These values return 0x47 if code is working correctly
     */
     //	int temp = Desired_Facing256 (1070, 5419, 1408, 5504);
-
-    /*
-    ** If we are already running then switch to the existing process and exit
-    */
-    SpawnedFromWChat = false;
-
-    if (CC95AlreadyRunning) { // Set in the DDEServer constructor
-        // MessageBox (NULL, "Error - attempt to restart C&C95 when already running.", "Command & Conquer",
-        // MB_ICONEXCLAMATION|MB_OK);
-
-        HWND ccwindow;
-        ccwindow = FindWindowA("Command & Conquer", "Command & Conquer");
-        if (ccwindow) {
-            SetForegroundWindow(ccwindow);
-            ShowWindow(ccwindow, SW_RESTORE);
-        }
-
-        return (EXIT_SUCCESS);
-    }
 
 #ifndef REMASTER_BUILD
     DDSCAPS surface_capabilities;
@@ -572,7 +550,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
             */
             char tempbuff[5];
             WWGetPrivateProfileString("Intro", "PlayIntro", "Yes", tempbuff, 4, buffer);
-            if ((stricmp(tempbuff, "No") == 0) || SpawnedFromWChat) {
+            if ((stricmp(tempbuff, "No") == 0)) {
                 Special.IsFromInstall = false;
             } else {
                 Special.IsFromInstall = true;
@@ -594,18 +572,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
             cfile.Write(buffer, strlen(buffer));
 
             Free(buffer);
-
-            CCDebugString("C&C95 - Checking availability of C&CSPAWN.INI packet from WChat.\n");
-            if (DDEServer.Get_MPlayer_Game_Info()) {
-                CCDebugString("C&C95 - C&CSPAWN.INI packet available.\n");
-                Check_From_WChat(NULL);
-            } else {
-                CCDebugString("C&C95 - C&CSPAWN.INI packet not arrived yet.\n");
-                // Check_From_WChat("C&CSPAWN.INI");
-                // if (Special.IsFromWChat){
-                //	DDEServer.Disable();
-                //}
-            }
 
             /*
             **	If the intro is being run for the first time, then don't

@@ -69,7 +69,6 @@
 #include <dos.h>
 #include <share.h>
 #include <malloc.h>
-#include "ccdde.h"
 
 #define SHAPE_TRANS 0x40
 
@@ -130,8 +129,6 @@ bool InMainLoop = false;
  *   10/01/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
 extern int TotalLocks;
-extern bool Spawn_WChat(bool can_launch);
-extern bool SpawnedFromWChat;
 void Main_Game(int argc, char* argv[])
 {
     bool fade = false; // don't fade title screen the first time through
@@ -185,8 +182,6 @@ void Main_Game(int argc, char* argv[])
             GameStatisticsPacketSent = false;
             PacketLater = NULL;
             ConnectionLost = false;
-        } else {
-            DDEServer.Disable();
         }
 
         InMainLoop = true;
@@ -359,24 +354,6 @@ void Main_Game(int argc, char* argv[])
             GameToPlay = GAME_NORMAL;
             PlaybackGame = 0;
         }
-
-        /*
-        ** If we were spawned from WChat then dont go back to the main menu - just quit
-        **
-        ** New: If spawned from WChat then maximise WChat and go back to the main menu after all
-        */
-#ifdef FORCE_WINSOCK
-        if (Special.IsFromWChat) {
-            Shutdown_Network(); // Clear up the pseudo IPX stuff
-            Winsock.Close();
-            Special.IsFromWChat = false;
-            SpawnedFromWChat = false;
-            DDEServer.Delete_MPlayer_Game_Info(); // Make sure we dont use the same start packet twice
-            GameToPlay = GAME_NORMAL;             // Have to do this or we will got straight to the multiplayer menu
-            Spawn_WChat(false); // Will switch back to Wchat. It must be there because its been poking us
-            // break;
-        }
-#endif // FORCE_WINSOCK
 
 #endif // DEMO
     }
