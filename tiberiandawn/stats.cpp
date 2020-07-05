@@ -40,7 +40,6 @@
 #include "function.h"
 #include "tcpip.h"
 #include "packet.h"
-#include "ccdde.h"
 
 #define FIELD_PACKET_TYPE      "TYPE"
 #define FIELD_GAME_ID          "IDNO"

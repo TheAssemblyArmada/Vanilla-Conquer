@@ -67,7 +67,6 @@ public:
         IsNamed = false;
         IsFromInstall = false;
         IsSeparate = false;
-        IsFromWChat = false;
         IsEarlyWin = false;
         HealthBarDisplayMode = HB_SELECTED;
         ResourceBarDisplayMode = RB_SELECTED;
@@ -225,11 +224,6 @@ public:
     **	Disables scrolling over the "options" and "sidebar" tabs.
     */
     unsigned IsScrollMod : 1;
-
-    /*
-    ** Flag that we were spawned from WChat.
-    */
-    unsigned IsFromWChat : 1;
 
     /*
     ** New anti-griefing early win mode. ST - 1/31/2020 3:42PM

@@ -105,7 +105,6 @@ TcpipManagerClass Winsock;
 #include <io.h>
 #include <dos.h>
 #include <share.h>
-#include "ccdde.h"
 #include "vortex.h"
 
 #ifdef WOLAPI_INTEGRATION
@@ -267,19 +266,6 @@ void Main_Game(int argc, char* argv[])
             Show_Mouse();
         }
 
-#ifdef WIN32
-        if (Session.Type == GAME_INTERNET) {
-            Register_Game_Start_Time();
-            GameStatisticsPacketSent = false;
-            PacketLater = NULL;
-            ConnectionLost = false;
-        } else {
-#ifndef WOLAPI_INTEGRATION
-            DDEServer.Disable();
-#endif //	!WOLAPI_INTEGRATION
-        }
-#endif // WIN32
-
 #ifdef SCENARIO_EDITOR
         /*
         **	Scenario-editor version of main-loop processing
@@ -421,15 +407,6 @@ void Main_Game(int argc, char* argv[])
         }
 #endif
 
-#ifdef WIN32
-        /*
-        ** Send the game stats to WChat if we haven't already done so
-        */
-        if (!GameStatisticsPacketSent && PacketLater) {
-            Send_Statistics_Packet(); //	After game sending if PacketLater set.
-        }
-#endif // WIN32
-
         /*
         **	Scenario is done; fade palette to black
         */
@@ -488,21 +465,6 @@ void Main_Game(int argc, char* argv[])
             Session.Type = GAME_NORMAL;
             Session.Play = 0;
         }
-#ifndef WOLAPI_INTEGRATION
-#ifdef WIN32
-        if (Special.IsFromWChat) {
-            // PG Shutdown_Network();		      // Clear up the pseudo IPX stuff
-#ifndef WINSOCK_IPX
-            Winsock.Close();
-#endif // WINSOCK_IPX
-            Special.IsFromWChat = false;
-            SpawnedFromWChat = false;
-            DDEServer.Delete_MPlayer_Game_Info(); // Make sure we dont use the same start packet twice
-            Session.Type = GAME_NORMAL;           // Have to do this or we will got straight to the multiplayer menu
-            Spawn_WChat(false); // Will switch back to Wchat. It must be there because its been poking us
-        }
-#endif // WIN32
-#endif //	!WOLAPI_INTEGRATION
     }
 
     /*
@@ -2308,15 +2270,6 @@ bool Main_Loop()
     if (PlayerWins) {
 
 #ifdef WIN32
-
-        /*
-        ** Send the game statistics to WChat.
-        */
-        if (Session.Type == GAME_INTERNET && !GameStatisticsPacketSent) {
-            Register_Game_End_Time();
-            Send_Statistics_Packet(); //	Player just won.
-        }
-
         WWMouse->Erase_Mouse(&HidPage, TRUE);
 #endif // WIN32
         PlayerLoses = false;
@@ -2328,14 +2281,6 @@ bool Main_Loop()
     }
     if (PlayerLoses) {
 #ifdef WIN32
-        /*
-        ** Send the game statistics to WChat.
-        */
-        if (Session.Type == GAME_INTERNET && !GameStatisticsPacketSent) {
-            Register_Game_End_Time();
-            Send_Statistics_Packet(); //	Player just lost.
-        }
-
         WWMouse->Erase_Mouse(&HidPage, TRUE);
 #endif // WIN32
         PlayerWins = false;
@@ -2361,10 +2306,6 @@ bool Main_Loop()
     if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH && Session.Players.Count() == 2
         && Scen.bLocalProposesDraw && Scen.bOtherProposesDraw) {
         //	End game in a draw.
-        if (Session.Type == GAME_INTERNET && !GameStatisticsPacketSent) {
-            Register_Game_End_Time();
-            Send_Statistics_Packet();
-        }
         WWMouse->Erase_Mouse(&HidPage, TRUE);
         Map.Help_Text(TXT_NONE);
         Do_Draw();

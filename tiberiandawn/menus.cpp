@@ -34,7 +34,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include "ccdde.h"
 
 /*****************************
 **	Function prototypes
@@ -888,16 +887,6 @@ int Main_Menu(unsigned long timeout)
                 process = false;
             }
         }
-
-#ifndef DEMO
-        /*
-        ** Check to see if WChat has told us to start playing an internet game
-        */
-        if (DDEServer.Get_MPlayer_Game_Info()) {
-            retval = BUTTON_INTERNET - BUTTON_EXPAND;
-            process = false;
-        }
-#endif // DEMO
 
         /*
         **	Get and process player input.

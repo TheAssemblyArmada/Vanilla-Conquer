@@ -1066,7 +1066,7 @@ int IPXManagerClass::Service(void)
     unsigned char temp_receive_buffer[1024];
     int recv_length;
 
-    if (Winsock.Get_Connected() || Special.IsFromWChat) {
+    if (Winsock.Get_Connected()) {
 
         if (!Winsock.Get_Connected())
             return (0);

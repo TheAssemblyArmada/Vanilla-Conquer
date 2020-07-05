@@ -45,7 +45,6 @@
 #include "tcpip.h"
 #include <conio.h>
 #include <dos.h>
-#include "ccdde.h"
 
 static HANDLE hCCLibrary;
 
@@ -84,7 +83,6 @@ long FAR PASCAL _export Start_Game_Proc(HWND hwnd, UINT message, UINT wParam, LO
 
 extern bool Server_Remote_Connect(void);
 extern bool Client_Remote_Connect(void);
-extern bool SpawnedFromWChat;
 
 /***********************************************************************************************
  * Init_Game -- Main game initialization routine.                                              *
@@ -557,15 +555,11 @@ bool Init_Game(int, char*[])
     CCDebugString("C&C95 - About to initialise the animation system\n");
     Anim_Init();
 
-    if (SpawnedFromWChat) {
-        Special.IsFromWChat = true;
-    }
-
     /*
     **	Play the introduction movies.
     */
     CCDebugString("C&C95 - About to play the intro movie\n");
-    if (!Special.IsFromInstall && !Special.IsFromWChat)
+    if (!Special.IsFromInstall)
         Play_Intro(true);
 
     /*
@@ -773,9 +767,6 @@ extern int ShowCommand;
  *=============================================================================================*/
 extern int Com_Fake_Scenario_Dialog(void);
 extern int Com_Show_Fake_Scenario_Dialog(void);
-extern int WChatMaxAhead;
-extern int WChatSendRate;
-void Check_From_WChat(char* wchat_name);
 
 bool Select_Game(bool fade)
 {
@@ -807,11 +798,6 @@ bool Select_Game(bool fade)
     MEMORYSTATUS mem_info;
     mem_info.dwLength = sizeof(mem_info);
     GlobalMemoryStatus(&mem_info);
-
-    /*
-    ** Enable the DDE Server so we can get internet start game packets from WChat
-    */
-    DDEServer.Enable();
 
     if (Special.IsFromInstall) {
         /*
@@ -854,9 +840,6 @@ bool Select_Game(bool fade)
     **   be at least 2 * MPlayerMaxAhead
     */
     CommProtocol = COMM_PROTOCOL_SINGLE_NO_COMP;
-    if (!Special.IsFromWChat) {
-        FrameSendRate = 3;
-    }
 
     ProcessTicks = 0;
     ProcessFrames = 0;
@@ -912,18 +895,6 @@ bool Select_Game(bool fade)
                 Theme.Fade_Out();
             } else
                 PlaybackGame = false;
-        }
-
-        /*
-        ** Handle case where we were spawned from Wchat
-        */
-        if (SpawnedFromWChat) {
-            Special.IsFromInstall = false; // Dont play intro if we were spawned from wchat
-            selection = SEL_INTERNET;
-            Theme.Queue_Song(THEME_NONE);
-            GameToPlay = GAME_INTERNET;
-            display = false;
-            Set_Logic_Page(SeenBuff);
         }
 
         while (process) {
@@ -1007,30 +978,6 @@ bool Select_Game(bool fade)
                 Theme.Queue_Song(THEME_NONE);
             }
 
-            /*
-            ** Handle case where we were spawned from Wchat
-            */
-            if (Special.IsFromWChat && DDEServer.Get_MPlayer_Game_Info()) {
-                Check_From_WChat(NULL);
-                selection = SEL_MULTIPLAYER_GAME;
-                Theme.Queue_Song(THEME_NONE);
-                GameToPlay = GAME_INTERNET;
-            } else {
-                /*
-                ** We werent spawned but we could still receive a DDE packet from wchat
-                */
-                if (DDEServer.Get_MPlayer_Game_Info()) {
-                    Check_From_WChat(NULL);
-                    /*
-                    ** Make sure top and bottom of screen are clear in 640x480 mode
-                    */
-                    if (ScreenHeight == 480) {
-                        VisiblePage.Fill_Rect(0, 0, 639, 40, 0);
-                        VisiblePage.Fill_Rect(0, 440, 639, 479, 0);
-                    }
-                }
-            }
-
             if (selection == SEL_NONE) {
                 //				selection = Main_Menu(0);
                 selection = Main_Menu(ATTRACT_MODE_TIMEOUT);
@@ -1042,28 +989,6 @@ bool Select_Game(bool fade)
 #ifdef NEWMENU
 
             case SEL_INTERNET:
-                /*
-                ** Only call up the internet menu code if we dont already have connect info from WChat
-                */
-                if (!DDEServer.Get_MPlayer_Game_Info()) {
-                    CCDebugString("C&C95 - About to call Internet Menu.\n");
-                    if (Do_The_Internet_Menu_Thang() && DDEServer.Get_MPlayer_Game_Info()) {
-                        CCDebugString("C&C95 - About to call Check_From_WChat.\n");
-                        Check_From_WChat(NULL);
-                        selection = SEL_MULTIPLAYER_GAME;
-                        display = false;
-                        GameToPlay = GAME_INTERNET;
-                    } else {
-                        selection = SEL_NONE;
-                        display = true;
-                    }
-                } else {
-                    CCDebugString("C&C95 - About to call Check_From_WChat.\n");
-                    Check_From_WChat(NULL);
-                    display = false;
-                    GameToPlay = GAME_INTERNET;
-                    selection = SEL_MULTIPLAYER_GAME;
-                }
                 break;
 
             /*
@@ -1262,121 +1187,6 @@ bool Select_Game(bool fade)
                 ** Handle being spawned from WChat. Intermnet play based on IPX code now.
                 */
                 case GAME_INTERNET:
-                    CCDebugString("C&C95 - case GAME_INTERNET:\n");
-                    if (Special.IsFromWChat) {
-                        // MessageBox (NULL, "About to restore focus to C&C95", "C&C95", MB_OK);
-                        CCDebugString("C&C95 - About to give myself focus.\n");
-                        SetForegroundWindow(MainWindow);
-                        ShowWindow(MainWindow, ShowCommand);
-
-                        CCDebugString("C&C95 - About to initialise Winsock.\n");
-                        if (Winsock.Init()) {
-                            CCDebugString("C&C95 - About to read multiplayer settings.\n");
-                            Read_MultiPlayer_Settings();
-                            Server = PlanetWestwoodIsHost;
-
-                            CCDebugString("C&C95 - About to set addresses.\n");
-                            Winsock.Set_Host_Address(PlanetWestwoodIPAddress);
-
-                            CCDebugString("C&C95 - About to call Start_Server or Start_Client.\n");
-                            if (Server) {
-                                ModemGameToPlay = INTERNET_HOST;
-                                Winsock.Start_Server();
-                            } else {
-                                ModemGameToPlay = INTERNET_JOIN;
-                                Winsock.Start_Client();
-                            }
-
-                            //#if (0)
-                            /*
-                            ** Flush out any pending packets from a previous game.
-                            */
-                            CCDebugString("C&C95 - About to flush packet queue.\n");
-                            CCDebugString("C&C95 - Allocating scrap memory.\n");
-                            char* temp_buffer = new char[1024];
-
-                            CCDebugString("C&C95 - Creating timer class instance.\n");
-                            CountDownTimerClass ptimer;
-
-                            CCDebugString("C&C95 - Entering read loop.\n");
-                            while (Winsock.Read(temp_buffer, 1024)) {
-
-                                CCDebugString("C&C95 - Discarding a packet.\n");
-                                ptimer.Set(30, true);
-                                while (ptimer.Time()) {
-                                };
-                                CCDebugString("C&C95 - Ready to check for more packets.\n");
-                            }
-                            CCDebugString("C&C95 - About to delete scrap memory.\n");
-                            delete temp_buffer;
-                            //#endif	//(0)
-
-                        } else {
-                            CCDebugString("C&C95 - Winsock failed to initialise.\n");
-                            GameToPlay = GAME_NORMAL;
-                            selection = SEL_EXIT;
-                            Special.IsFromWChat = false;
-                            break;
-                        }
-
-                        CCDebugString("C&C95 - About to call Init_Network.\n");
-                        Init_Network();
-
-                        if (DDEServer.Get_MPlayer_Game_Info()) {
-                            CCDebugString("C&C95 - About to call Read_Game_Options.\n");
-                            Read_Game_Options(NULL);
-                        } else {
-                            Read_Game_Options("C&CSPAWN.INI");
-                        }
-
-                        if (Server) {
-
-                            CCDebugString("C&C95 - About to call Server_Remote_Connect.\n");
-                            if (Server_Remote_Connect()) {
-                                CCDebugString("C&C95 - Server_Remote_Connect returned success.\n");
-                                break;
-                            } else {
-                                /*
-                                ** We failed to connect to the other player
-                                *
-                                *   SEND FAILURE PACKET TO WCHAT HERE !!!!!
-                                *
-                                */
-                                Winsock.Close();
-                                GameToPlay = GAME_NORMAL;
-                                selection = SEL_NONE;
-                                DDEServer.Delete_MPlayer_Game_Info(); // Make sure we dont go round in an infinite loop
-                                // Special.IsFromWChat = false;
-                                break;
-                            }
-                        } else {
-                            CCDebugString("C&C95 - About to call Client_Remote_Connect.\n");
-                            if (Client_Remote_Connect()) {
-                                CCDebugString("C&C95 - Client_Remote_Connect returned success.\n");
-                                break;
-                            } else {
-                                /*
-                                ** We failed to connect to the other player
-                                *
-                                *   SEND FAILURE PACKET TO WCHAT HERE !!!!!
-                                *
-                                */
-                                Winsock.Close();
-                                GameToPlay = GAME_NORMAL;
-                                selection = SEL_NONE;
-                                DDEServer.Delete_MPlayer_Game_Info(); // Make sure we dont go round in an infinite loop
-                                // Special.IsFromWChat = false;
-                                break;
-                            }
-                        }
-
-                    } else {
-                        GameToPlay = Select_MPlayer_Game();
-                        if (GameToPlay == GAME_NORMAL) { // 'Cancel'
-                            display = true;
-                            selection = SEL_NONE;
-                        }
-                    }
                     break;
 
 #endif // FORCE_WINSOCK
@@ -1580,9 +1390,7 @@ bool Select_Game(bool fade)
 #ifdef FORCE_WINSOCK
     if (GameToPlay == GAME_INTERNET) {
         CommProtocol = COMM_PROTOCOL_MULTI_E_COMP;
-        if (!Special.IsFromWChat) {
-            FrameSendRate = 5; // 3;
-        }
+        FrameSendRate = 5; // 3;
     }
 #endif // FORCE_WINSOCK
     /*
@@ -1733,12 +1541,7 @@ bool Select_Game(bool fade)
     */
 #ifdef FORCE_WINSOCK
     if (CommProtocol == COMM_PROTOCOL_MULTI_E_COMP && GameToPlay != GAME_NORMAL) {
-        if (!Special.IsFromWChat) {
-            MPlayerMaxAhead = FrameSendRate * 3; // 2;
-        } else {
-            MPlayerMaxAhead = WChatMaxAhead;
-            FrameSendRate = WChatSendRate;
-        }
+        MPlayerMaxAhead = FrameSendRate * 3; // 2;
     }
 #endif // FORCE_WINSOCK
 
@@ -2357,13 +2160,6 @@ bool Parse_Command_Line(int argc, char* argv[])
         if (strstr(string, "-480")) {
             ScreenHeight = 480;
             continue;
-        }
-
-        /*
-        ** Check for spawn from WChat
-        */
-        if (strstr(string, "-WCHAT")) {
-            SpawnedFromWChat = true;
         }
 
 #ifdef CHEAT_KEYS

@@ -88,11 +88,6 @@ public:
     unsigned IsTSpread : 1;
 
     /*
-    ** Flag that we were spawned from WChat.
-    */
-    unsigned IsFromWChat : 1;
-
-    /*
     **	If this flag is true, then the construction yard can undeploy back into an MCV.
     **	Used to override the rules setting.
     */

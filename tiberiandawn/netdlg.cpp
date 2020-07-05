@@ -92,7 +92,6 @@
 #include "function.h"
 #include <time.h>
 #include "tcpip.h"
-#include "ccdde.h"
 #define SHOW_MONO 0
 
 // ST = 12/17/2018 5:44PM
@@ -4237,8 +4236,6 @@ void Wait_For_Focus(void)
     }
 }
 
-extern bool Spawn_WChat(bool can_launch);
-
 /***********************************************************************************************
  * Net_Fake_New_Dialog -- Just like Net_New_Dialog but without the Dialog. For internet play   *
  *                                                                                             *
@@ -4574,9 +4571,7 @@ static int Net_Fake_New_Dialog(void)
             MPlayerGameName[0] = 0;
             process = false;
             rc = false;
-            Send_Data_To_DDE_Server("Hello", strlen("Hello"), DDEServerClass::DDE_CONNECTION_FAILED);
             GameStatisticsPacketSent = false;
-            Spawn_WChat(false);
             break;
 
         /*------------------------------------------------------------------
@@ -5162,9 +5157,7 @@ static int Net_Fake_Join_Dialog(void)
             while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0)
                 ;
 
-            Send_Data_To_DDE_Server("Hello", strlen("Hello"), DDEServerClass::DDE_CONNECTION_FAILED);
             GameStatisticsPacketSent = false;
-            Spawn_WChat(false);
             process = false;
             rc = -1;
 #if (0)

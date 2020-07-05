@@ -62,9 +62,6 @@
 #include "function.h"
 #ifdef WIN32
 #include "tcpip.h"
-#include "ccdde.h"
-
-extern bool SpawnedFromWChat;
 #endif
 extern int PreserveVQAScreen;
 
@@ -503,15 +500,7 @@ bool Read_Scenario(char* name)
                 GamePalette.Set(FADE_PALETTE_FAST, Call_Back);
                 RequiredCD = 3;
                 if (!Force_CD_Available(RequiredCD)) { // force Aftermath CD in drive.
-#ifndef WOLAPI_INTEGRATION
-#ifdef WIN32
-                    if (Special.IsFromWChat || SpawnedFromWChat) {
-                        char packet[10] = {"Hello"};
-                        Send_Data_To_DDE_Server(packet, strlen(packet), DDEServerClass::DDE_CONNECTION_FAILED);
-                    }
-#endif
-#endif
-                    if (!RunningAsDLL) { // PG
+                    if (!RunningAsDLL) {               // PG
                         Emergency_Exit(EXIT_FAILURE);
                     }
                 }

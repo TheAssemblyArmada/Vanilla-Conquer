@@ -39,7 +39,6 @@
 #include <io.h>
 
 #ifdef WIN32
-#include "ccdde.h"
 #include "ipx95.h"
 #endif // WIN32
 
@@ -188,27 +187,6 @@ int main(int argc, char* argv[])
 #ifndef REMASTER_BUILD
     DDSCAPS surface_capabilities;
 #endif
-#endif
-
-    /*
-    ** First thing to do is check if there is another instance of Red Alert already running
-    **  and if so, switch to the existing instance and terminate ourselves.
-    */
-    SpawnedFromWChat = false;
-#ifndef REMASTER_BUILD
-    if (RA95AlreadyRunning) { // Set in the DDEServer constructor
-        // MessageBox (NULL, "Error - attempt to restart Red Alert 95 when already running.", "Red Alert",
-        // MB_ICONEXCLAMATION|MB_OK);
-
-        HWND ccwindow;
-        ccwindow = FindWindowA(WINDOW_NAME, WINDOW_NAME);
-        if (ccwindow) {
-            SetForegroundWindow(ccwindow);
-            ShowWindow(ccwindow, SW_RESTORE);
-        }
-
-        return (EXIT_SUCCESS);
-    }
 #endif
 
 #endif
@@ -715,22 +693,6 @@ int main(int argc, char* argv[])
                 ini.Save(cfile);
             }
 
-#ifndef WOLAPI_INTEGRATION
-#ifdef WIN32
-            /*
-            ** If WChat has been trying to send us a game start packet then receive it and
-            ** flag that we were spawned from WCHat so we dont play the into movie.
-            */
-            if (DDEServer.Get_MPlayer_Game_Info()) {
-                Check_From_WChat(NULL);
-            } else {
-                // Check_From_WChat("C&CSPAWN.INI");
-                // if (Special.IsFromWChat){
-                //	DDEServer.Disable();
-                //}
-            }
-#endif // WIN32
-#endif
             /*
             **	If the intro is being run for the first time, then don't
             **	allow breaking out of it with the <ESC> key.

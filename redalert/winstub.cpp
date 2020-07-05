@@ -461,7 +461,6 @@ void Create_Main_Window(HANDLE instance, int command_show, int width, int height
     // End
 
     ShowWindow(hwnd, command_show);
-    ShowCommand = command_show;
     UpdateWindow(hwnd);
     SetFocus(hwnd);
     MainWindow = hwnd; // Save the handle to our main window
