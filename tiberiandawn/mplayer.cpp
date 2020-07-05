@@ -41,7 +41,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include "tcpip.h"
+#include "common/tcpip.h"
 
 static void Garble_Message(char* buf);
 

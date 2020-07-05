@@ -28,10 +28,10 @@ add_definitions(-DENGLISH -DTRUE_FALSE_DEFINED -DWIN32 -D_WINDOWS -D_CRT_SECURE_
 set(COMMON_LIBS winmm)
 
 set(VANILLA_DEFS "")
-set(VANILLA_LIBS wsock32 ws2_32 dsound ddraw dxguid)
+set(VANILLA_LIBS dsound ddraw dxguid)
 
 set(REMASTER_DEFS _USRDLL REMASTER_BUILD)
-set(REMASTER_LIBS wsock32 ws2_32)
+set(REMASTER_LIBS "")
 
 find_package(ClangFormat)
 include(ClangFormat)
@@ -49,6 +49,7 @@ option(BUILD_VANILLATD "Build Tiberian Dawn executable." ON)
 option(BUILD_VANILLARA "Build Red Alert executable." ON)
 option(MAP_EDITORTD "Include internal scenario editor in Tiberian Dawn build." OFF)
 option(MAP_EDITORRA "Include internal scenario editor in Red Alert build." OFF)
+option(NETWORKING "Enable network play." ON)
 
 if(NOT BUILD_VANILLATD AND MAP_EDTITORTD)
     message(WARNING "Internal scenario editor requires a Tiberian Dawn executable to be built, but it was not enabled.")
@@ -58,6 +59,11 @@ endif()
 if(NOT BUILD_VANILLARA AND MAP_EDTITORRA)
     message(WARNING "Internal scenario editor requires a Red Alert executable to be built, but it is not enabled.")
     set(BUILD_VANILLARA TRUE)
+endif()
+
+if(NETWORKING)
+    set(VANILLA_DEFS ${VANILLA_DEFS} NETWORKING)
+    set(VANILLA_LIBS ${VANILLA_LIBS} wsock32 ws2_32)
 endif()
 
 set(COMMON_SRC
@@ -113,6 +119,7 @@ target_link_libraries(common PUBLIC ${COMMON_LIBS})
 if(BUILD_REMASTERTD OR BUILD_REMASTERRA)
     add_library(commonr STATIC
         common/mouseww.cpp
+        common/tcpip_null.cpp
     )
     target_compile_definitions(commonr PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${REMASTER_DEFS})
     target_link_libraries(commonr PUBLIC common ${COMMON_LIBS} ${REMASTER_LIBS})
@@ -124,8 +131,9 @@ if(BUILD_VANILLATD OR BUILD_VANILLARA)
         common/mouseww.cpp
         common/soundio.cpp
         common/setvideomode.cpp
+        common/tcpip_null.cpp
     )
-
+    target_compile_definitions(commonv PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS})
     target_link_libraries(commonv PUBLIC common ${COMMON_LIBS} ${VANILLA_LIBS})
 endif()
 
@@ -635,12 +643,15 @@ endif()
 
 if(BUILD_VANILLARA)
     add_executable(VanillaRA ${REDALERT_SRC} ${REDALERT_HEADERS})
-    target_compile_definitions(VanillaRA PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS} WINSOCK_IPX)
+    target_compile_definitions(VanillaRA PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS})
     target_include_directories(VanillaRA PUBLIC . redalert/win32lib redalert)
     target_link_libraries(VanillaRA commonv ${VANILLA_LIBS} ${STATIC_LIBS})
     set_target_properties(VanillaRA PROPERTIES OUTPUT_NAME vanillara)
     if(MAP_EDITORRA)
         target_compile_definitions(VanillaRA PUBLIC SCENARIO_EDITOR INTERNAL_VERSION)
+    endif()
+    if(NETWORKING)
+        target_compile_definitions(VanillaRA PUBLIC WINSOCK_IPX)
     endif()
     # Control if we auto generate a console and which "main" function we link using MSVC.
     if(MSVC)
@@ -672,4 +683,10 @@ endif()
 
 if(MAP_EDITORRA)
     message(STATUS "  Include scenario editor functionality in the Red Alert executable.")
+endif()
+
+if(NETWORKING)
+    message(STATUS "  Networking is enabled.")
+else()
+    message(STATUS "  Networking is disabled.")
 endif()

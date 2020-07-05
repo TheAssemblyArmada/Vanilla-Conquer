@@ -59,7 +59,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include "tcpip.h"
+#include "common/tcpip.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

@@ -49,6 +49,8 @@
 #include <stdio.h>
 #include <svcguid.h>
 
+#ifdef NETWORKING
+
 /***********************************************************************************************
  * UDPInterfaceClass::UDPInterfaceClass -- Class constructor.                                  *
  *                                                                                             *
@@ -425,3 +427,5 @@ long UDPInterfaceClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
 
     return (0);
 }
+
+#endif // NETWORKING

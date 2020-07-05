@@ -57,6 +57,8 @@
 
 #include <stdio.h>
 
+#ifdef NETWORKING
+
 /***********************************************************************************************
  * WIC::WinsockInterfaceClass -- constructor for the WinsockInterfaceClass                     *
  *                                                                                             *
@@ -557,3 +559,67 @@ bool WinsockInterfaceClass::Set_Socket_Options(void)
 
     return (true);
 }
+
+#else // NETWORKING
+
+WinsockInterfaceClass::WinsockInterfaceClass(void)
+{
+}
+
+WinsockInterfaceClass::~WinsockInterfaceClass(void)
+{
+}
+
+void WinsockInterfaceClass::Close(void)
+{
+}
+
+void WinsockInterfaceClass::Close_Socket(void)
+{
+}
+
+bool WinsockInterfaceClass::Start_Listening(void)
+{
+    return false;
+}
+
+void WinsockInterfaceClass::Stop_Listening(void)
+{
+}
+
+void WinsockInterfaceClass::Discard_In_Buffers(void)
+{
+}
+
+void WinsockInterfaceClass::Discard_Out_Buffers(void)
+{
+}
+
+bool WinsockInterfaceClass::Init(void)
+{
+    return false;
+}
+
+int WinsockInterfaceClass::Read(void* buffer, int& buffer_len, void* address, int& address_len)
+{
+    return 0;
+}
+
+void WinsockInterfaceClass::WriteTo(void* buffer, int buffer_len, void* address)
+{
+}
+
+void WinsockInterfaceClass::Broadcast(void* buffer, int buffer_len)
+{
+}
+
+void WinsockInterfaceClass::Clear_Socket_Error(SOCKET socket)
+{
+}
+
+bool WinsockInterfaceClass::Set_Socket_Options(void)
+{
+    return false;
+}
+
+#endif

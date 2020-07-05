@@ -37,7 +37,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include "tcpip.h"
+#include "common/tcpip.h"
 
 void output(short, short)
 {

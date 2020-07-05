@@ -91,7 +91,7 @@ B<A> test;
 #ifdef WINSOCK_IPX
 #include "wsproto.h"
 #else // WINSOCK_IPX
-#include "tcpip.h"
+#include "common/tcpip.h"
 #endif // WINSOCK_IPX
 #else
 #include "fakesock.h"

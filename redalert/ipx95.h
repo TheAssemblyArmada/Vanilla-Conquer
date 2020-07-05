@@ -71,13 +71,13 @@ extern IPXCloseSocket95Type IPX_Close_Socket95;
 extern IPXGetConnectionNumber95Type IPX_Get_Connection_Number95;
 extern IPXGetLocalTarget95 IPX_Get_Local_Target95;
 //}
+#endif
 
 /*
 ** Functions
 */
 bool Load_IPX_Dll(void);
 void Unload_IPX_Dll(void);
-#endif
 
 #if (1)
 extern "C" {

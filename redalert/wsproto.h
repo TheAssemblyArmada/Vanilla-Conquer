@@ -39,7 +39,9 @@
 /*
 ** Include standard Winsock 1.0 header file.
 */
+#ifdef NETWORKING
 #include <winsock.h>
+#endif
 
 /*
 ** Misc defines

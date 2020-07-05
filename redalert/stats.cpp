@@ -40,7 +40,7 @@
 #ifdef WIN32
 
 #include "function.h"
-#include "tcpip.h"
+#include "common/tcpip.h"
 #include "common/packet.h"
 
 #define FIELD_PACKET_TYPE      "TYPE"

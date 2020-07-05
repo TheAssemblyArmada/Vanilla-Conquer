@@ -42,7 +42,7 @@
 
 #include "function.h"
 #include "loaddlg.h"
-#include "tcpip.h"
+#include "common/tcpip.h"
 #include <conio.h>
 #include <dos.h>
 
