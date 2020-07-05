@@ -52,10 +52,10 @@
  * TMC::Copy_To_In_Buffer -- copy data from our winsock buffer             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifdef WIN32
-
 #include "function.h"
-#include "tcpip.h"
+#include "common/tcpip.h"
+
+#ifdef NETWORKING
 
 /*
 ** Nasty globals
@@ -843,4 +843,4 @@ void TcpipManagerClass::Clear_Socket_Error(SOCKET socket)
     setsockopt(socket, SOL_SOCKET, SO_ERROR, (char*)&error_code, length);
 }
 
-#endif // WIN32
+#endif

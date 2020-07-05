@@ -35,7 +35,9 @@
 #define __FIELD_H
 
 #include <windows.h>
+#ifdef NETWORKING
 #include <winsock.h>
+#endif
 
 #define FIELD_HEADER_SIZE (sizeof(FieldClass) - (sizeof(void*) * 2))
 

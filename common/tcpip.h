@@ -40,6 +40,8 @@
  *                                                                         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <windows.h>
+
 extern bool Server;
 
 #define FORCE_WINSOCK 1

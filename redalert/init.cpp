@@ -59,13 +59,9 @@
 #include "function.h"
 #include "loaddlg.h"
 #ifdef WIN32
-#ifdef WINSOCK_IPX
 #include "wsproto.h"
 #include "wspudp.h"
 #include "internet.h"
-#else // WINSOCK_IPX
-#include "tcpip.h"
-#endif // WINSOCK_IPX
 
 #endif
 #include <conio.h>
@@ -431,9 +427,7 @@ bool Init_Game(int, char*[])
     return (true);
 }
 
-#ifdef WINSOCK_IPX //	Steve Tall missed this one - ajw
 extern bool Get_Broadcast_Addresses(void);
-#endif
 
 /***********************************************************************************************
  * Select_Game -- The game's main menu                                                         *
@@ -997,7 +991,9 @@ bool Select_Game(bool fade)
                 case GAME_INTERNET:
                     if (PacketTransport)
                         delete PacketTransport;
+#ifdef NETWORKING
                     PacketTransport = new UDPInterfaceClass;
+#endif
                     assert(PacketTransport != NULL);
                     if (PacketTransport->Init()) {
                         switch (WOL_Main()) {
@@ -1043,27 +1039,13 @@ bool Select_Game(bool fade)
                     /*
                     ** Init network system & remote-connect
                     */
-#ifdef WINSOCK_IPX
                     if (PacketTransport)
                         delete PacketTransport;
-                    //							if (WWMessageBox().Process("Select a protocol to use for network play.", "UDP",
-                    //"IPX")) {
+#ifdef NETWORKING
                     PacketTransport = new UDPInterfaceClass;
+#endif
                     assert(PacketTransport != NULL);
-                    //							}else{
-                    //								PacketTransport = new UDPInterfaceClass;	//IPXInterfaceClass;
-                    //								assert ( PacketTransport != NULL);
-                    //								if (!Get_Broadcast_Addresses()) {
-                    //									Session.Type = GAME_NORMAL;
-                    //									display = true;
-                    //									selection = SEL_NONE;
-                    //									delete PacketTransport;
-                    //									PacketTransport = NULL;
-                    //									break;
-                    //								}
-                    //							}
 
-#endif // WINSOCK_IPX
                     WWDebugString("RA95 - About to call Init_Network.\n");
                     if (Session.Type == GAME_IPX && Init_Network() && Remote_Connect()) {
 #ifdef FIXIT_VERSION_3
@@ -1077,10 +1059,8 @@ bool Select_Game(bool fade)
                         Session.Type = GAME_NORMAL;
                         display = true;
                         selection = SEL_NONE;
-#ifdef WINSOCK_IPX
                         delete PacketTransport;
                         PacketTransport = NULL;
-#endif // WINSOCK_IPX
                     }
                     break;
 

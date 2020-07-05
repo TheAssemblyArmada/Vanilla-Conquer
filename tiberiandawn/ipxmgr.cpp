@@ -65,7 +65,7 @@
 
 #include "function.h"
 #include "ipx95.h"
-#include "tcpip.h"
+#include "common/tcpip.h"
 
 /***************************************************************************
  * IPXManagerClass::IPXManagerClass -- class constructor                   *

@@ -43,7 +43,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include "tcpip.h"
+#include "common/tcpip.h"
 
 /***************************************************************************
  * IPXAddressClass::IPXAddressClass -- class constructor                   *

@@ -48,7 +48,7 @@
 #include "function.h"
 #include "common/wincomm.h"
 #include "common/modemreg.h"
-#include "tcpip.h"
+#include "common/tcpip.h"
 
 // PG_TO_FIX
 #if (0)

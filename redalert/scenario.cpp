@@ -61,7 +61,7 @@
 
 #include "function.h"
 #ifdef WIN32
-#include "tcpip.h"
+#include "common/tcpip.h"
 #endif
 extern int PreserveVQAScreen;
 

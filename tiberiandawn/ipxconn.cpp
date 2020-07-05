@@ -45,7 +45,7 @@
 
 #include "function.h"
 #include "ipx95.h"
-#include "tcpip.h"
+#include "common/tcpip.h"
 
 /*
 ********************************* Globals ***********************************

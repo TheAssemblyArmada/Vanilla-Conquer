@@ -48,7 +48,7 @@
 #else
 
 #ifdef WIN32
-#include "tcpip.h"
+#include "common/tcpip.h"
 #else
 #include "fakesock.h"
 #endif // WIN32

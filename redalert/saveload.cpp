@@ -47,7 +47,7 @@
 #include "function.h"
 #include "vortex.h"
 #ifdef WIN32
-#include "tcpip.h"
+#include "common/tcpip.h"
 
 //#include "WolDebug.h"
 

@@ -73,7 +73,7 @@
  *   Print_Framesync_Values -- displays frame-sync variables               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include "function.h"
-#include "tcpip.h"
+#include "common/tcpip.h"
 
 /********************************** Defines *********************************/
 #define SHOW_MONO 1

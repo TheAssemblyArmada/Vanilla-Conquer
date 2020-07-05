@@ -120,6 +120,13 @@ inline int max(int a, int b)
 //#define WIN32 =1	//_LEAN_AND_MEAN
 #include <windows.h>
 
+#ifndef NETWORKING
+#define htonl(x) x
+#define htons(x) x
+#define ntohl(x) x
+#define ntohs(x) x
+#endif
+
 /**********************************************************************
 **	If the following define is enabled, then the memory checking code
 **	will be disabled.

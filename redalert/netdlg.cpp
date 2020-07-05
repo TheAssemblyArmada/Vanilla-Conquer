@@ -124,7 +124,7 @@ bool Remote_Connect(void)
 #ifdef WINSOCK_IPX
 #include "WSProto.h"
 #else // WINSOCK_IPX
-#include "tcpip.h"
+#include "common/tcpip.h"
 #endif // WINSOCK_IPX
 #include "ccdde.h"
 #else // WIN32

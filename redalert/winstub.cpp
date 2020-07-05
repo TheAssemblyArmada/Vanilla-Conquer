@@ -47,7 +47,7 @@
 #ifdef WINSOCK_IPX
 #include "wsproto.h"
 #else // WINSOCK_IPX
-#include "tcpip.h"
+#include "common/tcpip.h"
 #include "ipx95.h"
 #endif // WINSOCK_IPX
 

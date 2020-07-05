@@ -139,6 +139,13 @@ inline int max(int a, int b)
 }
 #endif
 
+#ifndef NETWORKING
+#define htonl(x) x
+#define htons(x) x
+#define ntohl(x) x
+#define ntohs(x) x
+#endif
+
 /**********************************************************************
 **	This class is solely used as a parameter to a constructor that does
 **	absolutely no initialization to the object being constructed. By using
