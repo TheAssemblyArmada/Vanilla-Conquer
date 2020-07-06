@@ -55,6 +55,5 @@
 #include "common/timer.h"
 #include "common/ww_win.h"
 #include "common/wsa.h"
-#include "common/profile.h"
 
 #endif // WWLIB32_H
