@@ -433,8 +433,7 @@ void OptionsClass::Adjust_Palette(void* oldpal,
                                   unsigned char tint,
                                   unsigned char contrast) const
 {
-// ST - 1/3/2019 10:49AM
-#if (0)
+#ifndef REMASTER_BUILD
     int index;
     unsigned h, s, v;
     unsigned r, g, b;

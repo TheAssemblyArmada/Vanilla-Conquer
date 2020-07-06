@@ -197,6 +197,7 @@ set(TIBDAWN_SRC
     tiberiandawn/jshell.cpp
     tiberiandawn/keyframe.cpp
     tiberiandawn/layer.cpp
+    tiberiandawn/lib.cpp
     tiberiandawn/link.cpp
     tiberiandawn/list.cpp
     tiberiandawn/loaddlg.cpp
