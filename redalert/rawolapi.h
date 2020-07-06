@@ -29,7 +29,6 @@
 
 #include "function.h"
 
-//#include "cominit.h"
 #include <stdio.h>
 
 //	From OBJBASE.H
