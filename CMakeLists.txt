@@ -146,7 +146,6 @@ set(TIBDAWN_SRC
     tiberiandawn/dialog.cpp
     tiberiandawn/display.cpp
     tiberiandawn/door.cpp
-    tiberiandawn/dpmi.cpp
     tiberiandawn/drive.cpp
     tiberiandawn/edit.cpp
     tiberiandawn/ending.cpp
@@ -268,7 +267,6 @@ set(TIBDAWN_SRC
     tiberiandawn/wwkeyboard.cpp
     tiberiandawn/morphpal.cpp
     tiberiandawn/newdel.cpp
-    tiberiandawn/regionsz.cpp
     tiberiandawn/winstub.cpp
 )
 
@@ -363,11 +361,9 @@ set(REDALERT_SRC
     redalert/cell.cpp
     redalert/checkbox.cpp
     redalert/cheklist.cpp
-    redalert/class.cpp
     redalert/colrlist.cpp
     redalert/combat.cpp
     redalert/combuf.cpp
-    redalert/cominit.cpp
     redalert/comqueue.cpp
     redalert/confdlg.cpp
     redalert/connect.cpp
@@ -390,7 +386,6 @@ set(REDALERT_SRC
     redalert/dibutil.cpp
     redalert/display.cpp
     redalert/door.cpp
-    redalert/dpmi.cpp
     redalert/drive.cpp
     redalert/drop.cpp
     redalert/dynavec.cpp
