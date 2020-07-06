@@ -228,7 +228,6 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
         AllSurfaces.Release();
         if (!InDebugger)
             Reset_Video_Mode();
-        Stop_Profiler();
         PostQuitMessage(0);
 
         /*

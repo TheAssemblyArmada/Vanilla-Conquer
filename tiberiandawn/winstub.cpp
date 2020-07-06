@@ -268,8 +268,6 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
             CCDebugString("C&C95 - About to reset the video mode.\n");
             Reset_Video_Mode();
         }
-        CCDebugString("C&C95 - About to stop the profiler.\n");
-        Stop_Profiler();
         CCDebugString("C&C95 - Posting the quit message.\n");
         PostQuitMessage(0);
         /*

@@ -270,7 +270,6 @@ set(TIBDAWN_SRC
     tiberiandawn/newdel.cpp
     tiberiandawn/regionsz.cpp
     tiberiandawn/winstub.cpp
-    tiberiandawn/mem.cpp
 )
 
 if(CMAKE_CONFIGURATION_TYPES)
