@@ -1873,7 +1873,7 @@ void TemplateTypeClass::Display(int x, int y, WindowNumberType window, HousesTyp
         x -= (w / 2) * ICON_PIXEL_W;
         y -= (h / 2) * ICON_PIXEL_H;
     }
-    x += WindowList[window][WINDOWX] << 3;
+    x += WindowList[window][WINDOWX];
     y += WindowList[window][WINDOWY];
 
     Mem_Copy(Get_Icon_Set_Map(Get_Image_Data()), map, Width * Height);

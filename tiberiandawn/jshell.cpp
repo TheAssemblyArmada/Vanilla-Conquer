@@ -116,9 +116,9 @@ void* Small_Icon(void const* iconptr, int iconnum)
  *=============================================================================================*/
 void Set_Window(int window, int x, int y, int w, int h)
 {
-    WindowList[window][WINDOWWIDTH] = w >> 3;
+    WindowList[window][WINDOWWIDTH] = w;
     WindowList[window][WINDOWHEIGHT] = h;
-    WindowList[window][WINDOWX] = x >> 3;
+    WindowList[window][WINDOWX] = x;
     WindowList[window][WINDOWY] = y;
 }
 
