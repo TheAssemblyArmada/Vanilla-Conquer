@@ -337,7 +337,7 @@ void SmudgeTypeClass::Display(int x, int y, WindowNumberType window, HousesType)
 {
     void const* ptr = Get_Image_Data();
 
-    x += WindowList[window][WINDOWX] << 3;
+    x += WindowList[window][WINDOWX];
     y += WindowList[window][WINDOWY];
 
     if (ptr) {

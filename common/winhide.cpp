@@ -60,9 +60,9 @@ void Window_Hide_Mouse(int window)
 {
     int x, y, w, h;
 
-    x = WindowList[window][WINDOWX] << 3;
+    x = WindowList[window][WINDOWX];
     y = WindowList[window][WINDOWY];
-    w = WindowList[window][WINDOWWIDTH] << 3;
+    w = WindowList[window][WINDOWWIDTH];
     h = WindowList[window][WINDOWHEIGHT];
     //	Conditional_Hide_Mouse(x,y,x+w-1,y+h-1);
 }
