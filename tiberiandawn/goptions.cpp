@@ -253,7 +253,7 @@ void GameOptionsClass::Process(void)
 #ifdef DEMO
             Version_Number();
             Fancy_Text_Print("DEMO%s",
-                             ((WindowList[WINDOW_EDITOR][WINDOWX] + WindowList[WINDOW_EDITOR][WINDOWWIDTH]) << 3)
+                             (WindowList[WINDOW_EDITOR][WINDOWX] + WindowList[WINDOW_EDITOR][WINDOWWIDTH])
                                  - 3 * resfactor,
                              WindowList[WINDOW_EDITOR][WINDOWY] + WindowList[WINDOW_EDITOR][WINDOWHEIGHT]
                                  - ((GameToPlay == GAME_NORMAL) ? (32 * resfactor) : (24 * resfactor)),
@@ -264,7 +264,7 @@ void GameOptionsClass::Process(void)
                              VersionText);
 #else
             Fancy_Text_Print("%s\rV.%d%s",
-                             ((WindowList[WINDOW_EDITOR][WINDOWX] + WindowList[WINDOW_EDITOR][WINDOWWIDTH]) << 3)
+                             (WindowList[WINDOW_EDITOR][WINDOWX] + WindowList[WINDOW_EDITOR][WINDOWWIDTH])
                                  - 3 * resfactor,
                              WindowList[WINDOW_EDITOR][WINDOWY] + WindowList[WINDOW_EDITOR][WINDOWHEIGHT]
                                  - ((GameToPlay == GAME_NORMAL) ? (32 * resfactor) : (24 * resfactor)),

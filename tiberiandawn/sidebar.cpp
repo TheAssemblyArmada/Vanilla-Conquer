@@ -189,9 +189,9 @@ void SidebarClass::One_Time(void)
     **	code so that as the sidebar buildable buttons scroll, they get properly
     **	clipped at the top and bottom edges.
     */
-    WindowList[WINDOW_SIDEBAR][WINDOWX] = (SideX + PowWidth) >> 3;
+    WindowList[WINDOW_SIDEBAR][WINDOWX] = SideX + PowWidth;
     WindowList[WINDOW_SIDEBAR][WINDOWY] = SideY + 1 + TopHeight;
-    WindowList[WINDOW_SIDEBAR][WINDOWWIDTH] = SideWidth >> 3;
+    WindowList[WINDOW_SIDEBAR][WINDOWWIDTH] = SideWidth;
     WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = (MaxVisible * (StripClass::OBJECT_HEIGHT * factor)) - 1;
 
     /*
@@ -1853,7 +1853,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                 IsTheaterShape = true; // This shape is theater specific
                 CC_Draw_Shape(shapefile,
                               shapenum,
-                              x - (WindowList[WINDOW_SIDEBAR][WINDOWX] * 8) + LeftEdgeOffset,
+                              x - WindowList[WINDOW_SIDEBAR][WINDOWX] + LeftEdgeOffset,
                               y - WindowList[WINDOW_SIDEBAR][WINDOWY],
                               WINDOW_SIDEBAR,
                               SHAPE_NORMAL | SHAPE_WIN_REL | (remapper ? SHAPE_FADING : SHAPE_NORMAL),
@@ -1867,7 +1867,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                 if (darken) {
                     CC_Draw_Shape(ClockShapes,
                                   0,
-                                  x - (WindowList[WINDOW_SIDEBAR][WINDOWX] * 8) + LeftEdgeOffset,
+                                  x - WindowList[WINDOW_SIDEBAR][WINDOWX] + LeftEdgeOffset,
                                   y - WindowList[WINDOW_SIDEBAR][WINDOWY],
                                   WINDOW_SIDEBAR,
                                   SHAPE_NORMAL | SHAPE_WIN_REL | SHAPE_GHOST,
@@ -1888,7 +1888,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                     */
                     CC_Draw_Shape(ObjectTypeClass::PipShapes,
                                   PIP_READY,
-                                  (x - (WindowList[WINDOW_SIDEBAR][WINDOWX] * 8)) + LeftEdgeOffset + (ObjectWidth >> 1),
+                                  (x - WindowList[WINDOW_SIDEBAR][WINDOWX]) + LeftEdgeOffset + (ObjectWidth >> 1),
                                   (y - WindowList[WINDOW_SIDEBAR][WINDOWY]) + ObjectHeight
                                       - Get_Build_Frame_Height(ObjectTypeClass::PipShapes) - 8,
                                   WINDOW_SIDEBAR,
@@ -1898,7 +1898,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                 } else {
                     CC_Draw_Shape(ClockShapes,
                                   stage + 1,
-                                  x - (WindowList[WINDOW_SIDEBAR][WINDOWX] * 8) + LeftEdgeOffset,
+                                  x - WindowList[WINDOW_SIDEBAR][WINDOWX] + LeftEdgeOffset,
                                   y - WindowList[WINDOW_SIDEBAR][WINDOWY],
                                   WINDOW_SIDEBAR,
                                   SHAPE_NORMAL | SHAPE_WIN_REL | SHAPE_GHOST,
@@ -1910,8 +1910,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                     if (factory && !factory->Is_Building()) {
                         CC_Draw_Shape(ObjectTypeClass::PipShapes,
                                       PIP_HOLDING,
-                                      (x - (WindowList[WINDOW_SIDEBAR][WINDOWX] * 8)) + LeftEdgeOffset
-                                          + (ObjectWidth >> 1),
+                                      (x - WindowList[WINDOW_SIDEBAR][WINDOWX]) + LeftEdgeOffset + (ObjectWidth >> 1),
                                       (y - WindowList[WINDOW_SIDEBAR][WINDOWY]) + ObjectHeight
                                           - Get_Build_Frame_Height(ObjectTypeClass::PipShapes)
                                           - 8, // Moved up now that icons have names on them

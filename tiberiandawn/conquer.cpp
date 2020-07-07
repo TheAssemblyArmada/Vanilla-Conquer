@@ -2820,9 +2820,9 @@ void CC_Draw_Shape(void const* shapefile,
 
         if (shape_size) {
             GraphicViewPortClass draw_window(LogicPage->Get_Graphic_Buffer(),
-                                             (WindowList[window][WINDOWX] << 3) + LogicPage->Get_XPos(),
+                                             WindowList[window][WINDOWX] + LogicPage->Get_XPos(),
                                              WindowList[window][WINDOWY] + LogicPage->Get_YPos(),
-                                             WindowList[window][WINDOWWIDTH] << 3,
+                                             WindowList[window][WINDOWWIDTH],
                                              WindowList[window][WINDOWHEIGHT]);
 
             shape_pointer = (char*)shape_size;
@@ -2838,7 +2838,7 @@ void CC_Draw_Shape(void const* shapefile,
 
             predoffset = Frame;
 
-            if (x > (WindowList[window][WINDOWWIDTH] << 2)) {
+            if (x > WindowList[window][WINDOWWIDTH]) {
                 predoffset = -predoffset;
             }
 

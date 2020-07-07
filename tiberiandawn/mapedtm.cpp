@@ -2133,7 +2133,7 @@ void MapEditClass::Draw_Member(TechnoTypeClass const* ptr, int index, int quant,
 
     WindowList[WINDOW_EDITOR][WINDOWX] = 0;
     WindowList[WINDOW_EDITOR][WINDOWY] = 0;
-    WindowList[WINDOW_EDITOR][WINDOWWIDTH] = 640 / 8;
+    WindowList[WINDOW_EDITOR][WINDOWWIDTH] = 640;
     WindowList[WINDOW_EDITOR][WINDOWHEIGHT] = 400;
     Change_Window((int)WINDOW_EDITOR);
 
@@ -2165,9 +2165,9 @@ void MapEditClass::Draw_Member(TechnoTypeClass const* ptr, int index, int quant,
 	/*
 	**	Change the window to this box.
 	*/
-	WindowList[WINDOW_EDITOR][WINDOWX] = x >> 3;
+	WindowList[WINDOW_EDITOR][WINDOWX] = x;
 	WindowList[WINDOW_EDITOR][WINDOWY] = y;
-	WindowList[WINDOW_EDITOR][WINDOWWIDTH] = D_PICTURE_W >> 3;
+	WindowList[WINDOW_EDITOR][WINDOWWIDTH] = D_PICTURE_W;
 	WindowList[WINDOW_EDITOR][WINDOWHEIGHT] = D_PICTURE_H;
 	Change_Window((int)WINDOW_EDITOR);
 

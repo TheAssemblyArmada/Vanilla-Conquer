@@ -259,9 +259,9 @@ void Window_Box(WindowNumberType window, BoxStyleEnum style)
         {0, 1}   // 10 Simple 1 pixel box.
     };
 
-    x = WindowList[window][WINDOWX] << 3;
+    x = WindowList[window][WINDOWX];
     y = WindowList[window][WINDOWY];
-    w = WindowList[window][WINDOWWIDTH] << 3;
+    w = WindowList[window][WINDOWWIDTH];
     h = WindowList[window][WINDOWHEIGHT];
 
     /*

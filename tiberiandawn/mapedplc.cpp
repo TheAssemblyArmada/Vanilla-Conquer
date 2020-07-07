@@ -542,9 +542,9 @@ int MapEditClass::Placement_Dialog(void)
             - reset the window dimensions
             ------------------------------------------------------------------*/
             if (display >= REDRAW_OBJECT) {
-                WindowList[WINDOW_EDITOR][WINDOWX] = D_PICTURE_X >> 3;
+                WindowList[WINDOW_EDITOR][WINDOWX] = D_PICTURE_X;
                 WindowList[WINDOW_EDITOR][WINDOWY] = D_PICTURE_Y;
-                WindowList[WINDOW_EDITOR][WINDOWWIDTH] = D_PICTURE_W >> 3;
+                WindowList[WINDOW_EDITOR][WINDOWWIDTH] = D_PICTURE_W;
                 WindowList[WINDOW_EDITOR][WINDOWHEIGHT] = D_PICTURE_H;
                 Change_Window((int)WINDOW_EDITOR);
                 Draw_Box(D_PICTURE_X, D_PICTURE_Y, D_PICTURE_W, D_PICTURE_H, BOXSTYLE_GREEN_DOWN, true);
