@@ -30,8 +30,8 @@
  *   WWMouseClass::WWMouseClass -- Constructor for the Mouse Class                                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "mouseww.h"
-#include "wwmouse.h"
+#include "common/mouseww.h"
+#include "common/wwmouse.h"
 #include <mmsystem.h>
 
 static WWMouseClass* _Mouse = NULL;

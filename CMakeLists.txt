@@ -77,7 +77,6 @@ set(COMMON_SRC
     common/load.cpp
     common/loadfont.cpp
     common/loadpal.cpp
-    common/mouseww.cpp
     common/dipthong.cpp
     common/wsa.cpp
     common/_diptabl.cpp
@@ -268,6 +267,7 @@ set(TIBDAWN_SRC
     tiberiandawn/morphpal.cpp
     tiberiandawn/newdel.cpp
     tiberiandawn/winstub.cpp
+    tiberiandawn/mouseww.cpp
 )
 
 if(CMAKE_CONFIGURATION_TYPES)
@@ -577,6 +577,7 @@ set(REDALERT_SRC
     redalert/wspudp.cpp
     redalert/xpipe.cpp
     redalert/xstraw.cpp
+    redalert/mouseww.cpp
 )
 
 if(CMAKE_CONFIGURATION_TYPES)
