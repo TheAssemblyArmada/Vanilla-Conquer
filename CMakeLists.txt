@@ -97,9 +97,18 @@ file(GLOB_RECURSE COMMON_HEADERS "common/*.h")
 add_library(common STATIC ${COMMON_SRC} ${COMMON_HEADERS})
 target_link_libraries(common PUBLIC winmm)
 
+if(BUILD_REMASTERTD OR BUILD_REMASTERRA)
+    add_library(commonr STATIC
+        common/mouseww.cpp
+    )
+    target_compile_definitions(commonr PUBLIC REMASTER_BUILD)
+    target_link_libraries(commonr PUBLIC common winmm)
+endif()
+
 # These options currently require directx components from the aug 2007 SDK.
 if(BUILD_VANILLATD OR BUILD_VANILLARA)
     add_library(commonv STATIC
+        common/mouseww.cpp
         common/soundio.cpp
         common/setvideomode.cpp
     )
@@ -302,7 +311,7 @@ if(BUILD_REMASTERTD)
     )
     target_compile_definitions(TiberianDawn PUBLIC TRUE_FALSE_DEFINED WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _USRDLL TIBERIANDAWN_EXPORTS REMASTER_BUILD)
     target_include_directories(TiberianDawn PUBLIC . tiberiandawn/win32lib tiberiandawn)
-    target_link_libraries(TiberianDawn common wsock32 ws2_32 winmm ${STATIC_LIBS})
+    target_link_libraries(TiberianDawn commonr wsock32 ws2_32 winmm ${STATIC_LIBS})
     set_target_properties(TiberianDawn PROPERTIES PREFIX "")
 endif()
 
@@ -611,7 +620,7 @@ if(BUILD_REMASTERRA)
     )
     target_compile_definitions(RedAlert PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _USRDLL REDALERT_EXPORTS REMASTER_BUILD)
     target_include_directories(RedAlert PUBLIC . redalert/win32lib redalert)
-    target_link_libraries(RedAlert common wsock32 ws2_32 winmm ${STATIC_LIBS})
+    target_link_libraries(RedAlert commonr wsock32 ws2_32 winmm ${STATIC_LIBS})
     set_target_properties(RedAlert PROPERTIES PREFIX "")
 endif()
 
