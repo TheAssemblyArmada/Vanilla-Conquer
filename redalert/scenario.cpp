@@ -1394,16 +1394,16 @@ bool Restate_Mission(char const* name, int button1, int button2)
 int BGMessageBox(char const* msg, int btn1, int btn2)
 {
 #define BUFFSIZE 511
-    char buffer[BUFFSIZE];
-    int retval;
-    bool process;     // loop while true
-    KeyNumType input; // user input
-    int selection;
-    bool pressed;
-    int curbutton;
-    TextButtonClass* buttons[3];
-    BOOL display; // display level
-    int realval[5];
+    char buffer[BUFFSIZE] = {0};
+    int retval = 0;
+    bool process = false;       // loop while true
+    KeyNumType input = KN_NONE; // user input
+    int selection = 0;
+    bool pressed = false;
+    int curbutton = 0;
+    TextButtonClass* buttons[3] = {0};
+    BOOL display = false; // display level
+    int realval[5] = {0};
     int morebutton = 3; // which button says "more": 2 or 3?
 
     const char* b1txt = Text_String(btn1);
