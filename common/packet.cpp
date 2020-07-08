@@ -33,14 +33,21 @@
  *   PacketClass::Add_Field -- Adds a FieldClass entry to head of packet li*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include <stdlib.h>
-//#include <mem.h>
 #include <string.h>
 
-// enum {false=0,true=1};
-// typedef int bool;
-
-#include "function.h"
 #include "packet.h"
+
+#ifdef NOMINMAX
+inline int min(int a, int b)
+{
+    return a < b ? a : b;
+}
+
+inline int max(int a, int b)
+{
+    return a > b ? a : b;
+}
+#endif
 
 /**************************************************************************
  * PACKETCLASS::~PACKETCLASS -- destroys a packet class be freeing list   *
