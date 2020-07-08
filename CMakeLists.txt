@@ -91,6 +91,8 @@ set(COMMON_SRC
     common/writepcx.cpp
     common/delay.cpp
     common/file.cpp
+    common/packet.cpp
+    common/field.cpp
 )
 
 file(GLOB_RECURSE COMMON_HEADERS "common/*.h")
@@ -163,7 +165,6 @@ set(TIBDAWN_SRC
     tiberiandawn/expand.cpp
     tiberiandawn/facing.cpp
     tiberiandawn/factory.cpp
-    tiberiandawn/field.cpp
     tiberiandawn/findpath.cpp
     tiberiandawn/flasher.cpp
     tiberiandawn/fly.cpp
@@ -226,7 +227,6 @@ set(TIBDAWN_SRC
     tiberiandawn/odata.cpp
     tiberiandawn/options.cpp
     tiberiandawn/overlay.cpp
-    tiberiandawn/packet.cpp
     tiberiandawn/power.cpp
     tiberiandawn/profile.cpp
     tiberiandawn/queue.cpp
@@ -407,7 +407,6 @@ set(REDALERT_SRC
     redalert/face.cpp
     redalert/facing.cpp
     redalert/factory.cpp
-    redalert/field.cpp
     redalert/findpath.cpp
     redalert/fixed.cpp
     redalert/flasher.cpp
@@ -488,7 +487,6 @@ set(REDALERT_SRC
     redalert/odata.cpp
     redalert/options.cpp
     redalert/overlay.cpp
-    redalert/packet.cpp
     redalert/palettec.cpp
     redalert/pipe.cpp
     redalert/pk.cpp
