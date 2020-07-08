@@ -40,7 +40,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include <io.h> // for unlink
+#include "loaddlg.h"
+#include "common/file.h"
 
 /***********************************************************************************************
  * LoadOptionsClass::LoadOptionsClass -- class constructor                                     *
@@ -104,7 +105,7 @@ LoadOptionsClass::~LoadOptionsClass()
 int LoadOptionsClass::Process(void)
 {
     /*
-    **	Dialog & button dimensions
+    ** Dialog & button dimensions
     */
     int d_dialog_w = 250 * RESFACTOR;                        // dialog width
     int d_dialog_h = 156 * RESFACTOR;                        // dialog height
@@ -145,7 +146,7 @@ int LoadOptionsClass::Process(void)
     int d_cancel_y = d_dialog_y + d_dialog_h - d_cancel_h - d_margin;
 
     /*
-    **	Button enumerations
+    ** Button enumerations
     */
     enum
     {
@@ -158,7 +159,7 @@ int LoadOptionsClass::Process(void)
     };
 
     /*
-    **	Redraw values: in order from "top" to "bottom" layer of the dialog
+    ** Redraw values: in order from "top" to "bottom" layer of the dialog
     */
     typedef enum
     {
@@ -169,13 +170,13 @@ int LoadOptionsClass::Process(void)
     } RedrawType;
 
     /*
-    **	Dialog variables
+    ** Dialog variables
     */
     bool cancel = false;    // true = user cancels
     int list_ht = d_list_h; // adjusted list box height
 
     /*
-    **	Other Variables
+    ** Other Variables
     */
     int btn_txt;                        // text on the 'OK' button
     int btn_id;                         // ID of 'OK' button
@@ -187,7 +188,7 @@ int LoadOptionsClass::Process(void)
     int rc;                             // return code
 
     /*
-    **	Buttons
+    ** Buttons
     */
     ControlClass* commands = NULL; // the button list
 
@@ -235,14 +236,14 @@ int LoadOptionsClass::Process(void)
                       EditClass::ALPHANUMERIC);
 
     /*
-    **	Initialize.
+    ** Initialize.
     */
     Set_Logic_Page(SeenBuff);
 
     Fill_List(&listbtn);
 
     /*
-    **	Do nothing if list is empty.
+    ** Do nothing if list is empty.
     */
     if ((Style == LOAD || Style == WWDELETE) && listbtn.Count() == 0) {
         Clear_List(&listbtn);
@@ -251,7 +252,7 @@ int LoadOptionsClass::Process(void)
     }
 
     /*
-    **	Create the button list.
+    ** Create the button list.
     */
     commands = &button;
     cancelbtn.Add_Tail(*commands);
@@ -262,7 +263,7 @@ int LoadOptionsClass::Process(void)
     }
 
     /*
-    **	Main Processing Loop.
+    ** Main Processing Loop.
     */
     Keyboard->Clear();
     bool firsttime = true;
@@ -271,7 +272,7 @@ int LoadOptionsClass::Process(void)
     while (process) {
 
         /*
-        **	Invoke game callback.
+        ** Invoke game callback.
         */
         if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH) {
             Call_Back();
@@ -282,7 +283,6 @@ int LoadOptionsClass::Process(void)
             }
         }
 
-#ifdef WIN32
         /*
         ** If we have just received input focus again after running in the background then
         ** we need to redraw.
@@ -291,17 +291,16 @@ int LoadOptionsClass::Process(void)
             AllSurfaces.SurfacesRestored = FALSE;
             display = true;
         }
-#endif
 
         /*
-        **	Refresh display if needed.
+        ** Refresh display if needed.
         */
         if (display) {
 
-            /*
-            **	Display the dialog box.
-            */
             Hide_Mouse();
+            /*
+            ** Display the dialog box.
+            */
             if (display) {
                 Dialog_Box(d_dialog_x, d_dialog_y, d_dialog_w, d_dialog_h);
                 Draw_Caption(caption, d_dialog_x, d_dialog_y, d_dialog_w);
@@ -317,7 +316,7 @@ int LoadOptionsClass::Process(void)
             }
 
             /*
-            **	Redraw the buttons.
+            ** Redraw the buttons.
             */
             if (display) {
                 commands->Flag_List_To_Redraw();
@@ -327,16 +326,16 @@ int LoadOptionsClass::Process(void)
         }
 
         /*
-        **	Get user input.
+        ** Get user input.
         */
         KeyNumType input = commands->Input();
 
         /*
-        **	The first time through the processing loop, set the edit
-        **	gadget to have the focus if this is the save dialog. The
-        **	focus must be set here since the gadget list has changed
-        **	and this change will cause any previous focus setting to be
-        **	cleared by the input processing routine.
+        ** The first time through the processing loop, set the edit
+        ** gadget to have the focus if this is the save dialog. The
+        ** focus must be set here since the gadget list has changed
+        ** and this change will cause any previous focus setting to be
+        ** cleared by the input processing routine.
         */
         if (firsttime && Style == SAVE) {
             firsttime = false;
@@ -345,8 +344,8 @@ int LoadOptionsClass::Process(void)
         }
 
         /*
-        **	If the <RETURN> key was pressed, then default to the appropriate
-        **	action button according to the style of this dialog box.
+        ** If the <RETURN> key was pressed, then default to the appropriate
+        ** action button according to the style of this dialog box.
         */
         if (input == KN_RETURN || input == (BUTTON_EDIT | KN_BUTTON)) {
             ToggleClass* toggle = NULL;
@@ -354,18 +353,15 @@ int LoadOptionsClass::Process(void)
             case SAVE:
                 input = (KeyNumType)(BUTTON_SAVE | KN_BUTTON);
                 cancelbtn.Turn_Off();
-                //					cancelbtn.IsOn = false;
                 toggle = (ToggleClass*)commands->Extract_Gadget(BUTTON_SAVE);
                 if (toggle != NULL) {
                     toggle->Turn_On();
-                    //						toggle->IsOn = true;
                     toggle->IsPressed = true;
                 }
                 break;
 
             case LOAD:
                 input = (KeyNumType)(BUTTON_LOAD | KN_BUTTON);
-                //					cancelbtn.IsOn = false;
                 cancelbtn.Turn_Off();
                 toggle = (ToggleClass*)commands->Extract_Gadget(BUTTON_LOAD);
                 if (toggle != NULL) {
@@ -376,7 +372,6 @@ int LoadOptionsClass::Process(void)
 
             case WWDELETE:
                 input = (KeyNumType)(BUTTON_DELETE | KN_BUTTON);
-                //					cancelbtn.IsOn = false;
                 cancelbtn.Turn_Off();
                 toggle = (ToggleClass*)commands->Extract_Gadget(BUTTON_DELETE);
                 if (toggle != NULL) {
@@ -391,7 +386,7 @@ int LoadOptionsClass::Process(void)
         }
 
         /*
-        **	Process input.
+        ** Process input.
         */
         switch (input) {
         /*
@@ -432,7 +427,6 @@ int LoadOptionsClass::Process(void)
                     Hide_Mouse();
                     SeenPage.Clear();
                     GamePalette.Set();
-                    //						Set_Palette(GamePalette);
                     Show_Mouse();
                     process = false;
                 }
@@ -495,7 +489,7 @@ int LoadOptionsClass::Process(void)
             game_num = Files[game_idx]->Num;
             if (WWMessageBox().Process(TXT_DELETE_FILE_QUERY, TXT_YES, TXT_NO) == 0) {
                 sprintf(fname, "SAVEGAME.%03d", game_num);
-                unlink(fname);
+                Delete_File(fname);
                 Clear_List(&listbtn);
                 Fill_List(&listbtn);
                 if (listbtn.Count() == 0) {
@@ -534,7 +528,7 @@ int LoadOptionsClass::Process(void)
                     strcpy(game_descr, listbtn.Get_Item(game_idx));
 
                     /*
-                    **	Strip any leading parenthesis off of the description.
+                    ** Strip any leading parenthesis off of the description.
                     */
                     if (game_descr[0] == '(') {
                         char* ptr = strchr(game_descr, ')');
@@ -627,12 +621,11 @@ void LoadOptionsClass::Clear_List(ListClass* list)
  *=============================================================================================*/
 void LoadOptionsClass::Fill_List(ListClass* list)
 {
-#if (0)                    // PG
     FileEntryClass* fdata; // for adding entries to 'Files'
     char descr[DESCRIP_MAX + 32];
     unsigned scenario; // scenario #
     HousesType house;  // house
-    struct find_t ff;  // for _dos_findfirst
+    Find_File_Data* ff = nullptr;
     int id;
 
     /*
@@ -653,16 +646,16 @@ void LoadOptionsClass::Fill_List(ListClass* list)
     /*
     ** Find all savegame files
     */
-    int rc = _dos_findfirst("SAVEGAME.*", _A_NORMAL, &ff);
+    bool rc = Find_First("SAVEGAME.*", 0, &ff);
 
-    while (!rc) {
+    while (rc) {
 
-        if (stricmp(ff.name, NET_SAVE_FILE_NAME) != 0) {
+        if (stricmp(ff->GetName(), NET_SAVE_FILE_NAME) != 0) {
 
             /*
             ** Extract the game ID from the filename
             */
-            id = Num_From_Ext(ff.name);
+            id = Num_From_Ext(ff->GetName());
 
             /*
             ** get the game's info; if success, add it to the list
@@ -676,17 +669,9 @@ void LoadOptionsClass::Fill_List(ListClass* list)
                 strcpy(fdata->Descr, Text_String(TXT_OLD_GAME));
             } else {
                 if (house == HOUSE_USSR || house == HOUSE_UKRAINE) {
-#ifdef WIN32
                     sprintf(fdata->Descr, "(%s) ", Text_String(TXT_SOVIET));
-#else
-                    sprintf(fdata->Descr, "(%c) ", *Text_String(TXT_SOVIET));
-#endif
                 } else {
-#ifdef WIN32
                     sprintf(fdata->Descr, "(%s) ", Text_String(TXT_ALLIES));
-#else
-                    sprintf(fdata->Descr, "(%c) ", *Text_String(TXT_ALLIES));
-#endif
                 }
             }
             strncat(fdata->Descr, descr, (sizeof(fdata->Descr) - strlen(fdata->Descr)) - 1);
@@ -694,15 +679,16 @@ void LoadOptionsClass::Fill_List(ListClass* list)
             fdata->Scenario = scenario;
             fdata->House = house;
             fdata->Num = id;
-            fdata->DateTime = (((unsigned long)ff.wr_date) << 16) | (unsigned long)ff.wr_time;
+            fdata->DateTime = ff->GetTime();
             Files.Add(fdata);
         }
 
         /*
         ** Find the next file
         */
-        rc = _dos_findnext(&ff);
+        rc = Find_Next(ff);
     }
+    Find_Close(ff);
 
     /*
     ** If saving a game, determine a unique file ID for the empty slot
@@ -714,7 +700,8 @@ void LoadOptionsClass::Fill_List(ListClass* list)
         ** in the list; if any number isn't found, use that number; otherwise,
         ** use 'N + 1'.
         */
-        for (int i = 0; i < Files.Count(); i++) {     // i = the # we're searching for
+        int i = 0;
+        for (i = 0; i < Files.Count(); i++) {         // i = the # we're searching for
             id = -1;                                  // mark as 'not found'
             for (int j = 0; j < Files.Count(); j++) { // loop through all game ID's
                 if (Files[j]->Num == i) {             // if found, mark as found
@@ -740,7 +727,6 @@ void LoadOptionsClass::Fill_List(ListClass* list)
     for (int i = 0; i < Files.Count(); i++) {
         list->Add_Item(Files[i]->Descr);
     }
-#endif
 }
 
 /***********************************************************************************************
@@ -758,7 +744,7 @@ void LoadOptionsClass::Fill_List(ListClass* list)
  * HISTORY:                                                                                    *
  *   02/14/1995 BR : Created.                                                                  *
  *=============================================================================================*/
-int LoadOptionsClass::Num_From_Ext(char* fname)
+int LoadOptionsClass::Num_From_Ext(const char* fname)
 {
     char ext[_MAX_EXT];
 

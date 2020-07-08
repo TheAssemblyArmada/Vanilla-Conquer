@@ -17,21 +17,23 @@
 /***********************************************************************************************
  ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
- *                                                                         						  *
- *                 Project Name : Command & Conquer                        						  *
- *                                                                         						  *
- *                    File Name : LOADDLG.H 	                              						  *
- *                                                                         						  *
- *                   Programmer : Maria Legg, Joe Bostic, Bill Randolph     						  *
- *                                                                         						  *
- *                   Start Date : March 19, 1995															  *
- *                                                                         						  *
- *                  Last Update : March 19, 1995															  *
- *                                                                         						  *
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                    File Name : LOADDLG.H                                                    *
+ *                                                                                             *
+ *                   Programmer : Maria Legg, Joe Bostic, Bill Randolph                        *
+ *                                                                                             *
+ *                   Start Date : March 19, 1995                                               *
+ *                                                                                             *
+ *                  Last Update : March 19, 1995                                               *
+ *                                                                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #ifndef LOADDLG_H
 #define LOADDLG_H
+
+#include "defines.h"
 
 class FileEntryClass
 {
@@ -68,7 +70,7 @@ protected:
     */
     void Clear_List(ListClass* list);                   // clears the list & game # array
     void Fill_List(ListClass* list);                    // fills the list & game # array
-    int Num_From_Ext(char* fname);                      // translates filename to file #
+    int Num_From_Ext(const char* fname);                // translates filename to file #
     static int Compare(const void* p1, const void* p2); // for qsort()
 
     /*

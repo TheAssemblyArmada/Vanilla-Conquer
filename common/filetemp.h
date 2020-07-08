@@ -46,7 +46,6 @@
 // Look at FileErrorType below for the IO_Error function.
 // extern WORD __cdecl ( __cdecl IO_Error)(FileErrorType error, BYTE const *filename);
 void __cdecl Prog_End(const char* why, bool fatal); // Added why and fatal. ST - 8/7/2019 10:54AM
-extern WORD Hard_Error_Occured;
 
 //////////////////////// END OF DON'T BELONG //////////////////////////////////
 

@@ -126,7 +126,6 @@ inline int max(int a, int b)
 */
 #define NOMEMCHECK
 
-#define FILE_H
 #define WWMEM_H
 #include "compat.h"
 #include "common/rawfile.h"
