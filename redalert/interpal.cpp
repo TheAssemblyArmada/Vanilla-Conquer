@@ -295,11 +295,12 @@ int CopyType = 0;
  *=========================================================================*/
 void Interpolate_2X_Scale(GraphicBufferClass* source, GraphicViewPortClass* dest, char const* palette_file_name)
 {
+#ifdef REMASTER_BUILD
     // Not needed. ST - 5/13/2019
     source;
     dest;
     palette_file_name;
-#if (0)
+#else
     unsigned char* src_ptr;
     unsigned char* dest_ptr;
     unsigned char* last_dest_ptr;
