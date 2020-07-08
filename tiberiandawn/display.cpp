@@ -3732,75 +3732,75 @@ void DisplayClass::Mouse_Left_Up(bool shadow, ObjectClass* object, ActionType ac
             break;
         }
     }
-#if 0
-	/*
+#ifndef REMASTER_BUILD
+    /*
 	**	Give a generic help message when over shadow terrain.
 	*/
-	if (shadow) {
-		if (Scenario < 4) {
-			Help_Text(TXT_SHADOW);
-		} else {
-			Help_Text(TXT_NONE);
-		}
-	} else {
+    if (shadow) {
+        if (Scenario < 4) {
+            Help_Text(TXT_SHADOW);
+        } else {
+            Help_Text(TXT_NONE);
+        }
+    } else {
 
-		/*
+        /*
 		**	If the mouse is held over objects on the map, then help text may
 		**	pop up that tells what the object is. This call informs the help
 		**	system of the text name for the object under the mouse.
 		*/
-		if (object) {
-			int text;
-			int color = LTGREY;
+        if (object) {
+            int text;
+            int color = LTGREY;
 
-			/*
+            /*
 			**	Fetch the appropriate background color for help text.
 			*/
-			if (PlayerPtr->Is_Ally(object)) {
-				color = CC_GREEN;
-			} else {
-				if (object->Owner() == HOUSE_NONE || object->Owner() == HOUSE_NEUTRAL) {
-					color = LTGREY;
-				} else {
-					color = PINK;
-				}
-			}
+            if (PlayerPtr->Is_Ally(object)) {
+                color = CC_GREEN;
+            } else {
+                if (object->Owner() == HOUSE_NONE || object->Owner() == HOUSE_NEUTRAL) {
+                    color = LTGREY;
+                } else {
+                    color = PINK;
+                }
+            }
 
-			/*
+            /*
 			**	Fetch the name of the object. If it is an enemy object, then
 			**	the exact identity is glossed over with a generic text.
 			*/
-			text = object->Full_Name();
-			if (object->Is_Techno() && !((TechnoTypeClass const &)object->Class_Of()).IsNominal) {
+            text = object->Full_Name();
+            if (object->Is_Techno() && !((TechnoTypeClass const&)object->Class_Of()).IsNominal) {
 
-				if (!PlayerPtr->Is_Ally(object)) {
-					switch (object->What_Am_I()) {
-						case RTTI_INFANTRY:
-							text = TXT_ENEMY_SOLDIER;
-							break;
+                if (!PlayerPtr->Is_Ally(object)) {
+                    switch (object->What_Am_I()) {
+                    case RTTI_INFANTRY:
+                        text = TXT_ENEMY_SOLDIER;
+                        break;
 
-						case RTTI_UNIT:
-							text = TXT_ENEMY_VEHICLE;
-							break;
+                    case RTTI_UNIT:
+                        text = TXT_ENEMY_VEHICLE;
+                        break;
 
-						case RTTI_BUILDING:
-							if ( *((BuildingClass*)object) != STRUCT_MISSION) {
-								text = TXT_ENEMY_STRUCTURE;
-							}
-							break;
-					}
-				}
-			}
+                    case RTTI_BUILDING:
+                        if (*((BuildingClass*)object) != STRUCT_MISSION) {
+                            text = TXT_ENEMY_STRUCTURE;
+                        }
+                        break;
+                    }
+                }
+            }
 
-			if (Scenario > 3 || object->What_Am_I() != RTTI_TERRAIN) {
-				Help_Text(text, -1, -1, color);
-			} else {
-				Help_Text(TXT_NONE);
-			}
-		} else {
-			Help_Text(TXT_NONE);
-		}
-	}
+            if (Scenario > 3 || object->What_Am_I() != RTTI_TERRAIN) {
+                Help_Text(text, -1, -1, color);
+            } else {
+                Help_Text(TXT_NONE);
+            }
+        } else {
+            Help_Text(TXT_NONE);
+        }
+    }
 #endif
 }
 
