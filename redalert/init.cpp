@@ -3046,10 +3046,11 @@ static void Bootstrap(void)
     **	Default palette initialization.
     */
     // PG_TO_FIX. This doesn't seem right. ST - 5/9/2019
-    // memmove((unsigned char *)&GamePalette[0], (void *)MFCD::Retrieve("TEMPERAT.PAL"), 768L);
-    // WhitePalette[0] = BlackPalette[0];
-    //	GamePalette.Set();
-
+#ifndef REMASTER_BUILD
+    memmove((unsigned char*)&GamePalette[0], (void*)MFCD::Retrieve("TEMPERAT.PAL"), 768L);
+    WhitePalette[0] = BlackPalette[0];
+    //GamePalette.Set();
+#endif
     /*
     **	Initialize expansion files (if present). Expansion files must be located
     **	in the current directory.
