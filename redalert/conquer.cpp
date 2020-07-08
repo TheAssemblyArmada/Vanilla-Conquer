@@ -926,176 +926,195 @@ void Toggle_Formation(void)
 {
 
 // MBL 03.23.2020: this has been copied to DLLExportClass::Team_Units_Formation_Toggle_On(), and modified as needed
-#if 0
-	int team = -1;
-	long minx = 0x7FFFFFFFL, miny = 0x7FFFFFFFL;
-	long maxx = 0, maxy = 0;
-	int index;
-	bool setform = 0;
+#ifndef REMASTER_BUILD
+    int team = -1;
+    long minx = 0x7FFFFFFFL, miny = 0x7FFFFFFFL;
+    long maxx = 0, maxy = 0;
+    int index;
+    bool setform = 0;
 
-	//
-	// Recording support
-	//
-	if (Session.Record) {
-		FormationEvent = 1;
-	}
+    //
+    // Recording support
+    //
+    if (Session.Record) {
+        FormationEvent = 1;
+    }
 
-	/*
+    /*
 	** Find the first selected object that is a member of a team, and
 	** register his group as the team we're using.  Once we find the team
 	** number, update the 'setform' flag to know whether we should be setting
 	** the formation's offsets, or clearing them.  If they currently have
 	** illegal offsets (as in 0x80000000), then we're setting.
 	*/
-	for (index = 0; index < Units.Count(); index++) {
-		UnitClass * obj = Units.Ptr(index);
-		if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->IsSelected) {
-			team = obj->Group;
-			if (team != -1) {
-				setform = obj->XFormOffset == (int)0x80000000;
-				TeamSpeed[team] = SPEED_WHEEL;
-				TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
-				break;
-			}
-		}
-	}
-	if (team == -1) {
-		for (index = 0; index < Infantry.Count(); index++) {
-			InfantryClass * obj = Infantry.Ptr(index);
-			if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->IsSelected) {
-				team = obj->Group;
-				if (team != -1) {
-					setform = obj->XFormOffset == (int)0x80000000;
-					TeamSpeed[team] = SPEED_WHEEL;
-					TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
-					break;
-				}
-			}
-		}
-	}
+    for (index = 0; index < Units.Count(); index++) {
+        UnitClass* obj = Units.Ptr(index);
+        if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->IsSelected) {
+            team = obj->Group;
+            if (team != -1) {
+                TeamFormDataStruct& team_form_data = TeamFormData[obj->Owner()];
+                setform = obj->XFormOffset == (int)0x80000000;
+                team_form_data.TeamSpeed[team] = SPEED_WHEEL;
+                team_form_data.TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
+                break;
+            }
+        }
+    }
+    if (team == -1) {
+        for (index = 0; index < Infantry.Count(); index++) {
+            InfantryClass* obj = Infantry.Ptr(index);
+            if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->IsSelected) {
+                team = obj->Group;
+                if (team != -1) {
+                    TeamFormDataStruct& team_form_data = TeamFormData[obj->Owner()];
+                    setform = obj->XFormOffset == (int)0x80000000;
+                    team_form_data.TeamSpeed[team] = SPEED_WHEEL;
+                    team_form_data.TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
+                    break;
+                }
+            }
+        }
+    }
 
-	if (team == -1) {
-		for (index = 0; index < Vessels.Count(); index++) {
-			VesselClass * obj = Vessels.Ptr(index);
-			if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->IsSelected) {
-				team = obj->Group;
-				if (team != -1) {
-					setform = obj->XFormOffset == 0x80000000UL;
-					TeamSpeed[team] = SPEED_WHEEL;
-					TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
-					break;
-				}
-			}
-		}
-	}
+    if (team == -1) {
+        for (index = 0; index < Vessels.Count(); index++) {
+            VesselClass* obj = Vessels.Ptr(index);
+            if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->IsSelected) {
+                team = obj->Group;
+                if (team != -1) {
+                    TeamFormDataStruct& team_form_data = TeamFormData[obj->Owner()];
+                    setform = obj->XFormOffset == 0x80000000UL;
+                    team_form_data.TeamSpeed[team] = SPEED_WHEEL;
+                    team_form_data.TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
+                    break;
+                }
+            }
+        }
+    }
 
-	if (team == -1) return;
-	/*
+    if (team == -1)
+        return;
+    /*
 	** Now that we have a team, let's go set (or clear) the formation offsets.
 	*/
-	for (index = 0; index < Units.Count(); index++) {
-		UnitClass * obj = Units.Ptr(index);
-		if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
-			obj->Mark(MARK_CHANGE);
-			if (setform) {
-				long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-				long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
-				if (xc < minx) minx = xc;
-				if (xc > maxx) maxx = xc;
-				if (yc < miny) miny = yc;
-				if (yc > maxy) maxy = yc;
-				if (obj->Class->MaxSpeed < TeamMaxSpeed[team]) {
-					TeamMaxSpeed[team] = obj->Class->MaxSpeed;
-					TeamSpeed[team] = obj->Class->Speed;
-				}
-			} else {
-				obj->XFormOffset = obj->YFormOffset = (int)0x80000000;
-			}
-		}
-	}
+    for (index = 0; index < Units.Count(); index++) {
+        UnitClass* obj = Units.Ptr(index);
+        if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
+            obj->Mark(MARK_CHANGE);
+            if (setform) {
+                TeamFormDataStruct& team_form_data = TeamFormData[obj->Owner()];
+                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                if (xc < minx)
+                    minx = xc;
+                if (xc > maxx)
+                    maxx = xc;
+                if (yc < miny)
+                    miny = yc;
+                if (yc > maxy)
+                    maxy = yc;
+                if (obj->Class->MaxSpeed < team_form_data.TeamMaxSpeed[team]) {
+                    team_form_data.TeamMaxSpeed[team] = obj->Class->MaxSpeed;
+                    team_form_data.TeamSpeed[team] = obj->Class->Speed;
+                }
+            } else {
+                obj->XFormOffset = obj->YFormOffset = (int)0x80000000;
+            }
+        }
+    }
 
-	for (index = 0; index < Infantry.Count(); index++) {
-		InfantryClass * obj = Infantry.Ptr(index);
-		if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
-			obj->Mark(MARK_CHANGE);
-			if (setform) {
-				long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-				long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
-				if (xc < minx) minx = xc;
-				if (xc > maxx) maxx = xc;
-				if (yc < miny) miny = yc;
-				if (yc > maxy) maxy = yc;
-				if (obj->Class->MaxSpeed < TeamMaxSpeed[team]) {
-					TeamMaxSpeed[team] = obj->Class->MaxSpeed;
-				}
-			} else {
-				obj->XFormOffset = obj->YFormOffset = (int)0x80000000;
-			}
-		}
-	}
+    for (index = 0; index < Infantry.Count(); index++) {
+        InfantryClass* obj = Infantry.Ptr(index);
+        if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
+            obj->Mark(MARK_CHANGE);
+            if (setform) {
+                TeamFormDataStruct& team_form_data = TeamFormData[obj->Owner()];
+                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                if (xc < minx)
+                    minx = xc;
+                if (xc > maxx)
+                    maxx = xc;
+                if (yc < miny)
+                    miny = yc;
+                if (yc > maxy)
+                    maxy = yc;
+                if (obj->Class->MaxSpeed < team_form_data.TeamMaxSpeed[team]) {
+                    team_form_data.TeamMaxSpeed[team] = obj->Class->MaxSpeed;
+                }
+            } else {
+                obj->XFormOffset = obj->YFormOffset = (int)0x80000000;
+            }
+        }
+    }
 
-	for (index = 0; index < Vessels.Count(); index++) {
-		VesselClass * obj = Vessels.Ptr(index);
-		if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
-			obj->Mark(MARK_CHANGE);
-			if (setform) {
-				long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-				long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
-				if (xc < minx) minx = xc;
-				if (xc > maxx) maxx = xc;
-				if (yc < miny) miny = yc;
-				if (yc > maxy) maxy = yc;
-				if (obj->Class->MaxSpeed < TeamMaxSpeed[team]) {
-					TeamMaxSpeed[team] = obj->Class->MaxSpeed;
-				}
-			} else {
-				obj->XFormOffset = obj->YFormOffset = 0x80000000UL;
-			}
-		}
-	}
+    for (index = 0; index < Vessels.Count(); index++) {
+        VesselClass* obj = Vessels.Ptr(index);
+        if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
+            obj->Mark(MARK_CHANGE);
+            if (setform) {
+                TeamFormDataStruct& team_form_data = TeamFormData[obj->Owner()];
+                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                if (xc < minx)
+                    minx = xc;
+                if (xc > maxx)
+                    maxx = xc;
+                if (yc < miny)
+                    miny = yc;
+                if (yc > maxy)
+                    maxy = yc;
+                if (obj->Class->MaxSpeed < team_form_data.TeamMaxSpeed[team]) {
+                    team_form_data.TeamMaxSpeed[team] = obj->Class->MaxSpeed;
+                }
+            } else {
+                obj->XFormOffset = obj->YFormOffset = 0x80000000UL;
+            }
+        }
+    }
 
-	/*
+    /*
 	** All the units have been counted to find the bounding rectangle and
 	** center of the formation, or to clear their offsets.  Now, if we're to
 	** set them into formation, proceed to do so.  Otherwise, bail.
 	*/
-	if (setform) {
-		int centerx = (int)((maxx - minx)/2)+minx;
-		int centery = (int)((maxy - miny)/2)+miny;
+    if (setform) {
+        int centerx = (int)((maxx - minx) / 2) + minx;
+        int centery = (int)((maxy - miny) / 2) + miny;
 
-		for (index = 0; index < Units.Count(); index++) {
-			UnitClass * obj = Units.Ptr(index);
-			if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
-				long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-				long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+        for (index = 0; index < Units.Count(); index++) {
+            UnitClass* obj = Units.Ptr(index);
+            if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
+                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
 
-				obj->XFormOffset = xc - centerx;
-				obj->YFormOffset = yc - centery;
-			}
-		}
+                obj->XFormOffset = xc - centerx;
+                obj->YFormOffset = yc - centery;
+            }
+        }
 
-		for (index = 0; index < Infantry.Count(); index++) {
-			InfantryClass * obj = Infantry.Ptr(index);
-			if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team ) {
-				long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-				long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+        for (index = 0; index < Infantry.Count(); index++) {
+            InfantryClass* obj = Infantry.Ptr(index);
+            if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
+                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
 
-				obj->XFormOffset = xc - centerx;
-				obj->YFormOffset = yc - centery;
-			}
-		}
+                obj->XFormOffset = xc - centerx;
+                obj->YFormOffset = yc - centery;
+            }
+        }
 
-		for (index = 0; index < Vessels.Count(); index++) {
-			VesselClass * obj = Vessels.Ptr(index);
-			if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team ) {
-				long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-				long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+        for (index = 0; index < Vessels.Count(); index++) {
+            VesselClass* obj = Vessels.Ptr(index);
+            if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
+                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
 
-				obj->XFormOffset = xc - centerx;
-				obj->YFormOffset = yc - centery;
-			}
-		}
-	}
+                obj->XFormOffset = xc - centerx;
+                obj->YFormOffset = yc - centery;
+            }
+        }
+    }
 #endif
 }
 
