@@ -381,7 +381,7 @@ static unsigned char const _yellowpal[] =
     {0x0, 0x0, 0xEC, 0x0, 0xEB, 0x0, 0xEA, 0x0, 0xE9, 0x0, 0x0, 0x0, 0x0, 0x0, 0xED, 0x0};
 void ScoreClass::Presentation(void)
 {
-#if (0) // PG
+#ifndef REMASTER_BUILD
 #ifdef WIN32
 //	if (Keyboard != NULL) return;
 #endif
@@ -472,8 +472,8 @@ void ScoreClass::Presentation(void)
     /* --- Now display the background animation --- */
     Hide_Mouse();
 #ifdef WIN32
-    Load_Title_Screen(ScreenNames[house], &HidPage, ScorePalette);
-    Increase_Palette_Luminance(ScorePalette, 30, 30, 30, 63);
+    Load_Title_Screen(ScreenNames[house], &HidPage, (unsigned char*)ScorePalette.Get_Data());
+    Increase_Palette_Luminance((unsigned char*)ScorePalette.Get_Data(), 30, 30, 30, 63);
     HidPage.Blit(SeenPage);
     HidPage.Blit(*PseudoSeenBuff);
 #else
@@ -652,7 +652,7 @@ void ScoreClass::Presentation(void)
     // BG	}
 
     if (house)
-        Show_Credits(house, _greenpal);
+        Show_Credits(house, (const char*)_greenpal);
 
     /*BG	if (!Keyboard->Check()) */ Call_Back_Delay(60);
 
@@ -744,7 +744,7 @@ void ScoreClass::Presentation(void)
     Keyboard->Clear();
 
     if (!house)
-        Show_Credits(house, _greenpal);
+        Show_Credits(house, (const char*)_greenpal);
         /*
         ** Hall of fame display and processing
         */
@@ -809,7 +809,7 @@ void ScoreClass::Presentation(void)
 #ifdef WIN32
     char maststr[NUMFAMENAMES * 32];
 #endif
-    char const* pal;
+    unsigned char const* pal;
     for (i = 0; i < NUMFAMENAMES; i++) {
         pal = hallfame[i].side ? _redpal : _bluepal;
         Alloc_Object(new ScorePrintClass(hallfame[i].name, HALLFAME_X, HALLFAME_Y + (i * 8), pal));
@@ -843,7 +843,7 @@ void ScoreClass::Presentation(void)
 
     if (index < NUMFAMENAMES) {
         pal = hallfame[index].side ? _redpal : _bluepal;
-        Input_Name(hallfame[index].name, HALLFAME_X, HALLFAME_Y + (index * 8), pal);
+        Input_Name(hallfame[index].name, HALLFAME_X, HALLFAME_Y + (index * 8), (const char*)pal);
 
         file.Open(WRITE);
         for (i = 0; i < NUMFAMENAMES; i++) {
