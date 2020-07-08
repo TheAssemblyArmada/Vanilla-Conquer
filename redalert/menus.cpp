@@ -772,7 +772,7 @@ int Main_Menu(unsigned long)
             //			Draw_Caption (TXT_NONE, d_dialog_x, d_dialog_y, d_dialog_w);
             commands->Draw_All();
 #ifdef FIXIT_VERSION_3
-#if (0) // PG
+#ifndef REMASTER_BUILD
             Fancy_Text_Print("V%s",
                              d_dialog_x + d_dialog_w - (18 * RESFACTOR),
                              d_dialog_y + d_dialog_h - (5 * RESFACTOR),
