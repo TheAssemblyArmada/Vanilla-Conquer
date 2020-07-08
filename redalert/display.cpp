@@ -3800,85 +3800,85 @@ void DisplayClass::Mouse_Left_Up(CELL cell, bool shadow, ObjectClass* object, Ac
             break;
         }
     }
-#if 0
-	/*
+#ifndef REMASTER_BUILD
+    /*
 	**	Never display help text if the mouse is held over the radar map.
 	*/
-	if (wsmall) {
-		return;
-	}
+    if (wsmall) {
+        return;
+    }
 
-	/*
+    /*
 	**	Give a generic help message when over shadow terrain.
 	*/
-	if (shadow) {
-//		if (Scen.Scenario < 4) {
-			Help_Text(TXT_SHADOW);
-//		} else {
-//			Help_Text(TXT_NONE);
-//		}
-	} else {
+    if (shadow) {
+        //		if (Scen.Scenario < 4) {
+        Help_Text(TXT_SHADOW);
+        //		} else {
+        //			Help_Text(TXT_NONE);
+        //		}
+    } else {
 
-		/*
+        /*
 		**	If the mouse is held over objects on the map, then help text may
 		**	pop up that tells what the object is. This call informs the help
 		**	system of the text name for the object under the mouse.
 		*/
-		if (object != NULL) {
-			int text;
-			int color = LTGREY;
+        if (object != NULL) {
+            int text;
+            int color = LTGREY;
 
-			/*
+            /*
 			**	Fetch the appropriate background color for help text.
 			*/
-			if (PlayerPtr->Is_Ally(object)) {
-				color = GREEN;
-			} else {
-				if (object->Owner() == HOUSE_NONE || object->Owner() == HOUSE_NEUTRAL) {
-					color = LTGREY;
-				} else {
-					color = PINK;
-				}
-			}
+            if (PlayerPtr->Is_Ally(object)) {
+                color = GREEN;
+            } else {
+                if (object->Owner() == HOUSE_NONE || object->Owner() == HOUSE_NEUTRAL) {
+                    color = LTGREY;
+                } else {
+                    color = PINK;
+                }
+            }
 
-			/*
+            /*
 			**	Fetch the name of the object. If it is an enemy object, then
 			**	the exact identity is glossed over with a generic text.
 			*/
-			text = object->Full_Name();
-			if (object->Is_Techno() && !((TechnoTypeClass const &)object->Class_Of()).IsNominal) {
+            text = object->Full_Name();
+            if (object->Is_Techno() && !((TechnoTypeClass const&)object->Class_Of()).IsNominal) {
 
-				if (!((TechnoClass *)object)->House->Is_Ally(PlayerPtr)) {
-//				if (!PlayerPtr->Is_Ally(object)) {
-					switch (object->What_Am_I()) {
-						case RTTI_INFANTRY:
-							text = TXT_ENEMY_SOLDIER;
-							break;
+                if (!((TechnoClass*)object)->House->Is_Ally(PlayerPtr)) {
+                    //				if (!PlayerPtr->Is_Ally(object)) {
+                    switch (object->What_Am_I()) {
+                    case RTTI_INFANTRY:
+                        text = TXT_ENEMY_SOLDIER;
+                        break;
 
-						case RTTI_UNIT:
-							text = TXT_ENEMY_VEHICLE;
-							break;
+                    case RTTI_UNIT:
+                        text = TXT_ENEMY_VEHICLE;
+                        break;
 
-						case RTTI_BUILDING:
-							text = TXT_ENEMY_STRUCTURE;
-							break;
-					}
-				}
-			}
+                    case RTTI_BUILDING:
+                        text = TXT_ENEMY_STRUCTURE;
+                        break;
+                    }
+                }
+            }
 
-			if (/*Scen.Scenario > 3 ||*/ object->What_Am_I() != RTTI_TERRAIN) {
-				Help_Text(text, -1, -1, color);
-			} else {
-				Help_Text(TXT_NONE);
-			}
-		} else {
-			if ((*this)[cell].Land_Type() == LAND_TIBERIUM) {
-				Help_Text(TXT_MINERALS);
-			} else {
-				Help_Text(TXT_NONE);
-			}
-		}
-	}
+            if (/*Scen.Scenario > 3 ||*/ object->What_Am_I() != RTTI_TERRAIN) {
+                Help_Text(text, -1, -1, color);
+            } else {
+                Help_Text(TXT_NONE);
+            }
+        } else {
+            if ((*this)[cell].Land_Type() == LAND_TIBERIUM) {
+                Help_Text(TXT_MINERALS);
+            } else {
+                Help_Text(TXT_NONE);
+            }
+        }
+    }
 #endif
 }
 
