@@ -106,8 +106,11 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
     **	characters for each.
     */
     Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, TPF_6PT_GRAD | TPF_NOSHADOW);
-    char b1char, b2char, b3char; // 1st char of each string
-    int bwidth, bheight;         // button width and height
+    char b1char = 0;
+    char b2char = 0;
+    char b3char = 0; // 1st char of each string
+    int bwidth = 0;
+    int bheight = 0; // button width and height
     int numbuttons = 0;
     if (b1txt != NULL) {
         b1char = toupper(b1txt[0]);
@@ -139,8 +142,8 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
     */
     buffer[BUFFSIZE - 1] = 0;
     strncpy(buffer, msg, BUFFSIZE - 2);
-    int width;
-    int height;
+    int width = 0;
+    int height = 0;
 
 #ifdef JAPANESE
     if (IsPicture) {

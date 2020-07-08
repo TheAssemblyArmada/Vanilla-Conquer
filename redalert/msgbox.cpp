@@ -98,7 +98,8 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
     **	Examine the optional button parameters. Fetch the width and starting
     **	characters for each.
     */
-    int bwidth, bheight; // button width and height
+    int bwidth = 0;
+    int bheight = 0; // button width and height
     int numbuttons = 0;
     if (b1txt != NULL) {
 
@@ -127,8 +128,8 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
     */
     buffer[BUFFSIZE - 1] = 0;
     strncpy(buffer, msg, BUFFSIZE - 1);
-    int width;
-    int height;
+    int width = 0;
+    int height = 0;
     int lines = Format_Window_String(buffer, 255 * RESFACTOR, width, height);
     TextPrintType tpf = TPF_TEXT;
 
