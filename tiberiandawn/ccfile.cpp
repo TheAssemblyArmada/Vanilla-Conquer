@@ -527,12 +527,12 @@ int __cdecl Find_File(char const* file_name)
     return (file.Is_Available());
 }
 
-#ifdef NEVER
 int __cdecl Delete_File(char const* file_name)
 {
     return (CCFileClass(file_name).Delete());
 }
 
+#ifdef NEVER
 int __cdecl Create_File(char const* file_name)
 {
     return (CCFileClass(file_name).Create());

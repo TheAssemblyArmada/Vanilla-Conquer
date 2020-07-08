@@ -13,7 +13,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\savedlg.h_v   2.14   16 Oct 1995 16:45:12   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/SAVEDLG.H 1     3/03/97 10:25a Joe_bostic $ */
 /***********************************************************************************************
  ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************

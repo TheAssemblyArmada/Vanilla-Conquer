@@ -90,6 +90,7 @@ set(COMMON_SRC
     common/winhide.cpp
     common/writepcx.cpp
     common/delay.cpp
+    common/file.cpp
 )
 
 file(GLOB_RECURSE COMMON_HEADERS "common/*.h")
