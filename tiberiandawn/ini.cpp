@@ -381,6 +381,10 @@ bool Read_Scenario_Ini(char* root, bool fresh)
 
         PlayerPtr = HouseClass::As_Pointer(HouseTypeClass::From_Name(buf));
         PlayerPtr->IsHuman = true;
+#ifndef REMASTER_BUILD
+        // This is needed to fix the object selection issues. OmniBlade - 09/07/2020
+        CurrentObject.Set_Active_Context(PlayerPtr->Class->House);
+#endif
         int carryover;
         if (CarryOverCap != -1) {
             carryover = MIN((int)Fixed_To_Cardinal(CarryOverMoney, CarryOverPercent), CarryOverCap);

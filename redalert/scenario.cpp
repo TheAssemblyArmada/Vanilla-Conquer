@@ -2380,6 +2380,10 @@ bool Read_Scenario_INI(char* fname, bool)
     if (Session.Type == GAME_NORMAL) {
         PlayerPtr = HouseClass::As_Pointer(ini.Get_HousesType(BASIC, "Player", HOUSE_GREECE));
         PlayerPtr->Assign_Handicap(Scen.Difficulty);
+#ifndef REMASTER_BUILD
+        // This is needed to fix the object selection issues. OmniBlade - 09/07/2020
+        CurrentObject.Set_Active_Context(PlayerPtr->Class->House);
+#endif
         int carryover;
         if (Scen.CarryOverCap != -1) {
             carryover = min(Scen.CarryOverMoney * Scen.CarryOverPercent, Scen.CarryOverCap);
