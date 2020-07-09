@@ -255,22 +255,22 @@ void SoundControlsClass::Process(void)
     **	Add all the themes to the list box. The list box entries are constructed
     **	and then stored into allocated EMS memory blocks.
     */
-    //	char buffer[100];
     for (ThemeType index = THEME_FIRST; index < Theme.Max_Themes(); index++) {
         if (Theme.Is_Allowed(index)) {
             int length = Theme.Track_Length(index);
             char const* fullname = Theme.Full_Name(index);
 
-            void* ptr = new char[sizeof(100)];
-            if (ptr) {
-                sprintf((char*)ptr,
-                        "%cTrack %d\t%d:%02d\t%s",
-                        index,
-                        listbox.Count() + 1,
-                        length / 60,
-                        length % 60,
-                        fullname);
-                listbox.Add_Item((char const*)ptr);
+            char* ptr = new char[100];
+            if (ptr != nullptr) {
+                snprintf(ptr,
+                         100,
+                         "%cTrack %d\t%d:%02d\t%s",
+                         index,
+                         listbox.Count() + 1,
+                         length / 60,
+                         length % 60,
+                         fullname);
+                listbox.Add_Item(ptr);
             }
 
             if (Theme.What_Is_Playing() == index) {
