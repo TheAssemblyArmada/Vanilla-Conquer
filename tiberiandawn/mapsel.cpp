@@ -380,6 +380,25 @@ struct nodstats
     {32, TXT_MAP_P35, 2, TXT_MAP_C34, 11, 12, TXT_MAP_GDP28, TXT_MAP_PC41, 2, 92},
     {33, TXT_MAP_P36, 10, TXT_MAP_C35, 0, 8, TXT_MAP_GDP29, TXT_MAP_PC42, 1, 100}};
 
+const char* additional_strings[] = {"READING IMAGE DATA",
+                                    "ANALYZING",
+                                    "ENHANCING IMAGE DATA",
+                                    "ISOLATING OPERATIONAL",
+                                    "ESTABLISHING TRADITIONAL",
+                                    "FOR VISUAL REFERENCE",
+                                    "ENHANCING IMAGE"};
+
+const char* GetMapSelString(unsigned int index)
+{
+    const char* result = Text_String(index);
+    if (result == nullptr) {
+        if ((index > 741) && (index < 749)) {
+            result = additional_strings[index - 742];
+        }
+    }
+    return result;
+}
+
 /***********************************************************************************************
  * Map_Selection -- Starts the whole process of selecting next map to go to                    *
  *                                                                                             *
@@ -652,47 +671,47 @@ void Map_Selection(void)
 
         switch (frame) {
         case 1:
-            Alloc_Object(new MultiStagePrintClass(Text_String(TXT_READING_IMAGE_DATA), 0, 10, _othergreenpal));
+            Alloc_Object(new MultiStagePrintClass(GetMapSelString(TXT_READING_IMAGE_DATA), 0, 10, _othergreenpal));
             break;
 
         case 16:
             TextPrintBuffer->Fill_Rect(
-                0, 2 * 10, 2 * String_Pixel_Width(Text_String(TXT_READING_IMAGE_DATA)), 2 * (10 + 12), BLACK);
+                0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_READING_IMAGE_DATA)), 2 * (10 + 12), BLACK);
             break;
 
         case 17:
             TextPrintBuffer->Fill_Rect(
-                0, 2 * 10, 2 * String_Pixel_Width(Text_String(TXT_READING_IMAGE_DATA)), 2 * (10 + 12), TBLACK);
+                0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_READING_IMAGE_DATA)), 2 * (10 + 12), TBLACK);
             Alloc_Object(new MultiStagePrintClass("ANALYZING", 0, 10, _othergreenpal));
             break;
 
         case 33:
             TextPrintBuffer->Fill_Rect(
-                0, 2 * 10, 2 * String_Pixel_Width(Text_String(TXT_ANALYZING)), 2 * (10 + 12), BLACK);
+                0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_ANALYZING)), 2 * (10 + 12), BLACK);
             break;
 
         case 34:
             TextPrintBuffer->Fill_Rect(
-                0, 2 * 10, 2 * String_Pixel_Width(Text_String(TXT_ANALYZING)), 2 * (10 + 12), TBLACK);
-            Alloc_Object(new MultiStagePrintClass(Text_String(TXT_ENHANCING_IMAGE_DATA), 0, 10, _othergreenpal));
+                0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_ANALYZING)), 2 * (10 + 12), TBLACK);
+            Alloc_Object(new MultiStagePrintClass(GetMapSelString(TXT_ENHANCING_IMAGE_DATA), 0, 10, _othergreenpal));
             break;
 
         case 44:
             TextPrintBuffer->Fill_Rect(
-                0, 2 * 10, 2 * String_Pixel_Width(Text_String(TXT_ENHANCING_IMAGE_DATA)), 2 * (10 + 12), BLACK);
+                0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE_DATA)), 2 * (10 + 12), BLACK);
             break;
 
         case 45:
             TextPrintBuffer->Fill_Rect(
-                0, 2 * 10, 2 * String_Pixel_Width(Text_String(TXT_ENHANCING_IMAGE_DATA)), 2 * (10 + 12), TBLACK);
+                0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE_DATA)), 2 * (10 + 12), TBLACK);
             Alloc_Object(
-                new MultiStagePrintClass(Text_String(TXT_ISOLATING_OPERATIONAL_THEATER), 0, 10, _othergreenpal));
+                new MultiStagePrintClass(GetMapSelString(TXT_ISOLATING_OPERATIONAL_THEATER), 0, 10, _othergreenpal));
             break;
 
         case 70:
             TextPrintBuffer->Fill_Rect(0,
                                        2 * 10,
-                                       2 * String_Pixel_Width(Text_String(TXT_ISOLATING_OPERATIONAL_THEATER)),
+                                       2 * String_Pixel_Width(GetMapSelString(TXT_ISOLATING_OPERATIONAL_THEATER)),
                                        2 * (10 + 12),
                                        BLACK);
             break;
@@ -700,15 +719,15 @@ void Map_Selection(void)
         case 71:
             TextPrintBuffer->Fill_Rect(0,
                                        2 * 10,
-                                       2 * String_Pixel_Width(Text_String(TXT_ISOLATING_OPERATIONAL_THEATER)),
+                                       2 * String_Pixel_Width(GetMapSelString(TXT_ISOLATING_OPERATIONAL_THEATER)),
                                        2 * (10 + 12),
                                        TBLACK);
-            Alloc_Object(
-                new MultiStagePrintClass(Text_String(TXT_ESTABLISHING_TRADITIONAL_BOUNDARIES), 0, 10, _othergreenpal));
+            Alloc_Object(new MultiStagePrintClass(
+                GetMapSelString(TXT_ESTABLISHING_TRADITIONAL_BOUNDARIES), 0, 10, _othergreenpal));
             break;
 
         case 74:
-            Alloc_Object(new MultiStagePrintClass(Text_String(TXT_FOR_VISUAL_REFERENCE), 0, 22, _othergreenpal));
+            Alloc_Object(new MultiStagePrintClass(GetMapSelString(TXT_FOR_VISUAL_REFERENCE), 0, 22, _othergreenpal));
             break;
         }
 
@@ -716,11 +735,17 @@ void Map_Selection(void)
         Call_Back_Delay(/*Keyboard::Check() ? 0 :*/ 3);
     }
 
-    TextPrintBuffer->Fill_Rect(
-        0, 2 * 10, 2 * String_Pixel_Width(Text_String(TXT_ESTABLISHING_TRADITIONAL_BOUNDARIES)), 2 * (10 + 24), BLACK);
+    TextPrintBuffer->Fill_Rect(0,
+                               2 * 10,
+                               2 * String_Pixel_Width(GetMapSelString(TXT_ESTABLISHING_TRADITIONAL_BOUNDARIES)),
+                               2 * (10 + 24),
+                               BLACK);
     Call_Back_Delay(1);
-    TextPrintBuffer->Fill_Rect(
-        0, 2 * 10, 2 * String_Pixel_Width(Text_String(TXT_ESTABLISHING_TRADITIONAL_BOUNDARIES)), 2 * (10 + 24), TBLACK);
+    TextPrintBuffer->Fill_Rect(0,
+                               2 * 10,
+                               2 * String_Pixel_Width(GetMapSelString(TXT_ESTABLISHING_TRADITIONAL_BOUNDARIES)),
+                               2 * (10 + 24),
+                               TBLACK);
     Call_Back_Delay(1);
 
     Close_Animation(anim);
@@ -877,30 +902,32 @@ void Map_Selection(void)
 
             case 23:
                 if (house == HOUSE_GOOD) {
-                    Alloc_Object(new MultiStagePrintClass(Text_String(TXT_ENHANCING_IMAGE), 0, 10, _othergreenpal));
+                    Alloc_Object(new MultiStagePrintClass(GetMapSelString(TXT_ENHANCING_IMAGE), 0, 10, _othergreenpal));
                 } else {
 #if (FRENCH)
-                    Alloc_Object(new MultiStagePrintClass(Text_String(TXT_ENHANCING_IMAGE), 180, 10, _othergreenpal));
+                    Alloc_Object(
+                        new MultiStagePrintClass(GetMapSelString(TXT_ENHANCING_IMAGE), 180, 10, _othergreenpal));
 #else
-                    Alloc_Object(new MultiStagePrintClass(Text_String(TXT_ENHANCING_IMAGE), 210, 10, _othergreenpal));
+                    Alloc_Object(
+                        new MultiStagePrintClass(GetMapSelString(TXT_ENHANCING_IMAGE), 210, 10, _othergreenpal));
 #endif //(FRENCH)
                 }
 
             case 35:
                 if (house == HOUSE_GOOD) {
                     TextPrintBuffer->Fill_Rect(
-                        0, 2 * 10, 2 * String_Pixel_Width(Text_String(TXT_ENHANCING_IMAGE)), 2 * (10 + 12), BLACK);
+                        0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE)), 2 * (10 + 12), BLACK);
                 } else {
 #if (FRENCH)
                     TextPrintBuffer->Fill_Rect(2 * 180,
                                                2 * 10,
-                                               2 * (180 + String_Pixel_Width(Text_String(TXT_ENHANCING_IMAGE))),
+                                               2 * (180 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
                                                2 * (10 + 12),
                                                BLACK);
 #else
                     TextPrintBuffer->Fill_Rect(2 * 210,
                                                2 * 10,
-                                               2 * (210 + String_Pixel_Width(Text_String(TXT_ENHANCING_IMAGE))),
+                                               2 * (210 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
                                                2 * (10 + 12),
                                                BLACK);
 #endif //(FRENCH)
@@ -910,18 +937,18 @@ void Map_Selection(void)
             case 36:
                 if (house == HOUSE_GOOD) {
                     TextPrintBuffer->Fill_Rect(
-                        0, 2 * 10, 2 * String_Pixel_Width(Text_String(TXT_ENHANCING_IMAGE)), 2 * (10 + 12), TBLACK);
+                        0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE)), 2 * (10 + 12), TBLACK);
                 } else {
 #if (FRENCH)
                     TextPrintBuffer->Fill_Rect(2 * 180,
                                                2 * 10,
-                                               2 * (180 + String_Pixel_Width(Text_String(TXT_ENHANCING_IMAGE))),
+                                               2 * (180 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
                                                2 * (10 + 12),
                                                TBLACK);
 #else
                     TextPrintBuffer->Fill_Rect(2 * 210,
                                                2 * 10,
-                                               2 * (210 + String_Pixel_Width(Text_String(TXT_ENHANCING_IMAGE))),
+                                               2 * (210 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
                                                2 * (10 + 12),
                                                TBLACK);
 #endif //(FRENCH)
