@@ -88,6 +88,11 @@ public:
         RawPath[0] = 0;
     }
 
+    static bool Is_Local()
+    {
+        return (strcmp(RawPath, ";.") == 0);
+    }
+
     // Need to access the paths. ST - 3/15/2019 2:14PM
     static const char* Get_Search_Path(int index);
 

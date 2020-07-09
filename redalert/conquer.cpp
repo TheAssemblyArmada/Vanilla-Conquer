@@ -4509,7 +4509,7 @@ bool Force_CD_Available(int cd_desired) //	ajw
     ** If the required CD is set to -2 then it means that the file is present
     ** on the local hard drive and we shouldn't have to worry about it.
     */
-    if (cd_desired == CD_LOCAL)
+    if (cd_desired == CD_LOCAL || CDFileClass::Is_Local())
         return (true);
 
     /*
