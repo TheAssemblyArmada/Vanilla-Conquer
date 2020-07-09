@@ -2797,9 +2797,12 @@ static void Init_Bootstrap_Mixfiles(void)
 #ifdef FIXIT_CSII //	Ok. ajw
     bool ok1;
 #ifndef REMASTER_BUILD
-    new MFCD("HIRES1.MIX", &FastKey);
-    ok1 = MFCD::Cache("HIRES1.MIX");
-    assert(ok1);
+    CCFileClass fileHires1Mix("HIRES1.MIX");
+    if (fileHires1Mix.Is_Available()) {
+        new MFCD("HIRES1.MIX", &FastKey);
+        ok1 = MFCD::Cache("HIRES1.MIX");
+        assert(ok1);
+    }
 #else
     new MFCD("LORES1.MIX", &FastKey);
     ok1 = MFCD::Cache("LORES1.MIX");
