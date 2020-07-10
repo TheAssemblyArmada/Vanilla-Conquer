@@ -177,7 +177,7 @@ public:
 #include "common/wwlib32.h"
 #include "mpu.h"
 #include "bench.h"
-#include "rect.h"
+#include "common/rect.h"
 #include "jshell.h"
 #include "buff.h"
 #include "face.h"

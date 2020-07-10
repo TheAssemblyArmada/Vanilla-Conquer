@@ -125,6 +125,7 @@ set(COMMON_SRC
     common/file.cpp
     common/packet.cpp
     common/field.cpp
+    common/rect.cpp
 )
 
 set(COMMONR_SRC
@@ -349,7 +350,7 @@ if(CMAKE_CONFIGURATION_TYPES)
 endif()
 
 if(BUILD_REMASTERTD)
-    add_library(TiberianDawn SHARED 
+    add_library(TiberianDawn SHARED
         tiberiandawn/dllinterface.cpp
         tiberiandawn/dllinterfaceeditor.cpp
         tiberiandawn/sidebarglyphx.cpp
@@ -548,7 +549,6 @@ set(REDALERT_SRC
     redalert/random.cpp
     redalert/rawolapi.cpp
     redalert/readline.cpp
-    redalert/rect.cpp
     redalert/reinf.cpp
     redalert/rgb.cpp
     redalert/rndstraw.cpp
@@ -655,7 +655,7 @@ if(CMAKE_CONFIGURATION_TYPES)
 endif()
 
 if(BUILD_REMASTERRA)
-    add_library(RedAlert SHARED 
+    add_library(RedAlert SHARED
         redalert/dllinterface.cpp
         redalert/dllinterfaceeditor.cpp
         redalert/sidebarglyphx.cpp

@@ -574,8 +574,7 @@ void DisplayClass::Set_View_Dimensions(int x, int y, int width, int height)
     int yy = Coord_Y(TacticalCoord) - (MapCellY * CELL_LEPTON_H);
 #endif
 
-    Confine_Rect(
-        &xx, &yy, TacLeptonWidth, TacLeptonHeight, MapCellWidth * CELL_LEPTON_W, MapCellHeight * CELL_LEPTON_H);
+    Confine_Rect(xx, yy, TacLeptonWidth, TacLeptonHeight, MapCellWidth * CELL_LEPTON_W, MapCellHeight * CELL_LEPTON_H);
 
     Set_Tactical_Position(XY_Coord(xx + (MapCellX * CELL_LEPTON_W), yy + (MapCellY * CELL_LEPTON_H)));
 
@@ -1228,7 +1227,7 @@ bool DisplayClass::Scroll_Map(DirType facing, int& distance, bool really)
     int xx = (int)(short)Coord_X(coord) - (short)Cell_To_Lepton(MapCellX);
     int yy = (int)(short)Coord_Y(coord) - (short)Cell_To_Lepton(MapCellY);
     bool shifted = Confine_Rect(
-        &xx, &yy, TacLeptonWidth, TacLeptonHeight, Cell_To_Lepton(MapCellWidth), Cell_To_Lepton(MapCellHeight));
+        xx, yy, TacLeptonWidth, TacLeptonHeight, Cell_To_Lepton(MapCellWidth), Cell_To_Lepton(MapCellHeight));
     if (xx < 0) {
         xx = 0;
         shifted = true;
@@ -2505,10 +2504,10 @@ void DisplayClass::Redraw_Shadow(void)
                                 int ww = CELL_PIXEL_W;
                                 int hh = CELL_PIXEL_H;
 
-                                if (Clip_Rect(&xpixel,
-                                              &ypixel,
-                                              &ww,
-                                              &hh,
+                                if (Clip_Rect(xpixel,
+                                              ypixel,
+                                              ww,
+                                              hh,
                                               Lepton_To_Pixel(TacLeptonWidth),
                                               Lepton_To_Pixel(TacLeptonHeight))
                                     >= 0) {
@@ -4284,8 +4283,8 @@ void DisplayClass::Set_Tactical_Position(COORDINATE coord)
     int xx = 0; // (int)Coord_X(coord) - (int)Cell_To_Lepton(MapCellX);
     int yy = 0; // (int)Coord_Y(coord) - (int)Cell_To_Lepton(MapCellY);
 
-    Confine_Rect(&xx,
-                 &yy,
+    Confine_Rect(xx,
+                 yy,
                  TacLeptonWidth,
                  TacLeptonHeight,
                  Cell_To_Lepton(MapCellWidth) + GlyphXClientSidebarWidthInLeptons,
@@ -4296,8 +4295,7 @@ void DisplayClass::Set_Tactical_Position(COORDINATE coord)
     int xx = (int)Coord_X(coord) - (int)Cell_To_Lepton(MapCellX);
     int yy = (int)Coord_Y(coord) - (int)Cell_To_Lepton(MapCellY);
 
-    Confine_Rect(
-        &xx, &yy, TacLeptonWidth, TacLeptonHeight, Cell_To_Lepton(MapCellWidth), Cell_To_Lepton(MapCellHeight));
+    Confine_Rect(xx, yy, TacLeptonWidth, TacLeptonHeight, Cell_To_Lepton(MapCellWidth), Cell_To_Lepton(MapCellHeight));
 #endif
     coord = XY_Coord(xx + Cell_To_Lepton(MapCellX), yy + Cell_To_Lepton(MapCellY));
 

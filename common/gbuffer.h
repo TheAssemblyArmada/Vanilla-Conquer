@@ -121,6 +121,7 @@
 #include "drawbuff.h"
 #include "buffer.h"
 #include "ww_win.h"
+#include "rect.h"
 
 #include <stdlib.h>
 
@@ -1204,38 +1205,18 @@ inline VOID GraphicViewPortClass::Fill_Rect(int sx, int sy, int dx, int dy, unsi
 {
     if (AllowHardwareBlitFills && IsDirectDraw && ((dx - sx) * (dy - sy) >= (32 * 32))
         && GraphicBuff->Get_DD_Surface()->GetBltStatus(DDGBS_CANBLT) == DD_OK) {
-        DDBLTFX blit_effects;
+
+        Rect dest_rect(sx + XPos, sy + YPos, dx - sx, dy - sy);
+        Rect self_rect(XPos, YPos, Width, Height);
+        dest_rect = dest_rect.Intersect(self_rect);
+
         RECT dest_rectangle;
+        dest_rectangle.left = dest_rect.X;
+        dest_rectangle.top = dest_rect.Y;
+        dest_rectangle.right = dest_rect.X + dest_rect.Width;
+        dest_rectangle.bottom = dest_rect.Y + dest_rect.Height;
 
-        dest_rectangle.left = sx + XPos;
-        dest_rectangle.top = sy + YPos;
-        dest_rectangle.right = dx + XPos;
-        dest_rectangle.bottom = dy + YPos;
-
-        if (dest_rectangle.left < XPos) {
-            dest_rectangle.left = XPos;
-        }
-
-        if (dest_rectangle.right >= Width + XPos) {
-            dest_rectangle.right = Width + XPos - 1;
-        }
-
-        if (dest_rectangle.top < YPos) {
-            dest_rectangle.top = YPos;
-        }
-
-        if (dest_rectangle.bottom >= Height + YPos) {
-            dest_rectangle.bottom = Height + YPos - 1;
-        }
-
-        if (dest_rectangle.left >= dest_rectangle.right)
-            return;
-        if (dest_rectangle.top >= dest_rectangle.bottom)
-            return;
-
-        dest_rectangle.right++;
-        dest_rectangle.bottom++;
-
+        DDBLTFX blit_effects = {0};
         blit_effects.dwSize = sizeof(blit_effects);
         blit_effects.dwFillColor = color;
         GraphicBuff->Get_DD_Surface()->Blt(

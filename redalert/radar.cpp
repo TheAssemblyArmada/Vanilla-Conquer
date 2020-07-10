@@ -1974,7 +1974,7 @@ void RadarClass::Set_Radar_Position(CELL cell)
         oldy = 0;
     }
 
-    Confine_Rect(&oldx, &oldy, RadarCellWidth, RadarCellHeight, MapCellWidth, MapCellHeight);
+    Confine_Rect(oldx, oldy, RadarCellWidth, RadarCellHeight, MapCellWidth, MapCellHeight);
 
     newx = oldx + MapCellX;
     newy = oldy + MapCellY;
