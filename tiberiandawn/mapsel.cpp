@@ -989,10 +989,11 @@ void Map_Selection(void)
     int done = 0;
     int framecounter = 0;
 
+    GraphicBufferClass click_map(320, 200, GBC_NONE);
     if (house == HOUSE_GOOD) {
-        Load_Uncompress(CCFileClass(lastscenario ? "CLICK_EB.CPS" : "CLICK_E.CPS"), SysMemPage, SysMemPage);
+        Load_Uncompress(CCFileClass(lastscenario ? "CLICK_EB.CPS" : "CLICK_E.CPS"), click_map, click_map);
     } else {
-        Load_Uncompress(CCFileClass(lastscenario ? "CLICK_SA.CPS" : "CLICK_A.CPS"), SysMemPage, SysMemPage);
+        Load_Uncompress(CCFileClass(lastscenario ? "CLICK_SA.CPS" : "CLICK_A.CPS"), click_map, click_map);
         if (lastscenario)
             attackxcoord = 200;
     }
@@ -1014,7 +1015,7 @@ void Map_Selection(void)
         if (Keyboard::Check()) {
             if ((Keyboard::Get() & 0x10FF) == KN_LMOUSE) {
                 for (selection = 0; selection < CountryArray[scenario].Choices[ScenDir]; selection++) {
-                    color = SysMemPage.Get_Pixel(Get_Mouse_X() / 2, Get_Mouse_Y() / 2);
+                    color = click_map.Get_Pixel(Get_Mouse_X() / 2, Get_Mouse_Y() / 2);
 
                     /*
                     ** Special hack for Egypt the second time through
