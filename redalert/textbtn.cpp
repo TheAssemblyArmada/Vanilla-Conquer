@@ -83,8 +83,7 @@ TextButtonClass::TextButtonClass(unsigned id,
     IsBlackBorder = blackborder;
 
     if (w == -1 || h == -1) {
-        // PG_TO_FIX
-        // Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, PrintFlags);
+        Fancy_Text_Print(TXT_NONE, 0, 0, nullptr, TBLACK, PrintFlags);
         if (w == -1) {
             Width = String_Pixel_Width(String) + 8;
         }
@@ -157,8 +156,7 @@ TextButtonClass::TextButtonClass(unsigned id,
     Set_Text(text);
 
     if (w == -1 || h == -1) {
-        // PG_TO_FIX
-        // Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, PrintFlags);
+        Fancy_Text_Print(TXT_NONE, 0, 0, nullptr, TBLACK, PrintFlags);
         if (w == -1) {
             Width = String_Pixel_Width(String) + 8;
         }
@@ -234,8 +232,7 @@ void TextButtonClass::Set_Text(char const* text, bool resize)
     String = text;
     Flag_To_Redraw();
     if (resize && String) {
-        // PG_TO_FIX
-        // Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, PrintFlags);
+        Fancy_Text_Print(TXT_NONE, 0, 0, nullptr, TBLACK, PrintFlags);
         Width = String_Pixel_Width(String) + 8;
         Height = FontHeight + FontYSpacing + 2;
     }
