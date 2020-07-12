@@ -102,8 +102,9 @@ extern short StreamLowImpact;
 #endif
 char const* Map_Selection(void)
 {
+#ifdef REMASTER_BUILD
     return NULL;
-#if (0) // PG
+#else
     static char scenarioname[_MAX_FNAME + _MAX_EXT];
 
 #ifdef FIXIT_ANTS
@@ -149,7 +150,8 @@ char const* Map_Selection(void)
     //	Options.Set_Score_Volume(fixed(4, 10));
     Theme.Queue_Song(THEME_MAP);
 
-    void* anim = Open_Animation(_filename, NULL, 0L, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), mappalette);
+    void* anim = Open_Animation(
+        _filename, NULL, 0L, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), (unsigned char*)&mappalette);
 
     Keyboard->Clear();
     SeenPage.Clear();
