@@ -1812,8 +1812,9 @@ void Draw_Bar_Graphs(int i, int gkilled, int nkilled)
  *=========================================================================*/
 void Call_Back_Delay(int time)
 {
+#ifdef REMASTER_BUILD
     time;
-#if (0) // PG
+#else
     if (time < 0)
         time = 0;
     if (time > 60)
