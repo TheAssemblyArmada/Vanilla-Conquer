@@ -74,7 +74,6 @@
 #ifdef WINSOCK_IPX
 
 #include "wsproto.h"
-#include "wspipx.h"
 
 #else // WINSOCK_IPX
 
