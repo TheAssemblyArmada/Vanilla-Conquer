@@ -23,6 +23,16 @@ else()
     set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
 endif()
 
+add_definitions(-DENGLISH -DTRUE_FALSE_DEFINED -DWIN32 -D_WINDOWS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
+
+set(COMMON_LIBS winmm)
+
+set(VANILLA_DEFS "")
+set(VANILLA_LIBS wsock32 ws2_32 dsound ddraw dxguid)
+
+set(REMASTER_DEFS _USRDLL REMASTER_BUILD)
+set(REMASTER_LIBS wsock32 ws2_32)
+
 find_package(ClangFormat)
 include(ClangFormat)
 
@@ -98,14 +108,14 @@ set(COMMON_SRC
 file(GLOB_RECURSE COMMON_HEADERS "common/*.h")
 
 add_library(common STATIC ${COMMON_SRC} ${COMMON_HEADERS})
-target_link_libraries(common PUBLIC winmm)
+target_link_libraries(common PUBLIC ${COMMON_LIBS})
 
 if(BUILD_REMASTERTD OR BUILD_REMASTERRA)
     add_library(commonr STATIC
         common/mouseww.cpp
     )
-    target_compile_definitions(commonr PUBLIC REMASTER_BUILD)
-    target_link_libraries(commonr PUBLIC common winmm)
+    target_compile_definitions(commonr PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${REMASTER_DEFS})
+    target_link_libraries(commonr PUBLIC common ${COMMON_LIBS} ${REMASTER_LIBS})
 endif()
 
 # These options currently require directx components from the aug 2007 SDK.
@@ -116,7 +126,7 @@ if(BUILD_VANILLATD OR BUILD_VANILLARA)
         common/setvideomode.cpp
     )
 
-    target_link_libraries(commonv PUBLIC common dsound ddraw dxguid)
+    target_link_libraries(commonv PUBLIC common ${COMMON_LIBS} ${VANILLA_LIBS})
 endif()
 
 set(TIBDAWN_SRC
@@ -311,17 +321,17 @@ if(BUILD_REMASTERTD)
         ${TIBDAWN_SRC}
         ${TIBDAWN_HEADERS}
     )
-    target_compile_definitions(TiberianDawn PUBLIC TRUE_FALSE_DEFINED WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _USRDLL TIBERIANDAWN_EXPORTS REMASTER_BUILD)
+    target_compile_definitions(TiberianDawn PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${REMASTER_DEFS})
     target_include_directories(TiberianDawn PUBLIC . tiberiandawn/win32lib tiberiandawn)
-    target_link_libraries(TiberianDawn commonr wsock32 ws2_32 winmm ${STATIC_LIBS})
+    target_link_libraries(TiberianDawn commonr ${REMASTER_LIBS} ${STATIC_LIBS})
     set_target_properties(TiberianDawn PROPERTIES PREFIX "")
 endif()
 
 if(BUILD_VANILLATD)
     add_executable(VanillaTD ${TIBDAWN_SRC} ${TIBDAWN_HEADERS})
-    target_compile_definitions(VanillaTD PUBLIC TRUE_FALSE_DEFINED WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
+    target_compile_definitions(VanillaTD PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS})
     target_include_directories(VanillaTD PUBLIC . tiberiandawn/win32lib tiberiandawn)
-    target_link_libraries(VanillaTD commonv wsock32 ws2_32 winmm ${STATIC_LIBS})
+    target_link_libraries(VanillaTD commonv ${VANILLA_LIBS} ${STATIC_LIBS})
     set_target_properties(VanillaTD PROPERTIES OUTPUT_NAME vanillatd)
     if(MAP_EDITORTD)
         target_compile_definitions(VanillaTD PUBLIC SCENARIO_EDITOR CHEAT_KEYS VIRGIN_CHEAT_KEYS)
@@ -618,17 +628,17 @@ if(BUILD_REMASTERRA)
         ${REDALERT_SRC}
         ${REDALERT_HEADERS}
     )
-    target_compile_definitions(RedAlert PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE _USRDLL REDALERT_EXPORTS REMASTER_BUILD)
+    target_compile_definitions(RedAlert PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${REMASTER_DEFS})
     target_include_directories(RedAlert PUBLIC . redalert/win32lib redalert)
-    target_link_libraries(RedAlert commonr wsock32 ws2_32 winmm ${STATIC_LIBS})
+    target_link_libraries(RedAlert commonr ${REMASTER_LIBS} ${STATIC_LIBS})
     set_target_properties(RedAlert PROPERTIES PREFIX "")
 endif()
 
 if(BUILD_VANILLARA)
     add_executable(VanillaRA ${REDALERT_SRC} ${REDALERT_HEADERS})
-    target_compile_definitions(VanillaRA PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE WINSOCK_IPX)
+    target_compile_definitions(VanillaRA PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS} WINSOCK_IPX)
     target_include_directories(VanillaRA PUBLIC . redalert/win32lib redalert)
-    target_link_libraries(VanillaRA commonv wsock32 ws2_32 winmm ${STATIC_LIBS})
+    target_link_libraries(VanillaRA commonv ${VANILLA_LIBS} ${STATIC_LIBS})
     set_target_properties(VanillaRA PROPERTIES OUTPUT_NAME vanillara)
     if(MAP_EDITORRA)
         target_compile_definitions(VanillaRA PUBLIC SCENARIO_EDITOR INTERNAL_VERSION)
