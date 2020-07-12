@@ -591,7 +591,6 @@ set(REDALERT_SRC
     redalert/wol_logn.cpp
     redalert/wol_main.cpp
     redalert/wol_opt.cpp
-    redalert/wspipx.cpp
     redalert/wsproto.cpp
     redalert/wspudp.cpp
     redalert/xpipe.cpp
