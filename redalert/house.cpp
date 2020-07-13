@@ -1307,6 +1307,14 @@ void HouseClass::AI(void)
     if (PlayerPtr == this) {
         bool jammed = true;
 
+#ifndef REMASTER_BUILD
+        /*
+        ** Undocumented change in Remaster source, should check if radar is active before trying to jam.
+        ** OmniBlade - 13/07/2020
+        */
+        jammed = Map.Is_Radar_Active();
+#endif
+
         /*
         ** Find if there are any radar facilities, and if they're jammed or not
         */
@@ -1330,6 +1338,12 @@ void HouseClass::AI(void)
                 }
             }
         }
+
+#ifndef REMASTER_BUILD
+        if (Map.Get_Jammed(this) != jammed) {
+            Map.RadarClass::Flag_To_Redraw(true);
+        }
+#endif
 
         Map.Set_Jammed(this, jammed);
         // Need to add in here where we activate it when only GPS is active.
