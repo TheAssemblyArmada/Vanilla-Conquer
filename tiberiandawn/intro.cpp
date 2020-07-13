@@ -193,7 +193,6 @@ void Choose_Side(void)
             setpalette = 0;
         }
         SysMemPage.Blit(*PseudoSeenBuff, 0, 22, 0, 22, 320, 156);
-        Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "SIDES.PAL");
 
         /*
         ** If the sample has stopped or is about to then restart it
@@ -248,6 +247,10 @@ void Choose_Side(void)
     Hide_Mouse();
     Close_Animation(anim);
 
+    // erase the "choose side" text
+    PseudoSeenBuff->Fill_Rect(0, 180, 319, 199, 0);
+    SeenBuff.Fill_Rect(0, 180 * 2, 319 * 2, 199 * 2, 0);
+    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "SIDES.PAL");
     Keyboard::Clear();
     SysMemPage.Clear();
 
