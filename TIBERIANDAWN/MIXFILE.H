@@ -76,7 +76,7 @@ class MixFileClass : public LinkClass
 		int Count;							// Number of sub-blocks.
 		long DataSize;						// Size of raw data.
 		SubBlock * Buffer;				// Array of sub blocks (could be in EMS).
-		void *Data;							// Pointer to raw data.
+		char *Data;							// Pointer to raw data.
 
 		static MixFileClass * First;
 };
