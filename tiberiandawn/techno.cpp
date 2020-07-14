@@ -1542,7 +1542,8 @@ bool TechnoClass::Evaluate_Cell(ThreatType method,
     /*
     **	If the cell is not on the legal map, then always ignore it.
     */
-    if (cell & 0xF000)
+    //	if (cell & 0xF000) return(false);
+    if ((unsigned)cell > MAP_CELL_TOTAL)
         return (false);
     if (!Map.In_Radar(cell))
         return (false);

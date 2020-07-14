@@ -52,9 +52,15 @@
 #include "common/vqaconfig.h"
 
 #ifdef REMASTER_BUILD
+#ifdef MEGAMAPS
+#define GBUFF_INIT_WIDTH     3072
+#define GBUFF_INIT_HEIGHT    3072
+#define GBUFF_INIT_ALTHEIGHT 3072
+#else
 #define GBUFF_INIT_WIDTH     1536
 #define GBUFF_INIT_HEIGHT    1536
 #define GBUFF_INIT_ALTHEIGHT 1536
+#endif
 #else
 #define GBUFF_INIT_WIDTH     640
 #define GBUFF_INIT_HEIGHT    400

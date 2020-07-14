@@ -129,8 +129,9 @@ void RadarClass::One_Time(void)
     RadHeight = 70 << factor;
     RadX = SeenBuff.Get_Width() - RadWidth;
     RadY = Map.Get_Tab_Height() - (1 << factor);
-    RadPWidth = 64 << factor;
-    RadPHeight = 64 << factor;
+    RadPWidth = MAP_CELL_W << factor;
+    RadPHeight = MAP_CELL_H << factor;
+
     if (factor) {
         RadOffX = 16;
         RadOffY = 7;

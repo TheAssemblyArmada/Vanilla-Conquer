@@ -30,7 +30,7 @@ struct CarryoverObjectStruct;
 
 #define MAX_EXPORT_CELLS (128 * 128)
 
-#ifdef TIBERIAN_DAWN
+#if defined TIBERIAN_DAWN && !defined MEGAMAPS
 #define MAP_MAX_CELL_WIDTH  64
 #define MAP_MAX_CELL_HEIGHT 64
 #else

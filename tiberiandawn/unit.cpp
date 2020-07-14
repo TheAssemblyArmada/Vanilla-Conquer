@@ -3799,7 +3799,16 @@ void UnitClass::Read_INI(CCINIClass& ini)
                         **	Read the raw data.
                         */
                         int strength = atoi(strtok(NULL, ",\r\n"));
-                        COORDINATE coord = Cell_Coord((CELL)atoi(strtok(NULL, ",\r\n")));
+                        CELL cell = (CELL)atoi(strtok(NULL, ",\n\r"));
+#ifdef MEGAMAPS
+                        /*
+                        ** Convert the normal cell position to a new big map position.
+                        */
+                        if (Map.MapBinaryVersion == MAP_VERSION_NORMAL) {
+                            cell = Confine_Old_Cell(cell);
+                        }
+#endif
+                        COORDINATE coord = Cell_Coord(cell);
                         DirType dir = (DirType)atoi(strtok(NULL, ",\r\n"));
                         MissionType mission = MissionClass::Mission_From_Name(strtok(NULL, ",\n\r"));
                         unit->Trigger = TriggerClass::As_Pointer(strtok(NULL, ",\r\n"));
