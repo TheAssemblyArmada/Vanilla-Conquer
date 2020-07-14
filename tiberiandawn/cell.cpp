@@ -102,7 +102,7 @@ int CellClass::Validate(void) const
     int num;
 
     num = Cell_Number();
-    if (num < 0 || num > 4095) {
+    if (num < 0 || num > MAP_CELL_TOTAL) {
         Validate_Error("CELL");
         return (0);
     } else
@@ -1767,7 +1767,8 @@ int CellClass::Clear_Icon(void) const
 {
     Validate();
     CELL cell = Cell_Number();
-    return ((cell & 0x03) | ((cell >> 4) & 0x0C));
+    //return((cell & 0x03) | ((cell>>4) & 0x0C));
+    return ((Cell_X(cell) & 0x03) | ((Cell_Y(cell) & 0x03) << 2)); // From RA Clear_Icon()
 }
 
 /***********************************************************************************************

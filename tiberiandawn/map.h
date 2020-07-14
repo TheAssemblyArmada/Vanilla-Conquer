@@ -37,8 +37,6 @@
 
 #include "gscreen.h"
 
-#define BIGMAP 0
-
 class MapClass : public GScreenClass
 {
 public:
@@ -121,6 +119,20 @@ public:
     **	This is the total value of all harvestable Tiberium on the map.
     */
     long TotalValue;
+
+#ifdef MEGAMAPS
+    /*
+    **	To enable big maps we need to load the normal format a little differently.
+    **  This value should be set when reading the map ini before the binary is loaded.
+    */
+    int MapBinaryVersion;
+
+    /*
+    **	Slighty different version of Read/Write_Binary, suited for big maps.
+    */
+    bool Read_Binary_Big(char const* fname, uint32_t* crc);
+    bool Write_Binary_Big(char const* root);
+#endif
 
 protected:
     /*

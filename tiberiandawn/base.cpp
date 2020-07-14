@@ -170,6 +170,16 @@ void BaseClass::Read_INI(CCINIClass& ini)
         */
         node.Coord = atol(strtok(NULL, ","));
 
+#ifdef MEGAMAPS
+        /*
+        ** Convert the normal cell position to a new big map position.
+        */
+        if (Map.MapBinaryVersion == MAP_VERSION_NORMAL) {
+            CELL cell = Confine_Old_Cell(XY_Cell(Coord_X(node.Coord), Coord_Y(node.Coord)));
+            node.Coord = Cell_Coord(cell);
+        }
+#endif
+
         /*
         ** Add this node to the Base's list
         */

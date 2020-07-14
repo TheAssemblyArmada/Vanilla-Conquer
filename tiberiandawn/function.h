@@ -744,26 +744,22 @@ int Terrain_Cost(CELL cell, FacingType facing);
 **	Inline miscellaneous functions.
 */
 #define XYP_COORD(x, y) (unsigned)(((x)*ICON_LEPTON_W) / CELL_PIXEL_W + ((((y)*ICON_LEPTON_H) / CELL_PIXEL_H) << 16))
-inline FacingType Dir_Facing(DirType facing)
-{
-    return (FacingType)(((unsigned char)(facing + 0x10) & 0xFF) >> 5);
-}
-inline DirType Facing_Dir(FacingType facing)
-{
-    return (DirType)((int)facing << 5);
-}
+
 inline int Cell_To_Lepton(int cell)
 {
     return cell << 8;
 }
+
 inline int Lepton_To_Cell(int lepton)
 {
     return ((unsigned)(lepton + 0x0080)) >> 8;
 }
+
 inline CELL XY_Cell(int x, int y)
 {
-    return ((CELL)(((y) << 6) | (x)));
+    return ((CELL)(((y) << MAP_CELL_MAX_X_BITS) | (x)));
 }
+
 inline COORDINATE XY_Coord(int x, int y)
 {
     return ((COORDINATE)MAKE_LONG(y, x));
@@ -776,55 +772,110 @@ inline int Coord_Y(COORDINATE coord)
 {
     return (short)(HIGH_WORD(coord));
 }
+
 inline int Cell_X(CELL cell)
 {
-    return (int)(((unsigned)cell) & 0x3F);
+    return (int)(((unsigned)cell) & MAP_CELL_X_MASK);
 }
+
 inline int Cell_Y(CELL cell)
 {
-    return (int)(((unsigned)cell) >> 6);
+    return (int)(((unsigned)cell) >> MAP_CELL_MAX_X_BITS);
 }
-inline int Dir_Diff(DirType dir1, DirType dir2)
-{
-    return (int)(*((signed char*)&dir2) - *((signed char*)&dir1));
-}
+
 inline CELL Coord_XLepton(COORDINATE coord)
 {
     return (CELL)(*((unsigned char*)&coord));
 }
+
 inline CELL Coord_YLepton(COORDINATE coord)
 {
     return (CELL)(*(((unsigned char*)&coord) + 2));
 }
-// inline COORD CellXY_Coord(unsigned x, unsigned y) {return (COORD)(MAKE_LONG(y<<8, x<<8));}
+
 inline COORDINATE Coord_Add(COORDINATE coord1, COORDINATE coord2)
 {
     return (COORDINATE)MAKE_LONG((*((short*)(&coord1) + 1) + *((short*)(&coord2) + 1)),
                                  (*((short*)(&coord1)) + *((short*)(&coord2))));
 }
+
 inline COORDINATE Coord_Sub(COORDINATE coord1, COORDINATE coord2)
 {
     return (COORDINATE)MAKE_LONG((*((short*)(&coord1) + 1) - *((short*)(&coord2) + 1)),
                                  (*((short*)(&coord1)) - *((short*)(&coord2))));
 }
+
 inline COORDINATE Coord_Snap(COORDINATE coord)
 {
     return (COORDINATE)MAKE_LONG((((*(((unsigned short*)&coord) + 1)) & 0xFF00) | 0x80),
                                  (((*((unsigned short*)&coord)) & 0xFF00) | 0x80));
 }
+
 inline COORDINATE Coord_Mid(COORDINATE coord1, COORDINATE coord2)
 {
     return (COORDINATE)MAKE_LONG((*((unsigned short*)(&coord1) + 1) + *((unsigned short*)(&coord2) + 1)) >> 1,
                                  (*((unsigned short*)(&coord1)) + *((unsigned short*)(&coord2))) >> 1);
 }
-inline COORDINATE Cell_Coord(CELL cell)
-{
-    return (COORDINATE)MAKE_LONG((((cell & 0x0FC0) << 2) | 0x80), ((((cell & 0x003F) << 1) + 1) << 7));
-}
+
 inline COORDINATE XYPixel_Coord(int x, int y)
 {
     return ((COORDINATE)MAKE_LONG((int)(((long)y * (long)ICON_LEPTON_H) / (long)ICON_PIXEL_H) /*+LEPTON_OFFSET_Y*/,
                                   (int)(((long)x * (long)ICON_LEPTON_W) / (long)ICON_PIXEL_W) /*+LEPTON_OFFSET_X*/));
+}
+
+inline int Lepton_To_Pixel(int lepton)
+{
+    return ((lepton * ICON_PIXEL_W) + (ICON_LEPTON_W / 2) - ((lepton < 0) ? (ICON_LEPTON_W - 1) : 0)) / ICON_LEPTON_W;
+}
+
+inline int Pixel_To_Lepton(int pixel)
+{
+    return ((pixel * ICON_LEPTON_W) + (ICON_PIXEL_W / 2) - ((pixel < 0) ? (ICON_PIXEL_W - 1) : 0)) / ICON_PIXEL_W;
+}
+
+inline COORDINATE XYP_Coord(int x, int y)
+{
+    return XY_Coord(Pixel_To_Lepton(x), Pixel_To_Lepton(y));
+};
+
+#ifdef MEGAMAPS
+/*
+**   Added copies for mega maps.
+**   Cell_Coord - 0x0FC0 to 0x3F80, 0x003F to 0x007F
+*/
+inline COORDINATE Cell_Coord(CELL cell)
+{
+    return (COORDINATE)MAKE_LONG((((cell & 0x3F80) << 1) | 0x80), ((((cell & 0x007F) << 1) + 1) << 7));
+}
+
+/*
+**	Takes a old cell value (that assumes a map of 64x64) and adjusts it within 
+**  the new enlarged map array (128x128). All old maps are aligned to the top left
+**  of the new 128x128 map.
+*/
+inline CELL Confine_Old_Cell(CELL cell)
+{
+    return (cell % 64) + (cell / 64) * 128;
+}
+
+#else  // MEGAMAPS
+inline COORDINATE Cell_Coord(CELL cell)
+{
+    return (COORDINATE)MAKE_LONG((((cell & 0x0FC0) << 2) | 0x80), ((((cell & 0x003F) << 1) + 1) << 7));
+}
+#endif //MEGAMAPS
+
+inline int Dir_Diff(DirType dir1, DirType dir2)
+{
+    return (int)(*((signed char*)&dir2) - *((signed char*)&dir1));
+}
+inline FacingType Dir_Facing(DirType facing)
+{
+    return (FacingType)(((unsigned char)(facing + 0x10) & 0xFF) >> 5);
+}
+inline DirType Facing_Dir(FacingType facing)
+{
+    return (DirType)((int)facing << 5);
 }
 // inline int Facing_To_16(int facing) {return Facing16[facing];}
 inline int Facing_To_32(DirType facing)
@@ -865,19 +916,7 @@ inline CELL Adjacent_Cell(CELL cell, DirType dir)
 {
     return (CELL)(cell + AdjacentCell[Dir_Facing(dir)]);
 }
-inline int Lepton_To_Pixel(int lepton)
-{
-    return ((lepton * ICON_PIXEL_W) + (ICON_LEPTON_W / 2) - ((lepton < 0) ? (ICON_LEPTON_W - 1) : 0)) / ICON_LEPTON_W;
-}
-inline int Pixel_To_Lepton(int pixel)
-{
-    return ((pixel * ICON_LEPTON_W) + (ICON_PIXEL_W / 2) - ((pixel < 0) ? (ICON_PIXEL_W - 1) : 0)) / ICON_PIXEL_W;
-}
 // inline FacingType Facing_To_8(DirType facing) {return (FacingType)(((unsigned char)(facing|0x10))>>5);}
-inline COORDINATE XYP_Coord(int x, int y)
-{
-    return XY_Coord(Pixel_To_Lepton(x), Pixel_To_Lepton(y));
-};
 inline char const* Text_String(int string)
 {
     return (Extract_String(SystemStrings, string));

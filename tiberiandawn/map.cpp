@@ -724,7 +724,10 @@ int MapClass::Cell_Distance(CELL cell1, CELL cell2)
  *=============================================================================================*/
 bool MapClass::In_Radar(CELL cell) const
 {
-    if (cell & 0xF000)
+    /*
+    ** Updated to use the macro so it supports both map size configurations
+    */
+    if ((unsigned)cell > MAP_CELL_TOTAL)
         return (false);
     return ((unsigned)(Cell_X(cell) - MapCellX) < (unsigned)MapCellWidth
             && (unsigned)(Cell_Y(cell) - MapCellY) < (unsigned)MapCellHeight);
@@ -945,12 +948,19 @@ bool MapClass::Read_Binary(char const* root, unsigned long*)
 bool MapClass::Read_Binary(char const* root, uint32_t* crc)
 #endif
 {
+#ifdef MEGAMAPS
+    if (MapBinaryVersion == MAP_VERSION_MEGA) {
+        return Read_Binary_Big(root, crc);
+    }
+#endif
+
     CCFileClass file;
     char fname[_MAX_FNAME + _MAX_EXT];
     int i;
     char* map;
     void* rawmap;
     void const* shape;
+    CellClass* cellptr = NULL;
 
     /*
     **	Filename = INI name with BIN extension.
@@ -966,11 +976,40 @@ bool MapClass::Read_Binary(char const* root, uint32_t* crc)
     }
     file.Open(READ);
 
+#ifdef MEGAMAPS
+    /*
+    **	Loop through all cells and set all to the clear tile.
+    */
+    for (i = 0; i < MAP_CELL_TOTAL; i++) {
+        //CCDebugString("Cell: %d:%d\n", Cell_X(i), Cell_Y(i));
+        cellptr = &Map[i];
+        cellptr->TType = (TemplateType)255;
+        cellptr->TIcon = 0;
+        cellptr->Recalc_Attributes();
+    }
+#endif
+
+    /*
+    **	We need to handle the orignal maps differently now as MAP_CELL_TOTAL is larger
+    **  and will break all maps made the old way. This new piece of code will offset the
+    **  cells of the smaller maps to be within the new MAP_CELL_TOTAL range.
+    */
+#ifdef MEGAMAPS
+    /*
+    **	Loop through all cells. The helper funtion will convert the old map binary cell
+    **  to a position in the new big map array.
+    */
+    for (i = 0; i < (MAP_CELL_TOTAL / 4); i++) {
+        CELL cell = Confine_Old_Cell(i);
+        cellptr = &Map[cell];
+#else
     /*
     **	Loop through all cells.
     */
-    CellClass* cellptr = &Map[0];
+    cellptr = &Map[0];
     for (i = 0; i < MAP_CELL_TOTAL; i++) {
+#endif
+
 #pragma pack(push, 1)
         struct
         {
@@ -1013,6 +1052,127 @@ bool MapClass::Read_Binary(char const* root, uint32_t* crc)
         Add_CRC(crc, (uint32_t)cellptr->TIcon);
 #endif
 
+#ifndef MEGAMAPS
+        cellptr++;
+#endif
+    }
+
+    /*
+    **	Close the file.
+    */
+    file.Close();
+
+#ifdef MEGAMAPS
+    return (i == (MAP_CELL_TOTAL / 4));
+#else
+    return (i == MAP_CELL_TOTAL);
+#endif
+}
+
+#ifdef MEGAMAPS
+/***********************************************************************************************
+ * MapClass::Read_Binary_Big -- reads the map's binary image file                              *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *      root      root filename for scenario                                                   *
+ *      crc       ptr to CRC value to update                                                   *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *      1 = success, 0 = failure                                                               *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *      none.                                                                                  *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   11/14/1994 BR : Created.                                                                  *
+ *   01/08/1995 JLB : Fixup any obsolete icons detected.                                       *
+ *=============================================================================================*/
+bool MapClass::Read_Binary_Big(char const* root, uint32_t* crc)
+{
+    CCFileClass file;
+    char fname[_MAX_FNAME + _MAX_EXT];
+    int i;
+    char* map;
+    void* rawmap;
+    void const* shape;
+    CellClass* cellptr = NULL;
+
+    /*
+    **	Filename = INI name with BIN extension.
+    */
+    sprintf(fname, "%s.BIN", root);
+
+    /*
+    **	Create object & open file.
+    */
+    file.Set_Name(fname);
+    if (!file.Is_Available()) {
+        return (false);
+    }
+    file.Open(READ);
+
+    /*
+    **	Loop through all cells and set all to the clear tile.
+    */
+    for (i = 0; i < MAP_CELL_TOTAL; i++) {
+        cellptr = &Map[i];
+        cellptr->TType = (TemplateType)255;
+        cellptr->TIcon = 0;
+        cellptr->Recalc_Attributes();
+    }
+
+    /*
+    **	Loop through all cells.
+    */
+    struct
+    {
+        CELL Cell;           // cell number on the map.
+        TemplateType TType;  // Template type.
+        unsigned char TIcon; // Template icon number.
+    } temp;
+
+    int file_size = file.Size() / sizeof(temp);
+    cellptr = &Map[0];
+    for (i = 0; i < MAP_CELL_TOTAL; i++) {
+
+        if (i >= file_size)
+            break;
+        if (file.Read(&temp, sizeof(temp)) != sizeof(temp))
+            break;
+        if (temp.TType == (TemplateType)255) {
+            temp.TType = TEMPLATE_NONE;
+        }
+
+        cellptr = &Map[temp.Cell];
+
+        /*
+        **	Verify that the template type actually contains the template number specified. If
+        **	an illegal icon was specified, then replace it with clear terrain.
+        */
+        if (temp.TType != TEMPLATE_CLEAR1 && temp.TType != TEMPLATE_NONE) {
+            TemplateTypeClass const& ttype = TemplateTypeClass::As_Reference(temp.TType);
+            shape = ttype.Get_Image_Data();
+            if (shape) {
+                rawmap = Get_Icon_Set_Map(shape);
+                if (rawmap) {
+                    map = (char*)rawmap;
+                    if ((temp.TIcon >= (ttype.Width * ttype.Height)) || (map[temp.TIcon] == -1)) {
+                        temp.TIcon = 0;
+                        temp.TType = TEMPLATE_NONE;
+                    }
+                }
+            }
+        }
+
+        cellptr->TType = temp.TType;
+        cellptr->TIcon = temp.TIcon;
+        cellptr->Recalc_Attributes();
+
+#ifndef DEMO
+        Add_CRC(crc, (unsigned long)cellptr->TType);
+        Add_CRC(crc, (unsigned long)cellptr->TIcon);
+#endif
+
         cellptr++;
     }
 
@@ -1023,9 +1183,10 @@ bool MapClass::Read_Binary(char const* root, uint32_t* crc)
 
     return (i == MAP_CELL_TOTAL);
 }
+#endif
 
 /***********************************************************************************************
- * MapClass::Read_BinaryRead_Binary_File -- reads the map's binary image file						  *
+ * MapClass::Read_Binary_File -- reads the map's binary image file						  *
  *                                                                                             *
  * INPUT:                                                                                      *
  *      fname     file path for scenario																		  *
@@ -1132,6 +1293,86 @@ bool MapClass::Read_Binary_File(char const* fname, uint32_t* crc)
  *=============================================================================================*/
 bool MapClass::Write_Binary(char const* root)
 {
+#ifdef MEGAMAPS
+    if (MapBinaryVersion == MAP_VERSION_MEGA) {
+        return Write_Binary_Big(root);
+    }
+#endif
+
+    CCFileClass* file;
+    char fname[_MAX_FNAME + _MAX_EXT];
+    int i;
+
+    /*
+    **	Filename = INI name with BIN extension.
+    */
+    sprintf(fname, "%s.BIN", root);
+
+    /*
+    **	Create object & open file.
+    */
+    file = new CCFileClass(fname);
+    file->Open(WRITE);
+
+    /*
+    **	Loop through all cells.
+    */
+#ifdef MEGAMAPS
+    for (i = 0; i < (MAP_CELL_TOTAL / 4); i++) {
+        /*
+        **	Work out which cell in the larger array we need data from.
+        */
+        CELL cell = Confine_Old_Cell(i);
+#else
+    for (i = 0; i < MAP_CELL_TOTAL; i++) {
+        CELL cell = i;
+#endif
+        /*
+        **	Save TType.
+        */
+        if (file->Write(&(Map[cell].TType), sizeof(TemplateType)) != sizeof(TemplateType)) {
+            file->Close();
+            delete file;
+            return (false);
+        }
+
+        /*
+        **	Save TIcon.
+        */
+        if (file->Write(&(Map[cell].TIcon), sizeof(unsigned char)) != sizeof(unsigned char)) {
+            file->Close();
+            delete file;
+            return (false);
+        }
+    }
+
+    /*
+    **	Close the file.
+    */
+    file->Close();
+    delete file;
+
+    return (true);
+}
+
+#ifdef MEGAMAPS
+/***********************************************************************************************
+ * MapClass::Write_Binary_Big -- writes the map's binary image file                                *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *      root      root filename for scenario                                                   *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *      1 = success, 0 = failure                                                               *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *      none.                                                                                  *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   11/14/1994 BR : Created.                                                                  *
+ *=============================================================================================*/
+bool MapClass::Write_Binary_Big(char const* root)
+{
     CCFileClass* file;
     char fname[_MAX_FNAME + _MAX_EXT];
     int i;
@@ -1151,19 +1392,30 @@ bool MapClass::Write_Binary(char const* root)
     **	Loop through all cells.
     */
     for (i = 0; i < MAP_CELL_TOTAL; i++) {
+#pragma pack(push, 1)
+        struct
+        {
+            CELL Cell;           // cell number on the map.
+            TemplateType TType;  // Template type.
+            unsigned char TIcon; // Template icon number.
+        } temp;
+#pragma pack(pop)
         /*
-        **	Save TType.
+        **	To cut down the size of the scenario binary don't save clear tiles.
+        **  Read_Binary handles this by initialising the map data with clear tiles for us.
         */
-        if (file->Write(&(Map[i].TType), sizeof(TemplateType)) != sizeof(TemplateType)) {
-            file->Close();
-            delete file;
-            return (false);
+        if (Map[i].TType == TEMPLATE_NONE || Map[i].TType == TEMPLATE_CLEAR1) {
+            continue;
         }
 
+        temp.Cell = i;
+        temp.TType = Map[i].TType;
+        temp.TIcon = Map[i].TIcon;
+
         /*
-        **	Save TIcon.
+        **	Save cell data.
         */
-        if (file->Write(&(Map[i].TIcon), sizeof(unsigned char)) != sizeof(unsigned char)) {
+        if (file->Write(&temp, sizeof(temp)) != sizeof(temp)) {
             file->Close();
             delete file;
             return (false);
@@ -1178,6 +1430,7 @@ bool MapClass::Write_Binary(char const* root)
 
     return (true);
 }
+#endif
 
 /***********************************************************************************************
  * MapClass::Logic -- Handles map related logic functions.                                     *

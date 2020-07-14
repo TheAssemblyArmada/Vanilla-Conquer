@@ -297,6 +297,14 @@ void SmudgeClass::Read_INI(CCINIClass& ini)
             if (ptr) {
                 int data = 0;
                 CELL cell = atoi(ptr);
+#ifdef MEGAMAPS
+                /*
+                ** Convert the normal cell position to a new big map position.
+                */
+                if (Map.MapBinaryVersion == MAP_VERSION_NORMAL) {
+                    cell = Confine_Old_Cell(cell);
+                }
+#endif
                 ptr = strtok(NULL, ",");
                 if (ptr)
                     data = atoi(ptr);

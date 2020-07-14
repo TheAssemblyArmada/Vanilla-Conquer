@@ -813,7 +813,14 @@ void TerrainClass::Read_INI(CCINIClass& ini)
         char const* entry = ini.Get_Entry(INI_Name(), index);
         TerrainType terrain = ini.Get_TerrainType(INI_Name(), entry, TERRAIN_NONE);
         CELL cell = atoi(entry);
-
+#ifdef MEGAMAPS
+        /*
+        ** Convert the normal cell position to a new big map position.
+        */
+        if (Map.MapBinaryVersion == MAP_VERSION_NORMAL) {
+            cell = Confine_Old_Cell(cell);
+        }
+#endif
         if (terrain != TERRAIN_NONE) {
             tptr = new TerrainClass(terrain, cell);
         }

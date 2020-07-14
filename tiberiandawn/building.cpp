@@ -3282,6 +3282,12 @@ void BuildingClass::Read_INI(CCINIClass& ini)
             */
             cell = atoi(strtok(NULL, ","));
 
+#ifdef MEGAMAPS
+            if (Map.MapBinaryVersion == MAP_VERSION_NORMAL) {
+                cell = Confine_Old_Cell(cell);
+            }
+#endif
+
             /*
             **	5th token: facing.
             */

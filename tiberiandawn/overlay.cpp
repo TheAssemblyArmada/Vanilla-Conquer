@@ -353,7 +353,14 @@ void OverlayClass::Read_INI(CCINIClass& ini)
         char const* entry = ini.Get_Entry(INI_Name(), index);
         CELL cell = atoi(entry);
         OverlayType classid = ini.Get_OverlayType(INI_Name(), entry, OVERLAY_NONE);
-
+#ifdef MEGAMAPS
+        /*
+        ** Convert the normal cell position to a new big map position.
+        */
+        if (Map.MapBinaryVersion == MAP_VERSION_NORMAL) {
+            cell = Confine_Old_Cell(cell);
+        }
+#endif
         /*
         **	Don't allow placement of crates in the multiplayer scenarios.
         */
