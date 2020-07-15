@@ -455,7 +455,7 @@ KeyNumType GadgetClass::Input(void)
             } else {
                 sprintf(filename, "scrsht%d.pcx", lp);
             }
-            if (access(filename, F_OK) == -1)
+            if (access(filename, 0) == -1)
                 break;
         }
 

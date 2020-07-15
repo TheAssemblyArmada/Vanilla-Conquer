@@ -66,7 +66,7 @@
 /*...........................................................................
 Array of all missions supported by the map editor
 ...........................................................................*/
-MissionType MapEditClass::MapEditMissions[] = {
+MissionType MapEditClass::MapEditMissions[NUM_EDIT_MISSIONS] = {
     MISSION_GUARD,
     MISSION_STICKY,
     MISSION_HARVEST,
@@ -76,7 +76,6 @@ MissionType MapEditClass::MapEditMissions[] = {
     MISSION_HUNT,
     MISSION_SLEEP,
 };
-#define NUM_EDIT_MISSIONS (sizeof(MapEditClass::MapEditMissions) / sizeof(MapEditClass::MapEditMissions[0]))
 
 /*...........................................................................
 For menu processing
@@ -1915,5 +1914,3 @@ void MapEditClass::Detach(ObjectClass* object)
 }
 
 #endif
-
-#include "mapedsel.cpp"
