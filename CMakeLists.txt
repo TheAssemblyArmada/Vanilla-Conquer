@@ -28,7 +28,7 @@ add_definitions(-DENGLISH -DTRUE_FALSE_DEFINED -DWIN32 -D_WINDOWS -D_CRT_SECURE_
 set(COMMON_LIBS winmm)
 
 set(VANILLA_DEFS "")
-set(VANILLA_LIBS dsound ddraw dxguid)
+set(VANILLA_LIBS ddraw dxguid)
 
 set(REMASTER_DEFS _USRDLL REMASTER_BUILD)
 set(REMASTER_LIBS "")
@@ -50,6 +50,7 @@ option(BUILD_VANILLARA "Build Red Alert executable." ON)
 option(MAP_EDITORTD "Include internal scenario editor in Tiberian Dawn build." OFF)
 option(MAP_EDITORRA "Include internal scenario editor in Red Alert build." OFF)
 option(NETWORKING "Enable network play." ON)
+option(DSOUND "Enable DirectSound audio." ON)
 
 if(NOT BUILD_VANILLATD AND MAP_EDTITORTD)
     message(WARNING "Internal scenario editor requires a Tiberian Dawn executable to be built, but it was not enabled.")
@@ -62,8 +63,8 @@ if(NOT BUILD_VANILLARA AND MAP_EDTITORRA)
 endif()
 
 if(NETWORKING)
-    set(VANILLA_DEFS ${VANILLA_DEFS} NETWORKING)
-    set(VANILLA_LIBS ${VANILLA_LIBS} wsock32 ws2_32)
+    list(APPEND VANILLA_DEFS NETWORKING)
+    list(APPEND VANILLA_LIBS wsock32 ws2_32)
 endif()
 
 set(COMMON_SRC
@@ -111,28 +112,39 @@ set(COMMON_SRC
     common/field.cpp
 )
 
+set(COMMONR_SRC
+    common/mouseww.cpp
+    common/soundio_null.cpp
+    common/tcpip_null.cpp
+)
+
+set(COMMONV_SRC
+    common/mouseww.cpp
+    common/setvideomode.cpp
+    common/tcpip_null.cpp
+)
+
+if(DSOUND)
+    list(APPEND COMMONV_SRC common/soundio.cpp)
+    list(APPEND VANILLA_LIBS dsound)
+else()
+    list(APPEND COMMONV_SRC common/soundio_null.cpp)
+endif()
+
 file(GLOB_RECURSE COMMON_HEADERS "common/*.h")
 
 add_library(common STATIC ${COMMON_SRC} ${COMMON_HEADERS})
 target_link_libraries(common PUBLIC ${COMMON_LIBS})
 
 if(BUILD_REMASTERTD OR BUILD_REMASTERRA)
-    add_library(commonr STATIC
-        common/mouseww.cpp
-        common/tcpip_null.cpp
-    )
+    add_library(commonr STATIC ${COMMONR_SRC})
     target_compile_definitions(commonr PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${REMASTER_DEFS})
     target_link_libraries(commonr PUBLIC common ${COMMON_LIBS} ${REMASTER_LIBS})
 endif()
 
 # These options currently require directx components from the aug 2007 SDK.
 if(BUILD_VANILLATD OR BUILD_VANILLARA)
-    add_library(commonv STATIC
-        common/mouseww.cpp
-        common/soundio.cpp
-        common/setvideomode.cpp
-        common/tcpip_null.cpp
-    )
+    add_library(commonv STATIC ${COMMONV_SRC})
     target_compile_definitions(commonv PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS})
     target_link_libraries(commonv PUBLIC common ${COMMON_LIBS} ${VANILLA_LIBS})
 endif()
@@ -689,4 +701,10 @@ if(NETWORKING)
     message(STATUS "  Networking is enabled.")
 else()
     message(STATUS "  Networking is disabled.")
+endif()
+
+if(DSOUND)
+    message(STATUS "  DirectSound is enabled.")
+else()
+    message(STATUS "  DirectSound is disabled.")
 endif()
