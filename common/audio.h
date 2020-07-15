@@ -156,4 +156,4 @@ extern Sample_Type SampleType;
 
 extern CRITICAL_SECTION GlobalAudioCriticalSection;
 
-extern int StreamLowImpact;
+extern bool StreamLowImpact;

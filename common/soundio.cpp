@@ -11,7 +11,7 @@
 extern bool GameInFocus;
 
 void (*Audio_Focus_Loss_Function)(void) = nullptr;
-int StreamLowImpact = 0;
+bool StreamLowImpact = false;
 
 // These includes must not be resorted.
 #include <mmsystem.h>

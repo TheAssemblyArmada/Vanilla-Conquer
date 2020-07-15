@@ -51,7 +51,7 @@
 #include "theme.h"
 
 #ifndef WIN32
-extern short StreamLowImpact;
+extern bool StreamLowImpact;
 #endif // WIN32
 
 /*

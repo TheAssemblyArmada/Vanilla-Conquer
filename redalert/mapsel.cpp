@@ -79,10 +79,6 @@ struct point
                                 {{32, 156}, {46, 171}, {-1, -1}},
                                 {{108, 97}, {-1, -1}, {-1, -1}}}};
 
-#ifndef WIN32
-extern short StreamLowImpact;
-#endif // WIN32
-
 /***********************************************************************************************
  * Map_Selection -- Starts the whole process of selecting next map to go to                    *
  *                                                                                             *
@@ -97,9 +93,7 @@ extern short StreamLowImpact;
  *   07/18/1996 BWG : Created.                                                                 *
  *=============================================================================================*/
 extern int CopyType;
-#ifndef WIN32
-extern short StreamLowImpact;
-#endif
+extern bool StreamLowImpact;
 char const* Map_Selection(void)
 {
 #ifdef REMASTER_BUILD

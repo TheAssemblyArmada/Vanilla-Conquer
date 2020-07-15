@@ -44,10 +44,6 @@
  *   ScoreClass::Pulse_Bar_Graph -- Pulses the bargraph color.                                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef WIN32
-extern short StreamLowImpact;
-#endif
-
 #include "function.h"
 
 #define SCORETEXT_X 184
@@ -68,9 +64,7 @@ extern short StreamLowImpact;
 #define NUMFAMENAMES        7
 #define MAX_FAMENAME_LENGTH 11
 
-#ifndef WIN32
-extern short StreamLowImpact;
-#endif // WIN32
+extern bool StreamLowImpact;
 
 GraphicBufferClass* PseudoSeenBuff;
 
