@@ -342,7 +342,7 @@ if(BUILD_VANILLATD)
     target_link_libraries(VanillaTD commonv ${VANILLA_LIBS} ${STATIC_LIBS})
     set_target_properties(VanillaTD PROPERTIES OUTPUT_NAME vanillatd)
     if(MAP_EDITORTD)
-        target_compile_definitions(VanillaTD PUBLIC SCENARIO_EDITOR CHEAT_KEYS VIRGIN_CHEAT_KEYS)
+        target_compile_definitions(VanillaTD PUBLIC INTERNAL_VERSION)
     endif()
     # Control if we auto generate a console and which "main" function we link using MSVC.
     if(MSVC)
