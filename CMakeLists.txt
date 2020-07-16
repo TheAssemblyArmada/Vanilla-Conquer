@@ -609,7 +609,7 @@ if(CMAKE_CONFIGURATION_TYPES)
     # Glob all the header files together to add to the project for msvc/xcode.
     # Not ideal as CMake won't notice if you add any until something else prompts a CMake run
     # but this is largely a convenience feature for MSVC/XCode users.
-    file(GLOB_RECURSE REDALERT_HEADERS "tiberiandawn/*.h")
+    file(GLOB_RECURSE REDALERT_HEADERS "redalert/*.h")
     set(_REDALERT_SOURCES ${REDALERT_SRC})
 
     foreach(_REDALERT_SOURCE IN ITEMS ${_REDALERT_SOURCES})
@@ -648,7 +648,7 @@ if(BUILD_VANILLARA)
     target_link_libraries(VanillaRA commonv ${VANILLA_LIBS} ${STATIC_LIBS})
     set_target_properties(VanillaRA PROPERTIES OUTPUT_NAME vanillara)
     if(MAP_EDITORRA)
-        target_compile_definitions(VanillaRA PUBLIC SCENARIO_EDITOR INTERNAL_VERSION)
+        target_compile_definitions(VanillaRA PUBLIC INTERNAL_VERSION)
     endif()
     if(NETWORKING)
         target_compile_definitions(VanillaRA PUBLIC WINSOCK_IPX)
