@@ -62,7 +62,7 @@
 /*
 **	Array of all missions supported by the map editor
 */
-MissionType MapEditClass::MapEditMissions[] = {
+MissionType MapEditClass::MapEditMissions[NUM_EDIT_MISSIONS] = {
     MISSION_GUARD,
     MISSION_STICKY,
     MISSION_HARMLESS,
@@ -73,7 +73,6 @@ MissionType MapEditClass::MapEditMissions[] = {
     MISSION_HUNT,
     MISSION_SLEEP,
 };
-#define NUM_EDIT_MISSIONS (sizeof(MapEditClass::MapEditMissions) / sizeof(MapEditClass::MapEditMissions[0]))
 
 /*
 **	For menu processing
@@ -1061,7 +1060,7 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
                     }
                 }
             }
-            LastClickTime = WinTickCount();
+            LastClickTime = WinTickCount.Time();
             input = KN_NONE;
         } else {
 
@@ -1274,7 +1273,7 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
             /*
             **	Derive strength from current gauge reading
             */
-            strength = CurrentObject[0]->Class_Of().MaxStrength * fixed(HealthGauge->Get_Value(), 256);
+            strength = (int)CurrentObject[0]->Class_Of().MaxStrength * fixed(HealthGauge->Get_Value(), 256);
             //				strength = Fixed_To_Cardinal((unsigned)CurrentObject[0]->Class_Of().MaxStrength,
             //(unsigned)HealthGauge->Get_Value());
 
@@ -1873,7 +1872,7 @@ HousesType MapEditClass::Cycle_House(HousesType curhouse, ObjectTypeClass const*
 void MapEditClass::Fatal(int txt)
 {
     // Prog_End();
-    printf("%s\n", txt);
+    // printf("%s\n", txt);
     Emergency_Exit(EXIT_FAILURE);
 }
 
@@ -2147,5 +2146,3 @@ void MapEditClass::Write_INI(CCINIClass& ini)
 }
 
 #endif
-
-#include "mapedsel.cpp"

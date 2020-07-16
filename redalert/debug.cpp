@@ -351,6 +351,7 @@ void Debug_Key(unsigned input)
  *=============================================================================================*/
 static char const* Bench_Time(BenchType btype)
 {
+#if 0
     static char buffer[32];
 
     int rootcount = Benches[BENCH_GAME_FRAME].Count();
@@ -369,6 +370,7 @@ static char const* Bench_Time(BenchType btype)
         percent = 99;
     sprintf(buffer, "%-2d%% %7d", percent, time);
     return (buffer);
+#endif
 }
 
 /***********************************************************************************************
@@ -391,6 +393,7 @@ static char const* Bench_Time(BenchType btype)
  *=============================================================================================*/
 static void Benchmarks(MonoClass* mono)
 {
+#if 0
     static bool _first = true;
     if (_first) {
         _first = false;
@@ -458,6 +461,7 @@ static void Benchmarks(MonoClass* mono)
                 Benches[index].Reset();
         }
     }
+#endif
 }
 
 /***********************************************************************************************

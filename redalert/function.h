@@ -249,7 +249,7 @@ extern long LParam;
 #include "ccfile.h"
 #include "monoc.h"
 #include "conquer.h"
-//#include	"debug.h"
+#include "debug.h"
 #include "special.h"
 #include "defines.h"
 #include "ccini.h"
@@ -1127,16 +1127,6 @@ extern CCPtr<TemplateTypeClass> y24;
 extern CCPtr<TerrainTypeClass> y25;
 extern CCPtr<OverlayTypeClass> y26;
 extern CCPtr<SmudgeTypeClass> y27;
-template <> class DynamicVectorClass<CCPtr<TeamTypeClass>>;
-extern DynamicVectorClass<CCPtr<TeamTypeClass>> y002;
-template <> class DynamicVectorClass<CCPtr<TriggerTypeClass>>;
-extern DynamicVectorClass<CCPtr<TriggerTypeClass>> y001;
-template <> class DynamicVectorClass<TeamMissionClass*>;
-extern DynamicVectorClass<TeamMissionClass*> xxx1;
-template <> class DynamicVectorClass<EventChoiceClass*>;
-extern DynamicVectorClass<EventChoiceClass*> xxx2;
-template <> class DynamicVectorClass<ActionChoiceClass*>;
-extern DynamicVectorClass<ActionChoiceClass*> xxx3;
 template <> class DynamicVectorClass<EgoClass*>;
 extern DynamicVectorClass<EgoClass*> whatever;
 

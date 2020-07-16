@@ -59,7 +59,7 @@ enum MapEdit1Enum
     MAX_TEAM_CLASSES = // max # ObjectTypeClasses for a team
     (int)UNIT_COUNT + (int)INFANTRY_COUNT + (int)AIRCRAFT_COUNT,
 
-    //	NUM_EDIT_MISSIONS = 6,			// # missions that can be assigned an object
+    NUM_EDIT_MISSIONS = 9, // # missions that can be assigned an object
 
     NUM_EDIT_CLASSES = 9, // # different classes (templates, terrain, etc)
 
@@ -335,7 +335,7 @@ private:
     static char HealthBuf[20];
     GaugeClass* BaseGauge;
     TextLabelClass* BaseLabel;
-    static MissionType MapEditMissions[];
+    static MissionType MapEditMissions[NUM_EDIT_MISSIONS];
 };
 
 #endif

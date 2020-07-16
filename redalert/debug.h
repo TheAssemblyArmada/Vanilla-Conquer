@@ -12,6 +12,8 @@
 // distributed with this program. You should have received a copy of the
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
+#ifndef DEBUG_H
+#define DEBUG_H
 
 #define TXT_CLEAR_MAP           0x3e8 // Clear the map
 #define TXT_INHERIT_MAP         0x3e9 // Inherit previous map
@@ -56,3 +58,5 @@
 #define TXT_NO_PENTIUM          0x410 // ****************************
 #define TXT_SIZE_MAP            0x411 // Size Map
 #define TXT_TRUCK_CRATE         0x412 // Trucks drop crate when
+
+#endif
