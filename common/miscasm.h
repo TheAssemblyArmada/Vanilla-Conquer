@@ -7,8 +7,8 @@ extern "C" {
 
 int calcx(signed short param1, short distance);
 int calcy(signed short param1, short distance);
-unsigned int __cdecl Cardinal_To_Fixed(unsigned base, unsigned cardinal);
-unsigned int __cdecl Fixed_To_Cardinal(unsigned base, unsigned fixed);
+unsigned int Cardinal_To_Fixed(unsigned base, unsigned cardinal);
+unsigned int Fixed_To_Cardinal(unsigned base, unsigned fixed);
 int __cdecl Desired_Facing256(LONG srcx, LONG srcy, LONG dstx, LONG dsty);
 int __cdecl Desired_Facing8(long x1, long y1, long x2, long y2);
 void __cdecl Set_Bit(void* array, int bit, int value);
