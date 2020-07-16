@@ -627,7 +627,7 @@ bool TriggerTypeClass::Edit(void)
                               MFCD::Retrieve("EBTN-UP.SHP"),
                               MFCD::Retrieve("EBTN-DN.SHP"));
 
-    for (index = 0; index < TriggerTypes.Count(); index++) {
+    for (int index = 0; index < TriggerTypes.Count(); index++) {
         trtype1list.Add_Item(TriggerTypes.Ptr(index)->IniName);
         trtype2list.Add_Item(TriggerTypes.Ptr(index)->IniName);
     }

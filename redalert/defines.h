@@ -2825,7 +2825,7 @@ typedef enum BenchType : unsigned char
     BENCH_FIRST = 0
 } BenchType;
 
-#ifdef CHEAT_KEYS
+#if 0
 #define BStart(a)                                                                                                      \
     if (Benches != NULL)                                                                                               \
     Benches[a].Begin()

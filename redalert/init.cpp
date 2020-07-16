@@ -190,7 +190,7 @@ bool Init_Game(int, char*[])
 **	Allocate the benchmark tracking objects only if the machine and
 **	compile flags indicate.
 */
-#ifdef CHEAT_KEYS
+#if 0
     if (Processor() >= 2) {
         Benches = new Benchmark[BENCH_COUNT];
     }

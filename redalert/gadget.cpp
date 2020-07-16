@@ -55,6 +55,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/filepcx.h"
 
 /*
 **	This records the current gadget the the gadget system is "stuck on". Such a
@@ -504,8 +505,7 @@ KeyNumType GadgetClass::Input(void)
                     break;
             }
 
-            file.Cache(200000);
-            Write_PCX_File(file, temp_page, &GamePalette);
+            Write_PCX_File(filename, temp_page, (unsigned char*)&GamePalette);
             Sound_Effect(VOC_BEEP);
         }
     }

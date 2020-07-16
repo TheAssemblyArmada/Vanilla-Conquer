@@ -282,7 +282,7 @@ TListClass<T>::TListClass(int id, int x, int y, int w, int h, TextPrintType flag
     /*
     **	Set the list box to a default state.
     */
-    Fancy_Text_Print(TXT_NONE, 0, 0, TBLACK, TBLACK, TextFlags);
+    Fancy_Text_Print(TXT_NONE, 0, 0, nullptr, TBLACK, TextFlags);
     LineHeight = FontHeight + FontYSpacing - 1;
     LineCount = (h - 1) / LineHeight;
 }
