@@ -12,6 +12,6 @@ IControl_Type struct
     Map         dd ?
 IControl_Type ends
 
-include ../common/stamp.inc
+include common/stamp.inc
 
 end
