@@ -28,7 +28,7 @@ add_definitions(-DENGLISH -DTRUE_FALSE_DEFINED -DWIN32 -D_WINDOWS -D_CRT_SECURE_
 set(COMMON_LIBS winmm)
 
 set(VANILLA_DEFS "")
-set(VANILLA_LIBS ddraw dxguid)
+set(VANILLA_LIBS "")
 
 set(REMASTER_DEFS _USRDLL REMASTER_BUILD)
 set(REMASTER_LIBS "")
@@ -60,6 +60,7 @@ option(MAP_EDITORTD "Include internal scenario editor in Tiberian Dawn build." O
 option(MAP_EDITORRA "Include internal scenario editor in Red Alert build." OFF)
 option(NETWORKING "Enable network play." ON)
 option(DSOUND "Enable DirectSound audio." ON)
+option(DDRAW "Enable DirectDraw video backend." ON)
 option(USE_ASM "Use x86 assembly optimizations." ON)
 
 if(NOT USE_ASM)
@@ -105,7 +106,6 @@ set(COMMON_SRC
     common/timerdwn.cpp
     common/palette.cpp
     common/buffglbl.cpp
-    common/ddraw.cpp
     common/iff.cpp
     common/load.cpp
     common/loadfont.cpp
@@ -114,7 +114,6 @@ set(COMMON_SRC
     common/dipthong.cpp
     common/wsa.cpp
     common/_diptabl.cpp
-    common/drawrect.cpp
     common/set_font.cpp
     common/rawfile.cpp
     common/getshape.cpp
@@ -126,12 +125,14 @@ set(COMMON_SRC
     common/file.cpp
     common/packet.cpp
     common/field.cpp
+    common/rect.cpp
 )
 
 set(COMMONR_SRC
     common/mouseww.cpp
     common/soundio_null.cpp
     common/tcpip_null.cpp
+    common/video_null.cpp
 )
 
 set(COMMONV_SRC
@@ -145,6 +146,17 @@ if(DSOUND)
     list(APPEND VANILLA_LIBS dsound)
 else()
     list(APPEND COMMONV_SRC common/soundio_null.cpp)
+endif()
+
+if(DDRAW)
+    list(APPEND COMMONV_SRC common/ddraw.cpp)
+    list(APPEND VANILLA_LIBS ddraw)
+else()
+    list(APPEND COMMONV_SRC common/video_null.cpp)
+endif()
+
+if(DSOUND OR DDRAW)
+    list(APPEND VANILLA_LIBS dxguid)
 endif()
 
 file(GLOB_RECURSE COMMON_HEADERS "common/*.h")
@@ -549,7 +561,6 @@ set(REDALERT_SRC
     redalert/random.cpp
     redalert/rawolapi.cpp
     redalert/readline.cpp
-    redalert/rect.cpp
     redalert/reinf.cpp
     redalert/rgb.cpp
     redalert/rndstraw.cpp
@@ -723,6 +734,12 @@ if(DSOUND)
     message(STATUS "  DirectSound is enabled.")
 else()
     message(STATUS "  DirectSound is disabled.")
+endif()
+
+if(DDRAW)
+    message(STATUS "  DirectDraw is enabled.")
+else()
+    message(STATUS "  DirectDraw is disabled.")
 endif()
 
 if(USE_ASM)

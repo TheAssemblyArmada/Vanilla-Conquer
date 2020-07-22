@@ -105,7 +105,7 @@ bool Rect::Is_Valid(void) const
  * HISTORY:                                                                                    *
  *   07/22/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Rect const Rect::Intersect(Rect const& rectangle, int* x, int* y) const
+Rect const Rect::Intersect(const Rect& rectangle, int* x, int* y) const
 {
     Rect rect(0, 0, 0, 0); // Dummy (illegal) rectangle.
     Rect r = rectangle;    // Working rectangle.
@@ -159,17 +159,17 @@ Rect const Rect::Intersect(Rect const& rectangle, int* x, int* y) const
     **	Adjust Height relative draw position according to Height new rectangle
     **	union.
     */
-    if (x != NULL) {
+    if (x != nullptr) {
         *x -= (r.X - X);
     }
-    if (y != NULL) {
+    if (y != nullptr) {
         *y -= (r.Y - Y);
     }
 
     return (r);
 }
 
-Rect const Union(Rect const& rect1, Rect const& rect2)
+Rect const Union(const Rect& rect1, Rect const& rect2)
 {
     if (rect1.Is_Valid()) {
         if (rect2.Is_Valid()) {

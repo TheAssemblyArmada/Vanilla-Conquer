@@ -285,7 +285,7 @@ int cdecl Set_Shape_Height(VOID const* shape, WORD newheight)
     WORD oldheight;
 
     oldheight = shp->Height;
-    shp->Height = newheight;
+    shp->Height = (unsigned char)newheight;
 
     return (oldheight);
 

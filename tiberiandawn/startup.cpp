@@ -160,10 +160,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
     */
     //	int temp = Desired_Facing256 (1070, 5419, 1408, 5504);
 
-#ifndef REMASTER_BUILD
-    DDSCAPS surface_capabilities;
-#endif
-
     if (Ram_Free(MEM_NORMAL) < 5000000) {
 #ifdef GERMAN
         printf("Zuwenig Hauptspeicher verfgbar.\n");
@@ -403,16 +399,16 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 #else
 
             if (ScreenHeight == 400) {
-                if (Set_Video_Mode(MainWindow, ScreenWidth, ScreenHeight, 8)) {
+                if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
                     video_success = TRUE;
                 } else {
-                    if (Set_Video_Mode(MainWindow, ScreenWidth, 480, 8)) {
+                    if (Set_Video_Mode(ScreenWidth, 480, 8)) {
                         video_success = TRUE;
                         ScreenHeight = 480;
                     }
                 }
             } else {
-                if (Set_Video_Mode(MainWindow, ScreenWidth, ScreenHeight, 8)) {
+                if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
                     video_success = TRUE;
                 }
             }
@@ -421,7 +417,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
             if (!video_success) {
                 CCDebugString("C&C95 - Failed to set video mode.\n");
                 MessageBoxA(MainWindow,
-                            Text_String(TXT_UNABLE_TO_SET_VIDEO_MODE),
+                            "Error - Unable to set the video mode.",
                             "Command & Conquer",
                             MB_ICONEXCLAMATION | MB_OK);
                 if (WindowsTimer)
@@ -449,9 +445,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
                 /*
                 ** Check that we really got a video memory page. Failure is fatal.
                 */
-                memset(&surface_capabilities, 0, sizeof(surface_capabilities));
-                VisiblePage.Get_DD_Surface()->GetCaps(&surface_capabilities);
-                if (surface_capabilities.dwCaps & DDSCAPS_SYSTEMMEMORY) {
+                if (VisiblePage.IsAllocated()) {
                     /*
                     ** Aaaarrgghh!
                     */
@@ -491,16 +485,12 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
                     ** Make sure we really got a video memory hid page. If we didnt then things
                     ** will run very slowly.
                     */
-                    memset(&surface_capabilities, 0, sizeof(surface_capabilities));
-                    HiddenPage.Get_DD_Surface()->GetCaps(&surface_capabilities);
-                    if (surface_capabilities.dwCaps & DDSCAPS_SYSTEMMEMORY) {
+                    if (HiddenPage.IsAllocated()) {
                         /*
                         ** Oh dear, big trub. This must be an IBM Aptiva or something similarly cruddy.
                         ** We must redo the Hidden Page as system memory.
                         */
-                        AllSurfaces.Remove_DD_Surface(
-                            HiddenPage.Get_DD_Surface()); // Remove the old surface from the AllSurfaces list
-                        HiddenPage.Get_DD_Surface()->Release();
+                        HiddenPage.Un_Init();
                         HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
                     } else {
                         VisiblePage.Attach_DD_Surface(&HiddenPage);

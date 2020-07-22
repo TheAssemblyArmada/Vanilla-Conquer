@@ -183,12 +183,6 @@ int main(int argc, char* argv[])
 
 #ifdef WIN32
 
-#ifndef MPEGMOVIE // Denzil 6/10/98
-#ifndef REMASTER_BUILD
-    DDSCAPS surface_capabilities;
-#endif
-#endif
-
 #endif
 // printf("in program.\n");getch();
 // printf("ram free = %ld\n",Ram_Free(MEM_NORMAL));getch();
@@ -537,16 +531,16 @@ int main(int argc, char* argv[])
             video_success = TRUE;
 #else
             if (ScreenHeight == 400) {
-                if (Set_Video_Mode(MainWindow, ScreenWidth, ScreenHeight, 8)) {
+                if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
                     video_success = TRUE;
                 } else {
-                    if (Set_Video_Mode(MainWindow, ScreenWidth, 480, 8)) {
+                    if (Set_Video_Mode(ScreenWidth, 480, 8)) {
                         video_success = TRUE;
                         ScreenHeight = 480;
                     }
                 }
             } else {
-                if (Set_Video_Mode(MainWindow, ScreenWidth, ScreenHeight, 8)) {
+                if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
                     video_success = TRUE;
                 }
             }
@@ -576,9 +570,7 @@ int main(int argc, char* argv[])
                 /*
                 ** Check that we really got a video memory page. Failure is fatal.
                 */
-                memset(&surface_capabilities, 0, sizeof(surface_capabilities));
-                VisiblePage.Get_DD_Surface()->GetCaps(&surface_capabilities);
-                if (surface_capabilities.dwCaps & DDSCAPS_SYSTEMMEMORY) {
+                if (VisiblePage.IsAllocated()) {
                     /*
                     ** Aaaarrgghh!
                     */
@@ -611,17 +603,13 @@ int main(int argc, char* argv[])
                     ** Make sure we really got a video memory hid page. If we didnt then things
                     ** will run very slowly.
                     */
-                    memset(&surface_capabilities, 0, sizeof(surface_capabilities));
-                    HiddenPage.Get_DD_Surface()->GetCaps(&surface_capabilities);
-                    if (surface_capabilities.dwCaps & DDSCAPS_SYSTEMMEMORY) {
+                    if (HiddenPage.IsAllocated()) {
 
                         /*
                         ** Oh dear, big trub. This must be an IBM Aptiva or something similarly cruddy.
                         ** We must redo the Hidden Page as system memory.
                         */
-                        AllSurfaces.Remove_DD_Surface(
-                            HiddenPage.Get_DD_Surface()); // Remove the old surface from the AllSurfaces list
-                        HiddenPage.Get_DD_Surface()->Release();
+                        HiddenPage.Un_Init();
                         HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
                     } else {
                         VisiblePage.Attach_DD_Surface(&HiddenPage);
@@ -787,21 +775,20 @@ bool InitDDraw(void)
     HidPage.Attach(&HiddenPage, 0, 0, 3072, 3072);
 
 #else
-    DDSCAPS surface_capabilities;
     BOOL video_success = FALSE;
 
     /* Set 640x400 video mode. If its not available then try for 640x480 */
     if (ScreenHeight == 400) {
-        if (Set_Video_Mode(MainWindow, ScreenWidth, ScreenHeight, 8)) {
+        if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
             video_success = TRUE;
         } else {
-            if (Set_Video_Mode(MainWindow, ScreenWidth, 480, 8)) {
+            if (Set_Video_Mode(ScreenWidth, 480, 8)) {
                 video_success = TRUE;
                 ScreenHeight = 480;
             }
         }
     } else {
-        if (Set_Video_Mode(MainWindow, ScreenWidth, ScreenHeight, 8)) {
+        if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
             video_success = TRUE;
         }
     }
@@ -822,10 +809,7 @@ bool InitDDraw(void)
         VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VISIBLE | GBC_VIDEOMEM));
 
         /* Check that we really got a video memory page. Failure is fatal. */
-        memset(&surface_capabilities, 0, sizeof(surface_capabilities));
-        VisiblePage.Get_DD_Surface()->GetCaps(&surface_capabilities);
-
-        if (surface_capabilities.dwCaps & DDSCAPS_SYSTEMMEMORY) {
+        if (VisiblePage.IsAllocated()) {
             /* Aaaarrgghh! */
             WWDebugString(TEXT_DDRAW_ERROR);
             WWDebugString("\n");
@@ -856,16 +840,11 @@ bool InitDDraw(void)
             /* Make sure we really got a video memory hid page. If we didnt then things
              * will run very slowly.
              */
-            memset(&surface_capabilities, 0, sizeof(surface_capabilities));
-            HiddenPage.Get_DD_Surface()->GetCaps(&surface_capabilities);
-
-            if (surface_capabilities.dwCaps & DDSCAPS_SYSTEMMEMORY) {
+            if (HiddenPage.IsAllocated()) {
                 /* Oh dear, big trub. This must be an IBM Aptiva or something similarly cruddy.
                  * We must redo the Hidden Page as system memory.
                  */
-                AllSurfaces.Remove_DD_Surface(
-                    HiddenPage.Get_DD_Surface()); // Remove the old surface from the AllSurfaces list
-                HiddenPage.Get_DD_Surface()->Release();
+                HiddenPage.Un_Init();
                 HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
             } else {
                 VisiblePage.Attach_DD_Surface(&HiddenPage);

@@ -86,5 +86,5 @@ void* __cdecl Get_Font_Palette_Ptr(void);
 }
 
 extern GraphicViewPortClass* LogicPage;
-extern BOOL AllowHardwareBlitFills;
+extern bool AllowHardwareBlitFills;
 #endif

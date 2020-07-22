@@ -37,44 +37,33 @@
 
 /*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
 
-#include "misc.h"
+#include "ddraw.h"
 #include "gbuffer.h"
 #include "palette.h"
-#include <stdio.h>
+#include "video.h"
+#include "misc.h"
+#include <cstdio>
 #include <ddraw.h>
 
 LPDIRECTDRAW DirectDrawObject = NULL;      // Pointer to the direct draw object
 LPDIRECTDRAW2 DirectDraw2Interface = NULL; // Pointer to direct draw 2 interface
 
-HWND MainWindow; // Handle to programs main window
-                 // this is passed to SetCooperativeLevel
-                 // so DirectDraw knows which window is ours
-
 PALETTEENTRY PaletteEntries[256]; // 256 windows palette entries
 LPDIRECTDRAWPALETTE PalettePtr;   // Pointer to direct draw palette object
 BOOL FirstPaletteSet = FALSE;     // Is this the first time 'Set_Palette' has been called?
 LPDIRECTDRAWSURFACE PaletteSurface = NULL;
-SurfaceMonitorClass AllSurfaces; // List of all direct draw surfaces
+SurfaceMonitorClassDDraw AllSurfacesDDraw;           // List of all direct draw surfaces
+SurfaceMonitorClass& AllSurfaces = AllSurfacesDDraw; // List of all direct draw surfaces
+
 BOOL CanVblankSync = TRUE;
-
-BOOL SystemToVideoBlits = FALSE;  // Does hardware support system mem to video mem blits?
-BOOL VideoToSystemBlits = FALSE;  // Does hardware support video mem to system mem blits?
-BOOL SystemToSystemBlits = FALSE; // Does hardware support system mem to system mem blits?
-BOOL OverlappedVideoBlits = TRUE; // Can video driver blit overlapped regions?
-
-/*
-** Function to call if we detect focus loss
-*/
-extern void (*Misc_Focus_Loss_Function)(void) = NULL;
-extern void (*Misc_Focus_Restore_Function)(void) = NULL;
 
 /***********************************************************************************************
  * Process_DD_Result -- Does a message box based on the result of a DD command                 *
  *                                                                                             *
- * INPUT:		HRESULT result				- the result returned from the direct draw command		  *
- *             int     display_ok_msg	- should a message be displayed if command ok			  * *
+ * INPUT:      HRESULT result           - the result returned from the direct draw command     *
+ *             int     display_ok_msg   - should a message be displayed if command ok          *
  *                                                                                             *
- * OUTPUT:		none *
+ * OUTPUT:     none                                                                            *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   09/27/1995 PWG : Created.                                                                 *
@@ -621,7 +610,7 @@ void Check_Overlapped_Blit_Capability(void)
     /*
     ** Assume we can until we find out otherwise
     */
-    OverlappedVideoBlits = TRUE;
+    OverlappedVideoBlits = true;
 
     GraphicBufferClass test_buffer;
 
@@ -642,13 +631,98 @@ void Check_Overlapped_Blit_Capability(void)
     test_buffer.Blit(test_buffer, 0, 0, 0, 1, test_buffer.Get_Width(), test_buffer.Get_Height() - 1);
 
     if (test_buffer.Get_Pixel(0, 5) == 255)
-        OverlappedVideoBlits = FALSE;
+        OverlappedVideoBlits = false;
+}
+
+/***********************************************************************************************
+ * Set_Video_Mode -- Initializes Direct Draw and sets the required Video Mode                  *
+ *                                                                                             *
+ * INPUT:           int width           - the width of the video mode in pixels                *
+ *                  int height          - the height of the video mode in pixels               *
+ *                  int bits_per_pixel  - the number of bits per pixel the video mode supports *
+ *                                                                                             *
+ * OUTPUT:     none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   09/26/1995 PWG : Created.                                                                 *
+ *=============================================================================================*/
+bool Set_Video_Mode(int w, int h, int bits_per_pixel)
+{
+    HRESULT result;
+    //
+    // If there is not currently a direct draw object then we need to define one.
+    //
+    if (DirectDrawObject == NULL) {
+        result = DirectDrawCreate(NULL, &DirectDrawObject, NULL);
+        Process_DD_Result(result, FALSE);
+        if (result == DD_OK) {
+            if (w == 320) {
+                result = DirectDrawObject->SetCooperativeLevel(MainWindow,
+                                                               DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_ALLOWMODEX);
+            } else {
+                result = DirectDrawObject->SetCooperativeLevel(MainWindow, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
+            }
+            Process_DD_Result(result, FALSE);
+        } else {
+            return false;
+        }
+    }
+
+    //
+    // Set the required display mode with 8 bits per pixel
+    //
+    result = DirectDrawObject->SetDisplayMode(w, h, bits_per_pixel);
+    if (result != DD_OK) {
+        DirectDrawObject->Release();
+        DirectDrawObject = NULL;
+        return false;
+    }
+
+    //
+    // Create a direct draw palette object
+    //
+    result = DirectDrawObject->CreatePalette(DDPCAPS_8BIT | DDPCAPS_ALLOW256, &PaletteEntries[0], &PalettePtr, NULL);
+    Process_DD_Result(result, FALSE);
+    if (result != DD_OK) {
+        return false;
+    }
+
+    Check_Overlapped_Blit_Capability();
+
+    /*
+    ** Find out if DirectX 2 extensions are available
+    */
+    result = DirectDrawObject->QueryInterface(IID_IDirectDraw2, (LPVOID*)&DirectDraw2Interface);
+    SystemToVideoBlits = FALSE;
+    VideoToSystemBlits = FALSE;
+    SystemToSystemBlits = FALSE;
+    if (result != DD_OK) {
+        DirectDraw2Interface = NULL;
+    } else {
+        DDCAPS capabilities;
+        DDCAPS emulated_capabilities;
+
+        memset((char*)&capabilities, 0, sizeof(capabilities));
+        memset((char*)&emulated_capabilities, 0, sizeof(emulated_capabilities));
+        capabilities.dwSize = sizeof(capabilities);
+        emulated_capabilities.dwSize = sizeof(emulated_capabilities);
+
+        DirectDrawObject->GetCaps(&capabilities, &emulated_capabilities);
+
+        if (capabilities.dwCaps & DDCAPS_CANBLTSYSMEM) {
+            SystemToVideoBlits = (capabilities.dwSVBCaps & DDCAPS_BLT) ? TRUE : FALSE;
+            VideoToSystemBlits = (capabilities.dwVSBCaps & DDCAPS_BLT) ? TRUE : FALSE;
+            SystemToSystemBlits = (capabilities.dwSSBCaps & DDCAPS_BLT) ? TRUE : FALSE;
+        }
+    }
+
+    return true;
 }
 
 /***********************************************************************************************
  * Reset_Video_Mode -- Resets video mode and deletes Direct Draw Object                        *
  *                                                                                             *
- * INPUT:		none                                                                            *
+ * INPUT:      none                                                                            *
  *                                                                                             *
  * OUTPUT:     none                                                                            *
  *                                                                                             *
@@ -900,13 +974,17 @@ void Wait_Blit(void)
  *    11/3/95 3:23PM ST : Created                                                              *
  *=============================================================================================*/
 
-SurfaceMonitorClass::SurfaceMonitorClass(void)
+SurfaceMonitorClass::SurfaceMonitorClass()
+{
+    SurfacesRestored = false;
+}
+
+SurfaceMonitorClassDDraw::SurfaceMonitorClassDDraw()
 {
     for (int i = 0; i < MAX_SURFACES; i++) {
-        Surface[i] = NULL;
+        Surface[i] = nullptr;
     }
-    InFocus = FALSE;
-    SurfacesRestored = FALSE;
+    InFocus = false;
 }
 
 /***********************************************************************************************
@@ -923,7 +1001,7 @@ SurfaceMonitorClass::SurfaceMonitorClass(void)
  * HISTORY:                                                                                    *
  *                 11/3/95 3:24PM ST : Created                                                 *
  *=============================================================================================*/
-void SurfaceMonitorClass::Add_DD_Surface(LPDIRECTDRAWSURFACE new_surface)
+void SurfaceMonitorClassDDraw::Add_DD_Surface(LPDIRECTDRAWSURFACE new_surface)
 {
     if (!Got_Surface_Already(new_surface)) {
         for (int i = 0; i < MAX_SURFACES; i++) {
@@ -950,7 +1028,7 @@ void SurfaceMonitorClass::Add_DD_Surface(LPDIRECTDRAWSURFACE new_surface)
  *    11/3/95 3:25PM ST : Created                                                              *
  *=============================================================================================*/
 
-void SurfaceMonitorClass::Remove_DD_Surface(LPDIRECTDRAWSURFACE old_surface)
+void SurfaceMonitorClassDDraw::Remove_DD_Surface(LPDIRECTDRAWSURFACE old_surface)
 {
     for (int i = 0; i < MAX_SURFACES; i++) {
         if (Surface[i] == old_surface) {
@@ -975,14 +1053,14 @@ void SurfaceMonitorClass::Remove_DD_Surface(LPDIRECTDRAWSURFACE old_surface)
  *    11/3/95 3:25PM ST : Created                                                              *
  *=============================================================================================*/
 
-BOOL SurfaceMonitorClass::Got_Surface_Already(LPDIRECTDRAWSURFACE test_surface)
+bool SurfaceMonitorClassDDraw::Got_Surface_Already(LPDIRECTDRAWSURFACE test_surface)
 {
     for (int i = 0; i < MAX_SURFACES; i++) {
         if (Surface[i] == test_surface) {
-            return (TRUE);
+            return true;
         }
     }
-    return (FALSE);
+    return false;
 }
 
 /***********************************************************************************************
@@ -1000,7 +1078,7 @@ BOOL SurfaceMonitorClass::Got_Surface_Already(LPDIRECTDRAWSURFACE test_surface)
  *    11/3/95 3:26PM ST : Created                                                              *
  *=============================================================================================*/
 
-void SurfaceMonitorClass::Restore_Surfaces(void)
+void SurfaceMonitorClassDDraw::Restore_Surfaces()
 {
     if (InFocus) {
         /*
@@ -1027,7 +1105,7 @@ void SurfaceMonitorClass::Restore_Surfaces(void)
             Misc_Focus_Restore_Function();
         }
 
-        SurfacesRestored = TRUE;
+        SurfacesRestored = true;
 
         /*
         ** Restore the palette
@@ -1053,7 +1131,7 @@ void SurfaceMonitorClass::Restore_Surfaces(void)
  *    11/6/95 12:21PM ST : Created                                                             *
  *=============================================================================================*/
 
-void SurfaceMonitorClass::Set_Surface_Focus(BOOL in_focus)
+void SurfaceMonitorClassDDraw::Set_Surface_Focus(bool in_focus)
 {
     InFocus = in_focus;
 }
@@ -1073,7 +1151,7 @@ void SurfaceMonitorClass::Set_Surface_Focus(BOOL in_focus)
  *    6/6/96 12:23PM ST : Created                                                              *
  *=============================================================================================*/
 
-void SurfaceMonitorClass::Release(void)
+void SurfaceMonitorClassDDraw::Release()
 {
     /*
     ** Call release for each Direct Draw surface
@@ -1084,4 +1162,200 @@ void SurfaceMonitorClass::Release(void)
             Surface[i] = 0;
         }
     }
+}
+
+/*
+** VideoSurfaceDDraw
+*/
+
+class VideoSurfaceDDraw : public VideoSurface
+{
+public:
+    VideoSurfaceDDraw(int w, int h, GBC_Enum flags);
+    virtual ~VideoSurfaceDDraw();
+
+    virtual void* GetData() const;
+    virtual long GetPitch() const;
+    virtual bool IsAllocated() const;
+
+    virtual void AddAttachedSurface(VideoSurface* surface);
+    virtual bool IsReadyToBlit();
+    virtual bool LockWait();
+    virtual bool Unlock();
+    virtual void Blt(const Rect& destRect, VideoSurface* src, const Rect& srcRect, bool mask);
+    virtual void FillRect(const Rect& rect, unsigned char color);
+
+protected:
+    LPDIRECTDRAWSURFACE VideoSurfacePtr;   // Pointer to the related direct draw surface
+    DDSURFACEDESC VideoSurfaceDescription; // Description of the said surface
+};
+
+VideoSurfaceDDraw::VideoSurfaceDDraw(int w, int h, GBC_Enum flags)
+{
+    //
+    // Create the direct draw surface description
+    //
+    memset(&VideoSurfaceDescription, 0, sizeof(VideoSurfaceDescription));
+
+    VideoSurfaceDescription.dwSize = sizeof(VideoSurfaceDescription);
+    VideoSurfaceDescription.dwFlags = DDSD_CAPS;
+    VideoSurfaceDescription.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
+
+    if (!(flags & GBC_VISIBLE)) {
+        VideoSurfaceDescription.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
+        VideoSurfaceDescription.dwFlags |= DDSD_HEIGHT | DDSD_WIDTH;
+        VideoSurfaceDescription.dwHeight = h;
+        VideoSurfaceDescription.dwWidth = w;
+    }
+
+    //
+    // Need to set the DDSCAPS_MODEX  flag if we want a 320 wide mode
+    //
+    if (w == 320) {
+        VideoSurfaceDescription.ddsCaps.dwCaps |= DDSCAPS_MODEX;
+    }
+
+    //
+    // Call CreateSurface
+    //
+    DirectDrawObject->CreateSurface(&VideoSurfaceDescription, &VideoSurfacePtr, nullptr);
+    AllSurfacesDDraw.Add_DD_Surface(VideoSurfacePtr);
+
+    if (GBC_VISIBLE & flags) {
+        PaletteSurface = VideoSurfacePtr;
+    }
+}
+
+VideoSurfaceDDraw::~VideoSurfaceDDraw()
+{
+    AllSurfacesDDraw.Remove_DD_Surface(VideoSurfacePtr);
+    VideoSurfacePtr->Release();
+    VideoSurfacePtr = nullptr;
+}
+
+void* VideoSurfaceDDraw::GetData() const
+{
+    return VideoSurfaceDescription.lpSurface;
+}
+
+long VideoSurfaceDDraw::GetPitch() const
+{
+    return VideoSurfaceDescription.lPitch;
+}
+
+bool VideoSurfaceDDraw::IsAllocated() const
+{
+    DDSCAPS surface_capabilities = {0};
+    VideoSurfacePtr->GetCaps(&surface_capabilities);
+    return (surface_capabilities.dwCaps == DDSCAPS_SYSTEMMEMORY);
+}
+
+void VideoSurfaceDDraw::AddAttachedSurface(VideoSurface* surface)
+{
+    VideoSurfaceDDraw* ddSurface = reinterpret_cast<VideoSurfaceDDraw*>(surface);
+    if (ddSurface == nullptr) {
+        return;
+    }
+
+    VideoSurfacePtr->AddAttachedSurface(ddSurface->VideoSurfacePtr);
+}
+
+bool VideoSurfaceDDraw::IsReadyToBlit()
+{
+    return (VideoSurfacePtr->GetBltStatus(DDGBS_CANBLT) == DD_OK);
+}
+
+extern void (*Gbuffer_Focus_Loss_Function)(void);
+
+bool VideoSurfaceDDraw::LockWait()
+{
+    int restore_attempts = 0;
+    while (restore_attempts < 2) {
+        HRESULT result = VideoSurfacePtr->Lock(nullptr, &VideoSurfaceDescription, DDLOCK_WAIT, nullptr);
+
+        switch (result) {
+        case DD_OK:
+            return true; // we locked it multiple times.
+
+        case DDERR_SURFACELOST:
+            if (Gbuffer_Focus_Loss_Function) {
+                Gbuffer_Focus_Loss_Function();
+            }
+            AllSurfaces.Restore_Surfaces();
+            restore_attempts++;
+            break;
+
+        default:
+            return false;
+        }
+    }
+
+    return false;
+}
+
+bool VideoSurfaceDDraw::Unlock()
+{
+    return (VideoSurfacePtr->Unlock(nullptr) == DD_OK);
+}
+
+void VideoSurfaceDDraw::Blt(const Rect& destRect, VideoSurface* src, const Rect& srcRect, bool mask)
+{
+    int key_source = mask ? DDBLT_KEYSRC : 0;
+
+    RECT dRect = {0};
+    dRect.left = destRect.X;
+    dRect.top = destRect.Y;
+    dRect.right = destRect.X + destRect.Width;
+    dRect.bottom = destRect.Y + destRect.Height;
+
+    RECT sRect = {0};
+    sRect.left = srcRect.X;
+    sRect.top = srcRect.Y;
+    sRect.right = srcRect.X + srcRect.Width;
+    sRect.bottom = srcRect.Y + srcRect.Height;
+
+    VideoSurfaceDDraw* srcSurface = reinterpret_cast<VideoSurfaceDDraw*>(src);
+    if (srcSurface == nullptr) {
+        return;
+    }
+
+    VideoSurfacePtr->Blt(&dRect, srcSurface->VideoSurfacePtr, &sRect, key_source | DDBLT_WAIT | DDBLT_ASYNC, NULL);
+}
+
+void VideoSurfaceDDraw::FillRect(const Rect& rect, unsigned char color)
+{
+    DDBLTFX blit_effects = {0};
+    blit_effects.dwSize = sizeof(blit_effects);
+    blit_effects.dwFillColor = color;
+
+    RECT destRect = {0};
+    destRect.left = rect.X;
+    destRect.top = rect.Y;
+    destRect.right = rect.X + rect.Width;
+    destRect.bottom = rect.Y + rect.Height;
+
+    VideoSurfacePtr->Blt(&destRect, NULL, NULL, DDBLT_WAIT | DDBLT_ASYNC | DDBLT_COLORFILL, &blit_effects);
+}
+
+/*
+** Video
+*/
+
+Video::Video()
+{
+}
+
+Video::~Video()
+{
+}
+
+Video& Video::Shared()
+{
+    static Video video;
+    return video;
+}
+
+VideoSurface* Video::CreateSurface(int w, int h, GBC_Enum flags)
+{
+    return new VideoSurfaceDDraw(w, h, flags);
 }
