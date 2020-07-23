@@ -37,13 +37,12 @@
 
 /*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
 
-#include "ddraw.h"
+#include "video_ddraw.h"
 #include "gbuffer.h"
 #include "palette.h"
 #include "video.h"
 #include "misc.h"
 #include <cstdio>
-#include <ddraw.h>
 
 LPDIRECTDRAW DirectDrawObject = NULL;      // Pointer to the direct draw object
 LPDIRECTDRAW2 DirectDraw2Interface = NULL; // Pointer to direct draw 2 interface
