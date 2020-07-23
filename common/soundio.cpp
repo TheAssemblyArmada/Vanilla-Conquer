@@ -4,6 +4,7 @@
 #include "memflag.h"
 #include "file.h"
 #include "audio.h"
+#include "misc.h"
 #include <algorithm>
 #include <math.h>
 #include <stdint.h>
@@ -36,7 +37,7 @@ enum
     INVALID_FILE_HANDLE = -1,
 };
 
-BOOL ReverseChannels;
+bool ReverseChannels;
 LockedDataType LockedData;
 LPDIRECTSOUND SoundObject;
 LPDIRECTSOUNDBUFFER DumpBuffer;
@@ -47,18 +48,18 @@ DSBUFFERDESC BufferDesc;
 DSBUFFERDESC PrimaryBufferDesc;
 CRITICAL_SECTION GlobalAudioCriticalSection;
 void* SoundThreadHandle;
-BOOL SoundThreadActive;
-BOOL StartingFileStream;
+bool SoundThreadActive;
+bool StartingFileStream;
 MemoryFlagType StreamBufferFlag;
 //int Misc;
 UINT SoundTimerHandle;
 void* FileStreamBuffer;
-BOOL volatile AudioDone;
+bool volatile AudioDone;
 SFX_Type SoundType;
 Sample_Type SampleType;
 
 // Forward declare some internal functions.
-BOOL Attempt_Audio_Restore(LPDIRECTSOUNDBUFFER sound_buffer);
+bool Attempt_Audio_Restore(LPDIRECTSOUNDBUFFER sound_buffer);
 void CALLBACK
 Sound_Timer_Callback(UINT uID = 0, UINT uMsg = 0, DWORD_PTR dwUser = 0, DWORD_PTR dw1 = 0, DWORD_PTR dw2 = 0);
 int Simple_Copy(void** source, int* ssize, void** alternate, int* altsize, void** dest, int size);
@@ -118,7 +119,7 @@ void Maintenance_Callback()
 
                 // Do we have more data in this tracker to play?
                 if (st->MoreSource) {
-                    BOOL write_more = false;
+                    bool write_more = false;
 
                     // Work out where we are relative to where we copied up to? Code suggests DestPtr was a pointer in
                     // original and was abused to hold an integer value for the DSound implementation.
@@ -272,7 +273,7 @@ void Init_Locked_Data()
     LockedData._int = 0;
 }
 
-BOOL File_Callback(short id, short* odd, void** buffer, long* size)
+bool File_Callback(short id, short* odd, void** buffer, long* size)
 {
     if (id == INVALID_AUDIO_HANDLE) {
         return false;
@@ -385,7 +386,7 @@ BOOL File_Callback(short id, short* odd, void** buffer, long* size)
 
 int __cdecl Stream_Sample_Vol(void* buffer,
                               int size,
-                              BOOL (*callback)(short int, short int*, void**, long*),
+                              bool (*callback)(short int, short int*, void**, long*),
                               int volume,
                               int handle)
 {
@@ -413,7 +414,7 @@ int __cdecl Stream_Sample_Vol(void* buffer,
     return playid;
 }
 
-int File_Stream_Sample(const char* filename, BOOL real_time_start)
+int File_Stream_Sample(const char* filename, bool real_time_start)
 {
     return File_Stream_Sample_Vol(filename, VOLUME_MAX, real_time_start);
 }
@@ -480,7 +481,7 @@ void File_Stream_Preload(int index)
     }
 }
 
-int File_Stream_Sample_Vol(const char* filename, int volume, BOOL real_time_start)
+int File_Stream_Sample_Vol(const char* filename, int volume, bool real_time_start)
 {
     if (LockedData.DigiHandle == INVALID_AUDIO_HANDLE || filename == nullptr || !Find_File(filename)) {
         return INVALID_AUDIO_HANDLE;
@@ -667,7 +668,7 @@ void Sound_Thread(void* a1)
     SoundThreadActive = false;
 }
 
-BOOL Set_Primary_Buffer_Format()
+bool Set_Primary_Buffer_Format()
 {
     if (SoundObject != nullptr && PrimaryBufferPtr != nullptr) {
         return PrimaryBufferPtr->SetFormat(&PrimaryBuffFormat) == DS_OK;
@@ -681,7 +682,7 @@ int Print_Sound_Error(char* sound_error, void* window)
     return MessageBoxA((HWND)window, sound_error, "DirectSound Audio Error", MB_OK | MB_ICONWARNING);
 }
 
-BOOL Audio_Init(HWND window, int bits_per_sample, BOOL stereo, int rate, BOOL reverse_channels)
+bool Audio_Init(int bits_per_sample, bool stereo, int rate, bool reverse_channels)
 {
     Init_Locked_Data();
     FileStreamBuffer = nullptr;
@@ -699,7 +700,7 @@ BOOL Audio_Init(HWND window, int bits_per_sample, BOOL stereo, int rate, BOOL re
         return false;
     }
 
-    return_code = SoundObject->SetCooperativeLevel((HWND)window, DSSCL_PRIORITY);
+    return_code = SoundObject->SetCooperativeLevel(MainWindow, DSSCL_PRIORITY);
 
     if (return_code != DS_OK) {
         //CCDebugString("Audio_Init - Unable to set Direct Sound cooperative level. Error code %d.", return_code);
@@ -912,7 +913,7 @@ void Stop_Sample(int index)
     }
 }
 
-BOOL Sample_Status(int index)
+bool Sample_Status(int index)
 {
     if (index < 0) {
         return false;
@@ -951,7 +952,7 @@ BOOL Sample_Status(int index)
     return (status & (DSBSTATUS_PLAYING | DSBSTATUS_LOOPING)) != 0;
 }
 
-BOOL Is_Sample_Playing(void const* sample)
+bool Is_Sample_Playing(void const* sample)
 {
     if (AudioDone || sample == nullptr) {
         return false;
@@ -1028,7 +1029,7 @@ int Play_Sample(void const* sample, int priority, int volume, signed short panlo
     return Play_Sample_Handle(sample, priority, volume, panloc, Get_Free_Sample_Handle(priority));
 }
 
-BOOL Attempt_Audio_Restore(LPDIRECTSOUNDBUFFER sound_buffer)
+bool Attempt_Audio_Restore(LPDIRECTSOUNDBUFFER sound_buffer)
 {
     HRESULT return_code = 0;
     DWORD play_status = 0;
@@ -1091,7 +1092,7 @@ int Attempt_To_Play_Buffer(int id)
     return INVALID_AUDIO_HANDLE;
 }
 
-extern BOOL Any_Locked(void);
+extern bool Any_Locked();
 int Play_Sample_Handle(void const* sample, int priority, int volume, signed short panloc, int id)
 {
     HRESULT return_code;
@@ -1402,7 +1403,7 @@ unsigned Sample_Length(void* sample)
     return time;
 }
 
-int Start_Primary_Sound_Buffer(BOOL forced)
+bool Start_Primary_Sound_Buffer(bool forced)
 {
     if (PrimaryBufferPtr == nullptr || !GameInFocus) {
         return false;

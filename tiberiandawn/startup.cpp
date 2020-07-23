@@ -385,7 +385,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 
             CCDebugString("C&C95 - Initialising audio.\n");
 
-            SoundOn = Audio_Init(MainWindow, 16, false, 11025 * 2, 0);
+            SoundOn = Audio_Init(16, false, 11025 * 2, 0);
 
             Palette = new (MEM_CLEAR) unsigned char[768];
 

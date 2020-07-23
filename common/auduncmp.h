@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-short __cdecl Audio_Unzap(void* source, void* dest, short size);
+short Audio_Unzap(void* source, void* dest, short size);
 
 #ifdef __cplusplus
 }
