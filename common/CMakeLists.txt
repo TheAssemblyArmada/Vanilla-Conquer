@@ -1,4 +1,10 @@
+# Embed some git version information in the binary.
+set(GIT_PRE_CONFIGURE_FILE "gitinfo.c.in")
+set(GIT_POST_CONFIGURE_FILE "${CMAKE_CURRENT_BINARY_DIR}/gitinfo.c")
+include(GitWatcher)
+
 set(COMMON_SRC
+    ${GIT_POST_CONFIGURE_FILE}
     miscasm.asm
     misc.c
     irandoma.asm
@@ -65,7 +71,7 @@ else()
 endif()
 
 if(DDRAW)
-    list(APPEND COMMONV_SRC ddraw.cpp)
+    list(APPEND COMMONV_SRC video_ddraw.cpp)
     list(APPEND VANILLA_LIBS ddraw)
 else()
     list(APPEND COMMONV_SRC video_null.cpp)
@@ -79,6 +85,9 @@ file(GLOB_RECURSE COMMON_HEADERS "*.h")
 
 add_library(common STATIC ${COMMON_SRC} ${COMMON_HEADERS})
 target_link_libraries(common PUBLIC ${COMMON_LIBS})
+target_include_directories(common PUBLIC .)
+# Make build check state of git to check for uncommitted changes.
+add_dependencies(common check_git)
 
 if(BUILD_REMASTERTD OR BUILD_REMASTERRA)
     add_library(commonr STATIC ${COMMONR_SRC})

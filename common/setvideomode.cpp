@@ -42,7 +42,7 @@
 #include "palette.h"
 #include <stdio.h>
 #include <ddraw.h>
-#include "ddraw.h"
+#include "video_ddraw.h"
 
 extern void Check_Overlapped_Blit_Capability();
 extern PALETTEENTRY PaletteEntries[256]; // 256 windows palette entries
