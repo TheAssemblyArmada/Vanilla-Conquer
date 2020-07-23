@@ -541,12 +541,12 @@ void Colour_Debug(int call_number)
 
 //#pragma on (unreferenced)
 
-BOOL Any_Locked(void)
+bool Any_Locked()
 {
     if (SeenBuff.Get_LockCount() || HidPage.Get_LockCount()) {
-        return (TRUE);
+        return true;
     } else {
-        return (FALSE);
+        return false;
     }
 }
 

@@ -37,15 +37,6 @@
 #include "sound.h"
 
 /*
-** Defines for true and false.  These are included because we do not allow
-** the sound int to include any of the westwood standard headers.  If we
-** did, there might be too much temptation to call another library function.
-** this would be bad, because then that function would not be locked.
-*/
-#define FALSE 0
-#define TRUE  1
-
-/*
 ** Define the different type of sound compression avaliable to the westwood
 ** library.
 */
@@ -137,7 +128,7 @@ typedef struct
     **	yet playing.  This value is normally the size of the buffer,
     **	except for the case of the last bit of the sample.
     */
-    LONG DataLength;
+    long DataLength;
 
     /*
     **	This is the buffer index for the low buffer that
@@ -151,33 +142,33 @@ typedef struct
     **  chunk of sample to
     **
     */
-    VOID* DestPtr;
+    void* DestPtr;
 
     /*
     **	This flag indicates that there is more source data
     **  to copy to the play buffer
     **
     */
-    BOOL MoreSource;
+    bool MoreSource;
 
     /*
     **	This flag indicates that the entire sample fitted inside the
     ** direct sound secondary buffer
     **
     */
-    BOOL OneShot;
+    bool OneShot;
 
     /*
     **	Pointer to the sound data that has not yet been copied
     **	to the playback buffers.
     */
-    VOID* Source;
+    void* Source;
 
     /*
     **	This is the number of bytes remaining in the source data as
     **	pointed to by the "Source" element.
     */
-    LONG Remainder;
+    long Remainder;
 
     /*
     **	Object to use with Enter/LeaveCriticalSection
@@ -207,11 +198,11 @@ typedef struct
     **	This is the compression that the sound data is using.
     */
     SCompressType Compression;
-    short int TrailerLen;        // Number of trailer bytes in buffer.
-    BYTE Trailer[SONARC_MARGIN]; // Maximum number of 'order' samples needed.
+    short int TrailerLen;                 // Number of trailer bytes in buffer.
+    unsigned char Trailer[SONARC_MARGIN]; // Maximum number of 'order' samples needed.
 
-    DWORD Pitch;
-    WORD Flags;
+    unsigned int Pitch;
+    unsigned short Flags;
 
     /*
     **	This flag indicates whether this sample needs servicing.
@@ -220,18 +211,18 @@ typedef struct
     short int Service;
 
     /*
-    **	This flag is TRUE when the sample has stopped playing,
+    **	This flag is true when the sample has stopped playing,
     **	BUT there is more data available.  The sample must be
     **	restarted upon filling the low buffer.
     */
-    BOOL Restart;
+    bool Restart;
 
     /*
     **	Streaming control handlers.
     */
-    BOOL (*Callback)(short int id, short int* odd, VOID** buffer, LONG* size);
-    VOID* QueueBuffer;    // Pointer to continued sample data.
-    LONG QueueSize;       // Size of queue buffer attached.
+    bool (*Callback)(short int id, short int* odd, void** buffer, long* size);
+    void* QueueBuffer;    // Pointer to continued sample data.
+    long QueueSize;       // Size of queue buffer attached.
     short int Odd;        // Block number tracker (0..StreamBufferCount-1).
     int FilePending;      // Number of buffers already filled ahead.
     long FilePendingSize; // Number of bytes in last filled buffer.
@@ -241,7 +232,7 @@ typedef struct
     **	hard drive.
     */
     int FileHandle;   // Streaming file handle (ERROR = not in use).
-    VOID* FileBuffer; // Temporary streaming buffer (allowed to be freed).
+    void* FileBuffer; // Temporary streaming buffer (allowed to be freed).
     /*
     ** The following structure is used if the sample if compressed using
     ** the sos 16 bit compression Codec.
@@ -254,15 +245,15 @@ typedef struct
 typedef struct LockedData
 {
     unsigned int DigiHandle; // = -1;
-    BOOL ServiceSomething;   // = FALSE;
+    bool ServiceSomething;   // = false;
     long MagicNumber;        // = 0xDEAF;
-    VOID* UncompBuffer;      // = NULL;
+    void* UncompBuffer;      // = NULL;
     long StreamBufferSize;   // = (2*SECONDARY_BUFFER_SIZE)+128;
     short StreamBufferCount; // = 32;
     SampleTrackerType SampleTracker[MAX_SFX];
     unsigned int SoundVolume;
     unsigned int ScoreVolume;
-    BOOL _int;
+    int _int;
 } LockedDataType;
 
 extern LockedDataType LockedData;
@@ -280,18 +271,18 @@ long Sample_Copy(SampleTrackerType* st,
                  SCompressType scomp,
                  void* trailer,
                  short int* trailersize);
-VOID far __cdecl maintenance_callback(VOID);
-VOID __cdecl far DigiCallback(unsigned int driverhandle, unsigned int callsource, unsigned int sampleid);
-void far HMI_TimerCallback(void);
+void maintenance_callback(void);
+void DigiCallback(unsigned int driverhandle, unsigned int callsource, unsigned int sampleid);
+void HMI_TimerCallback(void);
 void* Audio_Add_Long_To_Pointer(void const* ptr, long size);
-void DPMI_Unlock(VOID const* ptr, long const size);
+void DPMI_Unlock(void const* ptr, long const size);
 extern "C" {
-void __cdecl Audio_Mem_Set(void const* ptr, unsigned char value, long size);
+void Audio_Mem_Set(void const* ptr, unsigned char value, long size);
 //	void	Mem_Copy(void *source, void *dest, unsigned long bytes_to_copy);
-long __cdecl Decompress_Frame(void* source, void* dest, long size);
-int __cdecl Decompress_Frame_Lock(void);
-int __cdecl Decompress_Frame_Unlock(void);
-int __cdecl sosCODEC_Lock(void);
-int __cdecl sosCODEC_Unlock(void);
+long Decompress_Frame(void* source, void* dest, long size);
+int Decompress_Frame_Lock(void);
+int Decompress_Frame_Unlock(void);
+int sosCODEC_Lock(void);
+int sosCODEC_Unlock(void);
 void __GETDS(void);
 }

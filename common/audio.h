@@ -118,19 +118,19 @@ typedef enum
 /*=========================================================================*/
 /* The following prototypes are for the file: SOUNDIO.CPP						*/
 /*=========================================================================*/
-int File_Stream_Sample(char const* filename, BOOL real_time_start = FALSE);
-int File_Stream_Sample_Vol(char const* filename, int volume, BOOL real_time_start = FALSE);
-void __cdecl Sound_Callback(void);
-void __cdecl far maintenance_callback(void);
+int File_Stream_Sample(char const* filename, bool real_time_start = false);
+int File_Stream_Sample_Vol(char const* filename, int volume, bool real_time_start = false);
+void Sound_Callback(void);
+void maintenance_callback(void);
 void* Load_Sample(char const* filename);
 long Load_Sample_Into_Buffer(char const* filename, void* buffer, long size);
 long Sample_Read(int fh, void* buffer, long size);
 void Free_Sample(void const* sample);
-BOOL Audio_Init(HWND window, int bits_per_sample, BOOL stereo, int rate, int reverse_channels);
+bool Audio_Init(int bits_per_sample, bool stereo, int rate, bool reverse_channels);
 void Sound_End(void);
 void Stop_Sample(int handle);
-BOOL Sample_Status(int handle);
-BOOL Is_Sample_Playing(void const* sample);
+bool Sample_Status(int handle);
+bool Is_Sample_Playing(void const* sample);
 void Stop_Sample_Playing(void const* sample);
 int Play_Sample(void const* sample, int priority = 0xFF, int volume = 0xFF, signed short panloc = 0x0);
 int Play_Sample_Handle(void const* sample, int priority, int volume, signed short panloc, int id);
@@ -141,8 +141,8 @@ int Get_Free_Sample_Handle(int priority);
 int Get_Digi_Handle(void);
 long Sample_Length(void const* sample);
 void Restore_Sound_Buffers(void);
-BOOL Set_Primary_Buffer_Format(void);
-BOOL Start_Primary_Sound_Buffer(BOOL forced);
+bool Set_Primary_Buffer_Format(void);
+bool Start_Primary_Sound_Buffer(bool forced);
 void Stop_Primary_Sound_Buffer(void);
 
 /*
@@ -153,7 +153,5 @@ extern void (*Audio_Focus_Loss_Function)(void);
 extern int Misc;
 extern SFX_Type SoundType;
 extern Sample_Type SampleType;
-
-extern CRITICAL_SECTION GlobalAudioCriticalSection;
 
 extern bool StreamLowImpact;

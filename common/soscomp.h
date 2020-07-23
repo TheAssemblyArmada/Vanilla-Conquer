@@ -77,9 +77,9 @@ typedef struct _tagCOMPRESS_HEADER
 extern "C" {
 #endif
 
-void __cdecl sosCODECInitStream(_SOS_COMPRESS_INFO*);
-unsigned long __cdecl sosCODECCompressData(_SOS_COMPRESS_INFO*, unsigned long);
-unsigned long __cdecl sosCODECDecompressData(_SOS_COMPRESS_INFO*, unsigned long);
+void sosCODECInitStream(_SOS_COMPRESS_INFO*);
+unsigned long sosCODECCompressData(_SOS_COMPRESS_INFO*, unsigned long);
+unsigned long sosCODECDecompressData(_SOS_COMPRESS_INFO*, unsigned long);
 
 #ifdef __cplusplus
 }

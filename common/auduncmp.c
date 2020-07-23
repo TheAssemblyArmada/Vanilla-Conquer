@@ -12,7 +12,7 @@ static int clamp(int x, int low, int high)
 }
 #endif
 
-short __cdecl Audio_Unzap(void* source, void* dest, short size)
+short Audio_Unzap(void* source, void* dest, short size)
 {
     short sample;
     unsigned char code;

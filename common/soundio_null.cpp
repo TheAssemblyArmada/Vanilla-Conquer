@@ -6,19 +6,19 @@ bool StreamLowImpact = false;
 SFX_Type SoundType;
 Sample_Type SampleType;
 
-int File_Stream_Sample(char const* filename, BOOL real_time_start)
+int File_Stream_Sample(char const* filename, bool real_time_start)
 {
     return 1;
 };
-int File_Stream_Sample_Vol(char const* filename, int volume, BOOL real_time_start)
+int File_Stream_Sample_Vol(char const* filename, int volume, bool real_time_start)
 {
     return 1;
 };
-void __cdecl Sound_Callback(void){};
-void __cdecl far maintenance_callback(void){};
+void Sound_Callback(void){};
+void maintenance_callback(void){};
 void* Load_Sample(char const* filename)
 {
-    return NULL;
+    return nullptr;
 };
 long Load_Sample_Into_Buffer(char const* filename, void* buffer, long size)
 {
@@ -29,17 +29,17 @@ long Sample_Read(int fh, void* buffer, long size)
     return 0;
 };
 void Free_Sample(void const* sample){};
-BOOL Audio_Init(HWND window, int bits_per_sample, BOOL stereo, int rate, int reverse_channels)
+bool Audio_Init(int bits_per_sample, bool stereo, int rate, bool reverse_channels)
 {
     return 0;
 };
 void Sound_End(void){};
 void Stop_Sample(int handle){};
-BOOL Sample_Status(int handle)
+bool Sample_Status(int handle)
 {
     return 0;
 };
-BOOL Is_Sample_Playing(void const* sample)
+bool Is_Sample_Playing(void const* sample)
 {
     return 0;
 };
@@ -74,11 +74,11 @@ long Sample_Length(void const* sample)
     return 0;
 };
 void Restore_Sound_Buffers(void){};
-BOOL Set_Primary_Buffer_Format(void)
+bool Set_Primary_Buffer_Format(void)
 {
     return 0;
 };
-BOOL Start_Primary_Sound_Buffer(BOOL forced)
+bool Start_Primary_Sound_Buffer(bool forced)
 {
     return 0;
 };

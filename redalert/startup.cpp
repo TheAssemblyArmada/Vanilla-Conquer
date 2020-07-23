@@ -498,7 +498,7 @@ int main(int argc, char* argv[])
             Read_Setup_Options(&cfile);
 
             Create_Main_Window(instance, command_show, ScreenWidth, ScreenHeight);
-            SoundOn = Audio_Init(MainWindow, 16, false, 11025 * 2, 0);
+            SoundOn = Audio_Init(16, false, 11025 * 2, 0);
 #else  // WIN32
             if (!Debug_Quiet) {
                 Audio_Init(NewConfig.DigitCard,
