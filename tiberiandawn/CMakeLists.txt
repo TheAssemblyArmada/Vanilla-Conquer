@@ -182,13 +182,30 @@ if(CMAKE_CONFIGURATION_TYPES)
     endforeach()
 endif()
 
+include(ProductVersion)
+
 if(BUILD_REMASTERTD)
+    if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        # Generate windows version info.
+        generate_product_version(
+            REMASTERTD_RC
+            NAME "Vanilla Conquer TiberianDawn DLL"
+            BUNDLE "Vanilla Conquer"
+            VERSION_MAJOR 1
+            VERSION_MINOR 7
+            COMPANY_NAME "Vanilla Conquer"
+            COMPANY_COPYRIGHT "Based on code released under GPLv3 by EA"
+            ORIGINAL_FILENAME "TiberianDawn.dll"
+            RCFILE_PREFIX "RemasterTD"
+        )
+    endif()
     add_library(TiberianDawn SHARED 
         dllinterface.cpp
         dllinterfaceeditor.cpp
         sidebarglyphx.cpp
         ${TIBDAWN_SRC}
         ${TIBDAWN_HEADERS}
+        ${REMASTERTD_RC}
     )
     target_compile_definitions(TiberianDawn PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${REMASTER_DEFS})
     target_include_directories(TiberianDawn PUBLIC ${CMAKE_SOURCE_DIR} .)
@@ -197,7 +214,21 @@ if(BUILD_REMASTERTD)
 endif()
 
 if(BUILD_VANILLATD)
-    add_executable(VanillaTD ${TIBDAWN_SRC} ${TIBDAWN_HEADERS})
+    if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        # Generate windows version info.
+        generate_product_version(
+            VANILLATD_RC
+            NAME "Vanilla Conquer VanillaTD EXE"
+            BUNDLE "Vanilla Conquer"
+            VERSION_MAJOR 1
+            VERSION_MINOR 7
+            COMPANY_NAME "Vanilla Conquer"
+            COMPANY_COPYRIGHT "Based on code released under GPLv3 by EA"
+            ORIGINAL_FILENAME "vanillatd.exe"
+            RCFILE_PREFIX "VanillaTD"
+        )
+    endif()
+    add_executable(VanillaTD ${TIBDAWN_SRC} ${TIBDAWN_HEADERS} ${VANILLATD_RC})
     target_compile_definitions(VanillaTD PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS})
     target_include_directories(VanillaTD PUBLIC ${CMAKE_SOURCE_DIR} .)
     target_link_libraries(VanillaTD commonv ${VANILLA_LIBS} ${STATIC_LIBS})

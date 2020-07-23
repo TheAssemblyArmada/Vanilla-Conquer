@@ -274,13 +274,30 @@ if(CMAKE_CONFIGURATION_TYPES)
     endforeach()
 endif()
 
+include(ProductVersion)
+
 if(BUILD_REMASTERRA)
+    if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        # Generate windows version info.
+        generate_product_version(
+            REMASTERRA_RC
+            NAME "Vanilla Conquer RedAlert DLL"
+            BUNDLE "Vanilla Conquer"
+            VERSION_MAJOR 3
+            VERSION_MINOR 3
+            COMPANY_NAME "Vanilla Conquer"
+            COMPANY_COPYRIGHT "Based on code released under GPLv3 by EA"
+            ORIGINAL_FILENAME "RedAlert.dll"
+            RCFILE_PREFIX "RemasterRA"
+        )
+    endif()
     add_library(RedAlert SHARED 
         dllinterface.cpp
         dllinterfaceeditor.cpp
         sidebarglyphx.cpp
         ${REDALERT_SRC}
         ${REDALERT_HEADERS}
+        ${REMASTERRA_RC}
     )
     target_compile_definitions(RedAlert PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${REMASTER_DEFS})
     target_include_directories(RedAlert PUBLIC ${CMAKE_SOURCE_DIR} .)
@@ -289,7 +306,21 @@ if(BUILD_REMASTERRA)
 endif()
 
 if(BUILD_VANILLARA)
-    add_executable(VanillaRA ${REDALERT_SRC} ${REDALERT_HEADERS})
+    if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        # Generate windows version info.
+        generate_product_version(
+            VANILLARA_RC
+            NAME "Vanilla Conquer VanillaRA EXE"
+            BUNDLE "Vanilla Conquer"
+            VERSION_MAJOR 3
+            VERSION_MINOR 3
+            COMPANY_NAME "Vanilla Conquer"
+            COMPANY_COPYRIGHT "Based on code released under GPLv3 by EA"
+            ORIGINAL_FILENAME "vanillara.exe"
+            RCFILE_PREFIX "VanillaRA"
+        )
+    endif()
+    add_executable(VanillaRA ${REDALERT_SRC} ${REDALERT_HEADERS} ${VANILLARA_RC})
     target_compile_definitions(VanillaRA PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS})
     target_include_directories(VanillaRA PUBLIC ${CMAKE_SOURCE_DIR} .)
     target_link_libraries(VanillaRA commonv ${VANILLA_LIBS} ${STATIC_LIBS})
