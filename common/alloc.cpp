@@ -45,13 +45,6 @@
 
 extern "C" unsigned long Largest_Mem_Block(void);
 
-/*
-** Define the equates necessary to call a DPMI interrupt.
-*/
-#define DPMI_INT        0x0031
-#define DPMI_LOCK_MEM   0x0600
-#define DPMI_UNLOCK_MEM 0x0601
-
 /*=========================================================================*/
 /* The following PRIVATE functions are in this file:                       */
 /*=========================================================================*/
@@ -73,39 +66,6 @@ extern "C" {
 extern void __cdecl Int3(void);
 }
 #endif // MEM_CHECK
-
-/***************************************************************************
- * DPMI_LOCK -- handles locking a block of DPMI memory                     *
- *                                                                         *
- * INPUT:                                                                  *
- *                                                                         *
- * OUTPUT:                                                                 *
- *                                                                         *
- * WARNINGS:                                                               *
- *                                                                         *
- * HISTORY:                                                                *
- *   06/23/1995 PWG : Created.                                             *
- *=========================================================================*/
-#include "mono.h"
-void DPMI_Lock(VOID const*, long const)
-{
-}
-
-/***************************************************************************
- * DPMI_UNLOCK -- Handles unlocking a locked block of DPMI                 *
- *                                                                         *
- * INPUT:                                                                  *
- *                                                                         *
- * OUTPUT:                                                                 *
- *                                                                         *
- * WARNINGS:                                                               *
- *                                                                         *
- * HISTORY:                                                                *
- *   06/23/1995 PWG : Created.                                             *
- *=========================================================================*/
-void DPMI_Unlock(void const*, long const)
-{
-}
 
 /***************************************************************************
  * Alloc -- Allocates system RAM.                                          *
@@ -138,9 +98,6 @@ void DPMI_Unlock(void const*, long const)
  *=========================================================================*/
 void* Alloc(unsigned long bytes_to_alloc, MemoryFlagType flags)
 {
-
-#ifdef WIN32
-
     void* mem_ptr;
 
 #ifdef MEM_CHECK
@@ -173,116 +130,6 @@ void* Alloc(unsigned long bytes_to_alloc, MemoryFlagType flags)
 
     Memory_Calls++;
     return (mem_ptr);
-
-#else
-
-    union REGS regs;
-    struct SREGS sregs;
-    unsigned char* retval = NULL; // Pointer to allocated block.
-    unsigned long original_size;  // Original allocation size.
-    unsigned long bytesfree;      // Number of free bytes.
-    long* longptr = NULL;         // Pointer used to store selector
-
-    /*
-    ** Save the original allocated space size so that we can clear the
-    ** exact amount of RAM if they specified MEM_CLEAR.
-    */
-    original_size = bytes_to_alloc;
-
-    /*
-    ** Reserve one byte for the header of the memory we allocated.
-    ** We will store the flags variable there for later use.
-    */
-    bytes_to_alloc += (flags & MEM_LOCK) ? 5 : 1;
-
-    /*
-    **	Initialize the total ram available value.
-    */
-    if (!TotalRam) {
-        TotalRam = Total_Ram_Free(MEM_NORMAL);
-    }
-
-    // Try to allocate the memory out of the protected mode memory
-    // chain if we did not require a real mode allocation.  If this
-    // fails we will have to try to allocate it out of real mode memory.
-    // Real mode memory is a last resort because some types of applications
-    // require real mode memory.
-    if (!(flags & MEM_REAL)) {
-        retval = (unsigned char*)malloc(bytes_to_alloc);
-    }
-
-    // Try to allocate the memory out of the real mode memory using DPMI
-    // service 0x100.  Note that retval will be null if we are requesting
-    // real mode memory so that we do not have to explicitly check for the
-    // real mode flag.  Remember we need to reserve room for the dos
-    // selector value at the beginning of our allocated block so rather than
-    // adding fifteen and rounding, we need to add 19 and round.
-    if (!retval) {
-        flags = (MemoryFlagType)(flags | MEM_REAL);
-        regs.x.eax = 0x100;
-        regs.x.ebx = (bytes_to_alloc + 19) >> 4;
-        if (regs.x.ebx & 0xFFFF0000) {
-            retval = NULL;
-        } else {
-            segread(&sregs);
-            int386x(0x31, &regs, &regs, &sregs);
-            if (regs.x.cflag)
-                retval = NULL;
-            else {
-                longptr = (long*)(((regs.x.eax & 0xFFFF) << 4) + 1);
-                *longptr++ = regs.x.edx & 0xFFFF;
-                retval = (unsigned char*)longptr;
-            }
-        }
-    }
-
-    // If the alloc failed then we need to signify a memory error.
-    if (retval == NULL) {
-        if (Memory_Error != NULL)
-            Memory_Error();
-        return NULL;
-    }
-
-    // If the memory needs to be DPMI locked then we should store the
-    // original size in the header before we store the flags.
-    if (flags & MEM_LOCK) {
-        longptr = (long*)retval;
-        *longptr++ = original_size;
-        retval = (unsigned char*)longptr;
-    }
-
-    // Now that we know the alloc was sucessful (and for an extra byte
-    // more than the user wanted) we need to stick in the memory flags.
-    *retval++ = flags;
-
-    // If the memory needed to be DPMI locked then set it up so it
-    // is locked.
-    if (flags & MEM_LOCK) {
-        DPMI_Lock(retval, original_size);
-    }
-
-    /* Clear the space if they wanted it clear */
-
-    if (flags & MEM_CLEAR) {
-        unsigned char* ptr; // Working memory block pointer.
-
-        ptr = retval;
-        memset(ptr, '\0', original_size);
-    }
-
-    bytesfree = Total_Ram_Free(MEM_NORMAL);
-    if (bytesfree < MinRam) {
-        MinRam = bytesfree;
-    }
-    if (TotalRam - bytesfree > MaxRam) {
-        MaxRam = TotalRam - bytesfree;
-    }
-
-    Memory_Calls++;
-
-    return (retval);
-
-#endif
 }
 
 /***************************************************************************
@@ -299,7 +146,6 @@ void* Alloc(unsigned long bytes_to_alloc, MemoryFlagType flags)
  * HISTORY:                                                                *
  *   05/25/1990     : Created.                                             *
  ***************************************************************************/
-#ifdef WIN32
 
 void Free(void const* pointer)
 {
@@ -328,46 +174,6 @@ void Free(void const* pointer)
         free((void*)pointer);
         Memory_Calls--;
     }
-
-#else
-
-void Free(void const* pointer)
-{
-
-    union REGS regs;
-    struct SREGS sregs;
-
-    if (pointer) {
-        /*
-        ** Get a pointer to the flags that we stored off.
-        */
-        char* byteptr = ((char*)pointer) - 1;
-
-        /*
-        ** Check to see if this was locked me and if it was unlock it.
-        */
-        if (*byteptr & MEM_LOCK) {
-            long* longptr = ((long*)byteptr) - 1;
-            DPMI_Unlock(pointer, *longptr);
-            pointer = (void*)longptr;
-        } else
-            pointer = (void*)byteptr;
-
-        // If the pointer is a real mode pointer than it will point to the
-        // first megabyte of system memory.  If it does than we need to
-        // use DPMI to free it.
-        if (*byteptr & MEM_REAL) {
-            regs.x.eax = 0x101;
-            regs.x.edx = *(((long*)pointer) - 1);
-            segread(&sregs);
-            int386x(0x31, &regs, &regs, &sregs);
-        } else {
-            free((void*)pointer);
-        }
-        Memory_Calls--;
-    }
-
-#endif
 }
 
 /***************************************************************************
