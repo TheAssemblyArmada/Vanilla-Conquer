@@ -48,6 +48,7 @@ set(COMMON_SRC
     packet.cpp
     field.cpp
     rect.cpp
+    cliprect.c
 )
 
 set(COMMONR_SRC
