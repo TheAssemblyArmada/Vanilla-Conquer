@@ -1,0 +1,49 @@
+name: mingw-w64
+
+on:
+  pull_request:
+  push:
+  release:
+    types: published
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        buildtype: [Debug, Release]
+        features: [ON, OFF]
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+
+    - name: Install dependencies
+      run: |
+        curl -L -O https://www.japheth.de/Download/JWasm/JWasm211as.zip
+        mkdir jwasm
+        cd jwasm
+        unzip ../JWasm211as.zip
+        make -f GccUnix.mak
+        sudo cp GccUnixR/jwasm /usr/local/bin/
+        sudo apt install mingw-w64 clang-format-10
+   
+    - name: Build Vanilla Conquer
+      run: |
+        cmake -DCMAKE_BUILD_TYPE=${{ matrix.buildtype }} -DDSOUND=${{ matrix.features }} -DDDRAW=${{ matrix.features }} -DUSE_ASM=${{ matrix.features }} -DNETWORKING=${{ matrix.features }} -DMAP_EDITORRA=${{ matrix.features }} -DMAP_EDITORTD=${{ matrix.features }} -B build
+        cmake --build build --target format
+        git diff --exit-code
+        cmake --build build -- -j 4
+
+    - name: Create archives
+      run: |
+        mkdir artifact
+        export ZIPNAME=vanillaconquer_mingw-w64_${{ matrix.buildtype }}
+        if [ ${{ matrix.features }} == "ON" ]; then export FEATURES=_full; fi
+        7z a artifact/$ZIPNAME$FEATURES.zip ./build/vanillara.exe ./build/vanillatd.exe ./build/RedAlert.dll ./build/TiberianDawn.dll
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: vanilla_conquer
+        path: artifact
