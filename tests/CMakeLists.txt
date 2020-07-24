@@ -12,3 +12,9 @@ target_include_directories(test_face PUBLIC .. ../common ../tiberiandawn ../tibe
 target_compile_definitions(test_face PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE WINSOCK_IPX)
 target_link_libraries(test_face PUBLIC common ${STATIC_LIBS})
 add_test(NAME face COMMAND ${TARGET_SYSTEM_EMULATOR} $<TARGET_FILE:test_face>)
+
+add_executable(test_rect rect.cpp)
+target_include_directories(test_rect PUBLIC .. ../common ../tiberiandawn ../tiberiandawn/win32lib)
+target_compile_definitions(test_rect PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE WINSOCK_IPX)
+target_link_libraries(test_rect PUBLIC common ${STATIC_LIBS})
+add_test(NAME rect COMMAND ${TARGET_SYSTEM_EMULATOR} $<TARGET_FILE:test_rect>)

@@ -29,8 +29,10 @@ externdef C Buffer_Remap:near
 externdef C Build_Fading_Table:near
 externdef C Buffer_Put_Pixel:near
 externdef C Buffer_Get_Pixel:near
+IFNDEF NOASM
 externdef C Clip_Rect:near
 externdef C Confine_Rect:near
+ENDIF
 externdef C Buffer_To_Page:near
 
 .code
@@ -2105,6 +2107,8 @@ Buffer_Get_Pixel proc C this_object:dword, x_pixel:dword, y_pixel:dword
         ret
 Buffer_Get_Pixel endp
 
+IFNDEF NOASM
+
 ;***************************************************************************
 ;**   C O N F I D E N T I A L --- W E S T W O O D   A S S O C I A T E S   **
 ;***************************************************************************
@@ -2342,6 +2346,8 @@ Confine_Rect proc C x:dword, y:dword, w:dword, h:dword, widt:dword, height:dword
             pop ebx
             ret
 Confine_Rect endp
+
+ENDIF
 
 ;***************************************************************************
 ;**   C O N F I D E N T I A L --- W E S T W O O D   A S S O C I A T E S   **

@@ -35,6 +35,8 @@
 #ifndef RECT_H
 #define RECT_H
 
+#include "cliprect.h"
+
 class Rect
 {
 public:
@@ -54,9 +56,19 @@ public:
     int Y;
     int Width;
     int Height;
+
+    friend inline bool operator==(const Rect& lhs, const Rect& rhs);
+    friend inline bool operator!=(const Rect& lhs, const Rect& rhs);
 };
 
-extern "C" int _cdecl Clip_Rect(int* x, int* y, int* dw, int* dh, int width, int height);
-extern "C" bool _cdecl Confine_Rect(int* x, int* y, int dw, int dh, int width, int height);
+inline bool operator==(const Rect& lhs, const Rect& rhs)
+{
+    return (lhs.X == rhs.X) && (lhs.Y == rhs.Y) && (lhs.Width == rhs.Width) && (lhs.Height == rhs.Height);
+}
+
+inline bool operator!=(const Rect& lhs, const Rect& rhs)
+{
+    return !(lhs == rhs);
+}
 
 #endif
