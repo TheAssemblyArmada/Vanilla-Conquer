@@ -1,0 +1,38 @@
+name: windows
+
+on:
+  pull_request:
+  push:
+  release:
+    types: published
+
+jobs:
+  build:
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        buildtype: [Debug, Release]
+        features: [ON, OFF]
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+
+    - name: Build Vanilla Conquer
+      run: |
+        cmake -A Win32 -DDSOUND=${{ matrix.features }} -DDDRAW=${{ matrix.features }} -DUSE_ASM=${{ matrix.features }} -DNETWORKING=${{ matrix.features }} -DMAP_EDITORRA=${{ matrix.features }} -DMAP_EDITORTD=${{ matrix.features }} -B build
+        cmake --build build --parallel --config ${{ matrix.buildtype }}
+
+    - name: Create archives
+      shell: bash
+      run: |
+        mkdir artifact
+        export ZIPNAME=vanillaconquer_win32_${{ matrix.buildtype }}
+        if [ ${{ matrix.features }} != "ON" ]; then export FEATURES=_full; fi
+        7z a artifact/$ZIPNAME$FEATURES.zip ./build/${{ matrix.buildtype }}/vanillara.exe ./build/${{ matrix.buildtype }}/vanillatd.exe ./build/${{ matrix.buildtype }}/RedAlert.dll ./build/${{ matrix.buildtype }}/TiberianDawn.dll
+  
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: vanilla_conquer
+        path: artifact
