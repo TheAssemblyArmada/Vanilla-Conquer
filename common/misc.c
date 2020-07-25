@@ -1,4 +1,3 @@
-#include <windows.h>
 #include "miscasm.h"
 
 unsigned short __rotl16(unsigned short a, unsigned b)
