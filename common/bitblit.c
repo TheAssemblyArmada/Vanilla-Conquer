@@ -17,7 +17,7 @@ typedef struct
     void* GVPBuffPtr; // related graphic buff
 } GraphicViewPort;
 
-int __cdecl Linear_Blit_To_Linear(void* thisptr,
+int Linear_Blit_To_Linear(void* thisptr,
                                   void* dest,
                                    int src_x,
                                    int src_y,
