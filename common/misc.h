@@ -34,8 +34,6 @@
 #ifndef MISC_H
 #define MISC_H
 
-#include <windows.h>
-
 /*========================= C++ Routines ==================================*/
 
 /*=========================================================================*/
@@ -54,7 +52,11 @@ extern void (*Misc_Focus_Restore_Function)(void);
 /*=========================================================================*/
 /* The following variables are declared in: DDRAW.CPP                      */
 /*=========================================================================*/
+
+#ifdef _WIN32
+#include <windows.h>
 extern HWND MainWindow;
+#endif
 extern bool SystemToVideoBlits;
 extern bool VideoToSystemBlits;
 extern bool SystemToSystemBlits;
@@ -64,9 +66,9 @@ extern bool OverlappedVideoBlits; // Can video driver blit overlapped regions?
 /* The following prototypes are for the file: EXIT.CPP                     */
 /* Prog_End Must be supplied by the user program in startup.cpp            */
 /*=========================================================================*/
-void __cdecl Prog_End(const char* why = NULL,
-                      bool fatal = false); // Added why and fatal parameters. ST - 6/27/2019 10:10PM
-VOID __cdecl Exit(INT errorval, const BYTE* message, ...);
+void Prog_End(const char* why = nullptr,
+              bool fatal = false); // Added why and fatal parameters. ST - 6/27/2019 10:10PM
+void Exit(int errorval, const unsigned char* message, ...);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: DELAY.CPP                    */
@@ -78,7 +80,7 @@ void Vsync(void);
 /* The following prototypes are for the file: FINDARGV.CPP                 */
 /*=========================================================================*/
 
-BYTE __cdecl Find_Argv(BYTE const* str);
+unsigned char Find_Argv(unsigned char const* str);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: LIB.CPP                      */
@@ -102,7 +104,7 @@ void Convert_HSV_To_RGB(unsigned int h,
 /* The following prototypes are for the file: VERSION.CPP                  */
 /*=========================================================================*/
 
-BYTE __cdecl Version(VOID);
+unsigned char Version(void);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: IRANDOM.CPP                  */
@@ -119,66 +121,66 @@ extern "C" {
 /* The following prototypes are for the file: RANDOM.ASM                   */
 /*=========================================================================*/
 
-unsigned char __cdecl Random(void);
-int __cdecl Get_Random_Mask(int maxval);
+unsigned char Random(void);
+int Get_Random_Mask(int maxval);
 
 /*=========================================================================*/
 /* The following prototype is for the file: SHAKESCR.ASM                   */
 /*=========================================================================*/
 
-void __cdecl Shake_Screen(int shakes);
+void Shake_Screen(int shakes);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: REVERSE.ASM                  */
 /*=========================================================================*/
 
-long __cdecl Reverse_Long(long number);
-short __cdecl Reverse_Short(short number);
-long __cdecl Swap_Long(long number);
+long Reverse_Long(long number);
+short Reverse_Short(short number);
+long Swap_Long(long number);
 #if (0)
 /*=========================================================================*/
 /* The following prototype is for the file: FACING8.ASM                    */
 /*=========================================================================*/
 
-int __cdecl Desired_Facing8(int x1, int y1, int x2, int y2);
+int Desired_Facing8(int x1, int y1, int x2, int y2);
 
 /*=========================================================================*/
 /* The following prototype is for the file: FACING16.ASM                   */
 /*=========================================================================*/
 
-int __cdecl Desired_Facing16(int x1, int y1, int x2, int y2);
+int Desired_Facing16(int x1, int y1, int x2, int y2);
 
 /*=========================================================================*/
 /* The following prototype is for the file: FACINGFF.ASM                   */
 /*=========================================================================*/
 
-int __cdecl Desired_Facing256(int x1, int y1, int x2, int y2);
+int Desired_Facing256(int x1, int y1, int x2, int y2);
 
 /*=========================================================================*/
 /* The following prototype is for the file: FADING.ASM                     */
 /*=========================================================================*/
 #endif
 
-void* __cdecl Build_Fading_Table(void const* palette, void const* dest, long int color, long int frac);
+void* Build_Fading_Table(void const* palette, void const* dest, long int color, long int frac);
 /*=========================================================================*/
 /* The following prototype is for the file: CRC.ASM                        */
 /*=========================================================================*/
 
-long __cdecl Calculate_CRC(void* buffer, long length);
+long Calculate_CRC(void* buffer, long length);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: DETPROC.ASM                  */
 /*=========================================================================*/
 
-extern WORD __cdecl Processor(void);
-extern WORD __cdecl Operating_System(void);
+extern short Processor(void);
+extern short Operating_System(void);
 extern unsigned long random(unsigned long mod);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: OPSYS.ASM                    */
 /*=========================================================================*/
 
-extern WORD OperationgSystem;
+extern short OperationgSystem;
 
 #ifdef __cplusplus
 }
