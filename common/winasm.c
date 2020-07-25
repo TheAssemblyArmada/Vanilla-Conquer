@@ -11,7 +11,7 @@ static unsigned char BottomLine[1600];
 /**
  * Interpolates in X axis, leaves additional lines blank in the Y axis.
  */
-void __cdecl Asm_Interpolate(void* src, void* dst, int src_height, int src_width, int dst_pitch)
+void Asm_Interpolate(void* src, void* dst, int src_height, int src_width, int dst_pitch)
 {
     unsigned char* dptr = (unsigned char*)(dst);
     unsigned char* sptr = (unsigned char*)(src);
@@ -34,7 +34,7 @@ void __cdecl Asm_Interpolate(void* src, void* dst, int src_height, int src_width
 /**
  * Interpolates in X axis, duplicates lines in the Y axis.
  */
-void __cdecl Asm_Interpolate_Line_Double(void* src, void* dst, int src_height, int src_width, int dst_pitch)
+void Asm_Interpolate_Line_Double(void* src, void* dst, int src_height, int src_width, int dst_pitch)
 {
     unsigned char* dptr = (unsigned char*)(dst);
     unsigned char* sptr = (unsigned char*)(src);
@@ -95,7 +95,7 @@ static void Interpolate_Y_Axis(void* top_line, void* bottom_line, void* middle_l
 /**
  * @brief Interpolates in both the X and Y axis.
  */
-void __cdecl Asm_Interpolate_Line_Interpolate(void* src, void* dst, int src_height, int src_width, int dst_pitch)
+void Asm_Interpolate_Line_Interpolate(void* src, void* dst, int src_height, int src_width, int dst_pitch)
 {
     unsigned char* dptr = (unsigned char*)(dst);
     unsigned char* buff_offset1 = TopLine;
