@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-void __cdecl Set_Font_Palette_Range(void const* palette, int start_idx, int end_idx);
+void Set_Font_Palette_Range(void const* palette, int start_idx, int end_idx);
 
 #ifdef __cplusplus
 }
