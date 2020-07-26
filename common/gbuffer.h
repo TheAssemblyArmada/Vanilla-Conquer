@@ -1080,7 +1080,8 @@ inline void GraphicViewPortClass::Draw_Line(int sx, int sy, int dx, int dy, unsi
  *=========================================================================*/
 inline void GraphicViewPortClass::Fill_Rect(int sx, int sy, int dx, int dy, unsigned char color)
 {
-    if (IsHardware && ((dx - sx) * (dy - sy) >= (32 * 32)) && GraphicBuff->Get_DD_Surface()->IsReadyToBlit()) {
+    if (AllowHardwareBlitFills && IsHardware && ((dx - sx) * (dy - sy) >= (32 * 32))
+        && GraphicBuff->Get_DD_Surface()->IsReadyToBlit()) {
         Rect dest_rectangle(sx + XPos, sy + YPos, dx - sx, dy - sy);
         Rect self_rect(XPos, YPos, Width, Height);
         GraphicBuff->Get_DD_Surface()->FillRect(dest_rectangle.Intersect(self_rect), color);
