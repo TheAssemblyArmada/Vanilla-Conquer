@@ -20,10 +20,9 @@ jobs:
 
     - name: Install dependencies
       run: |
-        curl -L -O https://www.japheth.de/Download/JWasm/JWasm211as.zip
-        mkdir jwasm
-        cd jwasm
-        unzip ../JWasm211as.zip
+        curl -L -O https://github.com/JWasm/JWasm/archive/45f69e4b96ff3e93522464f2c8bb2ff56e6ecbf8.zip
+        unzip 45f69e4b96ff3e93522464f2c8bb2ff56e6ecbf8.zip
+        cd JWasm-45f69e4b96ff3e93522464f2c8bb2ff56e6ecbf8
         make -f GccUnix.mak
         sudo cp GccUnixR/jwasm /usr/local/bin/
         sudo apt install mingw-w64 clang-format-10
