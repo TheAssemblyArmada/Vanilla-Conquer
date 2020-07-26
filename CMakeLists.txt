@@ -2,9 +2,14 @@ cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-if(NOT WIN32)
-    # until we are truly portable, assume MinGW
+if(NOT WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    # until we are truly portable, assume MinGW if no toolchain is set (use -DCMAKE_TOOLCHAIN_FILE= to force native build)
     set(CMAKE_TOOLCHAIN_FILE "cmake/mingw-toolchain.cmake")
+    message(STATUS "Cross-compiling for Win32 with MinGW-W64")
+endif()
+
+if(NOT DEFINED CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
 endif()
 
 project(VanillaConquer)
@@ -20,12 +25,18 @@ if(MSVC)
 else()
     set(ASM_DIALECT "_JWASM")
     enable_language(ASM_JWASM)
+    set(CMAKE_CXX_FLAGS_DEBUG "-gstabs3")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fpermissive -fpack-struct=1 -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
+    set(CMAKE_C_FLAGS_DEBUG "-gstabs3")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fpermissive -fpack-struct=1 -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
     set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
 endif()
 
-add_definitions(-DENGLISH -DTRUE_FALSE_DEFINED -DWIN32 -D_WINDOWS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
+add_definitions(-DENGLISH -DTRUE_FALSE_DEFINED)
+
+if(WIN32 OR CMAKE_CROSSCOMPILING)
+    add_definitions(-DWIN32 -D_WINDOWS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
+endif()
 
 set(COMMON_LIBS winmm)
 
