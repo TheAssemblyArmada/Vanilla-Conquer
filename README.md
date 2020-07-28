@@ -3,7 +3,7 @@ No extras. No bloat. No major changes. Just the games on your favourite platform
 
 This project aims to be a clean portable upstream for anyone wanting to mod the Remastered Collection or add features to the original standalone games.
 
-Current project goals are tracked as [GitHub issues with the goal label](https://github.com/hifi/Vanilla-Conquer/issues?q=is%3Aissue+is%3Aopen+label%3Agoal).
+Current project goals are tracked as [GitHub issues with the goal label](https://github.com/Vanilla-Conquer/Vanilla-Conquer/issues?q=is%3Aissue+is%3Aopen+label%3Agoal).
 
 All contributions towards project goals are welcome.
 Please use GitHub issues in advance to make sure your work will be accepted.
