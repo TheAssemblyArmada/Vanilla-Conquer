@@ -34,8 +34,11 @@
 #ifndef WWSTD_H
 #define WWSTD_H
 
+#include <stdint.h>
+
+#ifdef WIN32
 #include <windows.h>
-#include <windowsx.h>
+#endif
 
 #ifndef IBM
 #define IBM TRUE
@@ -148,13 +151,13 @@ template <class T> T Abs(T a)
     return ((a < 0) ? -(a) : a);
 }
 
-template <class T> VOID minimize(T& a, T b)
+template <class T> void minimize(T& a, T b)
 {
     if (b < a)
         a = b;
 }
 
-template <class T> VOID maximize(T& a, T b)
+template <class T> void maximize(T& a, T b)
 {
     if (b > a)
         a = b;
@@ -171,12 +174,12 @@ template <class T> VOID maximize(T& a, T b)
 
 // Template replacements for the user defines above
 #ifdef __cplusplus
-template <class T> VOID BitFlagsOn(T& a, T b)
+template <class T> void BitFlagsOn(T& a, T b)
 {
     a |= (b);
 }
 
-template <class T> VOID BitFlagsOff(T& a, T b)
+template <class T> void BitFlagsOff(T& a, T b)
 {
     a &= (~(b));
 }
@@ -186,7 +189,7 @@ template <class T> T BitFlagsValue(T a, T b)
     return (a & (b));
 }
 
-template <class T> VOID BitFlagsFlip(T& a, T b)
+template <class T> void BitFlagsFlip(T& a, T b)
 {
     a ^= (b);
 }
