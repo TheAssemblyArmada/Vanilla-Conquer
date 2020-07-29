@@ -59,21 +59,21 @@
 /* The following prototypes are for the file: SET_FONT.CPP						*/
 /*=========================================================================*/
 
-void* __cdecl Set_Font(void const* fontptr);
+void* Set_Font(void const* fontptr);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: FONT.CPP							*/
 /*=========================================================================*/
 
-int __cdecl Char_Pixel_Width(char chr);
-unsigned int __cdecl String_Pixel_Width(char const* string);
-void __cdecl Get_Next_Text_Print_XY(GraphicViewPortClass& vp, unsigned long offset, INT* x, INT* y);
+int Char_Pixel_Width(char chr);
+unsigned int String_Pixel_Width(char const* string);
+void Get_Next_Text_Print_XY(GraphicViewPortClass& vp, unsigned long offset, int* x, int* y);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: LOADFONT.CPP	  					*/
 /*=========================================================================*/
 
-void* __cdecl Load_Font(char const* name);
+void* Load_Font(char const* name);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: TEXTPRNT.ASM	  					*/
