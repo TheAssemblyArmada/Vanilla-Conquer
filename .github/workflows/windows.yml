@@ -23,6 +23,11 @@ jobs:
         cmake -A Win32 -DDSOUND=${{ matrix.features }} -DDDRAW=${{ matrix.features }} -DUSE_ASM=${{ matrix.features }} -DNETWORKING=${{ matrix.features }} -DMAP_EDITORRA=${{ matrix.features }} -DMAP_EDITORTD=${{ matrix.features }} -B build
         cmake --build build --parallel --config ${{ matrix.buildtype }}
 
+    - name: Run unit tests
+      run: |
+        cd build
+        ctest -C ${{ matrix.buildType }}
+
     - name: Create archives
       shell: bash
       run: |
