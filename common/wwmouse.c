@@ -66,13 +66,13 @@ typedef struct
 #pragma pack(pop)
 
 // Some forward declarations for stuff defined elsewhere.
-int __cdecl Get_Shape_Width(void const* shape);
-int __cdecl Get_Shape_Original_Height(void const* shape);
-int __cdecl Get_Shape_Uncomp_Size(void const* shape);
-long __cdecl LCW_Uncompress(void* source, void* dest, unsigned long length_);
+int Get_Shape_Width(void const* shape);
+int Get_Shape_Original_Height(void const* shape);
+int Get_Shape_Uncomp_Size(void const* shape);
+long LCW_Uncompress(void* source, void* dest, unsigned long length_);
 extern char* _ShapeBuffer;
 
-void __cdecl Mouse_Shadow_Buffer(void* thisptr, void* srcdst, void* buffer, int x, int y, int hotx, int hoty, int store)
+void Mouse_Shadow_Buffer(void* thisptr, void* srcdst, void* buffer, int x, int y, int hotx, int hoty, int store)
 {
     MouseType* mouse = (MouseType*)thisptr;
     GraphicViewPort* viewport = (GraphicViewPort*)srcdst;
@@ -128,7 +128,7 @@ void __cdecl Mouse_Shadow_Buffer(void* thisptr, void* srcdst, void* buffer, int 
     }
 }
 
-void __cdecl Draw_Mouse(void* thisptr, void* srcdst, int x, int y)
+void Draw_Mouse(void* thisptr, void* srcdst, int x, int y)
 {
     MouseType* mouse = (MouseType*)thisptr;
     GraphicViewPort* viewport = (GraphicViewPort*)srcdst;
@@ -184,7 +184,7 @@ void __cdecl Draw_Mouse(void* thisptr, void* srcdst, int x, int y)
     }
 }
 
-void* __cdecl ASM_Set_Mouse_Cursor(void* thisptr, int hotspotx, int hotspoty, void* cursor)
+void* ASM_Set_Mouse_Cursor(void* thisptr, int hotspotx, int hotspoty, void* cursor)
 {
     MouseType* mouse = (MouseType*)thisptr;
     Shape_Type* cursor_header = (Shape_Type*)(cursor);
