@@ -945,7 +945,7 @@ inline bool GraphicViewPortClass::Scale(GraphicViewPortClass& dest, char* remap)
     if (Lock()) {
         if (dest.Lock()) {
             return_code = (Linear_Scale_To_Linear(
-                this, &dest, 0, 0, 0, 0, Width, Height, dest.Get_Width(), dest.Get_Height(), FALSE, remap));
+                this, &dest, 0, 0, 0, 0, Width, Height, dest.Get_Width(), dest.Get_Height(), false, remap));
             dest.Unlock();
         }
         Unlock();

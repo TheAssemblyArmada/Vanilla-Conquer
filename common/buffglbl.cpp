@@ -43,8 +43,8 @@
 /* Globals required by GraphicBufferClass for function pointers.  These		*/
 /*   pointers will be set to the proper function when set mode is called.	*/
 /*=========================================================================*/
-BOOL (*GVPC_Blit_to_VVPC_Func)(void*, void*, int, int, int, int, int, int, BOOL);
-BOOL (*GVPC_Scale_To_VVPC)(void*, void*, int, int, int, int, int, int, int, int, BOOL, char*);
+bool (*GVPC_Blit_to_VVPC_Func)(void*, void*, int, int, int, int, int, int, bool);
+bool (*GVPC_Scale_To_VVPC)(void*, void*, int, int, int, int, int, int, int, int, bool, char*);
 
 #ifdef not_any_more_it_doesnt
 /*=========================================================================*/
@@ -56,11 +56,11 @@ long (*VVPC_To_Buffer_Func)(void*, int x, int y, int w, int h, void* buff, long 
 void (*VVPC_Put_Pixel_Func)(void*, int x, int y, unsigned char color);
 int (*VVPC_Get_Pixel_Func)(void*, int x, int y);
 long (*VVPC_Buffer_To_Page)(int x, int y, int w, int h, void* Buffer, void* view);
-BOOL (*VVPC_Blit_to_GVPC_Func)(void*, void*, int, int, int, int, int, int, BOOL);
-BOOL (*VVPC_Blit_to_VVPC_Func)(void*, void*, int, int, int, int, int, int, BOOL);
-BOOL (*VVPC_Scale_To_GVPC)(void*, void*, int, int, int, int, int, int, int, int, BOOL, char*);
-BOOL (*VVPC_Scale_To_VVPC)(void*, void*, int, int, int, int, int, int, int, int, BOOL, char*);
-LONG (*VVPC_Print_Func)(void*, const char*, int, int, int, int);
+bool (*VVPC_Blit_to_GVPC_Func)(void*, void*, int, int, int, int, int, int, bool);
+bool (*VVPC_Blit_to_VVPC_Func)(void*, void*, int, int, int, int, int, int, bool);
+bool (*VVPC_Scale_To_GVPC)(void*, void*, int, int, int, int, int, int, int, int, bool, char*);
+bool (*VVPC_Scale_To_VVPC)(void*, void*, int, int, int, int, int, int, int, int, bool, char*);
+long (*VVPC_Print_Func)(void*, const char*, int, int, int, int);
 void (*VVPC_Draw_Stamp)(void*, void*, int, int, int, void*);
 long (*VVPC_Size_Of_Region)(void*, int, int);
 
@@ -71,9 +71,9 @@ long (*VVPC_Size_Of_Region)(void*, int, int);
 /*=========================================================================*/
 GraphicViewPortClass* LogicPage;
 
-BOOL IconCacheAllowed = TRUE;
+bool IconCacheAllowed = true;
 
 /*
 ** Pointer to a function we will call if we detect loss of focus
 */
-void (*Gbuffer_Focus_Loss_Function)(void) = NULL;
+void (*Gbuffer_Focus_Loss_Function)(void) = nullptr;
