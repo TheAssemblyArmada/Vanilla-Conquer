@@ -33,12 +33,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "font.h"
-#include <malloc.h>
-#include <dos.h>
-#include <fcntl.h>
-#include <io.h>
-#include <sys/stat.h>
-#include <string.h>
 #include "wwstd.h"
 
 /***************************************************************************
@@ -56,7 +50,7 @@
  *   01/31/1992 DRD : Created.                                             *
  *   06/30/1994 SKB : Converted to 32 bit library.                         *
  *=========================================================================*/
-int __cdecl Char_Pixel_Width(char chr)
+int Char_Pixel_Width(char chr)
 {
     int width;
 
@@ -82,10 +76,10 @@ int __cdecl Char_Pixel_Width(char chr)
  *   01/31/1992 DRD : Use Char_Pixel_Width.                                *
  *   06/30/1994 SKB : Converted to 32 bit library.                         *
  *=========================================================================*/
-unsigned int __cdecl String_Pixel_Width(char const* string)
+unsigned int String_Pixel_Width(char const* string)
 {
-    WORD width;       // Working accumulator of string width.
-    WORD largest = 0; // Largest recorded width of the string.
+    unsigned short width;       // Working accumulator of string width.
+    unsigned short largest = 0; // Largest recorded width of the string.
 
     if (!string)
         return (0);
@@ -120,9 +114,9 @@ unsigned int __cdecl String_Pixel_Width(char const* string)
  * HISTORY:                                                                *
  *   07/20/1994 SKB : Created.                                             *
  *=========================================================================*/
-VOID __cdecl Get_Next_Text_Print_XY(GraphicViewPortClass& gp, unsigned long offset, INT* x, INT* y)
+void Get_Next_Text_Print_XY(GraphicViewPortClass& gp, unsigned long offset, int* x, int* y)
 {
-    INT buffwidth;
+    int buffwidth;
 
     if (offset) {
         buffwidth = gp.Get_Width() + gp.Get_XAdd();
