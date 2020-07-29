@@ -84,12 +84,124 @@ int test_fixed_cardinal()
     return ret;
 }
 
+int test_bitarray()
+{
+    struct test_data
+    {
+        int16_t a;
+        int16_t b;
+        int outx;
+        int outy;
+    };
+
+    int ret = 0;
+
+    unsigned char test_data[][4] = {
+        {255, 255, 255, 255},
+        {0, 0, 0, 0},
+        {1, 0, 0, 0},
+        {0, 128, 0, 0},
+    };
+
+    int first = First_True_Bit(test_data[2]);
+
+    if (first != 0) {
+        fprintf(stderr, "First_True_Bit(test_data[2]) -> %d, expected 0\n", first);
+        ret = 1;
+    }
+
+    first = First_False_Bit(test_data[2]);
+
+    if (first != 1) {
+        fprintf(stderr, "First_False_Bit(test_data[3]) -> %d, expected 1\n", first);
+        ret = 1;
+    }
+
+    first = First_True_Bit(test_data[3]);
+
+    if (first != 15) {
+        fprintf(stderr, "First_True_Bit(test_data[2]) -> %d, expected 15\n", first);
+        ret = 1;
+    }
+
+    first = First_False_Bit(test_data[3]);
+
+    if (first != 0) {
+        fprintf(stderr, "First_False_Bit(test_data[3]) -> %d, expected 0\n", first);
+        ret = 1;
+    }
+
+    bool get_check = Get_Bit(test_data[0], 1);
+
+    if (!get_check) {
+        fprintf(stderr, "Get_Bit(test_data[0], 1) -> false, expected true\n");
+        ret = 1;
+    }
+
+    get_check = Get_Bit(test_data[1], 1);
+
+    if (get_check) {
+        fprintf(stderr, "Get_Bit(test_data[1], 1) -> true, expected false\n");
+        ret = 1;
+    }
+
+    get_check = Get_Bit(test_data[0], 16);
+
+    if (!get_check) {
+        fprintf(stderr, "Get_Bit(test_data[0], 16) -> false, expected true\n");
+        ret = 1;
+    }
+
+    get_check = Get_Bit(test_data[1], 16);
+
+    if (get_check) {
+        fprintf(stderr, "Get_Bit(test_data[1], 16) -> true, expected false\n");
+        ret = 1;
+    }
+
+    Set_Bit(test_data[0], 5, 0);
+    Set_Bit(test_data[0], 30, 0);
+    Set_Bit(test_data[1], 5, 1);
+    Set_Bit(test_data[1], 30, 1);
+
+    get_check = Get_Bit(test_data[0], 5);
+
+    if (get_check) {
+        fprintf(stderr, "Get_Bit(test_data[0], 5) -> true, expected false\n");
+        ret = 1;
+    }
+
+    get_check = Get_Bit(test_data[0], 30);
+
+    if (get_check) {
+        fprintf(stderr, "Get_Bit(test_data[0], 30) -> true, expected false\n");
+        ret = 1;
+    }
+
+    get_check = Get_Bit(test_data[1], 5);
+
+    if (!get_check) {
+        fprintf(stderr, "Get_Bit(test_data[1], 5) -> false, expected true\n");
+        ret = 1;
+    }
+
+    get_check = Get_Bit(test_data[1], 30);
+
+    if (!get_check) {
+        fprintf(stderr, "Get_Bit(test_data[1], 30) -> false, expected true\n");
+        ret = 1;
+    }
+
+    return ret;
+}
+
 int main(int argc, char** argv)
 {
     int ret = 0;
 
     ret |= test_calcx_calcy();
     ret |= test_fixed_cardinal();
+    ret |= test_bitarray();
 
     return ret;
 }
