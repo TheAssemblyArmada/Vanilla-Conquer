@@ -56,16 +56,16 @@
  * HISTORY:                                                                *
  *   06/01/1994 PWG : Created.                                             *
  *=========================================================================*/
-BufferClass::BufferClass(VOID* buffer, LONG size)
+BufferClass::BufferClass(void* buffer, long size)
 {
     Size = size; // find size of physical buffer
 
-    if (buffer) {               // if buffer is specified
-        Buffer = (BYTE*)buffer; //		point to it and mark
-        Allocated = FALSE;      //		it as user allocated
+    if (buffer) {                        // if buffer is specified
+        Buffer = (unsigned char*)buffer; //		point to it and mark
+        Allocated = false;               //		it as user allocated
     } else {
-        Buffer = new BYTE[Size]; // otherwise allocate it and
-        Allocated = TRUE;        //		mark it system alloced
+        Buffer = new unsigned char[Size]; // otherwise allocate it and
+        Allocated = true;                 //		mark it system alloced
     }
 }
 
@@ -79,11 +79,11 @@ BufferClass::BufferClass(VOID* buffer, LONG size)
  * HISTORY:                                                                *
  *   06/01/1994 PWG : Created.                                             *
  *=========================================================================*/
-BufferClass::BufferClass(LONG size)
+BufferClass::BufferClass(long size)
 {
     Size = size;
-    Buffer = new BYTE[Size]; // otherwise allocate it and
-    Allocated = TRUE;        //		mark it system alloced
+    Buffer = new unsigned char[Size]; // otherwise allocate it and
+    Allocated = true;                 //		mark it system alloced
 }
 
 /***************************************************************************
@@ -100,11 +100,11 @@ BufferClass::BufferClass(LONG size)
  * HISTORY:                                                                *
  *   06/01/1994 PWG : Created.                                             *
  *=========================================================================*/
-BufferClass::BufferClass(VOID)
+BufferClass::BufferClass()
 {
-    Buffer = NULL;
+    Buffer = nullptr;
     Size = 0;
-    Allocated = FALSE;
+    Allocated = false;
 }
 
 /***************************************************************************
@@ -117,7 +117,7 @@ BufferClass::BufferClass(VOID)
  * HISTORY:                                                                *
  *   06/01/1994 PWG : Created.                                             *
  *=========================================================================*/
-BufferClass::~BufferClass(VOID)
+BufferClass::~BufferClass()
 {
     if (Allocated) {
         delete[] Buffer;

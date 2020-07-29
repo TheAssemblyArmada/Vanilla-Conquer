@@ -86,7 +86,7 @@ private:
 protected:
     void* Buffer;
     long Size;
-    BOOL Allocated;
+    bool Allocated;
 };
 /***************************************************************************
  * BC::GET_SIZE -- Returns the buffer size of the BufferClass instance     *
