@@ -114,7 +114,8 @@
 #include "video.h"
 #include "drawbuff.h"
 
-#include <cstdint>
+#include <stdint.h>
+#include <stdio.h>
 
 /*
 ** Pointer to function to call if we detect a focus loss
@@ -994,7 +995,8 @@ inline unsigned long GraphicViewPortClass::Print(int num, int x, int y, int fcol
 
     unsigned long return_code = 0;
     if (Lock()) {
-        return_code = (Buffer_Print(this, itoa(num, str, 10), x, y, fcol, bcol));
+        snprintf(str, sizeof(str), "%d", num);
+        return_code = (Buffer_Print(this, str, x, y, fcol, bcol));
         Unlock();
     }
     return (return_code);
@@ -1017,7 +1019,8 @@ inline unsigned long GraphicViewPortClass::Print(short num, int x, int y, int fc
 
     unsigned long return_code = 0;
     if (Lock()) {
-        return_code = (Buffer_Print(this, itoa(num, str, 10), x, y, fcol, bcol));
+        snprintf(str, sizeof(str), "%d", num);
+        return_code = (Buffer_Print(this, str, x, y, fcol, bcol));
         Unlock();
     }
     return (return_code);
@@ -1040,7 +1043,8 @@ inline unsigned long GraphicViewPortClass::Print(long num, int x, int y, int fco
 
     unsigned long return_code = 0;
     if (Lock()) {
-        return_code = (Buffer_Print(this, ltoa(num, str, 10), x, y, fcol, bcol));
+        snprintf(str, sizeof(str), "%ld", num);
+        return_code = (Buffer_Print(this, str, x, y, fcol, bcol));
         Unlock();
     }
     return (return_code);
