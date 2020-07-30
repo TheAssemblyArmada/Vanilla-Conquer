@@ -13,7 +13,9 @@
 	#include <winres.h>
 #endif
 
+#ifdef PRODUCT_ICON
 IDI_ICON1               ICON                    PRODUCT_ICON
+#endif
 
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
