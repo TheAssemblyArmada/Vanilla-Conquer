@@ -59,14 +59,14 @@
  * HISTORY:                                                                *
  *   07/12/1994 SKB : Created.                                             *
  *=========================================================================*/
-CountDownTimerClass::CountDownTimerClass(BaseTimerEnum timer, long set, int on)
+CountDownTimerClass::CountDownTimerClass(BaseTimerEnum timer, long set, bool on)
     : TimerClass(timer, on)
 {
     Set(set, on);
 }
 
-CountDownTimerClass::CountDownTimerClass(BaseTimerEnum timer, int on)
-    : TimerClass(timer, FALSE)
+CountDownTimerClass::CountDownTimerClass(BaseTimerEnum timer, bool on)
+    : TimerClass(timer, false)
 {
     DelayTime = 0;
     if (on)
@@ -110,7 +110,7 @@ long CountDownTimerClass::Time()
  * HISTORY:                                                                *
  *   07/12/1994 SKB : Created.                                             *
  *=========================================================================*/
-long CountDownTimerClass::Set(long value, BOOL start)
+long CountDownTimerClass::Set(long value, bool start)
 {
     DelayTime = value;
     TimerClass::Reset(start);

@@ -34,43 +34,27 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "wwstd.h"
-#include <mmsystem.h>
 #include "timer.h"
 #include <stdio.h>
 
 /////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////// Defines /////////////////////////////////////
-
-#define COPY_FROM_MEM TRUE
-
-/////////////////////////////////////////////////////////////////////////////////
-////////////////////////////// timera.asm functions//////////////////////////////
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-extern BOOL Install_Timer_Interrupt(VOID* bin_ptr, UINT rm_size, UINT freq, BOOL partial);
-extern BOOL Remove_Timer_Interrupt(VOID);
-
-#ifdef __cplusplus
-}
-#endif
-
-/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////// Global Data /////////////////////////////////////
 
-BOOL TimerSystemOn = FALSE;
+#ifdef _WIN32
 
-// Global timers that the library or user can count on existing.
-TimerClass WinTickCount(BT_SYSTEM);
-CountDownTimerClass CountDown(BT_SYSTEM, 0);
-
+#include <mmsystem.h>
+HANDLE TimerThreadHandle = 0; // Handle of timer thread
 // Prototype for timer callback
 void CALLBACK Timer_Callback(UINT event_id, UINT res1, DWORD user, DWORD res2, DWORD res3);
 
-HANDLE TimerThreadHandle = 0; // Handle of timer thread
-int InTimerCallback = 0;      // Flag to say if we are in a timer callback
+int InTimerCallback = 0; // Flag to say if we are in a timer callback
+#endif
+
+bool TimerSystemOn = false;
+
+// Global timers that the library or user can count on existing.
+TimerClass WinTickCount(BT_SYSTEM);
+CountDownTimerClass CountDown(BT_SYSTEM, false);
 
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////// Code ////////////////////////////////////////
@@ -81,7 +65,7 @@ int InTimerCallback = 0;      // Flag to say if we are in a timer callback
  * WinTimerClass::WinTimerClass -- Initialize the WW timer system.         *
  *                                                                         *
  *                                                                         *
- * INPUT: UINT : user timer frequency.												  *
+ * INPUT: unsigned int : user timer frequency.                             *
  *                                                                         *
  * OUTPUT:                                                                 *
  *                                                                         *
@@ -90,9 +74,10 @@ int InTimerCallback = 0;      // Flag to say if we are in a timer callback
  * HISTORY:                                                                *
  *   10/5/95 3:47PM : ST Created.                                          *
  *=========================================================================*/
-WinTimerClass::WinTimerClass(UINT freq, BOOL partial)
+WinTimerClass::WinTimerClass(unsigned int freq, bool partial)
 {
-    BOOL success;
+#ifdef _WIN32
+    bool success;
 
     //
     // Inform windows that we want a higher than normal
@@ -127,6 +112,7 @@ WinTimerClass::WinTimerClass(UINT freq, BOOL partial)
         sprintf(error_str, "Error - timer system failed to start. Error code %d\n", GetLastError());
         OutputDebugString(error_str);
     }
+#endif
 }
 
 /***************************************************************************
@@ -135,7 +121,7 @@ WinTimerClass::WinTimerClass(UINT freq, BOOL partial)
  *                                                                         *
  * INPUT:   NONE.                                                          *
  *                                                                         *
- * OUTPUT:  BOOL was it removed successfuly                                *
+ * OUTPUT:  bool was it removed successfuly                                *
  *                                                                         *
  * WARNINGS:                                                               *
  *                                                                         *
@@ -144,7 +130,7 @@ WinTimerClass::WinTimerClass(UINT freq, BOOL partial)
  *=========================================================================*/
 WinTimerClass::~WinTimerClass(void)
 {
-
+#ifdef _WIN32
     if (TimerHandle) {
         timeKillEvent(TimerHandle);
         TimerHandle = 0; // ST - 2/13/2019 5:12PM
@@ -152,6 +138,7 @@ WinTimerClass::~WinTimerClass(void)
 
     TimerSystemOn = FALSE;
     timeEndPeriod(1000 / Frequency);
+#endif
 }
 
 /***********************************************************************************************
@@ -173,6 +160,7 @@ WinTimerClass::~WinTimerClass(void)
  *    10/5/95 3:19PM ST : Created                                                              *
  *=============================================================================================*/
 
+#ifdef _WIN32
 void CALLBACK Timer_Callback(UINT, UINT, DWORD, DWORD, DWORD)
 {
     // CONTEXT	context;
@@ -190,6 +178,7 @@ void CALLBACK Timer_Callback(UINT, UINT, DWORD, DWORD, DWORD)
     }
     InTimerCallback--;
 }
+#endif
 
 /***********************************************************************************************
  * WinTimerClass::Update_Tick_Count -- update westwood timers                                  *
@@ -216,36 +205,6 @@ void WinTimerClass::Update_Tick_Count(void)
     SysTicks++;
     UserTicks++;
 }
-
-/*
-;***************************************************************************
-;* GET_NUM_INTERRUPTS -- Returns the number of interrupts that have occured*
-;*                                                                         *
-;* INPUT: TRUE - returns num RM ints.                                      *
-;*        FALSE - return num PM ints.                                      *
-;*                                                                         *
-;* OUTPUT:                                                                 *
-;*                                                                         *
-;* WARNINGS:                                                               *
-;*                                                                         *
-;* HISTORY:                                                                *
-;*   07/12/1994 SKB : Created.                                             *
-;*=========================================================================*
-    PROC	Get_Num_Interrupts C Near
-    USES	esi
-    ARG	realmode:DWORD
-
-    mov	esi,[RealModePtr]
-    cmp	[realmode],0
-    je	??prot_mode
-    mov	eax,[(TimerType PTR esi).NumRMInts]
-    ret
-??prot_mode:
-    mov	eax,[(TimerType PTR esi).NumPMInts]
-    ret
-
-    ENDP
-  */
 
 /***********************************************************************************************
  * WinTimerClass::Get_System_Tick_Count -- returns the system tick count                       *
