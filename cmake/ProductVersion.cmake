@@ -2,8 +2,6 @@ include (CMakeParseArguments)
 
 set (GenerateProductVersionCurrentDir ${CMAKE_CURRENT_LIST_DIR})
 
-# Default Icon made by https://www.flaticon.com/authors/freepik from https://www.flaticon.com/
-#
 # https://github.com/halex2005/CMakeHelpers
 # The MIT License (MIT)
 # 
@@ -50,7 +48,7 @@ set (GenerateProductVersionCurrentDir ${CMAKE_CURRENT_LIST_DIR})
 # You can specify resource strings in arguments:
 #   NAME               - name of executable (no defaults, ex: Microsoft Word)
 #   BUNDLE             - bundle (${NAME} is default, ex: Microsoft Office)
-#   ICON               - path to application icon (Dummy.ico used by default)
+#   ICON               - path to application icon (no icon will be included if not provided)
 #   VERSION_MAJOR      - 1 is default
 #   VERSION_MINOR      - 0 is default
 #   VERSION_PATCH      - 0 is default
@@ -84,9 +82,6 @@ function(generate_product_version outfiles)
 
     if (NOT PRODUCT_BUNDLE OR "${PRODUCT_BUNDLE}" STREQUAL "")
         set(PRODUCT_BUNDLE "${PRODUCT_NAME}")
-    endif()
-    if (NOT PRODUCT_ICON OR "${PRODUCT_ICON}" STREQUAL "")
-        set(PRODUCT_ICON "${GenerateProductVersionCurrentDir}/Dummy.ico")
     endif()
 
     if (NOT PRODUCT_VERSION_MAJOR EQUAL 0 AND (NOT PRODUCT_VERSION_MAJOR OR "${PRODUCT_VERSION_MAJOR}" STREQUAL ""))
