@@ -41,11 +41,11 @@
 /*
 ********************************* Includes **********************************
 */
-//#include <mem.h>
 
 #include "palette.h"
 #include "timer.h"
-#include "wwstd.h"
+
+#include <string.h>
 
 /*
 ********************************* Constants *********************************
@@ -62,8 +62,8 @@ extern unsigned char CurrentPalette[]; /* in pal.asm */
 ******************************** Prototypes *********************************
 */
 
-PRIVATE void __cdecl Determine_Bump_Rate(void* palette, int delay, short* ticks, short* rate);
-PRIVATE BOOL __cdecl Bump_Palette(void* palette1, unsigned int step);
+static void Determine_Bump_Rate(void* palette, int delay, short* ticks, short* rate);
+static bool Bump_Palette(void* palette1, unsigned int step);
 
 /*
 ******************************** Code *********************************
@@ -84,17 +84,9 @@ PRIVATE BOOL __cdecl Bump_Palette(void* palette1, unsigned int step);
  *   04/25/1994 SKB : Created.                                             *
  *   04/27/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-void __cdecl Set_Palette(void* palette)
+void Set_Palette(void* palette)
 {
-
-#if (IBM)
     Set_Palette_Range(palette);
-#else
-    Copy_Palette(palette, CurrentPalette);
-    LoadRGB4(&Main_Screen->ViewPort, palette, 32L);
-    LoadRGB4(AltVPort, palette, 32L);
-#endif
-
 } /* end of Set_Palette */
 
 /***************************************************************************
@@ -115,7 +107,7 @@ void __cdecl Set_Palette(void* palette)
  *   04/25/1994 SKB : Created.                                             *
  *   04/27/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-void __cdecl Set_Palette_Color(void* palette, int color, void* data)
+void Set_Palette_Color(void* palette, int color, void* data)
 {
     /*
     ---------------------- Return if 'palette' is NULL -----------------------
@@ -123,17 +115,11 @@ void __cdecl Set_Palette_Color(void* palette, int color, void* data)
     if (!palette)
         return;
 
-/*
+    /*
 ------------------- Change the color & set the palette -------------------
 */
-#if (IBM)
     memcpy(&((unsigned char*)palette)[color * RGB_BYTES], data, RGB_BYTES);
     Set_Palette_Range(palette);
-#else
-    palette[color] = *(unsigned short*)data;
-    Set_Palette(palette);
-#endif
-
 } /* end of Set_Palette */
 
 /***************************************************************************
@@ -156,7 +142,7 @@ void __cdecl Set_Palette_Color(void* palette, int color, void* data)
  *=========================================================================*/
 void Fade_Palette_To(void* palette1, unsigned int delay, void (*callback)())
 {
-    BOOL changed;        // Flag that palette has changed this tick.
+    bool changed;        // Flag that palette has changed this tick.
     short jump;          // Gun values to jump per palette set.
     unsigned long timer; // Tick count timer used for timing.
     short ticksper;      // The ticks (fixed point) per bit jump.
@@ -181,7 +167,7 @@ void Fade_Palette_To(void* palette1, unsigned int delay, void (*callback)())
     tickaccum = 0;               // init accumulated elapsed time
     timer = WinTickCount.Time(); // timer = current time
     do {
-        changed = FALSE;
+        changed = false;
 
         tickaccum += ticksper;     // tickaccum = time of next change * 256
         timer += (tickaccum >> 8); // timer = time of next change (rounded)
@@ -198,17 +184,11 @@ void Fade_Palette_To(void* palette1, unsigned int delay, void (*callback)())
                 ................. Update callback while waiting .................
                 */
                 if (callback) {
-#if LIB_EXTERNS_RESOLVED
-                    Sound_Callback(); // should be removed!
-#endif
                     (*cb_ptr)();
                 }
             }
         }
 
-#if LIB_EXTERNS_RESOLVED
-        Sound_Callback(); // should be removed!
-#endif
         if (callback) {
             (*cb_ptr)();
         }
@@ -234,7 +214,7 @@ void Fade_Palette_To(void* palette1, unsigned int delay, void (*callback)())
  *   04/27/1994 BR : Converted to 32-bit                                   *
  *   08/02/1994 SKB : Made private                                         *
  *=========================================================================*/
-PRIVATE void __cdecl Determine_Bump_Rate(void* palette, int delay, short* ticks, short* rate)
+static void Determine_Bump_Rate(void* palette, int delay, short* ticks, short* rate)
 {
     int gun1;  // Palette 1 gun value.
     int gun2;  // Palette 2 gun value.
@@ -292,7 +272,7 @@ PRIVATE void __cdecl Determine_Bump_Rate(void* palette, int delay, short* ticks,
  *		step			- max step amount, determined by Determine_Bump_Rate		*
  *                                                                         *
  * OUTPUT:                                                                 *
- *		FALSE = no change, TRUE = changed												*
+ *		false = no change, true = changed												*
  *                                                                         *
  * WARNINGS:                                                               *
  *                                                                         *
@@ -300,10 +280,9 @@ PRIVATE void __cdecl Determine_Bump_Rate(void* palette, int delay, short* ticks,
  *   04/27/1994 BR : Created.                                              *
  *   08/02/1994 SKB : Made private                                         *
  *=========================================================================*/
-#if (IBM)
-PRIVATE BOOL __cdecl Bump_Palette(void* palette1, unsigned int step)
+static bool Bump_Palette(void* palette1, unsigned int step)
 {
-    BOOL changed = FALSE;                 // Flag that palette has changed this tick.
+    bool changed = false;                 // Flag that palette has changed this tick.
     int index;                            // Index to DAC register gun.
     int gun1, gun2;                       // Palette 1 gun value.
     unsigned char palette[PALETTE_BYTES]; // copy of current palette
@@ -312,7 +291,7 @@ PRIVATE BOOL __cdecl Bump_Palette(void* palette1, unsigned int step)
     ---------------------- Return if 'palette1' is NULL ----------------------
     */
     if (!palette1)
-        return (FALSE);
+        return (false);
 
     /*
     ------------------------ Copy the current palette ------------------------
@@ -332,7 +311,7 @@ PRIVATE BOOL __cdecl Bump_Palette(void* palette1, unsigned int step)
         if (gun1 == gun2)
             continue;
 
-        changed = TRUE;
+        changed = true;
 
         /*
         .................. Increment current palette's color ..................
@@ -362,12 +341,6 @@ PRIVATE BOOL __cdecl Bump_Palette(void* palette1, unsigned int step)
     return (changed);
 
 } /* end of Bump_Palette */
-
-#else
-
-/* This is already implemented in asm on the Amiga */
-
-#endif
 
 void (*cb_ptr)(void); // callback function pointer
 
