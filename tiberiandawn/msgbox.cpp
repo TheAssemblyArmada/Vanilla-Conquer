@@ -425,7 +425,7 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
         **	Delay for a brief moment so that the dialog box will be visible long
         **	enough to read the text.
         */
-        CountDownTimerClass timer(BT_SYSTEM, 0);
+        CountDownTimerClass timer(BT_SYSTEM, false);
         timer.Start();
         timer.Set(TICKS_PER_SECOND * 4);
         while (timer.Time() > 0) {

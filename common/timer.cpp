@@ -59,7 +59,7 @@
  * HISTORY:                                                                *
  *   07/12/1994 SKB : Created.                                             *
  *=========================================================================*/
-TimerClass::TimerClass(BaseTimerEnum timer, BOOL on)
+TimerClass::TimerClass(BaseTimerEnum timer, bool on)
 {
     Accumulated = 0;
     Started = 0;
@@ -182,7 +182,7 @@ long TimerClass::Start(void)
  *   07/12/1994 SKB : Created.                                             *
  *   05/03/1995 SKB : If start return Start since it returns Time          *
  *=========================================================================*/
-long TimerClass::Set(long value, BOOL start)
+long TimerClass::Set(long value, bool start)
 {
     Started = 0;
     Accumulated = value;
