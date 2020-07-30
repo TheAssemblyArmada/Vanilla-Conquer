@@ -54,7 +54,7 @@ public:
     // other than the hidpage.
     //
     void Draw_Mouse(GraphicViewPortClass* scr);
-    void Erase_Mouse(GraphicViewPortClass* scr, int forced = FALSE);
+    void Erase_Mouse(GraphicViewPortClass* scr, int forced = 0);
 
     void Block_Mouse(GraphicBufferClass* buffer);
     void Unblock_Mouse(GraphicBufferClass* buffer);
@@ -102,8 +102,10 @@ private:
 
     int EraseFlags; // Records whether mutex has been released
 
+#ifdef _WIN32
     CRITICAL_SECTION MouseCriticalSection; // Control for mouse re-enterancy
     unsigned TimerHandle;
+#endif
 };
 
 void Hide_Mouse(void);

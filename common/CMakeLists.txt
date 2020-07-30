@@ -32,7 +32,6 @@ set(COMMON_SRC
     load.cpp
     loadfont.cpp
     loadpal.cpp
-    mouseww.cpp
     dipthong.cpp
     wsa.cpp
     _diptabl.cpp
