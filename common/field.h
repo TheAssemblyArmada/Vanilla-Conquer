@@ -34,7 +34,12 @@
 #ifndef __FIELD_H
 #define __FIELD_H
 
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <arpa/inet.h>
+#endif
+
 #ifdef NETWORKING
 #include <winsock.h>
 #endif
