@@ -72,7 +72,7 @@ int Write_PCX_File(char* name, GraphicViewPortClass& pic, unsigned char* palette
     // Open file name
     file_handle = Open_File(name, WRITE);
     if (file_handle == WW_ERROR)
-        return FALSE;
+        return 0;
 
     header.width = pic.Get_Width() - 1;
     header.height = pic.Get_Height() - 1;
