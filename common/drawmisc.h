@@ -28,7 +28,6 @@ extern "C" BOOL __cdecl Linear_Scale_To_Linear(void* this_object,
                                                int dst_height,
                                                BOOL trans,
                                                char* remap);
-extern "C" void __cdecl Set_Font_Palette_Range(void const* palette, int start_idx, int end_idx);
 
 extern "C" extern int LastIconset;
 extern "C" extern int StampPtr;

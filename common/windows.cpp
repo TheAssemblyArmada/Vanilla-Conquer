@@ -52,6 +52,7 @@
 #include "wwkeyboard.h"
 #include "font.h"
 #include "dipthong.h"
+#include "gbuffer.h"
 
 static void Scroll_Window(void);
 static void Flush_Line(void);
