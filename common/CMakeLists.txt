@@ -48,6 +48,7 @@ set(COMMON_SRC
     field.cpp
     rect.cpp
     cliprect.c
+    txtprnt.asm
 )
 
 set(COMMONR_SRC

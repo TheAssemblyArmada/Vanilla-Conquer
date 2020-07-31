@@ -1,6 +1,5 @@
 set(REDALERT_SRC
     lcwcomp.asm
-    txtprnt.asm
     keyfbuff.asm
     _wsproto.cpp
     2keyfram.cpp

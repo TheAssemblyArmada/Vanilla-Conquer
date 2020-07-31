@@ -1,6 +1,5 @@
 set(TIBDAWN_SRC
     keyfbuff.asm
-    txtprnt.asm
     aadata.cpp
     abstract.cpp
     adata.cpp
