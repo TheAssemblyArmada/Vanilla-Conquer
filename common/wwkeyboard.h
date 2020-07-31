@@ -56,12 +56,12 @@ public:
     /*===================================================================*/
     /* Define the functions which work with the Keyboard Class				*/
     /*===================================================================*/
-    BOOL Check(void);  // checks keybuff for meta key
+    bool Check(void);  // checks keybuff for meta key
     int Get(void);     // gets a meta key from the keybuffer
-    BOOL Put(int key); // dumps a key into the keybuffer
-    BOOL Put_Key_Message(UINT vk_key,
-                         BOOL release = FALSE, // handles keyboard related message
-                         BOOL dbl = FALSE);    //   and mouse clicks and dbl clicks
+    bool Put(int key); // dumps a key into the keybuffer
+    bool Put_Key_Message(unsigned int vk_key,
+                         bool release = false, // handles keyboard related message
+                         bool dbl = false);    //   and mouse clicks and dbl clicks
     int Check_Num(void);                       // checks keybuff for a keynum key
     int Get_VK(void);                          // gets keynum key from key buff
     int Check_ACII(void);                      // checks keybuff for an ascii key
@@ -78,13 +78,15 @@ public:
     /*===================================================================*/
     /* Define the main hook for the message processing loop.					*/
     /*===================================================================*/
+#ifdef _WIN32
     void Message_Handler(HWND hwnd, UINT message, UINT wParam, LONG lParam);
+#endif
 
     /*===================================================================*/
     /* Define public routines which can be used on keys in general.		*/
     /*===================================================================*/
-    VOID Split(int& key, int& shift, int& ctrl, int& alt, int& rls, int& dbl);
-    BOOL Is_Mouse_Key(int key);
+    void Split(int& key, int& shift, int& ctrl, int& alt, int& rls, int& dbl);
+    bool Is_Mouse_Key(int key);
 
     /*===================================================================*/
     /* Define the public access variables which are used with the			*/
@@ -111,7 +113,9 @@ private:
     long Tail;                      // the tail position in keyboard buffer
     int MState;
     int Conditional;
+#ifdef _WIN32
     HANDLE CurrentCursor;
+#endif
 };
 
 #define VK_NONE      0x00

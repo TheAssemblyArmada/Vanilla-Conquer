@@ -138,7 +138,7 @@ int WWKeyboardClass::Buff_Get(void)
     return (temp);
 }
 
-BOOL WWKeyboardClass::Is_Mouse_Key(int key)
+bool WWKeyboardClass::Is_Mouse_Key(int key)
 {
     key &= 0xFF;
     return (key == VK_LBUTTON || key == VK_MBUTTON || key == VK_RBUTTON);
@@ -156,7 +156,7 @@ BOOL WWKeyboardClass::Is_Mouse_Key(int key)
  * HISTORY:                                                                                    *
  *   10/16/1995 PWG : Created.                                                                 *
  *=============================================================================================*/
-BOOL WWKeyboardClass::Check(void)
+bool WWKeyboardClass::Check(void)
 {
     Message_Loop();
     unsigned short temp; // store temp holding spot for key
@@ -206,7 +206,7 @@ int WWKeyboardClass::Get(void)
  * HISTORY:                                                                                    *
  *   10/16/1995 PWG : Created.                                                                 *
  *=============================================================================================*/
-BOOL WWKeyboardClass::Put(int key)
+bool WWKeyboardClass::Put(int key)
 {
     int temp = (Tail + 1) & 255;
     if (temp != Head) {
@@ -232,7 +232,7 @@ BOOL WWKeyboardClass::Put(int key)
  * HISTORY:                                                                                    *
  *   10/16/1995 PWG : Created.                                                                 *
  *=============================================================================================*/
-BOOL WWKeyboardClass::Put_Key_Message(UINT vk_key, BOOL release, BOOL dbl)
+bool WWKeyboardClass::Put_Key_Message(unsigned int vk_key, bool release, bool dbl)
 {
     int bits = 0;
     //
