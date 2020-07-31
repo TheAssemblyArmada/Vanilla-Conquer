@@ -65,7 +65,7 @@
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int cdecl Get_Shape_Size(VOID const* shape)
+int Get_Shape_Size(void const* shape)
 {
     Shape_Type* shp = (Shape_Type*)shape;
 
@@ -99,7 +99,7 @@ int cdecl Get_Shape_Size(VOID const* shape)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int Get_Shape_Uncomp_Size(VOID const* shape)
+int Get_Shape_Uncomp_Size(void const* shape)
 {
     Shape_Type* shp = (Shape_Type*)shape;
 
@@ -117,7 +117,7 @@ int Get_Shape_Uncomp_Size(VOID const* shape)
  *                                                                         *
  * INPUT:                                                                  *
  *	shape		pointer to shape																*
- * data		index of WORD data value to get											*
+ * data		index of unsigned short data value to get											*
  *                                                                         *
  * OUTPUT:                                                                 *
  * data value																					*
@@ -131,10 +131,10 @@ int Get_Shape_Uncomp_Size(VOID const* shape)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-WORD cdecl Get_Shape_Data(VOID const* shape, WORD data)
+unsigned short Get_Shape_Data(void const* shape, unsigned short data)
 {
-    WORD* word_ptr = (WORD*)shape;
-    WORD retval;
+    unsigned short* word_ptr = (unsigned short*)shape;
+    unsigned short retval;
 
     retval = *(word_ptr - (data + 1));
 
@@ -145,7 +145,7 @@ WORD cdecl Get_Shape_Data(VOID const* shape, WORD data)
 /***************************************************************************
  * Extract_Shape_Count -- returns # of shapes in the given shape block		*
  *                                                                         *
- * The # of shapes in a shape block is the first WORD in the block, so		*
+ * The # of shapes in a shape block is the first unsigned short in the block, so		*
  * this is the value returned.															*
  *																									*
  * INPUT:                                                                  *
@@ -162,7 +162,7 @@ WORD cdecl Get_Shape_Data(VOID const* shape, WORD data)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int cdecl Extract_Shape_Count(VOID const* buffer)
+int Extract_Shape_Count(void const* buffer)
 {
     ShapeBlock_Type* block = (ShapeBlock_Type*)buffer;
 
@@ -188,7 +188,7 @@ int cdecl Extract_Shape_Count(VOID const* buffer)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-VOID* cdecl Extract_Shape(VOID const* buffer, int shape)
+void* Extract_Shape(void const* buffer, int shape)
 {
     ShapeBlock_Type* block = (ShapeBlock_Type*)buffer;
     // PG	int numshapes;		// Number of shapes
@@ -224,7 +224,7 @@ VOID* cdecl Extract_Shape(VOID const* buffer, int shape)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int Get_Shape_Width(VOID const* shape)
+int Get_Shape_Width(void const* shape)
 {
     Shape_Type* shp = (Shape_Type*)shape;
 
@@ -249,7 +249,7 @@ int Get_Shape_Width(VOID const* shape)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int Get_Shape_Height(VOID const* shape)
+int Get_Shape_Height(void const* shape)
 {
     Shape_Type* shp = (Shape_Type*)shape;
 
@@ -279,10 +279,10 @@ int Get_Shape_Height(VOID const* shape)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int cdecl Set_Shape_Height(VOID const* shape, WORD newheight)
+int Set_Shape_Height(void const* shape, unsigned short newheight)
 {
     Shape_Type* shp = (Shape_Type*)shape;
-    WORD oldheight;
+    unsigned short oldheight;
 
     oldheight = shp->Height;
     shp->Height = (unsigned char)newheight;
@@ -307,10 +307,10 @@ int cdecl Set_Shape_Height(VOID const* shape, WORD newheight)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int cdecl Restore_Shape_Height(VOID* shape)
+int Restore_Shape_Height(void* shape)
 {
     Shape_Type* shp = (Shape_Type*)shape;
-    WORD oldheight;
+    unsigned short oldheight;
 
     oldheight = shp->Height;
     shp->Height = shp->OriginalHeight;
@@ -336,7 +336,7 @@ int cdecl Restore_Shape_Height(VOID* shape)
  *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
  *   05/25/1994 BR : Converted to 32-bit                                   *
  *=========================================================================*/
-int Get_Shape_Original_Height(VOID const* shape)
+int Get_Shape_Original_Height(void const* shape)
 {
     Shape_Type* shp = (Shape_Type*)shape;
 
