@@ -548,7 +548,7 @@ int MapEditClass::Placement_Dialog(void)
                 WindowList[WINDOW_EDITOR][WINDOWHEIGHT] = D_PICTURE_H;
                 Change_Window((int)WINDOW_EDITOR);
                 Draw_Box(D_PICTURE_X, D_PICTURE_Y, D_PICTURE_W, D_PICTURE_H, BOXSTYLE_GREEN_DOWN, true);
-                curobj->Display(WinW << 2, WinH >> 1, WINDOW_EDITOR, LastHouse);
+                curobj->Display(WinW >> 1, WinH >> 1, WINDOW_EDITOR, LastHouse);
 
                 /*
                 ........................ Erase the grid .........................
