@@ -53,25 +53,25 @@
 #include "font.h"
 #include "dipthong.h"
 
-PRIVATE void Scroll_Window(void);
-PRIVATE void Flush_Line(void);
-PRIVATE void In_Char(char* str);
-PRIVATE char Fetch_Char(void);
+static void Scroll_Window(void);
+static void Flush_Line(void);
+static void In_Char(char* str);
+static char Fetch_Char(void);
 
-PRIVATE int ScrollCounter = 0; //	Count of the lines displayed before a pause.
-PRIVATE char Line[84];         // Staging line buffer.
-PRIVATE int Pos;               // Char Position of next free character.
-PRIVATE int PPos;              // Pixel position of next free character.
-PRIVATE int WPos;              // Char position in window.
-PRIVATE char* MainSource;
-PRIVATE char* AltSource;
-PRIVATE char Char[2];
-PRIVATE char Stack;
-PRIVATE char WordWrapFlag = FALSE; // flag for a word wrap.
+static int ScrollCounter = 0; //	Count of the lines displayed before a pause.
+static char Line[84];         // Staging line buffer.
+static int Pos;               // Char Position of next free character.
+static int PPos;              // Pixel position of next free character.
+static int WPos;              // Char position in window.
+static char* MainSource;
+static char* AltSource;
+static char Char[2];
+static char Stack;
+static char WordWrapFlag = false; // flag for a word wrap.
 
-PRIVATE int MoreSpace = 7;
-PRIVATE int MoreFColor = 0;
-PRIVATE int MoreBColor = 0;
+static int MoreSpace = 7;
+static int MoreFColor = 0;
+static int MoreBColor = 0;
 
 int WindowColumns = 40;
 int WindowLines = 25;
@@ -86,7 +86,7 @@ unsigned int WinH = 25;
 unsigned int WinW = 40;
 unsigned int Window = 0;
 
-int MoreOn = TRUE;
+int MoreOn = true;
 char* TXT_MoreText = "--More--";
 void (*Window_More_Ptr)(char const*, int, int, int) = Standard_More_Prompt;
 
@@ -204,7 +204,7 @@ void Set_More_Prompt(char const* prompt, int space, int fcolor, int bcolor)
  *=========================================================================*/
 void Set_More_On(void)
 {
-    MoreOn = TRUE;
+    MoreOn = true;
     ScrollCounter = 0;
 }
 
@@ -225,7 +225,7 @@ void Set_More_On(void)
  *=========================================================================*/
 void Set_More_Off(void)
 {
-    MoreOn = FALSE;
+    MoreOn = false;
 }
 
 /***************************************************************************
@@ -411,7 +411,7 @@ void Window_Print(char const string[], ...)
 
     va_start(arg, string);
 
-    WordWrapFlag = FALSE; // initialize word wrap flag.
+    WordWrapFlag = false; // initialize word wrap flag.
     Pos = PPos = 0;
     Line[0] = '\0';
     Char[0] = Char[1] = 0;
@@ -424,7 +424,7 @@ void Window_Print(char const string[], ...)
     // BG		Window_Hide_Mouse(Window);
     // BG	}
 
-    while (TRUE) {
+    while (true) {
 
         c = Fetch_Char();
 
@@ -463,7 +463,7 @@ void Window_Print(char const string[], ...)
 
         switch (c) {
 
-#if (FALSE)
+#if (false)
             // these are the positions of foreign language characters
         /*
         ** These are characters that shouldn't be window printed because
@@ -542,7 +542,7 @@ void Window_Print(char const string[], ...)
             ScrollCounter++;
             WinCx = 0;
 
-#if (FALSE)
+#if (false)
             if (WinCy >= WindowLines - 1) {
                 Scroll_Window();
             } else {
@@ -689,7 +689,7 @@ void Window_Print(char const string[], ...)
  * HISTORY:                                                                *
  *   07/25/1991 JLB : Created.                                             *
  *=========================================================================*/
-PRIVATE void Scroll_Window(void)
+static void Scroll_Window(void)
 {
     int y; // Top pixel row of bottom line of window.
 
@@ -735,7 +735,7 @@ PRIVATE void Scroll_Window(void)
  * HISTORY:                                                                *
  *   07/25/1991 JLB : Created.                                             *
  *=========================================================================*/
-PRIVATE void Flush_Line(void)
+static void Flush_Line(void)
 {
     int breakit, breaksize, breakwidth;
     int x, y;       // Coordinates of text print.
@@ -797,7 +797,7 @@ PRIVATE void Flush_Line(void)
             // after largest text is found then look for a space to break on
             if (breakit && breakchar == KA_SPACE) {
                 breakpoint = index;
-                WordWrapFlag = FALSE; // word will start at beginning of next line
+                WordWrapFlag = false; // word will start at beginning of next line
                 break;
             }
         }
@@ -811,7 +811,7 @@ PRIVATE void Flush_Line(void)
         if (!index) {
             if (WinCx && !WordWrapFlag) {
                 breakpoint = breaksize = 0; // Continue text on next line.
-                WordWrapFlag = TRUE;        // indicate a word continuation.
+                WordWrapFlag = true;        // indicate a word continuation.
             } else {
                 breakpoint = breakit; // Just print as much as possible.
             }
@@ -845,7 +845,7 @@ PRIVATE void Flush_Line(void)
     */
     if (Pos || WinCx >= (unsigned)WindowWidth) {
         WinCx = WPos = 0;
-#if (FALSE)
+#if (false)
         if (WinCy >= WindowLines - 1) {
             Scroll_Window();
         } else {
@@ -877,7 +877,7 @@ PRIVATE void Flush_Line(void)
  * HISTORY:                                                                *
  *   07/25/1991 JLB : Created.                                             *
  *=========================================================================*/
-PRIVATE void In_Char(char* str)
+static void In_Char(char* str)
 {
     char c;    // Character to return.
     char next; // Following character (if any).
@@ -939,7 +939,7 @@ PRIVATE void In_Char(char* str)
  * HISTORY:                                                                *
  *   07/25/1991 JLB : Created.                                             *
  *=========================================================================*/
-PRIVATE char Fetch_Char(void)
+static char Fetch_Char(void)
 {
     char c; // Character to return.
 
