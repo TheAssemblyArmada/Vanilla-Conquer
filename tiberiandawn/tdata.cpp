@@ -869,7 +869,9 @@ TerrainType TerrainTypeClass::From_Name(char const* name)
  *=============================================================================================*/
 void TerrainTypeClass::Display(int x, int y, WindowNumberType window, HousesType) const
 {
+    IsTheaterShape = true;
     CC_Draw_Shape(Get_Image_Data(), 0, x, y, window, SHAPE_NORMAL | SHAPE_CENTER | SHAPE_WIN_REL);
+    IsTheaterShape = false;
 }
 
 /***********************************************************************************************

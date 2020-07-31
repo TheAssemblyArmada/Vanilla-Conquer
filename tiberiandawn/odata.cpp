@@ -729,7 +729,9 @@ void OverlayTypeClass::Display(int x, int y, WindowNumberType window, HousesType
             frame = 7;
         }
 
+        IsTheaterShape = IsTheater;
         CC_Draw_Shape(Get_Image_Data(), frame, x, y, window, SHAPE_NORMAL | SHAPE_CENTER | SHAPE_WIN_REL);
+        IsTheaterShape = false;
     }
 }
 
