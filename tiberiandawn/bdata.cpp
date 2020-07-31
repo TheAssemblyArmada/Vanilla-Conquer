@@ -3925,6 +3925,7 @@ void BuildingTypeClass::Display(int x, int y, WindowNumberType window, HousesTyp
 {
     void const* ptr = Get_Cameo_Data();
     if (!ptr) {
+        IsTheaterShape = IsTheater;
         ptr = Get_Image_Data();
     }
     CC_Draw_Shape(ptr,
@@ -3934,6 +3935,7 @@ void BuildingTypeClass::Display(int x, int y, WindowNumberType window, HousesTyp
                   window,
                   SHAPE_FADING | SHAPE_CENTER | SHAPE_WIN_REL,
                   HouseTypeClass::As_Reference(house).RemapTable);
+    IsTheaterShape = false;
 }
 
 /***********************************************************************************************

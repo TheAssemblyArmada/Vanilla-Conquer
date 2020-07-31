@@ -340,6 +340,7 @@ void SmudgeTypeClass::Display(int x, int y, WindowNumberType window, HousesType)
     x += WindowList[window][WINDOWX];
     y += WindowList[window][WINDOWY];
 
+    IsTheaterShape = true; // Smudges are theater specific
     if (ptr) {
         for (int w = 0; w < Width; w++) {
             for (int h = 0; h < Height; h++) {
@@ -349,6 +350,7 @@ void SmudgeTypeClass::Display(int x, int y, WindowNumberType window, HousesType)
             }
         }
     }
+    IsTheaterShape = false;
 }
 
 /***********************************************************************************************
