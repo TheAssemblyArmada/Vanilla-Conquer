@@ -40,7 +40,12 @@
  *                                                                         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <sys/socket.h>
+#include <netinet/in.h>
+#endif
 
 extern bool Server;
 
@@ -88,21 +93,23 @@ public:
     TcpipManagerClass(void);
     ~TcpipManagerClass(void);
 
-    BOOL Init(void);
+    bool Init(void);
     void Start_Server(void);
     void Start_Client(void);
-    void Close_Socket(SOCKET s);
+    void Close_Socket(unsigned s);
+#ifdef _WIN32
     void Message_Handler(HWND window, UINT message, UINT wParam, LONG lParam);
+#endif
     void Copy_To_In_Buffer(int bytes);
     int Read(void* buffer, int buffer_len);
     void Write(void* buffer, int buffer_len);
-    BOOL Add_Client(void);
+    bool Add_Client(void);
     void Close(void);
     void Set_Host_Address(char* address);
-    void Set_Protocol_UDP(BOOL state);
-    void Clear_Socket_Error(SOCKET socket);
+    void Set_Protocol_UDP(bool state);
+    void Clear_Socket_Error(unsigned socket);
 
-    inline BOOL Get_Connected(void)
+    inline bool Get_Connected(void)
     {
         return (Connected);
     }
@@ -144,7 +151,8 @@ private:
         bool InUse : 1;
     } InternetBufferType;
 
-    BOOL WinsockInitialised;
+#ifdef _WIN32
+    bool WinsockInitialised;
     WSADATA WinsockInfo;
     SOCKET ListenSocket;
     SOCKET ConnectSocket;
@@ -154,19 +162,20 @@ private:
     char HostBuff[MAXGETHOSTSTRUCT];
     char ClientName[128];
     char ReceiveBuffer[WS_RECEIVE_BUFFER_LEN];
+#endif
     // char					InBuffer[WS_IN_BUFFER_LEN];
     // int					InBufferHead;
     // int					InBufferTail;
     // char					OutBuffer[WS_OUT_BUFFER_LEN];
     // int					OutBufferHead;
     // int					OutBufferTail;
-    BOOL IsServer;
-    BOOL Connected;
+    bool IsServer;
+    bool Connected;
     HostType Server;
     char HostAddress[IP_ADDRESS_MAX];
     ConnectStatusEnum ConnectStatus;
-    BOOL UseUDP;
-    IN_ADDR UDPIPAddress;
+    bool UseUDP;
+    struct in_addr UDPIPAddress;
     int SocketReceiveBuffer;
     int SocketSendBuffer;
     InternetBufferType ReceiveBuffers[WS_NUM_TX_BUFFERS];

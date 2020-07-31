@@ -83,8 +83,6 @@ TcpipManagerClass Winsock; // The object for interfacing with Winsock
  *=============================================================================================*/
 TcpipManagerClass::TcpipManagerClass(void)
 {
-    WinsockInitialised = FALSE;
-    Connected = FALSE;
 }
 
 /***********************************************************************************************
@@ -140,9 +138,9 @@ void TcpipManagerClass::Close(void)
  *    3/20/96 2:54PM ST : Created                                                              *
  *=============================================================================================*/
 
-BOOL TcpipManagerClass::Init(void)
+bool TcpipManagerClass::Init(void)
 {
-    return (FALSE);
+    return false;
 }
 
 /***********************************************************************************************
@@ -220,9 +218,9 @@ void TcpipManagerClass::Write(void* buffer, int buffer_len)
  *    3/20/96 3:02PM ST : Created                                                              *
  *=============================================================================================*/
 
-BOOL TcpipManagerClass::Add_Client(void)
+bool TcpipManagerClass::Add_Client(void)
 {
-    return FALSE;
+    return false;
 }
 
 /***********************************************************************************************
@@ -239,10 +237,11 @@ BOOL TcpipManagerClass::Add_Client(void)
  * HISTORY:                                                                                    *
  *    3/20/96 3:05PM ST : Created                                                              *
  *=============================================================================================*/
-
+#ifdef _WIN32
 void TcpipManagerClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
 {
 }
+#endif
 
 /***********************************************************************************************
  * TMC::Copy_To_In_Buffer -- copy data from our winsock buffer to our internal buffer          *
@@ -314,15 +313,15 @@ void TcpipManagerClass::Start_Client(void)
  *    3/20/96 3:24PM ST : Created                                                              *
  *=============================================================================================*/
 
-void TcpipManagerClass::Close_Socket(SOCKET s)
+void TcpipManagerClass::Close_Socket(unsigned s)
 {
 }
 
-void TcpipManagerClass::Set_Protocol_UDP(BOOL state)
+void TcpipManagerClass::Set_Protocol_UDP(bool state)
 {
 }
 
-void TcpipManagerClass::Clear_Socket_Error(SOCKET socket)
+void TcpipManagerClass::Clear_Socket_Error(unsigned int socket)
 {
 }
 

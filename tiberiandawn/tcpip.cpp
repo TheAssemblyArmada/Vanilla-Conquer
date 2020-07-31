@@ -183,7 +183,7 @@ void TcpipManagerClass::Close(void)
  *    3/20/96 2:54PM ST : Created                                                              *
  *=============================================================================================*/
 
-BOOL TcpipManagerClass::Init(void)
+bool TcpipManagerClass::Init(void)
 {
     short version;
     int rc;
@@ -411,7 +411,7 @@ void TcpipManagerClass::Write(void* buffer, int buffer_len)
  *    3/20/96 3:02PM ST : Created                                                              *
  *=============================================================================================*/
 
-BOOL TcpipManagerClass::Add_Client(void)
+bool TcpipManagerClass::Add_Client(void)
 {
     struct sockaddr_in addr;
     int addrsize;
@@ -920,7 +920,7 @@ void TcpipManagerClass::Close_Socket(SOCKET s)
     closesocket(s);
 }
 
-void TcpipManagerClass::Set_Protocol_UDP(BOOL state)
+void TcpipManagerClass::Set_Protocol_UDP(bool state)
 {
     UseUDP = state;
 }
