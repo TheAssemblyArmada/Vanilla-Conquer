@@ -53,7 +53,7 @@
  *   01/31/1992 DRD : Modified to use new font format.                     *
  *   06/29/1994 SKB : modified for 32 bit library                          *
  *=========================================================================*/
-void* __cdecl Set_Font(void const* fontptr)
+void* Set_Font(void const* fontptr)
 {
     void* oldfont;
     char const* blockptr;
@@ -73,7 +73,7 @@ void* __cdecl Set_Font(void const* fontptr)
         FontWidth = *(blockptr + FONTINFOMAXWIDTH);
         // Draw_Char_Setup();
 
-#if FALSE
+#if false
         WindowLines = WinH / FontHeight;
         WindowWidth = WinW << 3;
         WindowColumns = WindowWidth / FontWidth;
