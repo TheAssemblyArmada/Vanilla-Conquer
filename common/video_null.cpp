@@ -66,8 +66,6 @@ public:
 SurfaceMonitorClassDummy AllSurfacesDummy;           // List of all direct draw surfaces
 SurfaceMonitorClass& AllSurfaces = AllSurfacesDummy; // List of all direct draw surfaces
 
-BOOL CanVblankSync = TRUE;
-
 /***********************************************************************************************
  * Set_Video_Mode -- Initializes Direct Draw and sets the required Video Mode                  *
  *                                                                                             *
