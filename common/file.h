@@ -151,11 +151,11 @@ typedef struct
 
 // These are cpp errors in funtions declarations	JULIO JEREZ
 
-// extern FileDataType __cdecl FileData[];
-// extern BYTE __cdecl ExecPath[XMAXPATH + 1];
-// extern BYTE __cdecl DataPath[XMAXPATH + 1];
-// extern BYTE __cdecl StartPath[XMAXPATH + 1];
-// extern BOOL __cdecl UseCD;
+// extern FileDataType FileData[];
+// extern BYTE ExecPath[XMAXPATH + 1];
+// extern BYTE DataPath[XMAXPATH + 1];
+// extern BYTE StartPath[XMAXPATH + 1];
+// extern BOOL UseCD;
 
 // The correct syntax is  NO TYPE MODIFIER APPLY TO DATA DECLARATIONS
 extern FileDataType FileData[];
@@ -167,54 +167,54 @@ extern char StartPath[XMAXPATH + 1];
 /* The following prototypes are for the file: FILEINIT.CPP						*/
 /*=========================================================================*/
 
-void __cdecl WWDOS_Shutdown(void);
-FileInitErrorType __cdecl WWDOS_Init(unsigned long cachesize, char* filedata, char* cdpath);
+void WWDOS_Shutdown(void);
+FileInitErrorType WWDOS_Init(unsigned long cachesize, char* filedata, char* cdpath);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: FILE.CPP							*/
 /*=========================================================================*/
 
-int __cdecl Open_File(char const* file_name, int mode);
-void __cdecl Close_File(int handle);
-long __cdecl Read_File(int handle, void* buf, unsigned long bytes);
-int __cdecl Load_File(const char* file_name, void* load_addr);
-long __cdecl Write_File(int handle, void const* buf, unsigned long bytes);
-unsigned long __cdecl Seek_File(int handle, long offset, int starting);
-int __cdecl File_Exists(char const* file_name);
-unsigned long __cdecl File_Size(int handle);
-int __cdecl Open_File_With_Recovery(char const* file_name, unsigned int mode);
+int Open_File(char const* file_name, int mode);
+void Close_File(int handle);
+long Read_File(int handle, void* buf, unsigned long bytes);
+int Load_File(const char* file_name, void* load_addr);
+long Write_File(int handle, void const* buf, unsigned long bytes);
+unsigned long Seek_File(int handle, long offset, int starting);
+int File_Exists(char const* file_name);
+unsigned long File_Size(int handle);
+int Open_File_With_Recovery(char const* file_name, unsigned int mode);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: FILECACH.CPP						*/
 /*=========================================================================*/
 
 void Unfragment_File_Cache(void);
-int __cdecl Flush_Unused_File_Cache(int flush_keeps);
+int Flush_Unused_File_Cache(int flush_keeps);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: FILECHNG.CPP						*/
 /*=========================================================================*/
 
-int __cdecl Create_File(char const* file_name);
-extern int __cdecl Delete_File(char const* file_name);
+int Create_File(char const* file_name);
+extern int Delete_File(char const* file_name);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: FILEINFO.CPP						*/
 /*=========================================================================*/
 
-int __cdecl Get_DOS_Handle(int fh);
-int __cdecl Free_Handles(void);
-int __cdecl Find_Disk_Number(char const* file_name);
-int __cdecl Set_File_Flags(char const* filename, int flags);
-int __cdecl Clear_File_Flags(char const* filename, int flags);
-int __cdecl Get_File_Flags(char const* filename);
+int Get_DOS_Handle(int fh);
+int Free_Handles(void);
+int Find_Disk_Number(char const* file_name);
+int Set_File_Flags(char const* filename, int flags);
+int Clear_File_Flags(char const* filename, int flags);
+int Get_File_Flags(char const* filename);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: FINDFILE.CPP						*/
 /*=========================================================================*/
 
-int __cdecl Find_File(char const* file_name);
-int __cdecl Find_File_Index(char const* filename);
+int Find_File(char const* file_name);
+int Find_File_Index(char const* filename);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: file.cpp                     */

@@ -68,7 +68,7 @@
  *   05/16/1991 JLB : Created.                                             *
  *   04/19/1994 SKB : Update to 32 bit library.                            *
  *=========================================================================*/
-int __cdecl Open_Iff_File(char const* filename)
+int Open_Iff_File(char const* filename)
 {
     int fh;    // File handle.
     long type; // IFF file type.
@@ -120,7 +120,7 @@ int __cdecl Open_Iff_File(char const* filename)
  *   05/16/1991 JLB : Created.                                             *
  *   04/19/1994 SKB : Update to 32 bit library.                            *
  *=========================================================================*/
-void __cdecl Close_Iff_File(int fh)
+void Close_Iff_File(int fh)
 {
     if (fh != WW_ERROR)
         Close_File(fh);
@@ -139,13 +139,13 @@ void __cdecl Close_Iff_File(int fh)
  *   06/03/1991  CY : Created.                                             *
  *   04/19/1994 SKB : Update to 32 bit library.                            *
  *=========================================================================*/
-unsigned long __cdecl Get_Iff_Chunk_Size(int fh, long id)
+unsigned long Get_Iff_Chunk_Size(int fh, long id)
 {
     long form;            // Chunk iff form name.
     long chunksize;       // Size of the chunk.
-    char first_iteration; // Check once the current chunk name
+    bool first_iteration; // Check once the current chunk name
 
-    first_iteration = TRUE;
+    first_iteration = true;
 
     for (;;) {
         if (Read_File(fh, &form, 4L) != 4L && !first_iteration)
@@ -165,7 +165,7 @@ unsigned long __cdecl Get_Iff_Chunk_Size(int fh, long id)
 
             if (first_iteration) {
                 Seek_File(fh, 12L, SEEK_SET); // Start at beginning of file.
-                first_iteration = FALSE;      // Don't do this again
+                first_iteration = false;      // Don't do this again
             } else {
 
                 /* Otherwise, go to the next chunk in the file */
@@ -206,13 +206,13 @@ unsigned long __cdecl Get_Iff_Chunk_Size(int fh, long id)
  *   05/16/1991 JLB : Created.                                             *
  *   04/19/1994 SKB : Update to 32 bit library.                            *
  *=========================================================================*/
-unsigned long __cdecl Read_Iff_Chunk(int fh, long id, void* buffer, unsigned long maxsize)
+unsigned long Read_Iff_Chunk(int fh, long id, void* buffer, unsigned long maxsize)
 {
     long form;               // Chunk iff form name.
     unsigned long chunksize; // Size of the chunk.
-    char first_iteration;    // Check once the current chunk name
+    bool first_iteration;    // Check once the current chunk name
 
-    first_iteration = TRUE;
+    first_iteration = true;
 
     for (;;) {
         if (Read_File(fh, &form, 4L) != 4L && !first_iteration)
@@ -239,7 +239,7 @@ unsigned long __cdecl Read_Iff_Chunk(int fh, long id, void* buffer, unsigned lon
 
             if (first_iteration) {
                 Seek_File(fh, 12L, SEEK_SET); // Start at beginning of file.
-                first_iteration = FALSE;      // Don't do this again
+                first_iteration = false;      // Don't do this again
 
             } else {
 
@@ -266,13 +266,13 @@ unsigned long __cdecl Read_Iff_Chunk(int fh, long id, void* buffer, unsigned lon
  * HISTORY:                                                                *
  *   04/19/1994 SKB : Created.                                             *
  *=========================================================================*/
-void __cdecl Write_Iff_Chunk(int file, long id, void* buffer, long length)
+void Write_Iff_Chunk(int file, long id, void* buffer, long length)
 {
     long pos;    // Current position in the IFF file.
     long oldpos; // Record of start of chunk offset.
     long endpos; // end of file offset before we write our data
     long value;
-    BOOL odd;     // Is length odd?
+    bool odd;     // Is length odd?
     char pad = 0; // Optional padding byte for even sized chunks.
 
     /*
