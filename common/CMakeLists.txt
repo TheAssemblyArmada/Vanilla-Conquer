@@ -14,7 +14,6 @@ set(COMMON_SRC
     xordelta.asm
     auduncmp.c
     bitblit.c
-    setfpal.c
     soscodec.c
     winasm.c
     wwmouse.c
@@ -30,12 +29,10 @@ set(COMMON_SRC
     buffglbl.cpp
     iff.cpp
     load.cpp
-    loadfont.cpp
     loadpal.cpp
     dipthong.cpp
     wsa.cpp
     _diptabl.cpp
-    set_font.cpp
     rawfile.cpp
     getshape.cpp
     timerini.cpp

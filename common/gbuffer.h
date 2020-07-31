@@ -113,6 +113,7 @@
 #include "buffer.h"
 #include "video.h"
 #include "drawbuff.h"
+#include "font.h"
 
 #include <stdint.h>
 #include <stdio.h>

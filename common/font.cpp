@@ -27,20 +27,70 @@
  *                                                                         *
  *-------------------------------------------------------------------------*
  * Functions:                                                              *
- *   Char_Pixel_Width -- Return pixel width of a character.						*
+ *   Char_Pixel_Width -- Return pixel width of a character.                *
  *   String_Pixel_Width -- Return pixel width of a string of characters.   *
  *   Get_Next_Text_Print_XY -- Calculates X and Y given ret value from Text_P*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "font.h"
-#include "wwstd.h"
+
+#include "gbuffer.h"
+#include "file.h"
+#include "memflag.h"
+
+int FontXSpacing = 0;
+int FontYSpacing = 0;
+void const* FontPtr = nullptr;
+char FontWidth = 8;
+char FontHeight = 8;
+
+// only font.c and set_font.c use the following
+char* FontWidthBlockPtr = nullptr;
 
 /***************************************************************************
- * CHAR_PIXEL_WIDTH -- Return pixel width of a character.						*
+ * SET_FONT -- Changes the default text printing font.                     *
  *                                                                         *
- *    Retreives the pixel width of a character from the font width block.	*
+ *    This routine will change the default text printing font for all      *
+ *    text output.  It handles updating the system where necessary.        *
  *                                                                         *
- * INPUT:      Character.																	*
+ * INPUT:   fontptr  -- Pointer to the font to change to.                  *
+ *                                                                         *
+ * OUTPUT:  Returns with a pointer to the previous font.                   *
+ *                                                                         *
+ * WARNINGS:   none                                                        *
+ *                                                                         *
+ * HISTORY:                                                                *
+ *   09/06/1991 JLB : Created.                                             *
+ *   09/17/1991 JLB : Fixed return value bug.                              *
+ *   01/31/1992 DRD : Modified to use new font format.                     *
+ *   06/29/1994 SKB : modified for 32 bit library                          *
+ *=========================================================================*/
+void* Set_Font(void const* fontptr)
+{
+    void* oldfont = (void*)FontPtr;
+
+    if (fontptr) {
+        FontPtr = (void*)fontptr;
+
+        /*
+        **	Inform the system about the new font.
+        */
+
+        FontWidthBlockPtr = (char*)fontptr + *(unsigned short*)((char*)fontptr + FONTWIDTHBLOCK);
+        char const* blockptr = (char*)fontptr + *(unsigned short*)((char*)fontptr + FONTINFOBLOCK);
+        FontHeight = *(blockptr + FONTINFOMAXHEIGHT);
+        FontWidth = *(blockptr + FONTINFOMAXWIDTH);
+    }
+
+    return oldfont;
+}
+
+/***************************************************************************
+ * CHAR_PIXEL_WIDTH -- Return pixel width of a character.                  *
+ *                                                                         *
+ *    Retreives the pixel width of a character from the font width block.  *
+ *                                                                         *
+ * INPUT:      Character.                                                  *
  *                                                                         *
  * OUTPUT:     Pixel width of a string of characters.                      *
  *                                                                         *
@@ -52,9 +102,7 @@
  *=========================================================================*/
 int Char_Pixel_Width(char chr)
 {
-    int width;
-
-    width = (unsigned char)*(FontWidthBlockPtr + (unsigned char)chr) + FontXSpacing;
+    int width = (unsigned char)*(FontWidthBlockPtr + (unsigned char)chr) + FontXSpacing;
 
     return (width);
 }
@@ -63,7 +111,7 @@ int Char_Pixel_Width(char chr)
  * STRING_PIXEL_WIDTH -- Return pixel width of a string of characters.     *
  *                                                                         *
  *    Calculates the pixel width of a string of characters.  This uses     *
- *		the font width block for the widths.											*
+ *      the font width block for the widths.                               *
  *                                                                         *
  * INPUT:      Pointer to string of characters.                            *
  *                                                                         *
@@ -78,13 +126,12 @@ int Char_Pixel_Width(char chr)
  *=========================================================================*/
 unsigned int String_Pixel_Width(char const* string)
 {
-    unsigned short width;       // Working accumulator of string width.
+    if (!string) {
+        return 0;
+    }
+
     unsigned short largest = 0; // Largest recorded width of the string.
-
-    if (!string)
-        return (0);
-
-    width = 0;
+    unsigned short width = 0;   // Working accumulator of string width.
     while (*string) {
         if (*string == '\r') {
             string++;
@@ -95,7 +142,7 @@ unsigned int String_Pixel_Width(char const* string)
         }
     }
     largest = MAX(largest, width);
-    return (largest);
+    return largest;
 }
 
 /***************************************************************************
@@ -103,7 +150,7 @@ unsigned int String_Pixel_Width(char const* string)
  *                                                                         *
  *                                                                         *
  * INPUT:   VVPC& vp - viewport that was printed to.                       *
- *          unsigned long offset - offset that Text_Print returned.                *
+ *          unsigned long offset - offset that Text_Print returned.        *
  *          INT *x - x return value.                                       *
  *          INT *y - y return value.                                       *
  *                                                                         *
@@ -116,14 +163,103 @@ unsigned int String_Pixel_Width(char const* string)
  *=========================================================================*/
 void Get_Next_Text_Print_XY(GraphicViewPortClass& gp, unsigned long offset, int* x, int* y)
 {
-    int buffwidth;
-
     if (offset) {
-        buffwidth = gp.Get_Width() + gp.Get_XAdd();
+        int buffwidth = gp.Get_Width() + gp.Get_XAdd();
         offset -= gp.Get_Offset();
         *x = offset % buffwidth;
         *y = offset / buffwidth;
     } else {
         *x = *y = 0;
     }
+}
+
+extern "C" unsigned char ColorXlat[16][16];
+
+void Set_Font_Palette_Range(void const* palette, int start_idx, int end_idx)
+{
+    start_idx &= 15;
+    end_idx &= 15;
+    const unsigned char* colors = (const unsigned char*)palette;
+
+    for (int i = start_idx; i < end_idx + 1; ++i) {
+        ColorXlat[0][i] = *colors;
+        ColorXlat[i][0] = *colors++;
+    }
+}
+
+/***************************************************************************
+ * LOAD_FONT -- Loads a font from disk.                                    *
+ *                                                                         *
+ *    This loads a font from disk.  This function must be called as a      *
+ *    precursor to calling Set_Font().  You need only call this function   *
+ *    once per desired font at the beginning of your code, but AFTER       *
+ *    Prog_Init() is called.                                               *
+ *                                                                         *
+ * INPUT:      name  - Pointer to font name to use (eg. "topaz.font")      *
+ *                                                                         *
+ *             fontsize - Size in points of the font loaded.               *
+ *                                                                         *
+ * OUTPUT:     Pointer to font data or NULL if unable to load.             *
+ *                                                                         *
+ * WARNINGS:   Some system memory is grabbed by this routine.              *
+ *                                                                         *
+ * HISTORY:                                                                *
+ *   4/10/91    BS  : 2.0 compatibily                                      *
+ *   6/09/91    JLB : IBM and Amiga compatability.                         *
+ *   11/27/1991 JLB : Uses file I/O routines for disk access.              *
+ *   01/29/1992 DRD : Modified to use new font format.                     *
+ *   02/01/1992 DRD : Added font file verification.                        *
+ *   06/29/1994 SKB : modified for 32 bit library                          *
+ *=========================================================================*/
+void* Load_Font(char const* name)
+{
+    char valid;
+    int fh;              // DOS file handle for font file.
+    unsigned short size; // Size of the data in the file (-2);
+    char* ptr = NULL;    // Pointer to newly loaded font.
+
+    fh = Open_File(name, READ);
+    if (fh >= 0) {
+        if (Read_File(fh, (char*)&size, 2) != 2)
+            return (NULL);
+
+        ptr = (char*)Alloc(size, MEM_NORMAL);
+        *(short*)ptr = size;
+        Read_File(fh, ptr + 2, size - 2);
+        Close_File(fh);
+    } else {
+        return ((void*)errno);
+    }
+
+#ifdef cuts
+    if (Find_File(name)) {
+        fh = Open_File(name, READ);
+        if (Read_File(fh, (char*)&size, 2) != 2)
+            return (NULL);
+
+        ptr = (char*)Alloc(size, MEM_NORMAL);
+        *(short*)ptr = size;
+        Read_File(fh, ptr + 2, size - 2);
+        Close_File(fh);
+    } else {
+        return (NULL);
+    }
+#endif
+
+    //
+    // verify that the file loaded is a valid font file.
+    //
+
+    valid = FALSE;
+    if (*(ptr + 2) == 0) {     // no compression
+        if (*(ptr + 3) == 5) { // currently only 5 data blocks are used.
+            valid = TRUE;
+        }
+    }
+
+    if (!valid) {
+        return (NULL);
+    }
+
+    return (ptr);
 }

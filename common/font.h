@@ -35,9 +35,6 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include "setfpal.h"
-#include "gbuffer.h"
-
 //////////////////////////////////////// Defines //////////////////////////////////////////
 
 // defines for font header, offsets to block offsets
@@ -55,24 +52,13 @@
 
 //////////////////////////////////////// Prototypes //////////////////////////////////////////
 
-/*=========================================================================*/
-/* The following prototypes are for the file: SET_FONT.CPP						*/
-/*=========================================================================*/
+class GraphicViewPortClass;
 
 void* Set_Font(void const* fontptr);
-
-/*=========================================================================*/
-/* The following prototypes are for the file: FONT.CPP							*/
-/*=========================================================================*/
-
 int Char_Pixel_Width(char chr);
 unsigned int String_Pixel_Width(char const* string);
 void Get_Next_Text_Print_XY(GraphicViewPortClass& vp, unsigned long offset, int* x, int* y);
-
-/*=========================================================================*/
-/* The following prototypes are for the file: LOADFONT.CPP	  					*/
-/*=========================================================================*/
-
+void Set_Font_Palette_Range(void const* palette, int start_idx, int end_idx);
 void* Load_Font(char const* name);
 
 /*=========================================================================*/
