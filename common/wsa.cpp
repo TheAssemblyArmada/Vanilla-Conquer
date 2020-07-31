@@ -138,9 +138,9 @@ typedef struct
 /* The following PRIVATE functions are in this file:                       */
 /*=========================================================================*/
 
-PRIVATE unsigned long Get_Resident_Frame_Offset(char* file_buffer, int frame);
-PRIVATE unsigned long Get_File_Frame_Offset(int file_handle, int frame, int palette_adjust);
-PRIVATE BOOL Apply_Delta(SysAnimHeaderType* sys_header, int curr_frame, char* dest_ptr, int dest_w);
+static unsigned long Get_Resident_Frame_Offset(char* file_buffer, int frame);
+static unsigned long Get_File_Frame_Offset(int file_handle, int frame, int palette_adjust);
+static bool Apply_Delta(SysAnimHeaderType* sys_header, int curr_frame, char* dest_ptr, int dest_w);
 /*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
 
 /***************************************************************************
@@ -160,11 +160,11 @@ PRIVATE BOOL Apply_Delta(SysAnimHeaderType* sys_header, int curr_frame, char* de
  * HISTORY:                                                                *
  *   11/26/1991  SB : Created.                                             *
  *=========================================================================*/
-void* __cdecl Open_Animation(char const* file_name,
-                             char* user_buffer,
-                             long user_buffer_size,
-                             WSAOpenType user_flags,
-                             unsigned char* palette)
+void* Open_Animation(char const* file_name,
+                     char* user_buffer,
+                     long user_buffer_size,
+                     WSAOpenType user_flags,
+                     unsigned char* palette)
 {
     int fh, anim_flags;
     int palette_adjust;
@@ -195,7 +195,7 @@ void* __cdecl Open_Animation(char const* file_name,
         anim_flags |= WSA_PALETTE_PRESENT;
         palette_adjust = 768;
 
-        if (palette != NULL) {
+        if (palette != nullptr) {
             Seek_File(fh, sizeof(unsigned long) * (file_header.total_frames), SEEK_CUR);
             Read_File(fh, palette, 768L);
         }
@@ -254,11 +254,11 @@ void* __cdecl Open_Animation(char const* file_name,
     // check to see if buffer size is big enough for at least min required
     if (user_buffer && (user_buffer_size < min_buffer_size)) {
         Close_File(fh);
-        return (NULL);
+        return (nullptr);
     }
 
     // A buffer was not passed in, so do allocations
-    if (user_buffer == NULL) {
+    if (user_buffer == nullptr) {
 
         // If the user wants it from the disk, then let us give it to him,
         // otherwise, try to give a max allocation he can have.
@@ -285,7 +285,7 @@ void* __cdecl Open_Animation(char const* file_name,
 
             if (min_buffer_size > Ram_Free(MEM_NORMAL)) {
                 Close_File(fh);
-                return (NULL);
+                return (nullptr);
             }
 
             // Else make buffer size the min and allocate it.
@@ -369,7 +369,7 @@ void* __cdecl Open_Animation(char const* file_name,
         else
             anim_flags |= WSA_LINEAR_ONLY | WSA_FILE;
         ////
-        sys_header->file_buffer = NULL;
+        sys_header->file_buffer = nullptr;
     }
 
     // Figure where to back load frame 0 into the delta buffer.
@@ -409,7 +409,7 @@ void* __cdecl Open_Animation(char const* file_name,
  * HISTORY:                                                                *
  *   11/23/1991  ML : Created.                                             *
  *=========================================================================*/
-void __cdecl Close_Animation(void* handle)
+void Close_Animation(void* handle)
 {
     SysAnimHeaderType* sys_header;
 
@@ -435,7 +435,7 @@ void __cdecl Close_Animation(void* handle)
  *          int x_pixel position of left side of animation on page        *
  *          int y_pixel position of top of animation on page              *
  *                                                                         *
- * OUTPUT:  BOOL if successfull or not.                                   *
+ * OUTPUT:  bool if successfull or not.                                   *
  *                                                                         *
  * WARNINGS:                                                               *
  *                                                                         *
@@ -443,14 +443,14 @@ void __cdecl Close_Animation(void* handle)
  *   11/27/1991  SB : Created.                                             *
  *=========================================================================*/
 //#pragma off (unreferenced)
-BOOL __cdecl Animate_Frame(void* handle,
-                           GraphicViewPortClass& view,
-                           int frame_number,
-                           int x_pixel,
-                           int y_pixel,
-                           WSAType flags_and_prio,
-                           void* magic_cols,
-                           void* magic)
+bool Animate_Frame(void* handle,
+                   GraphicViewPortClass& view,
+                   int frame_number,
+                   int x_pixel,
+                   int y_pixel,
+                   WSAType flags_and_prio,
+                   void* magic_cols,
+                   void* magic)
 {
     SysAnimHeaderType* sys_header; // fix up the void pointer past in.
     int curr_frame;                // current frame we are on.
@@ -460,7 +460,7 @@ BOOL __cdecl Animate_Frame(void* handle,
     int search_frames;             // How many frames to search.
     int loop;                      // Just a loop varible.
     char* frame_buffer;            // our destination.
-    BOOL direct_to_dest;           // are we going directly to the destination?
+    bool direct_to_dest;           // are we going directly to the destination?
     int dest_width;                // the width of the destination buffer or page.
 
     // Assign local pointer to the beginning of the buffer where the system information
@@ -472,11 +472,11 @@ BOOL __cdecl Animate_Frame(void* handle,
 
     // Are the animation handle and the frame number valid?
     if (!handle || (total_frames <= frame_number)) {
-        return FALSE;
+        return false;
     }
 
-    if (view.Lock() != TRUE)
-        return (FALSE);
+    if (view.Lock() != true)
+        return (false);
 
     // Decide if we are going to a page or a viewport (part of a buffer).
     dest_width = view.Get_Width() + view.Get_XAdd() + view.Get_Pitch();
@@ -494,11 +494,11 @@ BOOL __cdecl Animate_Frame(void* handle,
     if (sys_header->flags & WSA_TARGET_IN_BUFFER) {
         // Get a pointer to the frame in animation buffer.
         frame_buffer = (char*)Add_Long_To_Pointer(sys_header, sizeof(SysAnimHeaderType));
-        direct_to_dest = FALSE;
+        direct_to_dest = false;
     } else {
         frame_buffer = (char*)view.Get_Offset();
         frame_buffer += (y_pixel * dest_width) + x_pixel;
-        direct_to_dest = TRUE;
+        direct_to_dest = true;
     }
     //
     // If current_frame is equal to tatal_frames, then no animations have taken place
@@ -514,8 +514,8 @@ BOOL __cdecl Animate_Frame(void* handle,
             if (direct_to_dest) {
 
                 // The last parameter says weather to copy or to XOR.  If  the
-                // first frame is a DELTA, then it must be XOR'd.  A TRUE is
-                // copy while FALSE is XOR.
+                // first frame is a DELTA, then it must be XOR'd.  A true is
+                // copy while false is XOR.
 
                 Apply_XOR_Delta_To_Page_Or_Viewport(frame_buffer,
                                                     sys_header->delta_buffer,
@@ -534,12 +534,12 @@ BOOL __cdecl Animate_Frame(void* handle,
     // If no looping aloud, are the trying to do it anyways?
     //
     curr_frame = sys_header->current_frame;
-#if (FALSE)
+#if (false)
     // This is commented out since we will let them loop even though they should
     // not - it will be slower.
     if ((sys_header->flags & WSA_LINEAR_ONLY) && (frame_number < cur_frame)) {
         view.Unlock();
-        return FALSE;
+        return false;
     }
 #endif
 
@@ -609,7 +609,7 @@ BOOL __cdecl Animate_Frame(void* handle,
 
     // If we did this all in a hidden buffer, then copy it to the desired page or viewport.
     if (sys_header->flags & WSA_TARGET_IN_BUFFER) {
-#if TRUE
+#if true
 
         Buffer_To_Page(x_pixel, y_pixel, sys_header->pixel_width, sys_header->pixel_height, frame_buffer, view);
 
@@ -631,7 +631,7 @@ BOOL __cdecl Animate_Frame(void* handle,
     }
 
     view.Unlock();
-    return TRUE;
+    return true;
 }
 /***************************************************************************
  * ANIMATE_FRAME -- Displays a frame of a given animation                  *
@@ -641,7 +641,7 @@ BOOL __cdecl Animate_Frame(void* handle,
  *          int x_pixel position of left side of animation on page        *
  *          int y_pixel position of top of animation on page              *
  *                                                                         *
- * OUTPUT:  BOOL if successfull or not.                                   *
+ * OUTPUT:  bool if successfull or not.                                   *
  *                                                                         *
  * WARNINGS:                                                               *
  *                                                                         *
@@ -650,14 +650,14 @@ BOOL __cdecl Animate_Frame(void* handle,
  *=========================================================================*/
 //#pragma argsused
 #ifdef cuts
-BOOL __cdecl Animate_Frame(void* handle,
-                           GraphicViewPortClass& view,
-                           int frame_number,
-                           int x_pixel,
-                           int y_pixel,
-                           WSAType flags_and_prio,
-                           void* magic_cols,
-                           void* magic)
+bool Animate_Frame(void* handle,
+                   GraphicViewPortClass& view,
+                   int frame_number,
+                   int x_pixel,
+                   int y_pixel,
+                   WSAType flags_and_prio,
+                   void* magic_cols,
+                   void* magic)
 {
     SysAnimHeaderType* sys_header; // fix up the void pointer past in.
     int curr_frame;                // current frame we are on.
@@ -667,7 +667,7 @@ BOOL __cdecl Animate_Frame(void* handle,
     int search_frames;             // How many frames to search.
     int loop;                      // Just a loop varible.
     char* frame_buffer;            // our destination.
-    BOOL direct_to_dest;           // are we going directly to the destination?
+    bool direct_to_dest;           // are we going directly to the destination?
     int dest_width;                // the width of the destination buffer or page.
 
     // Assign local pointer to the beginning of the buffer where the system information
@@ -679,7 +679,7 @@ BOOL __cdecl Animate_Frame(void* handle,
 
     // Are the animation handle and the frame number valid?
     if (!handle || (total_frames <= frame_number)) {
-        return FALSE;
+        return false;
     }
 
     // Decide if we are going to a page or a viewport (part of a buffer).
@@ -698,11 +698,11 @@ BOOL __cdecl Animate_Frame(void* handle,
     if (sys_header->flags & WSA_TARGET_IN_BUFFER) {
         // Get a pointer to the frame in animation buffer.
         frame_buffer = (char*)Add_Long_To_Pointer(sys_header, sizeof(SysAnimHeaderType));
-        direct_to_dest = FALSE;
+        direct_to_dest = false;
     } else {
         frame_buffer = (char*)view.Get_Offset();
         frame_buffer += (y_pixel * dest_width) + x_pixel;
-        direct_to_dest = TRUE;
+        direct_to_dest = true;
     }
     //
     // If current_frame is equal to tatal_frames, then no animations have taken place
@@ -718,8 +718,8 @@ BOOL __cdecl Animate_Frame(void* handle,
             if (direct_to_dest) {
 
                 // The last parameter says weather to copy or to XOR.  If  the
-                // first frame is a DELTA, then it must be XOR'd.  A TRUE is
-                // copy while FALSE is XOR.
+                // first frame is a DELTA, then it must be XOR'd.  A true is
+                // copy while false is XOR.
                 Apply_XOR_Delta_To_Page_Or_Viewport(frame_buffer,
                                                     sys_header->delta_buffer,
                                                     sys_header->pixel_width,
@@ -737,11 +737,11 @@ BOOL __cdecl Animate_Frame(void* handle,
     // If no looping aloud, are the trying to do it anyways?
     //
     curr_frame = sys_header->current_frame;
-#if (FALSE)
+#if (false)
     // This is commented out since we will let them loop even though they should
     // not - it will be slower.
     if ((sys_header->flags & WSA_LINEAR_ONLY) && (frame_number < cur_frame)) {
-        return FALSE;
+        return false;
     }
 #endif
 
@@ -811,7 +811,7 @@ BOOL __cdecl Animate_Frame(void* handle,
 
     // If we did this all in a hidden buffer, then copy it to the desired page or viewport.
     if (sys_header->flags & WSA_TARGET_IN_BUFFER) {
-#if TRUE
+#if true
 
         Buffer_To_Page(x_pixel, y_pixel, sys_header->pixel_width, sys_header->pixel_height, frame_buffer, view);
 
@@ -832,7 +832,7 @@ BOOL __cdecl Animate_Frame(void* handle,
 #endif
     }
 
-    return TRUE;
+    return true;
 }
 #endif
 
@@ -848,12 +848,12 @@ BOOL __cdecl Animate_Frame(void* handle,
  * HISTORY:                                                                *
  *   12/05/1991  SB : Created.                                             *
  *=========================================================================*/
-int __cdecl Get_Animation_Frame_Count(void* handle)
+int Get_Animation_Frame_Count(void* handle)
 {
     SysAnimHeaderType* sys_header;
 
     if (!handle) {
-        return FALSE;
+        return false;
     }
     sys_header = (SysAnimHeaderType*)handle;
     return ((short)sys_header->total_frames);
@@ -872,12 +872,12 @@ int __cdecl Get_Animation_Frame_Count(void* handle)
  * HISTORY:                                                                *
  *   07/03/1992 DRD : Created.                                             *
  *=========================================================================*/
-int __cdecl Get_Animation_X(void const* handle)
+int Get_Animation_X(void const* handle)
 {
     SysAnimHeaderType const* sys_header;
 
     if (!handle) {
-        return FALSE;
+        return false;
     }
     sys_header = (SysAnimHeaderType*)handle;
     return (sys_header->pixel_x);
@@ -896,12 +896,12 @@ int __cdecl Get_Animation_X(void const* handle)
  * HISTORY:                                                                *
  *   10/14/1992 PWG : Created.                                             *
  *=========================================================================*/
-int __cdecl Get_Animation_Y(void const* handle)
+int Get_Animation_Y(void const* handle)
 {
     SysAnimHeaderType const* sys_header;
 
     if (!handle) {
-        return FALSE;
+        return false;
     }
     sys_header = (SysAnimHeaderType*)handle;
     return (sys_header->pixel_y);
@@ -920,12 +920,12 @@ int __cdecl Get_Animation_Y(void const* handle)
  * HISTORY:                                                                *
  *   10/14/1992 PWG : Created.                                             *
  *=========================================================================*/
-int __cdecl Get_Animation_Width(void const* handle)
+int Get_Animation_Width(void const* handle)
 {
     SysAnimHeaderType const* sys_header;
 
     if (!handle) {
-        return FALSE;
+        return false;
     }
     sys_header = (SysAnimHeaderType*)handle;
     return (sys_header->pixel_width);
@@ -941,12 +941,12 @@ int __cdecl Get_Animation_Width(void const* handle)
  * HISTORY:                                                                *
  *   10/14/1992 PWG : Created.                                             *
  *=========================================================================*/
-int __cdecl Get_Animation_Height(void const* handle)
+int Get_Animation_Height(void const* handle)
 {
     SysAnimHeaderType const* sys_header;
 
     if (!handle) {
-        return FALSE;
+        return false;
     }
     sys_header = (SysAnimHeaderType*)handle;
     return (sys_header->pixel_height);
@@ -963,12 +963,12 @@ int __cdecl Get_Animation_Height(void const* handle)
  * HISTORY:                                                                *
  *   10/14/1992 PWG : Created.                                             *
  *=========================================================================*/
-int __cdecl Get_Animation_Palette(void const* handle)
+int Get_Animation_Palette(void const* handle)
 {
     SysAnimHeaderType const* sys_header;
 
     if (!handle) {
-        return FALSE;
+        return false;
     }
     sys_header = (SysAnimHeaderType*)handle;
     return (sys_header->flags & WSA_PALETTE_PRESENT);
@@ -987,12 +987,12 @@ int __cdecl Get_Animation_Palette(void const* handle)
  * HISTORY:                                                                *
  *   05/23/1994 SKB : Created.                                             *
  *=========================================================================*/
-unsigned long __cdecl Get_Animation_Size(void const* handle)
+unsigned long Get_Animation_Size(void const* handle)
 {
     SysAnimHeaderType const* sys_header;
 
     if (!handle) {
-        return FALSE;
+        return false;
     }
     sys_header = (SysAnimHeaderType*)handle;
     return (sys_header->anim_mem_size);
@@ -1013,7 +1013,7 @@ unsigned long __cdecl Get_Animation_Size(void const* handle)
  * HISTORY:                                                                *
  *   11/26/1991  SB : Created.                                             *
  *=========================================================================*/
-PRIVATE unsigned long Get_Resident_Frame_Offset(char* file_buffer, int frame)
+static unsigned long Get_Resident_Frame_Offset(char* file_buffer, int frame)
 {
     unsigned long frame0_size;
     unsigned long* lptr;
@@ -1048,7 +1048,7 @@ PRIVATE unsigned long Get_Resident_Frame_Offset(char* file_buffer, int frame)
  * HISTORY:                                                                *
  *   11/26/1991  SB : Created.                                             *
  *=========================================================================*/
-PRIVATE unsigned long Get_File_Frame_Offset(int file_handle, int frame, int palette_adjust)
+static unsigned long Get_File_Frame_Offset(int file_handle, int frame, int palette_adjust)
 {
     unsigned long offset;
 
@@ -1067,14 +1067,14 @@ PRIVATE unsigned long Get_File_Frame_Offset(int file_handle, int frame, int pale
  * INPUT:      SysAnimHeaderType *sys_header - pointer to animation buffer.*
  *             int curr_frame - frame to put into target buffer.          *
  *																									*
- * OUTPUT:     BOOL - Return wether or not it worked.                      *
+ * OUTPUT:     bool - Return wether or not it worked.                      *
  *                                                                         *
  * WARNINGS:                                                               *
  *                                                                         *
  * HISTORY:                                                                *
  *   11/26/1991  SB : Created.                                             *
  *=========================================================================*/
-PRIVATE BOOL Apply_Delta(SysAnimHeaderType* sys_header, int curr_frame, char* dest_ptr, int dest_w)
+static bool Apply_Delta(SysAnimHeaderType* sys_header, int curr_frame, char* dest_ptr, int dest_w)
 {
     char *data_ptr, *delta_back;
     int file_handle, palette_adjust;
@@ -1115,14 +1115,14 @@ PRIVATE BOOL Apply_Delta(SysAnimHeaderType* sys_header, int curr_frame, char* de
         frame_data_size = Get_File_Frame_Offset(file_handle, curr_frame + 1, palette_adjust) - frame_offset;
 
         if (!frame_offset || !frame_data_size) {
-            return (FALSE);
+            return (false);
         }
 
         Seek_File(file_handle, frame_offset, SEEK_SET);
         delta_back = (char*)Add_Long_To_Pointer(delta_back, sys_header->largest_frame_size - frame_data_size);
 
         if (Read_File(file_handle, delta_back, frame_data_size) != frame_data_size) {
-            return (FALSE);
+            return (false);
         }
     }
 
@@ -1139,5 +1139,5 @@ PRIVATE BOOL Apply_Delta(SysAnimHeaderType* sys_header, int curr_frame, char* de
             dest_ptr, sys_header->delta_buffer, sys_header->pixel_width, dest_w, DO_XOR);
     }
 
-    return (TRUE);
+    return (true);
 }
