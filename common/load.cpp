@@ -40,7 +40,6 @@
 #include "file.h"
 #include "misc.h"
 #include "wwstd.h"
-#include <dos.h>
 #include "wwmem.h"
 
 /*=========================================================================*/
@@ -68,7 +67,7 @@
  * HISTORY:                                                                *
  *   06/24/1991 JLB : Created.                                             *
  *=========================================================================*/
-unsigned long __cdecl Load_Data(char const* name, void* ptr, unsigned long size)
+unsigned long Load_Data(char const* name, void* ptr, unsigned long size)
 {
     int fd;
 
@@ -97,7 +96,7 @@ unsigned long __cdecl Load_Data(char const* name, void* ptr, unsigned long size)
  * HISTORY:                                                                *
  *   07/05/1992 JLB : Created.                                             *
  *=========================================================================*/
-unsigned long __cdecl Write_Data(char const* name, void* ptr, unsigned long size)
+unsigned long Write_Data(char const* name, void* ptr, unsigned long size)
 {
     int fd;
 
@@ -123,12 +122,12 @@ unsigned long __cdecl Write_Data(char const* name, void* ptr, unsigned long size
  *                                                                         *
  * WARNINGS:   A memory error could occur if regular memory flags are      *
  *             specified.  If XMS memory is specified, then this routine   *
- *             could likely return NULL.                                   *
+ *             could likely return nullptr.                                   *
  *                                                                         *
  * HISTORY:                                                                *
  *   05/28/1992 JLB : Created.                                             *
  *=========================================================================*/
-void* __cdecl Load_Alloc_Data(char const* name, MemoryFlagType flags)
+void* Load_Alloc_Data(char const* name, MemoryFlagType flags)
 {
     int fd;             // Working file handle.
     unsigned long size; // Size of the file to load.
@@ -160,10 +159,7 @@ void* __cdecl Load_Alloc_Data(char const* name, MemoryFlagType flags)
  *   05/28/1991  CY : Created.                                             *
  *   06/26/1991 JLB : Handles load & uncompress to same buffer.            *
  *=========================================================================*/
-unsigned long __cdecl Load_Uncompress(char const* file,
-                                      BufferClass& uncomp_buff,
-                                      BufferClass& dest_buff,
-                                      void* reserved_data)
+unsigned long Load_Uncompress(char const* file, BufferClass& uncomp_buff, BufferClass& dest_buff, void* reserved_data)
 {
     int fd;                 // Source file handle.
     unsigned int isize = 0; // Size of the file.
@@ -237,7 +233,7 @@ unsigned long __cdecl Load_Uncompress(char const* file,
  *   05/28/1991  CY : Created.                                             *
  *   06/26/1991 JLB : Handles load & uncompress to same buffer.            *
  *=========================================================================*/
-unsigned long __cdecl Load_Uncompress(char const* file, BuffType uncomp_buff, BuffType dest_buff, void* reserved_data)
+unsigned long Load_Uncompress(char const* file, BuffType uncomp_buff, BuffType dest_buff, void* reserved_data)
 {
     int fd;                // Source file handle.
     unsigned int isize;    // Size of the file.
@@ -322,14 +318,14 @@ unsigned long __cdecl Load_Uncompress(char const* file, BuffType uncomp_buff, Bu
  * HISTORY:                                                                *
  *   09/17/1993 JLB : Created.                                             *
  *=========================================================================*/
-unsigned long __cdecl Uncompress_Data(void const* src, void* dst)
+unsigned long Uncompress_Data(void const* src, void* dst)
 {
     unsigned int skip;      // Number of leading data to skip.
     CompressionType method; // Compression method used.
-    unsigned long uncomp_size = NULL;
+    unsigned long uncomp_size = 0;
 
     if (!src || !dst)
-        return (NULL);
+        return 0;
 
     /*
     **	Interpret the data block header structure to determine
