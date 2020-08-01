@@ -98,4 +98,17 @@ int First_False_Bit(const void* array)
     return 8 * bytenum + bitnum;
 }
 
+int _Bound(int original, int min, int max)
+{
+    if (original < min) {
+        return min;
+    }
+    
+    if (original > max) {
+        return max;
+    }
+
+    return original;
+}
+
 #endif
