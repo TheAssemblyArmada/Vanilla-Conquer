@@ -59,7 +59,6 @@ set(COMMONR_SRC
 
 set(COMMONV_SRC
     mouseww.cpp
-    setvideomode.cpp
     tcpip_null.cpp
 )
 
