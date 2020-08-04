@@ -75,8 +75,6 @@ public:
     virtual long Size(void);
     virtual long Write(void const* buffer, long size);
     virtual void Close(void);
-    virtual unsigned long Get_Date_Time(void);
-    virtual bool Set_Date_Time(unsigned long datetime);
     virtual void Error(int error, int canretry = false, char const* filename = NULL);
 
 private:

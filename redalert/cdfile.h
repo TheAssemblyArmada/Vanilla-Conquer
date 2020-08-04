@@ -37,6 +37,7 @@
 
 #include <dos.h>
 #include "bfiofile.h"
+#include <string.h>
 
 /*
 **	This class is derived from the BufferIOFileClass. This class adds the functionality of searching

@@ -62,14 +62,6 @@ public:
     virtual long Size(void);
     virtual long Write(void const* buffer, long size);
     virtual void Close(void);
-    virtual unsigned long Get_Date_Time(void)
-    {
-        return (0);
-    }
-    virtual bool Set_Date_Time(unsigned long)
-    {
-        return (true);
-    }
     virtual void Error(int, int = false, char const* = NULL)
     {
     }
