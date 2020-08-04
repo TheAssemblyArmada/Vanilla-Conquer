@@ -42,6 +42,7 @@
 #include "cdfile.h"
 #include <stdio.h>
 #include <string.h>
+#include <windows.h>
 
 #ifndef WIN32
 #include <wwstd.h>

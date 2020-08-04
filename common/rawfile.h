@@ -43,88 +43,26 @@
 #include <errno.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include <windows.h>
-
-#define NULL_HANDLE INVALID_HANDLE_VALUE
-#define HANDLE_TYPE HANDLE
+#include <stdio.h>
 
 #include "wwfile.h"
-
-#ifdef NEVER
-/*
-**	This is a duplicate of the error numbers. The error handler for the RawFileClass handles
-**	these errors. If the error routine is overridden and additional errors are defined, then
-**	use numbers starting with 100. Note that these errors here are listed in numerical order.
-**	These errors are defined in the standard header file "ERRNO.H".
-*/
-EZERO,                // Non-error.
-    EINVFNC,          // Invalid function number.
-    ENOFILE,          // File not found.
-    ENOENT = ENOFILE, // No such file or directory.
-    ENOPATH,          // Path not found.
-    EMFILE,           // Too many open files.
-    EACCES,           // Permission denied.
-    EBADF,            // Bad file number.
-    ECONTR,           // Memory blocks destroyed.
-    ENOMEM,           // Not enough core memory.
-    EINVMEM,          // Invalid memory block address.
-    EINVENV,          // Invalid environment.
-    EINVFMT,          // Invalid format.
-    EINVACC,          // Invalid access code.
-    EINVDAT,          // Invalid data.
-    EFAULT,           // Unknown error.
-    EINVDRV,          // Invalid drive specified.
-    ENODEV = EINVDRV, // No such device.
-    ECURDIR,          // Attempt to remove CurDir.
-    ENOTSAM,          // Not same device.
-    ENMFILE,          // No more files.
-    EINVAL,           // Invalid argument.
-    E2BIG,            // Argument list too long.
-    ENOEXEC,          // exec format error.
-    EXDEV,            // Cross-device link.
-    ENFILE,           // Too many open files.
-    ECHILD,           // No child process.
-    ENOTTY,           // not used
-    ETXTBSY,          // not used
-    EFBIG,            // not used
-    ENOSPC,           // No space left on device.
-    ESPIPE,           // Illegal seek.
-    EROFS,            // Read-only file system.
-    EMLINK,           // not used
-    EPIPE,            // Broken pipe.
-    EDOM,             // Math argument.
-    ERANGE,           // Result too large.
-    EEXIST,           // File already exists.
-    EDEADLOCK,        // Locking violation.
-    EPERM,            // Operation not permitted.
-    ESRCH,            // not used
-    EINTR,            // Interrupted function call.
-    EIO,              // Input/output error.
-    ENXIO,            // No such device or address.
-    EAGAIN,           // Resource temporarily unavailable.
-    ENOTBLK,          // not used
-    EBUSY,            // Resource busy.
-    ENOTDIR,          // not used
-    EISDIR,           // not used
-    EUCLEAN,          // not used
-#endif
 
 #ifndef WWERROR
 #define WWERROR -1
 #endif
 
-    /*
-    **	This is the definition of the raw file class. It is derived from the abstract base FileClass
-    **	and handles the interface to the low level DOS routines. This is the first class in the
-    **	chain of derived file classes that actually performs a useful function. With this class,
-    **	I/O is possible. More sophisticated features, such as packed files, CD-ROM support,
-    **	file caching, and XMS/EMS memory support, are handled by derived classes.
-    **
-    **	Of particular importance is the need to override the error routine if more sophisticated
-    **	error handling is required. This is more than likely if greater functionality is derived
-    **	from this base class.
-    */
-    class RawFileClass : public FileClass
+/*
+**	This is the definition of the raw file class. It is derived from the abstract base FileClass
+**	and handles the interface to the low level DOS routines. This is the first class in the
+**	chain of derived file classes that actually performs a useful function. With this class,
+**	I/O is possible. More sophisticated features, such as packed files, CD-ROM support,
+**	file caching, and XMS/EMS memory support, are handled by derived classes.
+**
+**	Of particular importance is the need to override the error routine if more sophisticated
+**	error handling is required. This is more than likely if greater functionality is derived
+**	from this base class.
+*/
+class RawFileClass : public FileClass
 {
 public:
     /*
@@ -152,12 +90,10 @@ public:
     virtual long Size(void);
     virtual long Write(void const* buffer, long size);
     virtual void Close(void);
-    virtual unsigned long Get_Date_Time(void);
-    virtual bool Set_Date_Time(unsigned long datetime);
     virtual void Error(int error, int canretry = false, char const* filename = NULL);
     void Bias(int start, int length = -1);
 
-    HANDLE_TYPE Get_File_Handle(void)
+    FILE* Get_File_Handle(void)
     {
         return (Handle);
     };
@@ -186,27 +122,13 @@ private:
     /*
     **	This is the low level DOS handle. A -1 indicates an empty condition.
     */
-    HANDLE_TYPE Handle;
+    FILE* Handle;
 
     /*
     **	This points to the filename as a NULL terminated string. It may point to either a
     **	constant or an allocated string as indicated by the "Allocated" flag.
     */
     const char* Filename;
-
-    //
-    // file date and time are in the following formats:
-    //
-    //      date   bits 0-4   day (0-31)
-    //             bits 5-8   month (1-12)
-    //             bits 9-15  year (0-119 representing 1980-2099)
-    //
-    //      time   bits 0-4   second/2 (0-29)
-    //             bits 5-10  minutes (0-59)
-    //             bits 11-15 hours (0-23)
-    //
-    unsigned short Date;
-    unsigned short Time;
 
     /*
     **	Filenames that were assigned as part of the construction process
@@ -259,10 +181,8 @@ inline RawFileClass::RawFileClass(void)
     : Rights(READ)
     , BiasStart(0)
     , BiasLength(-1)
-    , Handle(INVALID_HANDLE_VALUE)
+    , Handle(nullptr)
     , Filename(0)
-    , Date(0)
-    , Time(0)
     , Allocated(false)
 {
 }
@@ -310,7 +230,7 @@ inline RawFileClass::~RawFileClass(void)
  *=============================================================================================*/
 inline int RawFileClass::Is_Open(void) const
 {
-    return (Handle != INVALID_HANDLE_VALUE);
+    return (Handle != nullptr);
 }
 
 #endif
