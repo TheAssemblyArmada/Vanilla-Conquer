@@ -707,7 +707,9 @@ void Fill_In_Data(void)
  *=============================================================================================*/
 void Post_Load_Game(int load_multi)
 {
+#ifdef REMASTER_BUILD
     Map.Set_View_Dimensions(0, 0, Map.MapCellWidth, Map.MapCellHeight);
+#endif
     //
     // Do NOT call Overpass if we're loading a multiplayer game; it calls the
     // random # generator, which throws the games out of sync if they were
