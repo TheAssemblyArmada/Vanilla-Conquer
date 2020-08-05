@@ -38,7 +38,9 @@
 .MODEL FLAT
 
 ;GLOBAL    C LCW_Comp          :NEAR
+IFNDEF NOASM
 externdef C LCW_Comp:near
+ENDIF
 
 ;CODESEG
 .code
@@ -60,6 +62,7 @@ externdef C LCW_Comp:near
 ; returns the size of the compressed data in bytes
 ;
 ;*
+IFNDEF NOASM
 LCW_Comp proc C source:DWORD, dest:DWORD, datasize:DWORD
 
 	;USES ebx,ecx,edx,edi,esi
@@ -281,6 +284,6 @@ _out:
 	ret
 
 LCW_Comp endp
-
+ENDIF
 
 END
