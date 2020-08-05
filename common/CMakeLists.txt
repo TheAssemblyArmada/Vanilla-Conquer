@@ -48,6 +48,12 @@ set(COMMON_SRC
     txtprnt.asm
 )
 
+if (WIN32)
+    list(APPEND COMMON_SRC file_win.cpp)
+else()
+    list(APPEND COMMON_SRC file_posix.cpp)
+endif()
+
 set(COMMONR_SRC
     mouseww.cpp
     soundio_null.cpp

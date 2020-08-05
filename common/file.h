@@ -223,6 +223,11 @@ int Find_File_Index(char const* filename);
 class Find_File_Data
 {
 public:
+    static Find_File_Data* CreateFindData();
+
+    virtual ~Find_File_Data()
+    {
+    }
     virtual const char* GetName() const = 0;
     virtual unsigned long GetTime() const = 0;
 
