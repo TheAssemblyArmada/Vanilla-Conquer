@@ -1,5 +1,7 @@
 #include "miscasm.h"
+#include <ctype.h>
 #include <stdbool.h>
+#include <string.h>
 
 #ifdef NOASM
 
@@ -186,6 +188,59 @@ void* Conquer_Build_Fading_Table(const void* palette, void* dest, int color, int
     }
 
     return dest;
+}
+
+int Reverse_Long(int number)
+{
+    unsigned num = number;
+    return ((num >> 24) & 0xff) | ((num << 8) & 0xff0000) | ((num >> 8) & 0xff00) | ((num << 24) & 0xff000000);
+}
+
+void strtrim(char* str)
+{
+    size_t len = 0;
+    char* frontp = str;
+    char* endp = NULL;
+
+    if (str == NULL || str[0] == '\0') {
+        return;
+    }
+
+    len = strlen(str);
+    endp = str + len;
+
+    /*
+     * Move the front and back pointers to address the first non-whitespace
+     * characters from each end.
+     */
+    while (isspace((unsigned char)*frontp)) {
+        ++frontp;
+    }
+
+    if (endp != frontp) {
+        while (isspace((unsigned char)*(--endp)) && endp != frontp) {
+        }
+    }
+
+    if (str + len - 1 != endp) {
+        *(endp + 1) = '\0';
+    } else if (frontp != str && endp == frontp) {
+        *str = '\0';
+    }
+
+    /*
+     * Shift the string so that it starts at str so that if it's dynamically
+     * allocated, we can still free it on the returned pointer.  Note the reuse
+     * of endp to mean the front of the string buffer now.
+     */
+    endp = str;
+    if (frontp != str) {
+        while (*frontp) {
+            *endp++ = *frontp++;
+        }
+
+        *endp = '\0';
+    }
 }
 
 #endif

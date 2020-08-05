@@ -196,6 +196,70 @@ int test_bitarray()
     return ret;
 }
 
+int test_swap()
+{
+    int ret = 0;
+
+    const int expected = 0xefbeadde;
+    int actual = Reverse_Long(0xdeadbeef);
+
+    if (actual != expected) {
+        fprintf(stderr, "Reverse_Long(0xdeadbeef) -> %08x, expected %08x\n", actual, expected);
+        ret = 1;
+    }
+
+    return ret;
+}
+
+int test_strtrim()
+{
+    int ret = 0;
+
+    char test_data1[] = "   Lorem ipsum dolor sit amet, consectetur adipiscing elit.   ";
+    const char expected1[] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+    strtrim(test_data1);
+
+    if (strcmp(test_data1, expected1) != 0) {
+        fprintf(stderr, "strtrim(test_data1) -> '%s', expected '%s'\n", test_data1, expected1);
+        ret = 1;
+    }
+
+    char test_data2[] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.   ";
+    strtrim(test_data2);
+
+    if (strcmp(test_data2, expected1) != 0) {
+        fprintf(stderr, "strtrim(test_data2) -> '%s', expected '%s'\n", test_data2, expected1);
+        ret = 1;
+    }
+
+    char test_data3[] = "   Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+    strtrim(test_data3);
+
+    if (strcmp(test_data3, expected1) != 0) {
+        fprintf(stderr, "strtrim(test_data3) -> '%s', expected '%s'\n", test_data3, expected1);
+        ret = 1;
+    }
+
+    char test_data4[] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+    strtrim(test_data4);
+
+    if (strcmp(test_data4, expected1) != 0) {
+        fprintf(stderr, "strtrim(test_data4) -> '%s', expected '%s'\n", test_data4, expected1);
+        ret = 1;
+    }
+
+    char test_data5[] = "";
+    const char expected2[] = "";
+    strtrim(test_data5);
+
+    if (strcmp(test_data5, expected2) != 0) {
+        fprintf(stderr, "strtrim(test_data5) -> '%s', expected '%s'\n", test_data5, expected2);
+        ret = 1;
+    }
+
+    return ret;
+}
+
 int main(int argc, char** argv)
 {
     int ret = 0;
@@ -203,6 +267,8 @@ int main(int argc, char** argv)
     ret |= test_calcx_calcy();
     ret |= test_fixed_cardinal();
     ret |= test_bitarray();
+    ret |= test_swap();
+    ret |= test_strtrim();
 
     return ret;
 }
