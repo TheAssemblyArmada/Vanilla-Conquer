@@ -37,7 +37,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "lcwpipe.h"
-#include "lcw.h"
+#include "common/lcw.h"
 #include <string.h>
 #include <assert.h>
 

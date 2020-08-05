@@ -1,5 +1,4 @@
 set(REDALERT_SRC
-    lcwcomp.asm
     keyfbuff.asm
     _wsproto.cpp
     2keyfram.cpp
@@ -111,10 +110,8 @@ set(REDALERT_SRC
     jshell.cpp
     key.cpp
     layer.cpp
-    lcw.cpp
     lcwpipe.cpp
     lcwstraw.cpp
-    lcwuncmp.cpp
     link.cpp
     list.cpp
     loaddlg.cpp

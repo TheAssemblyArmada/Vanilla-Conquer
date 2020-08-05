@@ -36,7 +36,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "lcwstraw.h"
-#include "lcw.h"
+#include "common/lcw.h"
 #include <string.h>
 #include <assert.h>
 
