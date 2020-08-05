@@ -30,9 +30,9 @@ externdef C First_True_Bit:near
 externdef C First_False_Bit:near
 externdef C _Bound:near
 externdef C Conquer_Build_Fading_Table:near
-ENDIF
 externdef C Reverse_Long:near
 externdef C strtrim:near
+ENDIF
 
 .data
 
@@ -612,9 +612,7 @@ fini1:
     ret
 Conquer_Build_Fading_Table endp
 
-ENDIF
-
-;extern "C" long __cdecl Reverse_Long(long number)
+;extern "C" int __cdecl Reverse_Long(int number)
 Reverse_Long proc C number:dword
     mov     eax,dword ptr [number]
     xchg    al,ah
@@ -682,5 +680,7 @@ fini:
     pop     esi
     ret
 strtrim endp
+
+ENDIF
 
 end

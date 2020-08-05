@@ -16,7 +16,7 @@ int First_False_Bit(void const* array);
 int _Bound(int original, int min, int max);
 #define Bound _Bound
 void* Conquer_Build_Fading_Table(void const* palette, void* dest, int color, int frac);
-long Reverse_Long(long number);
+int Reverse_Long(int number);
 void strtrim(char* buffer);
 
 #ifdef __cplusplus
