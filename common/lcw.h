@@ -40,7 +40,7 @@ extern "C" {
 #endif
 
 int LCW_Uncompress(void const* source, void* dest, unsigned length);
-int LCW_Comp(void const* source, void* dest, int length);
+int LCW_Comp(void const* source, void* dest, unsigned length);
 
 #ifdef __cplusplus
 }
