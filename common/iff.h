@@ -136,18 +136,6 @@ extern "C" {
 
 extern void Pack_2_Plane(void* buffer, void* pageptr, int planebit);
 
-/*=========================================================================*/
-/* The following prototypes are for the file: LCWCOMP.ASM						*/
-/*=========================================================================*/
-
-extern unsigned long LCW_Compress(void* source, void* dest, unsigned long length);
-
-/*=========================================================================*/
-/* The following prototypes are for the file: LCWUNCMP.ASM						*/
-/*=========================================================================*/
-
-extern unsigned long LCW_Uncompress(void* source, void* dest, unsigned long length);
-
 #ifdef __cplusplus
 }
 #endif

@@ -37,6 +37,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "iff.h"
+#include "lcw.h"
 #include "file.h"
 #include "misc.h"
 #include "wwstd.h"

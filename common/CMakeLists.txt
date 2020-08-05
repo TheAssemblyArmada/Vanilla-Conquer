@@ -30,7 +30,6 @@ set(COMMON_SRC
     buffglbl.cpp
     iff.cpp
     lcw.cpp
-    lcwuncmp.cpp
     load.cpp
     loadpal.cpp
     dipthong.cpp
