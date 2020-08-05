@@ -135,8 +135,6 @@ void Shake_Screen(int shakes);
 /*=========================================================================*/
 
 long Reverse_Long(long number);
-short Reverse_Short(short number);
-long Swap_Long(long number);
 #if (0)
 /*=========================================================================*/
 /* The following prototype is for the file: FACING8.ASM                    */

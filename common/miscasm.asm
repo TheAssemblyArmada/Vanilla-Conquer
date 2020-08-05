@@ -32,8 +32,6 @@ externdef C _Bound:near
 externdef C Conquer_Build_Fading_Table:near
 ENDIF
 externdef C Reverse_Long:near
-externdef C Reverse_Short:near
-externdef C Swap_Long:near
 externdef C strtrim:near
 
 .data
@@ -624,20 +622,6 @@ Reverse_Long proc C number:dword
     xchg    al,ah
     ret
 Reverse_Long endp
-
-;extern "C" short __cdecl Reverse_Short(short number)
-Reverse_Short proc C number:word
-    mov     ax,[number]
-    xchg    ah,al
-    ret
-Reverse_Short endp
-
-;extern "C" long __cdecl Swap_Long(long number)
-Swap_Long proc C number:dword
-    mov     eax,dword ptr [number]
-    ror     eax,16
-    ret
-Swap_Long endp
 
 ;***************************************************************************
 ;* strtrim -- Remove the trailing white space from a string.               *
