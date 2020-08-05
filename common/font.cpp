@@ -38,6 +38,8 @@
 #include "file.h"
 #include "memflag.h"
 
+#include <errno.h>
+
 int FontXSpacing = 0;
 int FontYSpacing = 0;
 void const* FontPtr = nullptr;
@@ -250,10 +252,10 @@ void* Load_Font(char const* name)
     // verify that the file loaded is a valid font file.
     //
 
-    valid = FALSE;
+    valid = false;
     if (*(ptr + 2) == 0) {     // no compression
         if (*(ptr + 3) == 5) { // currently only 5 data blocks are used.
-            valid = TRUE;
+            valid = true;
         }
     }
 
