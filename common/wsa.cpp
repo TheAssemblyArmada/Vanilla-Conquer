@@ -65,6 +65,7 @@
 #include "file.h"
 #include "misc.h"
 #include "iff.h"
+#include "lcw.h"
 #include <string.h>
 
 //

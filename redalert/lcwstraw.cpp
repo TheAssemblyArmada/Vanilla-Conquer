@@ -161,7 +161,7 @@ int LCWStraw::Get(void* destbuf, int slen)
             if (incount != BlockHeader.CompCount)
                 break;
 
-            LCW_Uncomp(ptr, Buffer);
+            LCW_Uncompress(ptr, Buffer, BlockSize + SafetyMargin);
             Counter = BlockHeader.UncompCount;
         } else {
             BlockHeader.UncompCount = (unsigned short)Straw::Get(Buffer, BlockSize);

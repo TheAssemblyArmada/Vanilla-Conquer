@@ -168,7 +168,7 @@ int LCWPipe::Put(void const* source, int slen)
                 **	through the pipe.
                 */
                 if (Counter == BlockHeader.CompCount) {
-                    LCW_Uncomp(Buffer, Buffer2);
+                    LCW_Uncompress(Buffer, Buffer2, BlockSize + SafetyMargin);
                     total += Pipe::Put(Buffer2, BlockHeader.UncompCount);
                     Counter = 0;
                     BlockHeader.CompCount = 0xFFFF;

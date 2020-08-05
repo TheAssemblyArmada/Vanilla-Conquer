@@ -20,7 +20,7 @@
  *                                                                         *
  *               Project Name : WESTWOOD LIBRARY (PSX)                     *
  *                                                                         *
- *                 File Name : LCWUNCMP.CPP                                *
+ *                 File Name : LCW.CPP                                *
  *                                                                         *
  *                Programmer : Ian M. Leslie                               *
  *                                                                         *
@@ -31,9 +31,10 @@
  *-------------------------------------------------------------------------*
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+#include "lcw.h"
 
 /***************************************************************************
- * LCW_Uncomp -- Decompress an LCW encoded data block.                     *
+ * LCW_Uncompress -- Decompress an LCW encoded data block.                 *
  *                                                                         *
  * Uncompress data to the following codes in the format b = byte, w = word *
  * n = byte code pulled from compressed data.                              *
@@ -65,7 +66,7 @@
  * HISTORY:                                                                *
  *    03/20/1995 IML : Created.                                            *
  *=========================================================================*/
-int LCW_Uncomp(void const* source, void* dest, unsigned long)
+int LCW_Uncompress(void const* source, void* dest, unsigned)
 {
     unsigned char *source_ptr, *dest_ptr, *copy_ptr, op_code, data;
     unsigned count, *word_dest_ptr, word_data;
