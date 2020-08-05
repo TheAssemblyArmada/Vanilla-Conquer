@@ -5,6 +5,7 @@ include(GitWatcher)
 
 set(COMMON_SRC
     ${GIT_POST_CONFIGURE_FILE}
+    lcwcompa.asm
     miscasm.asm
     misc.c
     irandoma.asm
@@ -28,6 +29,8 @@ set(COMMON_SRC
     palette.cpp
     buffglbl.cpp
     iff.cpp
+    lcw.cpp
+    lcwuncmp.cpp
     load.cpp
     loadpal.cpp
     dipthong.cpp
