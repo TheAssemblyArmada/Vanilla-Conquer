@@ -2149,10 +2149,10 @@ void DisplayClass::Draw_It(bool forced)
             /*
             ** Work out which map edges need to be redrawn
             */
-            BOOL redraw_right = (oldx < 0) ? TRUE : FALSE;  // Right hand edge
-            BOOL redraw_left = (oldx > 0) ? TRUE : FALSE;   // Left hand edge
-            BOOL redraw_bottom = (oldy < 0) ? TRUE : FALSE; // Bottom edge
-            BOOL redraw_top = (oldy > 0) ? TRUE : FALSE;    // Top edge
+            bool redraw_right = (oldx < 0) ? true : false;  // Right hand edge
+            bool redraw_left = (oldx > 0) ? true : false;   // Left hand edge
+            bool redraw_bottom = (oldy < 0) ? true : false; // Bottom edge
+            bool redraw_top = (oldy > 0) ? true : false;    // Top edge
 
             // Colour_Debug(2);
             /*

@@ -151,7 +151,7 @@ void Nod_Ending(void)
 #endif // NOT_FOR_WIN95
     Show_Mouse();
 
-    InterpolationPaletteChanged = TRUE;
+    InterpolationPaletteChanged = true;
     InterpolationPalette = (unsigned char*)localpal;
     Increase_Palette_Luminance(InterpolationPalette, 30, 30, 30, 63);
     Read_Interpolation_Palette("SATSELIN.PAL");

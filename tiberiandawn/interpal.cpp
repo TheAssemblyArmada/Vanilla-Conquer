@@ -40,7 +40,7 @@
 
 #include "function.h"
 #include "common/winasm.h"
-BOOL InterpolationPaletteChanged = FALSE;
+bool InterpolationPaletteChanged = false;
 
 extern "C" {
 unsigned char PaletteInterpolationTable[SIZE_OF_PALETTE][SIZE_OF_PALETTE];
@@ -70,7 +70,7 @@ void Read_Interpolation_Palette(char const* palette_file_name)
         palette_file.Open(READ);
         palette_file.Read(&PaletteInterpolationTable[0][0], 256 * 256);
         palette_file.Close();
-        InterpolationPaletteChanged = FALSE;
+        InterpolationPaletteChanged = false;
     }
 }
 
@@ -204,7 +204,7 @@ void Create_Palette_Interpolation_Table(void)
     }
 
 #endif
-    InterpolationPaletteChanged = FALSE;
+    InterpolationPaletteChanged = false;
     return;
 }
 
@@ -283,8 +283,8 @@ void Interpolate_2X_Scale(GraphicBufferClass* source, GraphicViewPortClass* dest
     int src_width;
     int dest_width;
     //	int	width_counter;
-    BOOL source_locked = FALSE;
-    BOOL dest_locked = FALSE;
+    bool source_locked = false;
+    bool dest_locked = false;
 
     /*
     **If a palette table exists on disk then read it in otherwise create it
@@ -317,7 +317,7 @@ void Interpolate_2X_Scale(GraphicBufferClass* source, GraphicViewPortClass* dest
                 Show_Mouse();
             return;
         }
-        source_locked = TRUE;
+        source_locked = true;
     }
     if (dest->Get_IsDirectDraw()) {
         if (!dest->Lock()) {
@@ -328,7 +328,7 @@ void Interpolate_2X_Scale(GraphicBufferClass* source, GraphicViewPortClass* dest
                 Show_Mouse();
             return;
         }
-        dest_locked = TRUE;
+        dest_locked = true;
     }
 
     //

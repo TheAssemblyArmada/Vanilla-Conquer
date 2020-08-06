@@ -630,7 +630,7 @@ void ScoreClass::Presentation(void)
     VisiblePage.Clear();
     PseudoSeenBuff->Clear();
     SysMemPage.Clear();
-    WWMouse->Erase_Mouse(&HidPage, TRUE);
+    WWMouse->Erase_Mouse(&HidPage, true);
     HiddenPage.Clear();
     Set_Palette(BlackPalette);
 
@@ -724,7 +724,7 @@ void ScoreClass::Presentation(void)
     SysMemPage.Blit(*PseudoSeenBuff);
     Increase_Palette_Luminance(Palette, 30, 30, 30, 63);
     InterpolationPalette = Palette;
-    InterpolationPaletteChanged = TRUE;
+    InterpolationPaletteChanged = true;
     Read_Interpolation_Palette(inter_pal);
     Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, inter_pal);
     Fade_Palette_To(Palette, FADE_PALETTE_FAST, Call_Back);
@@ -1187,7 +1187,7 @@ void ScoreClass::Do_Nod_Buildings_Graph(void)
         BlitList.Update();
         WWMouse->Draw_Mouse(&HidPage);
         Blit_Hid_Page_To_Seen_Buff();
-        WWMouse->Erase_Mouse(&HidPage, TRUE);
+        WWMouse->Erase_Mouse(&HidPage, true);
         // Interpolate_2X_Scale( PseudoSeenBuff , &SeenBuff , NULL);
 
         if (!Check_Key())
@@ -1358,7 +1358,7 @@ void ScoreClass::Do_Nod_Casualties_Graph(void)
     BlitList.Update();
     WWMouse->Draw_Mouse(&HidPage);
     Blit_Hid_Page_To_Seen_Buff();
-    WWMouse->Erase_Mouse(&HidPage, TRUE);
+    WWMouse->Erase_Mouse(&HidPage, true);
 
     Call_Back_Delay(40);
 
@@ -1897,7 +1897,7 @@ void Call_Back_Delay(int time)
         BlitList.Update();
         WWMouse->Draw_Mouse(&HidPage);
         Blit_Hid_Page_To_Seen_Buff();
-        WWMouse->Erase_Mouse(&HidPage, TRUE);
+        WWMouse->Erase_Mouse(&HidPage, true);
         //}
     } while (cd.Time());
     StreamLowImpact = false;
@@ -1988,7 +1988,7 @@ void Multi_Score_Presentation(void)
     ** Display the background animation
     */
     VisiblePage.Clear();
-    InterpolationPaletteChanged = TRUE;
+    InterpolationPaletteChanged = true;
     InterpolationPalette = Palette;
     Increase_Palette_Luminance(Palette, 30, 30, 30, 63);
     Animate_Frame(anim, *PseudoSeenBuff, 1);

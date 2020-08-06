@@ -41,14 +41,14 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 extern "C" {
-extern BOOL __stdcall IPX_Initialise(void);
-extern BOOL __stdcall IPX_Get_Outstanding_Buffer95(unsigned char* buffer);
-extern void __stdcall IPX_Shut_Down95(void);
-extern int __stdcall IPX_Send_Packet95(unsigned char*, unsigned char*, int, unsigned char*, unsigned char*);
-extern int __stdcall IPX_Broadcast_Packet95(unsigned char*, int);
-extern BOOL __stdcall IPX_Start_Listening95(void);
-extern int __stdcall IPX_Open_Socket95(int socket);
-extern void __stdcall IPX_Close_Socket95(int socket);
-extern int __stdcall IPX_Get_Connection_Number95(void);
-extern int __stdcall IPX_Get_Local_Target95(unsigned char*, unsigned char*, unsigned short, unsigned char*);
+extern bool IPX_Initialise(void);
+extern bool IPX_Get_Outstanding_Buffer95(unsigned char* buffer);
+extern void IPX_Shut_Down95(void);
+extern int IPX_Send_Packet95(unsigned char*, unsigned char*, int, unsigned char*, unsigned char*);
+extern int IPX_Broadcast_Packet95(unsigned char*, int);
+extern bool IPX_Start_Listening95(void);
+extern int IPX_Open_Socket95(int socket);
+extern void IPX_Close_Socket95(int socket);
+extern int IPX_Get_Connection_Number95(void);
+extern int IPX_Get_Local_Target95(unsigned char*, unsigned char*, unsigned short, unsigned char*);
 }

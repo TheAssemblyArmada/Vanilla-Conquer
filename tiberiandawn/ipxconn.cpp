@@ -276,9 +276,9 @@ bool IPXConnClass::Start_Listening(void)
 
     if (IPX_Start_Listening95()) {
         Listening = 1;
-        return (TRUE);
+        return (true);
     } else {
-        return (FALSE);
+        return (false);
     }
 
 #else

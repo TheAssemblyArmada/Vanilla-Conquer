@@ -1403,10 +1403,10 @@ static void Sync_Delay(void)
         Call_Back();
 
         if (SpecialDialog == SDLG_NONE) {
-            WWMouse->Erase_Mouse(&HidPage, TRUE);
+            WWMouse->Erase_Mouse(&HidPage, true);
             KeyNumType input = KN_NONE;
             int x, y;
-            WWMouse->Erase_Mouse(&HidPage, TRUE);
+            WWMouse->Erase_Mouse(&HidPage, false);
             Map.Input(input, x, y);
             if (input) {
                 Keyboard_Process(input);
@@ -1511,7 +1511,7 @@ bool Main_Loop()
     if (!PlaybackGame) {
         if (SpecialDialog == SDLG_NONE && GameInFocus) {
 
-            WWMouse->Erase_Mouse(&HidPage, TRUE);
+            WWMouse->Erase_Mouse(&HidPage, true);
             Map.Input(input, x, y);
             if (input) {
                 Keyboard_Process(input);
@@ -1597,7 +1597,7 @@ bool Main_Loop()
             Send_Statistics_Packet();
         }
 
-        WWMouse->Erase_Mouse(&HidPage, TRUE);
+        WWMouse->Erase_Mouse(&HidPage, true);
         PlayerLoses = false;
         PlayerWins = false;
         PlayerRestarts = false;
@@ -1611,7 +1611,7 @@ bool Main_Loop()
             Send_Statistics_Packet();
         }
 
-        WWMouse->Erase_Mouse(&HidPage, TRUE);
+        WWMouse->Erase_Mouse(&HidPage, true);
         PlayerWins = false;
         PlayerLoses = false;
         PlayerRestarts = false;
@@ -1619,7 +1619,7 @@ bool Main_Loop()
         Do_Lose();
     }
     if (PlayerRestarts) {
-        WWMouse->Erase_Mouse(&HidPage, TRUE);
+        WWMouse->Erase_Mouse(&HidPage, true);
         PlayerWins = false;
         PlayerLoses = false;
         PlayerRestarts = false;
@@ -2195,16 +2195,16 @@ void Rebuild_Interpolated_Palette(unsigned char* interpal)
 }
 
 unsigned char* InterpolatedPalettes[100];
-BOOL PalettesRead;
+bool PalettesRead;
 unsigned PaletteCounter;
 
-int Load_Interpolated_Palettes(char const* filename, BOOL add)
+int Load_Interpolated_Palettes(char const* filename, bool add)
 {
     int num_palettes = 0;
     int i;
     int start_palette;
 
-    PalettesRead = FALSE;
+    PalettesRead = false;
     CCFileClass file(filename);
 
     //	RawFileClass	*palette_file;
@@ -2237,7 +2237,7 @@ int Load_Interpolated_Palettes(char const* filename, BOOL add)
         Rebuild_Interpolated_Palette(InterpolatedPalettes[i + start_palette]);
     }
 
-    PalettesRead = TRUE;
+    PalettesRead = true;
     file.Close();
     //	}
     PaletteCounter = 0;
@@ -2274,7 +2274,7 @@ void Free_Interpolated_Palettes(void)
  * HISTORY:                                                                                    *
  *   12/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-extern BOOL InMovie;
+extern bool InMovie;
 extern bool VQPaletteChange;
 extern void Suspend_Audio_Thread(void);
 extern void Resume_Audio_Thread(void);
@@ -2395,11 +2395,11 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn)
                 Load_Interpolated_Palettes(palname);
                 // Set_Palette(BlackPalette);
                 SysMemPage.Clear();
-                InMovie = TRUE;
+                InMovie = true;
                 VQA_Play(vqa, VQAMODE_RUN);
                 VQA_Close(vqa);
                 // Resume_Audio_Thread();
-                InMovie = FALSE;
+                InMovie = false;
                 Free_Interpolated_Palettes();
                 Set_Primary_Buffer_Format();
 
@@ -2803,7 +2803,7 @@ void CC_Draw_Shape(void const* shapefile,
                    void const* fadingdata,
                    void const* ghostdata)
 {
-#if (TRUE)
+#if true
     int predoffset;
     char* shape_pointer;
     unsigned long shape_size;
@@ -3943,7 +3943,7 @@ bool Force_CD_Available(int cd)
             while (Get_Mouse_State())
                 Show_Mouse();
 
-            if (WWMessageBox().Process(buffer, TXT_OK, TXT_CANCEL, TXT_NONE, TRUE) == 1) {
+            if (WWMessageBox().Process(buffer, TXT_OK, TXT_CANCEL, TXT_NONE, true) == 1) {
                 Set_Logic_Page(oldpage);
                 Hide_Mouse();
                 InMainLoop = old_in_main_loop;

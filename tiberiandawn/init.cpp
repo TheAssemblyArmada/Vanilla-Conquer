@@ -253,7 +253,7 @@ bool Init_Game(int, char*[])
         CCDebugString("C&C95 - About to call Keyboard::Check\n");
         Keyboard::Check();
     } while (!GameInFocus);
-    AllSurfaces.SurfacesRestored = FALSE;
+    AllSurfaces.SurfacesRestored = false;
 
     CCDebugString("C&C95 - About to load the language file\n");
     /*
@@ -904,8 +904,8 @@ bool Select_Game(bool fade)
             ** we need to redraw.
             */
             if (AllSurfaces.SurfacesRestored) {
-                AllSurfaces.SurfacesRestored = FALSE;
-                display = TRUE;
+                AllSurfaces.SurfacesRestored = false;
+                display = true;
             }
 
             /*
@@ -1524,7 +1524,7 @@ bool Select_Game(bool fade)
     Hide_Mouse();
     Hide_Mouse();
     Hide_Mouse();
-    WWMouse->Erase_Mouse(&HidPage, TRUE);
+    WWMouse->Erase_Mouse(&HidPage, true);
 
     Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
     HiddenPage.Clear();

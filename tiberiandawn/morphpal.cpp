@@ -52,10 +52,7 @@
 ******************************** Prototypes *********************************
 */
 
-PRIVATE int __cdecl Palette_To_Palette(void* src_palette,
-                                       void* dst_palette,
-                                       unsigned long current_time,
-                                       unsigned long delay);
+PRIVATE int Palette_To_Palette(void* src_palette, void* dst_palette, unsigned long current_time, unsigned long delay);
 
 /***************************************************************************
  * Morph_Palette -- morphs a palette from source to destination            *
@@ -74,7 +71,7 @@ PRIVATE int __cdecl Palette_To_Palette(void* src_palette,
  * HISTORY:                                                                *
  *   05/02/1994 BR : Created.                                              *
  *=========================================================================*/
-void cdecl Morph_Palette(void* src_pal, void* dst_pal, unsigned int delay, void (*callback)(void))
+void Morph_Palette(void* src_pal, void* dst_pal, unsigned int delay, void (*callback)(void))
 {
     int result;
     unsigned long pal_start = WinTickCount.Time();
@@ -125,10 +122,7 @@ void cdecl Morph_Palette(void* src_pal, void* dst_pal, unsigned int delay, void 
  * HISTORY:                                                                *
  *   05/24/1993  MC : Created.                                             *
  *=========================================================================*/
-PRIVATE int cdecl Palette_To_Palette(void* src_palette,
-                                     void* dst_palette,
-                                     unsigned long current_time,
-                                     unsigned long delay)
+PRIVATE int Palette_To_Palette(void* src_palette, void* dst_palette, unsigned long current_time, unsigned long delay)
 {
     char colour;
     char diff;
@@ -148,13 +142,13 @@ PRIVATE int cdecl Palette_To_Palette(void* src_palette,
             diff = dst_pal[lp] & (char)63;
             diff -= src_pal[lp] & (char)63;
             if (diff)
-                change = TRUE;
+                change = true;
             chgval = SCALE(diff, delay, current_time);
             colour = src_pal[lp] & (char)63;
             colour += (char)chgval;
         } else {
             colour = dst_pal[lp] & (char)63;
-            change = FALSE;
+            change = false;
         }
         palette[lp] = colour;
     }

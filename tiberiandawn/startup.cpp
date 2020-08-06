@@ -348,27 +348,27 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 
             Palette = new (MEM_CLEAR) unsigned char[768];
 
-            BOOL video_success = FALSE;
+            bool video_success = false;
             CCDebugString("C&C95 - Setting video mode.\n");
             /*
             ** Set 640x400 video mode. If its not available then try for 640x480
             */
 #ifdef REMASTER_BUILD
-            video_success = TRUE;
+            video_success = true;
 #else
 
             if (ScreenHeight == 400) {
                 if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
-                    video_success = TRUE;
+                    video_success = true;
                 } else {
                     if (Set_Video_Mode(ScreenWidth, 480, 8)) {
-                        video_success = TRUE;
+                        video_success = true;
                         ScreenHeight = 480;
                     }
                 }
             } else {
                 if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
-                    video_success = TRUE;
+                    video_success = true;
                 }
             }
 #endif
@@ -479,7 +479,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
             CCDebugString("C&C95 - Creating mouse class.\n");
             WWMouse = new WWMouseClass(&SeenBuff, 32, 32);
             //			MouseInstalled = Install_Mouse(32,24,320,200);
-            MouseInstalled = TRUE;
+            MouseInstalled = true;
 
             /*
             ** See if we should run the intro
@@ -604,7 +604,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
  * HISTORY:                                                                                    *
  *   03/20/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void __cdecl Prog_End(const char* why, bool fatal) // Added why and fatal parameters. ST - 6/27/2019 10:10PM
+void Prog_End(const char* why, bool fatal) // Added why and fatal parameters. ST - 6/27/2019 10:10PM
 {
     GlyphX_Debug_Print("Prog_End()");
 

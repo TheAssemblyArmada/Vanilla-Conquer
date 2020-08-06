@@ -45,7 +45,7 @@ extern "C" long _ShapeBufferSize = 0;
 ;*   10/26/1994 PWG : Created.                                             *
 ;*=========================================================================*
 */
-extern "C" void __cdecl Set_Shape_Buffer(void const* buffer, int size)
+extern "C" void Set_Shape_Buffer(void const* buffer, int size)
 {
     _ShapeBuffer = (unsigned char*)buffer;
     _ShapeBufferSize = size;

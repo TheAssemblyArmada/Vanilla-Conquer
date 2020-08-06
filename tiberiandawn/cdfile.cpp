@@ -49,7 +49,7 @@ int CDFileClass::CurrentCDDrive = 0;
 int CDFileClass::LastCDDrive = 0;
 char CDFileClass::RawPath[512];
 
-int __cdecl Is_Disk_Inserted(int disk)
+int Is_Disk_Inserted(int disk)
 {
     return true;
 
@@ -154,8 +154,8 @@ void CDFileClass::Refresh_Search_Drives(void)
  *=============================================================================================*/
 int CDFileClass::Set_Search_Drives(char* pathlist)
 {
-    int found = FALSE;
-    int empty = FALSE;
+    bool found = false;
+    bool empty = false;
     /*
     **	If there is no pathlist to add, then just return.
     */
@@ -201,7 +201,7 @@ int CDFileClass::Set_Search_Drives(char* pathlist)
             */
             if (strncmp(path, "?:", 2) == 0) {
                 if (CurrentCDDrive) {
-                    found = TRUE;
+                    found = true;
                     /*
                     ** If the drive has a C&C CD in it then add it to the path
                     */
@@ -217,7 +217,7 @@ int CDFileClass::Set_Search_Drives(char* pathlist)
                 continue;
             }
 
-            found = TRUE;
+            found = true;
             Add_Search_Drive(path);
         }
 

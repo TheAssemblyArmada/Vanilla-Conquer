@@ -156,7 +156,7 @@ GameType Select_MPlayer_Game(void)
     // If neither IPX or winsock are active then do only the modem serial dialog
     //
     if (Ipx.Is_IPX()) {
-        ipx_avail = TRUE;
+        ipx_avail = true;
     }
 
     TextButtonClass modemserialbtn(BUTTON_MODEMSERIAL,
@@ -242,7 +242,7 @@ GameType Select_MPlayer_Game(void)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = REDRAW_ALL;
         }
 
@@ -1330,7 +1330,7 @@ int Surrender_Dialog(void)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = REDRAW_ALL;
         }
 
