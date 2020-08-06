@@ -35,7 +35,7 @@
 #ifndef TRIGGER_H
 #define TRIGGER_H
 
-typedef enum EventType : char
+typedef enum EventType : signed char
 {
     EVENT_NONE = -1,
 
