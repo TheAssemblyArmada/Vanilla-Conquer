@@ -66,7 +66,8 @@ public:
                          SpeedType speed,
                          int zone = -1,
                          MZoneType check = MZONE_NORMAL,
-                         bool checkflagged = false) const;
+                         bool checkflagged = false,
+                         int locationmod = 0) const;
     ObjectClass* Close_Object(COORDINATE coord) const;
     virtual void Detach(ObjectClass*){};
     int Cell_Region(CELL cell);

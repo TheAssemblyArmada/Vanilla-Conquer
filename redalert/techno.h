@@ -295,7 +295,7 @@ public:
     {
         return (PrimaryFacing.Current());
     }
-    CELL Nearby_Location(TechnoClass const* from = NULL) const;
+    CELL Nearby_Location(TechnoClass const* from = NULL, int locationmod = 0) const;
     TechnoTypeClass* Techno_Type_Class(void) const
     {
         return ((TechnoTypeClass*)&Class_Of());
@@ -309,6 +309,7 @@ public:
     virtual ActionType What_Action(ObjectClass const* target) const;
     virtual BuildingClass* Find_Docking_Bay(StructType b, bool friendly) const;
     virtual CELL Find_Exit_Cell(TechnoClass const* techno) const;
+    virtual FireDataType Fire_Data(int) const;
     virtual COORDINATE Fire_Coord(int which) const;
     virtual DirType Desired_Load_Dir(ObjectClass*, CELL& moveto) const;
     virtual DirType Fire_Direction(void) const;
@@ -382,6 +383,9 @@ public:
                               WindowNumberType window,
                               COORDINATE source_coord = 0L,
                               unsigned char* remap = NULL) const;
+    bool Is_Cloaked(HousesType house, bool check_invisible = false) const;
+    bool Is_Cloaked(HouseClass const* house, bool check_invisible = false) const;
+    bool Is_Cloaked(ObjectClass const* object, bool check_invisible = false) const;
 
     /*
     **	AI.

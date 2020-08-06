@@ -579,7 +579,7 @@ AnimClass::AnimClass(AnimType animnum, COORDINATE coord, unsigned char timedelay
 
     AnimClass::Unlimbo(coord);
 
-    VisibleFlags = 0xffff;
+    VisibleFlags = static_cast<unsigned int>(-1);
 
     /*
     **	Drop zone smoke always reveals the map around itself.
@@ -820,10 +820,10 @@ void AnimClass::AI(void)
                     int damage = Accum;
                     Accum -= damage;
                     if (As_Object(xObject)->Take_Damage(damage, 0, WARHEAD_FIRE) == RESULT_DESTROYED) {
-                        delete this;
                         if (Target_Legal(VirtualAnimTarget)) {
                             delete As_Animation(VirtualAnimTarget);
                         }
+                        delete this;
                         return;
                     }
                 }
@@ -1181,8 +1181,12 @@ void AnimClass::Detach(TARGET target, bool all)
     assert(IsActive);
 
     if (all) {
-        if (VirtualAnimTarget && VirtualAnimTarget == target) {
+        if (Target_Legal(VirtualAnimTarget) && VirtualAnimTarget == target) {
             VirtualAnimTarget = TARGET_NONE;
+            if (IsInvisible) {
+                IsToDelete = true;
+                Mark(MARK_UP);
+            }
         }
         if (xObject == target) {
             Map.Remove(this, In_Which_Layer());

@@ -335,7 +335,7 @@ static AnimTypeClass const LZSmoke(ANIM_LZ_SMOKE, // Animation number.
                                    72,            // Loop start frame number.
                                    91,            // Ending frame of loop back.
                                    -1,            // Number of animation stages.
-                                   255,           // Number of times the animation loops.
+                                   127,           // Number of times the animation loops.
                                    VOC_NONE,      // Sound effect to play.
                                    ANIM_NONE);
 
@@ -1048,7 +1048,7 @@ static AnimTypeClass const OilFieldBurn(ANIM_OILFIELD_BURN, // Animation number.
                                         33,                 // Loop start frame number.
                                         99,                 // Ending frame of loop back.
                                         66,                 // Number of animation stages.
-                                        65535,              // Number of times the animation loops.
+                                        127,                // Number of times the animation loops.
                                         VOC_NONE,           // Sound effect to play.
                                         ANIM_NONE);
 

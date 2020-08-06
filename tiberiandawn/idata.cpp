@@ -394,7 +394,7 @@ static InfantryTypeClass const E5(INFANTRY_E5,           // Infantry type number
                                   70,                    // Strength of infantry (in damage points).
                                   1,                     // Sight range.
                                   300,                   // Cost of infantry (in credits).
-                                  99,                    // Scenario when they first appear.
+                                  98,                    // Scenario when they first appear.
                                   80,
                                   10, // Risk/Reward of this infantry unit.
                                   HOUSEF_MULTI1 | HOUSEF_MULTI2 | HOUSEF_MULTI3 | HOUSEF_MULTI4 | HOUSEF_MULTI5

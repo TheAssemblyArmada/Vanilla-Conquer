@@ -469,7 +469,7 @@ void EventClass::Execute(void)
         if (anim) {
             // 2019/09/19 JAS - Visibility needs to be determined per player
             if (Data.Anim.What != ANIM_MOVE_FLASH || Data.Anim.Owner == HOUSE_NONE || Special.IsVisibleTarget) {
-                anim->Set_Visible_Flags(0xffff);
+                anim->Set_Visible_Flags(static_cast<unsigned int>(-1));
             } else {
                 anim->Set_Visible_Flags(1 << Data.Anim.Owner);
             }
@@ -584,6 +584,10 @@ void EventClass::Execute(void)
                 techno->ArchiveTarget = Data.MegaMission.Target;
                 techno->Assign_Target(TARGET_NONE);
                 techno->Assign_Destination(Data.MegaMission.Target);
+            } else if (Data.MegaMission.Mission == MISSION_ENTER && object != NULL
+                       && object->What_Am_I() == RTTI_BUILDING && *((BuildingClass*)object) == STRUCT_REFINERY) {
+                techno->Transmit_Message(RADIO_HELLO, (BuildingClass*)object);
+                techno->Assign_Destination(TARGET_NONE);
             } else {
                 techno->Assign_Target(Data.MegaMission.Target);
                 techno->Assign_Destination(Data.MegaMission.Destination);

@@ -81,6 +81,7 @@ void SpecialClass::Init(void)
     UseMCVDeploy = false;
     IsMCVDeploy = false;
     IsEarlyWin = false;
+    ModernBalance = false;
 }
 
 /***********************************************************************************************
