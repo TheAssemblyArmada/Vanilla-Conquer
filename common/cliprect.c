@@ -33,7 +33,7 @@
 *                                                                         *
 *   05/03/1995 JRJ : added comment                                        *
 *========================================================================*/
-int _cdecl Clip_Rect(int* x, int* y, int* w, int* h, int width, int height)
+int Clip_Rect(int* x, int* y, int* w, int* h, int width, int height)
 {
     int xstart = *x;
     int ystart = *y;
@@ -90,7 +90,7 @@ int _cdecl Clip_Rect(int* x, int* y, int* w, int* h, int width, int height)
 *       bigger than the clipping window and at the same time wrap around  *
 *       it. If that is the case the result is meaningless                 *
 *=========================================================================*/
-int _cdecl Confine_Rect(int* x, int* y, int w, int h, int width, int height)
+int Confine_Rect(int* x, int* y, int w, int h, int width, int height)
 {
     int confined = 0;
 
