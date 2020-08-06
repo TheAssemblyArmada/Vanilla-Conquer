@@ -152,13 +152,4 @@ Open_Animation(char* file_name, BufferClass& buffer, WSAOpenType user_flags, uns
     return (Open_Animation(file_name, (char*)buffer.Get_Buffer(), buffer.Get_Size(), user_flags, palette));
 }
 
-/*=========================================================================*/
-/* The following prototypes are for the file: LP_ASM.ASM							*/
-/*=========================================================================*/
-
-extern "C" {
-unsigned int Apply_XOR_Delta(char* source_ptr, char* delta_ptr);
-void Apply_XOR_Delta_To_Page_Or_Viewport(void* target, void* delta, int width, int nextrow, int copy);
-}
-
 #endif // WSA_H

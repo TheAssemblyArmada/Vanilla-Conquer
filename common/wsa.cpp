@@ -66,6 +66,7 @@
 #include "misc.h"
 #include "iff.h"
 #include "lcw.h"
+#include "xordelta.h"
 #include <string.h>
 
 //

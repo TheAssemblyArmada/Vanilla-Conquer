@@ -60,15 +60,16 @@ TO_PAGE		equ	2
 ;	PROC	C Copy_Delta_Buffer
 ;
 
+IFNDEF NOASM
 externdef C Apply_XOR_Delta:NEAR
 externdef C Apply_XOR_Delta_To_Page_Or_Viewport:NEAR
-
+ENDIF
 
 
 	;CODESEG
 	.code
 
-
+IFNDEF NOASM
 ;***************************************************************************
 ;* APPLY_XOR_DELTA -- Apply XOR delta data to a linear buffer.             *
 ;*   AN example of this in C is at the botton of the file commented out.   *
@@ -549,6 +550,7 @@ stop3:
 
 Copy_Delta_Buffer	ENDP	
 
+ENDIF
 ;----------------------------------------------------------------------------
 
 	END

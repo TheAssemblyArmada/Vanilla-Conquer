@@ -37,6 +37,7 @@
 
 #include "function.h"
 #include "common/lcw.h"
+#include "common/xordelta.h"
 
 #define SUBFRAMEOFFS 7 // 3 1/2 frame offsets loaded (2 offsets/frame)
 
