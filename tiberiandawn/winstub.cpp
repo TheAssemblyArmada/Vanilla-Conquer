@@ -427,39 +427,6 @@ void Create_Main_Window(HANDLE instance, int command_show, int width, int height
 #endif
 }
 
-void Window_Dialog_Box(HANDLE hinst, LPCTSTR lpszTemplate, HWND hwndOwner, DLGPROC dlgprc)
-{
-#if (0)
-    MSG msg;
-    /*
-    ** Get rid of the Westwood mouse cursor because we are showing a
-    ** dialog box and we want to have the right windows cursor showing
-    ** for it.
-    */
-    Hide_Mouse();
-    ShowCursor(TRUE);
-
-    /*
-    ** Pop up the dialog box and then run a standard message handler
-    ** until the dialog box is closed.
-    */
-
-    DialogBox(hinst, lpszTemplate, hwndOwner, dlgprc);
-    while (GetMessage(&msg, NULL, 0, 0) && !AllDone) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-
-    /*
-    ** Restore the westwood mouse cursor and get rid of the windows one
-    ** because it is now time to restore back to the westwood way of
-    ** doing things.
-    */
-    ShowCursor(FALSE);
-    Show_Mouse();
-#endif
-}
-
 typedef struct tColourList
 {
 

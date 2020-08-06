@@ -733,8 +733,6 @@ void Call_Back_Delay(int time);
 int Alloc_Object(ScoreAnimClass* obj);
 extern GraphicBufferClass* PseudoSeenBuff;
 
-void Window_Dialog_Box(HANDLE hinst, LPCTSTR lpszTemplate, HWND hwndOwner, DLGPROC dlgprc);
-
 /*
 **	SPECIAL.CPP
 */
