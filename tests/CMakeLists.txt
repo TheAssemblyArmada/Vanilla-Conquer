@@ -1,5 +1,5 @@
 add_custom_target(tests)
-add_dependencies(tests test_miscasm test_face test_rect test_fading test_lcw)
+add_dependencies(tests test_miscasm test_face test_rect test_fading test_lcw test_xordelta)
 
 add_executable(test_miscasm miscasm.cpp)
 target_include_directories(test_miscasm PUBLIC .. ../common)
@@ -30,3 +30,9 @@ target_include_directories(test_lcw PUBLIC .. ../common)
 target_compile_definitions(test_lcw PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE WINSOCK_IPX)
 target_link_libraries(test_lcw PUBLIC common ${STATIC_LIBS})
 add_test(NAME lcw COMMAND ${TARGET_SYSTEM_EMULATOR} $<TARGET_FILE:test_lcw>)
+
+add_executable(test_xordelta xordelta.cpp)
+target_include_directories(test_xordelta PUBLIC .. ../common)
+target_compile_definitions(test_xordelta PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE WINSOCK_IPX)
+target_link_libraries(test_xordelta PUBLIC common ${STATIC_LIBS})
+add_test(NAME xordelta COMMAND ${TARGET_SYSTEM_EMULATOR} $<TARGET_FILE:test_xordelta>)
