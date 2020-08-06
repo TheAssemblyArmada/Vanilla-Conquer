@@ -12,7 +12,7 @@ set(COMMON_SRC
     irandom.cpp
     drawmisca.asm
     drawmisc.cpp
-    xordelta.asm
+    xordeltaa.asm
     auduncmp.c
     bitblit.c
     soscodec.c
@@ -49,6 +49,7 @@ set(COMMON_SRC
     cliprect.c
     txtprnt.asm
     graphicsviewport.cpp
+    xordelta.c
 )
 
 if (WIN32)
