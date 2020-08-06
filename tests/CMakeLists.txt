@@ -1,5 +1,5 @@
 add_custom_target(tests)
-add_dependencies(tests test_miscasm test_face test_lcw)
+add_dependencies(tests test_miscasm test_face test_rect test_fading test_lcw)
 
 add_executable(test_miscasm miscasm.cpp)
 target_include_directories(test_miscasm PUBLIC .. ../common)
