@@ -43,10 +43,6 @@
 #include "function.h"
 #include "loaddlg.h"
 #include "common/tcpip.h"
-#include <conio.h>
-#include <dos.h>
-
-static HANDLE hCCLibrary;
 
 /****************************************
 **	Function prototypes for this module **
@@ -105,7 +101,6 @@ bool Init_Game(int, char*[])
     void const* temp_mouse_shapes;
 
     CCDebugString("C&C95 - About to load reslib.dll\n");
-    hCCLibrary = LoadLibrary("reslib.dll");
 
     /*
     **	Initialize the game object heaps.
@@ -584,8 +579,6 @@ bool Init_Game(int, char*[])
         Show_Mouse();
     }
     Call_Back();
-    //	Window_Dialog_Box(hCCLibrary, "DIALOG_1", MainWindow, MakeProcInstance((FARPROC)Start_Game_Proc, hInstance));
-    //	if (hCCLibrary) FreeLibrary(hCCLibrary);
 
 #ifdef DEMO
     MixFileClass::Cache("DEMO.MIX");
