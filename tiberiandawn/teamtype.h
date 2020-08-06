@@ -41,7 +41,7 @@
 /*
 **	TeamMissionType: the various missions that a team can have.
 */
-typedef enum TeamMissionType : char
+typedef enum TeamMissionType : signed char
 {
     TMISSION_NONE = -1,
     TMISSION_ATTACKBASE,      // Attack nearest enemy base.
