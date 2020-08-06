@@ -221,7 +221,7 @@ void Check_For_Focus_Loss(void)
 #endif
 }
 
-extern BOOL InMovie;
+extern bool InMovie;
 #ifndef REMASTER_BUILD // PG_TO_FIX
 long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 {

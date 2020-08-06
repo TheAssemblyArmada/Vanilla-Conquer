@@ -503,7 +503,7 @@ void Do_Win(void)
 
         if (!Special.IsJurassic || !AreThingiesEnabled) {
             Keyboard::Clear();
-            InterpolationPaletteChanged = TRUE;
+            InterpolationPaletteChanged = true;
             InterpolationPalette = Palette;
             Score.Presentation();
 

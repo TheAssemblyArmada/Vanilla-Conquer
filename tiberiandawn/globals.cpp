@@ -939,7 +939,7 @@ int ScreenHeight = GBUFF_INIT_HEIGHT;
 WWMouseClass* WWMouse = NULL;
 HANDLE hInstance;
 int AllDone;
-BOOL InMovie = FALSE; // Are we currently playing a VQ movie?
+bool InMovie = false; // Are we currently playing a VQ movie?
 GetCDClass CDList;
 bool GameStatisticsPacketSent;
 bool ConnectionLost;

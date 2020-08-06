@@ -513,7 +513,7 @@ int KN_To_VK(int key)
 int Key_Down(int key)
 {
     if (!_Kbd)
-        return (FALSE);
+        return (0);
     return (_Kbd->Down(key));
 }
 

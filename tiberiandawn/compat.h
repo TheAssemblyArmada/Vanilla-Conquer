@@ -77,7 +77,6 @@ extern char* ShapeBuffer;
 
 extern unsigned char* Palette;
 extern unsigned char MDisabled; // Is mouse disabled?
-extern WORD Hard_Error_Occured;
 
 /*
 **	This is the menu control structures.

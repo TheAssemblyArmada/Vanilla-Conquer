@@ -1033,7 +1033,7 @@ static RetcodeType Wait_For_Players(int first_time,
         //---------------------------------------------------------------------
         Call_Back();
         if (!first_time && SpecialDialog == SDLG_NONE && reconnect_dlg == 0) {
-            WWMouse->Erase_Mouse(&HidPage, TRUE);
+            WWMouse->Erase_Mouse(&HidPage, true);
             Map.Input(input, x, y);
             if (input)
                 Keyboard_Process(input);
@@ -1884,7 +1884,7 @@ Process_Reconnect_Dialog(CountDownTimerClass* timeout_timer, long* their_frame, 
     // we need to redraw the whole dialog.
     //--------------------------------------------------------------------------------
     if (AllSurfaces.SurfacesRestored) {
-        AllSurfaces.SurfacesRestored = FALSE;
+        AllSurfaces.SurfacesRestored = false;
         fresh = true;
     }
 

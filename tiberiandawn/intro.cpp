@@ -140,7 +140,7 @@ void Choose_Side(void)
     // anim = Open_Animation("CHOOSE.WSA",NULL,0L,(WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE),Palette);
     anim = Open_Animation("CHOOSE.WSA", NULL, 0L, (WSAOpenType)(WSA_OPEN_FROM_DISK | WSA_OPEN_TO_PAGE), Palette);
     Call_Back();
-    InterpolationPaletteChanged = TRUE;
+    InterpolationPaletteChanged = true;
     InterpolationPalette = Palette;
     Read_Interpolation_Palette("SIDES.PAL");
 
@@ -149,9 +149,9 @@ void Choose_Side(void)
     gdi_start_palette = Load_Interpolated_Palettes("NOD1PRE.VQP");
     Call_Back();
     // gdibrief = Open_Movie("GDI1.VQA");
-    Load_Interpolated_Palettes("GDI1.VQP", TRUE);
+    Load_Interpolated_Palettes("GDI1.VQP", true);
 
-    WWMouse->Erase_Mouse(&HidPage, TRUE);
+    WWMouse->Erase_Mouse(&HidPage, true);
     HiddenPage.Clear();
     PseudoSeenBuff->Clear();
     SysMemPage.Clear();

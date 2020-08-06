@@ -1857,7 +1857,7 @@ int IPXManagerClass::Alloc_RealMode_Mem(void)
     }
 #else // NOT_FOR_WIN95
 
-    return (TRUE);
+    return (true);
 
 #endif // NOT_FOR_WIN95
 }
