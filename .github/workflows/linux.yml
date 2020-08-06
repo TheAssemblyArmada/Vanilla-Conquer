@@ -1,0 +1,37 @@
+name: linux
+
+on:
+  pull_request:
+  push:
+  release:
+    types: published
+
+jobs:
+  common:
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        asm: [ON, OFF]
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get install -y g++-multilib
+        curl -L -O https://github.com/JWasm/JWasm/archive/45f69e4b96ff3e93522464f2c8bb2ff56e6ecbf8.zip
+        unzip 45f69e4b96ff3e93522464f2c8bb2ff56e6ecbf8.zip
+        cd JWasm-45f69e4b96ff3e93522464f2c8bb2ff56e6ecbf8
+        make -f GccUnix.mak
+        sudo cp GccUnixR/jwasm /usr/local/bin/
+
+    - name: Build common and tests
+      run: |
+        cmake -DCMAKE_TOOLCHAIN_FILE= -DCMAKE_BUILD_TYPE=Debug -DBUILD_REMASTERTD=ON -BUILD_REMASTERRA=ON -DDSOUND=OFF -DDDRAW=OFF -DUSE_ASM=${{ matrix.asm }} -DNETWORKING=OFF -B build
+        cmake --build build --target common --target commonr --target commonv --target tests -- -j 4
+
+    - name: Run unit tests
+      run: |
+        cd build
+        ctest
