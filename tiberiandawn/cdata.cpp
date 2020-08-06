@@ -1257,8 +1257,8 @@ static TemplateTypeClass const Patch15(TEMPLATE_PATCH15,
                                        "P15",
                                        TXT_PATCH,
                                        LAND_CLEAR,
-                                       1,
-                                       1,
+                                       4,
+                                       2,
                                        LAND_CLEAR,
                                        NULL);
 static TemplateTypeClass const

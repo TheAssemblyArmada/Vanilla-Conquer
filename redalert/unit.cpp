@@ -407,6 +407,15 @@ void UnitClass::AI(void)
     Rotation_AI();
 
     /*
+    **	Scatter units off buildings in guard modes.
+    */
+    if (!IsTethered && !IsFiring && !IsDriving && !IsRotating
+        && (Mission == MISSION_GUARD || Mission == MISSION_GUARD_AREA) && MissionQueue == MISSION_NONE
+        && Map[Coord].Cell_Building() != NULL) {
+        Scatter(0, true, true);
+    }
+
+    /*
     **	Delete this unit if it finds itself off the edge of the map and it is in
     **	guard or other static mission mode.
     */
@@ -1258,6 +1267,11 @@ void UnitClass::Player_Assign_Mission(MissionType mission, TARGET target, TARGET
 
     if (mission == MISSION_HARVEST) {
         ArchiveTarget = TARGET_NONE;
+    } else if (mission == MISSION_ENTER) {
+        BuildingClass* building = As_Building(destination);
+        if (building != NULL && *building == STRUCT_REFINERY && building->In_Radio_Contact()) {
+            building->Transmit_Message(RADIO_OVER_OUT);
+        }
     }
     DriveClass::Player_Assign_Mission(mission, target, destination);
 }
@@ -1683,7 +1697,8 @@ void UnitClass::Per_Cell_Process(PCPType why)
             } else {
                 TechnoClass* contact = Contact_With_Whom();
                 if (Transmit_Message(RADIO_UNLOADED) == RADIO_RUN_AWAY) {
-                    if (*this == UNIT_HARVESTER && contact && contact->What_Am_I() == RTTI_BUILDING) {
+                    if (*this == UNIT_HARVESTER && contact && contact->What_Am_I() == RTTI_BUILDING
+                        && *((BuildingClass*)contact) != STRUCT_REPAIR) {
                         Assign_Mission(MISSION_HARVEST);
                     } else if (!Target_Legal(NavCom)) {
                         Scatter(0, true);
@@ -2200,11 +2215,26 @@ int UnitClass::Tiberium_Check(CELL& center, int x, int y)
 
     center = XY_Cell(Cell_X(center) + x, Cell_Y(center) + y);
 
-    if ((Session.Type != GAME_NORMAL || (!IsOwnedByPlayer || Map[center].IsMapped))) {
+    if ((Session.Type != GAME_NORMAL || (!IsOwnedByPlayer || Map[center].Is_Mapped(PlayerPtr)))) {
         if (Map[Coord].Zones[Class->MZone] != Map[center].Zones[Class->MZone])
             return (0);
         if (!Map[center].Cell_Techno() && Map[center].Land_Type() == LAND_TIBERIUM) {
-            return (Map[center].OverlayData);
+            int value = 0;
+            switch (Map[center].Overlay) {
+            case OVERLAY_GOLD1:
+            case OVERLAY_GOLD2:
+            case OVERLAY_GOLD3:
+            case OVERLAY_GOLD4:
+                value = Rule.GoldValue;
+                break;
+            case OVERLAY_GEMS1:
+            case OVERLAY_GEMS2:
+            case OVERLAY_GEMS3:
+            case OVERLAY_GEMS4:
+                value = Rule.GemValue * 4;
+                break;
+            }
+            return ((Map[center].OverlayData + 1) * value);
         }
     }
     return (0);
@@ -2247,6 +2277,7 @@ bool UnitClass::Goto_Tiberium(int rad)
                 int tiberium = 0;
                 int besttiberium = 0;
                 for (int x = -radius; x <= radius; x++) {
+                    cell = center;
                     tiberium = Tiberium_Check(cell, x, -radius);
                     if (tiberium > besttiberium) {
                         bestcell = cell;
@@ -2849,10 +2880,10 @@ int UnitClass::Mission_Harvest(void)
     */
     case LOOKING:
         /*
-        **	When full of tiberium, just skip to finding a free refinery
-        **	to unload at.
+        **	Slightly hacky; if TarCom is set then skip to finding home state.
         */
-        if (Tiberium_Load() == 1) {
+        if (Target_Legal(TarCom)) {
+            Assign_Target(TARGET_NONE);
             Status = FINDHOME;
             return (1);
         }
@@ -3280,7 +3311,7 @@ MoveType UnitClass::Can_Enter_Cell(CELL cell, FacingType) const
                 **	Cloaked enemy objects are not considered if this is a Find_Path()
                 **	call.
                 */
-                if (!obj->Is_Techno() || ((TechnoClass*)obj)->Cloak != CLOAKED) {
+                if (!obj->Is_Techno() || !((TechnoClass*)obj)->Is_Cloaked(this)) {
 
                     /*
                     **	If this unit can crush infantry, and there is an enemy infantry in the
@@ -3564,7 +3595,11 @@ ActionType UnitClass::What_Action(ObjectClass const* object) const
     /*
     **	Special return to friendly refinery action.
     */
-    if (Is_Owned_By_Player() && House->Class->House == object->Owner() && object->What_Am_I() == RTTI_BUILDING
+    bool is_player_controlled = (Session.Type == GAME_NORMAL)
+                                    ? (House->IsPlayerControl && object->Owner() != HOUSE_NONE
+                                       && HouseClass::As_Pointer(object->Owner())->IsPlayerControl)
+                                    : (Is_Owned_By_Player() && House->Class->House == object->Owner());
+    if (is_player_controlled && object->What_Am_I() == RTTI_BUILDING
         && ((UnitClass*)this)->Transmit_Message(RADIO_CAN_LOAD, (TechnoClass*)object) == RADIO_ROGER) {
         action = ACTION_ENTER;
     }
@@ -3572,8 +3607,7 @@ ActionType UnitClass::What_Action(ObjectClass const* object) const
     /*
     **	Special return to friendly repair factory action.
     */
-    if (Is_Owned_By_Player() && House->Class->House == object->Owner() && action == ACTION_SELECT
-        && object->What_Am_I() == RTTI_BUILDING) {
+    if (is_player_controlled && action == ACTION_SELECT && object->What_Am_I() == RTTI_BUILDING) {
         BuildingClass* building = (BuildingClass*)object;
         if (building->Class->Type == STRUCT_REPAIR
             && ((UnitClass*)this)->Transmit_Message(RADIO_CAN_LOAD, building) == RADIO_ROGER

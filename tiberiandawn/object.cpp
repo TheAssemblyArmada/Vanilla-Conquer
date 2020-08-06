@@ -550,6 +550,10 @@ COORDINATE ObjectClass::Sort_Y(void) const
 {
     return Coord;
 };
+FireDataType ObjectClass::Fire_Data(int which) const
+{
+    return {Fire_Coord(which), 0};
+}
 COORDINATE ObjectClass::Fire_Coord(int) const
 {
     return Coord;

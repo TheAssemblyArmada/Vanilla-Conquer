@@ -513,6 +513,25 @@ bool TechnoClass::Is_Allowed_To_Recloak(void) const
  * HISTORY:                                                                                    *
  *   07/29/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
+FireDataType TechnoClass::Fire_Data(int which) const
+{
+    assert(IsActive);
+
+    TechnoTypeClass const* tclass = Techno_Type_Class();
+
+    int dist = 0;
+    if (which == 0) {
+        dist = tclass->PrimaryOffset;
+    } else {
+        dist = tclass->SecondaryOffset;
+    }
+
+    COORDINATE coord = Coord_Move(Center_Coord(), DIR_N, tclass->VerticalOffset + Height);
+    coord = Coord_Move(coord, DIR_E, tclass->HorizontalOffset);
+
+    return {coord, dist};
+}
+
 COORDINATE TechnoClass::Fire_Coord(int which) const
 {
     assert(IsActive);
@@ -700,7 +719,7 @@ bool TechnoClass::Is_Visible_On_Radar(void) const
             }
         }
     }
-    if (!Techno_Type_Class()->IsInvisible && (Cloak != CLOAKED || House->Is_Ally(PlayerPtr))) {
+    if (!Is_Cloaked(PlayerPtr, true)) {
         return (true);
     }
     return (false);
@@ -1004,9 +1023,14 @@ RadioMessageType TechnoClass::Receive_Message(RadioClass* from, RadioMessageType
             /*
             **	If there is sufficient money to repair the unit one step, then do so.
             **	Otherwise return with a "can't complete" radio response.
+            **	Special case: in single-player campaigns, also try to use the repair pad house's money.
             */
-            if (House->Available_Money() >= cost) {
-                House->Spend_Money(cost);
+            HouseClass* house = House;
+            if (Session.Type == GAME_NORMAL && house->Available_Money() < cost) {
+                house = HouseClass::As_Pointer(from->Owner());
+            }
+            if (house != NULL && house->Available_Money() >= cost) {
+                house->Spend_Money(cost);
                 Strength += step;
 
                 /*
@@ -1118,7 +1142,7 @@ void TechnoClass::Draw_It(int x, int y, WindowNumberType window) const
     Class_Of().Dimensions(width, height);
 
     const bool show_health_bar =
-        (Strength > 0)
+        (Strength > 0) && !Is_Cloaked(PlayerPtr)
         && (Is_Selected_By_Player()
             || ((Rule.HealthBarDisplayMode == RulesClass::HB_DAMAGED) && (Strength < Techno_Type_Class()->MaxStrength))
             || (Rule.HealthBarDisplayMode == RulesClass::HB_ALWAYS));
@@ -1282,8 +1306,8 @@ bool TechnoClass::In_Range(TARGET target, int which, bool reciprocal_check) cons
         if (building != NULL) {
             range += ((building->Class->Width() + building->Class->Height()) * (ICON_LEPTON_W / 4));
         }
-
-        if (::Distance(Fire_Coord(which), As_Coord(target)) <= range) {
+        FireDataType data = Fire_Data(which);
+        if (MAX(0, ::Distance(data.Center, As_Coord(target)) - data.Distance) <= range) {
             return (true);
         }
 
@@ -1339,8 +1363,8 @@ bool TechnoClass::In_Range(ObjectClass const* target, int which, bool reciprocal
             BuildingClass const* building = (BuildingClass const*)target;
             range += ((building->Class->Width() + building->Class->Height()) * (ICON_LEPTON_W / 4));
         }
-
-        if (::Distance(Fire_Coord(which), target->Center_Coord()) <= range) {
+        FireDataType data = Fire_Data(which);
+        if (MAX(0, ::Distance(data.Center, target->Center_Coord()) - data.Distance) <= range) {
             return (true);
         }
 
@@ -1545,7 +1569,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
     /*
     **	If the object is cloaked, then it isn't a legal target.
     */
-    if (object->Cloak == CLOAKED) {
+    if (object->Is_Cloaked(this)) {
         BEnd(BENCH_EVAL_OBJECT);
         return (false);
     }
@@ -1574,16 +1598,12 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
     **	object is a friend.  Unless we're a medic, of course.  But then,
     ** only consider it a target if it's injured.
     */
-    if (House->Is_Ally(object)) {
-        if (Combat_Damage() < 0) {
-            if (object->Health_Ratio() == Rule.ConditionGreen) {
-                BEnd(BENCH_EVAL_OBJECT);
-                return (false);
-            }
-        } else {
-            BEnd(BENCH_EVAL_OBJECT);
-            return (false);
-        }
+    bool is_ally = House->Is_Ally(object);
+    bool is_medic = Combat_Damage() < 0;
+    bool green_health = object->Health_Ratio() == Rule.ConditionGreen;
+    if ((is_ally && (!is_medic || green_health)) || (!is_ally && is_medic)) {
+        BEnd(BENCH_EVAL_OBJECT);
+        return (false);
     }
 
     /*
@@ -2058,6 +2078,24 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         return (Weapon_Range(0) - Distance(Cell_Coord(cell)));
     }
 
+    bool TechnoClass::Is_Cloaked(HousesType house, bool check_invisible) const
+    {
+        const bool is_invisible = check_invisible && Techno_Type_Class()->IsInvisible;
+        return !House->Is_Ally(house) && ((Cloak == CLOAKED) || is_invisible);
+    }
+
+    bool TechnoClass::Is_Cloaked(HouseClass const* house, bool check_invisible) const
+    {
+        const bool is_invisible = check_invisible && Techno_Type_Class()->IsInvisible;
+        return !House->Is_Ally(house) && ((Cloak == CLOAKED) || is_invisible);
+    }
+
+    bool TechnoClass::Is_Cloaked(ObjectClass const* object, bool check_invisible) const
+    {
+        const bool is_invisible = check_invisible && Techno_Type_Class()->IsInvisible;
+        return !House->Is_Ally(object) && ((Cloak == CLOAKED) || is_invisible);
+    }
+
     /***********************************************************************************************
      * TechnoClass::Greatest_Threat -- Determines best target given search criteria.               *
      *                                                                                             *
@@ -2499,7 +2537,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         **	If for some strange reason, the computer is firing upon itself, then
         **	tell it not to.
         */
-        if (!House->IsHuman && As_Techno(TarCom) && As_Techno(TarCom)->House->Is_Ally(this)) {
+        if (!House->IsHuman && As_Techno(TarCom) && As_Techno(TarCom)->House->Is_Ally(this) && Combat_Damage() >= 0) {
             //#ifdef FIXIT_CSII	//	checked - ajw 9/28/98 (commented out)
             // if(What_Am_I() == RTTI_INFANTRY && *(InfantryClass *)this==INFANTRY_GENERAL && Session.Type==GAME_NORMAL
             // && House->Class->House==HOUSE_UKRAINE) { } else #endif
@@ -2822,9 +2860,9 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         ObjectClass* object = As_Object(target);
 
         /*
-        **	If the object is completely cloaked, then you can't fire on it.
+        **	If an enemy object is completely cloaked, then you can't fire on it.
         */
-        if (object != NULL && object->Is_Techno() && ((TechnoClass*)object)->Cloak == CLOAKED) {
+        if (object != NULL && object->Is_Techno() && ((TechnoClass*)object)->Is_Cloaked(this)) {
             return (FIRE_CANT);
         }
 
@@ -4261,7 +4299,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
      *   07/06/1995 JLB : Created.                                                                 *
      *   09/28/1995 JLB : Uses map scan function.                                                  *
      *=============================================================================================*/
-    CELL TechnoClass::Nearby_Location(TechnoClass const* techno) const
+    CELL TechnoClass::Nearby_Location(TechnoClass const* techno, int locationmod) const
     {
         assert(IsActive);
 
@@ -4277,8 +4315,8 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             cell = Coord_Cell(Center_Coord());
         }
 
-        return (
-            Map.Nearby_Location(cell, speed, Map[cell].Zones[Techno_Type_Class()->MZone], Techno_Type_Class()->MZone));
+        return (Map.Nearby_Location(
+            cell, speed, Map[cell].Zones[Techno_Type_Class()->MZone], Techno_Type_Class()->MZone, false, locationmod));
     }
 
     /***********************************************************************************************
