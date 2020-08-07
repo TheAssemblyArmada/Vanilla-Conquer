@@ -420,6 +420,12 @@ int LoadOptionsClass::Process(void)
                 if (!rc) {
                     WWMessageBox().Process(TXT_ERROR_LOADING_GAME);
                 } else {
+                    /*
+                    ** Fix unit selection issues on load, mirrors remaster code in CNC_Save_Load.
+                    */
+                    if (PlayerPtr) {
+                        CurrentObject.Set_Active_Context(PlayerPtr->Class->House);
+                    }
                     Speak(VOX_LOAD1);
                     while (Is_Speaking()) {
                         Call_Back();
