@@ -48,6 +48,7 @@ set(COMMON_SRC
     rect.cpp
     cliprect.c
     txtprnt.asm
+    graphicsviewport.cpp
 )
 
 if (WIN32)
