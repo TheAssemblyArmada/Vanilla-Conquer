@@ -9,7 +9,7 @@ if(NOT WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
 endif()
 
 if(NOT DEFINED CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug)
+    set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build, options are: Debug Release" FORCE)
 endif()
 
 project(VanillaConquer)
