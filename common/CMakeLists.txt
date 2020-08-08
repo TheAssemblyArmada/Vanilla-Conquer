@@ -16,6 +16,7 @@ set(COMMON_SRC
     xordeltaa.asm
     auduncmp.c
     bitblit.c
+    fading.c
     soscodec.c
     winasm.c
     wwmouse.c
