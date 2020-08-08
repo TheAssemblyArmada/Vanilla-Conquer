@@ -36,6 +36,9 @@
 
 #include "buffer.h"
 
+#include "graphicsviewport.h"
+#include "drawbuff.h"
+
 /*=========================================================================*/
 /* The following PRIVATE functions are in this file:                       */
 /*=========================================================================*/
@@ -45,13 +48,13 @@
 /***************************************************************************
  * BC::BufferClass -- The standard constructor for a buffer class          *
  *                                                                         *
- * INPUT:		VOID *	buffer to which should be included in buffer class *
- *					LONG		size of the buffer which we included					*
+ * INPUT:      VOID *   buffer to which should be included in buffer class *
+ *             LONG     size of the buffer which we included               *
  *                                                                         *
  * OUTPUT:     NONE                                                        *
  *                                                                         *
  * WARNINGS:   If the buffer passed to this function is equal to NULL,     *
- *					the buffer will be allocated using new.							*
+ *                  the buffer will be allocated using new.                *
  *                                                                         *
  * HISTORY:                                                                *
  *   06/01/1994 PWG : Created.                                             *
@@ -122,4 +125,99 @@ BufferClass::~BufferClass()
     if (Allocated) {
         delete[] Buffer;
     }
+}
+
+/***************************************************************************
+ * BUFFER_TO_PAGE -- Generic 'c' callable form of Buffer_To_Page           *
+ *                                                                         *
+ * INPUT:                                                                  *
+ *                                                                         *
+ * OUTPUT:                                                                 *
+ *                                                                         *
+ * WARNINGS:                                                               *
+ *                                                                         *
+ * HISTORY:                                                                *
+ *   01/12/1995 PWG : Created.                                             *
+ *=========================================================================*/
+long Buffer_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortClass& view)
+{
+    long return_code = 0;
+    if (view.Lock()) {
+        return_code = (Buffer_To_Page(x, y, w, h, Buffer, &view));
+        view.Unlock();
+    }
+    return (return_code);
+}
+
+/***************************************************************************
+ * BC::TO_PAGE -- Copys a buffer class to a page with definable w, h       *
+ *                                                                         *
+ * INPUT:      int   width   - the width of copy region                    *
+ *             int   height  - the height of copy region                   *
+ *             GVPC& dest    - virtual viewport to copy to                 *
+ *                                                                         *
+ * OUTPUT:     none                                                        *
+ *                                                                         *
+ * WARNINGS:   x and y position are the upper left corner of the dest      *
+ *                     viewport                                            *
+ *                                                                         *
+ * HISTORY:                                                                *
+ *   07/01/1994 PWG : Created.                                             *
+ *=========================================================================*/
+long BufferClass::To_Page(int w, int h, GraphicViewPortClass& view)
+{
+    long return_code = 0;
+    if (view.Lock()) {
+        return_code = (Buffer_To_Page(0, 0, w, h, Buffer, &view));
+        view.Unlock();
+    }
+    return (return_code);
+}
+
+/***************************************************************************
+ * BC::TO_PAGE -- Copys a buffer class to a page with definable w, h       *
+ *                                                                         *
+ * INPUT:      GVPC&    dest  - virtual viewport to copy to                *
+ *                                                                         *
+ * OUTPUT:     none                                                        *
+ *                                                                         *
+ * WARNINGS:   x and y position are the upper left corner of the dest      *
+ *                      viewport.  width and height are assumed to be the  *
+ *                      viewport's width and height.                       *
+ *                                                                         *
+ * HISTORY:                                                                *
+ *   07/01/1994 PWG : Created.                                             *
+ *=========================================================================*/
+long BufferClass::To_Page(GraphicViewPortClass& view)
+{
+    long return_code = 0;
+    if (view.Lock()) {
+        return_code = (Buffer_To_Page(0, 0, view.Get_Width(), view.Get_Height(), Buffer, &view));
+        view.Unlock();
+    }
+    return (return_code);
+}
+
+/***************************************************************************
+ * BC::TO_PAGE -- Copys a buffer class to a page with definable x, y, w, h *
+ *                                                                         *
+ * INPUT:   int    x        - x pixel on viewport to copy from             *
+ *          int    y        - y pixel on viewport to copy from             *
+ *          int    width    - the width of copy region                     *
+ *          int    height   - the height of copy region                    *
+ *          GVPC&  dest     - virtual viewport to copy to                  *
+ *                                                                         *
+ * OUTPUT:  none                                                           *
+ *                                                                         *
+ * HISTORY:                                                                *
+ *   07/01/1994 PWG : Created.                                             *
+ *=========================================================================*/
+long BufferClass::To_Page(int x, int y, int w, int h, GraphicViewPortClass& view)
+{
+    long return_code = 0;
+    if (view.Lock()) {
+        return_code = (Buffer_To_Page(x, y, w, h, Buffer, &view));
+        view.Unlock();
+    }
+    return (return_code);
 }
