@@ -135,31 +135,6 @@ void Shake_Screen(int shakes);
 /*=========================================================================*/
 
 int Reverse_Long(int number);
-#if (0)
-/*=========================================================================*/
-/* The following prototype is for the file: FACING8.ASM                    */
-/*=========================================================================*/
-
-int Desired_Facing8(int x1, int y1, int x2, int y2);
-
-/*=========================================================================*/
-/* The following prototype is for the file: FACING16.ASM                   */
-/*=========================================================================*/
-
-int Desired_Facing16(int x1, int y1, int x2, int y2);
-
-/*=========================================================================*/
-/* The following prototype is for the file: FACINGFF.ASM                   */
-/*=========================================================================*/
-
-int Desired_Facing256(int x1, int y1, int x2, int y2);
-
-/*=========================================================================*/
-/* The following prototype is for the file: FADING.ASM                     */
-/*=========================================================================*/
-#endif
-
-void* Build_Fading_Table(void const* palette, void const* dest, long int color, long int frac);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: DETPROC.ASM                  */

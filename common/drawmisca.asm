@@ -26,7 +26,9 @@ externdef C Buffer_Clear:near
 externdef C Linear_Blit_To_Linear_ASM:near
 externdef C Linear_Scale_To_Linear:near
 externdef C Buffer_Remap:near
+IFNDEF NOASM
 externdef C Build_Fading_Table:near
+ENDIF
 externdef C Buffer_Put_Pixel:near
 externdef C Buffer_Get_Pixel:near
 IFNDEF NOASM
@@ -1810,6 +1812,7 @@ Buffer_Remap endp
 ; Bounds Checking: None
 ;*
 ;void* __cdecl Build_Fading_Table(void const* palette, void const* dest, long int color, long int frac)
+IFNDEF NOASM
 Build_Fading_Table proc C palette:dword, dest:dword, color:dword, frac:dword
     LOCAL	matchvalue:DWORD	; Last recorded match value.
     LOCAL	targetred:BYTE		; Target gun red.
@@ -1967,6 +1970,8 @@ Build_Fading_Table proc C palette:dword, dest:dword, color:dword, frac:dword
         pop ebx
         ret
 Build_Fading_Table endp
+
+ENDIF
 
 ;***************************************************************************
 ;**     C O N F I D E N T I A L --- W E S T W O O D   S T U D I O S       **

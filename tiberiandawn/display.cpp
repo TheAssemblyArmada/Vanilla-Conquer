@@ -76,6 +76,7 @@
  *   DisplayClass::Prev_Object -- Searches for the previous object on the map.                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include "function.h"
+#include "common/fading.h"
 
 /*
 **	These layer control elements are used to group the displayable objects

@@ -87,6 +87,7 @@
 
 #include "function.h"
 #include "vortex.h"
+#include "common/fading.h"
 
 /*
 **	These layer control elements are used to group the displayable objects
