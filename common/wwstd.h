@@ -216,4 +216,66 @@ typedef enum : unsigned short
     COLOR_PADDING = 0x1000
 } ColorType;
 
+/*
+** Define some Windows specific values that are used throghout the games
+*/
+#ifndef _WIN32
+
+#define _MAX_FNAME 255
+#define _MAX_EXT   8
+#define _MAX_PATH  512
+#define MAX_PATH   _MAX_PATH
+
+#define stricmp  strcasecmp
+#define _stricmp strcasecmp
+#define strnicmp strncasecmp
+#define memicmp  strncasecmp
+
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+inline static void _makepath(char* path, const char* drive, const char* dir, const char* fname, const char* ext)
+{
+    if (!path || !fname || !ext) {
+        return;
+    }
+
+    sprintf(path, "%s.%s", fname, ext);
+}
+
+inline static void _splitpath(char* path, const char* drive, const char* dir, const char* fname, const char* ext)
+{
+    if (!path || !ext) {
+        return;
+    }
+
+    for (int i = 0; i < strlen(path); i++) {
+        if (path[i] == '.') {
+            strcpy(ext, path + i + 1);
+            break;
+        }
+    }
+}
+
+inline static char* strupr(char* str)
+{
+    for (int i = 0; i < strlen(str); i++)
+        str[i] = toupper(str[i]);
+    return str;
+}
+
+inline static void strrev(char* str)
+{
+    int len = strlen(str);
+
+    for (int i = 0; i < len / 2; i++) {
+        char c = str[i];
+        str[i] = str[len - i - 1];
+        str[len - i - 1] = c;
+    }
+}
+
+#endif // not _WIN32
+
 #endif // WWSTD_H
