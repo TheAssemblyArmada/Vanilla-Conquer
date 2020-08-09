@@ -138,14 +138,9 @@ typedef struct
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
-//#include	<mem.h>
-//#include	<dos.h>
-#include <direct.h>
 #include <stdarg.h>
 #include <ctype.h>
 #include <assert.h>
-#include <process.h>
-//#include	<new.h>
 
 /*
 **	VQ player specific includes.
