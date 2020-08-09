@@ -37,6 +37,7 @@
 
 #include "function.h"
 #include "textblit.h"
+#include "common/irandom.h"
 
 #ifndef DEMO
 

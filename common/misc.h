@@ -106,23 +106,11 @@ void Convert_HSV_To_RGB(unsigned int h,
 
 unsigned char Version(void);
 
-/*=========================================================================*/
-/* The following prototypes are for the file: IRANDOM.CPP                  */
-/*=========================================================================*/
-int IRandom(int minval, int maxval);
-
 /*========================= Assembly Routines ==============================*/
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/*=========================================================================*/
-/* The following prototypes are for the file: RANDOM.ASM                   */
-/*=========================================================================*/
-
-unsigned char Random(void);
-int Get_Random_Mask(int maxval);
 
 /*=========================================================================*/
 /* The following prototype is for the file: SHAKESCR.ASM                   */

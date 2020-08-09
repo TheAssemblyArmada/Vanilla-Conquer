@@ -58,6 +58,7 @@
 
 #include "function.h"
 #include "terrain.h"
+#include "common/irandom.h"
 
 #define BARNACLE_STAGE       22
 #define FIRST_SPORE_STAGE    30

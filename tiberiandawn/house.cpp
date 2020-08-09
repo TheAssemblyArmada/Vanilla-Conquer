@@ -104,6 +104,7 @@
 */
 #include "sidebarglyphx.h"
 #include "defines.h"
+#include "common/irandom.h"
 
 /***********************************************************************************************
  * HouseClass::Validate -- validates house pointer															  *

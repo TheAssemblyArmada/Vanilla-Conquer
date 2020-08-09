@@ -32,6 +32,7 @@
 #include "gadget.h"
 #include "defines.h" // VOC_COUNT, VOX_COUNT
 #include "sidebarglyphx.h"
+#include "common/irandom.h"
 
 /*
 ** Externs

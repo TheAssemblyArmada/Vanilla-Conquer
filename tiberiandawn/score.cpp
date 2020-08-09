@@ -46,6 +46,8 @@
 
 #include "function.h"
 #include "textblit.h"
+#include "common/irandom.h"
+
 #define SCORETEXT_X 184
 #define SCORETEXT_Y 8
 #define CASUALTY_Y  88
