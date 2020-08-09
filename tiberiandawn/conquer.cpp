@@ -59,6 +59,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/irandom.h"
 #include "common/tcpip.h"
 #include <stdlib.h>
 #include <stdio.h>

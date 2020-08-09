@@ -46,6 +46,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/irandom.h"
 
 /************************************* Prototypes *********************************************/
 static void Assign_Houses(void);

@@ -31,9 +31,9 @@
 
 #include <stdlib.h>
 #include <time.h>
+#include "irandom.h"
 
 extern "C" unsigned long RandNumb = 0x12349876;
-extern "C" int Get_Random_Mask(int maxval);
 
 /* IRANDOM ----------------------------------------------------------
 
