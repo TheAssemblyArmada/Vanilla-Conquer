@@ -51,6 +51,7 @@ set(COMMON_SRC
     txtprnt.asm
     graphicsviewport.cpp
     xordelta.c
+    crc.cpp
 )
 
 if (WIN32)

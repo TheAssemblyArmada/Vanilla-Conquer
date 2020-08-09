@@ -160,11 +160,6 @@ int Desired_Facing256(int x1, int y1, int x2, int y2);
 #endif
 
 void* Build_Fading_Table(void const* palette, void const* dest, long int color, long int frac);
-/*=========================================================================*/
-/* The following prototype is for the file: CRC.ASM                        */
-/*=========================================================================*/
-
-long Calculate_CRC(void* buffer, long length);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: DETPROC.ASM                  */
@@ -185,5 +180,11 @@ extern short OperationgSystem;
 #endif
 
 /*=========================================================================*/
+
+/*=========================================================================*/
+/* The following prototype is for the file: CRC.CPP                        */
+/*=========================================================================*/
+
+long Calculate_CRC(void* buffer, long length);
 
 #endif // MISC_H
