@@ -32,142 +32,7 @@
 #ifndef PLAYCD_H
 #define PLAYCD_H
 
-#ifdef NOT_FOR_WIN95
-/* ==================================================================== */
-/* Defines */
-/* ==================================================================== */
-
-#define CHLEFT  0
-#define CHRIGHT 1
-#define CHBOTH  2
-
-#define AUDIO_START_MIN 1
-#define AUDIO_START_SEC 44
-
-typedef struct
-{
-    unsigned short seg;
-    unsigned short sel;
-} SEGSEL;
-
-extern "C" int DPMI_real_alloc(UINT, SEGSEL*, USHORT*);
-extern "C" int DPMI_real_free(SEGSEL);
-extern "C" void DPMI_real_intr(int, union REGS*, struct SREGS*);
-extern "C" void DPMI_real_call(void* funct, union REGS*, struct SREGS*);
-
-/* ==================================================================== */
-/* Data structures */
-/* ==================================================================== */
-
-// Audio Track Info request block
-
-struct TinfoType
-{
-    UBYTE Length;
-    UBYTE SubCd;
-    UBYTE Command;
-    UWORD Status;
-    UBYTE Rsvd[8];
-    UBYTE MDescr;
-
-    UWORD TrnsAdOff;
-    UWORD TrnsAdSeg;
-
-    UWORD CntTrns;
-    UWORD StSect;
-
-    UWORD VolIDOff;
-    UWORD VolIDSeg;
-
-    UBYTE TrInfo;
-    UBYTE Track;
-    ULONG Start;
-    UBYTE TrCtrl;
-};
-
-// Audio Track Status Control Block
-
-struct StatType
-{
-    UBYTE Length;
-    UBYTE SubCd;
-    UBYTE Command;
-    UWORD Status;
-    UBYTE Rsvd[8];
-    UBYTE MDescr;
-
-    UWORD TrnsAdOff;
-    UWORD TrnsAdSeg;
-
-    UWORD CntTrns;
-    UWORD StSect;
-
-    UWORD VolIDOff;
-    UWORD VolIDSeg;
-
-    UBYTE StatInfo;
-    UWORD Stat;
-    ULONG Start;
-    ULONG End;
-};
-
-// Audio Track Volume control block
-
-struct VolmType
-{
-    UBYTE Length;
-    UBYTE SubCd;
-    UBYTE Command;
-    UWORD Status;
-    UBYTE Rsvd[8];
-    UBYTE MDescr;
-
-    UWORD TrnsAdOff;
-    UWORD TrnsAdSeg;
-
-    UWORD CntTrns;
-    UWORD StSect;
-
-    UWORD VolIDOff;
-    UWORD VolIDSeg;
-
-    UBYTE TrInfo;
-    UBYTE In0;
-    UBYTE Vol0;
-    UBYTE In1;
-    UBYTE Vol1;
-    UBYTE In2;
-    UBYTE Vol2;
-    UBYTE In3;
-    UBYTE Vol3;
-};
-
-// Audio Track Play request block
-
-struct PlayType
-{
-    UBYTE Length;
-    UBYTE SubCd;
-    UBYTE Command;
-    UWORD Status;
-    UBYTE Rsvd[8];
-    UBYTE AddrMd;
-    ULONG Start;
-    ULONG CntSect;
-};
-
-// Audio Track Stop request block
-
-struct StopType
-{
-    UBYTE Length;
-    UBYTE SubCd;
-    UBYTE Command;
-    UWORD Status;
-    UBYTE Rsvd[8];
-};
-
-#endif // NOT_FOR_WIN95
+#include <string.h>
 
 /***************************************************************************
  * GetCDClass -- object which will return logical CD drive						*
@@ -187,8 +52,9 @@ protected:
     int CDIndex;
 
 public:
-    GetCDClass(VOID)
+    GetCDClass()
     {
+#ifdef _WIN32
         char* _path = "a:\\";
         char drive[4];
 
@@ -204,9 +70,10 @@ public:
                 CDDrives[CDCount++] = i - 'A';
             }
         }
+#endif
     }
 
-    ~GetCDClass(VOID)
+    ~GetCDClass()
     {
     }
     inline int Get_First_CD_Drive(void);
@@ -262,49 +129,5 @@ inline int GetCDClass::Get_First_CD_Drive(void)
     CDIndex = 0;
     return (Get_Next_CD_Drive());
 }
-
-/***************************************************************************
- * RedBookClass -- adds red book functionality										*
- *																									*
- *	this class inherits from GetCDClass and adds red book play functionality*
- *																									*
- *                                                                         *
- * HISTORY:                                                                *
- *   06/04/1994 SW : Created.																*
- *=========================================================================*/
-
-#ifdef NOT_FOR_WIN95
-class RedBookClass : public GetCDClass
-{
-
-private:
-    SEGSEL Tinfo_addrp;
-    SEGSEL Stat_addrp;
-    SEGSEL Stop_addrp;
-    SEGSEL Volm_addrp;
-    SEGSEL Play_addrp;
-
-    StopType Stop;
-    PlayType Play;
-    VolmType Volm;
-    StatType Stat;
-    TinfoType Tinfo;
-
-public:
-    RedBookClass(VOID);  // This is the default constructor
-    ~RedBookClass(VOID); // This is the destructor
-
-    ULONG RedToHS(ULONG i);
-    ULONG MSFtoRed(UBYTE m, UBYTE s, UBYTE f);
-    VOID FullCDVolume(UBYTE chan);
-    VOID PlayTrack(UWORD track);
-    VOID Play_CD_MSL(UWORD min_sec, UWORD len);
-    VOID PlayMSF(UBYTE startM, UBYTE startS, UBYTE startF, UBYTE endM, UBYTE endS, UBYTE endF, UBYTE chan);
-    UWORD CheckCDMusic(VOID);
-    VOID StopCDMusic(VOID);
-};
-
-#endif // NOT_FOR_WIN95
-/***************************** End of Playcd.h ****************************/
 
 #endif // PLAYCD_H
