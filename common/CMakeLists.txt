@@ -9,6 +9,7 @@ set(COMMON_SRC
     miscasm.asm
     misc.c
     irandoma.asm
+    keyfbuff.asm
     irandom.cpp
     drawmisca.asm
     drawmisc.cpp
