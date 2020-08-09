@@ -44,11 +44,6 @@
 #include <string.h>
 #include <windows.h>
 
-#ifndef WIN32
-#include <wwstd.h>
-#include <playcd.h>
-#endif
-
 /*
 **	Pointer to the first search path record.
 */
