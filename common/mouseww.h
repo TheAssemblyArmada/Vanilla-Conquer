@@ -102,6 +102,10 @@ private:
 
     int EraseFlags; // Records whether mutex has been released
 
+    void Mouse_Shadow_Buffer(GraphicViewPortClass* viewport, void* buffer, int x, int y, int hotx, int hoty, int store);
+    void Draw_Mouse(GraphicViewPortClass* viewport, int x, int y);
+    void* ASM_Set_Mouse_Cursor(int hotspotx, int hotspoty, void* cursor);
+
 #ifdef _WIN32
     CRITICAL_SECTION MouseCriticalSection; // Control for mouse re-enterancy
     unsigned TimerHandle;

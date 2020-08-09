@@ -116,6 +116,10 @@ typedef struct
     unsigned char OriginalHeight; // Original height of shape in scan lines
     unsigned short ShapeSize;     // Size of the shape, including header
     unsigned short DataLength;    // Size of the uncompressed shape (just data)
+} Shape_Header;
+
+typedef struct Shape_Type : Shape_Header
+{
     unsigned char Colortable[16]; // Optional color table for compact shape
 } Shape_Type;
 
