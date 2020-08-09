@@ -46,7 +46,6 @@ set(REDALERT_SRC
     control.cpp
     coord.cpp
     crate.cpp
-    crc.cpp
     crcpipe.cpp
     crcstraw.cpp
     credits.cpp

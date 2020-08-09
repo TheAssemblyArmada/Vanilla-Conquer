@@ -38,23 +38,6 @@
 #include <stdlib.h>
 
 /*
-**	The "bool" integral type was defined by the C++ comittee in
-**	November of '94. Until the compiler supports this, use the following
-**	definition.
-*/
-#ifndef __BORLANDC__
-#ifndef TRUE_FALSE_DEFINED
-#define TRUE_FALSE_DEFINED
-enum
-{
-    false = 0,
-    true = 1
-};
-typedef int bool;
-#endif
-#endif
-
-/*
 **	This is a CRC engine class. It will process submitted data and generate a CRC from it.
 **	Well, actually, the value returned is not a true CRC. However, it shares the same strength
 **	characteristic and is faster to generate than the traditional CRC. This object is treated like
@@ -96,10 +79,15 @@ protected:
         return (Index != 0);
     };
 
+    inline unsigned long lrotl(unsigned long value, int shift) const
+    {
+        return (value << shift) | (value >> (sizeof(unsigned long) * 8 - shift));
+    }
+
     long Value(void) const
     {
         if (Buffer_Needs_Data()) {
-            return (_lrotl(CRC, 1) + StagingBuffer.Composite);
+            return (lrotl(CRC, 1) + StagingBuffer.Composite);
         }
         return (CRC);
     };
