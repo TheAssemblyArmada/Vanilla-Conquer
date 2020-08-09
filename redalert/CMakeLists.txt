@@ -1,5 +1,4 @@
 set(REDALERT_SRC
-    keyfbuff.asm
     _wsproto.cpp
     2keyfram.cpp
     aadata.cpp

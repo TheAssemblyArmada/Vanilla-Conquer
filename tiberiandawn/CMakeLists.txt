@@ -1,5 +1,4 @@
 set(TIBDAWN_SRC
-    keyfbuff.asm
     aadata.cpp
     abstract.cpp
     adata.cpp
