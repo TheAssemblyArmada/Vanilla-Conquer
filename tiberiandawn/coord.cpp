@@ -43,6 +43,63 @@
 
 #include "function.h"
 
+#ifdef NOASM
+/***********************************************************************************************
+ * Coord_Cell -- Convert a coordinate into a cell number.                                      *
+ *                                                                                             *
+ *    This routine will convert the specified coordinate value into a cell number. This is     *
+ *    useful to determine the map index number into the cell array that corresponds to a       *
+ *    particular coordinate.                                                                   *
+ *                                                                                             *
+ * INPUT:   coord -- The coordinate to convert into a cell number.                             *
+ *                                                                                             *
+ * OUTPUT:  Returns with the cell number that corresponds to the coordinate specified.         *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/17/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+CELL Coord_Cell(COORDINATE coord)
+{
+    return XY_Cell(Coord_XCell(coord), Coord_YCell(coord));
+}
+
+/***********************************************************************************************
+ * Distance -- Determines the lepton distance between two coordinates.                         *
+ *                                                                                             *
+ *    This routine is used to determine the distance between two coordinates. It uses the      *
+ *    Dragon Strike method of distance determination and thus it is very fast.                 *
+ *                                                                                             *
+ * INPUT:   coord1   -- First coordinate.                                                      *
+ *                                                                                             *
+ *          coord2   -- Second coordinate.                                                     *
+ *                                                                                             *
+ * OUTPUT:  Returns the lepton distance between the two coordinates.                           *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   05/27/1994 JLB : Created.                                                                 *
+ *=============================================================================================*/
+int Distance_Coord(COORDINATE coord1, COORDINATE coord2)
+{
+    int diff1, diff2;
+
+    diff1 = Coord_Y(coord1) - Coord_Y(coord2);
+    if (diff1 < 0)
+        diff1 = -diff1;
+    diff2 = Coord_X(coord1) - Coord_X(coord2);
+    if (diff2 < 0)
+        diff2 = -diff2;
+    if (diff1 > diff2) {
+        return (diff1 + ((unsigned)diff2 / 2));
+    }
+    return (diff2 + ((unsigned)diff1 / 2));
+}
+
+#endif
+
 /***********************************************************************************************
  * Coord_Spillage_List -- Determines the offset list for cell spillage/occupation.             *
  *                                                                                             *

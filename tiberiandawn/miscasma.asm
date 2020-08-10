@@ -17,8 +17,10 @@
 
 .model flat
 
+IFNDEF NOASM
 externdef C Distance_Coord:near
 externdef C Coord_Cell:near
+ENDIF
 externdef C Fat_Put_Pixel:near
 
 GraphicViewPort struct
@@ -34,6 +36,7 @@ GraphicViewPort ends
 
 .code
 
+IFNDEF NOASM
 ;***********************************************************************************************
 ;* Distance -- Determines the lepton distance between two coordinates.                         *
 ;*                                                                                             *
@@ -90,6 +93,8 @@ Coord_Cell proc C coord:dword
     pop ebx
     ret
 Coord_Cell endp
+
+ENDIF
 
 ;***************************************************************************
 ;* Fat_Put_Pixel -- Draws a fat pixel.                                     *
