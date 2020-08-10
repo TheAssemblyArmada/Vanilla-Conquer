@@ -33,7 +33,57 @@
 #include <time.h>
 #include "irandom.h"
 
-extern "C" unsigned long RandNumb = 0x12349876;
+extern "C" unsigned RandNumb = 0x12349876;
+
+#ifdef NOASM
+static bool bsr(unsigned int* index, unsigned mask)
+{
+    if (mask == 0 || index == 0)
+        return 0;
+
+    int i = 0;
+    for (i = 31; i >= 0; --i) {
+        unsigned tmp = 1 << i;
+
+        if ((mask & tmp) != 0) {
+            *index = i;
+            break;
+        }
+    }
+
+    return i >= 0;
+}
+
+unsigned char Random()
+{
+    /*
+    ** This treats the number as bytes so setting it on bit endian machines needs to byte swap.
+    */
+    unsigned char* bytes = reinterpret_cast<unsigned char*>(&RandNumb);
+    unsigned char cf1 = (bytes[0] >> 1) & 1;
+    unsigned char tmp_a = bytes[0] >> 2;
+    unsigned char cf2 = (bytes[2] >> 7) & 1;
+    bytes[2] = (bytes[2] << 1) | cf1;
+    cf1 = (bytes[1] >> 7) & 1;
+    bytes[1] = (bytes[1] << 1) | cf2;
+    cf2 = (tmp_a - (RandNumb + (cf1 != 1))) & 1;
+    bytes[0] = (bytes[0] >> 1) | (cf2 << 7);
+
+    return bytes[1] ^ bytes[0];
+}
+
+int Get_Random_Mask(int maxval)
+{
+    unsigned int index;
+    unsigned int mask = 1;
+
+    if (bsr(&index, maxval)) {
+        mask = (1 << (index + 1)) - 1;
+    }
+
+    return mask;
+}
+#endif
 
 /* IRANDOM ----------------------------------------------------------
 

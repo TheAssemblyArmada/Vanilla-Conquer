@@ -17,7 +17,7 @@ extern "C" {
 #endif
 
 int IRandom(int minval, int maxval);
-unsigned char Random(void);
+unsigned char Random();
 int Get_Random_Mask(int maxval);
 
 #ifdef __cplusplus
