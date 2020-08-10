@@ -31,16 +31,19 @@
 
 .model flat
 
+IFNDEF NOASM
 externdef C Random:near
 externdef C Get_Random_Mask:near
-extern _RandNumb:near
+extern C RandNumb:near
+ENDIF
 
 .code
 
+IFNDEF NOASM
 ;unsigned char Random(void)
 Random proc C
     push    esi
-    lea     esi, [_RandNumb]    ; get offset in segment of RandNumb
+    lea     esi, [RandNumb]    ; get offset in segment of RandNumb
     xor     eax,eax
     mov     al,[esi]
     shr     al,1               ; shift right 1 bit (bit0 in carry)
@@ -68,5 +71,6 @@ Get_Random_Mask proc C maxval:dword
 invalid:
     ret
 Get_Random_Mask endp
+ENDIF
 
 end
