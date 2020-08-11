@@ -32,6 +32,9 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #ifndef MEMFLAG_H
 #define MEMFLAG_H
+
+#include <stddef.h>
+
 // Memory Flags
 /*
 **	Memory allocation flags.  These are the flags that are passed into Alloc

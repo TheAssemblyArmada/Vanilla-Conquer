@@ -72,7 +72,6 @@ set(TIBDAWN_SRC
     ipxgconn.cpp
     ipxmgr.cpp
     jshell.cpp
-    keyframe.cpp
     layer.cpp
     lib.cpp
     link.cpp

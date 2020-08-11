@@ -53,6 +53,7 @@ set(COMMON_SRC
     graphicsviewport.cpp
     xordelta.c
     crc.cpp
+    keyframe.cpp
 )
 
 if (WIN32)

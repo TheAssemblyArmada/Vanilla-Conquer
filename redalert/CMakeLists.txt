@@ -1,6 +1,5 @@
 set(REDALERT_SRC
     _wsproto.cpp
-    2keyfram.cpp
     aadata.cpp
     abstract.cpp
     adata.cpp
