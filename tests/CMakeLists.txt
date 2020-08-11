@@ -1,5 +1,5 @@
 add_custom_target(tests)
-add_dependencies(tests test_miscasm test_face test_rect test_fading test_lcw test_xordelta test_irandom)
+add_dependencies(tests test_miscasm test_face test_rect test_fading test_lcw test_xordelta test_irandom test_fatpixel)
 
 add_executable(test_miscasm miscasm.cpp)
 target_include_directories(test_miscasm PUBLIC .. ../common)
@@ -42,3 +42,9 @@ target_include_directories(test_irandom PUBLIC .. ../common)
 target_compile_definitions(test_irandom PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE WINSOCK_IPX)
 target_link_libraries(test_irandom PUBLIC common ${STATIC_LIBS})
 add_test(NAME irandom COMMAND ${TARGET_SYSTEM_EMULATOR} $<TARGET_FILE:test_irandom>)
+
+add_executable(test_fatpixel fatpixel.cpp ../tiberiandawn/stamp.asm ../tiberiandawn/miscasma.asm)
+target_include_directories(test_fatpixel PUBLIC .. ../common)
+target_compile_definitions(test_fatpixel PUBLIC TRUE_FALSE_DEFINED ENGLISH WIN32 $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE WINSOCK_IPX)
+target_link_libraries(test_fatpixel PUBLIC commonv ${STATIC_LIBS})
+add_test(NAME fatpixel COMMAND ${TARGET_SYSTEM_EMULATOR} $<TARGET_FILE:test_fatpixel>)
