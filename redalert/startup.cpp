@@ -89,8 +89,7 @@ bool ProgEndCalled = false;
 extern "C" {
 extern char* BigShapeBufferStart;
 extern char* TheaterShapeBufferStart;
-extern BOOL UseBigShapeBuffer;
-extern bool IsTheaterShape;
+extern unsigned int IsTheaterShape;
 }
 
 extern void Free_Heaps(void);

@@ -3571,16 +3571,6 @@ typedef enum WaypointEnum : unsigned char
 */
 #define MAX_EVENTS 256
 
-typedef enum : unsigned char
-{
-    KF_NUMBER = 0x08,
-    KF_LCW = 0x10,
-    KF_DELTA = 0x20,
-    KF_KEYDELTA = 0x40,
-    KF_KEYFRAME = 0x80,
-    KF_MASK = 0xF0
-} KeyFrameType;
-
 /*
 ** New Config structure for .CFG files
 */

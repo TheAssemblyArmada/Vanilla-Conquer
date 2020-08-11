@@ -438,7 +438,7 @@ extern class DynamicVectorClass<ActionChoiceClass> test3;
 extern bool LogDump_Print;
 
 extern "C" {
-extern bool IsTheaterShape;
+extern unsigned int IsTheaterShape;
 }
 
 extern void Reset_Theater_Shapes(void);
@@ -457,8 +457,6 @@ void WWDebugString(const char* string);
 #ifndef REMASTER_BUILD
 #define GlyphX_Debug_Print(x) WWDebugString(x)
 #endif
-#else
-extern bool IsTheaterShape;
 #endif // WIN32
 
 /*************************************************************

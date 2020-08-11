@@ -35,9 +35,12 @@
  *   Get_Build_Frame_Height -- Fetches the height of the shape image.                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
-#include "common/lcw.h"
-#include "common/xordelta.h"
+#include "lcw.h"
+#include "xordelta.h"
+#include "memflag.h"
+#include "keyframe.h"
+
+#include <string.h>
 
 #define SUBFRAMEOFFS 7 // 3 1/2 frame offsets loaded (2 offsets/frame)
 
@@ -55,23 +58,23 @@ typedef struct
 } KeyFrameHeaderType;
 
 #define INITIAL_BIG_SHAPE_BUFFER_SIZE 12000 * 1024
-#define THEATER_BIG_SHAPE_BUFFER_SIZE 1000 * 1024
+#define THEATER_BIG_SHAPE_BUFFER_SIZE 2000 * 1024
 #define UNCOMPRESS_MAGIC_NUMBER       56789
 
 unsigned BigShapeBufferLength = INITIAL_BIG_SHAPE_BUFFER_SIZE;
 unsigned TheaterShapeBufferLength = THEATER_BIG_SHAPE_BUFFER_SIZE;
 extern "C" {
-char* BigShapeBufferStart = NULL;
-char* TheaterShapeBufferStart = NULL;
-BOOL UseBigShapeBuffer = FALSE;
-bool IsTheaterShape = false;
+char* BigShapeBufferStart = nullptr;
+char* TheaterShapeBufferStart = nullptr;
+unsigned int UseBigShapeBuffer = false;
+unsigned int IsTheaterShape = false;
 }
-char* BigShapeBufferPtr = NULL;
+char* BigShapeBufferPtr = nullptr;
 int TotalBigShapes = 0;
-BOOL ReallocShapeBufferFlag = FALSE;
+bool ReallocShapeBufferFlag = false;
 bool OriginalUseBigShapeBuffer = false;
 
-char* TheaterShapeBufferPtr = NULL;
+char* TheaterShapeBufferPtr = nullptr;
 int TotalTheaterShapes = 0;
 
 #define MAX_SLOTS          1500
@@ -122,12 +125,14 @@ void Reset_Theater_Shapes(void)
     TheaterSlotsUsed = THEATER_SLOT_START;
 }
 
-void Reallocate_Big_Shape_Buffer(void)
+extern void Memory_Error_Handler();
+
+void Reallocate_Big_Shape_Buffer()
 {
     if (ReallocShapeBufferFlag) {
-        BigShapeBufferLength += 200 * 1024; // Extra 2 Mb of uncompressed shape space
+        BigShapeBufferLength += 2000 * 1024; // Extra 2 Mb of uncompressed shape space
         BigShapeBufferPtr -= (unsigned)BigShapeBufferStart;
-        Memory_Error = NULL;
+        Memory_Error = nullptr;
         BigShapeBufferStart = (char*)Resize_Alloc(BigShapeBufferStart, BigShapeBufferLength);
         Memory_Error = &Memory_Error_Handler;
         /*
@@ -139,21 +144,17 @@ void Reallocate_Big_Shape_Buffer(void)
             return;
         }
         BigShapeBufferPtr += (unsigned)BigShapeBufferStart;
-        ReallocShapeBufferFlag = FALSE;
+        ReallocShapeBufferFlag = false;
     }
 }
 
-void Check_Use_Compressed_Shapes(void)
+void Check_Use_Compressed_Shapes()
 {
-    MEMORYSTATUS mem_info;
-
-    mem_info.dwLength = sizeof(mem_info);
-    GlobalMemoryStatus(&mem_info);
-
-    UseBigShapeBuffer = (mem_info.dwTotalPhys > 16 * 1024 * 1024) ? TRUE : FALSE;
-    OriginalUseBigShapeBuffer = UseBigShapeBuffer;
-
-    // UseBigShapeBuffer = false;
+    // Uncompressed shapes enabled for performance reasons. We don't need to worry about memory.
+    // Uncompressed shapes don't seem to work in RA for rotated/scaled objects so wherever scale/rotate is used,
+    // we will need to disable it (like in Techno_Draw_Object). ST - 11/6/2019 2:09PM
+    UseBigShapeBuffer = true;
+    OriginalUseBigShapeBuffer = true;
 }
 
 /***********************************************************************************************
@@ -170,7 +171,7 @@ void Check_Use_Compressed_Shapes(void)
  * HISTORY:                                                                                    *
  *    11/19/96 2:37PM ST : Created                                                             *
  *=============================================================================================*/
-void Disable_Uncompressed_Shapes(void)
+void Disable_Uncompressed_Shapes()
 {
     UseBigShapeBuffer = false;
 }
@@ -189,7 +190,7 @@ void Disable_Uncompressed_Shapes(void)
  * HISTORY:                                                                                    *
  *    11/19/96 2:37PM ST : Created                                                             *
  *=============================================================================================*/
-void Enable_Uncompressed_Shapes(void)
+void Enable_Uncompressed_Shapes()
 {
     UseBigShapeBuffer = OriginalUseBigShapeBuffer;
 }
@@ -239,6 +240,7 @@ unsigned long Build_Frame(void const* dataptr, unsigned short framenumber, void*
         if (!BigShapeBufferStart) {
             BigShapeBufferStart = (char*)Alloc(BigShapeBufferLength, MEM_NORMAL);
             BigShapeBufferPtr = BigShapeBufferStart;
+
             /*
             ** Allocate memory for theater specific uncompressed shapes
             */
@@ -247,40 +249,11 @@ unsigned long Build_Frame(void const* dataptr, unsigned short framenumber, void*
         }
 
         /*
-        ** Track memory usage in uncompressed shape buffers.
-        */
-        static bool show_info = true;
-
-        if ((Frame & 0xff) == 0) {
-
-            if (show_info) {
-
-                char debugstr[128];
-                sprintf(debugstr, "C&C95 - Big shape buffer is now %d Kb.\n", BigShapeBufferLength / 1024);
-                CCDebugString(debugstr);
-
-                sprintf(debugstr,
-                        "C&C95 - %d Kb Used in big shape buffer.\n",
-                        (unsigned)((unsigned)BigShapeBufferPtr - (unsigned)BigShapeBufferStart) / 1024);
-                CCDebugString(debugstr);
-
-                sprintf(debugstr,
-                        "C&C95 - %d Kb Used in theater shape buffer.\n",
-                        (unsigned)((unsigned)TheaterShapeBufferPtr - (unsigned)TheaterShapeBufferStart) / 1024);
-                CCDebugString(debugstr);
-                show_info = false;
-            }
-
-        } else {
-            show_info = true;
-        }
-
-        /*
         ** If we are running out of memory (<128k left) for uncompressed shapes
         ** then allocate some more.
         */
         if (((unsigned)BigShapeBufferStart + BigShapeBufferLength) - (unsigned)BigShapeBufferPtr < 128 * 1024) {
-            ReallocShapeBufferFlag = TRUE;
+            ReallocShapeBufferFlag = true;
         }
 
         /*
@@ -358,6 +331,7 @@ unsigned long Build_Frame(void const* dataptr, unsigned short framenumber, void*
 #ifndef FIXIT_SCORE_CRASH
         off16 = (unsigned long)lockptr & 0x00003FFFL;
 #endif
+
         length = LCW_Uncompress(ptr, buffptr, buffsize);
 
         if (length > buffsize) {
@@ -374,6 +348,7 @@ unsigned long Build_Frame(void const* dataptr, unsigned short framenumber, void*
             offdiff = 0;
         }
 #endif
+
         length = buffsize;
         Apply_Delta(buffptr, Add_Long_To_Pointer(ptr, offdiff));
 

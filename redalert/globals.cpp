@@ -723,14 +723,8 @@ TTimerClass<SystemTimerClass> TickCount = 0;
 /***************************************************************************
 **  Win32 specific globals
 */
-#ifdef WIN32
-
 bool InDebugger = false;
 int ReadyToQuit = 0;
-
-#else
-bool IsTheaterShape = false; // must be defined only if not Win32
-#endif // WIN32
 
 GetCDClass CDList;
 int UnitBuildPenalty = 100;
