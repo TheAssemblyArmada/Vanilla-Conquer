@@ -3371,6 +3371,8 @@ void Extract(char* filename, char* outname)
 
 bool bUsingDVD = false;
 
+#ifndef REMASTER_BUILD
+
 const char* Game_Registry_Key();
 
 //***********************************************************************************************
@@ -3410,6 +3412,8 @@ bool Determine_If_Using_DVD()
 
     return bUsingDVD;
 }
+
+#endif
 
 //***********************************************************************************************
 bool Using_DVD()
