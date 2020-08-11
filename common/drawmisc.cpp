@@ -1,3 +1,6 @@
+#include "gbuffer.h"
+#include <string.h>
+
 #ifdef _WIN32
 #include <windows.h>
 HWND MainWindow; // Handle to programs main window
@@ -17,3 +20,31 @@ bool AllowHardwareBlitFills = true;
 */
 void (*Misc_Focus_Loss_Function)(void) = nullptr;
 void (*Misc_Focus_Restore_Function)(void) = nullptr;
+
+#ifdef NOASM
+
+extern "C" void Fat_Put_Pixel(int x, int y, int value, int size, GraphicViewPortClass& gvp)
+{
+    char* buf;
+    int w;
+    int pitch;
+
+    if (size == 0) {
+        return;
+    }
+
+    if ((unsigned)y >= (unsigned)gvp.Get_Height() || (unsigned)x >= (unsigned)gvp.Get_Width()) {
+        return;
+    }
+
+    buf = reinterpret_cast<char*>(x + (gvp.Get_Pitch() + gvp.Get_XAdd() + gvp.Get_Width()) * y + gvp.Get_Offset());
+    w = size;
+    pitch = gvp.Get_Pitch() + gvp.Get_XAdd() + gvp.Get_Width();
+
+    while (size--) {
+        memset(buf, value, w);
+        buf += pitch;
+    }
+}
+
+#endif

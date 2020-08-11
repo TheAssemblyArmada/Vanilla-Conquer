@@ -20,8 +20,8 @@
 IFNDEF NOASM
 externdef C Distance_Coord:near
 externdef C Coord_Cell:near
-ENDIF
 externdef C Fat_Put_Pixel:near
+ENDIF
 
 GraphicViewPort struct
     GVPOffset   DD ? ; offset to virtual viewport
@@ -94,8 +94,6 @@ Coord_Cell proc C coord:dword
     ret
 Coord_Cell endp
 
-ENDIF
-
 ;***************************************************************************
 ;* Fat_Put_Pixel -- Draws a fat pixel.                                     *
 ;*                                                                         *
@@ -167,5 +165,6 @@ exit_label:
     pop     ebx
     ret
 Fat_Put_Pixel endp
+ENDIF
 
 end

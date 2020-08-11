@@ -7,7 +7,7 @@ extern "C" extern unsigned char PaletteTable[1024];
 extern "C" void __cdecl Buffer_Draw_Line(void* this_object, int sx, int sy, int dx, int dy, unsigned char color);
 extern "C" void __cdecl Buffer_Fill_Rect(void* thisptr, int sx, int sy, int dx, int dy, unsigned char color);
 extern "C" void __cdecl Buffer_Clear(void* this_object, unsigned char color);
-extern "C" BOOL __cdecl Linear_Blit_To_Linear(void* this_object,
+extern "C" bool __cdecl Linear_Blit_To_Linear(void* this_object,
                                               void* dest,
                                               int x_pixel,
                                               int y_pixel,
@@ -15,8 +15,8 @@ extern "C" BOOL __cdecl Linear_Blit_To_Linear(void* this_object,
                                               int dest_y0,
                                               int pixel_width,
                                               int pixel_height,
-                                              BOOL trans);
-extern "C" BOOL __cdecl Linear_Scale_To_Linear(void* this_object,
+                                              bool trans);
+extern "C" bool __cdecl Linear_Scale_To_Linear(void* this_object,
                                                void* dest,
                                                int src_x,
                                                int src_y,
@@ -26,7 +26,7 @@ extern "C" BOOL __cdecl Linear_Scale_To_Linear(void* this_object,
                                                int src_height,
                                                int dst_width,
                                                int dst_height,
-                                               BOOL trans,
+                                               bool trans,
                                                char* remap);
 
 extern "C" extern int LastIconset;
@@ -39,5 +39,8 @@ extern "C" extern int IconSize;
 extern "C" extern int IconCount;
 
 extern "C" void __cdecl Init_Stamps(unsigned int icondata);
+
+class GraphicViewPortClass;
+extern "C" void Fat_Put_Pixel(int x, int y, int value, int size, GraphicViewPortClass& gvp);
 
 #endif
