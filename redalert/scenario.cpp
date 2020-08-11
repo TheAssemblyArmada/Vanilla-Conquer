@@ -491,12 +491,7 @@ bool Read_Scenario(char* name)
             /*
             ** Find out if the CD in the current drive is the Aftermath disc.
             */
-#ifdef FIXIT_VERSION_3
-            int cd_index = Get_CD_Index(CCFileClass::Get_CD_Drive(), 1 * 60);
-            if (!(Using_DVD() && cd_index == 5) && cd_index != 3) {
-#else
             if (Get_CD_Index(CCFileClass::Get_CD_Drive(), 1 * 60) != 3) {
-#endif
                 GamePalette.Set(FADE_PALETTE_FAST, Call_Back);
                 RequiredCD = 3;
                 if (!Force_CD_Available(RequiredCD)) { // force Aftermath CD in drive.
@@ -2144,12 +2139,7 @@ bool Read_Scenario_INI(char* fname, bool)
         // to avoid a black screen.  If this is a normal RA game, and the CD being
         // requested is an RA CD, then don't set the palette, leave the map screen up.
 
-#ifdef FIXIT_VERSION_3
-        int cd_index = Get_CD_Index(CCFileClass::Get_CD_Drive(), 1 * 60);
-        if (!(Using_DVD() && cd_index == 5) && cd_index != RequiredCD) {
-#else
         if (Get_CD_Index(CCFileClass::Get_CD_Drive(), 1 * 60) != RequiredCD) {
-#endif
             if ((RequiredCD == 0 || RequiredCD == 1) && Session.Type == GAME_NORMAL) {
                 SeenPage.Clear();
             }
