@@ -2649,15 +2649,6 @@ static void Init_CDROM_Access(void)
     VisiblePage.Clear();
     HidPage.Clear();
 
-#ifdef FIXIT_VERSION_3
-    //	Determine if we're going to be running from a DVD.
-    //	The entire session will either require a DVD, or the regular CDs. Never both.
-    //	Call Using_DVD() to determine which case it is.
-    //	Here we set the value that Using_DVD() returns.
-    Determine_If_Using_DVD();
-    //	Force_CD_Available() is modified when Using_DVD() is true so that all requests become requests for the DVD.
-#endif
-
     /*
     **	Always try to look at the CD-ROM for data files.
     */
@@ -3365,62 +3356,6 @@ void Extract(char* filename, char* outname)
         free(buffer);
     }
 }
-#endif
-
-#ifdef FIXIT_VERSION_3
-
-bool bUsingDVD = false;
-
-#ifndef REMASTER_BUILD
-
-const char* Game_Registry_Key();
-
-//***********************************************************************************************
-bool Is_DVD_Installed()
-{
-    bool bInstalled;
-    HKEY hKey;
-    if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, Game_Registry_Key(), 0, KEY_READ, &hKey) != ERROR_SUCCESS)
-        return false;
-    DWORD dwValue;
-    DWORD dwBufSize = sizeof(DWORD);
-    if (RegQueryValueEx(hKey, "DVD", 0, NULL, (LPBYTE)&dwValue, &dwBufSize) != ERROR_SUCCESS)
-        bInstalled = false;
-    else
-        bInstalled = (bool)dwValue; //	(Presumably true, if it's there...)
-
-    RegCloseKey(hKey);
-
-    return bInstalled;
-}
-
-//***********************************************************************************************
-bool Determine_If_Using_DVD()
-{
-    //	Determines if the user has a DVD currently available. If they do, we'll use it throughout the
-    //	session. Else we won't check for it again and will always ask for CDs.
-    if (Is_DVD_Installed()) {
-        if (Force_CD_Available(5)) {
-            bUsingDVD = true;
-        } else {
-            //	User hit cancel. Allow things to progress normally. They will be prompted for
-            //	a Red Alert disk as usual.
-            bUsingDVD = false;
-        }
-    } else
-        bUsingDVD = false;
-
-    return bUsingDVD;
-}
-
-#endif
-
-//***********************************************************************************************
-bool Using_DVD()
-{
-    return bUsingDVD;
-}
-
 #endif
 
 /***********************************************************************************************

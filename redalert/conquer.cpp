@@ -4541,13 +4541,6 @@ bool Force_CD_Available(int cd_desired) //	ajw
     //	debugprint("We are checking for %d\n", cd_desired);
     //	debugprint("current_drive = %d\n", current_drive);
 
-    if (Using_DVD()) {
-        //	All requested cd indexes get rerouted to the DVD.
-        cd_desired = CD_DVD;
-        //		if( RequiredCD != -1 )
-        //			RequiredCD = CD_DVD;		//	Just seems like a good idea. Not sure if necessary.	ajw
-    }
-
     if (cd_current >= 0) {
         if (cd_desired == CD_CS_OR_AM) {
             // If the current cd is CS or AM then change request to whatever
