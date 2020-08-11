@@ -65,9 +65,6 @@ endif()
 find_package(ClangFormat)
 include(ClangFormat)
 
-enable_testing()
-add_subdirectory(tests)
-
 # For now build the dll files by default only for windows while there is only the proprietary GlyphX frontend for them.
 if(WIN32)
     set(DEFAULT_REMASTER ON)
@@ -89,6 +86,10 @@ option(USE_ASM "Use x86 assembly optimizations." ON)
 if(NOT USE_ASM)
     add_definitions(-DNOASM)
 endif()
+
+# Tests need to respect some options so need to occur after the options are set.
+enable_testing()
+add_subdirectory(tests)
 
 if(NOT BUILD_VANILLATD AND MAP_EDTITORTD)
     message(WARNING "Internal scenario editor requires a Tiberian Dawn executable to be built, but it was not enabled.")
