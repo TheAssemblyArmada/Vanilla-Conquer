@@ -385,6 +385,7 @@ private:
     static int CurrentDrawCount;
     static int TotalObjectCount;
     static int SortOrder;
+    static int ExportLayer;
     static CNCObjectListStruct* ObjectList;
 
     static CNC_Event_Callback_Type EventCallback;
@@ -423,6 +424,7 @@ private:
 int DLLExportClass::CurrentDrawCount = 0;
 int DLLExportClass::TotalObjectCount = 0;
 int DLLExportClass::SortOrder = 0;
+int DLLExportClass::ExportLayer = 0;
 CNCObjectListStruct* DLLExportClass::ObjectList = NULL;
 SidebarGlyphxClass DLLExportClass::MultiplayerSidebars[MAX_PLAYERS];
 uint64 DLLExportClass::GlyphxPlayerIDs[MAX_PLAYERS] = {0xffffffffl};
@@ -3006,7 +3008,11 @@ void DLLExportClass::DLL_Draw_Intercept(int shape_number,
 
     new_object.CNCInternalObjectPointer = (void*)object;
     new_object.OccupyListLength = 0;
-    new_object.SortOrder = SortOrder++;
+    if (CurrentDrawCount == 0) {
+        new_object.SortOrder = (ExportLayer << 29) + (object->Sort_Y() >> 3);
+    } else {
+        new_object.SortOrder = ObjectList->Objects[TotalObjectCount].SortOrder + CurrentDrawCount;
+    }
 
     strncpy(new_object.TypeName, object->Class_Of().IniName, CNC_OBJECT_ASSET_NAME_LENGTH);
 
@@ -3367,6 +3373,8 @@ bool DLLExportClass::Get_Layer_State(uint64 player_id, unsigned char* buffer_in,
     **	Get the ground layer first and then followed by all the layers in increasing altitude.
     */
     for (int layer = 0; layer < DLL_LAYER_COUNT; layer++) {
+
+        ExportLayer = layer;
 
         for (int index = 0; index < Map.Layer[layer].Count(); index++) {
 
