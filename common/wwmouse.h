@@ -32,15 +32,18 @@
 #ifndef WW_MOUSE_H
 #define WW_MOUSE_H
 
-#include "gbuffer.h"
+class GraphicViewPortClass;
+class GraphicBufferClass;
+class Rect;
 
 class WWMouseClass
 {
 public:
     WWMouseClass(GraphicViewPortClass* scr, int mouse_max_width, int mouse_max_height);
-    ~WWMouseClass();
-    void* Set_Cursor(int xhotspot, int yhotspot, void* cursor);
-    void Process_Mouse(void);
+    virtual ~WWMouseClass();
+    static WWMouseClass* CreateMouse(GraphicViewPortClass* scr, int mouse_max_width, int mouse_max_height);
+
+    virtual void* Set_Cursor(int xhotspot, int yhotspot, void* cursor) = 0;
     void Hide_Mouse(void);
     void Show_Mouse(void);
     void Conditional_Hide_Mouse(int x1, int y1, int x2, int y2);
@@ -49,26 +52,34 @@ public:
     int Get_Mouse_X(void);
     int Get_Mouse_Y(void);
     void Get_Mouse_XY(int& x, int& y);
-    //
-    // The following two routines can be used to render the mouse onto a graphicbuffer
-    // other than the hidpage.
-    //
-    void Draw_Mouse(GraphicViewPortClass* scr);
-    void Erase_Mouse(GraphicViewPortClass* scr, int forced = 0);
 
     void Block_Mouse(GraphicBufferClass* buffer);
     void Unblock_Mouse(GraphicBufferClass* buffer);
     void Set_Cursor_Clip(void);
     void Clear_Cursor_Clip(void);
 
-private:
+    //
+    // The following two routines can be used to render the mouse onto a graphicbuffer
+    // other than the hidpage.
+    //
+    virtual void Draw_Mouse(GraphicViewPortClass* scr) = 0;
+    virtual void Erase_Mouse(GraphicViewPortClass* scr, int forced = 0) = 0;
+
+protected:
+    virtual void Process_Mouse() = 0;
+    virtual void Low_Hide_Mouse() = 0;
+    virtual void Low_Show_Mouse(int x, int y) = 0;
+
+    virtual void GetPosition(int& x, int& y) = 0;
+    virtual void Block() = 0;
+    virtual void Unblock() = 0;
+    virtual void Clip(const Rect& rect) = 0;
+
     enum
     {
         CONDHIDE = 1,
         CONDHIDDEN = 2,
     };
-    void Low_Hide_Mouse(void);
-    void Low_Show_Mouse(int x, int y);
 
     char* MouseCursor; // pointer to the mouse cursor in memory
     int MouseXHot;     // X hot spot of the current mouse cursor
@@ -101,15 +112,6 @@ private:
     int EraseBuffHotY; // Y position of the hidden page background
 
     int EraseFlags; // Records whether mutex has been released
-
-    void Mouse_Shadow_Buffer(GraphicViewPortClass* viewport, void* buffer, int x, int y, int hotx, int hoty, int store);
-    void Draw_Mouse(GraphicViewPortClass* viewport, int x, int y);
-    void* ASM_Set_Mouse_Cursor(int hotspotx, int hotspoty, void* cursor);
-
-#ifdef _WIN32
-    CRITICAL_SECTION MouseCriticalSection; // Control for mouse re-enterancy
-    unsigned TimerHandle;
-#endif
 };
 
 void Hide_Mouse(void);

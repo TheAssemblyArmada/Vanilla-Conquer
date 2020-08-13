@@ -53,6 +53,7 @@ set(COMMON_SRC
     xordelta.c
     crc.cpp
     keyframe.cpp
+    wwmouse.cpp
 )
 
 if (WIN32)
@@ -62,16 +63,22 @@ else()
 endif()
 
 set(COMMONR_SRC
-    mouseww.cpp
     soundio_null.cpp
     tcpip_null.cpp
     video_null.cpp
+    wwmouse_remaster.cpp
 )
 
 set(COMMONV_SRC
-    mouseww.cpp
     tcpip_null.cpp
 )
+
+if (WIN32)
+    list(APPEND COMMONV_SRC wwmousedrawable.cpp)
+    list(APPEND COMMONV_SRC wwmouse_win.cpp)
+else()
+    list(APPEND COMMONV_SRC wwmouse_null.cpp)
+endif()
 
 if(DSOUND)
     list(APPEND COMMONV_SRC soundio.cpp)

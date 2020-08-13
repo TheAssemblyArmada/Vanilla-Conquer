@@ -522,7 +522,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
             Memory_Error = &Memory_Error_Handler;
 
             CCDebugString("C&C95 - Creating mouse class.\n");
-            WWMouse = new WWMouseClass(&SeenBuff, 32, 32);
+            WWMouse = WWMouseClass::CreateMouse(&SeenBuff, 32, 32);
             //			MouseInstalled = Install_Mouse(32,24,320,200);
             MouseInstalled = TRUE;
 

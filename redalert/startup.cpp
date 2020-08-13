@@ -643,7 +643,7 @@ int main(int argc, char* argv[])
             ////////////////////////////////////////
             // The editor needs to not start the mouse up. - 7/22/2019 JAS
             if (!RunningFromEditor) {
-                WWMouse = new WWMouseClass(&SeenBuff, 48, 48);
+                WWMouse = WWMouseClass::CreateMouse(&SeenBuff, 48, 48);
                 MouseInstalled = TRUE;
             }
 
