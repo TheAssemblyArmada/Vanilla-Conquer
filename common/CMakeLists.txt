@@ -9,7 +9,7 @@ set(COMMON_SRC
     miscasm.asm
     misc.c
     irandoma.asm
-    keyfbuff.asm
+    keyfbuffa.asm
     irandom.cpp
     drawmisca.asm
     drawmisc.cpp
@@ -20,6 +20,7 @@ set(COMMON_SRC
     soscodec.c
     winasm.c
     wwmouse.c
+    keybuff.cpp
     alloc.cpp
     buffer.cpp
     gbuffer.cpp
