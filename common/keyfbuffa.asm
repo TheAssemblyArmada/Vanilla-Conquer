@@ -268,6 +268,7 @@ ShapeHeaderType	ENDS
 
 ;externdef AllFlagsJumpTable:dword
 ;
+IFNDEF NOASM
 externdef NewShapeJumpTable:dword
 externdef EndNewShapeJumpTable:byte
 externdef CriticalFadeRedirections:dword
@@ -297,6 +298,7 @@ externdef	C Single_Line_Trans:near
 externdef	C Single_Line_Trans_Entry:near
 externdef	C Next_Line:near
 
+ENDIF
 
 .CODE
 
@@ -308,7 +310,7 @@ externdef	C Next_Line:near
 ; Tables defined are:
 ;	BufferFrameTable
 ;---------------------------------------------------------------------------
-
+IFNDEF NOASM
 WANT	equ 	<TRUE>
 USE	BF_Copy, BufferFrameTable
 
@@ -357,7 +359,7 @@ USE	BF_Predator_Ghost_Fading
 WANT	equ 	<TRUE>
 USE	BF_Predator_Ghost_Fading_Trans
 
-
+ENDIF
 
 .DATA
 
@@ -366,6 +368,8 @@ USE	BF_Predator_Ghost_Fading_Trans
 ;
 ; Jumptable for shape line drawing with no flags set
 ;
+
+IFNDEF NOASM
 
 NewShapeJumpTable	dd	Short_Single_Line_Copy
 		dd	Short_Single_Line_Copy
@@ -989,6 +993,8 @@ AllFlagsJumpTable label dword
 
 EndNewShapeJumpTable	db 0
 
+ENDIF
+
 .CODE
 
 
@@ -1016,7 +1022,7 @@ EndNewShapeJumpTable	db 0
 ;* HISTORY:                                                                                  *
 ;*   11/29/95 10:09AM ST : Created.                                                          *
 ;*===========================================================================================*
-
+IFNDEF NOASM
 		Setup_Shape_Header proc	C pixel_width:DWORD, pixel_height:DWORD, src:DWORD, headers:DWORD, flags:DWORD, Translucent:DWORD, IsTranslucent:DWORD
 
 		;ARG	pixel_width 	:DWORD		; width of rectangle to blit
@@ -4002,6 +4008,7 @@ Not_Supported:
 
 Buffer_Frame_To_Page	ENDP	
 
+ENDIF
 
 end
 
