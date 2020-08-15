@@ -35,7 +35,7 @@
 #define TIMER_H
 
 /*=========================================================================*/
-/* The following prototypes are for the file: TIMERA.ASM							*/
+/* The following prototypes are for the file: TIMERA.ASM                   */
 /*=========================================================================*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,50 +125,35 @@ inline long CountDownTimerClass::Reset(bool start)
     return (TimerClass::Reset(start));
 }
 
-class WinTimerClass
+class SystemTimerClass
 {
-
 public:
-    WinTimerClass(unsigned int freq = 60, bool partial = false);
-    ~WinTimerClass();
-
-    void Update_Tick_Count(void);
-    unsigned Get_System_Tick_Count(void);
-    unsigned Get_User_Tick_Count(void);
-
-private:
-    unsigned TimerHandle; // Handle for windows timer event
-    unsigned Frequency;   // Frequency of our windows timer in ticks per second
-
-    unsigned TrueRate;  // True rate of clock. (only use word)
-    unsigned SysTicks;  // Tick count of timer.
-    unsigned UserTicks; // Tick count of timer.
-    unsigned UserRate;  // Desired rate of timer.
+    long operator()() const;
+    operator long() const;
 };
 
-extern WinTimerClass* WindowsTimer;
+class WinTimerClass
+{
+public:
+    WinTimerClass();
+    WinTimerClass(unsigned int freq = 60);
+    ~WinTimerClass();
+
+    static void Init(unsigned int freq = 60);
+
+    unsigned int Get_System_Tick_Count();
+    unsigned int Get_User_Tick_Count();
+
+private:
+    unsigned int Frequency; // Frequency of our windows timer in ticks per second
+    unsigned long long Start;
+
+    static unsigned long long Now();
+};
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////// externs  //////////////////////////////////////////
 extern TimerClass WinTickCount;
 extern CountDownTimerClass CountDown;
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////// Prototypes //////////////////////////////////////////
-
-extern "C" {
-long Get_System_Tick_Count(void);
-long Get_User_Tick_Count(void);
-void Timer_Interrupt_Func(void);
-//	long Get_Num_Interrupts(unsigned int realmode);
-void Disable_Timer_Interrupt(void);
-void Enable_Timer_Interrupt(void);
-}
-
-/*=========================================================================*/
-/* The following prototypes are for the file: TIMER.CPP							*/
-/*=========================================================================*/
-bool Init_Timer_System(unsigned int freq, int partial = false);
-bool Remove_Timer_System();
 
 #endif // TIMER_H

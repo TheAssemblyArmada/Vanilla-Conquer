@@ -43,7 +43,6 @@ bool Read_Private_Config_Struct(char* profile, NewConfigType* config);
 void Delete_Swap_Files(void);
 void Print_Error_End_Exit(char* string);
 void Print_Error_Exit(char* string);
-WinTimerClass* WinTimer;
 extern void Create_Main_Window(HANDLE instance, int command_show, int width, int height);
 
 extern int ReadyToQuit;
@@ -115,10 +114,6 @@ BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserve
         break;
 
     case DLL_PROCESS_DETACH:
-        if (WindowsTimer) {
-            delete WindowsTimer;
-            WindowsTimer = NULL;
-        }
         DLL_Shutdown();
 
         MixFileClass::Free_All();
@@ -151,9 +146,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
     // malloc(1);
 #endif
     CCDebugString("C&C95 - Starting up.\n");
-
-    // WindowsTimer = new WinTimerClass(60,FALSE);
-    // CD_Test();
 
     /*
     ** These values return 0x47 if code is working correctly
@@ -284,33 +276,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 #endif
     if (Parse_Command_Line(argc, argv)) {
 
-        WindowsTimer = new WinTimerClass(60, FALSE);
-
-        int time_test = WindowsTimer->Get_System_Tick_Count();
-        Sleep(1000);
-        if (WindowsTimer->Get_System_Tick_Count() == time_test) {
-#ifdef FRENCH
-            MessageBoxA(0,
-                        "Error - L'horloge systŠme n'a pas pu s'initialiser en raison de l'instabilit‚ du sytŠme. Vous "
-                        "devez red‚marrer Windows.",
-                        "Command & Conquer",
-                        MB_OK | MB_ICONSTOP);
-#else
-#ifdef GERMAN
-            MessageBoxA(0,
-                        "Fehler - das Timer-System konnte aufgrund einer Instabilit„t des Systems nicht initialisiert "
-                        "werden. Bitte starten Sie Windows neu.",
-                        "Command & Conquer",
-                        MB_OK | MB_ICONSTOP);
-#else
-            MessageBoxA(0,
-                        "Error - Timer system failed to start due to system instability. You need to restart Windows.",
-                        "Command & Conquer",
-                        MB_OK | MB_ICONSTOP);
-#endif // GERMAN
-#endif // FRENCH
-            return (EXIT_FAILURE);
-        }
+        WinTimerClass::Init(60);
 
         RawFileClass cfile("CONQUER.INI");
 
@@ -334,8 +300,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
                     "Festplatte.",
                     (INIT_FREE_DISK_SPACE) / (1024 * 1024));
             MessageBoxA(NULL, disk_space_message, "Command & Conquer", MB_ICONEXCLAMATION | MB_OK);
-            if (WindowsTimer)
-                delete WindowsTimer;
             return (EXIT_FAILURE);
 #endif
 #ifdef FRENCH
@@ -345,8 +309,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
                     "disponsible sur disque dur.",
                     (INIT_FREE_DISK_SPACE) / (1024 * 1024));
             MessageBoxA(NULL, disk_space_message, "Command & Conquer", MB_ICONEXCLAMATION | MB_OK);
-            if (WindowsTimer)
-                delete WindowsTimer;
             return (EXIT_FAILURE);
 #endif
 #if !(FRENCH | GERMAN)
@@ -356,9 +318,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
                                     "Command & Conquer",
                                     MB_ICONQUESTION | MB_YESNO);
             if (reply == IDNO) {
-
-                if (WindowsTimer)
-                    delete WindowsTimer;
                 return (EXIT_FAILURE);
             }
 
@@ -420,8 +379,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
                             "Error - Unable to set the video mode.",
                             "Command & Conquer",
                             MB_ICONEXCLAMATION | MB_OK);
-                if (WindowsTimer)
-                    delete WindowsTimer;
                 if (Palette)
                     delete[] Palette;
                 return (EXIT_FAILURE);
@@ -454,8 +411,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
                                 Text_String(TXT_UNABLE_TO_ALLOCATE_PRIMARY_VIDEO_BUFFER),
                                 "Command & Conquer",
                                 MB_ICONEXCLAMATION | MB_OK);
-                    if (WindowsTimer)
-                        delete WindowsTimer;
                     if (Palette)
                         delete[] Palette;
                     return (EXIT_FAILURE);
@@ -617,12 +572,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 #endif
         }
 
-        //		Remove_Keyboard_Interrupt();
-        if (WindowsTimer) {
-            delete WindowsTimer;
-            WindowsTimer = NULL;
-        }
-
         if (Palette) {
             delete[] Palette;
             Palette = NULL;
@@ -679,12 +628,6 @@ void __cdecl Prog_End(const char* why, bool fatal) // Added why and fatal parame
         delete WWMouse;
         WWMouse = NULL;
     }
-    if (WindowsTimer) {
-        CCDebugString("C&C95 - Deleting windows timer.\n");
-        delete WindowsTimer;
-        WindowsTimer = NULL;
-    }
-
     if (Palette) {
         CCDebugString("C&C95 - Deleting palette object.\n");
         delete[] Palette;

@@ -926,14 +926,6 @@ int MouseInstalled;
 int AreThingiesEnabled = false;
 
 /*
-** Pointer to windows timer object
-**
-**
-*/
-
-WinTimerClass* WindowsTimer = NULL;
-
-/*
 ** Command line arguments
 **
 **
