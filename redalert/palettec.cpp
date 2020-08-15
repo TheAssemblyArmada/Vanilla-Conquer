@@ -55,46 +55,10 @@ void __cdecl Set_Palette(void* palette);
 #include "common/palette.h"
 #include "palettec.h"
 #include "ftimer.h"
-//#define TIMER_H
 #include "common/wwlib32.h"
-//#include	"timer.h"
+#include "common/timer.h"
+
 #include <string.h>
-
-#ifndef SYSTEM_TIMER_CLASS
-#define SYSTEM_TIMER_CLASS
-
-#ifdef WIN32
-extern WinTimerClass* WindowsTimer;
-#endif
-
-class SystemTimerClass
-{
-public:
-#ifdef WIN32
-    long operator()(void) const
-    {
-        if (!WindowsTimer)
-            return (0);
-        return (WindowsTimer->Get_System_Tick_Count());
-    };
-    operator long(void) const
-    {
-        if (!WindowsTimer)
-            return (0);
-        return (WindowsTimer->Get_System_Tick_Count());
-    };
-#else
-    long operator()(void) const
-    {
-        return (Get_System_Tick_Count());
-    };
-    operator long(void) const
-    {
-        return (Get_System_Tick_Count());
-    };
-#endif
-};
-#endif
 
 // PaletteClass const PaletteClass::CurrentPalette;
 extern "C" unsigned char CurrentPalette[];

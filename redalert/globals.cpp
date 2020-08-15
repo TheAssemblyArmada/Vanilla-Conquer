@@ -179,7 +179,6 @@ fixed EngineerCaptureLevel = 0x40; // Building damage level before engineer can 
 unsigned short Hard_Error_Occured = 0;
 WWMouseClass* WWMouse = NULL;
 GraphicBufferClass SysMemPage(DEFAULT_SCREEN_WIDTH, 200, (void*)NULL);
-WinTimerClass* WindowsTimer = NULL;
 int ScreenWidth = GBUFF_INIT_WIDTH;
 int ScreenHeight = GBUFF_INIT_HEIGHT;
 GraphicBufferClass ModeXBuff;

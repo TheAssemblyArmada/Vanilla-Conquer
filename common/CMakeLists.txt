@@ -39,7 +39,6 @@ set(COMMON_SRC
     _diptabl.cpp
     rawfile.cpp
     getshape.cpp
-    timerini.cpp
     windows.cpp
     winhide.cpp
     writepcx.cpp

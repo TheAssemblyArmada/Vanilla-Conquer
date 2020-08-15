@@ -128,7 +128,6 @@ extern unsigned PaletteCounter;
 extern int AllDone;
 extern HANDLE hInstance;
 extern bool InMovie;
-extern WinTimerClass* WindowsTimer;
 extern WWMouseClass* WWMouse;
 extern GraphicBufferClass HiddenPage;
 #define SeenPage SeenBuff

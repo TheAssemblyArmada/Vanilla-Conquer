@@ -56,18 +56,12 @@ bool Read_Private_Config_Struct(FileClass& file, NewConfigType* config);
 void Print_Error_End_Exit(char* string);
 void Print_Error_Exit(char* string);
 
-#ifdef WIN32
-// WinTimerClass * WinTimer;
 extern void Create_Main_Window(HANDLE instance, int command_show, int width, int height);
 extern BOOL RA95AlreadyRunning;
 HINSTANCE ProgramInstance;
 void Check_Use_Compressed_Shapes(void);
 void Read_Setup_Options(RawFileClass* config_file);
 bool VideoBackBufferAllowed = true;
-#else
-BOOL Init_Timer_System(unsigned int freq, int partial = FALSE);
-BOOL Remove_Timer_System(VOID);
-#endif // WIN32
 
 const char* Game_Registry_Key();
 
@@ -107,11 +101,6 @@ BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserve
         break;
 
     case DLL_PROCESS_DETACH:
-        if (WindowsTimer) {
-            delete WindowsTimer;
-            WindowsTimer = NULL;
-        }
-
         /*
         ** Red Alert doesn't clean up memory. Do some of that here.
         */
@@ -404,20 +393,7 @@ int main(int argc, char* argv[])
         }
 #endif // MPATH
 
-#ifdef WIN32
-
-        WindowsTimer = new WinTimerClass(60, FALSE);
-#ifndef REMASTER_BUILD
-        int time_test = WindowsTimer->Get_System_Tick_Count();
-        Sleep(1000);
-        if (WindowsTimer->Get_System_Tick_Count() == time_test) {
-            MessageBoxA(0, TEXT_ERROR_TIMER, TEXT_SHORT_TITLE, MB_OK | MB_ICONSTOP);
-            return (EXIT_FAILURE);
-        }
-#endif
-#else  // WIN32
-        Init_Timer_System(60, true);
-#endif // WIN32
+        WinTimerClass::Init(60);
 
 #ifdef REMASTER_BUILD
         ////////////////////////////////////////
@@ -467,8 +443,6 @@ int main(int argc, char* argv[])
             sprintf(disk_space_message, TEXT_CRITICALLY_LOW); // PG , (INIT_FREE_DISK_SPACE) / (1024 * 1024));
             int reply = MessageBoxA(NULL, disk_space_message, TEXT_SHORT_TITLE, MB_ICONQUESTION | MB_YESNO);
             if (reply == IDNO) {
-                if (WindowsTimer)
-                    delete WindowsTimer;
                 return (EXIT_FAILURE);
             }
 #endif
@@ -547,8 +521,6 @@ int main(int argc, char* argv[])
 
             if (!video_success) {
                 MessageBoxA(MainWindow, TEXT_VIDEO_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
-                if (WindowsTimer)
-                    delete WindowsTimer;
                 // if (Palette) delete Palette;
                 return (EXIT_FAILURE);
             }
@@ -576,8 +548,6 @@ int main(int argc, char* argv[])
                     WWDebugString(TEXT_DDRAW_ERROR);
                     WWDebugString("\n");
                     MessageBoxA(MainWindow, TEXT_DDRAW_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
-                    if (WindowsTimer)
-                        delete WindowsTimer;
                     return (EXIT_FAILURE);
                 }
 
@@ -741,17 +711,6 @@ int main(int argc, char* argv[])
                 Keyboard->Get();
             }
         }
-
-#ifdef WIN32
-        if (WindowsTimer) {
-            delete WindowsTimer;
-            WindowsTimer = NULL;
-        }
-
-#else  // WIN32
-        Remove_Keyboard_Interrupt();
-        Remove_Timer_System();
-#endif // WIN32
     }
     /*
     **	Restore the current drive and directory.
@@ -794,10 +753,6 @@ bool InitDDraw(void)
 
     if (!video_success) {
         MessageBoxA(MainWindow, TEXT_VIDEO_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
-
-        if (WindowsTimer)
-            delete WindowsTimer;
-
         return false;
     }
 
@@ -813,10 +768,6 @@ bool InitDDraw(void)
             WWDebugString(TEXT_DDRAW_ERROR);
             WWDebugString("\n");
             MessageBoxA(MainWindow, TEXT_DDRAW_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
-
-            if (WindowsTimer)
-                delete WindowsTimer;
-
             return false;
         }
 
@@ -900,10 +851,6 @@ void __cdecl Prog_End(const char* why, bool fatal)
     if (WWMouse) {
         delete WWMouse;
         WWMouse = NULL;
-    }
-    if (WindowsTimer) {
-        delete WindowsTimer;
-        WindowsTimer = NULL;
     }
 
     ProgEndCalled = true;

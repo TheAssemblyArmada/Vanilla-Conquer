@@ -38,10 +38,20 @@
  *   TimerClass::Time -- Get the current time of timer.                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "wwstd.h"
 #include "timer.h"
-#include <stdio.h>
-#include <stdlib.h>
+
+#include <chrono>
+
+using namespace std::chrono;
+
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////// Global Data /////////////////////////////////////
+
+// Global timers that the library or user can count on existing.
+TimerClass WinTickCount(BT_SYSTEM);
+CountDownTimerClass CountDown(BT_SYSTEM, false);
+bool TimerSystemOn = false;
+WinTimerClass WindowsTimer(60);
 
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////// Code ////////////////////////////////////////
@@ -88,16 +98,14 @@ TimerClass::TimerClass(BaseTimerEnum timer, bool on)
 long TimerClass::Get_Ticks(void)
 
 {
-    if (WindowsTimer) {
-        switch (TickType) {
+    switch (TickType) {
+    case BT_SYSTEM:
+        return WindowsTimer.Get_System_Tick_Count();
 
-        case BT_SYSTEM:
-            return (WindowsTimer->Get_System_Tick_Count());
-
-        case BT_USER:
-            return (WindowsTimer->Get_User_Tick_Count());
-        }
+    case BT_USER:
+        return WindowsTimer.Get_User_Tick_Count();
     }
+
     return 0;
 }
 
@@ -190,3 +198,116 @@ long TimerClass::Set(long value, bool start)
         return (Start());
     return (Time());
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////// Code ////////////////////////////////////////
+
+/***************************************************************************
+ * WinTimerClass::WinTimerClass -- Initialize the WW timer system.         *
+ *                                                                         *
+ *                                                                         *
+ * INPUT: unsigned int : user timer frequency.                             *
+ *                                                                         *
+ * OUTPUT:                                                                 *
+ *                                                                         *
+ * WARNINGS:                                                               *
+ *                                                                         *
+ * HISTORY:                                                                *
+ *   10/5/95 3:47PM : ST Created.                                          *
+ *=========================================================================*/
+WinTimerClass::WinTimerClass()
+    : Frequency(60)
+    , Start(Now())
+{
+    WinTickCount.Start();
+    TimerSystemOn = true;
+}
+
+WinTimerClass::WinTimerClass(unsigned int freq)
+    : Frequency(freq)
+    , Start(Now())
+{
+    WinTickCount.Start();
+    TimerSystemOn = true;
+}
+
+/***************************************************************************
+ * WinTimerClass::~WinTimerClass -- Removes the timer system.              *
+ *                                                                         *
+ *                                                                         *
+ * INPUT:   NONE.                                                          *
+ *                                                                         *
+ * OUTPUT:  bool was it removed successfuly                                *
+ *                                                                         *
+ * WARNINGS:                                                               *
+ *                                                                         *
+ * HISTORY:                                                                *
+ *   10/5/95 3:47PM : ST Created.                                          *
+ *=========================================================================*/
+WinTimerClass::~WinTimerClass()
+{
+}
+
+void WinTimerClass::Init(unsigned int freq)
+{
+    WindowsTimer = WinTimerClass(freq);
+}
+
+/***********************************************************************************************
+ * WinTimerClass::Get_System_Tick_Count -- returns the system tick count                       *
+ *                                                                                             *
+ * INPUT:    Nothing                                                                           *
+ *                                                                                             *
+ * OUTPUT:   tick count                                                                        *
+ *                                                                                             *
+ * WARNINGS: None                                                                              *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *    10/5/95 4:02PM ST : Created                                                              *
+ *=============================================================================================*/
+
+unsigned int WinTimerClass::Get_System_Tick_Count()
+{
+    if (Frequency == 0) {
+        return 0;
+    }
+    unsigned long long delta = Now() - Start;
+    return (unsigned int)(delta / (1000 / Frequency));
+}
+
+/***********************************************************************************************
+ * WinTimerClass::Get_User_Tick_Count -- returns the user tick count                           *
+ *                                                                                             *
+ * INPUT:    Nothing                                                                           *
+ *                                                                                             *
+ * OUTPUT:   tick count                                                                        *
+ *                                                                                             *
+ * WARNINGS: None                                                                              *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *    10/5/95 4:02PM ST : Created                                                              *
+ *=============================================================================================*/
+
+unsigned int WinTimerClass::Get_User_Tick_Count()
+{
+    if (Frequency == 0) {
+        return 0;
+    }
+    unsigned long long delta = Now() - Start;
+    return (unsigned int)(delta / (1000 / Frequency));
+}
+
+unsigned long long WinTimerClass::Now()
+{
+    return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+}
+
+long SystemTimerClass::operator()() const
+{
+    return WindowsTimer.Get_System_Tick_Count();
+};
+
+SystemTimerClass::operator long() const
+{
+    return WindowsTimer.Get_System_Tick_Count();
+};
