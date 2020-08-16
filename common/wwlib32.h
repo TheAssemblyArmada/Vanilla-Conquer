@@ -43,7 +43,7 @@
 #include "common/mono.h"
 #include "common/wwmem.h"
 #include "common/wwkeyboard.h"
-#include "common/mouseww.h"
+#include "common/wwmouse.h"
 #include "common/file.h"
 #include "common/rawfile.h"
 
