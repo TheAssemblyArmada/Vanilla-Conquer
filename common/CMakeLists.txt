@@ -19,7 +19,6 @@ set(COMMON_SRC
     fading.c
     soscodec.c
     winasm.c
-    wwmouse.c
     keybuff.cpp
     alloc.cpp
     buffer.cpp
