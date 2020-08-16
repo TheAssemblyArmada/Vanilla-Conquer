@@ -31,7 +31,12 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "mouseww.h"
-#include "wwmouse.h"
+#include "lcw.h"
+#include <string.h>
+
+#ifndef min
+#define min(x, y) (x <= y ? x : y)
+#endif
 
 #ifdef _WIN32
 #include <mmsystem.h>
@@ -291,7 +296,7 @@ void* WWMouseClass::Set_Cursor(int xhotspot, int yhotspot, void* cursor)
     // Now convert the shape to a mouse cursor with the given hotspots and
     // set it as our current mouse.
     //
-    void* retval = ASM_Set_Mouse_Cursor(this, xhotspot, yhotspot, cursor);
+    void* retval = Set_Mouse_Cursor(xhotspot, yhotspot, (Cursor*)cursor);
     //
     // Show the mouse which will force it to appear with the new shape we
     // have assigned.
@@ -303,7 +308,7 @@ void* WWMouseClass::Set_Cursor(int xhotspot, int yhotspot, void* cursor)
     MouseUpdate--;
     //
     // Return the previous mouse cursor which as conveniantly passed back by
-    // Asm_Set_Mouse_Cursor.
+    // Set_Mouse_Cursor.
     //
     return (retval);
 #endif
@@ -316,7 +321,7 @@ void WWMouseClass::Low_Hide_Mouse()
     if (!State) {
         if (MouseBuffX != -1 || MouseBuffY != -1) {
             if (Screen->Lock()) {
-                Mouse_Shadow_Buffer(this, Screen, MouseBuffer, MouseBuffX, MouseBuffY, MouseXHot, MouseYHot, 0);
+                Mouse_Shadow_Buffer(Screen, MouseBuffer, MouseBuffX, MouseBuffY, MouseXHot, MouseYHot, 0);
                 Screen->Unlock();
             }
         }
@@ -360,11 +365,11 @@ void WWMouseClass::Low_Show_Mouse(int x, int y)
             //
             // Save off the area behind the mouse.
             //
-            Mouse_Shadow_Buffer(this, Screen, MouseBuffer, x, y, MouseXHot, MouseYHot, 1);
+            Mouse_Shadow_Buffer(Screen, MouseBuffer, x, y, MouseXHot, MouseYHot, 1);
             //
             // Draw the mouse in its new location
             //
-            ::Draw_Mouse(this, Screen, x, y);
+            Draw_Mouse(Screen, x, y);
             //
             // Save off the positions that we saved the buffer from
             //
@@ -515,12 +520,12 @@ void WWMouseClass::Draw_Mouse(GraphicViewPortClass* scr)
             // which will be used to restore the mouse and the other which will
             // be used to restore the hidden surface when we get a chance.
             //
-            Mouse_Shadow_Buffer(this, scr, EraseBuffer, pt.x, pt.y, MouseXHot, MouseYHot, 1);
+            Mouse_Shadow_Buffer(scr, EraseBuffer, pt.x, pt.y, MouseXHot, MouseYHot, 1);
             memcpy(MouseBuffer, EraseBuffer, MaxWidth * MaxHeight);
             //
             // Draw the mouse in its new location
             //
-            ::Draw_Mouse(this, scr, pt.x, pt.y);
+            Draw_Mouse(scr, pt.x, pt.y);
             //
             // Save off the positions that we saved the buffer from
             //
@@ -570,7 +575,7 @@ void WWMouseClass::Erase_Mouse(GraphicViewPortClass* scr, int forced)
             // restoration coordinates so we don't accidentally do it twice.
             //
             if (EraseBuffX != -1 || EraseBuffY != -1) {
-                Mouse_Shadow_Buffer(this, scr, EraseBuffer, EraseBuffX, EraseBuffY, EraseBuffHotX, EraseBuffHotY, 0);
+                Mouse_Shadow_Buffer(scr, EraseBuffer, EraseBuffX, EraseBuffY, EraseBuffHotX, EraseBuffHotY, 0);
                 EraseBuffX = -1;
                 EraseBuffY = -1;
             }
@@ -587,7 +592,7 @@ void WWMouseClass::Erase_Mouse(GraphicViewPortClass* scr, int forced)
         //
         if (EraseBuffX != -1 || EraseBuffY != -1) {
             if (scr->Lock()) {
-                Mouse_Shadow_Buffer(this, scr, EraseBuffer, EraseBuffX, EraseBuffY, EraseBuffHotX, EraseBuffHotY, 0);
+                Mouse_Shadow_Buffer(scr, EraseBuffer, EraseBuffX, EraseBuffY, EraseBuffHotX, EraseBuffHotY, 0);
                 scr->Unlock();
             }
             EraseBuffX = -1;
@@ -665,6 +670,232 @@ void WWMouseClass::Get_Mouse_XY(int& x, int& y)
     x = pt.x;
     y = pt.y;
 #endif
+}
+
+void WWMouseClass::Mouse_Shadow_Buffer(GraphicViewPortClass* viewport,
+                                       void* buffer,
+                                       int x,
+                                       int y,
+                                       int hotx,
+                                       int hoty,
+                                       int store)
+{
+    int xstart = x - hotx;
+    int ystart = y - hoty;
+    int yend = CursorHeight + ystart - 1;
+    int xend = CursorWidth + xstart - 1;
+    int ms_img_offset = 0;
+    unsigned char* mouse_img = (unsigned char*)(buffer);
+
+    // If we aren't drawing within the viewport, return
+    if (xstart >= viewport->Get_Width() || ystart >= viewport->Get_Height() || xend <= 0 || yend <= 0) {
+        return;
+    }
+
+    if (xstart < 0) {
+        ms_img_offset = -xstart;
+        xstart = 0;
+    }
+
+    if (ystart < 0) {
+        mouse_img += CursorWidth * (-ystart);
+        ystart = 0;
+    }
+
+    xend = min(xend, viewport->Get_Width() - 1);
+    yend = min(yend, viewport->Get_Height() - 1);
+
+    int blit_height = yend - ystart + 1;
+    int blit_width = xend - xstart + 1;
+    int src_pitch;
+    int dst_pitch;
+    unsigned char* src;
+    unsigned char* dst;
+
+    // Bool will control if we are copying to or from shadow buffer, set vars here
+    if (store) {
+        src_pitch = (viewport->Get_Pitch() + viewport->Get_XAdd() + viewport->Get_Width());
+        dst_pitch = CursorWidth;
+        src = (unsigned char*)(viewport->Get_Offset()) + src_pitch * ystart + xstart;
+        dst = mouse_img + ms_img_offset;
+    } else {
+        src_pitch = CursorWidth;
+        dst_pitch = (viewport->Get_Pitch() + viewport->Get_XAdd() + viewport->Get_Width());
+        src = mouse_img + ms_img_offset;
+        dst = (unsigned char*)(viewport->Get_Offset()) + dst_pitch * ystart + xstart;
+    }
+
+    while (blit_height--) {
+        memcpy(dst, src, blit_width);
+        src += src_pitch;
+        dst += dst_pitch;
+    }
+}
+
+void WWMouseClass::Draw_Mouse(GraphicViewPortClass* viewport, int x, int y)
+{
+    int xstart = x - MouseXHot;
+    int ystart = y - MouseYHot;
+    int yend = CursorHeight + ystart - 1;
+    int xend = CursorWidth + xstart - 1;
+    int ms_img_offset = 0;
+    unsigned char* mouse_img = (unsigned char*)MouseCursor;
+
+    // If we aren't drawing within the viewport, return
+    if (xstart >= viewport->Get_Width() || ystart >= viewport->Get_Height() || xend <= 0 || yend <= 0) {
+        return;
+    }
+
+    if (xstart < 0) {
+        ms_img_offset = -xstart;
+        xstart = 0;
+    }
+
+    if (ystart < 0) {
+        mouse_img += CursorWidth * (-ystart);
+        ystart = 0;
+    }
+
+    xend = min(xend, viewport->Get_Width() - 1);
+    yend = min(yend, viewport->Get_Height() - 1);
+
+    int pitch = viewport->Get_Pitch() + viewport->Get_XAdd() + viewport->Get_Width();
+    unsigned char* dst = xstart + pitch * ystart + (unsigned char*)(viewport->Get_Offset());
+    unsigned char* src = ms_img_offset + mouse_img;
+    int blit_pitch = xend - xstart + 1;
+
+    if ((xend > xstart) && (yend > ystart)) {
+        int blit_height = yend - ystart + 1;
+        int dst_pitch = pitch - blit_pitch;
+        int src_pitch = CursorWidth - blit_pitch;
+
+        while (blit_height--) {
+            int blit_width = blit_pitch;
+            while (blit_width--) {
+                unsigned char current = *src++;
+                if (current) {
+                    *dst = current;
+                }
+
+                ++dst;
+            }
+
+            src += src_pitch;
+            dst += dst_pitch;
+        }
+    }
+}
+
+void* WWMouseClass::Set_Mouse_Cursor(int hotspotx, int hotspoty, Cursor* cursor)
+{
+    void* result = NULL;
+    unsigned char* cursor_buff;
+    unsigned char* data_buff;
+    unsigned char* decmp_buff;
+    unsigned char* lcw_buff;
+    short frame_flags;
+    int height;
+    int width;
+    int uncompsz;
+
+    // Get the dimensions of our frame, mouse shp format can have variable
+    // dimensions for each frame.
+    uncompsz = Get_Shape_Uncomp_Size(cursor);
+    width = Get_Shape_Width(cursor);
+    height = Get_Shape_Original_Height(cursor);
+
+    if (width <= MaxWidth && height <= MaxHeight) {
+        cursor_buff = (unsigned char*)MouseCursor;
+        data_buff = (unsigned char*)(cursor);
+        frame_flags = cursor->ShapeType;
+
+        // Flag bit 2 is flag for no compression on frame, decompress to
+        // intermediate buffer if flag is clear
+        if (!(cursor->ShapeType & 2)) {
+            decmp_buff = (unsigned char*)_ShapeBuffer;
+            lcw_buff = (unsigned char*)(cursor);
+            frame_flags = cursor->ShapeType | 2;
+
+            memcpy(decmp_buff, lcw_buff, sizeof(Cursor));
+            decmp_buff += sizeof(Cursor);
+            lcw_buff += sizeof(Cursor);
+
+            // Copies a small lookup table if it exists, probably not in RA.
+            if (frame_flags & 1) {
+                memcpy(decmp_buff, lcw_buff, 16);
+                decmp_buff += 16;
+                lcw_buff += 16;
+            }
+
+            LCW_Uncompress(lcw_buff, decmp_buff, uncompsz);
+            data_buff = (unsigned char*)_ShapeBuffer;
+        }
+
+        if (frame_flags & 1) {
+            unsigned char* data_start = data_buff + sizeof(Cursor);
+            unsigned char* image_start = data_buff + sizeof(Cursor) + 16;
+            int image_size = height * width;
+            int run_len = 0;
+
+            while (image_size) {
+                unsigned char current_byte = *image_start++;
+
+                if (current_byte) {
+                    *cursor_buff++ = data_start[current_byte];
+                    --image_size;
+                    continue;
+                }
+
+                if (!image_size) {
+                    break;
+                }
+
+                run_len = *image_start;
+                image_size -= run_len;
+                ++image_start;
+
+                while (run_len--) {
+                    *cursor_buff++ = 0;
+                }
+            }
+        } else {
+            unsigned char* data_start = data_buff + sizeof(Cursor);
+            int image_size = height * width;
+            int run_len = 0;
+
+            while (image_size) {
+                unsigned char current_byte = *data_start++;
+
+                if (current_byte) {
+                    *cursor_buff++ = current_byte;
+                    --image_size;
+                    continue;
+                }
+
+                if (!image_size) {
+                    break;
+                }
+
+                run_len = *data_start;
+                image_size -= run_len;
+                ++data_start;
+
+                while (run_len--) {
+                    *cursor_buff++ = 0;
+                }
+            }
+        }
+
+        MouseXHot = hotspotx;
+        MouseYHot = hotspoty;
+        CursorHeight = height;
+        CursorWidth = width;
+    }
+
+    result = PrevCursor;
+    PrevCursor = cursor;
+
+    return result;
 }
 
 #ifdef _WIN32

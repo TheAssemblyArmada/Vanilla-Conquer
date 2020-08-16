@@ -33,6 +33,21 @@
 #define WW_MOUSE_H
 
 #include "gbuffer.h"
+#include "shape.h"
+
+#pragma pack(push, 1)
+typedef struct
+{
+    unsigned short ShapeType;     // 0 = normal, 1 = 16 colors,
+                                  //  2 = uncompressed, 4 = 	<16 colors
+    unsigned char Height;         // Height of the shape in scan lines
+    unsigned short Width;         // Width of the shape in bytes
+    unsigned char OriginalHeight; // Original height of shape in scan lines
+    unsigned short ShapeSize;     // Size of the shape, including header
+    unsigned short DataLength;    // Size of the uncompressed shape (just data)
+    unsigned char Data[];         // Cursor data
+} Cursor;
+#pragma pack(pop)
 
 class WWMouseClass
 {
@@ -54,7 +69,10 @@ public:
     // other than the hidpage.
     //
     void Draw_Mouse(GraphicViewPortClass* scr);
+    void Draw_Mouse(GraphicViewPortClass* viewport, int x, int y);
     void Erase_Mouse(GraphicViewPortClass* scr, int forced = 0);
+    void Mouse_Shadow_Buffer(GraphicViewPortClass* viewport, void* buffer, int x, int y, int hotx, int hoty, int store);
+    void* Set_Mouse_Cursor(int hotspotx, int hotspoty, Cursor* cursor);
 
     void Block_Mouse(GraphicBufferClass* buffer);
     void Unblock_Mouse(GraphicBufferClass* buffer);
@@ -90,7 +108,7 @@ private:
     char MCCount;     // nesting count for conditional hide mouse
 
     GraphicViewPortClass* Screen; // pointer to the surface mouse was init'd with
-    char* PrevCursor;             // pointer to previous cursor shape
+    Cursor* PrevCursor;           // pointer to previous cursor shape
     int MouseUpdate;
     int State;
 
