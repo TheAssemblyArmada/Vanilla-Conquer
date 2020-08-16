@@ -62,14 +62,14 @@ else()
 endif()
 
 set(COMMONR_SRC
-    mouseww.cpp
+    wwmouse.cpp
     soundio_null.cpp
     tcpip_null.cpp
     video_null.cpp
 )
 
 set(COMMONV_SRC
-    mouseww.cpp
+    wwmouse.cpp
     tcpip_null.cpp
 )
 
