@@ -39,6 +39,7 @@
 #include "memflag.h"
 
 #include <errno.h>
+#include <string.h>
 
 int FontXSpacing = 0;
 int FontYSpacing = 0;
@@ -49,6 +50,28 @@ char FontHeight = 8;
 // only font.c and set_font.c use the following
 char* FontWidthBlockPtr = nullptr;
 
+#ifdef NOASM
+unsigned char ColorXlat[16][16] = {
+    {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15},
+    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+};
+#else
+extern "C" unsigned char ColorXlat[16][16];
+#endif
 /***************************************************************************
  * SET_FONT -- Changes the default text printing font.                     *
  *                                                                         *
@@ -175,8 +198,6 @@ void Get_Next_Text_Print_XY(GraphicViewPortClass& gp, unsigned long offset, int*
     }
 }
 
-extern "C" unsigned char ColorXlat[16][16];
-
 void Set_Font_Palette_Range(void const* palette, int start_idx, int end_idx)
 {
     start_idx &= 15;
@@ -265,3 +286,204 @@ void* Load_Font(char const* name)
 
     return (ptr);
 }
+
+#ifdef NOASM
+#pragma pack(push, 1)
+struct FontHeader
+{
+    unsigned short FontLength;        // Size of the file
+    unsigned char FontCompress;       // file version? 0==EOB? 1==RA? 2==TS? what about RA2?
+    unsigned char FontDataBlocks;     // 5==TD/RA 0==TS? unused in RA
+    unsigned short InfoBlockOffset;   // offset to start of font description Pad, always 0x0010
+    unsigned short OffsetBlockOffset; // offset to bitmap data offset list, always 0x0014 as follows header
+    unsigned short WidthBlockOffset;  // points to list of widths
+    unsigned short DataBlockOffset;   // points to graphics data, unused by RA code
+    unsigned short HeightOffset;      // points to list of heights (or lines)
+    unsigned short UnknownConst;      // Unknown entry (always 0x1012 or 0x1011) unused by RA
+    unsigned char Pad;                // padding?
+    unsigned char CharCount;          // Number of chars in font - 1
+    unsigned char MaxHeight;          // Max char height
+    unsigned char MaxWidth;           // Max char width
+};
+#pragma pack(pop)
+/***************************************************************************
+ * Buffer_Print -- C++ text print to graphic buffer routine                *
+ *                                                                         *
+ *                                                                         *
+ *                                                                         *
+ * INPUT:                                                                  *
+ *                                                                         *
+ * OUTPUT:                                                                 *
+ *                                                                         *
+ * PROTO:                                                                  *
+ *                                                                         *
+ * WARNINGS:                                                               *
+ *                                                                         *
+ * HISTORY:                                                                *
+ *   01/17/1995 PWG : Created.                                             *
+ *   18/08/2020 OmniBlade : Translation to C++ added.                      *
+ *=========================================================================*/
+long Buffer_Print(void* thisptr, const char* string, int x, int y, int fground, int bground)
+{
+    GraphicViewPortClass& vp = *static_cast<GraphicViewPortClass*>(thisptr);
+    const FontHeader* fntheader = reinterpret_cast<const FontHeader*>(FontPtr);
+    int pitch = vp.Get_XAdd() + vp.Get_Width() + vp.Get_Pitch();
+    unsigned char* offset = y * pitch + reinterpret_cast<unsigned char*>(vp.Get_Offset());
+    unsigned char* dst = x + offset;
+    int char_width = 0;
+    int base_x = x;
+
+    if (FontPtr != nullptr) {
+        const unsigned short* datalist = reinterpret_cast<const unsigned short*>(reinterpret_cast<const char*>(FontPtr)
+                                                                                 + fntheader->OffsetBlockOffset);
+        const unsigned char* widthlist = reinterpret_cast<const unsigned char*>(FontPtr) + fntheader->WidthBlockOffset;
+        const unsigned short* linelist =
+            reinterpret_cast<const unsigned short*>(reinterpret_cast<const char*>(FontPtr) + fntheader->HeightOffset);
+
+        int fntheight = fntheader->MaxHeight;
+        int ydisplace = FontYSpacing + fntheight;
+
+        // Check if we are drawing in bounds, we don't draw clipped text
+        if (y + fntheight <= vp.Get_Height()) {
+            int fntbottom = y + fntheight;
+            // Set colors to draw with
+            ColorXlat[0][1] = fground;
+            ColorXlat[0][0] = bground;
+
+            while (true) {
+                // Handle a new line
+                unsigned char char_num;
+                unsigned char* char_dst;
+                while (true) {
+                    char_num = *string;
+
+                    if (char_num == '\0') {
+                        return 0;
+                    }
+
+                    char_dst = dst;
+                    ++string;
+
+                    if (char_num != '\n' && char_num != '\r') {
+                        break;
+                    }
+
+                    // We don't handle clipping text, it either draws or it doesn't
+                    if (ydisplace + fntbottom > vp.Get_Height()) {
+                        return 0;
+                    }
+
+                    // If its a new line, we are just going to set the start to an increased y displacement, hence x_pos
+                    // becomes 0
+                    x = char_num == '\n' ? 0 : base_x;
+                    dst = ydisplace * pitch + offset + x;
+                    offset += ydisplace * pitch;
+                    fntbottom += ydisplace;
+                }
+
+                // Move to the start of the next char
+                char_width = widthlist[char_num];
+                dst += FontXSpacing + char_width;
+
+                // Handle text wrapping for long strings
+                if (FontXSpacing + char_width + x > vp.Get_Width()) {
+                    --string;
+                    char_num = '\0';
+
+                    // We don't handle clipping text, it either draws or it doesn't
+                    if (ydisplace + fntbottom > vp.Get_Height()) {
+                        return 0;
+                    }
+
+                    // If its a new line, we are just going to set the start to an increased y displacement, hence x_pos
+                    // becomes 0
+                    x = char_num == '\n' ? 0 : base_x;
+                    dst = ydisplace * pitch + offset + x;
+                    offset += ydisplace * pitch;
+                    fntbottom += ydisplace;
+
+                    continue;
+                }
+
+                // Prepare variables for drawing
+                x += FontXSpacing + char_width;
+                int next_line = pitch - char_width;
+                const unsigned char* char_data = reinterpret_cast<const unsigned char*>(FontPtr) + datalist[char_num];
+                int char_lle = linelist[char_num];
+                int char_ypos = char_lle & 0xFF;
+                int char_lines = char_lle >> 8;
+                int char_height = fntheight - (char_ypos + char_lines);
+                int blit_width = widthlist[char_num];
+
+                // Fill unused lines if we have a color other than 0
+                if (char_ypos) {
+                    unsigned char color = ColorXlat[0][0];
+                    if (color) {
+                        for (int i = char_ypos; i; --i) {
+                            memset(char_dst, color, blit_width);
+                            char_dst += pitch;
+                        }
+                    } else {
+                        char_dst += pitch * char_ypos;
+                    }
+                }
+
+                // Draw the character
+                if (char_lines) {
+                    for (int i = 0; i < char_lines; ++i) {
+                        int width_todraw = blit_width;
+
+                        while (width_todraw) {
+                            unsigned char color_packed;
+                            color_packed = *char_data++;
+                            unsigned char color = ColorXlat[0][color_packed & 0x0F];
+
+                            if (color) {
+                                *char_dst = color;
+                            }
+
+                            ++char_dst;
+                            --width_todraw;
+
+                            if (width_todraw == 0) {
+                                break;
+                            }
+
+                            color = ColorXlat[0][color_packed >> 4];
+
+                            if (color) {
+                                *char_dst = color;
+                            }
+
+                            ++char_dst;
+                            --width_todraw;
+                        }
+
+                        char_dst += next_line;
+                    }
+
+                    // Fill any remaining unused lines.
+                    if (char_height) {
+                        unsigned char color = ColorXlat[0][0];
+
+                        if (color) {
+                            for (int i = char_height; i; --i) {
+                                memset(char_dst, color, blit_width);
+                                char_dst += pitch;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
+void* Get_Font_Palette_Ptr()
+{
+    return ColorXlat;
+}
+
+#endif

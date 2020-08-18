@@ -47,8 +47,6 @@ bool Linear_Blit_To_Linear(void* thisptr,
                            bool trans);
 bool Linear_Scale_To_Linear(void*, void*, int, int, int, int, int, int, int, int, bool, char*);
 
-long Buffer_Print(void* thisptr, const char* str, int x, int y, int fcolor, int bcolor);
-
 /*======================================================================*/
 /* Externs for all of the graphic buffer class only functions				*/
 /*======================================================================*/
@@ -82,7 +80,6 @@ void Buffer_Draw_Stamp_Clip(void const* thisptr,
                             int,
                             int,
                             int);
-void* Get_Font_Palette_Ptr(void);
 }
 
 extern GraphicViewPortClass* LogicPage;
