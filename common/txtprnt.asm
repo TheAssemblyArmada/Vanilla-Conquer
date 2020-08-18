@@ -41,7 +41,9 @@
 ;INCLUDE "mcgaprim.inc"
 ;INCLUDE ".\gbuffer.inc"
 
+IFNDEF NOASM
 externdef C Buffer_Print : NEAR
+ENDIF
 
 GraphicViewPort STRUCT 
 GVPOffset		DD		?		; offset to virtual viewport
@@ -61,7 +63,9 @@ GraphicViewPort ENDS
 extern C	FontPtr:DWORD
 extern C	FontXSpacing:DWORD
 extern C	FontYSpacing:DWORD
+IFNDEF NOASM
 externdef C	ColorXlat:byte
+ENDIF
 
 ;*=========================================================================*
 ;* Define the necessary equates for structures and bounds checking	   *
@@ -92,7 +96,7 @@ FONTINFOMAXWIDTH	EQU	5
 ;*=========================================================================*
 	;DATASEG
 	.data
-
+IFNDEF NOASM
 ColorXlat	DB	00H,01H,02H,03H,04H,05H,06H,07H
 		DB	08H,09H,0AH,0BH,0CH,0DH,0EH,0FH
 
@@ -139,12 +143,12 @@ ColorXlat	DB	00H,01H,02H,03H,04H,05H,06H,07H
 		DB	00H,00H,00H,00H,00H,00H,00H,00H
 
 		DB	0FH
-
+ENDIF
 	;CODESEG
 	.code
 	
 
-
+IFNDEF NOASM
 ;***************************************************************************
 ;* Buffer_Print -- Assembly text print to graphic buffer routine           *
 ;*                                                                         *
@@ -515,6 +519,6 @@ Get_Font_Palette_Ptr proc C public
 	ret
 
 Get_Font_Palette_Ptr endp
-
+ENDIF
 
 END

@@ -62,9 +62,16 @@ void Set_Font_Palette_Range(void const* palette, int start_idx, int end_idx);
 void* Load_Font(char const* name);
 
 /*=========================================================================*/
-/* The following prototypes are for the file: TEXTPRNT.ASM	  					*/
+/* The following prototypes are for the file: TEXTPRNT.ASM                 */
 /*=========================================================================*/
-
+#ifdef __cplusplus
+extern "C" {
+#endif
+long Buffer_Print(void* thisptr, const char* str, int x, int y, int fcolor, int bcolor);
+void* Get_Font_Palette_Ptr();
+#ifdef __cplusplus
+}
+#endif
 /*=========================================================================*/
 
 //////////////////////////////////////// External varables ///////////////////////////////////////
