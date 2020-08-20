@@ -182,6 +182,8 @@ endif()
 include(ProductVersion)
 
 if(BUILD_REMASTERTD)
+    include(BuildIcons)
+
     if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
         # Generate windows version info.
         generate_product_version(
@@ -212,6 +214,8 @@ endif()
 
 if(BUILD_VANILLATD)
     if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        # Create the custom command for generating the ico file for windows.
+        make_icon(INPUT "${CMAKE_SOURCE_DIR}/resources/vanillatd_icon.svg" OUTPUT VANILLATD_ICON)
         # Generate windows version info.
         generate_product_version(
             VANILLATD_RC
@@ -223,9 +227,11 @@ if(BUILD_VANILLATD)
             COMPANY_COPYRIGHT "Based on code released under GPLv3 by EA"
             ORIGINAL_FILENAME "vanillatd.exe"
             RCFILE_PREFIX "VanillaTD"
+            ICON "${VANILLATD_ICON}"
         )
     endif()
-    add_executable(VanillaTD ${TIBDAWN_SRC} ${TIBDAWN_HEADERS} ${VANILLATD_RC})
+    # A target must include the icon for the custom command to run.
+    add_executable(VanillaTD ${TIBDAWN_SRC} ${TIBDAWN_HEADERS} ${VANILLATD_RC} ${VANILLATD_ICON})
     target_compile_definitions(VanillaTD PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS})
     target_include_directories(VanillaTD PUBLIC ${CMAKE_SOURCE_DIR} .)
     target_link_libraries(VanillaTD commonv ${VANILLA_LIBS} ${STATIC_LIBS})
