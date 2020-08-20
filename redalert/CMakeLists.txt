@@ -299,7 +299,11 @@ if(BUILD_REMASTERRA)
 endif()
 
 if(BUILD_VANILLARA)
+    include(BuildIcons)
+
     if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        # Create the custom command for generating the ico file for windows.
+        make_icon(INPUT "${CMAKE_SOURCE_DIR}/resources/vanillara_icon.svg" OUTPUT VANILLARA_ICON)
         # Generate windows version info.
         generate_product_version(
             VANILLARA_RC
@@ -311,9 +315,11 @@ if(BUILD_VANILLARA)
             COMPANY_COPYRIGHT "Based on code released under GPLv3 by EA"
             ORIGINAL_FILENAME "vanillara.exe"
             RCFILE_PREFIX "VanillaRA"
+            ICON "${VANILLARA_ICON}"
         )
     endif()
-    add_executable(VanillaRA ${REDALERT_SRC} ${REDALERT_HEADERS} ${VANILLARA_RC})
+    # A target must include the icon for the custom command to run.
+    add_executable(VanillaRA ${REDALERT_SRC} ${REDALERT_HEADERS} ${VANILLARA_RC} ${VANILLARA_ICON})
     target_compile_definitions(VanillaRA PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS})
     target_include_directories(VanillaRA PUBLIC ${CMAKE_SOURCE_DIR} .)
     target_link_libraries(VanillaRA commonv ${VANILLA_LIBS} ${STATIC_LIBS})

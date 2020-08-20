@@ -18,6 +18,10 @@ jobs:
       with:
         submodules: 'true'
 
+    - name: Install Dependencies
+      run: |
+        choco install imagemagick.app
+
     - name: Build Vanilla Conquer
       run: |
         cmake -A Win32 -DDSOUND=${{ matrix.features }} -DDDRAW=${{ matrix.features }} -DUSE_ASM=${{ matrix.features }} -DNETWORKING=${{ matrix.features }} -DMAP_EDITORRA=${{ matrix.features }} -DMAP_EDITORTD=${{ matrix.features }} -B build
