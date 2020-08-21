@@ -163,7 +163,7 @@ void TcpipManagerClass::Close(void)
     /*
     ** Call the Winsock cleanup function to say we are finished using Winsock
     */
-    WSACleanup();
+    socket_cleanup();
 
     WinsockInitialised = FALSE;
     Connected = FALSE;
@@ -186,7 +186,6 @@ void TcpipManagerClass::Close(void)
 
 bool TcpipManagerClass::Init(void)
 {
-    short version;
     int rc;
 
     /*
@@ -205,16 +204,8 @@ bool TcpipManagerClass::Init(void)
     /*
     ** Start WinSock, and fill in our WinSockData
     */
-    version = (WINSOCK_MINOR_VER << 8) | WINSOCK_MAJOR_VER;
-    rc = WSAStartup(version, &WinsockInfo);
+    rc = socket_startup();
     if (rc != 0) {
-        return (FALSE);
-    }
-
-    /*
-    ** Check the Winsock version number
-    */
-    if ((WinsockInfo.wVersion & 0x00ff) != (version & 0x00ff) || (WinsockInfo.wVersion >> 8) != (version >> 8)) {
         return (FALSE);
     }
 
@@ -424,7 +415,7 @@ bool TcpipManagerClass::Add_Client(void)
     addrsize = sizeof(addr);
     ConnectSocket = accept(ListenSocket, (LPSOCKADDR)&addr, &addrsize);
     if (ConnectSocket == INVALID_SOCKET) {
-        // Show_Error("accept", WSAGetLastError());
+        // Show_Error("accept", LastSocketError);
         return (FALSE);
     }
 
@@ -641,7 +632,7 @@ void TcpipManagerClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
                                 sizeof(addr));
 
                     if (rc == SOCKET_ERROR) {
-                        if (WSAGetLastError() != WSAEWOULDBLOCK) {
+                        if (LastSocketError != WSAEWOULDBLOCK) {
                             Clear_Socket_Error(UDPSocket);
                         }
                         break;
@@ -715,7 +706,7 @@ void TcpipManagerClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
             while (OutBufferHead > OutBufferTail) {
                 rc = send(ConnectSocket, OutBuffer + OutBufferTail, OutBufferHead - OutBufferTail, 0);
                 if (rc == SOCKET_ERROR) {
-                    if (WSAGetLastError() != WSAEWOULDBLOCK) {
+                    if (LastSocketError != WSAEWOULDBLOCK) {
                         Clear_Socket_Error(ConnectSocket);
                     }
                     break;

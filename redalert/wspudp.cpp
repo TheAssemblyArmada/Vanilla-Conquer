@@ -412,7 +412,7 @@ long UDPInterfaceClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
         rc = sendto(Socket, (const char*)packet->Buffer, packet->BufferLen, 0, (LPSOCKADDR)&addr, sizeof(addr));
 
         if (rc == SOCKET_ERROR) {
-            if (WSAGetLastError() != WSAEWOULDBLOCK) {
+            if (LastSocketError != WSAEWOULDBLOCK) {
                 Clear_Socket_Error(Socket);
                 return (0);
             }
