@@ -37,10 +37,10 @@
 #include "_wsproto.h"
 
 /*
-** Include standard Winsock 1.0 header file.
+** Include compatability sockets header file.
 */
 #ifdef NETWORKING
-#include <winsock.h>
+#include "common/sockets.h"
 #endif
 
 /*

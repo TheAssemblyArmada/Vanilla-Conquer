@@ -99,6 +99,7 @@ Map(screen) class heirarchy.
 
 #include "watcom.h"
 #include "lint.h"
+#include "common/sockets.h" // Must come before windows.h include.
 
 #ifdef WIN32
 //#define WIN32_LEAN_AND_MEAN
