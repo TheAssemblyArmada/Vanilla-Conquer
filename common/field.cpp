@@ -31,6 +31,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include <string.h>
 #include "field.h"
+#include "endianness.h"
 
 // ST - 12/18/2018 10:14AM
 #pragma warning(disable : 4996)
@@ -140,12 +141,12 @@ void FieldClass::Host_To_Net(void)
 
     case TYPE_SHORT:
     case TYPE_UNSIGNED_SHORT:
-        *((unsigned short*)Data) = htons(*((unsigned short*)Data));
+        *((unsigned short*)Data) = hton16(*((unsigned short*)Data));
         break;
 
     case TYPE_LONG:
     case TYPE_UNSIGNED_LONG:
-        *((unsigned long*)Data) = htonl(*((unsigned long*)Data));
+        *((unsigned long*)Data) = hton32(*((unsigned long*)Data));
         break;
 
     //
@@ -158,8 +159,8 @@ void FieldClass::Host_To_Net(void)
     //
     // Finally convert over the data type and the size of the packet.
     //
-    DataType = htons(DataType);
-    Size = htons(Size);
+    DataType = hton16(DataType);
+    Size = hton16(Size);
 }
 /**************************************************************************
  * PACKETCLASS::NET_TO_HOST_FIELD -- Converts net field to host format    *
@@ -177,9 +178,9 @@ void FieldClass::Net_To_Host(void)
     // Convert the variables to host order.  This needs to be converted so
     // the switch statement does compares on the data that follows.
     //
-    Size = ntohs(Size);
+    Size = ntoh16(Size);
 
-    DataType = ntohs(DataType);
+    DataType = ntoh16(DataType);
 
     //
     // Before we convert the data type, we should convert the actual data
@@ -194,12 +195,12 @@ void FieldClass::Net_To_Host(void)
 
     case TYPE_SHORT:
     case TYPE_UNSIGNED_SHORT:
-        *((unsigned short*)Data) = ntohs(*((unsigned short*)Data));
+        *((unsigned short*)Data) = ntoh16(*((unsigned short*)Data));
         break;
 
     case TYPE_LONG:
     case TYPE_UNSIGNED_LONG:
-        *((unsigned long*)Data) = ntohl(*((unsigned long*)Data));
+        *((unsigned long*)Data) = ntoh32(*((unsigned long*)Data));
         break;
 
     //

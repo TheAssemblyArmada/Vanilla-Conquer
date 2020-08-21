@@ -3241,7 +3241,7 @@ void WOL_GameSetupDialog::TriggerGameStart(char* szGoMessage)
             pPlayerNew = new NodeNameType;
             strcpy(pPlayerNew->Name, szPlayerName);
             //	Get player's IP address from pChatSink...
-            unsigned long lAddress = (pWO->pChatSink->GetPlayerGameIP(szPlayerName)); // ntohl(
+            unsigned long lAddress = (pWO->pChatSink->GetPlayerGameIP(szPlayerName)); // ntoh32(
             //			debugprint( "IP address is %i, or 0x%x\n", lAddress, lAddress );
             if (pWO->GameInfoCurrent.bTournament) {
                 //	This is a tournament game, and I therefore have only one opponent: this one.

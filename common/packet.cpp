@@ -36,6 +36,7 @@
 #include <string.h>
 
 #include "packet.h"
+#include "endianness.h"
 
 #ifdef NOMINMAX
 inline int min(int a, int b)
@@ -108,10 +109,10 @@ PacketClass::PacketClass(char* curbuf)
     //
     Size = *(unsigned short*)curbuf;
     curbuf += sizeof(unsigned short);
-    Size = ntohs(Size);
+    Size = ntoh16(Size);
     ID = *(short*)curbuf;
     curbuf += sizeof(short);
-    ID = ntohs(ID);
+    ID = ntoh16(ID);
     Head = NULL;
 
     //
@@ -137,7 +138,7 @@ PacketClass::PacketClass(char* curbuf)
         //
         // Copy the data into the buffer
         //
-        int size = ntohs(field->Size);
+        int size = ntoh16(field->Size);
         field->Data = new char[size];
         memcpy(field->Data, curbuf, size);
         curbuf += size;
@@ -145,7 +146,7 @@ PacketClass::PacketClass(char* curbuf)
         //
         // Make sure we allow for the pad bytes.
         //
-        int pad = (4 - (ntohs(field->Size) & 3)) & 3;
+        int pad = (4 - (ntoh16(field->Size) & 3)) & 3;
         curbuf += pad;
         remaining_size -= pad;
 
@@ -205,9 +206,9 @@ char* PacketClass::Create_Comms_Packet(int& size)
     //
     // write the size into the packet header
     //
-    *(unsigned short*)curbuf = (unsigned short)htons((unsigned short)size);
+    *(unsigned short*)curbuf = (unsigned short)hton16((unsigned short)size);
     curbuf += sizeof(unsigned short);
-    *(short*)curbuf = htons(ID);
+    *(short*)curbuf = hton16(ID);
     curbuf += sizeof(short);
 
     //
@@ -230,13 +231,13 @@ char* PacketClass::Create_Comms_Packet(int& size)
         //
         // Copy the data into the buffer and then advance the buffer
         //
-        memcpy(curbuf, current->Data, ntohs(current->Size));
-        curbuf += ntohs(current->Size);
+        memcpy(curbuf, current->Data, ntoh16(current->Size));
+        curbuf += ntoh16(current->Size);
 
         //
         // Finally take care of any pad bytes by setting them to 0
         //
-        int pad = (4 - (ntohs(current->Size) & 3)) & 3;
+        int pad = (4 - (ntoh16(current->Size) & 3)) & 3;
 
         //
         //	If there is any pad left over, make sure you memset it

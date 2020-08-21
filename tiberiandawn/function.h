@@ -104,13 +104,6 @@ inline int max(int a, int b)
 #include <windows.h>
 #endif
 
-#ifndef NETWORKING
-#define htonl(x) x
-#define htons(x) x
-#define ntohl(x) x
-#define ntohs(x) x
-#endif
-
 /**********************************************************************
 **	If the following define is enabled, then the memory checking code
 **	will be disabled.

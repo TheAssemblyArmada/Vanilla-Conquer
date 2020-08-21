@@ -570,7 +570,7 @@ int IPXConnClass::Send_To(char* buf, int buflen, IPXAddressClass* address, NetNo
 
         char* tempsend = new char[buflen + sizeof(target_mask)];
 
-        *(unsigned short*)tempsend = htons(target_mask);
+        *(unsigned short*)tempsend = hton16(target_mask);
         memcpy(tempsend + 2, buf, buflen);
 #if (0)
         char tempbuf[256];

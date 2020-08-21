@@ -966,7 +966,7 @@ int IPXManagerClass::Service(void)
             */
             CurHeaderBuf = (IPXHEADER*)&temp_receive_buffer[0]; // NULL;
             unsigned short* swapptr = (unsigned short*)CurHeaderBuf;
-            *swapptr = ntohs(*swapptr);
+            *swapptr = ntoh16(*swapptr);
 
             CurDataBuf = (char*)&temp_receive_buffer[2];
 
