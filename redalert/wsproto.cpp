@@ -134,7 +134,7 @@ void WinsockInterfaceClass::Close(void)
     /*
     ** Call the Winsock cleanup function to say we are finished using Winsock
     */
-    WSACleanup();
+    socket_cleanup();
 
     WinsockInitialised = false;
 }
@@ -278,7 +278,6 @@ void WinsockInterfaceClass::Discard_Out_Buffers(void)
  *=============================================================================================*/
 bool WinsockInterfaceClass::Init(void)
 {
-    short version;
     int rc;
 
     /*
@@ -286,13 +285,6 @@ bool WinsockInterfaceClass::Init(void)
     */
     if (WinsockInitialised)
         return (true);
-
-    /*
-    ** Create a buffer much larger than the sizeof (WSADATA) would indicate since Bounds Checker
-    ** says that a buffer of that size gets overrun.
-    */
-    char* buffer = new char[sizeof(WSADATA) + 1024];
-    WSADATA* winsock_info = (WSADATA*)(&buffer[0]);
 
     /*
     ** Initialise socket and event handle to null
@@ -305,22 +297,11 @@ bool WinsockInterfaceClass::Init(void)
     /*
     ** Start WinSock, and fill in our Winsock info structure
     */
-    version = (WINSOCK_MINOR_VER << 8) | WINSOCK_MAJOR_VER;
-    rc = WSAStartup(version, winsock_info);
+    rc = socket_startup();
     if (rc != 0) {
         char out[128];
         sprintf(out, "TS: Winsock failed to initialise - error code %d.\n", GetLastError());
         OutputDebugString(out);
-        delete[] buffer;
-        return (false);
-    }
-
-    /*
-    ** Check the Winsock version number
-    */
-    if ((winsock_info->wVersion & 0x00ff) != (version & 0x00ff) || (winsock_info->wVersion >> 8) != (version >> 8)) {
-        OutputDebugString("TS: Winsock version is less than 1.1\n");
-        delete[] buffer;
         return (false);
     }
 
@@ -329,7 +310,6 @@ bool WinsockInterfaceClass::Init(void)
     */
     WinsockInitialised = true;
 
-    delete[] buffer;
     return (true);
 }
 

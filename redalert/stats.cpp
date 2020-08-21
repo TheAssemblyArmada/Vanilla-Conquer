@@ -412,10 +412,10 @@ void Send_Statistics_Packet(void)
                             }
                         }
                         //						else
-                        //							debugprint( "gethostbyname failed. Error %i\n", WSAGetLastError() );
+                        //							debugprint( "gethostbyname failed. Error %i\n", LastSocketError );
                     }
                     //					else
-                    //						debugprint( "gethostname failed with %i, error %i\n", iRes, WSAGetLastError()
+                    //						debugprint( "gethostname failed with %i, error %i\n", iRes, LastSocketError
                     //);
                 }
                 stats.Add_Field(FIELD_PLAYER1_IP, (char*)szIPAddress);
