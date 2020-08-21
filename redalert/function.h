@@ -42,6 +42,13 @@
 
 //#pragma warn -hid
 
+#include "common/sockets.h" // Must come before windows.h include.
+
+#ifdef _WIN32
+//#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 #ifdef _WIN32
 #define MONOC_H
 #endif
