@@ -53,6 +53,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/endianness.h"
 #include "common/tcpip.h"
 
 #ifdef NETWORKING
@@ -430,8 +431,8 @@ bool TcpipManagerClass::Add_Client(void)
     ** Bind our UDP socket to our UDP port number
     */
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(PlanetWestwoodPortNumber);
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    addr.sin_port = hton16(PlanetWestwoodPortNumber);
+    addr.sin_addr.s_addr = hton32(INADDR_ANY);
 
     if (bind(UDPSocket, (LPSOCKADDR)&addr, sizeof(addr)) == SOCKET_ERROR) {
         Close_Socket(UDPSocket);
@@ -584,7 +585,7 @@ void TcpipManagerClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
                 }
 
                 addr.sin_family = AF_INET;
-                addr.sin_port = htons(PlanetWestwoodPortNumber);
+                addr.sin_port = hton16(PlanetWestwoodPortNumber);
                 memcpy(&addr.sin_addr.s_addr, &UDPIPAddress, 4);
 
                 /*
@@ -722,7 +723,7 @@ void TcpipManagerClass::Start_Client(void)
 
     addr.sin_family = AF_INET;
     addr.sin_port = 0;
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    addr.sin_addr.s_addr = hton32(INADDR_ANY);
 
     /*
     ** Set up the incoming and outgoing data buffers head and tail pointers
@@ -760,8 +761,8 @@ void TcpipManagerClass::Start_Client(void)
     ** Bind our UDP socket to our UDP port number
     */
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(PlanetWestwoodPortNumber);
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    addr.sin_port = hton16(PlanetWestwoodPortNumber);
+    addr.sin_addr.s_addr = hton32(INADDR_ANY);
 
     if (bind(UDPSocket, (LPSOCKADDR)&addr, sizeof(addr)) == SOCKET_ERROR) {
         Close_Socket(UDPSocket);

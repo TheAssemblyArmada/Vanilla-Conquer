@@ -44,6 +44,7 @@
 #include "function.h"
 #include "internet.h"
 #include "wspudp.h"
+#include "common/endianness.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -164,8 +165,8 @@ bool UDPInterfaceClass::Open_Socket(SOCKET)
     ** Bind our UDP socket to our UDP port number
     */
     addr.sin_family = AF_INET;
-    addr.sin_port = (unsigned short)htons((unsigned short)PlanetWestwoodPortNumber);
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    addr.sin_port = (unsigned short)hton16((unsigned short)PlanetWestwoodPortNumber);
+    addr.sin_addr.s_addr = hton32(INADDR_ANY);
 
     if (bind(Socket, (LPSOCKADDR)&addr, sizeof(addr)) == SOCKET_ERROR) {
         Close_Socket();
@@ -200,7 +201,7 @@ bool UDPInterfaceClass::Open_Socket(SOCKET)
             break;
 
         unsigned long address = **addresses++;
-        // address = ntohl (address);
+        // address = ntoh32 (address);
 
         char temp[128];
         sprintf(temp,
@@ -399,7 +400,7 @@ long UDPInterfaceClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
         ** Set up the address structure of the outgoing packet
         */
         addr.sin_family = AF_INET;
-        addr.sin_port = (unsigned short)htons((unsigned short)PlanetWestwoodPortNumber);
+        addr.sin_port = (unsigned short)hton16((unsigned short)PlanetWestwoodPortNumber);
         memcpy(&addr.sin_addr.s_addr, packet->Address + 4, 4);
 
         /*

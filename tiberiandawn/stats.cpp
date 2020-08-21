@@ -402,8 +402,8 @@ void Send_Statistics_Packet(void)
 
         if (handle != INVALID_HANDLE_VALUE) {
             if (GetFileTime(handle, NULL, NULL, &write_time)) {
-                write_time.dwLowDateTime = htonl(write_time.dwLowDateTime);
-                write_time.dwHighDateTime = htonl(write_time.dwHighDateTime);
+                write_time.dwLowDateTime = hton32(write_time.dwLowDateTime);
+                write_time.dwHighDateTime = hton32(write_time.dwHighDateTime);
                 stats.Add_Field(FIELD_GAME_BUILD_DATE, (void*)&write_time, sizeof(write_time));
             }
         }

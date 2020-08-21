@@ -42,14 +42,15 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/endianness.h"
 
 /*
 ** Define host to network to host functions for DOS
 */
 #ifndef WIN32
 
-#define htonl(val) 0
-#define ntohl(val) 0
+#define hton32(val) 0
+#define ntoh32(val) 0
 
 #endif // WIN32
 
@@ -188,7 +189,7 @@ void UnitTrackerClass::To_Network_Format(void)
 {
     if (!InNetworkFormat) {
         for (int i = 0; i < UnitCount; i++) {
-            UnitTotals[i] = htonl(UnitTotals[i]);
+            UnitTotals[i] = hton32(UnitTotals[i]);
         }
     }
     InNetworkFormat = 1; // Flag that data is now in network format
@@ -212,7 +213,7 @@ void UnitTrackerClass::To_PC_Format(void)
 {
     if (InNetworkFormat) {
         for (int i = 0; i < UnitCount; i++) {
-            UnitTotals[i] = ntohl(UnitTotals[i]);
+            UnitTotals[i] = ntoh32(UnitTotals[i]);
         }
     }
     InNetworkFormat = 0; // Flag that data is now in PC format
