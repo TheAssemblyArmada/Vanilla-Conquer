@@ -54,7 +54,11 @@
 
 #include "function.h"
 #include "common/filepcx.h"
+#ifdef _WIN32
 #include <io.h>
+#else
+#include <unistd.h>
+#endif
 
 /*
 **	This records the current gadget the the gadget system is "stuck on". Such a

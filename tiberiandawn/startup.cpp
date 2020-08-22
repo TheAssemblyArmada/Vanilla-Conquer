@@ -36,14 +36,15 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include <conio.h>
-#include <io.h>
 
 bool Read_Private_Config_Struct(char* profile, NewConfigType* config);
 void Delete_Swap_Files(void);
 void Print_Error_End_Exit(char* string);
 void Print_Error_Exit(char* string);
+#ifdef _WIN32
 extern void Create_Main_Window(HANDLE instance, int command_show, int width, int height);
+HINSTANCE ProgramInstance;
+#endif
 
 extern int ReadyToQuit;
 void Read_Setup_Options(RawFileClass* config_file);
@@ -96,13 +97,16 @@ void CD_Test(void)
  *   03/20/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
 
-HINSTANCE ProgramInstance;
 void Move_Point(short& x, short& y, register DirType dir, unsigned short distance);
 
 void Check_Use_Compressed_Shapes(void);
 extern void DLL_Shutdown(void);
 
-#if defined REMASTER_BUILD && defined _WIN32
+#ifdef _WIN32
+
+int main(int argc, char** argv);
+
+#ifdef REMASTER_BUILD
 BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserved)
 {
     lpvReserved;
@@ -129,29 +133,17 @@ BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserve
 
     return true;
 }
-#endif
 
-#ifdef REMASTER_BUILD
 int DLL_Startup(const char* command_line_in)
 {
     RunningAsDLL = true;
-    int command_show = SW_HIDE;
     HINSTANCE instance = ProgramInstance;
     char command_line[1024];
     strcpy(command_line, command_line_in);
-#else
+#else // not remaster
 int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int command_show)
 {
-    // Heap_Dump_Check( "first thing in main" );
-    // malloc(1);
 #endif
-    CCDebugString("C&C95 - Starting up.\n");
-
-    /*
-    ** These values return 0x47 if code is working correctly
-    */
-    //	int temp = Desired_Facing256 (1070, 5419, 1408, 5504);
-
     if (Ram_Free(MEM_NORMAL) < 5000000) {
 #ifdef GERMAN
         printf("Zuwenig Hauptspeicher verfgbar.\n");
@@ -164,12 +156,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 #endif
         return (EXIT_FAILURE);
     }
-
-    // void *test_buffer = Alloc(20,MEM_NORMAL);
-
-    // memset ((char*)test_buffer, 0, 21);
-
-    // Free(test_buffer);
 
     int argc; // Command line argument count
     unsigned command_scan;
@@ -230,33 +216,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
     /*
     **	Remember the current working directory and drive.
     */
-#ifndef REMSATER_BUILD
-#if (0) // PG_TO_FIX
-    unsigned olddrive;
-    char oldpath[MAX_PATH];
-    getcwd(oldpath, sizeof(oldpath));
-    _dos_getdrive(&olddrive);
-
-    /*
-    **	Change directory to the where the executable is located. Handle the
-    **	case where there is no path attached to argv[0].
-    */
-    char drive[_MAX_DRIVE];
-    char path[_MAX_PATH];
-    unsigned drivecount;
-    _splitpath(argv[0], drive, path, NULL, NULL);
-    if (!drive[0]) {
-        drive[0] = ('A' + olddrive) - 1;
-    }
-    if (!path[0]) {
-        strcpy(path, ".");
-    }
-    _dos_setdrive(toupper((drive[0]) - 'A') + 1, &drivecount);
-    if (path[strlen(path) - 1] == '\\') {
-        path[strlen(path) - 1] = '\0';
-    }
-    chdir(path);
-#elif defined _WIN32 // OmniBlade: Win32 version of the commented out dos/watcom code.
+#ifndef REMASTER_BUILD
     char path[MAX_PATH];
     GetModuleFileNameA(GetModuleHandleA(nullptr), path, sizeof(path));
 
@@ -269,7 +229,15 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 
     SetCurrentDirectoryA(path);
 #endif
-#endif // REMASTER_BUILD
+
+    return main(argc, argv);
+}
+
+#endif // _WIN32
+
+int main(int argc, char** argv)
+{
+    CCDebugString("C&C95 - Starting up.\n");
 
 #ifdef JAPANESE
     ForceEnglish = false;
@@ -289,6 +257,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
         */
         Check_Use_Compressed_Shapes();
 
+#if 0
         /*
         ** If there is not enough disk space free, dont allow the product to run.
         */
@@ -323,6 +292,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 
 #endif
         }
+#endif
 
 #ifndef REMASTER_BUILD
         CDFileClass::Set_CD_Drive(CDList.Get_First_CD_Drive());
@@ -340,7 +310,9 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 
             CCDebugString("C&C95 - Creating main window.\n");
 
-            Create_Main_Window(instance, command_show, ScreenWidth, ScreenHeight);
+#ifdef _WIN32
+            Create_Main_Window(ProgramInstance, 0, ScreenWidth, ScreenHeight);
+#endif
 
             CCDebugString("C&C95 - Initialising audio.\n");
 
@@ -375,10 +347,12 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 
             if (!video_success) {
                 CCDebugString("C&C95 - Failed to set video mode.\n");
+#ifdef _WIN32
                 MessageBoxA(MainWindow,
                             "Error - Unable to set the video mode.",
                             "Command & Conquer",
                             MB_ICONEXCLAMATION | MB_OK);
+#endif
                 if (Palette)
                     delete[] Palette;
                 return (EXIT_FAILURE);
@@ -407,10 +381,12 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
                     ** Aaaarrgghh!
                     */
                     CCDebugString("C&C95 - Unable to allocate primary surface.\n");
+#ifdef _WIN32
                     MessageBoxA(MainWindow,
                                 Text_String(TXT_UNABLE_TO_ALLOCATE_PRIMARY_VIDEO_BUFFER),
                                 "Command & Conquer",
                                 MB_ICONEXCLAMATION | MB_OK);
+#endif
                     if (Palette)
                         delete[] Palette;
                     return (EXIT_FAILURE);
@@ -543,10 +519,12 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
             CCDebugString("C&C95 - About to exit.\n");
             ReadyToQuit = 1;
 
+#ifdef _WIN32
             PostMessageA(MainWindow, WM_DESTROY, 0, 0);
             do {
                 Keyboard::Check();
             } while (ReadyToQuit == 1);
+#endif
 
             CCDebugString("C&C95 - Returned from final message loop.\n");
             // Prog_End();

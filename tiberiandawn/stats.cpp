@@ -122,7 +122,9 @@ enum
 };
 
 extern unsigned long PlanetWestwoodGameID;
+#ifdef _WIN32
 extern HINSTANCE ProgramInstance;
+#endif
 extern unsigned long PlanetWestwoodStartTime;
 
 extern "C" char CPUType;

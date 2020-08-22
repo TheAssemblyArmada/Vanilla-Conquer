@@ -65,6 +65,7 @@ WWKeyboardClass::WWKeyboardClass(void)
     //
     memset(VKRemap, 0, 256);
     memset(AsciiRemap, 0, 2048);
+#ifdef _WIN32
     short lp;
     for (lp = 31; lp < 255; lp++) {
         if (isprint(lp)) {
@@ -89,6 +90,7 @@ WWKeyboardClass::WWKeyboardClass(void)
             ToggleKeys[lp] = 2;
         }
     }
+#endif
 
     //
     // Our buffer should start devoid of keys.
@@ -105,7 +107,9 @@ WWKeyboardClass::WWKeyboardClass(void)
     MouseQY = 0;
     MState = 0;
     Conditional = 0;
+#ifdef _WIN32
     CurrentCursor = NULL;
+#endif
 }
 
 /***********************************************************************************************
@@ -161,9 +165,9 @@ bool WWKeyboardClass::Check(void)
     Message_Loop();
     unsigned short temp; // store temp holding spot for key
     if (Head == Tail)
-        return (FALSE);  // if no keys in buff then get out
+        return false;    // if no keys in buff then get out
     temp = Buffer[Head]; // get key out of the buffer
-    return (temp);       // send it back to main program
+    return (bool)temp;   // send it back to main program
 }
 
 /***********************************************************************************************
@@ -216,9 +220,9 @@ bool WWKeyboardClass::Put(int key)
         // Critical Line
         //
         Tail = temp;
-        return (TRUE);
+        return true;
     }
-    return (FALSE);
+    return false;
 }
 /***********************************************************************************************
  * WWKeyboardClass::Put_Key_Message -- Translates and inserts wParam into Keyboard Buffer      *
@@ -241,6 +245,7 @@ bool WWKeyboardClass::Put_Key_Message(unsigned int vk_key, bool release, bool db
     // that we do not want to set the shift, ctrl and alt bits for Mouse keypresses as this
     // would be incompatible with the dos version.
     //
+#ifdef _WIN32
     if (vk_key != VK_LBUTTON && vk_key != VK_MBUTTON && vk_key != VK_RBUTTON) {
         int shift = (GetKeyState(VK_SHIFT) & 0xFF00) != 0;
         int ctrl = (GetKeyState(VK_CONTROL) & 0xFF00) != 0;
@@ -261,6 +266,8 @@ bool WWKeyboardClass::Put_Key_Message(unsigned int vk_key, bool release, bool db
             bits |= WWKEY_ALT_BIT;
         }
     }
+#endif
+
     if (!AsciiRemap[vk_key | bits]) {
         bits |= WWKEY_VK_BIT;
     }
@@ -291,10 +298,14 @@ int WWKeyboardClass::To_ASCII(int key)
 
 int WWKeyboardClass::Down(int key)
 {
+#ifdef _WIN32
     return (GetAsyncKeyState(key & 0xFF));
+#else
+    return 0;
+#endif
 }
 
-VOID WWKeyboardClass::Split(int& key, int& shift, int& ctrl, int& alt, int& rls, int& dbl)
+void WWKeyboardClass::Split(int& key, int& shift, int& ctrl, int& alt, int& rls, int& dbl)
 {
     shift = (key & WWKEY_SHIFT_BIT) != 0;
     ctrl = (key & WWKEY_CTRL_BIT) != 0;
@@ -305,12 +316,12 @@ VOID WWKeyboardClass::Split(int& key, int& shift, int& ctrl, int& alt, int& rls,
 }
 
 extern "C" {
-void __cdecl Stop_Execution(void)
+void Stop_Execution(void)
 {
 }
 }
 
-//#pragma off(unreferenced)
+#ifdef _WIN32
 void WWKeyboardClass::Message_Handler(HWND, UINT message, UINT wParam, LONG lParam)
 {
 #ifndef REMASTER_BUILD // #if (0) //   ST - 12/20/2018 11:27AM
@@ -389,11 +400,11 @@ void WWKeyboardClass::Message_Handler(HWND, UINT message, UINT wParam, LONG lPar
     }
 #endif
 }
-//#pragma on(unreferenced)
+#endif // __WIN32
 
 void Message_Loop(void)
 {
-
+#ifdef _WIN32
     MSG msg;
 
     while (PeekMessageA(&msg, NULL, 0, 0, PM_NOREMOVE)) {
@@ -403,6 +414,7 @@ void Message_Loop(void)
         TranslateMessage(&msg);
         DispatchMessageA(&msg);
     }
+#endif
 }
 
 /***************************************************************************

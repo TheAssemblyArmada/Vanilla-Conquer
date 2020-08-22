@@ -389,11 +389,17 @@ void WWMouseClass::Show_Mouse()
 #if defined(_WIN32)
     POINT pt;
     GetCursorPos(&pt);
+#else
+    struct
+    {
+        int x;
+        int y;
+    } pt = {0, 0};
+#endif
 
     MouseUpdate++;
     Low_Show_Mouse(pt.x, pt.y);
     MouseUpdate--;
-#endif
 }
 
 void WWMouseClass::Conditional_Hide_Mouse(int x1, int y1, int x2, int y2)

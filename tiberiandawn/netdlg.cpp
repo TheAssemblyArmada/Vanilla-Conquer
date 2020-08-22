@@ -4210,6 +4210,7 @@ void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned long
  *=============================================================================================*/
 void Wait_For_Focus(void)
 {
+#ifdef _WIN32
     CountDownTimerClass focus_timer;
     focus_timer.Set(5 * 60);
     ShowWindow(MainWindow, SW_SHOWMAXIMIZED);
@@ -4234,6 +4235,7 @@ void Wait_For_Focus(void)
         CCDebugString("\n");
         AllSurfaces.SurfacesRestored = false;
     }
+#endif
 }
 
 /***********************************************************************************************

@@ -39,10 +39,7 @@
  *                                                                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef WIN32
-#define WIN32
-#define _WIN32
-#endif // WIN32
+#ifdef _WIN32
 #include <windows.h>
 
 typedef enum WinCommDialMethodType
@@ -418,3 +415,5 @@ typedef struct _MODEMSETTINGS
 #define MDM_V23_OVERRIDE     0x00000400
 
 #endif /* _MCX_H_ */
+
+#endif
