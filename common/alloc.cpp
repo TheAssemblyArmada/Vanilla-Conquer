@@ -229,13 +229,6 @@ void* Resize_Alloc(void* original_ptr, unsigned long new_size_in_bytes)
  *=========================================================================*/
 long Ram_Free(MemoryFlagType)
 {
-//	return(_memmax());
-#if (0)
-    MEMORYSTATUS mem_info;
-    mem_info.dwLength = sizeof(mem_info);
-    GlobalMemoryStatus(&mem_info);
-    return (mem_info.dwAvailPhys);
-#endif
     return (64 * 1024 * 1024);
 }
 
@@ -278,12 +271,5 @@ long Heap_Size(MemoryFlagType)
  *=========================================================================*/
 long Total_Ram_Free(MemoryFlagType)
 {
-#if (0)
-    MEMORYSTATUS mem_info;
-    mem_info.dwLength = sizeof(mem_info);
-    GlobalMemoryStatus(&mem_info);
-    return (mem_info.dwAvailPhys);
-#endif
-
     return (64 * 1024 * 1024);
 }

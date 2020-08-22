@@ -788,25 +788,9 @@ bool Select_Game(bool fade)
     CountDownTimerClass count;
     int cd_index;
 
-    MEMORYSTATUS mem_info;
-    mem_info.dwLength = sizeof(mem_info);
-    GlobalMemoryStatus(&mem_info);
-
     if (Special.IsFromInstall) {
-        /*
-        ** Special case for machines with 12 megs or less - just play intro, no choose side screen
-        */
-        if (mem_info.dwTotalPhys < 12 * 1024 * 1024) {
-            VisiblePage.Clear();
-            Play_Movie("INTRO2", THEME_NONE, false);
-            BreakoutAllowed = true;
-            Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-            fade = true;
-            VisiblePage.Clear();
-        } else {
-            display = false;
-            Show_Mouse();
-        }
+        display = false;
+        Show_Mouse();
     }
 
     /*
@@ -966,7 +950,7 @@ bool Select_Game(bool fade)
             /*
             **	Display menu and fetch selection from player.
             */
-            if (Special.IsFromInstall && mem_info.dwTotalPhys >= 12 * 1024 * 1024) {
+            if (Special.IsFromInstall) {
                 selection = SEL_START_NEW_GAME;
                 Theme.Queue_Song(THEME_NONE);
             }
