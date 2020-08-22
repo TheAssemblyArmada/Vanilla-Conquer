@@ -357,10 +357,7 @@ void Send_Statistics_Packet(void)
         /*
         ** Memory
         */
-        MEMORYSTATUS mem_info;
-        mem_info.dwLength = sizeof(mem_info);
-        GlobalMemoryStatus(&mem_info);
-        stats.Add_Field(FIELD_MEMORY, (long)mem_info.dwTotalPhys);
+        stats.Add_Field(FIELD_MEMORY, (long)-1);
 
         /*
         ** Video memory
