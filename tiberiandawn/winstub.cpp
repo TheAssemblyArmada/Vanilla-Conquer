@@ -112,7 +112,9 @@ VOID* __cdecl Extract_Shape(VOID const* buffer, int shape)
 } /* end of Extract_Shape */
 #endif //(0)
 
+#ifdef _WIN32
 unsigned long CCFocusMessage = WM_USER + 50; // Private message for receiving application focus
+#endif
 extern void VQA_PauseAudio(void);
 void VQA_ResumeAudio(void)
 {
@@ -152,7 +154,7 @@ void Focus_Loss(void)
 void Focus_Restore(void)
 {
     Map.Flag_To_Redraw(true);
-    Start_Primary_Sound_Buffer(TRUE);
+    Start_Primary_Sound_Buffer(true);
     if (WWMouse)
         WWMouse->Set_Cursor_Clip();
     VisiblePage.Clear();
@@ -176,9 +178,7 @@ void Focus_Restore(void)
 
 void Check_For_Focus_Loss(void)
 {
-
-// ST - 1/3/2019 10:40AM
-#ifndef REMASTER_BUILD
+#if !defined(REMASTER_BUILD) && defined(_WIN32)
     static BOOL focus_last_time = 1;
     MSG msg;
 
@@ -222,7 +222,7 @@ void Check_For_Focus_Loss(void)
 }
 
 extern bool InMovie;
-#ifndef REMASTER_BUILD // PG_TO_FIX
+#if !defined(REMASTER_BUILD) && defined(_WIN32)
 long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 {
 
@@ -369,6 +369,7 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
 #define CC_ICON 1
 int ShowCommand;
 
+#ifdef _WIN32
 void Create_Main_Window(HANDLE instance, int command_show, int width, int height)
 
 {
@@ -425,6 +426,7 @@ void Create_Main_Window(HANDLE instance, int command_show, int width, int height
     Gbuffer_Focus_Loss_Function = &Focus_Loss;
 #endif
 }
+#endif
 
 typedef struct tColourList
 {
@@ -469,7 +471,9 @@ bool Any_Locked()
     }
 }
 
+#ifdef _WIN32
 HANDLE DebugFile = INVALID_HANDLE_VALUE;
+#endif
 
 /***********************************************************************************************
  * CCDebugString -- sends a string to the debugger and echos it to disk                        *
@@ -489,6 +493,7 @@ void CCDebugString(const char* string)
 {
 #ifndef REMASTER_BUILD
 
+#ifdef _WIN32
     char outstr[256];
 
     sprintf(outstr, "%s", string);
@@ -507,6 +512,9 @@ void CCDebugString(const char* string)
     }
 
     OutputDebugString(string);
+#else
+    fprintf(stderr, "%s", string);
+#endif
 
 #else
 
@@ -585,7 +593,7 @@ unsigned long VQSlowpal;
 bool VQPaletteChange = false;
 
 extern "C" {
-void __cdecl SetPalette(unsigned char* palette, long numbytes, unsigned long slowpal);
+void SetPalette(unsigned char* palette, long numbytes, unsigned long slowpal);
 }
 
 void Flag_To_Set_Palette(unsigned char* palette, long numbytes, unsigned long slowpal)
@@ -604,7 +612,7 @@ void Check_VQ_Palette_Set(void)
     }
 }
 
-void __cdecl SetPalette(unsigned char* palette, long, unsigned long)
+void SetPalette(unsigned char* palette, long, unsigned long)
 {
     for (int i = 0; i < 256 * 3; i++) {
         *(palette + i) &= 63;

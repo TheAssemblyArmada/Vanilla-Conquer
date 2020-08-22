@@ -43,6 +43,7 @@
 #include "function.h"
 #include "loaddlg.h"
 #include "common/tcpip.h"
+#include <time.h>
 
 /****************************************
 **	Function prototypes for this module **
@@ -229,7 +230,9 @@ bool Init_Game(int, char*[])
     ** Since there is no mouse shape currently available we need'
     ** to set one of our own.
     */
+#ifdef _WIN32
     ShowCursor(FALSE);
+#endif
     if (MouseInstalled) {
         temp_mouse_shapes = MixFileClass::Retrieve("MOUSE.SHP");
         if (temp_mouse_shapes) {
@@ -383,6 +386,7 @@ bool Init_Game(int, char*[])
             strcat(search_path, "\\");
         }
 
+#ifdef _WIN32
         strcpy(scan_path, search_path);
         strcat(scan_path, "SC*.MIX");
 
@@ -410,6 +414,7 @@ bool Init_Game(int, char*[])
             } while (FindNextFileA(file_handle, &find_data));
             FindClose(file_handle);
         }
+#endif
 
         path = CDFileClass::Get_Search_Path(p);
 
@@ -1389,7 +1394,11 @@ bool Select_Game(bool fade)
     ** back a recording, init the Seed to a random value.
     */
     if (GameToPlay == GAME_NORMAL && !PlaybackGame) {
+#ifdef _WIN32
         srand(timeGetTime());
+#else
+        srand(time(NULL));
+#endif
         // randomize();
         Seed = rand();
     }

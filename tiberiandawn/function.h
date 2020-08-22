@@ -100,10 +100,6 @@ inline int max(int a, int b)
 }
 #endif
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 /**********************************************************************
 **	If the following define is enabled, then the memory checking code
 **	will be disabled.

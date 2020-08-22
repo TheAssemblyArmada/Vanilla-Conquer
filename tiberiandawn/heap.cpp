@@ -48,10 +48,8 @@
 
 #include "function.h"
 #include "heap.h"
-//#include	<mem.h>
 #include <stdio.h>
 #include <stddef.h>
-#include <conio.h>
 #include <string.h>
 
 /***********************************************************************************************
