@@ -54,6 +54,9 @@
 #include "wwkeyboard.h"
 #include "miscasm.h"
 #include <string.h>
+#ifdef SDL2_BUILD
+#include <SDL.h>
+#endif
 
 #define ARRAY_SIZE(x) int(sizeof(x) / sizeof(x[0]))
 
@@ -303,7 +306,9 @@ KeyASCIIType WWKeyboardClass::To_ASCII(unsigned short key)
     int result = 1;
     int scancode = 0;
 
-#ifdef _WIN32
+#if defined(SDL2_BUILD)
+    buffer[0] = SDL_GetKeyFromScancode((SDL_Scancode)key);
+#elif defined(_WIN32)
     scancode = MapVirtualKeyA(key & 0xFF, 0);
     result = ToAscii((UINT)(key & 0xFF), (UINT)scancode, (PBYTE)KeyState, (LPWORD)buffer, (UINT)0);
 #endif
@@ -429,7 +434,7 @@ bool WWKeyboardClass::Put_Element(unsigned short val)
         /* set cached down state for given key, remove all bits */
         if (DownSkip == 0) {
             bool isDown = !(val & KN_RLSE_BIT);
-            val &= ~(KN_SHIFT_BIT|KN_CTRL_BIT|KN_ALT_BIT|KN_RLSE_BIT|KN_BUTTON);
+            val &= ~(KN_SHIFT_BIT | KN_CTRL_BIT | KN_ALT_BIT | KN_RLSE_BIT | KN_BUTTON);
             Set_Bit(DownState, val, isDown);
 
             if (Is_Mouse_Key(val)) {
@@ -507,7 +512,42 @@ bool WWKeyboardClass::Is_Buffer_Empty(void) const
  *=============================================================================================*/
 void WWKeyboardClass::Fill_Buffer_From_System(void)
 {
-#ifdef _WIN32
+#ifdef SDL2_BUILD
+    SDL_Event event;
+
+    while (!Is_Buffer_Full() && SDL_PollEvent(&event)) {
+        unsigned short key;
+        switch (event.type) {
+        case SDL_QUIT:
+            exit(0);
+            break;
+        case SDL_KEYDOWN:
+            if (event.key.keysym.scancode < 256)
+                Put_Key_Message(event.key.keysym.scancode, false);
+            break;
+        case SDL_KEYUP:
+            if (event.key.keysym.scancode < 256)
+                Put_Key_Message(event.key.keysym.scancode, true);
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONUP:
+            switch (event.button.button) {
+            case SDL_BUTTON_LEFT:
+            default:
+                key = VK_LBUTTON;
+                break;
+            case SDL_BUTTON_RIGHT:
+                key = VK_RBUTTON;
+                break;
+            case SDL_BUTTON_MIDDLE:
+                key = VK_MBUTTON;
+                break;
+            }
+            Put_Mouse_Message(key, event.button.x, event.button.y, event.type == SDL_MOUSEBUTTONDOWN ? false : true);
+            break;
+        }
+    }
+#elif defined(_WIN32)
     if (!Is_Buffer_Full()) {
         MSG msg;
         while (PeekMessageA(&msg, NULL, 0, 0, PM_NOREMOVE)) {
@@ -580,7 +620,7 @@ void WWKeyboardClass::Clear(void)
  * HISTORY:                                                                                    *
  *   09/30/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
 bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LONG lParam)
 {
 // ST - 5/13/2019

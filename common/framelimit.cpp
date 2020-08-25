@@ -1,4 +1,5 @@
 #include "framelimit.h"
+#include "wwmouse.h"
 #include <chrono>
 
 #ifdef _WIN32
@@ -6,6 +7,8 @@
 #endif
 
 #include "mssleep.h"
+
+extern WWMouseClass* WWMouse;
 
 void Frame_Limiter()
 {
@@ -20,4 +23,8 @@ void Frame_Limiter()
     if (remaining > 0) {
         ms_sleep(unsigned(remaining));
     }
+
+#ifdef SDL2_BUILD
+    WWMouse->Process_Mouse();
+#endif
 }

@@ -218,7 +218,7 @@ void Check_For_Focus_Loss(void)
 }
 
 extern bool InMovie;
-#if !defined(REMASTER_BUILD) && defined(_WIN32)
+#if !defined(REMASTER_BUILD) && defined(_WIN32) && !defined(SDL2_BUILD)
 long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 {
 
@@ -357,7 +357,7 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
 #define CC_ICON 1
 int ShowCommand;
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
 void Create_Main_Window(HANDLE instance, int width, int height)
 
 {
