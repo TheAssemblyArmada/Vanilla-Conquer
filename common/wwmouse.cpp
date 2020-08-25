@@ -33,12 +33,15 @@
 #include "wwmouse.h"
 #include "lcw.h"
 #include <string.h>
+#ifdef SDL2_BUILD
+#include <SDL.h>
+#endif
 
 #ifndef min
 #define min(x, y) (x <= y ? x : y)
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
 #include <mmsystem.h>
 void CALLBACK Process_Mouse(UINT event_id, UINT res1, DWORD user, DWORD res2, DWORD res3);
 #endif
@@ -81,7 +84,7 @@ WWMouseClass::WWMouseClass(GraphicViewPortClass* scr, int mouse_max_width, int m
     PrevCursor = nullptr;
     MouseUpdate = 0;
     State = 1;
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
     timeBeginPeriod(1000 / 60);
 
     InitializeCriticalSection(&MouseCriticalSection);
@@ -101,7 +104,7 @@ WWMouseClass::WWMouseClass(GraphicViewPortClass* scr, int mouse_max_width, int m
 
     // Add TIME_KILL_SYNCHRONOUS flag. ST - 2/13/2019 5:07PM
     // TimerHandle = timeSetEvent( 1000/60 , 1 , ::Process_Mouse, 0 , TIME_PERIODIC);
-#if defined(_WIN32) && !defined(REMASTER_BUILD)
+#if defined(_WIN32) && !defined(REMASTER_BUILD) && !defined(SDL2_BUILD)
     TimerHandle = timeSetEvent(1000 / 60, 1, ::Process_Mouse, 0, TIME_PERIODIC | TIME_KILL_SYNCHRONOUS);
 #endif
     // Removed. ST - 2/13/2019 5:12PM
@@ -120,7 +123,7 @@ WWMouseClass::~WWMouseClass()
         delete[] MouseCursor;
     if (MouseBuffer)
         delete[] MouseBuffer;
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
     if (TimerHandle) {
         timeKillEvent(TimerHandle);
         TimerHandle = 0; // ST - 2/13/2019 5:12PM
@@ -152,7 +155,7 @@ void Unblock_Mouse(GraphicBufferClass* buffer)
 void WWMouseClass::Block_Mouse(GraphicBufferClass* buffer)
 {
     if (buffer == Screen->Get_Graphic_Buffer()) {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
         EnterCriticalSection(&MouseCriticalSection);
 #endif
     }
@@ -161,7 +164,7 @@ void WWMouseClass::Block_Mouse(GraphicBufferClass* buffer)
 void WWMouseClass::Unblock_Mouse(GraphicBufferClass* buffer)
 {
     if (buffer == Screen->Get_Graphic_Buffer()) {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
         LeaveCriticalSection(&MouseCriticalSection);
 #endif
     }
@@ -169,8 +172,11 @@ void WWMouseClass::Unblock_Mouse(GraphicBufferClass* buffer)
 
 void WWMouseClass::Set_Cursor_Clip(void)
 {
-#if defined(_WIN32) && !defined(REMASTER_BUILD)
+#if !defined(REMASTER_BUILD)
     if (Screen) {
+#if defined(SDL2_BUILD)
+        SDL_CaptureMouse(SDL_TRUE);
+#elif defined(_WIN32)
         RECT region;
 
         region.left = 0;
@@ -179,22 +185,27 @@ void WWMouseClass::Set_Cursor_Clip(void)
         region.bottom = Screen->Get_Height();
 
         ClipCursor(&region);
-    }
 #endif
+    }
+#endif // !REMASTER_BUILD
 }
 
 void WWMouseClass::Clear_Cursor_Clip(void)
 {
-#if defined(_WIN32) && !defined(REMASTER_BUILD)
+#if !defined(REMASTER_BUILD)
+#if defined(SDL2_BUILD)
+    SDL_CaptureMouse(SDL_FALSE);
+#elif defined(_WIN32)
     ClipCursor(nullptr);
 #endif
+#endif // !REMASTER_BUILD
 }
 
 void WWMouseClass::Process_Mouse(void)
 {
     // ST - 1/3/2019 10:50AM
-#if defined(_WIN32) && !defined(REMASTER_BUILD)
-    POINT pt; // define a structure to hold current cursor pos
+#if !defined(REMASTER_BUILD)
+    int x, y;
 
     //
     // If the mouse is currently hidden or it has not been installed, then we
@@ -220,11 +231,12 @@ void WWMouseClass::Process_Mouse(void)
     //
     // Get the mouse's current real cursor position
     //
-    GetCursorPos(&pt); // get the current cursor position
+    Get_Mouse_XY(x, y);
+
     //
     // If the mouse has moved then we are responsible to redraw the mouse
     //
-    if (pt.x != MouseBuffX || pt.y != MouseBuffY) {
+    if (x != MouseBuffX || y != MouseBuffY) {
         //
         // If we can't lock the surface we need to draw to, we cannot update
         // the mouse.
@@ -240,8 +252,7 @@ void WWMouseClass::Process_Mouse(void)
             // Verify that the mouse has not gone into a conditional hiden area
             // If it has, mark it as being in one.
             //
-            if (MCFlags & CONDHIDE && pt.x >= MouseCXLeft && pt.x <= MouseCXRight && pt.y >= MouseCYUpper
-                && pt.y <= MouseCYLower) {
+            if (MCFlags & CONDHIDE && x >= MouseCXLeft && x <= MouseCXRight && y >= MouseCYUpper && y <= MouseCYLower) {
                 MCFlags |= CONDHIDDEN;
             }
 
@@ -249,7 +260,7 @@ void WWMouseClass::Process_Mouse(void)
             // Show the mouse if we are allowed to.
             //
             if (!(MCFlags & CONDHIDDEN)) {
-                Low_Show_Mouse(pt.x, pt.y);
+                Low_Show_Mouse(x, y);
             }
             //
             // Finally unlock the destination surface as we have sucessfully
@@ -268,7 +279,7 @@ void WWMouseClass::Process_Mouse(void)
 
 void* WWMouseClass::Set_Cursor(int xhotspot, int yhotspot, void* cursor)
 {
-#if !defined(_WIN32) || defined(REMASTER_BUILD)
+#if defined(REMASTER_BUILD)
     // ST - 1/3/2019 10:50AM
     xhotspot;
     yhotspot;
@@ -386,27 +397,16 @@ void WWMouseClass::Low_Show_Mouse(int x, int y)
 
 void WWMouseClass::Show_Mouse()
 {
-#if defined(_WIN32)
-    POINT pt;
-    GetCursorPos(&pt);
-#else
-    struct
-    {
-        int x;
-        int y;
-    } pt = {0, 0};
-#endif
+    int x, y;
+    Get_Mouse_XY(x, y);
 
     MouseUpdate++;
-    Low_Show_Mouse(pt.x, pt.y);
+    Low_Show_Mouse(x, y);
     MouseUpdate--;
 }
 
 void WWMouseClass::Conditional_Hide_Mouse(int x1, int y1, int x2, int y2)
 {
-#ifdef _WIN32
-    POINT pt;
-
     MouseUpdate++;
 
     //
@@ -450,7 +450,6 @@ void WWMouseClass::Conditional_Hide_Mouse(int x1, int y1, int x2, int y2)
     // the hiding region and hide if necessary.
     //
     if (!(MCFlags & CONDHIDDEN)) {
-        GetCursorPos(&pt);
         if (MouseBuffX >= MouseCXLeft && MouseBuffX <= MouseCXRight && MouseBuffY >= MouseCYUpper
             && MouseBuffY <= MouseCYLower) {
             Low_Hide_Mouse();
@@ -464,7 +463,6 @@ void WWMouseClass::Conditional_Hide_Mouse(int x1, int y1, int x2, int y2)
     MCFlags |= CONDHIDE;
     MCCount++;
     MouseUpdate--;
-#endif
 }
 void WWMouseClass::Conditional_Show_Mouse(void)
 {
@@ -492,13 +490,13 @@ void WWMouseClass::Conditional_Show_Mouse(void)
 
 void WWMouseClass::Draw_Mouse(GraphicViewPortClass* scr)
 {
-#if !defined(_WIN32) || defined(REMASTER_BUILD)
+#if defined(REMASTER_BUILD)
     scr;
     return;
 // ST - 1/3/2019 10:50AM
 #else
 
-    POINT pt;
+    int x, y;
 
     if (State != 0)
         return;
@@ -506,9 +504,8 @@ void WWMouseClass::Draw_Mouse(GraphicViewPortClass* scr)
     //
     //	Get the position that the mouse is currently located at
     //
-    GetCursorPos(&pt);
-    if (MCFlags & CONDHIDE && pt.x >= MouseCXLeft && pt.x <= MouseCXRight && pt.y >= MouseCYUpper
-        && pt.y <= MouseCYLower) {
+    Get_Mouse_XY(x, y);
+    if (MCFlags & CONDHIDE && x >= MouseCXLeft && x <= MouseCXRight && y >= MouseCYUpper && y <= MouseCYLower) {
         Hide_Mouse();
         MCFlags |= CONDHIDDEN;
     } else {
@@ -526,19 +523,19 @@ void WWMouseClass::Draw_Mouse(GraphicViewPortClass* scr)
             // which will be used to restore the mouse and the other which will
             // be used to restore the hidden surface when we get a chance.
             //
-            Mouse_Shadow_Buffer(scr, EraseBuffer, pt.x, pt.y, MouseXHot, MouseYHot, 1);
+            Mouse_Shadow_Buffer(scr, EraseBuffer, x, y, MouseXHot, MouseYHot, 1);
             memcpy(MouseBuffer, EraseBuffer, MaxWidth * MaxHeight);
             //
             // Draw the mouse in its new location
             //
-            Draw_Mouse(scr, pt.x, pt.y);
+            Draw_Mouse(scr, x, y);
             //
             // Save off the positions that we saved the buffer from
             //
-            EraseBuffX = pt.x;
-            MouseBuffX = pt.x;
-            EraseBuffY = pt.y;
-            MouseBuffY = pt.y;
+            EraseBuffX = x;
+            MouseBuffX = x;
+            EraseBuffY = y;
+            MouseBuffY = y;
             EraseBuffHotX = MouseXHot;
             EraseBuffHotY = MouseYHot;
             //
@@ -554,7 +551,7 @@ void WWMouseClass::Draw_Mouse(GraphicViewPortClass* scr)
 
 void WWMouseClass::Erase_Mouse(GraphicViewPortClass* scr, int forced)
 {
-#if !defined(_WIN32) || defined(REMASTER_BUILD)
+#if defined(REMASTER_BUILD)
     // ST - 1/3/2019 10:50AM
     scr;
     forced;
@@ -626,13 +623,9 @@ int WWMouseClass::Get_Mouse_State(void)
  *=============================================================================================*/
 int WWMouseClass::Get_Mouse_X(void)
 {
-#ifdef _WIN32
-    POINT pt;
-    GetCursorPos(&pt);
-    return (pt.x);
-#else
-    return 0;
-#endif
+    int x, y;
+    Get_Mouse_XY(x, y);
+    return x;
 }
 
 /***********************************************************************************************
@@ -647,13 +640,9 @@ int WWMouseClass::Get_Mouse_X(void)
  *=============================================================================================*/
 int WWMouseClass::Get_Mouse_Y(void)
 {
-#ifdef _WIN32
-    POINT pt;
-    GetCursorPos(&pt);
-    return (pt.y);
-#else
-    return 0;
-#endif
+    int x, y;
+    Get_Mouse_XY(x, y);
+    return y;
 }
 
 /***********************************************************************************************
@@ -669,7 +658,9 @@ int WWMouseClass::Get_Mouse_Y(void)
  *=============================================================================================*/
 void WWMouseClass::Get_Mouse_XY(int& x, int& y)
 {
-#ifdef _WIN32
+#if defined(SDL2_BUILD)
+    SDL_GetMouseState(&x, &y);
+#elif defined(_WIN32)
     POINT pt;
 
     GetCursorPos(&pt);

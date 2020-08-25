@@ -1,4 +1,4 @@
-name: windows
+name: win32
 
 on:
   pull_request:

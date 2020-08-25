@@ -312,7 +312,7 @@ int main(int argc, char** argv)
 
             CCDebugString("C&C95 - Creating main window.\n");
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
             Create_Main_Window(ProgramInstance, ScreenWidth, ScreenHeight);
 #endif
 
