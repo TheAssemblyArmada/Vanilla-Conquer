@@ -36,6 +36,7 @@
 
 #include "function.h"
 #include "visudlg.h"
+#include "common/framelimit.h"
 
 /***********************************************************************************************
  * VisualControlsClass::Process -- Process the visual control dialog box.                      *
@@ -411,5 +412,7 @@ void VisualControlsClass::Process(void)
 
             pressed = false;
         }
+
+        Frame_Limiter();
     }
 }

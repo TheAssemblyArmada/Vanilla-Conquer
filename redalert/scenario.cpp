@@ -63,6 +63,8 @@
 #ifdef WIN32
 #include "common/tcpip.h"
 #endif
+#include "common/framelimit.h"
+
 extern int PreserveVQAScreen;
 
 void Display_Briefing_Text_GlyphX();
@@ -1794,6 +1796,8 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
 
                 pressed = false;
             }
+
+            Frame_Limiter();
         }
 
     } else {

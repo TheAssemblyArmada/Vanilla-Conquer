@@ -37,6 +37,7 @@
 #ifndef WIN32
 #include <sys/timeb.h>
 #endif
+#include "common/framelimit.h"
 
 /*****************************
 **	Function prototypes
@@ -1013,6 +1014,8 @@ int Main_Menu(unsigned long)
         default:
             break;
         }
+
+        Frame_Limiter();
     }
 
     Options.Set_Score_Volume(oldvolume, false);

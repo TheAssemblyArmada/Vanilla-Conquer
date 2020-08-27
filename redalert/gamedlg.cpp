@@ -37,6 +37,7 @@
 #include "gamedlg.h"
 #include "sounddlg.h"
 #include "visudlg.h"
+#include "common/framelimit.h"
 #define GERMAN_OFFSET_Y 4 // VG
 
 #ifdef WOLAPI_INTEGRATION
@@ -516,5 +517,7 @@ void GameControlsClass::Process(void)
 
             pressed = false;
         }
+
+        Frame_Limiter();
     }
 }

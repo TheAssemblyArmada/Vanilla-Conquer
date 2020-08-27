@@ -45,6 +45,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/framelimit.h"
 
 #define SCORETEXT_X 184
 #define SCORETEXT_Y 8
@@ -1833,6 +1834,7 @@ void Call_Back_Delay(int time)
             callbackcd = TIMER_SECOND / 4;
         }
         Animate_Score_Objs();
+        Frame_Limiter();
     } while (cd);
     StreamLowImpact = false;
 #endif

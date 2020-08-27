@@ -34,6 +34,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/framelimit.h"
 
 /*****************************
 **	Function prototypes
@@ -1006,6 +1007,8 @@ int Main_Menu(unsigned long timeout)
         default:
             break;
         }
+
+        Frame_Limiter();
     }
     return (retval);
 }

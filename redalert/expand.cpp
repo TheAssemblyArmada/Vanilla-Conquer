@@ -34,6 +34,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/framelimit.h"
 
 #ifdef FIXIT_VERSION_3
 #include "wolstrng.h"
@@ -549,6 +550,8 @@ bool Expansion_Dialog(void)
         default:
             break;
         }
+
+        Frame_Limiter();
     }
 
     /*

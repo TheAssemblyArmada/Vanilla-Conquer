@@ -37,6 +37,7 @@
 #include "function.h"
 #include "msgbox.h"
 #include "gadget.h"
+#include "common/framelimit.h"
 
 #ifdef JAPANESE
 WWMessageBox::WWMessageBox(int caption, bool pict)
@@ -417,6 +418,8 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
 
                 pressed = false;
             }
+
+            Frame_Limiter();
         }
 
     } else {

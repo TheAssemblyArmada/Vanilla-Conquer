@@ -33,6 +33,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/framelimit.h"
 
 #ifdef NEWMENU
 
@@ -230,6 +231,8 @@ bool Expansion_Dialog(void)
         default:
             break;
         }
+
+        Frame_Limiter();
     }
 
     /*

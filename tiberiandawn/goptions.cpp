@@ -44,6 +44,7 @@
 #include "textbtn.h"
 #include "confdlg.h"
 #include "descdlg.h"
+#include "common/framelimit.h"
 
 void GameOptionsClass::Adjust_Variables_For_Resolution(void)
 {
@@ -480,6 +481,8 @@ void GameOptionsClass::Process(void)
             buttonsel[curbutton - 1]->Turn_On();
             buttonsel[curbutton - 1]->Flag_To_Redraw();
         }
+
+        Frame_Limiter();
     }
 
     /*

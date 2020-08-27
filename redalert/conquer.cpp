@@ -106,6 +106,7 @@ TcpipManagerClass Winsock;
 #include <dos.h>
 #include <share.h>
 #include "vortex.h"
+#include "common/framelimit.h"
 
 #ifdef WOLAPI_INTEGRATION
 //#include "WolDebug.h"
@@ -2093,6 +2094,8 @@ static void Sync_Delay(void)
             }
             Map.Render();
         }
+
+        Frame_Limiter();
     }
     Color_Cycle();
     Call_Back();
