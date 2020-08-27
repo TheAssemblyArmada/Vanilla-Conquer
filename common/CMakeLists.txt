@@ -23,7 +23,6 @@ set(COMMON_SRC
     keybuff.cpp
     alloc.cpp
     buffer.cpp
-    gbuffer.cpp
     tobuff.asm
     face.cpp
     font.cpp
@@ -63,6 +62,7 @@ else()
 endif()
 
 set(COMMONR_SRC
+    gbuffer.cpp
     wwmouse.cpp
     soundio_null.cpp
     tcpip_null.cpp
@@ -70,6 +70,7 @@ set(COMMONR_SRC
 )
 
 set(COMMONV_SRC
+    gbuffer.cpp
     wwmouse.cpp
     tcpip_null.cpp
 )
