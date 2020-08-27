@@ -17,6 +17,7 @@ set(COMMON_SRC
     auduncmp.c
     bitblit.c
     fading.c
+    framelimit.cpp
     soscodec.c
     winasm.c
     keybuff.cpp

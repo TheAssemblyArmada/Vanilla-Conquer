@@ -70,6 +70,7 @@
 #include <dos.h>
 #include <share.h>
 #include <malloc.h>
+#include "common/framelimit.h"
 
 #define SHAPE_TRANS 0x40
 
@@ -1413,6 +1414,8 @@ static void Sync_Delay(void)
             }
             Map.Render();
         }
+
+        Frame_Limiter();
     }
     Color_Cycle();
     Call_Back();

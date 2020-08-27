@@ -37,6 +37,7 @@
 #include "gamedlg.h"
 #include "sounddlg.h"
 #include "visudlg.h"
+#include "common/framelimit.h"
 
 /***********************************************************************************************
  * OptionsClass::Process -- Handles all the options graphic interface.                         *
@@ -439,5 +440,7 @@ void GameControlsClass::Process(void)
 
             pressed = false;
         }
+
+        Frame_Limiter();
     }
 }

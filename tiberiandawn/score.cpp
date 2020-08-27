@@ -47,6 +47,7 @@
 #include "function.h"
 #include "textblit.h"
 #include "common/irandom.h"
+#include "common/framelimit.h"
 
 #define SCORETEXT_X 184
 #define SCORETEXT_Y 8
@@ -1899,6 +1900,8 @@ void Call_Back_Delay(int time)
         Blit_Hid_Page_To_Seen_Buff();
         WWMouse->Erase_Mouse(&HidPage, true);
         //}
+
+        Frame_Limiter();
     } while (cd.Time());
     StreamLowImpact = false;
 }

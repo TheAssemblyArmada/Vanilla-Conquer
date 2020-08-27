@@ -42,6 +42,7 @@
 #include "gamedlg.h"
 #include "textbtn.h"
 #include "descdlg.h"
+#include "common/framelimit.h"
 
 #ifdef FIXIT_VERSION_3 //	Stalemate games.
 #include "wolstrng.h"
@@ -579,6 +580,8 @@ void GameOptionsClass::Process(void)
             buttonsel[curbutton - 1]->Turn_Off();
             buttonsel[curbutton - 1]->Flag_To_Redraw();
         }
+
+        Frame_Limiter();
     }
 
     /*

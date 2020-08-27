@@ -36,6 +36,8 @@
 
 #include "function.h"
 #include "visudlg.h"
+#include "common/framelimit.h"
+
 int VisualControlsClass::Init(void)
 {
     int factor = (SeenBuff.Get_Width() == 320) ? 1 : 2;
@@ -411,5 +413,7 @@ void VisualControlsClass::Process(void)
 
             pressed = false;
         }
+
+        Frame_Limiter();
     }
 }

@@ -42,6 +42,7 @@
 #include "function.h"
 #include "loaddlg.h"
 #include "common/file.h"
+#include "common/framelimit.h"
 
 /***********************************************************************************************
  * LoadOptionsClass::LoadOptionsClass -- class constructor                                     *
@@ -563,6 +564,8 @@ int LoadOptionsClass::Process(void)
         default:
             break;
         }
+
+        Frame_Limiter();
     }
 
     Clear_List(&listbtn);

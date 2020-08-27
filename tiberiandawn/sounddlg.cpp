@@ -35,6 +35,7 @@
 
 #include "function.h"
 #include "sounddlg.h"
+#include "common/framelimit.h"
 
 class MusicListClass : public ListClass
 {
@@ -423,6 +424,8 @@ void SoundControlsClass::Process(void)
             Options.Set_Repeat(repeatbtn.IsOn);
             break;
         }
+
+        Frame_Limiter();
     }
 
     /*

@@ -38,6 +38,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/framelimit.h"
 
 #ifdef WIN32
 #define OPTION_WIDTH  236 * 2
@@ -638,6 +639,8 @@ int Fetch_Difficulty(void)
         default:
             break;
         }
+
+        Frame_Limiter();
     }
 
     return (slider.Get_Value() * (Rule.IsFineDifficulty ? 1 : 2));
