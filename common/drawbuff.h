@@ -34,7 +34,7 @@ long Buffer_Size_Of_Region(void* thisptr, int w, int h);
 void Buffer_Put_Pixel(void* thisptr, int x, int y, unsigned char color);
 int Buffer_Get_Pixel(void* thisptr, int x, int y);
 void Buffer_Clear(void* thisptr, unsigned char color);
-long Buffer_To_Buffer(void* thisptr, int x, int y, int w, int h, void* buff, long size);
+int Buffer_To_Buffer(void* thisptr, int x, int y, int w, int h, void* buff, int size);
 long Buffer_To_Page(int x, int y, int w, int h, void* Buffer, void* view);
 bool Linear_Blit_To_Linear(void* thisptr,
                            void* dest,
