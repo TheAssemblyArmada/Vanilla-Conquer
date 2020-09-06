@@ -48,7 +48,7 @@ INCLUDE gbuffer.inc
 ;CODESEG
 .code
 
-
+IFNDEF NOASM
 ;***************************************************************************
 ;* VIVC::TOBUFFER -- Copies a virtual viewport to a linear buffer          *
 ;*                                                                         *
@@ -290,5 +290,7 @@ real_out:
 
 ;ENDP	Buffer_To_Buffer
 Buffer_To_Buffer endp
+
+ENDIF
 
 END

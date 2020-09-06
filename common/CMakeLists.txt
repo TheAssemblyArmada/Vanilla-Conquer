@@ -23,7 +23,8 @@ set(COMMON_SRC
     keybuff.cpp
     alloc.cpp
     buffer.cpp
-    tobuff.asm
+    tobuff.cpp
+    tobuffa.asm
     face.cpp
     font.cpp
     timer.cpp
