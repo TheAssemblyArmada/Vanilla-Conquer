@@ -22,6 +22,7 @@
 
 include graphicviewport.inc
 
+IFNDEF NOASM
 externdef C Init_Stamps:near
 externdef C Buffer_Draw_Stamp_Clip:near
 externdef C LastIconset:dword
@@ -32,9 +33,11 @@ externdef C IconWidth:dword
 externdef C IconHeight:dword
 externdef C IconSize:dword
 externdef C IconCount:dword
+ENDIF
 
 .data
 
+IFNDEF NOASM
 LastIconset dd 0
 StampPtr    dd 0 ; Pointer to icon data.
 IsTrans     dd 0 ; Pointer to transparent icon flag table.
@@ -43,9 +46,10 @@ IconWidth   dd 0 ; Width of icon in pixels.
 IconHeight  dd 0 ; Height of icon in pixels.
 IconSize    dd 0 ; Number of bytes for each icon data.
 IconCount   dd 0 ; Number of icons in the set.
+ENDIF
 
 .code
-
+IFNDEF NOASM
 ;***********************************************************
 ; INIT_STAMPS
 ;
@@ -370,3 +374,5 @@ proc_out:
             ret
 
 Buffer_Draw_Stamp_Clip endp
+
+ENDIF

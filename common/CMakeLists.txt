@@ -44,6 +44,7 @@ set(COMMON_SRC
     writepcx.cpp
     delay.cpp
     file.cpp
+    stamp.cpp
     packet.cpp
     field.cpp
     rect.cpp
