@@ -43,6 +43,9 @@
 #include "function.h"
 #include "loaddlg.h"
 #include "common/gitinfo.h"
+#include "soleglobals.h"
+#include "soleparams.h"
+#include "voicethemes.h"
 #include "common/tcpip.h"
 #include "common/vqaconfig.h"
 #include <time.h>
@@ -81,6 +84,27 @@ long FAR PASCAL _export Start_Game_Proc(HWND hwnd, UINT message, UINT wParam, LO
 
 extern bool Server_Remote_Connect(void);
 extern bool Client_Remote_Connect(void);
+
+/***********************************************************************************************
+ * Clear_Team_Scores -- Clear Sole Survivor team scores.                                       *
+ *                                                                                             *
+ *    Clears all the team scores.                                                              *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   12/10/2020 OB : Implemented.                                                              *
+ *=============================================================================================*/
+void Clear_Team_Scores()
+{
+    for (int i = 0; i < 4; ++i) {
+        TeamScores[i] = 0;
+    }
+}
 
 /***********************************************************************************************
  * Init_Game -- Main game initialization routine.                                              *
@@ -179,20 +203,8 @@ bool Init_Game(int, char*[])
     } else {
         int temp = RequiredCD;
         RequiredCD = -2;
-
-        /*
-        ** On low resolution mode, we want to load the DOS version fonts present in LOCAL.MIX.
-        ** Load it first and and find the fonts there. Else, on high resolution, use
-        ** Windows CCLOCAL.MIX
-        */
-
-        if (Get_Resolution_Factor()) {
-            new MFCD("CCLOCAL.MIX"); // Cached.
-            MFCD::Cache("CCLOCAL.MIX");
-        } else {
-            local_mix = new MFCD("LOCAL.MIX"); // Cached.
-            MFCD::Cache("LOCAL.MIX");
-        }
+        new MFCD("LOCAL.MIX"); // Cached.
+        MFCD::Cache("LOCAL.MIX");
         CCDebugString("C&C95 - About to register UPDATE.MIX\n");
         new MFCD("UPDATE.MIX"); // Cached.
         new MFCD("UPDATA.MIX"); // Cached.
@@ -225,31 +237,10 @@ bool Init_Game(int, char*[])
     WhitePalette = new (MEM_CLEAR | MEM_REAL) unsigned char[768];
     memset(WhitePalette, 63, 768);
 
-    /* FIXME: If LOCAL.MIX is loaded, the game tries to find mission.ini from
-    ** it and crash, as it is not present there. Furthermore, an old version of
-    ** conquer.eng is there, and loading it glitches out the Covert Operations
-    ** strings. There is also fonts which is only present on the Windows version
-    ** and they require loading for now. Therefore, just unload LOCAL.MIX and
-    ** and load CCLOCAL.MIX from Windows.
-    */
-    if (local_mix) {
-        delete local_mix;
-
-        new MFCD("CCLOCAL.MIX"); // Cached.
-        MFCD::Cache("CCLOCAL.MIX");
-    }
-
-    if (Get_Resolution_Factor()) {
-        MapFontPtr = Load_Alloc_Data(CCFileClass("8FAT.FNT"));
-        Green12FontPtr = Load_Alloc_Data(CCFileClass("12GREEN.FNT"));
-        Green12GradFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
-        ScoreFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
-    } else {
-        MapFontPtr = Font3Ptr;
-        Green12FontPtr = Font3Ptr;
-        Green12GradFontPtr = GradFont6Ptr;
-        ScoreFontPtr = GradFont6Ptr;
-    }
+    MapFontPtr = Load_Alloc_Data(CCFileClass("8FAT.FNT"));
+    Green12FontPtr = Load_Alloc_Data(CCFileClass("12GREEN.FNT"));
+    Green12GradFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
+    ScoreFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
 
     CCDebugString("C&C95 - About to set palette\n");
     memset(BlackPalette, 0x01, 768);
@@ -315,12 +306,12 @@ bool Init_Game(int, char*[])
         char buffer[255];
         Set_Palette(GamePalette);
 #ifdef GERMAN
-        sprintf(buffer, "Command & Conquer kann Ihren Maustreiber nicht finden..");
+        sprintf(buffer, "Sole Survivor kann Ihren Maustreiber nicht finden..");
 #else
 #ifdef FRENCH
-        sprintf(buffer, "Command & Conquer ne peut pas d‚tecter votre gestionnaire de souris.");
+        sprintf(buffer, "Sole Survivor ne peut pas d‚tecter votre gestionnaire de souris.");
 #else
-        sprintf(buffer, "Command & Conquer is unable to detect your mouse driver.");
+        sprintf(buffer, "Sole Survivor is unable to detect your mouse driver.");
 #endif
 #endif
         WWMessageBox().Process(buffer, TXT_OK);
@@ -412,44 +403,37 @@ bool Init_Game(int, char*[])
     /*
     **	Inform the file system of the various MIX files.
     */
-    if (Is_Demo()) {
-        CCDebugString("C&C95 - About to register DEMO.MIX\n");
-        new MFCD("DEMO.MIX");
-        ScoresPresent = false;
-        if (CCFileClass("DEMOM.MIX").Is_Available()) {
-            CCDebugString("C&C95 - About to register DEMOM.MIX\n");
-            if (!MoviesMix)
-                MoviesMix = new MFCD("DEMOM.MIX");
-            ScoresPresent = true;
-            ThemeClass::Scan();
-        }
-    } else {
-        CCDebugString("C&C95 - About to register CONQUER.MIX\n");
-        new MFCD("CONQUER.MIX"); // Cached.
-        CCDebugString("C&C95 - About to register TRANSIT.MIX\n");
-        new MFCD("TRANSIT.MIX");
 
-        CCDebugString("C&C95 - About to register GENERAL.MIX\n");
-        if (!GeneralMix)
-            GeneralMix = new MFCD("GENERAL.MIX"); // Never cached.
+    CCDebugString("C&C95 - About to register CONQUER.MIX\n");
+    new MFCD("CONQUER.MIX"); // Cached.
+    // Sole Survivor addition. Load the extra sole survivor mix files.
+    CCDebugString("C&C95 - About to register SOLE.MIX\n");
+    new MFCD("SOLE.MIX");
+    CCDebugString("C&C95 - About to register SOLEDISK.MIX\n");
+    new MFCD("SOLEDISK.MIX");
+    CCDebugString("C&C95 - About to register TRANSIT.MIX\n");
+    new MFCD("TRANSIT.MIX");
 
-        //	if (CCFileClass("MOVIES.MIX").Is_Available()) {
-        CCDebugString("C&C95 - About to register MOVIES.MIX\n");
-        if (!MoviesMix)
-            MoviesMix = new MFCD("MOVIES.MIX"); // Never cached.
-                                                //	}
+    CCDebugString("C&C95 - About to register GENERAL.MIX\n");
+    if (!GeneralMix)
+        GeneralMix = new MFCD("GENERAL.MIX"); // Never cached.
 
-        /*
-        **	Register the score mixfile.
-        */
-        CCDebugString("C&C95 - About to register SCORES.MIX\n");
-        ScoresPresent = false;
-        //	if (CCFileClass("SCORES.MIX").Is_Available()) {
-        ScoresPresent = true;
-        if (!ScoreMix) {
-            ScoreMix = new MFCD("SCORES.MIX");
-            ThemeClass::Scan();
-        }
+    //	if (CCFileClass("MOVIES.MIX").Is_Available()) {
+    CCDebugString("C&C95 - About to register MOVIES.MIX\n");
+    if (!MoviesMix)
+        MoviesMix = new MFCD("MOVIES.MIX"); // Never cached.
+                                            //	}
+
+    /*
+    **	Register the score mixfile.
+    */
+    CCDebugString("C&C95 - About to register SCORES.MIX\n");
+    ScoresPresent = false;
+    //	if (CCFileClass("SCORES.MIX").Is_Available()) {
+    ScoresPresent = true;
+    if (!ScoreMix) {
+        ScoreMix = new MFCD("SCORES.MIX");
+        ThemeClass::Scan();
     }
 
     /*
@@ -476,6 +460,7 @@ bool Init_Game(int, char*[])
     */
     CCDebugString("C&C95 - About to initialise the animation system\n");
     Anim_Init();
+    Options.Load_Settings();
 
     /*
     **	Play the introduction movies.
@@ -507,20 +492,18 @@ bool Init_Game(int, char*[])
     }
     Call_Back();
 
-    if (Is_Demo()) {
-        MFCD::Cache("DEMO.MIX");
+    /*
+    **	Cache the main game data. This operation can take a very long time.
+    */
+    MFCD::Cache("CONQUER.MIX");
+    // Sole Survivor addition.
+    MFCD::Cache("SOLE.MIX");
+
+    if (SampleType != 0 && !Debug_Quiet) {
         MFCD::Cache("SOUNDS.MIX");
-    } else {
-        /*
-        **	Cache the main game data. This operation can take a very long time.
-        */
-        MFCD::Cache("CONQUER.MIX");
-        if (SampleType != 0 && !Debug_Quiet) {
-            MFCD::Cache("SOUNDS.MIX");
-            if (Special.IsJuvenile) {
-                new MFCD("ZOUNDS.MIX"); // Cached.
-                MFCD::Cache("ZOUNDS.MIX");
-            }
+        if (Special.IsJuvenile) {
+            new MFCD("ZOUNDS.MIX"); // Cached.
+            MFCD::Cache("ZOUNDS.MIX");
         }
     }
     Call_Back();
@@ -570,6 +553,12 @@ bool Init_Game(int, char*[])
     AircraftTypeClass::One_Time();
     HouseClass::One_Time();
 
+    if (LogTeams) {
+        CCDebugString("*ClearTeamScore B:\n");
+    }
+
+    Clear_Team_Scores();
+
     /*
     **	Speech holding tank buffer. Since speech does not mix, it can be placed
     **	into a custom holding tank only as large as the largest speech file to
@@ -600,6 +589,7 @@ bool Init_Game(int, char*[])
     /*
     **	Initialize the multiplayer score values
     */
+    // Unused Sole Survivor
     MPlayerGamesPlayed = 0;
     MPlayerNumScores = 0;
     MPlayerCurGame = 0;
@@ -623,6 +613,10 @@ bool Init_Game(int, char*[])
     ** dialogs are invoked.  (GameSpeed must be synchronized between systems.)
     */
     Options.Load_Settings();
+
+    // Sole Survivor addition.
+    Init_Voice_Themes();
+    Read_Server_INI_Params(&GameParams);
 
     /*
     **	Dump a default copy of rules.ini.
@@ -708,7 +702,7 @@ bool Select_Game(bool fade)
         SEL_START_NEW_GAME, // start a new game
 #ifdef BONUS_MISSIONS
         SEL_BONUS_MISSIONS,
-#endif                        // BONUS_MISSIONS
+#endif // BONUS_MISSIONS
         SEL_LOAD_MISSION,     // load a saved game
         SEL_MULTIPLAYER_GAME, // play modem/null-modem/network game
         SEL_INTRO,            // replay the intro

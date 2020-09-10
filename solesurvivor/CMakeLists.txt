@@ -109,6 +109,11 @@ set(SOLE_SRC
     sidebar.cpp
     slider.cpp
     smudge.cpp
+    soleglobals.cpp
+    soleparams.cpp
+    solerandom.cpp
+    sounddlg.cpp
+    sounddlg.cpp
     sounddlg.cpp
     special.cpp
     startup.cpp
@@ -131,6 +136,7 @@ set(SOLE_SRC
     udata.cpp
     unit.cpp
     visudlg.cpp
+    voicethemes.cpp
     winstub.cpp
 )
 
