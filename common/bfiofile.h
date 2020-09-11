@@ -35,7 +35,7 @@
 #ifndef BFIOFILE_H
 #define BFIOFILE_H
 
-#include "common/rawfile.h"
+#include "rawfile.h"
 
 /*
 **	This derivation of the raw file class handles buffering the input/output in order to
