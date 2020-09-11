@@ -13,7 +13,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\cdfile.cpv   2.18   16 Oct 1995 16:48:10   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/CDFILE.CPP 1     3/03/97 10:24a Joe_bostic $ */
 /***********************************************************************************************
  ***             C O N F I D E N T I A L  ---  W E S T W O O D   S T U D I O S               ***
  ***********************************************************************************************
@@ -26,7 +26,7 @@
  *                                                                                             *
  *                   Start Date : October 18, 1994                                             *
  *                                                                                             *
- *                  Last Update : October 18, 1994   [JLB]                                     *
+ *                  Last Update : September 22, 1995 [JLB]                                     *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -35,10 +35,23 @@
  *   CDFileClass::Open -- Opens the file wherever it can be found.                             *
  *   CDFileClass::Set_Name -- Performs a multiple directory scan to set the filename.          *
  *   CDFileClass::Set_Search_Drives -- Sets a list of search paths for file access.            *
+ *   Is_Disk_Inserted -- Checks to see if a disk is inserted in specified drive.               *
+ *   harderr_handler -- Handles hard DOS errors.                                               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
-//#include	"cdfile.h"
+#include "cdfile.h"
+#include <stdio.h>
+#include <string.h>
+
+#ifdef _WIN32
+#include <windows.h> // for MAX_PATH
+#else
+#ifndef MAX_PATH
+#include <limits.h>
+#define MAX_PATH  PATH_MAX
+#define _MAX_PATH PATH_MAX
+#endif
+#endif
 
 /*
 **	Pointer to the first search path record.
@@ -47,31 +60,41 @@ CDFileClass::SearchDriveType* CDFileClass::First = 0;
 
 int CDFileClass::CurrentCDDrive = 0;
 int CDFileClass::LastCDDrive = 0;
-char CDFileClass::RawPath[512];
-
-int Is_Disk_Inserted(int disk)
-{
-    return true;
-
-#if (0) // ST - 12/17/2018 5:31PM
-    struct find_t fb;
-    char scan[] = "?:\\*.*";
-
-    scan[0] = 'A' + disk;
-    return (_dos_findfirst(scan, _A_SUBDIR, &fb) == 0);
-#endif
-}
+char CDFileClass::RawPath[512] = {0};
 
 CDFileClass::CDFileClass(char const* filename)
     : IsDisabled(false)
 {
-    Set_Name(filename);
-    memset(RawPath, 0, sizeof(RawPath));
+    CDFileClass::Set_Name(filename);
+    //	memset (RawPath, 0, sizeof(RawPath));
 }
 
 CDFileClass::CDFileClass(void)
     : IsDisabled(false)
 {
+}
+
+extern int Get_CD_Index(int cd_drive, int timeout);
+
+/***********************************************************************************************
+ * Is_Disk_Inserted -- Checks to see if a disk is inserted in specified drive.                 *
+ *                                                                                             *
+ *    This routine will examine the drive specified to see if there is a disk inserted. It     *
+ *    can be used for floppy drives as well as for the CD-ROM.                                 *
+ *                                                                                             *
+ * INPUT:   disk  -- The drive number to examine. 0=A, 1=B, etc.                               *
+ *                                                                                             *
+ * OUTPUT:  bool; Is a disk inserted into the specified drive?                                 *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   09/20/1995 JLB : Created.                                                                 *
+ *=============================================================================================*/
+int Is_Disk_Inserted(int disk)
+{
+    disk;
+    return true;
 }
 
 /***********************************************************************************************
@@ -92,9 +115,8 @@ CDFileClass::CDFileClass(void)
  *=============================================================================================*/
 int CDFileClass::Open(int rights)
 {
-    return (RawFileClass::Open(rights));
+    return (BufferIOFileClass::Open(rights));
 }
-
 /***********************************************************************************************
  * CDFC::Refresh_Search_Drives -- Updates the search path when a CD changes or is added        *
  *                                                                                             *
@@ -156,6 +178,7 @@ int CDFileClass::Set_Search_Drives(char* pathlist)
 {
     bool found = false;
     bool empty = false;
+
     /*
     **	If there is no pathlist to add, then just return.
     */
@@ -198,18 +221,22 @@ int CDFileClass::Set_Search_Drives(char* pathlist)
             **	If there is a drive letter specified, and this drive letter is '?', then it should
             **	be substituted with the CD-ROM drive letter. In the case of no CD-ROM attached, then
             **	merely ignore this path entry.
+            ** Adds an extra entry for each CD drive in the system that has a C&C disc inserted.
+            ** 																						ST - 5/21/96 4:40PM
             */
             if (strncmp(path, "?:", 2) == 0) {
                 if (CurrentCDDrive) {
                     found = true;
+
                     /*
                     ** If the drive has a C&C CD in it then add it to the path
                     */
                     if (Get_CD_Index(CurrentCDDrive, 2 * 60) >= 0) {
-                        path[0] = CurrentCDDrive + 'A';
+                        path[0] = (char)(CurrentCDDrive + 'A');
                         Add_Search_Drive(path);
                     }
                 }
+
                 /*
                 **	Find the next path string and resubmit.
                 */
@@ -234,27 +261,6 @@ int CDFileClass::Set_Search_Drives(char* pathlist)
 }
 
 /***********************************************************************************************
- * CDFC::Set_CD_Drive -- sets the current CD drive letter                                      *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    Nothing                                                                           *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *    5/22/96 9:39AM ST : Created                                                              *
- *=============================================================================================*/
-
-void CDFileClass::Set_CD_Drive(int drive)
-{
-    LastCDDrive = CurrentCDDrive;
-    CurrentCDDrive = drive;
-}
-
-/***********************************************************************************************
  * CDFC::Add_Search_Drive -- Add a new path to the search path list                            *
  *                                                                                             *
  *                                                                                             *
@@ -268,7 +274,6 @@ void CDFileClass::Set_CD_Drive(int drive)
  * HISTORY:                                                                                    *
  *    5/22/96 10:12AM ST : Created                                                             *
  *=============================================================================================*/
-
 void CDFileClass::Add_Search_Drive(char* path)
 {
     SearchDriveType* srch; // Working pointer to path object.
@@ -296,6 +301,26 @@ void CDFileClass::Add_Search_Drive(char* path)
         }
         chain->Next = srch;
     }
+}
+
+/***********************************************************************************************
+ * CDFC::Set_CD_Drive -- sets the current CD drive letter                                      *
+ *                                                                                             *
+ *                                                                                             *
+ *                                                                                             *
+ * INPUT:    Nothing                                                                           *
+ *                                                                                             *
+ * OUTPUT:   Nothing                                                                           *
+ *                                                                                             *
+ * WARNINGS: None                                                                              *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *    5/22/96 9:39AM ST : Created                                                              *
+ *=============================================================================================*/
+void CDFileClass::Set_CD_Drive(int drive)
+{
+    LastCDDrive = CurrentCDDrive;
+    CurrentCDDrive = drive;
 }
 
 /***********************************************************************************************
@@ -360,10 +385,9 @@ char const* CDFileClass::Set_Name(char const* filename)
     **	just return with the normal file name setting process. Do the same if there is
     **	no multi-drive search path.
     */
-    RawFileClass::Set_Name(filename);
-    if (IsDisabled || !First || RawFileClass::Is_Available()) {
+    BufferIOFileClass::Set_Name(filename);
+    if (IsDisabled || !First || BufferIOFileClass::Is_Available())
         return (File_Name());
-    }
 
     /*
     **	Attempt to find the file first. Check the current directory. If not found there, then
@@ -386,8 +410,8 @@ char const* CDFileClass::Set_Name(char const* filename)
         **	prompt if necessary when the CD-ROM drive has been removed. In all other cases,
         **	it will return false and the search process will continue.
         */
-        RawFileClass::Set_Name(path);
-        if (RawFileClass::Is_Available()) {
+        BufferIOFileClass::Set_Name(path);
+        if (BufferIOFileClass::Is_Available()) {
             return (File_Name());
         }
 
@@ -401,7 +425,7 @@ char const* CDFileClass::Set_Name(char const* filename)
     **	At this point, all path searching has failed. Just set the file name to the
     **	plain text passed to this routine and be done with it.
     */
-    RawFileClass::Set_Name(filename);
+    BufferIOFileClass::Set_Name(filename);
     return (File_Name());
 }
 
@@ -411,7 +435,7 @@ char const* CDFileClass::Set_Name(char const* filename)
  *    This routine is similar to the RawFileClass open except that if the file is being        *
  *    opened only for READ access, it will search all specified directories looking for the    *
  *    file. If after a complete search the file still couldn't be found, then it is opened     *
- *    using the normal RawFileClass system -- resulting in normal error procedures.            *
+ *    using the normal BufferIOFileClass system -- resulting in normal error procedures.       *
  *                                                                                             *
  * INPUT:   filename -- Pointer to the override filename to supply for this file object. It    *
  *                      would be the base filename (sans any directory specification).         *
@@ -430,7 +454,7 @@ char const* CDFileClass::Set_Name(char const* filename)
  *=============================================================================================*/
 int CDFileClass::Open(char const* filename, int rights)
 {
-    Close();
+    CDFileClass::Close();
 
     /*
     **	Verify that there is a filename associated with this file object. If not, then this is a
@@ -444,7 +468,9 @@ int CDFileClass::Open(char const* filename, int rights)
     **	If writing is requested, then multiple drive searching is not performed.
     */
     if (IsDisabled || rights == WRITE) {
-        return (RawFileClass::Open(filename, rights));
+
+        BufferIOFileClass::Set_Name(filename);
+        return (BufferIOFileClass::Open(rights));
     }
 
     /*
@@ -452,42 +478,7 @@ int CDFileClass::Open(char const* filename, int rights)
     **	using the normal procedure.
     */
     Set_Name(filename);
-    return (RawFileClass::Open(rights));
-}
-
-#ifdef NEVER
-/* Get the drive letters if the CD's online */
-WORD __cdecl GetCDDrive(VOID)
-{
-    _ES = FP_SEG(&cdDrive[0]);
-    _BX = FP_OFF(&cdDrive[0]);
-    _AX = 0x150d;
-    geninterrupt(0x2F);
-    return ((WORD)(*cdDrive));
-}
-#endif
-
-int Get_CD_Drive(void)
-{
-#ifdef NEVER
-    for (int index = 0; index < 26; index++) {
-        union REGS regs;
-
-        regs.w.ax = 0x150B;
-        regs.w.bx = 0;
-        regs.w.cx = index;
-        int386(0x2F, &regs, &regs);
-        if (regs.w.bx == 0xADAD) {
-            return (index);
-        }
-    }
-    return (0);
-#else
-
-    //	GetCDClass temp;
-    //	return(temp.GetCDDrive());
-    return (0);
-#endif
+    return (BufferIOFileClass::Open(rights));
 }
 
 const char* CDFileClass::Get_Search_Path(int index)

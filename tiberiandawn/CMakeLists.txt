@@ -13,7 +13,6 @@ set(TIBDAWN_SRC
     cargo.cpp
     ccfile.cpp
     cdata.cpp
-    cdfile.cpp
     cell.cpp
     checkbox.cpp
     cheklist.cpp
