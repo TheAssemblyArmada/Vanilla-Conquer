@@ -13,7 +13,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\cdfile.h_v   2.20   16 Oct 1995 16:45:58   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/CDFILE.H 1     3/03/97 10:24a Joe_bostic $ */
 /***********************************************************************************************
  ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
@@ -35,10 +35,11 @@
 #ifndef CDFILE_H
 #define CDFILE_H
 
-#include "common/rawfile.h"
+#include "bfiofile.h"
+#include <string.h>
 
 /*
-**	This class is derived from the raw file class. This class adds the functionality of searching
+**	This class is derived from the BufferIOFileClass. This class adds the functionality of searching
 **	across multiple directories or drives. It is designed for the typical case of a CD-ROM game
 **	were some data exists in the current directory (hard drive) and the rest exists on the CD-ROM.
 **	Searching for the file occurs by first examining the current directory. If the file does not
@@ -47,7 +48,7 @@
 **	is controlled by the path list as submitted to Set_Search_Drives(). The format of the path
 **	string is the same as the DOS path string.
 */
-class CDFileClass : public RawFileClass
+class CDFileClass : public BufferIOFileClass
 {
 public:
     CDFileClass(char const* filename);
@@ -87,6 +88,11 @@ public:
         RawPath[0] = 0;
     }
 
+    static bool Is_Local()
+    {
+        return (strcmp(RawPath, ";.") == 0);
+    }
+
     // Need to access the paths. ST - 3/15/2019 2:14PM
     static const char* Get_Search_Path(int index);
 
@@ -110,7 +116,6 @@ private:
     **	This points to the first path record.
     */
     static SearchDriveType* First;
-
     /*
     ** This is a copy of the unparsed search path list
     */
