@@ -6,6 +6,7 @@ include(GitWatcher)
 set(COMMON_SRC
     ${GIT_POST_CONFIGURE_FILE}
     lcwcompa.asm
+    bfiofile.cpp
     miscasm.asm
     misc.c
     irandoma.asm
