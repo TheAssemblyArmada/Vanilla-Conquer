@@ -109,13 +109,20 @@ set(COMMONV_SRC
     wwmouse.cpp
     wwkeyboard.cpp
     tcpip_null.cpp
+    unvqbuff.c
+    vqaconfig.cpp
+    vqadrawer.cpp
+    vqaloader.cpp
+    vqapalette.cpp
+    vqatask.cpp
+    vqaver.cpp
 )
 
 if(DSOUND)
-    list(APPEND COMMONV_SRC soundio.cpp)
+    list(APPEND COMMONV_SRC soundio.cpp vqaaudio_dsound.cpp)
     list(APPEND VANILLA_LIBS dsound)
 else()
-    list(APPEND COMMONV_SRC soundio_null.cpp)
+    list(APPEND COMMONV_SRC soundio_null.cpp vqaaudio_null.cpp)
 endif()
 
 if(DDRAW)
@@ -148,4 +155,7 @@ if(BUILD_VANILLATD OR BUILD_VANILLARA)
     add_library(commonv STATIC ${COMMONV_SRC})
     target_compile_definitions(commonv PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS})
     target_link_libraries(commonv PUBLIC common ${VANILLA_LIBS})
+    if(DSOUND)
+        target_compile_definitions(commonv PUBLIC DSOUND_BUILD)
+    endif()
 endif()
