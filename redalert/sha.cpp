@@ -43,6 +43,7 @@
 #if !defined(__BORLANDC__) && !defined(min)
 #define min(a, b) ((a) < (b)) ? (a) : (b)
 #endif
+#include "memrev.h"
 
 /***********************************************************************************************
  * SHAEngine::Process_Partial -- Helper routine to process any partially accumulated data bloc *
@@ -246,7 +247,6 @@ template <class T> T _rotl(T X, int n)
 //	return(unsigned long)( (unsigned long)( (unsigned long)( (unsigned long)X ) << (int)n ) | (unsigned long)(
 //((unsigned long) X ) >> ( (int)((int)(sizeof(long)*(long)8) - (long)n) ) ) );
 //}
-void memrev(char* buffer, size_t length);
 
 /***********************************************************************************************
  * SHAEngine::Process_Block -- Process a full data block into the hash accumulator.            *
