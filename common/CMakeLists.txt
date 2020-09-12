@@ -7,6 +7,7 @@ set(COMMON_SRC
     ${GIT_POST_CONFIGURE_FILE}
     lcwcompa.asm
     bfiofile.cpp
+    blowfish.cpp
     cdfile.cpp
     miscasm.asm
     misc.c
