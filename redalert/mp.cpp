@@ -31,7 +31,6 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   _Byte_Precision -- Determines the number of bytes significant in long integer.            *
- *   memrev -- Reverse the byte order of the buffer specified.                                 *
  *   XMP_Abs -- Perform an absolute value on the specified MP number.                          *
  *   XMP_Add -- Add two MP numbers with a carry option.                                        *
  *   XMP_Add_Int -- Add an integer to an MP number (with carry).                               *
@@ -86,6 +85,7 @@
 #include <assert.h>
 #include <limits.h>
 #include "mp.h"
+#include "common\memrev.h"
 
 #ifndef __BORLANDC__
 #define min(a, b) (((a) < (b)) ? (a) : (b))
@@ -2140,32 +2140,6 @@ int xmp_exponent_mod(digit* expout, const digit* expin, const digit* exponent_pt
     XMP_Mod_Mult_Clear(limited_precision); /* ask mp_modmult to also burn its own evidence */
 
     return 0;
-}
-
-/***********************************************************************************************
- * memrev -- Reverse the byte order of the buffer specified.                                   *
- *                                                                                             *
- *    This routine will reverse the byte order in the buffer specified.                        *
- *                                                                                             *
- * INPUT:   buffer   -- Pointer to the buffer that will be reversed.                           *
- *                                                                                             *
- *          length   -- The length of the buffer.                                              *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/02/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
-void memrev(char* buffer, size_t length)
-{
-    char* r2 = &(buffer[length - 1]);
-    while (buffer < r2) {
-        char b = *buffer;
-        *buffer++ = *r2;
-        *r2-- = b;
-    }
 }
 
 int _USERENTRY pfunc(const void* pkey, const void* base)

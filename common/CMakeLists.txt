@@ -10,6 +10,7 @@ set(COMMON_SRC
     bfiofile.cpp
     blowfish.cpp
     cdfile.cpp
+    memrev.c
     miscasm.asm
     misc.c
     irandoma.asm

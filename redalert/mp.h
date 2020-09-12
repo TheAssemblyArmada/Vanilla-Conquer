@@ -160,7 +160,4 @@ inline bool XMP_Test_Bit(const digit* r, unsigned bit)
     return (r[bit >> LOG_UNITSIZE] & ((digit)1 << (bit & (UNITSIZE - 1))));
 }
 
-// Misc functions.
-void memrev(char* buffer, size_t length);
-
 #endif
