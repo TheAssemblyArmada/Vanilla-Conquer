@@ -39,11 +39,10 @@
 #include <stdlib.h>
 //#include	<iostream.h>
 #include "sha.h"
-
-#if !defined(__BORLANDC__) && !defined(min)
-#define min(a, b) ((a) < (b)) ? (a) : (b)
-#endif
+#include "endianness.h"
 #include "memrev.h"
+#include "rotates.h"
+#include <algorithm>
 
 /***********************************************************************************************
  * SHAEngine::Process_Partial -- Helper routine to process any partially accumulated data bloc *
@@ -84,7 +83,7 @@ void SHAEngine::Process_Partial(void const*& data, long& length)
     **	Attach as many bytes as possible from the source data into
     **	the staging buffer.
     */
-    int add_count = min((int)length, SRC_BLOCK_SIZE - PartialCount);
+    int add_count = std::min((int)length, SRC_BLOCK_SIZE - PartialCount);
     memcpy(&Partial[PartialCount], data, add_count);
     data = ((char const*&)data) + add_count;
     PartialCount += add_count;
@@ -156,9 +155,6 @@ void SHAEngine::Hash(void const* data, long length)
     Process_Partial(data, length);
 }
 
-#define Reverse_LONG(a)                                                                                                \
-    ((a >> 24) & 0x000000FFL) | ((a >> 8) & 0x0000FF00L) | ((a << 8) & 0x00FF0000L) | ((a << 24) & 0xFF000000L)
-
 /***********************************************************************************************
  * SHAEngine::Result -- Fetch the current digest.                                              *
  *                                                                                             *
@@ -218,35 +214,18 @@ int SHAEngine::Result(void* result) const
     **	last 8 bytes of the pseudo-source data.
     */
     memset(&partial[partialcount], '\0', SRC_BLOCK_SIZE - partialcount);
-    *(long*)(&partial[SRC_BLOCK_SIZE - 4]) = Reverse_LONG((length * 8));
+    *(long*)(&partial[SRC_BLOCK_SIZE - 4]) = htobe32((length * 8));
     Process_Block(&partial[0], acc);
 
     memcpy((char*)&FinalResult, &acc, sizeof(acc));
     for (int index = 0; index < sizeof(FinalResult) / sizeof(long); index++) {
         //	for (int index = 0; index < SRC_BLOCK_SIZE/sizeof(long); index++) {
-        (long&)FinalResult.Long[index] = Reverse_LONG(FinalResult.Long[index]);
+        (long&)FinalResult.Long[index] = htobe32(FinalResult.Long[index]);
     }
     (bool&)IsCached = true;
     memcpy(result, &FinalResult, sizeof(FinalResult));
     return (sizeof(FinalResult));
 }
-
-/*
-**	This pragma to turn off the warning "Conversion may lose significant digits" is to
-**	work around a bug within the Borland compiler. It will give this warning when the
-**	_rotl() function is called but will NOT give the warning when the _lrotl() function
-**	is called even though they both have the same parameters and declaration attributes.
-*/
-//#pragma warn -sig
-template <class T> T _rotl(T X, int n)
-{
-    return (T)((X << n) | ((unsigned)X >> ((sizeof(T) * 8) - n)));
-}
-// unsigned long _RTLENTRY _rotl(unsigned long X, int n)
-//{
-//	return(unsigned long)( (unsigned long)( (unsigned long)( (unsigned long)X ) << (int)n ) | (unsigned long)(
-//((unsigned long) X ) >> ( (int)((int)(sizeof(long)*(long)8) - (long)n) ) ) );
-//}
 
 /***********************************************************************************************
  * SHAEngine::Process_Block -- Process a full data block into the hash accumulator.            *
@@ -281,13 +260,13 @@ void SHAEngine::Process_Block(void const* source, SHADigest& acc) const
     long const* data = (long const*)source;
     int index;
     for (index = 0; index < SRC_BLOCK_SIZE / sizeof(long); index++) {
-        block[index] = Reverse_LONG(data[index]);
+        block[index] = htobe32(data[index]);
     }
 
     for (index = SRC_BLOCK_SIZE / sizeof(long); index < PROC_BLOCK_SIZE / sizeof(long); index++) {
-        //		block[index] = _rotl(block[(index-3)&15] ^ block[(index-8)&15] ^ block[(index-14)&15] ^
+        //		block[index] = rotl32(block[(index-3)&15] ^ block[(index-8)&15] ^ block[(index-14)&15] ^
         //block[(index-16)&15], 1);
-        block[index] = _rotl(block[index - 3] ^ block[index - 8] ^ block[index - 14] ^ block[index - 16], 1);
+        block[index] = rotl32(block[index - 3] ^ block[index - 8] ^ block[index - 14] ^ block[index - 16], 1);
     }
 
     /*
@@ -296,11 +275,11 @@ void SHAEngine::Process_Block(void const* source, SHADigest& acc) const
     */
     SHADigest alt = acc;
     for (index = 0; index < PROC_BLOCK_SIZE / sizeof(long); index++) {
-        long temp = _rotl(alt.Long[0], 5) + Do_Function(index, alt.Long[1], alt.Long[2], alt.Long[3]) + alt.Long[4]
+        long temp = rotl32(alt.Long[0], 5) + Do_Function(index, alt.Long[1], alt.Long[2], alt.Long[3]) + alt.Long[4]
                     + block[index] + Get_Constant(index);
         alt.Long[4] = alt.Long[3];
         alt.Long[3] = alt.Long[2];
-        alt.Long[2] = _rotl(alt.Long[1], 30);
+        alt.Long[2] = rotl32(alt.Long[1], 30);
         alt.Long[1] = alt.Long[0];
         alt.Long[0] = temp;
     }
