@@ -6,6 +6,7 @@ include(GitWatcher)
 set(COMMON_SRC
     ${GIT_POST_CONFIGURE_FILE}
     lcwcompa.asm
+    base64.cpp
     bfiofile.cpp
     blowfish.cpp
     cdfile.cpp

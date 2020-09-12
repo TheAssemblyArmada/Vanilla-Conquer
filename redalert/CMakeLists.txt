@@ -10,7 +10,6 @@ set(REDALERT_SRC
     b64straw.cpp
     bar.cpp
     base.cpp
-    base64.cpp
     bbdata.cpp
     bdata.cpp
     bench.cpp
