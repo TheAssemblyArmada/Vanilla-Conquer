@@ -172,7 +172,6 @@ set(REDALERT_SRC
     sendfile.cpp
     seqconn.cpp
     session.cpp
-    sha.cpp
     shape.cpp
     shapebtn.cpp
     shapipe.cpp
