@@ -15,7 +15,6 @@ set(REDALERT_SRC
     bdata.cpp
     bench.cpp
     bigcheck.cpp
-    blowfish.cpp
     blowpipe.cpp
     blwstraw.cpp
     buff.cpp
