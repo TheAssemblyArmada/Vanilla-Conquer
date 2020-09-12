@@ -11,6 +11,7 @@ set(COMMON_SRC
     blowfish.cpp
     cdfile.cpp
     memrev.c
+    sha.cpp
     miscasm.asm
     misc.c
     irandoma.asm
