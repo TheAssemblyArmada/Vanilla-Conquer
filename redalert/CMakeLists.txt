@@ -144,7 +144,6 @@ set(REDALERT_SRC
     options.cpp
     overlay.cpp
     palettec.cpp
-    pipe.cpp
     pk.cpp
     pkpipe.cpp
     pkstraw.cpp
@@ -186,7 +185,6 @@ set(REDALERT_SRC
     startup.cpp
     statbtn.cpp
     stats.cpp
-    straw.cpp
     super.cpp
     surface.cpp
     tab.cpp

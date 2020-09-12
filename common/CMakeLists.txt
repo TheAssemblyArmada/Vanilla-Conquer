@@ -31,6 +31,8 @@ set(COMMON_SRC
     buffer.cpp
     tobuff.cpp
     tobuffa.asm
+    pipe.cpp
+    straw.cpp
     face.cpp
     font.cpp
     timer.cpp
