@@ -14,6 +14,8 @@ set(COMMON_SRC
     sha.cpp
     miscasm.asm
     misc.c
+    mp.cpp
+    int.cpp
     irandoma.asm
     keyfbuffa.asm
     irandom.cpp

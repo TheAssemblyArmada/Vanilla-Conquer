@@ -89,7 +89,6 @@ set(REDALERT_SRC
     inibin.cpp
     inicode.cpp
     init.cpp
-    int.cpp
     interpal.cpp
     intro.cpp
     iomap.cpp
@@ -131,7 +130,6 @@ set(REDALERT_SRC
     mixfile.cpp
     monoc.cpp
     mouse.cpp
-    mp.cpp
     mpgset.cpp
     mplayer.cpp
     mpmgrw.cpp

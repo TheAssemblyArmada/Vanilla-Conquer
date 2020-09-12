@@ -85,7 +85,7 @@
 #include <assert.h>
 #include <limits.h>
 #include "mp.h"
-#include "common\memrev.h"
+#include "memrev.h"
 
 #ifndef __BORLANDC__
 #define min(a, b) (((a) < (b)) ? (a) : (b))
