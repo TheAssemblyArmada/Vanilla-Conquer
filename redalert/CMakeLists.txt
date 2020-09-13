@@ -142,7 +142,6 @@ set(REDALERT_SRC
     options.cpp
     overlay.cpp
     palettec.cpp
-    pk.cpp
     pkpipe.cpp
     pkstraw.cpp
     power.cpp
