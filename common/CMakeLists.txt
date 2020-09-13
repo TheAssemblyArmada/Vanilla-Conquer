@@ -25,6 +25,7 @@ set(COMMON_SRC
     auduncmp.c
     random.cpp
     bitblit.c
+    rndstraw.cpp
     fading.c
     framelimit.cpp
     soscodec.c

@@ -156,7 +156,6 @@ set(REDALERT_SRC
     readline.cpp
     reinf.cpp
     rgb.cpp
-    rndstraw.cpp
     rotbmp.cpp
     rules.cpp
     saveload.cpp
