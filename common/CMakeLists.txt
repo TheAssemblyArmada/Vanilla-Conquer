@@ -23,6 +23,7 @@ set(COMMON_SRC
     drawmisc.cpp
     xordeltaa.asm
     auduncmp.c
+    random.cpp
     bitblit.c
     fading.c
     framelimit.cpp
