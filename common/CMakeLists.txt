@@ -13,6 +13,7 @@ set(COMMON_SRC
     memrev.c
     sha.cpp
     miscasm.asm
+    pk.cpp
     misc.c
     mp.cpp
     int.cpp
