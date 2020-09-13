@@ -152,7 +152,6 @@ set(REDALERT_SRC
     radio.cpp
     ramfile.cpp
     rand.cpp
-    random.cpp
     rawolapi.cpp
     readline.cpp
     reinf.cpp
