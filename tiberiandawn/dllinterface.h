@@ -26,7 +26,7 @@ struct CarryoverObjectStruct;
 **
 **
 */
-#define CNC_DLL_API_VERSION 0x101
+#include "dllinterfaceversion.h"
 
 #define MAX_EXPORT_CELLS (128 * 128)
 
@@ -408,7 +408,11 @@ enum InputRequestEnum
     INPUT_REQUEST_SELL_AT_POSITION,
     INPUT_REQUEST_SELECT_AT_POSITION,
     INPUT_REQUEST_COMMAND_AT_POSITION,
-    INPUT_REQUEST_SPECIAL_KEYS
+    INPUT_REQUEST_SPECIAL_KEYS,
+    INPUT_REQUEST_MOD_GAME_COMMAND_1_AT_POSITION,
+    INPUT_REQUEST_MOD_GAME_COMMAND_2_AT_POSITION,
+    INPUT_REQUEST_MOD_GAME_COMMAND_3_AT_POSITION,
+    INPUT_REQUEST_MOD_GAME_COMMAND_4_AT_POSITION,
 };
 
 /**************************************************************************************
@@ -456,6 +460,18 @@ enum GameRequestEnum
 {
     INPUT_GAME_MOVIE_DONE,
     INPUT_GAME_LOADING_DONE,
+};
+
+/**************************************************************************************
+**
+**  Beacon Requests
+**
+**
+*/
+enum BeaconRequestEnum
+{
+    INPUT_BEACON_NONE,
+    INPUT_BEACON_PLACE,
 };
 
 /**************************************************************************************

@@ -2208,22 +2208,71 @@ static AnimTypeClass const Flag(ANIM_FLAG, // Animation number.
                                 VOC_NONE,  // Sound effect to play.
                                 ANIM_NONE);
 
+static AnimTypeClass const Beacon(ANIM_BEACON, // Animation number.
+                                  "MOVEFLSH",  // Data name of animation.
+                                  21,          // Maximum dimension of animation.
+                                  0,           // Biggest animation stage.
+                                  false,       // Normalized animation rate?
+                                  false,       // Uses white translucent table?
+                                  false,       // Scorches the ground?
+                                  false,       // Forms a crater?
+                                  false,       // Sticks to unit in square?
+                                  false,       // Ground level animation?
+                                  false,       // Translucent colors in this animation?
+                                  false,       // Is this a flame thrower animation?
+                                  0x0000,      // Damage to apply per tick (fixed point).
+                                  1,           // Delay between frames.
+                                  0,           // Starting frame number.
+                                  0,           // Loop start frame number.
+                                  -1,          // Ending frame of loop back.
+                                  1,           // Number of animation stages.
+                                  -1,          // Number of times the animation loops.
+                                  VOC_NONE,    // Sound effect to play.
+                                  ANIM_NONE,
+                                  -1,                 // Virtual stages
+                                  0x100,              // Virtual scale
+                                  ANIM_BEACON_VIRTUAL // Virtual anim
+);
+
+static AnimTypeClass const BeaconVirtual(ANIM_BEACON_VIRTUAL, // Animation number.
+                                         "BEACON",            // Data name of animation.
+                                         21,                  // Maximum dimension of animation.
+                                         0,                   // Biggest animation stage.
+                                         false,               // Normalized animation rate?
+                                         false,               // Uses white translucent table?
+                                         false,               // Scorches the ground?
+                                         false,               // Forms a crater?
+                                         false,               // Sticks to unit in square?
+                                         false,               // Ground level animation?
+                                         false,               // Translucent colors in this animation?
+                                         false,               // Is this a flame thrower animation?
+                                         0x0000,              // Damage to apply per tick (fixed point).
+                                         1,                   // Delay between frames.
+                                         0,                   // Starting frame number.
+                                         0,                   // Loop start frame number.
+                                         -1,                  // Ending frame of loop back.
+                                         1,                   // Number of animation stages.
+                                         -1,                  // Number of times the animation loops.
+                                         VOC_NONE,            // Sound effect to play.
+                                         ANIM_NONE);
+
 AnimTypeClass const* const AnimTypeClass::Pointers[ANIM_COUNT] = {
-    &FBall1,    &Grenade,      &Frag1,     &Frag3,     &VehHit1,      &VehHit2,      &VehHit3,      &ArtExp1,
-    &Napalm1,   &Napalm2,      &Napalm3,   &SmokePuff, &Piff,         &PiffPiff,     &FlameN,       &FlameNE,
-    &FlameE,    &FlameSE,      &FlameS,    &FlameSW,   &FlameW,       &FlameNW,      &ChemN,        &ChemNE,
-    &ChemE,     &ChemSE,       &ChemS,     &ChemSW,    &ChemW,        &ChemNW,       &Fire3,        &Fire2,
-    &Fire1,     &Fire4,        &Gunfire,
+    &FBall1,       &Grenade,      &Frag1,     &Frag3,     &VehHit1,     &VehHit2,      &VehHit3,      &ArtExp1,
+    &Napalm1,      &Napalm2,      &Napalm3,   &SmokePuff, &Piff,        &PiffPiff,     &FlameN,       &FlameNE,
+    &FlameE,       &FlameSE,      &FlameS,    &FlameSW,   &FlameW,      &FlameNW,      &ChemN,        &ChemNE,
+    &ChemE,        &ChemSE,       &ChemS,     &ChemSW,    &ChemW,       &ChemNW,       &Fire3,        &Fire2,
+    &Fire1,        &Fire4,        &Gunfire,
 #ifdef NEVER
-    &E1RotFire, &E1RotGrenade, &E1RotGun,  &E1RotExp,  &E2RotFire,    &E2RotGrenade, &E2RotGun,     &E2RotExp,
-    &E3RotFire, &E3RotGrenade, &E3RotGun,  &E3RotExp,  &E4RotFire,    &E4RotGrenade, &E4RotGun,     &E4RotExp,
+    &E1RotFire,    &E1RotGrenade, &E1RotGun,  &E1RotExp,  &E2RotFire,   &E2RotGrenade, &E2RotGun,     &E2RotExp,
+    &E3RotFire,    &E3RotGrenade, &E3RotGun,  &E3RotExp,  &E4RotFire,   &E4RotGrenade, &E4RotGun,     &E4RotExp,
 #endif
-    &SmokeM,    &BurnSmall,    &BurnMed,   &BurnBig,   &OnFireSmall,  &OnFireMed,    &OnFireBig,    &SAMN,
-    &SAMNE,     &SAME,         &SAMSE,     &SAMS,      &SAMSW,        &SAMW,         &SAMNW,        &GUNN,
-    &GUNNE,     &GUNE,         &GUNSE,     &GUNS,      &GUNSW,        &GUNW,         &GUNNW,        &LZSmoke,
-    &IonCannon, &AtomBomb,     &CDeviator, &CDollar,   &CEarth,       &CEmpulse,     &CInvun,       &CMine,
-    &CRapid,    &CStealth,     &CMissile,  &AtomDoor,  &MoveFlash,    &OilFieldBurn, &TricDie,      &TRexDie,
-    &StegDie,   &RaptDie,      &ChemBall,  &Flag,      &Fire3Virtual, &Fire2Virtual, &Fire1Virtual, &Fire4Virtual};
+    &SmokeM,       &BurnSmall,    &BurnMed,   &BurnBig,   &OnFireSmall, &OnFireMed,    &OnFireBig,    &SAMN,
+    &SAMNE,        &SAME,         &SAMSE,     &SAMS,      &SAMSW,       &SAMW,         &SAMNW,        &GUNN,
+    &GUNNE,        &GUNE,         &GUNSE,     &GUNS,      &GUNSW,       &GUNW,         &GUNNW,        &LZSmoke,
+    &IonCannon,    &AtomBomb,     &CDeviator, &CDollar,   &CEarth,      &CEmpulse,     &CInvun,       &CMine,
+    &CRapid,       &CStealth,     &CMissile,  &AtomDoor,  &MoveFlash,   &OilFieldBurn, &TricDie,      &TRexDie,
+    &StegDie,      &RaptDie,      &ChemBall,  &Flag,      &Beacon,      &Fire3Virtual, &Fire2Virtual, &Fire1Virtual,
+    &Fire4Virtual, &BeaconVirtual};
 
 /***********************************************************************************************
  * AnimTypeClass::AnimTypeClass -- Constructor for animation types.                            *
@@ -2322,4 +2371,7 @@ void AnimTypeClass::One_Time(void)
             ((void const*&)As_Reference(index).ImageData) = MixFileClass::Retrieve(fullname);
         }
     }
+
+    // Set up beacon image data manually since they're new animations only available in the virtual renderer
+    ((void const*&)As_Reference(ANIM_BEACON_VIRTUAL).ImageData) = As_Reference(ANIM_BEACON).ImageData;
 }

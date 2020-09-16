@@ -532,7 +532,9 @@ void CC_Draw_Shape(const ObjectClass* object,
                    void const* fadingdata = 0,
                    void const* ghostdata = 0,
                    DirType rotation = DIR_N,
-                   long virtualscale = 0x0100);
+                   long virtualscale = 0x0100,
+                   int width = 0,
+                   int height = 0);
 void CC_Draw_Shape(const ObjectClass* object,
                    const char* shape_file_name,
                    void const* shapefile,

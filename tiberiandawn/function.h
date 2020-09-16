@@ -334,7 +334,9 @@ void CC_Draw_Shape(ObjectClass* object,
                    ShapeFlags_Type flags,
                    void const* fadingdata = 0,
                    void const* ghostdata = 0,
-                   int scale = 0x100);
+                   int scale = 0x100,
+                   int width = 0,
+                   int height = 0);
 void CC_Draw_Shape(ObjectClass* object,
                    const char* shape_file_name,
                    void const* shapefile,

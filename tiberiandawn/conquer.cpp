@@ -2694,12 +2694,16 @@ void CC_Draw_Shape(ObjectClass* object,
                    ShapeFlags_Type flags,
                    void const* fadingdata,
                    void const* ghostdata,
-                   int scale)
+                   int scale,
+                   int width,
+                   int height)
 {
 #ifdef REMASTER_BUILD
     if (window == WINDOW_VIRTUAL) {
-        int width = Get_Build_Frame_Width(shapefile);
-        int height = Get_Build_Frame_Height(shapefile);
+        if (width == 0)
+            width = Get_Build_Frame_Width(shapefile);
+        if (height == 0)
+            height = Get_Build_Frame_Height(shapefile);
         DLL_Draw_Intercept(shapenum, x, y, width, height, (int)flags, object, NULL, -1, scale);
         return;
     }
