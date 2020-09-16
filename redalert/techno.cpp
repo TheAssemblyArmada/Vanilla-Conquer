@@ -1687,7 +1687,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
     **	If the scan is limited to capturable buildings only, then bail if the examined
     **	object isn't a capturable building.
     */
-    if ((method & THREAT_CAPTURE) && (otype != RTTI_BUILDING || !((BuildingTypeClass const*)tclass)->IsCaptureable)) {
+    if ((method & THREAT_CAPTURE) && (otype != RTTI_BUILDING || !object->Can_Capture())) {
         BEnd(BENCH_EVAL_OBJECT);
         return (false);
     }
@@ -3445,6 +3445,13 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             }
         }
 
+        /*
+        ** For electric zaps, immediately perform bullet logic.
+        */
+        if (weapon->IsElectric) {
+            bullet->AI();
+        }
+
 #endif
         }
 
@@ -3632,8 +3639,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                             if (Can_Player_Move() || In_Range(object, primary)) {
                                 if (In_Range(object, primary)
                                     || (What_Am_I() == RTTI_INFANTRY && ((InfantryClass*)this)->Class->IsCapture
-                                        && object->What_Am_I() == RTTI_BUILDING
-                                        && ((BuildingClass*)object)->Class->IsCaptureable)) {
+                                        && object->What_Am_I() == RTTI_BUILDING && object->Can_Capture())) {
                                     return (ACTION_ATTACK);
                                 } else {
                                     if (!Can_Player_Move()) {

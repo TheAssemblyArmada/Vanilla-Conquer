@@ -3374,12 +3374,16 @@ void CC_Draw_Shape(const ObjectClass* object,
                    void const* fadingdata,
                    void const* ghostdata,
                    DirType rotation,
-                   long virtualscale)
+                   long virtualscale,
+                   int width,
+                   int height)
 {
 #ifdef REMASTER_BUILD
     if (window == WINDOW_VIRTUAL) {
-        int width = Get_Build_Frame_Width(shapefile);
-        int height = Get_Build_Frame_Height(shapefile);
+        if (width == 0)
+            width = Get_Build_Frame_Width(shapefile);
+        if (height == 0)
+            height = Get_Build_Frame_Height(shapefile);
         DLL_Draw_Intercept(shapenum, x, y, width, height, (int)flags, object, rotation, virtualscale, NULL, HOUSE_NONE);
         return;
     }

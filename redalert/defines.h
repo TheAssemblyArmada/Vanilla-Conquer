@@ -2338,6 +2338,7 @@ typedef enum AnimType : char
     ANIM_PARA_BOMB,
     ANIM_MINE_EXP1,
     ANIM_FLAG,
+    ANIM_BEACON,
 
 #ifdef FIXIT_ANTS
     ANIM_ANT1_DEATH,
@@ -2349,6 +2350,7 @@ typedef enum AnimType : char
     ANIM_FIRE_MED_VIRTUAL,   // Medium flame animation.
     ANIM_FIRE_MED2_VIRTUAL,  // Medium flame animation (oranger).
     ANIM_FIRE_TINY_VIRTUAL,  // Very tiny flames.
+    ANIM_BEACON_VIRTUAL,     // Beacon (virtual).
 
     ANIM_COUNT,
     ANIM_FIRST = 0
@@ -3354,6 +3356,8 @@ typedef enum VocType : short
     VOC_MAD_CHARGE,
     VOC_MAD_EXPLODE,
     VOC_SHOCK_TROOP1,
+
+    VOC_BEACON,
 
 #endif
     VOC_COUNT,
