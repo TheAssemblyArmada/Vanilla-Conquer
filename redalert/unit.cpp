@@ -103,7 +103,11 @@
 extern void Logic_Switch_Player_Context(ObjectClass* object);
 extern void Logic_Switch_Player_Context(HouseClass* object);
 extern void On_Special_Weapon_Targetting(const HouseClass* player_ptr, SpecialWeaponType weapon_type);
+#ifdef REMASTER_BUILD
 extern bool Is_Legacy_Render_Enabled(void);
+#else
+#define Is_Legacy_Render_Enabled() true
+#endif
 
 static int _GapShroudXTable[] = {-1, 0, 1,  -2, -1, 0, 1, 2,  -2, -1, 0, 1, 2,  -2, -1, 0,
                                  1,  2, -2, -1, 0,  1, 2, -2, -1, 0,  1, 2, -1, 0,  1};

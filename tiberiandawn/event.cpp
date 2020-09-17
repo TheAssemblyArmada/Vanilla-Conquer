@@ -480,6 +480,7 @@ void EventClass::Execute(void)
             **	Beacons have a 30-second kill time.
             */
             if (Data.Anim.What == ANIM_BEACON) {
+#ifdef _WIN32
                 FILETIME ft;
                 GetSystemTimeAsFileTime(&ft);
 
@@ -487,6 +488,7 @@ void EventClass::Execute(void)
                     ((unsigned long long)ft.dwLowDateTime + ((unsigned long long)ft.dwHighDateTime << 32ULL))
                     + 300000000ULL;
                 anim->Kill_At(kill_time);
+#endif
             }
         }
         break;
