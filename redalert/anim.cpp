@@ -768,6 +768,7 @@ void AnimClass::AI(void)
     **	Check the kill time.
     */
     if (KillTime > 0ULL) {
+#ifdef _WIN32
         FILETIME ft;
         GetSystemTimeAsFileTime(&ft);
 
@@ -776,6 +777,7 @@ void AnimClass::AI(void)
         if (now >= KillTime) {
             IsToDelete = true;
         }
+#endif
     }
 
     /*
