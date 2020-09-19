@@ -36,6 +36,7 @@
 #define WWFILE_Hxx
 
 #include <stddef.h>
+#include <stdio.h>
 
 #ifndef _READ
 #define READ  1

@@ -37,7 +37,7 @@
 
 #include "straw.h"
 #include "buff.h"
-#include "common/wwfile.h"
+#include "wwfile.h"
 #include <stddef.h>
 
 /*

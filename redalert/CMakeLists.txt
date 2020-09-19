@@ -226,8 +226,6 @@ set(REDALERT_SRC
     wol_opt.cpp
     wsproto.cpp
     wspudp.cpp
-    xpipe.cpp
-    xstraw.cpp
 )
 
 if(CMAKE_CONFIGURATION_TYPES)
