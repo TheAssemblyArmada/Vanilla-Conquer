@@ -21,6 +21,7 @@ set(COMMON_SRC
     int.cpp
     irandoma.asm
     keyfbuffa.asm
+    buff.cpp
     irandom.cpp
     drawmisca.asm
     drawmisc.cpp

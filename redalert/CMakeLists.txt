@@ -14,7 +14,6 @@ set(REDALERT_SRC
     bigcheck.cpp
     blowpipe.cpp
     blwstraw.cpp
-    buff.cpp
     building.cpp
     bullet.cpp
     cargo.cpp
