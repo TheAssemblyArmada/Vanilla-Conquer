@@ -99,8 +99,6 @@ set(REDALERT_SRC
     jshell.cpp
     key.cpp
     layer.cpp
-    lcwpipe.cpp
-    lcwstraw.cpp
     link.cpp
     list.cpp
     loaddlg.cpp
