@@ -18,6 +18,8 @@ set(COMMON_SRC
     sha.cpp
     miscasm.asm
     pk.cpp
+    pkpipe.cpp
+    pkstraw.cpp
     misc.c
     mp.cpp
     int.cpp
