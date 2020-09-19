@@ -11,6 +11,8 @@ set(COMMON_SRC
     base64.cpp
     bfiofile.cpp
     blowfish.cpp
+    blowpipe.cpp
+    blwstraw.cpp
     cdfile.cpp
     memrev.c
     sha.cpp
