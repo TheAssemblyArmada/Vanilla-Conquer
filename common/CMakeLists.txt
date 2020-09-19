@@ -71,6 +71,8 @@ set(COMMON_SRC
     xordelta.c
     crc.cpp
     keyframe.cpp
+    xpipe.cpp
+    xstraw.cpp
 )
 
 if (WIN32)

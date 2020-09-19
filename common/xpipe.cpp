@@ -13,55 +13,56 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header: /CounterStrike/XSTRAW.CPP 1     3/03/97 10:26a Joe_bostic $ */
+/* $Header: /CounterStrike/XPIPE.CPP 1     3/03/97 10:26a Joe_bostic $ */
 /***********************************************************************************************
  ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                    File Name : XSTRAW.CPP                                                   *
+ *                    File Name : XPIPE.CPP                                                    *
  *                                                                                             *
  *                   Programmer : Joe L. Bostic                                                *
  *                                                                                             *
  *                   Start Date : 07/04/96                                                     *
  *                                                                                             *
- *                  Last Update : July 4, 1996 [JLB]                                           *
+ *                  Last Update : July 5, 1996 [JLB]                                           *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
- *   BufferStraw::Get -- Fetch data from the straw's buffer holding tank.                      *
- *   FileStraw::Get -- Fetch data from the file.                                               *
- *   FileStraw::~FileStraw -- The destructor for the file straw.                               *
+ *   BufferPipe::Put -- Submit data to the buffered pipe segment.                              *
+ *   FilePipe::Put -- Submit a block of data to the pipe.                                      *
+ *   FilePipe::End -- End the file pipe handler.                                               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#include "function.h"
-#include "xstraw.h"
+
+#include "wwfile.h"
+#include "xpipe.h"
 #include <stddef.h>
 #include <string.h>
 
 //---------------------------------------------------------------------------------------------------------
-// BufferStraw
+// BufferPipe
 //---------------------------------------------------------------------------------------------------------
 
 /***********************************************************************************************
- * BufferStraw::Get -- Fetch data from the straw's buffer holding tank.                        *
+ * BufferPipe::Put -- Submit data to the buffered pipe segment.                                *
  *                                                                                             *
- *    This routine will copy the requested number of bytes from the buffer holding tank (as    *
- *    set up by the straw's constructor) to the buffer specified.                              *
+ *    The buffered pipe is a pipe terminator. That is, the data never flows onto subsequent    *
+ *    pipe chains. The data is stored into the buffer previously submitted to the pipe.        *
+ *    If the buffer is full, no more data is output to the buffer.                             *
  *                                                                                             *
- * INPUT:   source   -- Pointer to the buffer to be filled with data.                          *
+ * INPUT:   source   -- Pointer to the data to submit.                                         *
  *                                                                                             *
- *          length   -- The number of bytes requested.                                         *
+ *          length   -- The number of bytes to be submitted.                                   *
  *                                                                                             *
- * OUTPUT:  Returns with the number of bytes copied to the buffer. If this is less than        *
- *          requested, then it indicates that the data holding tank buffer is exhausted.       *
+ * OUTPUT:  Returns with the number of bytes output to the destination buffer.                 *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int BufferStraw::Get(void* source, int slen)
+int BufferPipe::Put(void const* source, int slen)
 {
     int total = 0;
 
@@ -73,74 +74,85 @@ int BufferStraw::Get(void* source, int slen)
         }
 
         if (len > 0) {
-            memmove(source, ((char*)BufferPtr.Get_Buffer()) + Index, len);
+            memmove(((char*)BufferPtr.Get_Buffer()) + Index, source, len);
         }
 
         Index += len;
         //		Length -= len;
-        //		BufferPtr = ((char *)BufferPtr) + len;
+        //		Buffer = ((char *)Buffer) + len;
         total += len;
     }
     return (total);
 }
 
 //---------------------------------------------------------------------------------------------------------
-// FileStraw
+// FilePipe
 //---------------------------------------------------------------------------------------------------------
 
+FilePipe::~FilePipe(void)
+{
+    if (Valid_File() && HasOpened) {
+        HasOpened = false;
+        File->Close();
+        File = NULL;
+    }
+}
+
 /***********************************************************************************************
- * FileStraw::Get -- Fetch data from the file.                                                 *
+ * FilePipe::End -- End the file pipe handler.                                                 *
  *                                                                                             *
- *    This routine will read data from the file (as specified in the straw's constructor) into *
- *    the buffer indicated.                                                                    *
+ *    This routine is called when there will be no more data sent through the pipe. It is      *
+ *    responsible for cleaning up anything it needs to. This is not handled by the             *
+ *    destructor, although it serves a similar purpose, because pipe are linked together and   *
+ *    the destructor order is not easily controlled. If the destructors for a pipe chain were  *
+ *    called out of order, the result might be less than pleasant.                             *
  *                                                                                             *
- * INPUT:   source   -- Pointer to the buffer to hold the data.                                *
+ * INPUT:   none                                                                               *
  *                                                                                             *
- *          length   -- The number of bytes requested.                                         *
+ * OUTPUT:  Returns with the number of bytes flushed out the final end of the pipe as a        *
+ *          consequence of this routine.                                                       *
  *                                                                                             *
- * OUTPUT:  Returns with the number of bytes stored into the buffer. If this number is less    *
- *          than the number requested, then this indicates that the file is exhausted.         *
+ * WARNINGS:   Don't send any more data through the pipe after this routine is called.         *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/05/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+int FilePipe::End(void)
+{
+    int total = Pipe::End();
+    if (Valid_File() && HasOpened) {
+        HasOpened = false;
+        File->Close();
+    }
+    return (total);
+}
+
+/***********************************************************************************************
+ * FilePipe::Put -- Submit a block of data to the pipe.                                        *
+ *                                                                                             *
+ *    Takes the data block submitted and writes it to the file. If the file was not already    *
+ *    open, this routine will open it for write.                                               *
+ *                                                                                             *
+ * INPUT:   source   -- Pointer to the data to submit to the file.                             *
+ *                                                                                             *
+ *          length   -- The number of bytes to write to the file.                              *
+ *                                                                                             *
+ * OUTPUT:  Returns with the number of bytes written to the file.                              *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int FileStraw::Get(void* source, int slen)
+int FilePipe::Put(void const* source, int slen)
 {
     if (Valid_File() && source != NULL && slen > 0) {
         if (!File->Is_Open()) {
             HasOpened = true;
-            if (!File->Is_Available())
-                return (0);
-            if (!File->Open(READ))
-                return (0);
+            File->Open(WRITE);
         }
 
-        return (File->Read(source, slen));
+        return (File->Write(source, slen));
     }
     return (0);
-}
-
-/***********************************************************************************************
- * FileStraw::~FileStraw -- The destructor for the file straw.                                 *
- *                                                                                             *
- *    This destructor only needs to close the file if it was the one to open it.               *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/03/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
-FileStraw::~FileStraw(void)
-{
-    if (Valid_File() && HasOpened) {
-        File->Close();
-        HasOpened = false;
-        File = NULL;
-    }
 }

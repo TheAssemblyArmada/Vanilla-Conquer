@@ -36,7 +36,7 @@
 #define XPIPE_H
 
 #include "pipe.h"
-#include "common/wwfile.h"
+#include "wwfile.h"
 #include "buff.h"
 
 /*
