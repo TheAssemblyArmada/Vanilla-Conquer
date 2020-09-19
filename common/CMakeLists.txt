@@ -49,6 +49,8 @@ set(COMMON_SRC
     buffglbl.cpp
     iff.cpp
     lcw.cpp
+    lcwpipe.cpp
+    lcwstraw.cpp
     load.cpp
     loadpal.cpp
     dipthong.cpp
