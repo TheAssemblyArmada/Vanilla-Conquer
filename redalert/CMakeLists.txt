@@ -6,8 +6,6 @@ set(REDALERT_SRC
     aircraft.cpp
     anim.cpp
     audio.cpp
-    b64pipe.cpp
-    b64straw.cpp
     bar.cpp
     base.cpp
     bbdata.cpp
