@@ -135,8 +135,6 @@ set(REDALERT_SRC
     options.cpp
     overlay.cpp
     palettec.cpp
-    pkpipe.cpp
-    pkstraw.cpp
     power.cpp
     profile.cpp
     queue.cpp
