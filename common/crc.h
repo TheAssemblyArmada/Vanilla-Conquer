@@ -116,4 +116,6 @@ protected:
     } StagingBuffer;
 };
 
+long Calculate_CRC(void* buffer, long length);
+
 #endif
