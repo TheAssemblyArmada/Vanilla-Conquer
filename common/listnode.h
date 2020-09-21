@@ -39,25 +39,6 @@
 #include <assert.h>
 
 /*
-**	The "bool" integral type was defined by the C++ comittee in
-**	November of '94. Until the compiler supports this, use the following
-**	definition.
-*/
-#ifndef __BORLANDC__
-#ifndef TRUE_FALSE_DEFINED
-#define TRUE_FALSE_DEFINED
-enum
-{
-    false = 0,
-    true = 1
-};
-typedef int bool;
-#endif
-#endif
-
-//#pragma warn -inl
-
-/*
 **	This is a doubly linked list node. Typical use of this node is to derive
 **	objects from this node. The interface class for this node can be used for
 **	added convenience.
