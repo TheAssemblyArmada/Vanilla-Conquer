@@ -2272,7 +2272,7 @@ void UnitClass::Draw_It(int x, int y, WindowNumberType window)
     **	If this unit is carrying the flag, then draw that on top of everything else.
     */
     if (Flagged != HOUSE_NONE) {
-        shapefile = MixFileClass::Retrieve("FLAGFLY.SHP");
+        shapefile = MFCD::Retrieve("FLAGFLY.SHP");
         int flag_x = x + (ICON_PIXEL_W / 2) - 2;
         int flag_y = y + (3 * ICON_PIXEL_H / 4) - Get_Build_Frame_Height(shapefile);
         CC_Draw_Shape(this,

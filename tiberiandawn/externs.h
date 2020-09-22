@@ -63,6 +63,12 @@
 extern bool ForceEnglish;
 #endif
 
+/*
+**	Convenient alias for MixFileClass<CDFileClass> object. This allows
+**	easier entry into the code and less clutter.
+*/
+typedef MixFileClass<CCFileClass> MFCD;
+
 extern bool Debug_Quiet;
 extern bool Debug_Cheat;
 extern bool Debug_Remap;
@@ -135,11 +141,11 @@ extern MouseClass Map;
 #endif
 extern ScoreClass Score;
 extern MonoClass MonoArray[MonoClass::MAX_MONO_PAGES];
-extern MixFileClass* ScoreMix;
-extern MixFileClass* TheaterData;
-extern MixFileClass* LowTheaterData;
-extern MixFileClass* MoviesMix;
-extern MixFileClass* GeneralMix;
+extern MFCD* ScoreMix;
+extern MFCD* TheaterData;
+extern MFCD* LowTheaterData;
+extern MFCD* MoviesMix;
+extern MFCD* GeneralMix;
 extern ThemeClass Theme;
 extern SpecialClass Special;
 extern RulesClass Rule;

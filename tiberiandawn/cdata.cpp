@@ -1829,7 +1829,7 @@ void TemplateTypeClass::Init(TheaterType theater)
         ((void const*&)tplate.ImageData) = NULL;
         if (tplate.Theater & (1 << theater)) {
             _makepath(fullname, NULL, NULL, tplate.IniName, Theaters[theater].Suffix);
-            ptr = MixFileClass::Retrieve(fullname);
+            ptr = MFCD::Retrieve(fullname);
             ((void const*&)tplate.ImageData) = ptr;
             // No need for icon caching now. ST - 12/19/2018 11:48AM
             //				Register_Icon_Set((void*)ptr,TRUE);		//Register icon set for video memory caching

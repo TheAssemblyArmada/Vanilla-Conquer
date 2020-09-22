@@ -120,7 +120,7 @@ BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserve
     case DLL_PROCESS_DETACH:
         DLL_Shutdown();
 
-        MixFileClass::Free_All();
+        MFCD::Free_All();
 
         Uninit_Game();
 
@@ -146,7 +146,7 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 #endif
     if (Ram_Free(MEM_NORMAL) < 5000000) {
 #ifdef GERMAN
-        printf("Zuwenig Hauptspeicher verfgbar.\n");
+        printf("Zuwenig Hauptspeicher verf?gbar.\n");
 #else
 #ifdef FRENCH
         printf("M‚moire vive (RAM) insuffisante.\n");
@@ -265,7 +265,7 @@ int main(int argc, char** argv)
 #ifdef GERMAN
             char disk_space_message[512];
             sprintf(disk_space_message,
-                    "Nicht genug Festplattenplatz fr Command & Conquer.\nSie brauchen %d MByte freien Platz auf der "
+                    "Nicht genug Festplattenplatz f?r Command & Conquer.\nSie brauchen %d MByte freien Platz auf der "
                     "Festplatte.",
                     (INIT_FREE_DISK_SPACE) / (1024 * 1024));
             MessageBoxA(NULL, disk_space_message, "Command & Conquer", MB_ICONEXCLAMATION | MB_OK);

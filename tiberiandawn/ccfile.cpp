@@ -328,7 +328,7 @@ long CCFileClass::Size(void)
  *=============================================================================================*/
 int CCFileClass::Is_Available(int)
 {
-    if (MixFileClass::Offset(File_Name())) {
+    if (MFCD::Offset(File_Name())) {
         return (true);
     }
     return (CDFileClass::Is_Available());
@@ -422,8 +422,8 @@ int CCFileClass::Open(int rights)
     **	Check to see if file is part of a mixfile and that mixfile is currently loaded
     **	into RAM.
     */
-    MixFileClass* mixfile = 0;
-    if (MixFileClass::Offset(File_Name(), &Pointer, &mixfile, &Start, &Length)) {
+    MFCD* mixfile = 0;
+    if (MFCD::Offset(File_Name(), &Pointer, &mixfile, &Start, &Length)) {
 
         /*
         **	If the mixfile is located on disk, then fake out the file system to read from

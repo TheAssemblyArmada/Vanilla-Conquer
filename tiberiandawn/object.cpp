@@ -1075,7 +1075,7 @@ short const* ObjectTypeClass::Overlap_List(void) const
  *=============================================================================================*/
 void ObjectTypeClass::One_Time(void)
 {
-    SelectShapes = MixFileClass::Retrieve("SELECT.SHP");
+    SelectShapes = MFCD::Retrieve("SELECT.SHP");
 #if (FRENCH)
     PipShapes = Hires_Retrieve("PIPS_F.SHP");
 #else

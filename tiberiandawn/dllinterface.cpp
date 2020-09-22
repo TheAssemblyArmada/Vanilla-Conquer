@@ -5966,7 +5966,7 @@ void DLLExportClass::Cell_Class_Draw_It(CNCDynamicMapStruct* dynamic_map,
 
     if (cell_ptr->IsFlagged) {
 
-        const void* image_data = MixFileClass::Retrieve("FLAGFLY.SHP");
+        const void* image_data = MFCD::Retrieve("FLAGFLY.SHP");
         if (image_data != NULL) {
 
             CNCDynamicMapEntryStruct& flag_entry = dynamic_map->Entries[entry_index++];

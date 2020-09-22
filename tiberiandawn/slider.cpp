@@ -66,8 +66,8 @@ SliderClass::SliderClass(unsigned id, int x, int y, int w, int h, int belong_to_
     PlusGadget = 0;
     MinusGadget = 0;
     if (!BelongToList) {
-        PlusGadget = new ShapeButtonClass(id, MixFileClass::Retrieve("BTN-PLUS.SHP"), X + Width + 2, Y);
-        MinusGadget = new ShapeButtonClass(id, MixFileClass::Retrieve("BTN-MINS.SHP"), X - 6, Y);
+        PlusGadget = new ShapeButtonClass(id, MFCD::Retrieve("BTN-PLUS.SHP"), X + Width + 2, Y);
+        MinusGadget = new ShapeButtonClass(id, MFCD::Retrieve("BTN-MINS.SHP"), X - 6, Y);
 
         if (PlusGadget) {
             PlusGadget->Make_Peer(*this);

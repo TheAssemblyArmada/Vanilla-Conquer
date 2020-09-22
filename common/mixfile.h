@@ -18,6 +18,7 @@
 #ifndef MIXFILE_H
 #define MIXFILE_H
 
+#include <errno.h>
 #include <stdlib.h>
 #include "listnode.h"
 #include "pk.h"
@@ -30,6 +31,12 @@
 
 #ifndef _WIN32
 #include <libgen.h> // For basename()
+#include <strings.h>
+#define stricmp(x, y) strcasecmp(x, y)
+#endif
+
+#ifndef _MAX_PATH
+#define _MAX_PATH PATH_MAX
 #endif
 
 void Prog_End(const char*, bool);
@@ -43,6 +50,7 @@ template <class T> class MixFileClass : public Node<MixFileClass<T>>
 public:
     char const* Filename; // Filename of mixfile.
 
+    MixFileClass(char const* filename);
     MixFileClass(char const* filename, PKey const* key);
     ~MixFileClass(void);
 
@@ -230,6 +238,115 @@ template <class T> MixFileClass<T>::~MixFileClass(void)
  *   07/12/1996 JLB : Handles compressed file header.                                          *
  *=============================================================================================*/
 template <class T>
+MixFileClass<T>::MixFileClass(char const* filename)
+    : IsDigest(false)
+    , IsEncrypted(false)
+    , IsAllocated(false)
+    , Filename(0)
+    , Count(0)
+    , DataSize(0)
+    , DataStart(0)
+    , HeaderBuffer(0)
+    , Data(0)
+{
+    if (filename == NULL)
+        return; // ST - 5/9/2019
+
+    /*
+    **	Check to see if the file is available. If it isn't, then
+    **	no further processing is needed or possible.
+    */
+    if (!Force_CD_Available(RequiredCD)) {
+        Prog_End("MixFileClass Force_CD_Available failed", true);
+        if (!RunningAsDLL) { // PG
+            // RA uses Emergency_Exit but until that is common we stick with standard exit here for TD.
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    T file(filename); // Working file object.
+    Filename = strdup(file.File_Name());
+    FileStraw fstraw(file);
+    Straw* straw = &fstraw;
+
+    if (!file.Is_Available())
+        return;
+
+    /*
+    **	Stuctures used to hold the various file headers.
+    */
+    FileHeader fileheader;
+    struct
+    {
+        short First;  // Always zero for extended mixfile format.
+        short Second; // Bitfield of extensions to this mixfile.
+    } alternate;
+
+    /*
+    **	Fetch the first bit of the file. From this bit, it is possible to detect
+    **	whether this is an extended mixfile format or the plain format. An
+    **	extended format may have extra options or data layout.
+    */
+    int got = straw->Get(&alternate, sizeof(alternate));
+
+    /*
+    **	Detect if this is an extended mixfile. If so, then see if it is encrypted
+    **	and/or has a message digest attached. Otherwise, just retrieve the
+    **	plain mixfile header.
+    */
+    if (alternate.First == 0) {
+        IsDigest = ((alternate.Second & 0x01) != 0);
+        IsEncrypted = ((alternate.Second & 0x02) != 0);
+        straw->Get(&fileheader, sizeof(fileheader));
+    } else {
+        memmove(&fileheader, &alternate, sizeof(alternate));
+        straw->Get(((char*)&fileheader) + sizeof(alternate), sizeof(fileheader) - sizeof(alternate));
+    }
+
+    Count = fileheader.count;
+    DataSize = fileheader.size;
+
+    /*
+    **	Load up the offset control array. If RAM is exhausted, then the mixfile is invalid.
+    */
+    HeaderBuffer = new SubBlock[Count];
+    if (HeaderBuffer == NULL)
+        return;
+    straw->Get(HeaderBuffer, Count * sizeof(SubBlock));
+
+    /*
+    **	The start of the embedded mixfile data will be at the current file offset.
+    **	This should be true even if the file header has been encrypted because the file
+    **	header was cleverly written with just the sufficient number of padding bytes so
+    **	that this condition would be true.
+    */
+    DataStart = file.Seek(0, SEEK_CUR) + file.BiasStart;
+    //	DataStart = file.Seek(0, SEEK_CUR);
+
+    /*
+    **	Attach to list of mixfiles.
+    */
+    List.Add_Tail(this);
+}
+
+/***********************************************************************************************
+ * MixFileClass::MixFileClass -- Constructor for mixfile object.                               *
+ *                                                                                             *
+ *    This is the constructor for the mixfile object. It takes a filename and a memory         *
+ *    handler object and registers the mixfile object with the system. The index block is      *
+ *    allocated and loaded from disk by this routine.                                          *
+ *                                                                                             *
+ * INPUT:   filename -- Pointer to the filename of the mixfile object.                         *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/08/1994 JLB : Created.                                                                 *
+ *   07/12/1996 JLB : Handles compressed file header.                                          *
+ *=============================================================================================*/
+template <class T>
 MixFileClass<T>::MixFileClass(char const* filename, PKey const* key)
     : IsDigest(false)
     , IsEncrypted(false)
@@ -251,7 +368,8 @@ MixFileClass<T>::MixFileClass(char const* filename, PKey const* key)
     if (!Force_CD_Available(RequiredCD)) {
         Prog_End("MixFileClass Force_CD_Available failed", true);
         if (!RunningAsDLL) { // PG
-            Emergency_Exit(EXIT_FAILURE);
+            // RA uses Emergency_Exit but until that is common we stick with standard exit here for TD.
+            exit(EXIT_FAILURE);
         }
     }
 
@@ -393,7 +511,7 @@ template <class T> MixFileClass<T>* MixFileClass<T>::Finder(char const* filename
 #else
         char buff[PATH_MAX];
         char* path = nullptr;
-        strncpy(buff, ptr->FileName, PATH_MAX);
+        strncpy(buff, ptr->Filename, PATH_MAX);
         buff[PATH_MAX - 1] = '\0';
         path = basename(buff);
 #endif

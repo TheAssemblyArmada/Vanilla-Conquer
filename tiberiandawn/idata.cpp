@@ -1879,7 +1879,7 @@ void InfantryTypeClass::One_Time(void)
         **	Generic shape for all houses load method.
         */
         _makepath(fullname, NULL, NULL, uclass->IniName, ".SHP");
-        ((void const*&)uclass->ImageData) = MixFileClass::Retrieve(fullname);
+        ((void const*&)uclass->ImageData) = MFCD::Retrieve(fullname);
 
         /*
         **	The small build image icon sized shapes are always generic.
@@ -1891,7 +1891,7 @@ void InfantryTypeClass::One_Time(void)
             sprintf(buffer, "%.4sICON", uclass->IniName);
         }
         _makepath(fullname, NULL, NULL, buffer, ".SHP");
-        ((void const*&)uclass->CameoData) = MixFileClass::Retrieve(fullname);
+        ((void const*&)uclass->CameoData) = MFCD::Retrieve(fullname);
     }
 }
 
@@ -1930,7 +1930,7 @@ void InfantryTypeClass::Init(TheaterType theater)
 
                 sprintf(buffer, "%.4sICNH", uclass->IniName);
                 _makepath(fullname, NULL, NULL, buffer, Theaters[theater].Suffix);
-                cameo_ptr = MixFileClass::Retrieve(fullname);
+                cameo_ptr = MFCD::Retrieve(fullname);
                 if (cameo_ptr) {
                     ((void const*&)uclass->CameoData) = cameo_ptr;
                 }

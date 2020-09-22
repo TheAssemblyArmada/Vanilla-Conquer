@@ -131,7 +131,7 @@ static int const TEX_X = 0;
 static int const TEX_Y = 6;
 static int const TEX_W = 14;
 
-extern MixFileClass* TheaterIcons;
+extern MFCD* TheaterIcons;
 
 // Added for getting the input for special character keys from the client
 // - 6/26/2019 JAS
@@ -211,9 +211,9 @@ void DisplayClass::One_Time(void)
     /*
     **	Load the generic transparent icon set.
     */
-    TransIconset = MixFileClass::Retrieve("TRANS.ICN");
+    TransIconset = MFCD::Retrieve("TRANS.ICN");
 
-    ShadowShapes = MixFileClass::Retrieve("SHADOW.SHP");
+    ShadowShapes = MFCD::Retrieve("SHADOW.SHP");
 
     Set_View_Dimensions(0, Map.Get_Tab_Height());
 
@@ -375,7 +375,7 @@ void DisplayClass::Init_Theater(TheaterType theater)
         if (TheaterData) {
             delete TheaterData;
         }
-        TheaterData = new MixFileClass(fullname);
+        TheaterData = new MFCD(fullname);
         TheaterData->Cache();
     }
 
@@ -390,7 +390,7 @@ void DisplayClass::Init_Theater(TheaterType theater)
         if (TheaterIcons) {
             delete TheaterIcons;
         }
-        TheaterIcons = new MixFileClass(iconname);
+        TheaterIcons = new MFCD(iconname);
         TheaterIcons->Cache();
     }
 
@@ -399,7 +399,7 @@ void DisplayClass::Init_Theater(TheaterType theater)
     **	The fading palettes will have to be generated as well.
     */
     sprintf(fullname, "%s.PAL", Theaters[theater].Root);
-    void const* ptr = MixFileClass::Retrieve(fullname);
+    void const* ptr = MFCD::Retrieve(fullname);
     Mem_Copy((void*)ptr, GamePalette, 768);
 
     Mem_Copy(GamePalette, OriginalPalette, 768);
@@ -504,7 +504,7 @@ void DisplayClass::Init_Theater(TheaterType theater)
     **	Restore the palette since it was mangled while building the fading tables.
     */
     sprintf(fullname, "%s.PAL", Theaters[theater].Root);
-    ptr = MixFileClass::Retrieve(fullname);
+    ptr = MFCD::Retrieve(fullname);
     Mem_Copy((void*)ptr, GamePalette, 768);
     Mem_Copy(GamePalette, OriginalPalette, 768);
 #endif

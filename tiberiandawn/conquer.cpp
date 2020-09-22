@@ -3752,34 +3752,34 @@ bool Force_CD_Available(int cd)
             ScoreMix = 0;
         }
 
-        MoviesMix = new MixFileClass("MOVIES.MIX");
-        GeneralMix = new MixFileClass("GENERAL.MIX");
-        ScoreMix = new MixFileClass("SCORES.MIX");
+        MoviesMix = new MFCD("MOVIES.MIX");
+        GeneralMix = new MFCD("GENERAL.MIX");
+        ScoreMix = new MFCD("SCORES.MIX");
 #if (0)
         switch (cd) {
         case -1:
         default:
-            MoviesMix = new MixFileClass("MOVIES.MIX");
-            GeneralMix = new MixFileClass("GENERAL.MIX");
-            ScoreMix = new MixFileClass("SCORES.MIX");
+            MoviesMix = new MFCD("MOVIES.MIX");
+            GeneralMix = new MFCD("GENERAL.MIX");
+            ScoreMix = new MFCD("SCORES.MIX");
             break;
 
         case 0:
-            MoviesMix = new MixFileClass("GDIMOVIES.MIX");
-            GeneralMix = new MixFileClass("GENERAL.MIX");
-            ScoreMix = new MixFileClass("GDISCORES.MIX");
+            MoviesMix = new MFCD("GDIMOVIES.MIX");
+            GeneralMix = new MFCD("GENERAL.MIX");
+            ScoreMix = new MFCD("GDISCORES.MIX");
             break;
 
         case 1:
-            MoviesMix = new MixFileClass("NODMOVIES.MIX");
-            GeneralMix = new MixFileClass("GENERAL.MIX");
-            ScoreMix = new MixFileClass("NODSCORES.MIX");
+            MoviesMix = new MFCD("NODMOVIES.MIX");
+            GeneralMix = new MFCD("GENERAL.MIX");
+            ScoreMix = new MFCD("NODSCORES.MIX");
             break;
 
         case 2:
-            MoviesMix = new MixFileClass("COVERTMOVIES.MIX");
-            GeneralMix = new MixFileClass("GENERAL.MIX");
-            ScoreMix = new MixFileClass("COVERTSCORES.MIX");
+            MoviesMix = new MFCD("COVERTMOVIES.MIX");
+            GeneralMix = new MFCD("GENERAL.MIX");
+            ScoreMix = new MFCD("COVERTSCORES.MIX");
             break;
         }
 #endif
@@ -3986,9 +3986,9 @@ bool Force_CD_Available(int cd)
         if (ScoreMix)
             delete ScoreMix;
 
-        MoviesMix = new MixFileClass("MOVIES.MIX");
-        GeneralMix = new MixFileClass("GENERAL.MIX");
-        ScoreMix = new MixFileClass("SCORES.MIX");
+        MoviesMix = new MFCD("MOVIES.MIX");
+        GeneralMix = new MFCD("GENERAL.MIX");
+        ScoreMix = new MFCD("SCORES.MIX");
         ThemeClass::Scan();
     }
 #endif
@@ -4205,7 +4205,7 @@ void const* Hires_Retrieve(char* name)
     } else {
         strcpy(filename, name);
     }
-    return (MixFileClass::Retrieve(filename));
+    return (MFCD::Retrieve(filename));
 }
 int Get_Resolution_Factor(void)
 {

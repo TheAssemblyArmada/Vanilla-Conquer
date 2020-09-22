@@ -341,7 +341,7 @@ int Sound_Effect(VocType voc, VolType volume, int variation, signed short pan_va
         }
     }
     _makepath(name, NULL, NULL, SoundEffectName[voc].Name, ext);
-    void const* ptr = MixFileClass::Retrieve(name);
+    void const* ptr = MFCD::Retrieve(name);
 
     /*
     **	If the sound data pointer is not null, then presume that it is valid.

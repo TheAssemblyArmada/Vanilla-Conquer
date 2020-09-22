@@ -3829,7 +3829,7 @@ void BuildingTypeClass::One_Time(void)
                 sprintf(buffer, "%sICON", building.IniName);
             }
             _makepath(fullname, NULL, NULL, buffer, ".SHP");
-            ((void const*&)building.CameoData) = MixFileClass::Retrieve(fullname);
+            ((void const*&)building.CameoData) = MFCD::Retrieve(fullname);
         }
 
         /*
@@ -3837,7 +3837,7 @@ void BuildingTypeClass::One_Time(void)
         */
         sprintf(buffer, "%sMAKE", building.IniName);
         _makepath(fullname, NULL, NULL, buffer, ".SHP");
-        void const* dataptr = MixFileClass::Retrieve(fullname);
+        void const* dataptr = MFCD::Retrieve(fullname);
         ((void const*&)building.BuildupData) = dataptr;
         if (dataptr) {
             int timedelay = 1;
@@ -3852,13 +3852,13 @@ void BuildingTypeClass::One_Time(void)
         **	Fetch the normal game shape for this building.
         */
         _makepath(fullname, NULL, NULL, building.IniName, ".SHP");
-        ((void const*&)building.ImageData) = MixFileClass::Retrieve(fullname);
+        ((void const*&)building.ImageData) = MFCD::Retrieve(fullname);
     }
 
     // Try to load weap2.shp
     char fullname[_MAX_FNAME + _MAX_EXT];
     _makepath(fullname, NULL, NULL, (char const*)"WEAP2", ".SHP");
-    WarFactoryOverlay = MixFileClass::Retrieve(fullname);
+    WarFactoryOverlay = MFCD::Retrieve(fullname);
 
     /*
     **	Install all the special animation sequences for the different building types.
@@ -4183,7 +4183,7 @@ void BuildingTypeClass::Init(TheaterType theater)
 
             if (classptr->IsTheater) {
                 _makepath(fullname, NULL, NULL, classptr->IniName, Theaters[theater].Suffix);
-                ((void const*&)classptr->ImageData) = MixFileClass::Retrieve(fullname);
+                ((void const*&)classptr->ImageData) = MFCD::Retrieve(fullname);
             }
 
             if (Get_Resolution_Factor()) {
@@ -4195,7 +4195,7 @@ void BuildingTypeClass::Init(TheaterType theater)
 
                 sprintf(buffer, "%.4sICNH", classptr->IniName);
                 _makepath(fullname, NULL, NULL, buffer, Theaters[theater].Suffix);
-                cameo_ptr = MixFileClass::Retrieve(fullname);
+                cameo_ptr = MFCD::Retrieve(fullname);
                 if (cameo_ptr) {
                     ((void const*&)classptr->CameoData) = cameo_ptr;
                 }
