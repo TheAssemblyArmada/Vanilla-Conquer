@@ -225,12 +225,12 @@ bool GameInFocus = true;
 /***************************************************************************
 **	This holds the theater specific mixfiles.
 */
-MixFileClass* TheaterData = NULL;
-MixFileClass* TheaterIcons = NULL;
-MixFileClass* LowTheaterData;
-MixFileClass* MoviesMix = 0;
-MixFileClass* GeneralMix = 0;
-MixFileClass* ScoreMix = 0;
+MFCD* TheaterData = NULL;
+MFCD* TheaterIcons = NULL;
+MFCD* LowTheaterData;
+MFCD* MoviesMix = 0;
+MFCD* GeneralMix = 0;
+MFCD* ScoreMix = 0;
 
 /***************************************************************************
 **	This is the options control class. The options control such things as

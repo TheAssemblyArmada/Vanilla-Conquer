@@ -567,19 +567,19 @@ void Map_Selection(void)
                                   progresspalette);
     }
 
-    void const* appear1 = MixFileClass::Retrieve("APPEAR1.AUD");
-    void const* sfx4 = MixFileClass::Retrieve("SFX4.AUD");
-    void const* text2 = MixFileClass::Retrieve("TEXT2.AUD");
-    void const* target1 = MixFileClass::Retrieve("TARGET1.AUD");
-    void const* target2 = MixFileClass::Retrieve("TARGET2.AUD");
-    //	void const * target3 = MixFileClass::Retrieve("TARGET3.AUD");
-    void const* newtarg1 = MixFileClass::Retrieve("NEWTARG1.AUD");
-    void const* beepy2 = MixFileClass::Retrieve("BEEPY2.AUD");
-    void const* beepy3 = MixFileClass::Retrieve("BEEPY3.AUD");
-    void const* beepy6 = MixFileClass::Retrieve("BEEPY6.AUD");
-    void const* world2 = MixFileClass::Retrieve("WORLD2.AUD");
-    void const* country1 = MixFileClass::Retrieve("COUNTRY1.AUD");
-    void const* scold1 = MixFileClass::Retrieve("SCOLD1.AUD");
+    void const* appear1 = MFCD::Retrieve("APPEAR1.AUD");
+    void const* sfx4 = MFCD::Retrieve("SFX4.AUD");
+    void const* text2 = MFCD::Retrieve("TEXT2.AUD");
+    void const* target1 = MFCD::Retrieve("TARGET1.AUD");
+    void const* target2 = MFCD::Retrieve("TARGET2.AUD");
+    //	void const * target3 = MFCD::Retrieve("TARGET3.AUD");
+    void const* newtarg1 = MFCD::Retrieve("NEWTARG1.AUD");
+    void const* beepy2 = MFCD::Retrieve("BEEPY2.AUD");
+    void const* beepy3 = MFCD::Retrieve("BEEPY3.AUD");
+    void const* beepy6 = MFCD::Retrieve("BEEPY6.AUD");
+    void const* world2 = MFCD::Retrieve("WORLD2.AUD");
+    void const* country1 = MFCD::Retrieve("COUNTRY1.AUD");
+    void const* scold1 = MFCD::Retrieve("SCOLD1.AUD");
 
     SysMemPage.Clear();
     PseudoSeenBuff->Clear();
@@ -1046,7 +1046,7 @@ void Map_Selection(void)
         /*
         ** Now it's time to highlight the country we're going to.
         */
-        void const* countryshape = MixFileClass::Retrieve(house == HOUSE_GOOD ? "COUNTRYE.SHP" : "COUNTRYA.SHP");
+        void const* countryshape = MFCD::Retrieve(house == HOUSE_GOOD ? "COUNTRYE.SHP" : "COUNTRYA.SHP");
 
         Hide_Mouse();
         // erase "Select country to attack"

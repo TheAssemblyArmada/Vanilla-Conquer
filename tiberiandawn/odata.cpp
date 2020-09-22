@@ -865,7 +865,7 @@ void OverlayTypeClass::Init(TheaterType theater)
             } else {
                 _makepath(fullname, NULL, NULL, overlay.IniName, ".SHP");
             }
-            ((void const*&)overlay.ImageData) = MixFileClass::Retrieve(fullname);
+            ((void const*&)overlay.ImageData) = MFCD::Retrieve(fullname);
 
             IsTheaterShape = overlay.IsTheater;
             if (overlay.RadarIcon)

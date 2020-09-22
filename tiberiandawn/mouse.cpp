@@ -276,7 +276,7 @@ void MouseClass::One_Time(void)
     if (file.Is_Available()) {
         MouseShapes = Load_Alloc_Data(&file);
     } else {
-        MouseShapes = MixFileClass::Retrieve("MOUSE.SHP");
+        MouseShapes = MFCD::Retrieve("MOUSE.SHP");
     }
 
     VTable = ((void**)(((char*)this) + sizeof(VectorClass<CellClass>) - 4))[0];

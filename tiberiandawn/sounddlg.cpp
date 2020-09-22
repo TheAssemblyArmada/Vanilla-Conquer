@@ -152,7 +152,7 @@ void SoundControlsClass::Process(void)
         strcpy(filename, "BTN-ST.SHP");
     else
         strcpy(filename, "BTN-STH.SHP");
-    ShapeButtonClass stopbtn(BUTTON_STOP, MixFileClass::Retrieve(filename), Option_X + Stop_X, Option_Y + Stop_Y);
+    ShapeButtonClass stopbtn(BUTTON_STOP, MFCD::Retrieve(filename), Option_X + Stop_X, Option_Y + Stop_Y);
 
     /*
     **	Start playing button.
@@ -162,7 +162,7 @@ void SoundControlsClass::Process(void)
     else
         strcpy(filename, "BTN-PLH.SHP");
 
-    ShapeButtonClass playbtn(BUTTON_PLAY, MixFileClass::Retrieve(filename), Option_X + Play_X, Option_Y + Play_Y);
+    ShapeButtonClass playbtn(BUTTON_PLAY, MFCD::Retrieve(filename), Option_X + Play_X, Option_Y + Play_Y);
 
     /*
     **	Shuffle control.

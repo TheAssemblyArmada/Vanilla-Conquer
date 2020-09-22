@@ -2368,7 +2368,7 @@ void AnimTypeClass::One_Time(void)
         if (file.Is_Available()) {
             ((void const*&)As_Reference(index).ImageData) = Load_Alloc_Data(&file);
         } else {
-            ((void const*&)As_Reference(index).ImageData) = MixFileClass::Retrieve(fullname);
+            ((void const*&)As_Reference(index).ImageData) = MFCD::Retrieve(fullname);
         }
     }
 

@@ -236,8 +236,8 @@ ScoreCredsClass::ScoreCredsClass(int xpos, int ypos, void const* data, int max, 
     Stage = 0;
     MaxStage = max;
     TimerReset = timer;
-    Clock1 = MixFileClass::Retrieve("CLOCK1.AUD");
-    CashTurn = MixFileClass::Retrieve("CASHTURN.AUD");
+    Clock1 = MFCD::Retrieve("CLOCK1.AUD");
+    CashTurn = MFCD::Retrieve("CASHTURN.AUD");
 }
 
 void ScoreCredsClass::Update(void)
@@ -637,9 +637,9 @@ void ScoreClass::Presentation(void)
 
     Set_Logic_Page(SysMemPage);
 
-    void const* country4 = MixFileClass::Retrieve("COUNTRY4.AUD");
-    void const* sfx4 = MixFileClass::Retrieve("SFX4.AUD");
-    Beepy6 = MixFileClass::Retrieve("BEEPY6.AUD");
+    void const* country4 = MFCD::Retrieve("COUNTRY4.AUD");
+    void const* sfx4 = MFCD::Retrieve("SFX4.AUD");
+    Beepy6 = MFCD::Retrieve("BEEPY6.AUD");
 
     /*
     ** Load the background for the score screen
@@ -711,8 +711,8 @@ void ScoreClass::Presentation(void)
 
     // Load up the shapes for the Nod score screen
     if (house == HOUSE_GOOD) {
-        yellowptr = MixFileClass::Retrieve("BAR3YLW.SHP");
-        redptr = MixFileClass::Retrieve("BAR3RED.SHP");
+        yellowptr = MFCD::Retrieve("BAR3YLW.SHP");
+        redptr = MFCD::Retrieve("BAR3RED.SHP");
     }
 
     /* Change to the six-point font for Text_Print */
@@ -746,11 +746,11 @@ void ScoreClass::Presentation(void)
     /*
     ** Background's up, so now load various shapes and animations
     */
-    void const* timeshape = MixFileClass::Retrieve("TIME.SHP");
+    void const* timeshape = MFCD::Retrieve("TIME.SHP");
     ScoreObjs[0] = new ScoreTimeClass(233, 2, timeshape, 30, 4);
 
-    void const* hiscore1shape = MixFileClass::Retrieve("HISCORE1.SHP");
-    void const* hiscore2shape = MixFileClass::Retrieve("HISCORE2.SHP");
+    void const* hiscore1shape = MFCD::Retrieve("HISCORE1.SHP");
+    void const* hiscore2shape = MFCD::Retrieve("HISCORE2.SHP");
     ScoreObjs[1] = new ScoreTimeClass(4, 97, hiscore1shape, 10, 4);
     ScoreObjs[2] = new ScoreTimeClass(8, 172, hiscore2shape, 10, 4);
 
@@ -762,7 +762,7 @@ void ScoreClass::Presentation(void)
         /*
         ** load the logo
         */
-        void const* logoptr = MixFileClass::Retrieve("LOGOS.SHP");
+        void const* logoptr = MFCD::Retrieve("LOGOS.SHP");
         CC_Draw_Shape(logoptr, 1, 0, 0, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
 
         Bit_It_In_Scale(0, 0, 128, 104 - 16, &SysMemPage, PseudoSeenBuff, &SeenBuff, 1);
@@ -1092,9 +1092,9 @@ void ScoreClass::Do_Nod_Buildings_Graph(void)
     int shapenum;
     InfantryTypeClass const* ramboclass;
 
-    void const* factptr = MixFileClass::Retrieve("FACT.SHP");
-    void const* rmboptr = MixFileClass::Retrieve("RMBO.SHP");
-    void const* fball1ptr = MixFileClass::Retrieve("FBALL1.SHP");
+    void const* factptr = MFCD::Retrieve("FACT.SHP");
+    void const* rmboptr = MFCD::Retrieve("RMBO.SHP");
+    void const* fball1ptr = MFCD::Retrieve("FBALL1.SHP");
     ramboclass = &InfantryTypeClass::As_Reference(INFANTRY_E5);
 
     /*
@@ -1300,8 +1300,8 @@ void ScoreClass::Do_Nod_Casualties_Graph(void)
 {
     int i, gdikilled, nodkilled, civkilled, max;
 
-    void const* e1ptr = MixFileClass::Retrieve("E1.SHP");
-    void const* c1ptr = MixFileClass::Retrieve("C1.SHP");
+    void const* e1ptr = MFCD::Retrieve("E1.SHP");
+    void const* c1ptr = MFCD::Retrieve("C1.SHP");
 
     gdikilled = GKilled;
     nodkilled = NKilled;
@@ -1429,7 +1429,7 @@ void ScoreClass::Show_Credits(int house, char const pal[])
     int credobj, i;
     int min, add;
 
-    void const* credshape = MixFileClass::Retrieve("CREDS.SHP");
+    void const* credshape = MFCD::Retrieve("CREDS.SHP");
 
     Alloc_Object(new ScorePrintClass(TXT_SCORE_ENDCRED, _credtx[house], _credty[house], pal));
     Call_Back_Delay(15);
@@ -1568,7 +1568,7 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
     int ascii = 0;
     int index = 0;
 
-    void const* keystrok = MixFileClass::Retrieve("KEYSTROK.AUD");
+    void const* keystrok = MFCD::Retrieve("KEYSTROK.AUD");
 
     /*
     ** Ready the hidpage so it can restore background under zoomed letters

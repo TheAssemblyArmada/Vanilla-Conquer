@@ -65,7 +65,7 @@ const static int EDITOR_COMMMAND_FAILURE = 1;
 const static char* MixFileNames[] =
     {"GENERAL.MIX", "SC-000.MIX", "SC-001.MIX", "DESERT.MIX", "TEMPERAT.MIX", "WINTER.MIX"};
 
-extern MixFileClass* TheaterIcons;
+extern MFCD* TheaterIcons;
 extern bool Read_Movies_From_Scenario_Ini(char* root, bool fresh);
 
 /**************************************************************************************************
@@ -121,12 +121,12 @@ void CNC_Editor_Load_Mix_Files()
     int count = sizeof(MixFileNames) / sizeof(MixFileNames[0]);
 
     for (int i = count - 1; i >= 0; --i) {
-        MixFileClass::Free(MixFileNames[i]);
+        MFCD::Free(MixFileNames[i]);
     }
 
     for (int i = 0; i < count; ++i) {
-        new MixFileClass(MixFileNames[i]);
-        MixFileClass::Cache(MixFileNames[i]);
+        new MFCD(MixFileNames[i]);
+        MFCD::Cache(MixFileNames[i]);
     }
 }
 
@@ -294,7 +294,7 @@ extern "C" __declspec(dllexport) int __cdecl CNC_Editor_Clear_Map()
 
         int count = sizeof(MixFileNames) / sizeof(MixFileNames[0]);
         for (int i = count - 1; i >= 0; --i) {
-            MixFileClass::Free(MixFileNames[i]);
+            MFCD::Free(MixFileNames[i]);
         }
 
         EditorMapInitialized = false;

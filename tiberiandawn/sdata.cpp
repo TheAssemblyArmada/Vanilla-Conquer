@@ -310,7 +310,7 @@ void SmudgeTypeClass::Init(TheaterType theater)
             char fullname[_MAX_FNAME + _MAX_EXT]; // Fully constructed smudge data set name.
 
             _makepath(fullname, NULL, NULL, smudge.IniName, Theaters[theater].Suffix);
-            ((void const*&)smudge.ImageData) = MixFileClass::Retrieve(fullname);
+            ((void const*&)smudge.ImageData) = MFCD::Retrieve(fullname);
         }
     }
 }
