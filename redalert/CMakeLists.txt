@@ -159,8 +159,6 @@ set(REDALERT_SRC
     session.cpp
     shape.cpp
     shapebtn.cpp
-    shapipe.cpp
-    shastraw.cpp
     sidebar.cpp
     slider.cpp
     smudge.cpp

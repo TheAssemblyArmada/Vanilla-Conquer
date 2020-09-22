@@ -16,6 +16,8 @@ set(COMMON_SRC
     cdfile.cpp
     memrev.c
     sha.cpp
+    shapipe.cpp
+    shastraw.cpp
     miscasm.asm
     pk.cpp
     pkpipe.cpp
