@@ -11,7 +11,6 @@ set(TIBDAWN_SRC
     building.cpp
     bullet.cpp
     cargo.cpp
-    ccfile.cpp
     cdata.cpp
     cell.cpp
     checkbox.cpp
@@ -88,7 +87,6 @@ set(TIBDAWN_SRC
     miscasm.cpp
     miscasma.asm
     mission.cpp
-    mixfile.cpp
     monoc.cpp
     mouse.cpp
     mplayer.cpp

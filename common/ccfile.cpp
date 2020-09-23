@@ -13,8 +13,9 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
+/* $Header: /CounterStrike/CCFILE.CPP 2     3/13/97 2:05p Steve_tall $ */
 /***********************************************************************************************
- ***             C O N F I D E N T I A L  ---  W E S T W O O D   S T U D I O S               ***
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
@@ -25,13 +26,14 @@
  *                                                                                             *
  *                   Start Date : August 8, 1994                                               *
  *                                                                                             *
- *                  Last Update : March 20, 1995 [JLB]                                         *
+ *                  Last Update : August 5, 1996 [JLB]                                         *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   CCFileClass::CCFileClass -- Default constructor for file object.                          *
  *   CCFileClass::CCFileClass -- Filename based constructor for C&C file.                      *
  *   CCFileClass::Close -- Closes the file.                                                    *
+ *   CCFileClass::Error -- Handles displaying a file error message.                            *
  *   CCFileClass::Is_Available -- Checks for existence of file on disk or in mixfile.          *
  *   CCFileClass::Is_Open -- Determines if the file is open.                                   *
  *   CCFileClass::Open -- Opens a file from either the mixfile system or the rawfile system.   *
@@ -39,11 +41,50 @@
  *   CCFileClass::Seek -- Moves the current file pointer in the file.                          *
  *   CCFileClass::Size -- Determines the size of the file.                                     *
  *   CCFileClass::Write -- Writes data to the file (non mixfile files only).                   *
- *   CCFileClass::Error -- Handles displaying a file error message.                            *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+#include <errno.h>
+#include "ccfile.h"
 
-#include "function.h"
-//#include	"ccfile.h"
+/***********************************************************************************************
+ * CCFileClass::CCFileClass -- Filename based constructor for C&C file.                        *
+ *                                                                                             *
+ *    Use this constructor for a file when the filename is known at construction time.         *
+ *                                                                                             *
+ * INPUT:   filename -- Pointer to the filename to use for this file object.                   *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   The filename pointer is presumed to be inviolate throughout the duration of     *
+ *             the file object. If this is not guaranteed, then use the default constructor    *
+ *             and then set the name manually.                                                 *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   03/20/1995 JLB : Created.                                                                 *
+ *=============================================================================================*/
+CCFileClass::CCFileClass(char const* filename)
+    : Position(0)
+{
+    CCFileClass::Set_Name(filename);
+}
+
+/***********************************************************************************************
+ * CCFileClass::CCFileClass -- Default constructor for file object.                            *
+ *                                                                                             *
+ *    This is the default constructor for a C&C file object.                                   *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   03/20/1995 JLB : Created.                                                                 *
+ *=============================================================================================*/
+CCFileClass::CCFileClass(void)
+    : Position(0)
+{
+}
 
 /***********************************************************************************************
  * CCFileClass::Error -- Handles displaying a file error message.                              *
@@ -70,76 +111,13 @@
  *=============================================================================================*/
 void CCFileClass::Error(int, int, char const*)
 {
-#ifdef DEMO
-    if (strstr(File_Name(), "\\")) {
-        if (!Force_CD_Available(-1)) {
-            Prog_End();
-            if (!RunningAsDLL) {
-                exit(EXIT_FAILURE);
-            }
-        }
-    }
-
-#else
-
     if (!Force_CD_Available(RequiredCD)) {
         Prog_End("CCFileClass::Error CD not found", true);
-        if (!RunningAsDLL) {
+        if (!RunningAsDLL) { // PG
+            // RA uses Emergency_Exit(EXIT_FAILURE); here, but common/td don't have it yet.
             exit(EXIT_FAILURE);
         }
     }
-
-#endif
-}
-
-/***********************************************************************************************
- * CCFileClass::CCFileClass -- Filename based constructor for C&C file.                        *
- *                                                                                             *
- *    Use this constructor for a file when the filename is known at construction time.         *
- *                                                                                             *
- * INPUT:   filename -- Pointer to the filename to use for this file object.                   *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   The filename pointer is presumed to be inviolate throughout the duration of     *
- *             the file object. If this is not guaranteed, then use the default constructor    *
- *             and then set the name manually.                                                 *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/20/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
-CCFileClass::CCFileClass(char const* filename)
-    : CDFileClass()
-    , FromDisk(false)
-    , Pointer(0)
-    , Position(0)
-    , Length(0)
-    , Start(0)
-{
-    Set_Name(filename);
-}
-
-/***********************************************************************************************
- * CCFileClass::CCFileClass -- Default constructor for file object.                            *
- *                                                                                             *
- *    This is the default constructor for a C&C file object.                                   *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   03/20/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
-CCFileClass::CCFileClass(void)
-{
-    FromDisk = false;
-    Pointer = 0;
-    Position = 0;
-    Length = 0;
-    Start = 0;
 }
 
 /***********************************************************************************************
@@ -160,12 +138,11 @@ CCFileClass::CCFileClass(void)
  *=============================================================================================*/
 long CCFileClass::Write(void const* buffer, long size)
 {
-
     /*
     **	If this is part of a mixfile, then writing is not allowed. Error out with a fatal
     **	message.
     */
-    if (Pointer || FromDisk) {
+    if (Is_Resident()) {
         Error(EACCES, false, File_Name());
     }
 
@@ -192,8 +169,11 @@ long CCFileClass::Write(void const* buffer, long size)
  *=============================================================================================*/
 long CCFileClass::Read(void* buffer, long size)
 {
-    int opened = false;
+    bool opened = false;
 
+    /*
+    **	If the file isn't currently open, then open it.
+    */
     if (!Is_Open()) {
         if (Open()) {
             opened = true;
@@ -204,30 +184,14 @@ long CCFileClass::Read(void* buffer, long size)
     **	If the file is part of a loaded mixfile, then a mere copy is
     **	all that is required for the read.
     */
-    if (Pointer) {
-        long maximum = Length - Position;
+    if (Is_Resident()) {
+        long maximum = Data.Get_Size() - Position;
 
-        size = MIN(maximum, size);
+        size = maximum < size ? maximum : size;
+        //		size = MIN(maximum, size);
         if (size) {
-            Mem_Copy(Add_Long_To_Pointer(Pointer, Position), buffer, size);
-            Position += size;
-        }
-        if (opened)
-            Close();
-        return (size);
-    }
-
-    /*
-    **	If the file is part of a mixfile, but the mixfile is located
-    **	on disk, then a special read operation is necessary.
-    */
-    if (FromDisk) {
-        long maximum = Length - Position;
-
-        size = MIN(maximum, size);
-        if (size > 0) {
-            CDFileClass::Seek(Start + Position, SEEK_SET);
-            size = CDFileClass::Read(buffer, size);
+            memmove(buffer, (char*)Data + Position, size);
+            //			Mem_Copy((char *)Pointer + Position, buffer, size);
             Position += size;
         }
         if (opened)
@@ -236,8 +200,16 @@ long CCFileClass::Read(void* buffer, long size)
     }
 
     long s = CDFileClass::Read(buffer, size);
+
+    /*
+    **	If the file was opened by this routine, then close it at this time.
+    */
     if (opened)
         Close();
+
+    /*
+    **	Return with the number of bytes read.
+    */
     return (s);
 }
 
@@ -263,10 +235,14 @@ long CCFileClass::Read(void* buffer, long size)
  *=============================================================================================*/
 long CCFileClass::Seek(long pos, int dir)
 {
-    if (Pointer || FromDisk) {
+    /*
+    **	When the file is resident, a mere adjustment of the virtual file position is
+    **	all that is required of a seek.
+    */
+    if (Is_Resident()) {
         switch (dir) {
         case SEEK_END:
-            Position = Length;
+            Position = Data.Get_Size();
             break;
 
         case SEEK_SET:
@@ -278,10 +254,9 @@ long CCFileClass::Seek(long pos, int dir)
             break;
         }
         Position += pos;
-        if (Position < 0)
-            Position = 0;
-        if (Position > Length)
-            Position = Length;
+        Position = Position < 0 ? 0 : Position;
+        Position = Position > Data.Get_Size() ? Data.Get_Size() : Position;
+        //		Position = Bound(Position+pos, 0L, Length);
         return (Position);
     }
     return (CDFileClass::Seek(pos, dir));
@@ -302,11 +277,26 @@ long CCFileClass::Seek(long pos, int dir)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   08/08/1994 JLB : Created.                                                                 *
+ *   08/05/1996 JLB : Handles returning size of embedded file.                                 *
  *=============================================================================================*/
 long CCFileClass::Size(void)
 {
-    if (Pointer || FromDisk)
-        return (Length);
+    /*
+    **	If the file is resident, the the size is already known. Just return the size in this
+    **	case.
+    */
+    if (Is_Resident())
+        return (Data.Get_Size());
+
+    /*
+    **	If the file is not available as a stand alone file, then search for it in the
+    **	mixfiles in order to get its size.
+    */
+    if (!CDFileClass::Is_Available()) {
+        long length = 0;
+        MixFileClass<CCFileClass>::Offset(File_Name(), NULL, NULL, NULL, &length);
+        return (length);
+    }
 
     return (CDFileClass::Size());
 }
@@ -328,9 +318,23 @@ long CCFileClass::Size(void)
  *=============================================================================================*/
 int CCFileClass::Is_Available(int)
 {
-    if (MFCD::Offset(File_Name())) {
+    /*
+    **	A file that is open is presumed available.
+    */
+    if (Is_Open())
+        return (true);
+
+    /*
+    **	A file that is part of a mixfile is also presumed available.
+    */
+    if (MixFileClass<CCFileClass>::Offset(File_Name())) {
         return (true);
     }
+
+    /*
+    **	Otherwise a manual check of the file system is required to
+    **	determine if the file is actually available.
+    */
     return (CDFileClass::Is_Available());
 }
 
@@ -351,13 +355,16 @@ int CCFileClass::Is_Available(int)
  *=============================================================================================*/
 int CCFileClass::Is_Open(void) const
 {
-
     /*
     **	If the file is part of a cached file, then return that it is opened. A closed file
     **	doesn't have a valid pointer.
     */
-    if (Pointer)
+    if (Is_Resident())
         return (true);
+
+    /*
+    **	Otherwise, go to a lower level to determine if the file is open.
+    */
     return (CDFileClass::Is_Open());
 }
 
@@ -377,11 +384,8 @@ int CCFileClass::Is_Open(void) const
  *=============================================================================================*/
 void CCFileClass::Close(void)
 {
-    FromDisk = false;
-    Pointer = 0;
+    new (&Data)::Buffer;
     Position = 0; // Starts at beginning offset.
-    Start = 0;
-    Length = 0;
     CDFileClass::Close();
 }
 
@@ -422,16 +426,19 @@ int CCFileClass::Open(int rights)
     **	Check to see if file is part of a mixfile and that mixfile is currently loaded
     **	into RAM.
     */
-    MFCD* mixfile = 0;
-    if (MFCD::Offset(File_Name(), &Pointer, &mixfile, &Start, &Length)) {
+    MixFileClass<CCFileClass>* mixfile = NULL;
+    void* pointer = NULL;
+    long length = 0;
+    long start = 0;
+    if (MixFileClass<CCFileClass>::Offset(File_Name(), &pointer, &mixfile, &start, &length)) {
+
+        assert(mixfile != NULL);
 
         /*
         **	If the mixfile is located on disk, then fake out the file system to read from
         **	the mixfile, but think it is reading from a solitary file.
         */
-        if (!Pointer) {
-            long start = Start;
-            long length = Length;
+        if (pointer == NULL && mixfile != NULL) {
 
             /*
             **	This is a legitimate open to the file. All access to the file through this
@@ -439,16 +446,18 @@ int CCFileClass::Open(int rights)
             **	note that the filename attached to this object is NOT the same as the file
             **	attached to the file handle.
             */
-            char const* dupfile = strdup(File_Name());
+            char* dupfile = strdup(File_Name());
             Open(mixfile->Filename, READ);
             Searching(false); // Disable multi-drive search.
             Set_Name(dupfile);
             Searching(true);
-            if (dupfile)
-                free((void*)dupfile);
-            Start = start;
-            Length = length;
-            FromDisk = true;
+            free(dupfile);
+            Bias(0);
+            Bias(start, length);
+            Seek(0, SEEK_SET);
+        } else {
+            new (&Data)::Buffer(pointer, length);
+            Position = 0;
         }
 
     } else {
@@ -465,43 +474,32 @@ int CCFileClass::Open(int rights)
 /***********************************************************************************
 ** Backward compatibility section.
 */
-// extern "C" {
 
 static CCFileClass Handles[10];
 
-#ifdef NEVER
-bool __cdecl Set_Search_Drives(char const*)
-{
-    CCFileClass::Set_Search_Path(path);
-    return (true);
-}
-#endif
-
 int Open_File(char const* file_name, int mode)
 {
-    for (int index = 0; index < sizeof(Handles) / sizeof(Handles[0]); index++) {
+    for (int index = 0; index < ARRAY_SIZE(Handles); index++) {
         if (!Handles[index].Is_Open()) {
-            Handles[index].Set_Name(file_name);
-            if (Handles[index].Open(mode)) {
-                //			if (Handles[index].Open(file_name, mode)) {
+            if (Handles[index].Open(file_name, mode)) {
                 return (index);
             }
             break;
         }
     }
-    return (WW_ERROR);
+    return (WWERROR);
 }
 
 void Close_File(int handle)
 {
-    if (handle != WW_ERROR && Handles[handle].Is_Open()) {
+    if (handle != WWERROR && Handles[handle].Is_Open()) {
         Handles[handle].Close();
     }
 }
 
 long Read_File(int handle, void* buf, unsigned long bytes)
 {
-    if (handle != WW_ERROR && Handles[handle].Is_Open()) {
+    if (handle != WWERROR && Handles[handle].Is_Open()) {
         return (Handles[handle].Read(buf, bytes));
     }
     return (0);
@@ -509,7 +507,7 @@ long Read_File(int handle, void* buf, unsigned long bytes)
 
 long Write_File(int handle, void const* buf, unsigned long bytes)
 {
-    if (handle != WW_ERROR && Handles[handle].Is_Open()) {
+    if (handle != WWERROR && Handles[handle].Is_Open()) {
         return (Handles[handle].Write(buf, bytes));
     }
     return (0);
@@ -526,43 +524,26 @@ int Delete_File(char const* file_name)
     return (CCFileClass(file_name).Delete());
 }
 
-#ifdef NEVER
-int __cdecl Create_File(char const* file_name)
-{
-    return (CCFileClass(file_name).Create());
-}
-
-ULONG __cdecl Load_Data(char const* name, VOID* ptr, ULONG size)
-{
-    return (CCFileClass(name).Read(ptr, size));
-}
-#endif
+void* Load_Alloc_Data(FileClass& file);
 
 void* Load_Alloc_Data(char const* name, int)
 {
     CCFileClass file(name);
 
-    return (Load_Alloc_Data(&file));
+    return (Load_Alloc_Data(file));
 }
 
 unsigned long File_Size(int handle)
 {
-    if (handle != WW_ERROR && Handles[handle].Is_Open()) {
+    if (handle != WWERROR && Handles[handle].Is_Open()) {
         return (Handles[handle].Size());
     }
     return (0);
 }
 
-#ifdef NEVER
-ULONG __cdecl Write_Data(char const* name, VOID const* ptr, ULONG size)
-{
-    return (CCFileClass(name).Write(ptr, size));
-}
-#endif
-
 unsigned long Seek_File(int handle, long offset, int starting)
 {
-    if (handle != WW_ERROR && Handles[handle].Is_Open()) {
+    if (handle != WWERROR && Handles[handle].Is_Open()) {
         return (Handles[handle].Seek(offset, starting));
     }
     return (0);
@@ -574,40 +555,6 @@ void WWDOS_Shutdown(void)
         Handles[index].Set_Name(NULL);
     }
 }
-
-#ifdef NEVER
-bool __cdecl Multi_Drive_Search(bool on)
-{
-    //	return(CCFileClass::Multi_Drive_Search(on));
-    return (on);
-}
-
-VOID __cdecl WWDOS_Init(VOID)
-{
-}
-
-VOID __cdecl WWDOS_Shutdown(VOID)
-{
-}
-
-int __cdecl Find_Disk_Number(char const*)
-{
-    return (0);
-}
-#endif
-
-// ULONG cdecl Load_Uncompress(BYTE const *file, BuffType uncomp_buff, BuffType dest_buff, VOID *reserved_data)
-//{
-//	return(Load_Uncompress(CCFileClass(file), uncomp_buff, dest_buff, reserved_data));
-//	return(CCFileClass(file).Load_Uncompress(uncomp_buff, dest_buff, reserved_data));
-//}
-
-// extern "C" {
-// int MaxDevice;
-// int DefaultDrive;
-// char CallingDOSInt;
-
-//}
 
 void Unfragment_File_Cache(void)
 {
