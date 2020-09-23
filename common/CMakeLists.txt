@@ -14,7 +14,9 @@ set(COMMON_SRC
     blowpipe.cpp
     blwstraw.cpp
     cdfile.cpp
+    ccfile.cpp
     memrev.c
+    mixfile.cpp
     sha.cpp
     shapipe.cpp
     shastraw.cpp

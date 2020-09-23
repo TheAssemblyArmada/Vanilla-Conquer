@@ -13,7 +13,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\ccfile.h_v   2.18   16 Oct 1995 16:45:28   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/CCFILE.H 1     3/03/97 10:24a Joe_bostic $ */
 /***********************************************************************************************
  ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
@@ -35,10 +35,11 @@
 #ifndef CCFILE_H
 #define CCFILE_H
 
-#include "common/wwlib32.h"
+//#include	<wwlib32.h>
 #include <limits.h>
 #include "mixfile.h"
 #include "cdfile.h"
+#include "buff.h"
 
 /*
 **	This derived class for file access knows about mixfiles (packed files). It can handle opening
@@ -50,18 +51,25 @@ class CCFileClass : public CDFileClass
 public:
     CCFileClass(char const* filename);
     CCFileClass(void);
-    virtual ~CCFileClass(void){};
+    virtual ~CCFileClass(void)
+    {
+        Position = 0;
+    };
 
     // Delete should be overloaded here as well. Don't allow deletes of mixfiles.
 
+    bool Is_Resident(void) const
+    {
+        return (Data.Get_Buffer() != NULL);
+    }
+    virtual int Is_Available(int forced = false);
+    virtual int Is_Open(void) const;
     virtual int Open(char const* filename, int rights = READ)
     {
         Set_Name(filename);
         return Open(rights);
     };
     virtual int Open(int rights = READ);
-    virtual int Is_Open(void) const;
-    virtual int Is_Available(int forced = false);
     virtual long Read(void* buffer, long size);
     virtual long Seek(long pos, int dir = SEEK_CUR);
     virtual long Size(void);
@@ -71,26 +79,19 @@ public:
 
 private:
     /*
-    **	This flag indicates that the file is part of a mixfile and the mixfile resides on
-    **	disk. The file handle for this file is a legitimate DOS handle, although special
-    **	handling is necessary that takes into account the embedded nature of the file.
-    */
-    bool FromDisk;
-
-    /*
     **	This indicates the file is actually part of a resident image of the mixfile
     **	itself. In this case, the embedded file handle is invalid. All file access actually
     **	gets routed through the cached version of the file. This is a pointer to the start
     **	of the RAM image of the file.
     */
-    void* Pointer;
+    ::Buffer Data;
+    //		void * Pointer;
 
     /*
-    **	This is the starting offset of the beginning of the file. This value is only valid
-    **	if the file is part of a mixfile that resides on disk. It serves as the counterpart
-    **	to the "Pointer" variable.
+    **	This is the size of the file if it was embedded in a mixfile. The size must be manually
+    **	kept track of because the DOS file size is invalid.
     */
-    long Start;
+    //		long Length;
 
     /*
     **	This is the current seek position of the file. It is duplicated here if the file is
@@ -99,15 +100,9 @@ private:
     */
     long Position;
 
-    /*
-    **	This is the size of the file if it was embedded in a mixfile. The size must be manually
-    **	kept track of because the DOS file size is invalid.
-    */
-    long Length;
-
     // Force these to never be invoked.
-    CCFileClass const operator=(CCFileClass const& c);
-    CCFileClass(CCFileClass const&){};
+    CCFileClass const& operator=(CCFileClass const& c);
+    CCFileClass(CCFileClass const&);
 };
 
 #endif

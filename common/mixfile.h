@@ -27,12 +27,11 @@
 #include "xstraw.h"
 #include "pkstraw.h"
 #include "shastraw.h"
+#include "wwstd.h"
 #include "rndstraw.h"
 
 #ifndef _WIN32
 #include <libgen.h> // For basename()
-#include <strings.h>
-#define stricmp(x, y) strcasecmp(x, y)
 #endif
 
 #ifndef _MAX_PATH

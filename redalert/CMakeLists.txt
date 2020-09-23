@@ -16,7 +16,6 @@ set(REDALERT_SRC
     bullet.cpp
     cargo.cpp
     carry.cpp
-    ccfile.cpp
     ccini.cpp
     ccmpath.cpp
     ccptr.cpp
@@ -120,7 +119,6 @@ set(REDALERT_SRC
     menus.cpp
     miscasm.cpp
     mission.cpp
-    mixfile.cpp
     monoc.cpp
     mouse.cpp
     mpgset.cpp
