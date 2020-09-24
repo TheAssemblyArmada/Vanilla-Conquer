@@ -85,11 +85,7 @@ public:
     bool Harvesting(void);
     void APC_Close_Door(void);
     void APC_Open_Door(void);
-    BuildingClass* Tiberium_Unload_Refinery(void) const
-    {
-        return TiberiumUnloadRefinery;
-    }
-    BuildingClass* Find_Best_Refinery(void) const;
+    virtual BuildingClass* Find_Best_Refinery(void) const;
 
     /*
     **	Query functions.
@@ -163,6 +159,7 @@ public:
     virtual int Mission_Guard(void);
     virtual int Mission_Harvest(void);
     virtual int Mission_Hunt(void);
+    virtual int Mission_Enter(void);
     virtual int UnitClass::Mission_Move(void);
     virtual FireErrorType Can_Fire(TARGET, int which) const;
 
@@ -211,7 +208,7 @@ private:
     /*
     **	This is the refinery a harvester is interested in unloading at.
     */
-    BuildingClass* TiberiumUnloadRefinery;
+    mutable BuildingClass* TiberiumUnloadRefinery;
 
     /*
     ** Some additional padding in case we need to add data to the class and maintain backwards compatibility for

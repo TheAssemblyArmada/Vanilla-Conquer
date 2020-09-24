@@ -112,7 +112,7 @@ public:
     /*
     **	This is the refinery a harvester is interested in unloading at.
     */
-    TARGET TiberiumUnloadRefinery;
+    mutable TARGET TiberiumUnloadRefinery;
 
     /*
     ** Some additional padding in case we need to add data to the class and maintain backwards compatibility for
@@ -180,7 +180,6 @@ public:
     virtual bool Ok_To_Move(DirType facing) const;
     virtual FireErrorType Can_Fire(TARGET target, int which) const;
     virtual fixed Tiberium_Load(void) const;
-    virtual BuildingClass* Tiberium_Unload_Refinery(void) const;
     virtual BuildingClass* Find_Best_Refinery(void) const;
 
     /*
@@ -238,6 +237,7 @@ public:
     virtual int Mission_Hunt(void);
     virtual int Mission_Repair(void);
     virtual int Mission_Move(void);
+    virtual int Mission_Enter(void);
     void Rotation_AI(void);
     void Firing_AI(void);
     void Reload_AI(void);
