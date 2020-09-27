@@ -33,6 +33,7 @@ set(COMMON_SRC
     irandom.cpp
     drawmisca.asm
     drawmisc.cpp
+    drawline.cpp
     xordeltaa.asm
     auduncmp.c
     random.cpp

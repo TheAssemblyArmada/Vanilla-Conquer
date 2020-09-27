@@ -20,7 +20,9 @@
 
 include graphicviewport.inc
 
+IFNDEF NOASM
 externdef C Buffer_Draw_Line:near
+ENDIF
 externdef C Buffer_Fill_Rect:near
 externdef C Buffer_Clear:near
 externdef C Linear_Blit_To_Linear_ASM:near
@@ -39,6 +41,7 @@ externdef C Buffer_To_Page:near
 
 .code
 
+IFNDEF NOASM
 ;***************************************************************************
 ;* VVC::DRAW_LINE -- Scales a virtual viewport to another virtual viewport *
 ;*                                                                         *
@@ -404,6 +407,7 @@ Buffer_Draw_Line proc C this_object:dword, x1_pixel:dword, y1_pixel:dword, x2_pi
     pop ebx
     ret
 Buffer_Draw_Line endp
+ENDIF
 
 ;***************************************************************************
 ;* GVPC::FILL_RECT -- Fills a rectangular region of a graphic view port	   *
