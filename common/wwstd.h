@@ -241,7 +241,7 @@ inline static void _makepath(char* path, const char* drive, const char* dir, con
         return;
     }
 
-    sprintf(path, "%s.%s", fname, ext);
+    sprintf(path, "%s%s%s", fname, (ext[0] == '.' ? "" : "."), ext);
 }
 
 inline static void _splitpath(char* path, const char* drive, const char* dir, const char* fname, const char* ext)
