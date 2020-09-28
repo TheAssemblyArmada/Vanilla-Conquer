@@ -25,7 +25,18 @@ int Linear_Blit_To_Linear(void* thisptr,
                           int pixel_width,
                           int pixel_height,
                           int trans);
-bool Linear_Scale_To_Linear(void*, void*, int, int, int, int, int, int, int, int, bool, char*);
+bool Linear_Scale_To_Linear(void* thisptr,
+                            void* dest,
+                            int src_x,
+                            int src_y,
+                            int dst_x,
+                            int dst_y,
+                            int src_width,
+                            int src_height,
+                            int dst_width,
+                            int dst_height,
+                            bool trans,
+                            char* remap);
 
 #ifdef __cplusplus
 }
