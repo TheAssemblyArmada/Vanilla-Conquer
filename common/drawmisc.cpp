@@ -1,3 +1,4 @@
+#include "drawmisc.h"
 #include "gbuffer.h"
 #include <string.h>
 
@@ -23,7 +24,7 @@ void (*Misc_Focus_Restore_Function)(void) = nullptr;
 
 #ifdef NOASM
 
-extern "C" void Fat_Put_Pixel(int x, int y, int value, int size, GraphicViewPortClass& gvp)
+void Fat_Put_Pixel(int x, int y, int value, int size, GraphicViewPortClass& gvp)
 {
     char* buf;
     int w;
