@@ -15,19 +15,19 @@
 #include <string.h>
 
 int Linear_Blit_To_Linear(void* thisptr,
-                                  void* dest,
-                                   int src_x,
-                                   int src_y,
-                                   int dst_x,
-                                   int dst_y,
-                                   int w,
-                                   int h,
-                                   int use_key)
+                          void* dest,
+                          int src_x,
+                          int src_y,
+                          int dst_x,
+                          int dst_y,
+                          int w,
+                          int h,
+                          int use_key)
 {
     GraphicViewPortClass& src_vp = *static_cast<GraphicViewPortClass*>(thisptr);
     GraphicViewPortClass& dst_vp = *static_cast<GraphicViewPortClass*>(dest);
-    unsigned char* src = reinterpret_cast<unsigned char *>(src_vp.Get_Offset());
-    unsigned char* dst = reinterpret_cast<unsigned char *>(dst_vp.Get_Offset());
+    unsigned char* src = reinterpret_cast<unsigned char*>(src_vp.Get_Offset());
+    unsigned char* dst = reinterpret_cast<unsigned char*>(dst_vp.Get_Offset());
     int src_pitch = (src_vp.Get_Pitch() + src_vp.Get_XAdd() + src_vp.Get_Width());
     int dst_pitch = (dst_vp.Get_Pitch() + dst_vp.Get_XAdd() + dst_vp.Get_Width());
 
@@ -99,3 +99,154 @@ int Linear_Blit_To_Linear(void* thisptr,
     // Return supposed to match DDraw to 0 is DD_OK.
     return 0;
 }
+
+#ifdef NOASM
+
+// Note that this function does not generate pixel perfect results when compared to the ASM implementation
+// It should not generate anything that is visibly different without doing side byt side comparisons however.
+bool Linear_Scale_To_Linear(void* thisptr,
+                            void* dest,
+                            int src_x,
+                            int src_y,
+                            int dst_x,
+                            int dst_y,
+                            int src_width,
+                            int src_height,
+                            int dst_width,
+                            int dst_height,
+                            bool trans,
+                            char* remap)
+{
+    GraphicViewPortClass& src_vp = *static_cast<GraphicViewPortClass*>(thisptr);
+    GraphicViewPortClass& dst_vp = *static_cast<GraphicViewPortClass*>(dest);
+    // If there is nothing to scale, just return.
+    if (src_width <= 0 || src_height <= 0 || dst_width <= 0 || dst_height <= 0) {
+        return true;
+    }
+
+    int src_x0 = src_x;
+    int src_y0 = src_y;
+    int dst_x0 = dst_x;
+    int dst_y0 = dst_y;
+    int dst_x1 = dst_width + dst_x;
+    int dst_y1 = dst_height + dst_y;
+
+    // These ifs are all for clipping purposes incase coords are outside
+    // the expected area.
+    if (src_x < 0) {
+        src_x0 = 0;
+        dst_x0 = dst_x + ((dst_width * -src_x) / src_width);
+    }
+
+    if (src_y < 0) {
+        src_y0 = 0;
+        dst_y0 = dst_y + ((dst_height * -src_y) / src_height);
+    }
+
+    if (src_x + src_width > src_vp.Get_Width() + 1) {
+        dst_x1 = dst_x + (dst_width * (src_vp.Get_Width() - src_x) / src_width);
+    }
+
+    if (src_y + src_height > src_vp.Get_Height() + 1) {
+        dst_y1 = dst_y + (dst_height * (src_vp.Get_Height() - src_y) / src_height);
+    }
+
+    if (dst_x0 < 0) {
+        dst_x0 = 0;
+        src_x0 = src_x + ((src_width * -dst_x) / dst_width);
+    }
+
+    if (dst_y0 < 0) {
+        dst_y0 = 0;
+        src_y0 = src_y + ((src_height * -dst_y) / dst_height);
+    }
+
+    if (dst_x1 > dst_vp.Get_Width() + 1) {
+        dst_x1 = dst_vp.Get_Width();
+    }
+
+    if (dst_y1 > dst_vp.Get_Height() + 1) {
+        dst_y1 = dst_vp.Get_Height();
+    }
+
+    if (dst_y0 > dst_y1 || dst_x0 > dst_x1) {
+        return true;
+    }
+
+    char* src = src_y0 * (src_vp.Get_Pitch() + src_vp.Get_XAdd() + src_vp.Get_Width()) + src_x0
+                + reinterpret_cast<char*>(src_vp.Get_Offset());
+    char* dst = dst_y0 * (dst_vp.Get_Pitch() + dst_vp.Get_XAdd() + dst_vp.Get_Width()) + dst_x0
+                + reinterpret_cast<char*>(dst_vp.Get_Offset());
+    dst_x1 -= dst_x0;
+    dst_y1 -= dst_y0;
+    int x_ratio = ((src_width << 16) / dst_x1) + 1;
+    int y_ratio = ((src_height << 16) / dst_y1) + 1;
+
+    // trans basically means do we skip index 0 entries, thus treating them as
+    // transparent?
+    if (trans) {
+        if (remap != nullptr) {
+            for (int i = 0; i < dst_y1; ++i) {
+                char* d = dst + i * (dst_vp.Get_Pitch() + dst_vp.Get_XAdd() + dst_vp.Get_Width());
+                char* s = src + ((i * y_ratio) >> 16) * (src_vp.Get_Pitch() + src_vp.Get_XAdd() + src_vp.Get_Width());
+                int xrat = 0;
+
+                for (int j = 0; j < dst_x1; ++j) {
+                    char tmp = s[xrat >> 16];
+
+                    if (tmp != 0) {
+                        *d = (remap)[tmp];
+                    }
+
+                    ++d;
+                    xrat += x_ratio;
+                }
+            }
+        } else {
+            for (int i = 0; i < dst_y1; ++i) {
+                char* d = dst + i * (dst_vp.Get_Pitch() + dst_vp.Get_XAdd() + dst_vp.Get_Width());
+                char* s = src + ((i * y_ratio) >> 16) * (src_vp.Get_Pitch() + src_vp.Get_XAdd() + src_vp.Get_Width());
+                int xrat = 0;
+
+                for (int j = 0; j < dst_x1; ++j) {
+                    char tmp = s[xrat >> 16];
+
+                    if (tmp != 0) {
+                        *d = tmp;
+                    }
+
+                    ++d;
+                    xrat += x_ratio;
+                }
+            }
+        }
+    } else {
+        if (remap != nullptr) {
+            for (int i = 0; i < dst_y1; ++i) {
+                char* d = dst + i * (dst_vp.Get_Pitch() + dst_vp.Get_XAdd() + dst_vp.Get_Width());
+                char* s = src + ((i * y_ratio) >> 16) * (src_vp.Get_Pitch() + src_vp.Get_XAdd() + src_vp.Get_Width());
+                int xrat = 0;
+
+                for (int j = 0; j < dst_x1; ++j) {
+                    *d++ = (remap)[s[xrat >> 16]];
+                    xrat += x_ratio;
+                }
+            }
+        } else {
+            for (int i = 0; i < dst_y1; ++i) {
+                char* d = dst + i * (dst_vp.Get_Pitch() + dst_vp.Get_XAdd() + dst_vp.Get_Width());
+                char* s = src + ((i * y_ratio) >> 16) * (src_vp.Get_Pitch() + src_vp.Get_XAdd() + src_vp.Get_Width());
+                int xrat = 0;
+
+                for (int j = 0; j < dst_x1; ++j) {
+                    *d++ = s[xrat >> 16];
+                    xrat += x_ratio;
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
+#endif
