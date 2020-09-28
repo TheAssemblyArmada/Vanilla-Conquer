@@ -30,10 +30,8 @@ externdef C Linear_Scale_To_Linear:near
 externdef C Buffer_Remap:near
 IFNDEF NOASM
 externdef C Build_Fading_Table:near
-ENDIF
 externdef C Buffer_Put_Pixel:near
 externdef C Buffer_Get_Pixel:near
-IFNDEF NOASM
 externdef C Clip_Rect:near
 externdef C Confine_Rect:near
 ENDIF
@@ -1975,8 +1973,6 @@ Build_Fading_Table proc C palette:dword, dest:dword, color:dword, frac:dword
         ret
 Build_Fading_Table endp
 
-ENDIF
-
 ;***************************************************************************
 ;**     C O N F I D E N T I A L --- W E S T W O O D   S T U D I O S       **
 ;***************************************************************************
@@ -2115,8 +2111,6 @@ Buffer_Get_Pixel proc C this_object:dword, x_pixel:dword, y_pixel:dword
         pop ebx
         ret
 Buffer_Get_Pixel endp
-
-IFNDEF NOASM
 
 ;***************************************************************************
 ;**   C O N F I D E N T I A L --- W E S T W O O D   A S S O C I A T E S   **
