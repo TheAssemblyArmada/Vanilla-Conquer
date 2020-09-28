@@ -36,16 +36,6 @@ int Buffer_Get_Pixel(void* thisptr, int x, int y);
 void Buffer_Clear(void* thisptr, unsigned char color);
 int Buffer_To_Buffer(void* thisptr, int x, int y, int w, int h, void* buff, int size);
 long Buffer_To_Page(int x, int y, int w, int h, void* Buffer, void* view);
-bool Linear_Blit_To_Linear(void* thisptr,
-                           void* dest,
-                           int x_pixel,
-                           int y_pixel,
-                           int dx_pixel,
-                           int dy_pixel,
-                           int pixel_width,
-                           int pixel_height,
-                           bool trans);
-bool Linear_Scale_To_Linear(void*, void*, int, int, int, int, int, int, int, int, bool, char*);
 
 /*======================================================================*/
 /* Externs for all of the graphic buffer class only functions				*/

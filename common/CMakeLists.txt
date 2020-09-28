@@ -38,7 +38,7 @@ set(COMMON_SRC
     xordeltaa.asm
     auduncmp.c
     random.cpp
-    bitblit.c
+    linear.cpp
     rndstraw.cpp
     fading.c
     framelimit.cpp

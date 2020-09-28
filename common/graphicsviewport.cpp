@@ -47,6 +47,7 @@
 
 #include "buffer.h"
 #include "drawbuff.h"
+#include "linear.h"
 #include "rect.h"
 #include "gbuffer.h"
 #include "ww_win.h"
