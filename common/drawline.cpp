@@ -20,7 +20,7 @@ static unsigned Line_Get_Clipping(GraphicViewPortClass& view, int x, int y)
 {
     unsigned flags = 0;
 
-    if (y < view.Get_YPos()) {
+    if (y < 0) {
         flags |= 0x1;
     }
 
@@ -28,7 +28,7 @@ static unsigned Line_Get_Clipping(GraphicViewPortClass& view, int x, int y)
         flags |= 0x2;
     }
 
-    if (x < view.Get_XPos()) {
+    if (x < 0) {
         flags |= 0x4;
     }
 
@@ -41,8 +41,8 @@ static unsigned Line_Get_Clipping(GraphicViewPortClass& view, int x, int y)
 
 static void Line_Clip_Top(GraphicViewPortClass& view, int& x1, int& y1, int x2, int y2)
 {
-    x1 += (x2 - x1) * (view.Get_YPos() - y1) / (y2 - y1);
-    y1 = view.Get_YPos();
+    x1 += (x2 - x1) * (0 - y1) / (y2 - y1);
+    y1 = 0;
 }
 
 static void Line_Clip_Bottom(GraphicViewPortClass& view, int& x1, int& y1, int x2, int y2)
@@ -53,8 +53,8 @@ static void Line_Clip_Bottom(GraphicViewPortClass& view, int& x1, int& y1, int x
 
 static void Line_Clip_Left(GraphicViewPortClass& view, int& x1, int& y1, int x2, int y2)
 {
-    y1 += (y2 - y1) * (view.Get_XPos() - x1) / (x2 - x1);
-    x1 = view.Get_XPos();
+    y1 += (y2 - y1) * (0 - x1) / (x2 - x1);
+    x1 = 0;
 }
 
 static void Line_Clip_Right(GraphicViewPortClass& view, int& x1, int& y1, int x2, int y2)
