@@ -248,6 +248,8 @@ int main(int argc, char** argv)
 
         RawFileClass cfile("CONQUER.INI");
 
+        Keyboard = new WWKeyboardClass();
+
 #ifdef JAPANESE
         //////////////////////////////////////if(!ForceEnglish) KBLanguage = 1;
 #endif
@@ -522,7 +524,7 @@ int main(int argc, char** argv)
 #ifdef _WIN32
             PostMessageA(MainWindow, WM_DESTROY, 0, 0);
             do {
-                Keyboard::Check();
+                Keyboard->Check();
             } while (ReadyToQuit == 1);
 #endif
 
@@ -546,7 +548,7 @@ int main(int argc, char** argv)
             puts("Run SETUP program first.");
             puts("\n");
 #endif
-            Kbd.Get();
+            Keyboard->Get();
 #endif
         }
 
@@ -648,7 +650,7 @@ void Delete_Swap_Files(void)
 void Print_Error_End_Exit(char* string)
 {
     printf("%s\n", string);
-    Get_Key();
+    Keyboard->Get();
     Prog_End();
     printf("%s\n", string);
     if (!RunningAsDLL) {

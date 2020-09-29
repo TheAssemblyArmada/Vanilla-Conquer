@@ -96,6 +96,7 @@ endif()
 set(COMMONR_SRC
     gbuffer.cpp
     wwmouse.cpp
+    wwkeyboard.cpp
     soundio_null.cpp
     tcpip_null.cpp
     video_null.cpp
@@ -104,6 +105,7 @@ set(COMMONR_SRC
 set(COMMONV_SRC
     gbuffer.cpp
     wwmouse.cpp
+    wwkeyboard.cpp
     tcpip_null.cpp
 )
 

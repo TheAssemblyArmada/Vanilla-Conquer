@@ -118,12 +118,12 @@ void Debug_Key(unsigned input)
             break;
 
         case KN_P:
-            Keyboard::Clear();
-            while (!Keyboard::Check()) {
+            Keyboard->Clear();
+            while (!Keyboard->Check()) {
                 Self_Regulate();
                 Sound_Callback();
             }
-            Keyboard::Clear();
+            Keyboard->Clear();
             break;
 
         case KN_O: {

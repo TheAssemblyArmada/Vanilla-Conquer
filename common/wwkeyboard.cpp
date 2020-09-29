@@ -51,13 +51,8 @@
  *   WWKeyboardClass::Put_Mouse_Message -- Stores a mouse type message into the keyboard buffer*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "key.h"
-
-#include "monoc.h"
-
-// void Message_Loop(void);
-
-// WWKeyboardClass * _Kbd = NULL;
+#include "wwkeyboard.h"
+#include <string.h>
 
 #define ARRAY_SIZE(x) int(sizeof(x) / sizeof(x[0]))
 
@@ -77,8 +72,6 @@ WWKeyboardClass::WWKeyboardClass(void)
     , Head(0)
     , Tail(0)
 {
-    //	_Kbd = this;
-
     memset(KeyState, '\0', sizeof(KeyState));
 }
 
@@ -140,12 +133,12 @@ bool WWKeyboardClass::Is_Mouse_Key(unsigned short key)
  *   10/16/1995 PWG : Created.                                                                 *
  *   09/24/1996 JLB : Converted to new style keyboard system.                                  *
  *=============================================================================================*/
-unsigned short WWKeyboardClass::Check(void) const
+KeyNumType WWKeyboardClass::Check(void) const
 {
     ((WWKeyboardClass*)this)->Fill_Buffer_From_System();
     if (Is_Buffer_Empty())
-        return (false);
-    return (Peek_Element());
+        return KN_NONE;
+    return (KeyNumType)(Peek_Element());
 }
 
 /***********************************************************************************************
@@ -160,11 +153,11 @@ unsigned short WWKeyboardClass::Check(void) const
  * HISTORY:                                                                                    *
  *   10/16/1995 PWG : Created.                                                                 *
  *=============================================================================================*/
-unsigned short WWKeyboardClass::Get(void)
+KeyNumType WWKeyboardClass::Get(void)
 {
     while (!Check()) {
     } // wait for key in buffer
-    return (Buff_Get());
+    return (KeyNumType)(Buff_Get());
 }
 
 /***********************************************************************************************
@@ -188,6 +181,7 @@ bool WWKeyboardClass::Put(unsigned short key)
     return (false);
 }
 
+#ifdef _WIN32
 /***********************************************************************************************
  * WWKeyboardClass::Put_Key_Message -- Translates and inserts wParam into Keyboard Buffer      *
  *                                                                                             *
@@ -232,6 +226,7 @@ bool WWKeyboardClass::Put_Key_Message(unsigned short vk_key, bool release)
     */
     return (Put(vk_key));
 }
+#endif
 
 /***********************************************************************************************
  * WWKeyboardClass::Put_Mouse_Message -- Stores a mouse type message into the keyboard buffer. *
@@ -280,13 +275,13 @@ bool WWKeyboardClass::Put_Mouse_Message(unsigned short vk_key, int x, int y, boo
  * HISTORY:                                                                                    *
  *   09/30/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-char WWKeyboardClass::To_ASCII(unsigned short key)
+KeyASCIIType WWKeyboardClass::To_ASCII(unsigned short key)
 {
     /*
     **	Released keys never translate into an ASCII value.
     */
     if (key & WWKEY_RLS_BIT) {
-        return ('\0');
+        return KA_NONE;
     }
 
     /*
@@ -309,8 +304,10 @@ char WWKeyboardClass::To_ASCII(unsigned short key)
     int result = 1;
     int scancode = 0;
 
+#ifdef _WIN32
     scancode = MapVirtualKeyA(key & 0xFF, 0);
     result = ToAscii((UINT)(key & 0xFF), (UINT)scancode, (PBYTE)KeyState, (LPWORD)buffer, (UINT)0);
+#endif
 
     /*
     **	Restore the KeyState buffer back to pristine condition.
@@ -330,10 +327,10 @@ char WWKeyboardClass::To_ASCII(unsigned short key)
     **	return with a null ASCII value.
     */
     if (result != 1) {
-        return ('\0');
+        return KA_NONE;
     }
 
-    return (buffer[0]);
+    return (KeyASCIIType)(buffer[0]);
 }
 
 /***********************************************************************************************
@@ -352,13 +349,11 @@ char WWKeyboardClass::To_ASCII(unsigned short key)
  *=============================================================================================*/
 bool WWKeyboardClass::Down(unsigned short key)
 {
+#ifdef _WIN32
     return (GetAsyncKeyState(key & 0xFF) == 0 ? false : true);
-}
-
-extern "C" {
-void __cdecl Stop_Execution(void)
-{
-}
+#else
+    return false;
+#endif
 }
 
 /***********************************************************************************************
@@ -503,6 +498,7 @@ bool WWKeyboardClass::Is_Buffer_Empty(void) const
  *=============================================================================================*/
 void WWKeyboardClass::Fill_Buffer_From_System(void)
 {
+#ifdef _WIN32
     if (!Is_Buffer_Full()) {
         MSG msg;
         while (PeekMessageA(&msg, NULL, 0, 0, PM_NOREMOVE)) {
@@ -513,6 +509,7 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
             DispatchMessageA(&msg);
         }
     }
+#endif
 }
 
 /***********************************************************************************************
@@ -569,6 +566,7 @@ void WWKeyboardClass::Clear(void)
  * HISTORY:                                                                                    *
  *   09/30/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
+#ifdef _WIN32
 bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LONG lParam)
 {
 // ST - 5/13/2019
@@ -586,11 +584,7 @@ bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LO
     */
     case WM_SYSKEYDOWN:
     case WM_KEYDOWN:
-        if (wParam == VK_SCROLL) {
-            Stop_Execution();
-        } else {
-            Put_Key_Message((unsigned short)wParam);
-        }
+        Put_Key_Message((unsigned short)wParam);
         processed = true;
         break;
 
@@ -706,6 +700,7 @@ bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LO
 #endif
     return (false);
 }
+#endif
 
 /***********************************************************************************************
  * WWKeyboardClass::Available_Buffer_Room -- Fetch the quantity of free elements in the keyboa *

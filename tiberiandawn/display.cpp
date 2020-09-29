@@ -3213,8 +3213,8 @@ int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType& key)
     */
     bool edge = false;
     if (flags & (LEFTPRESS | LEFTRELEASE | RIGHTPRESS | RIGHTRELEASE)) {
-        x = _Kbd->MouseQX;
-        y = _Kbd->MouseQY;
+        x = Keyboard->MouseQX;
+        y = Keyboard->MouseQY;
     } else {
         x = Get_Mouse_X();
         y = Get_Mouse_Y();
@@ -3403,8 +3403,8 @@ int DisplayClass::TacticalClass::Selection_At_Mouse(unsigned flags, KeyNumType& 
     int x, y; // Sub cell pixel coordinates.
     bool edge = false;
     if (flags & (LEFTPRESS | LEFTRELEASE | RIGHTPRESS | RIGHTRELEASE)) {
-        x = _Kbd->MouseQX;
-        y = _Kbd->MouseQY;
+        x = Keyboard->MouseQX;
+        y = Keyboard->MouseQY;
     } else {
         x = Get_Mouse_X();
         y = Get_Mouse_Y();
@@ -3477,8 +3477,8 @@ int DisplayClass::TacticalClass::Command_Object(unsigned flags, KeyNumType& key)
     int x, y; // Sub cell pixel coordinates.
     bool edge = false;
     if (flags & (LEFTPRESS | LEFTRELEASE | RIGHTPRESS | RIGHTRELEASE)) {
-        x = _Kbd->MouseQX;
-        y = _Kbd->MouseQY;
+        x = Keyboard->MouseQX;
+        y = Keyboard->MouseQY;
     } else {
         x = Get_Mouse_X();
         y = Get_Mouse_Y();

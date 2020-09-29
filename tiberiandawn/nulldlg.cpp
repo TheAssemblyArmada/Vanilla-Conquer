@@ -3830,10 +3830,10 @@ int Com_Scenario_Dialog(void)
         User clicks on a color button
         ------------------------------------------------------------------*/
         case KN_LMOUSE:
-            if (_Kbd->MouseQX > cbox_x[0] && _Kbd->MouseQX < (cbox_x[MAX_MPLAYER_COLORS - 1] + d_color_w)
-                && _Kbd->MouseQY > d_color_y && _Kbd->MouseQY < (d_color_y + d_color_h)) {
+            if (Keyboard->MouseQX > cbox_x[0] && Keyboard->MouseQX < (cbox_x[MAX_MPLAYER_COLORS - 1] + d_color_w)
+                && Keyboard->MouseQY > d_color_y && Keyboard->MouseQY < (d_color_y + d_color_h)) {
                 if (!ready_to_go) {
-                    MPlayerPrefColor = (_Kbd->MouseQX - cbox_x[0]) / d_color_w;
+                    MPlayerPrefColor = (Keyboard->MouseQX - cbox_x[0]) / d_color_w;
                     MPlayerColorIdx = MPlayerPrefColor;
                     display = REDRAW_COLORS;
 
@@ -5300,13 +5300,13 @@ int Com_Show_Scenario_Dialog(void)
         User clicks on a color button
         ------------------------------------------------------------------*/
         case KN_LMOUSE:
-            if (_Kbd->MouseQX > cbox_x[0] && _Kbd->MouseQX < (cbox_x[MAX_MPLAYER_COLORS - 1] + d_color_w)
-                && _Kbd->MouseQY > d_color_y && _Kbd->MouseQY < (d_color_y + d_color_h)) {
+            if (Keyboard->MouseQX > cbox_x[0] && Keyboard->MouseQX < (cbox_x[MAX_MPLAYER_COLORS - 1] + d_color_w)
+                && Keyboard->MouseQY > d_color_y && Keyboard->MouseQY < (d_color_y + d_color_h)) {
                 if (!ready_to_go) {
                     /*.........................................................
                     Compute my preferred color as the one I clicked on.
                     .........................................................*/
-                    MPlayerPrefColor = (_Kbd->MouseQX - cbox_x[0]) / d_color_w;
+                    MPlayerPrefColor = (Keyboard->MouseQX - cbox_x[0]) / d_color_w;
                     changed = 1;
                     /*.........................................................
                     If 'TheirColor' is set to the other player's color, make

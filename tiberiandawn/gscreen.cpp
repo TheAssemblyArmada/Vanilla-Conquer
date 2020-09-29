@@ -263,10 +263,10 @@ void GScreenClass::Flag_To_Redraw(bool complete)
  *=============================================================================================*/
 void GScreenClass::Input(KeyNumType& key, int& x, int& y)
 {
-    key = Keyboard::Check();
+    key = Keyboard->Check();
 
-    x = Keyboard::Mouse_X();
-    y = Keyboard::Mouse_Y();
+    x = Get_Mouse_X();
+    y = Get_Mouse_Y();
 
     if (Buttons) {
 
@@ -287,7 +287,7 @@ void GScreenClass::Input(KeyNumType& key, int& x, int& y)
 
     } else {
         if (key) {
-            key = Keyboard::Get();
+            key = Keyboard->Get();
         }
     }
     AI(key, x, y);

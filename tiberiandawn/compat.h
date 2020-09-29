@@ -35,11 +35,6 @@
 #ifndef COMPAT_H
 #define COMPAT_H
 
-//#include "i86.h"
-
-#define KeyNumType   int
-#define KeyASCIIType int
-
 #define BuffType        BufferClass
 #define movmem(a, b, c) memmove(b, a, c)
 #define ShapeBufferSize _ShapeBufferSize

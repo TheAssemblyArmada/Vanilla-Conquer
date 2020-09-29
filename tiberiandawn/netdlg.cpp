@@ -1358,9 +1358,9 @@ static int Net_Join_Dialog(void)
         case KN_LMOUSE:
             if (joinstate > JOIN_NOTHING)
                 break;
-            if (_Kbd->MouseQX > cbox_x[0] && _Kbd->MouseQX < (cbox_x[MAX_MPLAYER_COLORS - 1] + d_color_w)
-                && _Kbd->MouseQY > d_color_y && _Kbd->MouseQY < (d_color_y + d_color_h)) {
-                MPlayerPrefColor = (_Kbd->MouseQX - cbox_x[0]) / d_color_w;
+            if (Keyboard->MouseQX > cbox_x[0] && Keyboard->MouseQX < (cbox_x[MAX_MPLAYER_COLORS - 1] + d_color_w)
+                && Keyboard->MouseQY > d_color_y && Keyboard->MouseQY < (d_color_y + d_color_h)) {
+                MPlayerPrefColor = (Keyboard->MouseQX - cbox_x[0]) / d_color_w;
                 MPlayerColorIdx = MPlayerPrefColor;
 
                 name_edt.Set_Color(MPlayerTColors[MPlayerColorIdx]);
@@ -4222,7 +4222,7 @@ void Wait_For_Focus(void)
         CCDebugString("C&C95 - Waiting for game to come into focus.");
         do {
             CCDebugString(".");
-            Keyboard::Check();
+            Keyboard->Check();
             if (!focus_timer.Time()) {
                 CCDebugString("C&C95 - Calling SetForgroundWindow.\n");
                 SetForegroundWindow(MainWindow);

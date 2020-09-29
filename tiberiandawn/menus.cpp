@@ -189,7 +189,7 @@ void Setup_Menu(int menu, char const* text[], unsigned long field, int index, in
     }
     MenuSkip = skip;
     Show_Mouse();
-    Keyboard::Clear();
+    Keyboard->Clear();
 }
 
 /*=========================================================================*/
@@ -229,8 +229,8 @@ int Check_Menu(int menu, char const* text[], char*, long field, int index)
     */
     key = 0;
     UnknownKey = 0;
-    if (Keyboard::Check()) {
-        key = (Keyboard::Get() & 0x18FF); /* mask off all but release bit	*/
+    if (Keyboard->Check()) {
+        key = (Keyboard->Get() & 0x18FF); /* mask off all but release bit	*/
     }
 
     /*
@@ -276,8 +276,8 @@ int Check_Menu(int menu, char const* text[], char*, long field, int index)
     */
     case KN_RMOUSE:
     case KN_LMOUSE:
-        if (Coordinates_In_Region(_Kbd->MouseQX, _Kbd->MouseQY, mx1, my1, mx2, my2)) {
-            newitem = (_Kbd->MouseQY - my1) / menuskip;
+        if (Coordinates_In_Region(Keyboard->MouseQX, Keyboard->MouseQY, mx1, my1, mx2, my2)) {
+            newitem = (Keyboard->MouseQY - my1) / menuskip;
         } else {
             UnknownKey = key; //	Pass the unprocessed button click back.
             break;
@@ -306,7 +306,7 @@ int Check_Menu(int menu, char const* text[], char*, long field, int index)
     default:
         for (idx = 0; idx < menuptr[ITEMSHIGH]; idx++) {
             if (toupper(*(text[Select_To_Entry(idx, field, index)]))
-                == toupper(Keyboard::To_ASCII((KeyNumType)(key & 0x0FF)))) {
+                == toupper(Keyboard->To_ASCII((KeyNumType)(key & 0x0FF)))) {
                 newitem = select = idx;
                 break;
             }
@@ -373,7 +373,7 @@ int Do_Menu(char const** strings, bool blue)
     if (!strings)
         return (-1);
     Set_Logic_Page(SeenBuff);
-    Keyboard::Clear();
+    Keyboard->Clear();
 
     /*
     **	Determine the number of entries in this string.
@@ -416,7 +416,7 @@ int Do_Menu(char const** strings, bool blue)
     Window_Box(WINDOW_MENU, blue ? BOXSTYLE_BLUE_UP : BOXSTYLE_RAISED);
     Setup_Menu(0, strings, 0xFFFFL, 0, 0);
 
-    Keyboard::Clear();
+    Keyboard->Clear();
     selection = -1;
     UnknownKey = 0;
     while (selection == -1) {
@@ -425,7 +425,7 @@ int Do_Menu(char const** strings, bool blue)
         if (UnknownKey != 0 || UnknownKey == KN_ESC || UnknownKey == KN_LMOUSE || UnknownKey == KN_RMOUSE)
             break;
     }
-    Keyboard::Clear();
+    Keyboard->Clear();
     Hide_Mouse();
 
     Blit_Hid_Page_To_Seen_Buff();
@@ -717,7 +717,7 @@ int Main_Menu(unsigned long timeout)
     **	Initialize
     */
     Set_Logic_Page(SeenBuff);
-    Keyboard::Clear();
+    Keyboard->Clear();
 #if (0) // PG_TO_FIX
     starttime = WinTickCount.Time();
 #endif
@@ -769,7 +769,7 @@ int Main_Menu(unsigned long timeout)
 #endif
     buttons[curbutton]->Turn_On();
 
-    Keyboard::Clear();
+    Keyboard->Clear();
 
     Fancy_Text_Print(TXT_NONE, 0, 0, CC_GREEN, TBLACK, TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
     while (Get_Mouse_State() > 0)

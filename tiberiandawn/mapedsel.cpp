@@ -69,8 +69,8 @@ int MapEditClass::Select_Object(void)
     /*
     -------------------- See if an object was clicked on ---------------------
     */
-    x = _Kbd->MouseQX;
-    y = _Kbd->MouseQY;
+    x = Keyboard->MouseQX;
+    y = Keyboard->MouseQY;
 
     /*
     ............................ Get cell for x,y ............................

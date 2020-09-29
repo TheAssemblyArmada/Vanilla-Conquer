@@ -161,7 +161,7 @@ void Main_Game(int argc, char* argv[])
         **	told the map to draw itself.
         */
         Fade_Palette_To(GamePalette, FADE_PALETTE_MEDIUM, NULL);
-        Keyboard::Clear();
+        Keyboard->Clear();
 
         /*
         ** Only show the mouse if we're not playing back a recording.
@@ -415,10 +415,10 @@ void Keyboard_Process(KeyNumType& input)
     Message_Input(input);
 #endif
     /*
-    ** Use WWKEY values because KN values have WWKEY_VK_BIT or'd in with them
-    ** and we need WWKEY_VK_BIT to still be set if it is.
+    ** Use WWKEY values because KN values have WWKEY_KN_BIT or'd in with them
+    ** and we need WWKEY_KN_BIT to still be set if it is.
     */
-    KeyNumType plain = input & ~(WWKEY_SHIFT_BIT | WWKEY_ALT_BIT | WWKEY_CTRL_BIT);
+    KeyNumType plain = (KeyNumType)(input & ~(WWKEY_SHIFT_BIT | WWKEY_ALT_BIT | WWKEY_CTRL_BIT));
 
 #ifdef CHEAT_KEYS
 
@@ -483,13 +483,13 @@ void Keyboard_Process(KeyNumType& input)
     if (input & WWKEY_CTRL_BIT)
         action = 2;
 
-    switch (KN_To_VK(plain)) {
+    switch (plain) {
 
     /*
     **	Center the map around the currently selected objects. If no
     **	objects are selected, then fall into the home case.
     */
-    case VK_HOME:
+    case KN_HOME:
         if (CurrentObject.Count()) {
             Map.Center_Map();
             Map.Flag_To_Redraw(true);
@@ -501,7 +501,7 @@ void Keyboard_Process(KeyNumType& input)
     **	Center the map about the construction yard or construction vehicle
     **	if one is present.
     */
-    case VK_H:
+    case KN_H:
         for (index = 0; index < Units.Count(); index++) {
             UnitClass* unit = Units.Ptr(index);
 
@@ -528,7 +528,7 @@ void Keyboard_Process(KeyNumType& input)
     /*
     **	Toggle free scrolling mode.
     */
-    case VK_F:
+    case KN_F:
         Options.IsFreeScroll = (Options.IsFreeScroll == false);
         break;
 #endif
@@ -536,7 +536,7 @@ void Keyboard_Process(KeyNumType& input)
     /*
     **	If the "N" key is pressed, then select the next object.
     */
-    case VK_N:
+    case KN_N:
         if (action) {
             obj = Map.Prev_Object(CurrentObject.Count() ? CurrentObject[0] : NULL);
         } else {
@@ -553,7 +553,7 @@ void Keyboard_Process(KeyNumType& input)
     /*
     ** For multiplayer, 'R' pops up the surrender dialog.
     */
-    case VK_R:
+    case KN_R:
         if (/*GameToPlay != GAME_NORMAL &&*/ !PlayerPtr->IsDefeated) {
             SpecialDialog = SDLG_SURRENDER;
             input = KN_NONE;
@@ -563,7 +563,7 @@ void Keyboard_Process(KeyNumType& input)
     /*
     **	Handle making and breaking alliances.
     */
-    case VK_A:
+    case KN_A:
         if (GameToPlay != GAME_NORMAL || Debug_Flag) {
             if (CurrentObject.Count() && !PlayerPtr->IsDefeated) {
                 if (CurrentObject[0]->Owner() != PlayerPtr->Class->House) {
@@ -576,20 +576,20 @@ void Keyboard_Process(KeyNumType& input)
     /*
     **	Control the remembered tactical location.
     */
-    case VK_F7:
-    case VK_F8:
-    case VK_F9:
-    case VK_F10:
+    case KN_F7:
+    case KN_F8:
+    case KN_F9:
+    case KN_F10:
         if (!Debug_Map) {
-            Handle_View(KN_To_VK(plain) - VK_F7, action);
+            Handle_View(plain - KN_F7, action);
         }
         break;
 #if (0)
-    case VK_F11:
+    case KN_F11:
         Winsock.Set_Protocol_UDP(FALSE);
         break;
 
-    case VK_F12:
+    case KN_F12:
         Winsock.Set_Protocol_UDP(TRUE);
         break;
 #endif //(0)
@@ -597,23 +597,23 @@ void Keyboard_Process(KeyNumType& input)
     /*
     **	Control the custom team select state.
     */
-    case VK_1:
-    case VK_2:
-    case VK_3:
-    case VK_4:
-    case VK_5:
-    case VK_6:
-    case VK_7:
-    case VK_8:
-    case VK_9:
-    case VK_0:
-        Handle_Team(KN_To_VK(plain) - VK_1, action);
+    case KN_1:
+    case KN_2:
+    case KN_3:
+    case KN_4:
+    case KN_5:
+    case KN_6:
+    case KN_7:
+    case KN_8:
+    case KN_9:
+    case KN_0:
+        Handle_Team(plain - KN_1, action);
         break;
 
     /*
     **	All selected units will go into idle mode.
     */
-    case VK_S:
+    case KN_S:
         if (CurrentObject.Count()) {
             for (int index = 0; index < CurrentObject.Count(); index++) {
                 ObjectClass const* tech = CurrentObject[index];
@@ -629,7 +629,7 @@ void Keyboard_Process(KeyNumType& input)
     /*
     **	All selected units will attempt to scatter.
     */
-    case VK_X:
+    case KN_X:
         if (CurrentObject.Count()) {
             for (int index = 0; index < CurrentObject.Count(); index++) {
                 ObjectClass const* tech = CurrentObject[index];
@@ -644,7 +644,7 @@ void Keyboard_Process(KeyNumType& input)
     /*
     **	All selected units will attempt to go into guard area mode.
     */
-    case VK_G:
+    case KN_G:
         if (CurrentObject.Count()) {
             for (int index = 0; index < CurrentObject.Count(); index++) {
                 ObjectClass const* tech = CurrentObject[index];
@@ -2341,7 +2341,7 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn)
             memset(BlackPalette, 0x00, 768);
         }
         PreserveVQAScreen = 0;
-        Keyboard::Clear();
+        Keyboard->Clear();
 
         VQAHandle* vqa = NULL;
 
@@ -2642,7 +2642,7 @@ void CC_Texture_Fill(void const* shapefile, int shapenum, int xpos, int ypos, in
         shape_size = Build_Frame(shapefile, shapenum, _ShapeBuffer);
         if (Get_Last_Frame_Length() > _ShapeBufferSize) {
             Mono_Printf("Attempt to use shape buffer for size %d buffer is only size %d", shape_size, _ShapeBufferSize);
-            Get_Key();
+            Keyboard->Get();
         }
 
         if (shape_size) {
@@ -2818,7 +2818,7 @@ void CC_Draw_Shape(void const* shapefile,
         shape_size = Build_Frame(shapefile, shapenum, _ShapeBuffer);
         if (Get_Last_Frame_Length() > _ShapeBufferSize) {
             Mono_Printf("Attempt to use shape buffer for size %d buffer is only size %d", shape_size, _ShapeBufferSize);
-            Get_Key();
+            Keyboard->Get();
         }
 
         if (shape_size) {
@@ -3944,7 +3944,7 @@ bool Force_CD_Available(int cd)
             old_in_main_loop = InMainLoop;
             InMainLoop = true;
 
-            Keyboard::Clear();
+            Keyboard->Clear();
 
             while (Get_Mouse_State())
                 Show_Mouse();

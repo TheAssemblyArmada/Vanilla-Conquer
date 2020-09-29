@@ -174,7 +174,7 @@ void Choose_Side(void)
     Alloc_Object(new ScorePrintClass(TXT_SEL_TRANS, 103, 190, _graypal));
 #endif
 #endif
-    Keyboard::Clear();
+    Keyboard->Clear();
 
     while (Get_Mouse_State())
         Show_Mouse();
@@ -210,10 +210,10 @@ void Choose_Side(void)
         }
         if (frame >= Get_Animation_Frame_Count(anim))
             frame = 0;
-        if (Keyboard::Check() && endframe == 255) {
-            if ((Keyboard::Get() & 0x10FF) == KN_LMOUSE) {
-                if ((_Kbd->MouseQY > 48 * 2) && (_Kbd->MouseQY < 150 * 2)) {
-                    if ((_Kbd->MouseQX > 18 * 2) && (_Kbd->MouseQX < 148 * 2)) {
+        if (Keyboard->Check() && endframe == 255) {
+            if ((Keyboard->Get() & 0x10FF) == KN_LMOUSE) {
+                if ((Keyboard->MouseQY > 48 * 2) && (Keyboard->MouseQY < 150 * 2)) {
+                    if ((Keyboard->MouseQX > 18 * 2) && (Keyboard->MouseQX < 148 * 2)) {
 
                         // Chose GDI
                         Whom = HOUSE_GOOD;
@@ -223,7 +223,7 @@ void Choose_Side(void)
                         speechplaying = true;
                         speech = speechg;
 
-                    } else if ((_Kbd->MouseQX > 160 * 2) && (_Kbd->MouseQX < 300 * 2)) {
+                    } else if ((Keyboard->MouseQX > 160 * 2) && (Keyboard->MouseQX < 300 * 2)) {
                         // Chose Nod
                         selection = 1;
                         endframe = 14;
@@ -245,7 +245,7 @@ void Choose_Side(void)
     PseudoSeenBuff->Fill_Rect(0, 180, 319, 199, 0);
     SeenBuff.Fill_Rect(0, 180 * 2, 319 * 2, 199 * 2, 0);
     Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "SIDES.PAL");
-    Keyboard::Clear();
+    Keyboard->Clear();
     SysMemPage.Clear();
 
     /*

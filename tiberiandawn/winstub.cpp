@@ -237,24 +237,16 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
         return (0);
     }
 
-    switch (message) {
+    /*
+    **	Pass this message through to the keyboard handler. If the message
+    **	was processed and requires no further action, then return with
+    **	this information.
+    */
+    if (Keyboard->Message_Handler(hwnd, message, wParam, lParam)) {
+        return (1);
+    }
 
-    case WM_MOUSEMOVE:
-    case WM_SYSKEYDOWN:
-    case WM_SYSKEYUP:
-    case WM_KEYDOWN:
-    case WM_KEYUP:
-    case WM_LBUTTONDOWN:
-    case WM_LBUTTONUP:
-    case WM_LBUTTONDBLCLK:
-    case WM_MBUTTONDOWN:
-    case WM_MBUTTONUP:
-    case WM_MBUTTONDBLCLK:
-    case WM_RBUTTONDOWN:
-    case WM_RBUTTONUP:
-    case WM_RBUTTONDBLCLK:
-        Kbd.Message_Handler(hwnd, message, wParam, lParam);
-        return (0);
+    switch (message) {
 
     case WM_DESTROY:
         CCDebugString("C&C95 - WM_DESTROY message received.\n");

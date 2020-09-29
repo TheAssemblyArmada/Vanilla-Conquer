@@ -339,7 +339,7 @@ int TcpipManagerClass::Read(void* buffer, int buffer_len)
     ** Make sure the message loop gets called because all the Winsock notifications
     ** are done via messages.
     */
-    Keyboard::Check();
+    Keyboard->Check();
 
     /*
     ** Copy any outstanding incoming data to the buffer provided
@@ -394,7 +394,7 @@ void TcpipManagerClass::Write(void* buffer, int buffer_len)
     } else {
         SendMessage(MainWindow, WM_ASYNCEVENT, 0, (LONG)FD_WRITE);
     }
-    Keyboard::Check();
+    Keyboard->Check();
 }
 
 /***********************************************************************************************

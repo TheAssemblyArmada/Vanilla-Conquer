@@ -437,9 +437,9 @@ KeyNumType GadgetClass::Input(void)
     /*
     **	Fetch any pending keyboard input.
     */
-    key = Keyboard::Check();
+    key = Keyboard->Check();
     if (key) {
-        key = Keyboard::Get();
+        key = Keyboard->Get();
     }
 
 #ifdef SCENARIO_EDITOR
@@ -476,8 +476,8 @@ KeyNumType GadgetClass::Input(void)
     **	rather the the mouse position at the time we get around to this function.
     */
     if (((key & 0x10FF) == KN_LMOUSE) || ((key & 0x10FF) == KN_RMOUSE)) {
-        mousex = _Kbd->MouseQX;
-        mousey = _Kbd->MouseQY;
+        mousex = Keyboard->MouseQX;
+        mousey = Keyboard->MouseQY;
     } else {
         mousex = Get_Mouse_X();
         mousey = Get_Mouse_Y();
@@ -525,12 +525,12 @@ KeyNumType GadgetClass::Input(void)
         **	held down, then we automatically know that it must be up -- set the flag
         **	accordingly.
         */
-        if (Keyboard::Down(KN_LMOUSE)) {
+        if (Keyboard->Down(KN_LMOUSE)) {
             flags |= LEFTHELD;
         } else {
             flags |= LEFTUP;
         }
-        if (Keyboard::Down(KN_RMOUSE)) {
+        if (Keyboard->Down(KN_RMOUSE)) {
             flags |= RIGHTHELD;
         } else {
             flags |= RIGHTUP;

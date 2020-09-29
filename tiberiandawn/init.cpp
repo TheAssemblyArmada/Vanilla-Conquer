@@ -151,8 +151,7 @@ bool Init_Game(int, char*[])
     Keyboard_Attributes_Off(TRACKEXT | PAUSEON | BREAKON | SCROLLLOCKON | CTRLSON | CTRLCON | PASSBREAKS | FILTERONLY
                             | TASKSWITCHABLE);
 #endif // FIX_ME_LATER
-    Keyboard::Clear();
-    Kbd.Clear();
+    Keyboard->Clear();
 
     /*
     **	This is the shape staging buffer. It must always be available, so it is
@@ -248,8 +247,8 @@ bool Init_Game(int, char*[])
     ** Process the message loop until we are in focus.
     */
     do {
-        CCDebugString("C&C95 - About to call Keyboard::Check\n");
-        Keyboard::Check();
+        CCDebugString("C&C95 - About to call Keyboard->Check\n");
+        Keyboard->Check();
     } while (!GameInFocus);
     AllSurfaces.SurfacesRestored = false;
 
@@ -1039,7 +1038,7 @@ bool Select_Game(bool fade)
                 Load_Title_Screen("PREPICK.PCX", &HidPage, Palette);
                 Blit_Hid_Page_To_Seen_Buff();
                 Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-                Clear_KeyBuffer();
+                Keyboard->Clear();
                 while (!Check_Key_Num()) {
                     Call_Back();
                 }
@@ -1103,7 +1102,7 @@ bool Select_Game(bool fade)
                 Load_Title_Screen("DEMOPIC.PCX", &HidPage, Palette);
                 Blit_Hid_Page_To_Seen_Buff();
                 Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-                Clear_KeyBuffer();
+                Keyboard->Clear();
                 while (!Check_Key()) {
                     Call_Back();
                 }
@@ -1246,7 +1245,7 @@ bool Select_Game(bool fade)
                         SysMemPage.Scale(SeenBuff, 0, 0, 0, 0, 320, 199, 640, 398);
                         Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
                     }
-                    Clear_KeyBuffer();
+                    Keyboard->Clear();
                     count.Set(TIMER_SECOND * 3);
                     while (count.Time()) {
                         Call_Back();
@@ -1264,7 +1263,7 @@ bool Select_Game(bool fade)
                         SysMemPage.Scale(SeenBuff, 0, 0, 0, 0, 320, 199, 640, 398);
                         Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
                     }
-                    Clear_KeyBuffer();
+                    Keyboard->Clear();
                     count.Set(TIMER_SECOND * 3);
                     while (count.Time()) {
                         Call_Back();
@@ -1282,7 +1281,7 @@ bool Select_Game(bool fade)
                         SysMemPage.Scale(SeenBuff, 0, 0, 0, 0, 320, 199, 640, 398);
                         Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
                     }
-                    Clear_KeyBuffer();
+                    Keyboard->Clear();
                     count.Set(TIMER_SECOND * 3);
                     while (count.Time()) {
                         Call_Back();
@@ -1299,7 +1298,7 @@ bool Select_Game(bool fade)
                     SysMemPage.Scale(SeenBuff, 0, 0, 0, 0, 320, 199, 640, 398);
                     Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
                 }
-                Clear_KeyBuffer();
+                Keyboard->Clear();
                 count.Set(TIMER_SECOND * 3);
                 while (count.Time()) {
                     Call_Back();
@@ -1378,7 +1377,7 @@ bool Select_Game(bool fade)
     /*
     **	Don't carry stray keystrokes into game.
     */
-    Kbd.Clear();
+    Keyboard->Clear();
 
     /*
     ** Get a pointer to the compiler's random number seed.
@@ -1562,7 +1561,7 @@ static void Play_Intro(bool for_real)
 {
     return; // No game intro movies. - LLL
 
-    bool playright = !Key_Down(KN_LCTRL) || !Key_Down(KN_RCTRL);
+    bool playright = !Keyboard->Down(KN_LCTRL) || !Keyboard->Down(KN_RCTRL);
     static int _counter = -1;
     static char* _names[] = {
 #ifdef DEMO
@@ -1676,7 +1675,7 @@ static void Play_Intro(bool for_real)
 #endif
         NULL};
 
-    Keyboard::Clear();
+    Keyboard->Clear();
     if (for_real) {
         Hide_Mouse();
         Play_Movie("LOGO", THEME_NONE, false);

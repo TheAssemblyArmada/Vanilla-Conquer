@@ -263,8 +263,8 @@ void GScreenClass::Input(KeyNumType& key, int& x, int& y)
 {
     key = Keyboard->Check();
 
-    x = Keyboard->Mouse_X();
-    y = Keyboard->Mouse_Y();
+    x = Get_Mouse_X();
+    y = Get_Mouse_Y();
 
     if (Buttons != NULL) {
 

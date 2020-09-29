@@ -288,6 +288,12 @@ SpecialClass Special;
 RulesClass Rule;
 
 /***************************************************************************
+** All keyboard input is routed through the object pointed to by this
+**	keyboard class pointer.
+*/
+WWKeyboardClass* Keyboard;
+
+/***************************************************************************
 **	This is the scenario data for the currently loaded scenario.
 ** These variables should all be set together.
 */
@@ -933,7 +939,6 @@ int AreThingiesEnabled = false;
 char* Argv[20]; // Pointers to command line arguments
 int Argc;       // Command line argument count
 
-WWKeyboardClass Kbd;
 int ScreenWidth = GBUFF_INIT_WIDTH;
 int ScreenHeight = GBUFF_INIT_HEIGHT;
 WWMouseClass* WWMouse = NULL;
