@@ -48,6 +48,7 @@
 #include "goptions.h"
 #include "options.h"
 #include "infantry.h"
+#include "jshell.h"
 
 #ifdef REMASTER_BUILD
 #define GBUFF_INIT_WIDTH     1536
@@ -149,6 +150,7 @@ extern MFCD* GeneralMix;
 extern ThemeClass Theme;
 extern SpecialClass Special;
 extern RulesClass Rule;
+extern WWKeyboardClass* Keyboard;
 
 /*
 **	Game object allocation and tracking classes.
@@ -397,7 +399,6 @@ extern int RequiredCD;
 extern int MouseInstalled;
 extern int AreThingiesEnabled;
 
-extern WWKeyboardClass Kbd;
 extern int In_Debugger;
 extern WWMouseClass* WWMouse;
 extern int AllDone;

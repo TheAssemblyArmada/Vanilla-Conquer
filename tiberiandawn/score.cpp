@@ -783,7 +783,7 @@ void ScoreClass::Presentation(void)
 
     max = MAX((long)leadership, (long)efficiency);
     int scorecounter = 0;
-    Keyboard::Clear();
+    Keyboard->Clear();
 
     BlitList.Add(264 * 2, 26 * 2, 264 * 2, 26 * 2, 4 * 12, 12);
     BlitList.Add(264 * 2, 38 * 2, 264 * 2, 38 * 2, 4 * 12, 12);
@@ -801,9 +801,9 @@ void ScoreClass::Presentation(void)
         Print_Minutes(minutes);
         Call_Back_Delay(1);
         Play_Sample(Beepy6, 255, Options.Normalize_Sound(60));
-        if (Check_Key() && i < (max - 5)) {
+        if (Keyboard->Check() && i < (max - 5)) {
             i = 158;
-            Keyboard::Clear();
+            Keyboard->Clear();
         }
     }
     Count_Up_Print("%3d", total, total, 264, 50);
@@ -871,8 +871,8 @@ void ScoreClass::Presentation(void)
         Call_Back_Delay(1);
     }
 
-    if (Keyboard::Check())
-        Keyboard::Clear();
+    if (Keyboard->Check())
+        Keyboard->Clear();
 
     if (house == HOUSE_GOOD)
         Show_Credits(house, _greenpal);
@@ -957,7 +957,7 @@ void ScoreClass::Presentation(void)
     /*
     ** If the player's on the hall of fame, have him enter his name now
     */
-    Keyboard::Clear();
+    Keyboard->Clear();
     if (index < NUMFAMENAMES) {
         Input_Name(hallfame[index].name, HALLFAME_X, HALLFAME_Y + (index * 8), _bluepal);
 
@@ -982,7 +982,7 @@ void ScoreClass::Presentation(void)
     file.Close();
 #endif
 
-    Keyboard::Clear();
+    Keyboard->Clear();
 
     /* get rid of all the animating objects */
     for (i = 0; i < MAXSCOREOBJS; i++)
@@ -1029,8 +1029,8 @@ void Cycle_Wait_Click(void)
     // SerialPacketType receivepacket;
     // int packetlen;
 
-    Keyboard::Clear();
-    while (minclicks || (!Check_Key() && !ControlQ)) {
+    Keyboard->Clear();
+    while (minclicks || (!Keyboard->Check() && !ControlQ)) {
 
         if (GameToPlay == GAME_NULL_MODEM || GameToPlay == GAME_MODEM) {
             // GameToPlay == GAME_INTERNET) {
@@ -1060,7 +1060,7 @@ void Cycle_Wait_Click(void)
         Call_Back_Delay(1);
         if (minclicks) {
             minclicks--;
-            Keyboard::Clear();
+            Keyboard->Clear();
         }
 
         counter = ((++counter) & 7);
@@ -1084,7 +1084,7 @@ void Cycle_Wait_Click(void)
             Set_Palette(Palette);
         }
     }
-    Keyboard::Clear();
+    Keyboard->Clear();
 }
 
 void ScoreClass::Do_Nod_Buildings_Graph(void)
@@ -1191,7 +1191,7 @@ void ScoreClass::Do_Nod_Buildings_Graph(void)
         WWMouse->Erase_Mouse(&HidPage, true);
         // Interpolate_2X_Scale( PseudoSeenBuff , &SeenBuff , NULL);
 
-        if (!Check_Key())
+        if (!Keyboard->Check())
             Call_Back_Delay(1);
     }
 
@@ -1202,7 +1202,7 @@ void ScoreClass::Do_Nod_Buildings_Graph(void)
         Count_Up_Print("%d", q, GBKilled, BUILDING_X + 8, BUILDING_Y);
         Count_Up_Print("%d", q, NBKilled, BUILDING_X + 8, BUILDING_Y + 12);
         Count_Up_Print("%d", q, CBKilled, BUILDING_X + 8, BUILDING_Y + 24);
-        if (!Check_Key()) {
+        if (!Keyboard->Check()) {
             Play_Sample(Beepy6, 255, Options.Normalize_Sound(110));
             Call_Back_Delay(1);
         }
@@ -1260,14 +1260,14 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
         }
 
         Count_Up_Print("%d", (i * gkilled) / max, gkilled, 297, ypos + 2);
-        if (!Check_Key()) {
+        if (!Keyboard->Check()) {
             Play_Sample(Beepy6, 255, Options.Normalize_Sound(110));
             Call_Back_Delay(2);
         }
     }
     CC_Draw_Shape(yellowptr, gdikilled, 172, ypos, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
     Count_Up_Print("%d", gkilled, gkilled, 297, ypos + 2);
-    if (!Check_Key())
+    if (!Keyboard->Check())
         Call_Back_Delay(40);
 
     BlitList.Add(2 * 297, 2 * (ypos + 14), 2 * 297, 2 * (ypos + 14), 5 * 12, 12);
@@ -1279,20 +1279,20 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
         }
 
         Count_Up_Print("%d", (i * nkilled) / max, nkilled, 297, ypos + 14);
-        if (!Check_Key()) {
+        if (!Keyboard->Check()) {
             Play_Sample(Beepy6, 255, Options.Normalize_Sound(110));
             Call_Back_Delay(2);
         }
     }
 
-    //	if (Keyboard::Check()) Keyboard::Clear();
+    //	if (Keyboard->Check()) Keyboard->Clear();
 
     /*
     ** Make sure accurate count is printed at end
     */
     CC_Draw_Shape(redptr, nodkilled, 172, ypos + 12, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
     Count_Up_Print("%d", nkilled, nkilled, 297, ypos + 14);
-    if (!Check_Key())
+    if (!Keyboard->Check())
         Call_Back_Delay(40);
 }
 
@@ -1380,13 +1380,13 @@ void ScoreClass::Do_Nod_Casualties_Graph(void)
             Count_Up_Print("%d", (i * GKilled) / max, GKilled, SCORETEXT_X + 64, CASUALTY_Y + 2);
             Count_Up_Print("%d", (i * NKilled) / max, NKilled, SCORETEXT_X + 64, CASUALTY_Y + 14);
             Count_Up_Print("%d", (i * CKilled) / max, CKilled, SCORETEXT_X + 64, CASUALTY_Y + 26);
-            if (!Check_Key())
+            if (!Keyboard->Check())
                 Call_Back_Delay(3);
         }
         Play_Sample(Beepy6, 255, Options.Normalize_Sound(110));
     }
-    if (Check_Key())
-        Keyboard::Clear();
+    if (Keyboard->Check())
+        Keyboard->Clear();
 
     /*
     ** Make sure accurate count is printed at end
@@ -1460,9 +1460,9 @@ void ScoreClass::Show_Credits(int house, char const pal[])
         Set_Font_Palette(pal);
         Count_Up_Print("%d", i, PlayerPtr->Available_Money(), _credpx[house], _credpy[house]);
         Call_Back_Delay(2);
-        if (Check_Key()) {
+        if (Keyboard->Check()) {
             i = PlayerPtr->Available_Money() - 5;
-            Keyboard::Clear();
+            Keyboard->Clear();
         }
     } while (i < PlayerPtr->Available_Money());
 
@@ -1586,12 +1586,12 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
         BlitList.Update();
         Blit_Hid_Page_To_Seen_Buff();
 
-        if (Check_Key()) {   // if (Keyboard::Check()) {
-            key = Get_Key(); // key = Keyboard::Get();
+        if (Keyboard->Check()) {   // if (Keyboard->Check()) {
+            key = Keyboard->Get(); // key = Keyboard->Get();
 
             if (index == MAX_FAMENAME_LENGTH - 2) {
-                while (Check_Key()) {
-                    Get_Key();
+                while (Keyboard->Check()) {
+                    Keyboard->Get();
                 }
             }
 
@@ -1874,9 +1874,9 @@ void Call_Back_Delay(int time)
     CountDownTimerClass cd;
 
     if (!ControlQ) {
-        if (Keyboard::Down(KN_LCTRL) && Keyboard::Down(KN_Q)) {
+        if (Keyboard->Down(KN_LCTRL) && Keyboard->Down(KN_Q)) {
             ControlQ = 1;
-            Keyboard::Clear();
+            Keyboard->Clear();
         }
     }
     if (ControlQ)

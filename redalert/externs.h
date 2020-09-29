@@ -164,7 +164,7 @@ extern int LogicTriggerID;
 extern PKey FastKey;
 extern PKey SlowKey;
 extern RulesClass Rule;
-extern KeyboardClass* Keyboard;
+extern WWKeyboardClass* Keyboard;
 extern RandomStraw CryptRandom;
 extern RandomClass NonCriticalRandomNumber;
 extern CarryoverClass* Carryover;

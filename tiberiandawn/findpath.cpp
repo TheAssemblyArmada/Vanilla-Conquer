@@ -910,7 +910,7 @@ end_of_list:
     if (Debug_Find_Path && DrawPath) {
         Debug_Draw_Map("Final Generated Path", startcell, dest, false);
         Debug_Draw_Path(&path);
-        Get_Key_Num();
+        Keyboard->Get();
     }
     //	IsFindPath = false;
     return (&path);
@@ -1542,7 +1542,7 @@ void FootClass::Debug_Draw_Map(char* txt, CELL start, CELL dest, bool pause)
         return;
 
     if (pause)
-        Get_Key_Num();
+        Keyboard->Get();
     GraphicViewPortClass* page = Set_Logic_Page(SeenBuff);
 
     VisiblePage.Clear();

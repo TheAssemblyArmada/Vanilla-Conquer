@@ -188,7 +188,7 @@ void GameOptionsClass::Process(void)
                       GadgetClass::LEFTPRESS | GadgetClass::RIGHTPRESS))
         ->Add_Tail(*buttons);
 
-    Keyboard::Clear();
+    Keyboard->Clear();
 
     Fancy_Text_Print(TXT_NONE, 0, 0, CC_GREEN, TBLACK, TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
 
@@ -493,7 +493,7 @@ void GameOptionsClass::Process(void)
     /*
     **	Redraw the map.
     */
-    Keyboard::Clear();
+    Keyboard->Clear();
     Call_Back();
     HiddenPage.Clear();
     Call_Back();

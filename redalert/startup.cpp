@@ -416,14 +416,7 @@ int main(int argc, char* argv[])
         Install_Keyboard_Interrupt(Get_RM_Keyboard_Address(), Get_RM_Keyboard_Size());
 #endif // WIN32
 
-#ifdef NEVER
-        Keyboard->IsLibrary = true;
-        if (Debug_Flag) {
-            Keyboard_Attributes_On(DEBUGINT);
-        }
-#endif
-
-        Keyboard = new KeyboardClass();
+        Keyboard = new WWKeyboardClass();
 
 #ifdef WIN32
         /*
@@ -452,7 +445,6 @@ int main(int argc, char* argv[])
             printf("\n");
             if (Keyboard)
                 Keyboard->Get();
-            //			Keyboard::IsLibrary = false;
             Remove_Keyboard_Interrupt();
             Remove_Timer_System();
             return (EXIT_FAILURE);

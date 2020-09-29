@@ -148,7 +148,6 @@ set(TIBDAWN_SRC
     vector.cpp
     visudlg.cpp
     iconset.cpp
-    wwkeyboard.cpp
     morphpal.cpp
     newdel.cpp
     winstub.cpp

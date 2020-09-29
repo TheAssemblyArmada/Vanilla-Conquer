@@ -94,7 +94,6 @@ set(REDALERT_SRC
     ipxgconn.cpp
     ipxmgr.cpp
     jshell.cpp
-    key.cpp
     layer.cpp
     link.cpp
     list.cpp

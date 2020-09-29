@@ -622,7 +622,7 @@ int MessageListClass::Input(KeyNumType& input)
     If we're in 'edit mode', handle keys
     ------------------------------------------------------------------------*/
     if (EditLabel) {
-        ascii = (KeyASCIIType)(Keyboard::To_ASCII(input) & 0x00ff);
+        ascii = (KeyASCIIType)(Keyboard->To_ASCII(input) & 0x00ff);
 
         /*
         ** Allow numeric keypad presses to map to ascii numbers

@@ -1912,8 +1912,8 @@ Process_Reconnect_Dialog(CountDownTimerClass* timeout_timer, long* their_frame, 
     //........................................................................
     //	If user hits ESC, bail out
     //........................................................................
-    if (Check_Key()) {
-        if (Get_Key_Num() == KN_ESC) {
+    if (Keyboard->Check()) {
+        if (Keyboard->Get() == KN_ESC) {
             return (1);
         }
     }
@@ -3126,8 +3126,8 @@ static void Queue_Playback(void)
     //------------------------------------------------------------------------
     //	If the user hits ESC, stop the playback
     //------------------------------------------------------------------------
-    if (Check_Key_Num()) {
-        key = Get_Key();
+    if (Keyboard->Check()) {
+        key = Keyboard->Get();
         //
         // If the user hit ESC, end the recording.  If this is an Attract-mode
         // recording, end it no matter what the user does (any key or mouse).

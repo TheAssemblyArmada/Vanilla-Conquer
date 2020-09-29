@@ -163,10 +163,7 @@ public:
 #define TIMER_H
 #endif
 
-#ifdef WIN32
-#include "key.h"
-#endif
-
+#include "common/wwkeyboard.h"
 #include "common/wwlib32.h"
 #include "mpu.h"
 #include "bench.h"

@@ -1294,8 +1294,8 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Start_Instance_Variation(int s
     */
     DLLForceMouseX = 100;
     DLLForceMouseY = 100;
-    _Kbd->MouseQX = 100;
-    _Kbd->MouseQY = 100;
+    Keyboard->MouseQX = 100;
+    Keyboard->MouseQY = 100;
 
     GlyphXClientSidebarWidthInLeptons = 0;
 
@@ -1393,8 +1393,8 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Start_Custom_Instance(const ch
     */
     DLLForceMouseX = 100;
     DLLForceMouseY = 100;
-    _Kbd->MouseQX = 100;
-    _Kbd->MouseQY = 100;
+    Keyboard->MouseQX = 100;
+    Keyboard->MouseQY = 100;
 
     GlyphXClientSidebarWidthInLeptons = 0;
 
@@ -3580,8 +3580,8 @@ extern "C" __declspec(dllexport) void __cdecl CNC_Handle_Input(InputRequestEnum 
 
         DLLForceMouseX = x1;
         DLLForceMouseY = y1;
-        _Kbd->MouseQX = x1;
-        _Kbd->MouseQY = y1;
+        Keyboard->MouseQX = x1;
+        Keyboard->MouseQY = y1;
 
         COORDINATE coord = Map.Pixel_To_Coord(x1, y1);
         CELL cell = Coord_Cell(coord);
@@ -3607,8 +3607,8 @@ extern "C" __declspec(dllexport) void __cdecl CNC_Handle_Input(InputRequestEnum 
 
         DLLForceMouseX = x1;
         DLLForceMouseY = y1;
-        _Kbd->MouseQX = x1;
-        _Kbd->MouseQY = y1;
+        Keyboard->MouseQX = x1;
+        Keyboard->MouseQY = y1;
 
         KeyNumType key = (KeyNumType)(KN_LMOUSE | KN_RLSE_BIT);
 
@@ -3627,8 +3627,8 @@ extern "C" __declspec(dllexport) void __cdecl CNC_Handle_Input(InputRequestEnum 
 
         DLLForceMouseX = x1;
         DLLForceMouseY = y1;
-        _Kbd->MouseQX = x1;
-        _Kbd->MouseQY = y1;
+        Keyboard->MouseQX = x1;
+        Keyboard->MouseQY = y1;
 
         KeyNumType key = (KeyNumType)(KN_RMOUSE | KN_RLSE_BIT);
 
@@ -3647,8 +3647,8 @@ extern "C" __declspec(dllexport) void __cdecl CNC_Handle_Input(InputRequestEnum 
 
         DLLForceMouseX = x1;
         DLLForceMouseY = y1;
-        _Kbd->MouseQX = x1;
-        _Kbd->MouseQY = y1;
+        Keyboard->MouseQX = x1;
+        Keyboard->MouseQY = y1;
 
         KeyNumType key = (KeyNumType)(KN_RMOUSE);
 
@@ -3678,8 +3678,8 @@ extern "C" __declspec(dllexport) void __cdecl CNC_Handle_Input(InputRequestEnum 
         DLLExportClass::Adjust_Internal_View();
         DLLForceMouseX = x1;
         DLLForceMouseY = y1;
-        _Kbd->MouseQX = x1;
-        _Kbd->MouseQY = y1;
+        Keyboard->MouseQX = x1;
+        Keyboard->MouseQY = y1;
 
         COORDINATE coord = Map.Pixel_To_Coord(x1, y1);
         CELL cell = Coord_Cell(coord);
@@ -3695,8 +3695,8 @@ extern "C" __declspec(dllexport) void __cdecl CNC_Handle_Input(InputRequestEnum 
         DLLExportClass::Adjust_Internal_View();
         DLLForceMouseX = x1;
         DLLForceMouseY = y1;
-        _Kbd->MouseQX = x1;
-        _Kbd->MouseQY = y1;
+        Keyboard->MouseQX = x1;
+        Keyboard->MouseQY = y1;
 
         COORDINATE coord = Map.Pixel_To_Coord(x1, y1);
         CELL cell = Coord_Cell(coord);
@@ -3714,8 +3714,8 @@ extern "C" __declspec(dllexport) void __cdecl CNC_Handle_Input(InputRequestEnum 
         DLLExportClass::Adjust_Internal_View();
         DLLForceMouseX = x1;
         DLLForceMouseY = y1;
-        _Kbd->MouseQX = x1;
-        _Kbd->MouseQY = y1;
+        Keyboard->MouseQX = x1;
+        Keyboard->MouseQY = y1;
 
         COORDINATE coord = Map.Pixel_To_Coord(x1, y1);
         CELL cell = Coord_Cell(coord);
@@ -3736,8 +3736,8 @@ extern "C" __declspec(dllexport) void __cdecl CNC_Handle_Input(InputRequestEnum 
         DLLExportClass::Adjust_Internal_View();
         DLLForceMouseX = x1;
         DLLForceMouseY = y1;
-        _Kbd->MouseQX = x1;
-        _Kbd->MouseQY = y1;
+        Keyboard->MouseQX = x1;
+        Keyboard->MouseQY = y1;
 
         COORDINATE coord = Map.Pixel_To_Coord(x1, y1);
         CELL cell = Coord_Cell(coord);
