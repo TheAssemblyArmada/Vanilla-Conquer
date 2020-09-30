@@ -49,6 +49,7 @@
 #include "options.h"
 #include "infantry.h"
 #include "dsound.h"
+#include "common/vqaconfig.h"
 
 #ifdef REMASTER_BUILD
 #define GBUFF_INIT_WIDTH     3072
@@ -123,7 +124,7 @@ extern int NameIDOverride[25];
 #ifdef WIN32
 extern bool GameInFocus;
 extern unsigned char* InterpolatedPalettes[100];
-extern BOOL PalettesRead;
+extern bool PalettesRead;
 extern unsigned PaletteCounter;
 extern int AllDone;
 extern HANDLE hInstance;
@@ -134,8 +135,6 @@ extern GraphicBufferClass HiddenPage;
 extern GraphicBufferClass VisiblePage;
 extern GraphicViewPortClass SeenBuff;
 extern GraphicBufferClass SysMemPage;
-extern LPDIRECTSOUND SoundObject;
-extern LPDIRECTSOUNDBUFFER PrimaryBufferPtr;
 extern int ScreenWidth;
 extern int ScreenHeight;
 extern GraphicBufferClass ModeXBuff;
@@ -310,7 +309,7 @@ extern ChronalVortexClass ChronalVortex;
 extern TTimerClass<SystemTimerClass> TickCount;
 extern bool PassedProximity; // used in display.cpp
 extern HousesType Whom;
-// extern _VQAConfig					AnimControl;
+extern VQAConfig AnimControl;
 extern long SpareTicks;
 extern long PathCount;
 extern long CellCount;

@@ -80,6 +80,8 @@
 #include "mpgset.h"
 #endif
 
+#include "common/vqaconfig.h"
+
 RemapControlType SidebarScheme;
 
 //#include "WolDebug.h"
@@ -1434,14 +1436,16 @@ static void Play_Intro(bool sequenced)
  *   12/20/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
 
-#ifdef WIN32
-#ifdef MOVIE640
-// GraphicBufferClass VQ640(711, 400, (void *)NULL);
+#ifdef DSOUND_BUILD
+extern LPDIRECTSOUND SoundObject;
+extern LPDIRECTSOUNDBUFFER PrimaryBufferPtr;
 #endif
+#ifdef MOVIE640
+GraphicBufferClass VQ640(640, 400, nullptr);
 #endif
 void Anim_Init(void)
 {
-#if (0)
+#ifndef REMASTER_BUILD
 #ifdef WIN32
 
     /* Configure player with INI file */
@@ -1460,7 +1464,7 @@ void Anim_Init(void)
     AnimControl.ImageBuf = (unsigned char*)SysMemPage.Get_Offset();
 #ifdef MOVIE640
     if (IsVQ640) {
-        AnimControl.ImageWidth = 711;
+        AnimControl.ImageWidth = 640;
         AnimControl.ImageHeight = 400;
         AnimControl.ImageBuf = (unsigned char*)VQ640.Get_Offset();
     }
@@ -1470,8 +1474,10 @@ void Anim_Init(void)
     if (SlowPalette) {
         AnimControl.OptionFlags |= VQAOPTF_SLOWPAL;
     }
+#ifdef DSOUND_BUILD
     AnimControl.SoundObject = SoundObject;
     AnimControl.PrimaryBufferPtr = PrimaryBufferPtr;
+#endif
     if (MonoClass::Is_Enabled()) {
         AnimControl.OptionFlags |= VQAOPTF_MONO;
     }
