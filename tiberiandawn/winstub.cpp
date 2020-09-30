@@ -38,6 +38,7 @@
 
 #include "function.h"
 #include "common/tcpip.h"
+#include "common/vqaaudio.h"
 
 void output(short, short)
 {
@@ -115,11 +116,6 @@ VOID* __cdecl Extract_Shape(VOID const* buffer, int shape)
 #ifdef _WIN32
 unsigned long CCFocusMessage = WM_USER + 50; // Private message for receiving application focus
 #endif
-extern void VQA_PauseAudio(void);
-void VQA_ResumeAudio(void)
-{
-    // Temp, needs real VQALib implementing
-}
 
 ThemeType OldTheme = THEME_NONE;
 
@@ -578,44 +574,6 @@ void CCDebugString(const char* string)
 //{
 //	return (0);
 //}
-
-unsigned char* VQPalette;
-long VQNumBytes;
-unsigned long VQSlowpal;
-bool VQPaletteChange = false;
-
-extern "C" {
-void SetPalette(unsigned char* palette, long numbytes, unsigned long slowpal);
-}
-
-void Flag_To_Set_Palette(unsigned char* palette, long numbytes, unsigned long slowpal)
-{
-    VQPalette = palette;
-    VQNumBytes = numbytes;
-    VQSlowpal = slowpal;
-    VQPaletteChange = true;
-}
-
-void Check_VQ_Palette_Set(void)
-{
-    if (VQPaletteChange) {
-        SetPalette(VQPalette, VQNumBytes, VQSlowpal);
-        VQPaletteChange = false;
-    }
-}
-
-void SetPalette(unsigned char* palette, long, unsigned long)
-{
-    for (int i = 0; i < 256 * 3; i++) {
-        *(palette + i) &= 63;
-    }
-    Increase_Palette_Luminance(palette, 15, 15, 15, 63);
-
-    if (PalettesRead) {
-        memcpy(&PaletteInterpolationTable[0][0], InterpolatedPalettes[PaletteCounter++], 65536);
-    }
-    Set_Palette(palette);
-}
 
 /***********************************************************************************************
  * Memory_Error_Handler -- Handle a possibly fatal failure to allocate memory                  *
