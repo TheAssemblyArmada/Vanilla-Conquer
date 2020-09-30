@@ -384,22 +384,7 @@ void Shake_The_Screen(int shakes, HousesType house = HOUSE_NONE);
 /*
 ** INTERPAL.CPP
 */
-#define SIZE_OF_PALETTE 256
-extern "C" unsigned char* InterpolationPalette;
-extern bool InterpolationPaletteChanged;
-extern void Interpolate_2X_Scale(GraphicBufferClass* source, GraphicViewPortClass* dest, char const* palette_file_name);
-void Read_Interpolation_Palette(char const* palette_file_name);
-void Write_Interpolation_Palette(char const* palette_file_name);
-void Increase_Palette_Luminance(unsigned char* InterpolationPalette,
-                                int RedPercentage,
-                                int GreenPercentage,
-                                int BluePercentage,
-                                int cap);
-extern "C" {
-extern unsigned char PaletteInterpolationTable[SIZE_OF_PALETTE][SIZE_OF_PALETTE];
-extern unsigned char* InterpolationPalette;
-void Asm_Create_Palette_Interpolation_Table(void);
-}
+#include "common/interpal.h"
 
 /*
 **	COORD.CPP

@@ -59,7 +59,6 @@ set(TIBDAWN_SRC
     infantry.cpp
     ini.cpp
     init.cpp
-    interpal.cpp
     intro.cpp
     iomap.cpp
     ioobj.cpp

@@ -38,8 +38,16 @@
  *                                                                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
-#include "common/winasm.h"
+#include "interpal.h"
+#include "ccfile.h"
+#include "gbuffer.h"
+#include "winasm.h"
+
+void Show_Mouse();
+void Hide_Mouse();
+
+extern GraphicViewPortClass SeenBuff;
+
 bool InterpolationPaletteChanged = false;
 
 extern "C" {
@@ -348,7 +356,6 @@ void Interpolate_2X_Scale(GraphicBufferClass* source, GraphicViewPortClass* dest
     /*
     ** Call the appropriate assembly language copy routine
     */
-#if (1)
     switch (CopyType) {
     case 0:
         Asm_Interpolate(src_ptr, dest_ptr, source->Get_Height(), src_width, dest_width);
@@ -362,45 +369,7 @@ void Interpolate_2X_Scale(GraphicBufferClass* source, GraphicViewPortClass* dest
         Asm_Interpolate_Line_Interpolate(src_ptr, dest_ptr, source->Get_Height(), src_width, dest_width);
         break;
     }
-#endif
 
-#if (0)
-    //
-    // Copy over the first pixel (upper left).
-    //
-    *dest_ptr = *src_ptr;
-    src_ptr++;
-    dest_ptr++;
-
-    //
-    // Scale copy.
-    //
-    width_counter = 0;
-    while (src_ptr < end_of_source) {
-
-        //
-        // Blend this pixel with the one to the left and place this new color in the dest buffer.
-        //
-        *dest_ptr = PaletteInterpolationTable[(*src_ptr)][(*(src_ptr - 1))];
-        dest_ptr++;
-
-        //
-        // Now place the source pixel into the dest buffer.
-        //
-        *dest_ptr = *src_ptr;
-
-        src_ptr++;
-        dest_ptr++;
-
-        width_counter++;
-        if (width_counter == src_width) {
-            width_counter = 0;
-            last_dest_ptr += dest_width;
-            dest_ptr = last_dest_ptr;
-        }
-    }
-
-#endif
     if (source_locked)
         source->Unlock();
     if (dest_locked)

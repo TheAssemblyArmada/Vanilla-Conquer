@@ -402,12 +402,6 @@ void Assert_Failure(char* expression, int line, char* file);
 extern void Free_Interpolated_Palettes(void);
 extern int Load_Interpolated_Palettes(char const* filename, BOOL add = FALSE);
 extern void Rebuild_Interpolated_Palette(unsigned char* interpal);
-extern void Interpolate_2X_Scale(GraphicBufferClass* source, GraphicViewPortClass* dest, char const* palette_file_name);
-void Increase_Palette_Luminance(unsigned char* palette,
-                                int red_percentage,
-                                int green_percentage,
-                                int blue_percentage,
-                                int cap);
 #endif
 
 /*
@@ -700,22 +694,7 @@ void Parse_INI_File(void);
 /*
 ** INTERPAL.CPP
 */
-#define SIZE_OF_PALETTE 256
-extern "C" unsigned char* InterpolationPalette;
-extern BOOL InterpolationPaletteChanged;
-extern void Interpolate_2X_Scale(GraphicBufferClass* source, GraphicViewPortClass* dest, char const* palette_file_name);
-void Read_Interpolation_Palette(char const* palette_file_name);
-void Write_Interpolation_Palette(char const* palette_file_name);
-void Increase_Palette_Luminance(unsigned char* InterpolationPalette,
-                                int RedPercentage,
-                                int GreenPercentage,
-                                int BluePercentage,
-                                int cap);
-extern "C" {
-extern unsigned char PaletteInterpolationTable[SIZE_OF_PALETTE][SIZE_OF_PALETTE];
-extern unsigned char* InterpolationPalette;
-void __cdecl Asm_Create_Palette_Interpolation_Table(void);
-}
+#include "common/interpal.h"
 
 /*
 ** JSHELL.CPP
