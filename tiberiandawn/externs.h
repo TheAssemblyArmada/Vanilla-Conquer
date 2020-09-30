@@ -49,6 +49,7 @@
 #include "options.h"
 #include "infantry.h"
 #include "jshell.h"
+#include "common/vqaconfig.h"
 
 #ifdef REMASTER_BUILD
 #define GBUFF_INIT_WIDTH     1536
@@ -202,7 +203,7 @@ extern char const* SystemStrings;
 **	Miscellaneous globals.
 */
 extern HousesType Whom;
-// extern _VQAConfig				AnimControl;
+extern VQAConfig AnimControl;
 extern long SpareTicks;
 extern int MonoPage;
 extern unsigned char* OriginalPalette;

@@ -32,6 +32,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/vqaconfig.h"
 
 #ifdef JAPANESE
 bool ForceEnglish = false;
@@ -97,8 +98,7 @@ char VersionText[16];
 **	This is the VQ animation controller structure. It is filled in by reading
 **	the PLAYER.INI and overridden through program control.
 */
-// PG_TO_FIX
-// VQAConfig AnimControl;
+VQAConfig AnimControl;
 
 int PreserveVQAScreen;       // Used for screen mode transition control.
 bool BreakoutAllowed = true; // "true" if aborting of movies is allowed.
@@ -867,7 +867,7 @@ GraphicBufferClass HiddenPage;
 GraphicViewPortClass SeenBuff(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
 GraphicBufferClass ModeXBuff;
 GraphicViewPortClass HidPage(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-GraphicBufferClass SysMemPage(DEFAULT_SCREEN_WIDTH, 200, (void*)NULL);
+GraphicBufferClass SysMemPage(320, 200, (void*)NULL);
 int SoundOn;
 CountDownTimerClass FrameTimer(BT_SYSTEM, 0L);
 CountDownTimerClass DebugTimer(BT_SYSTEM, 0L);

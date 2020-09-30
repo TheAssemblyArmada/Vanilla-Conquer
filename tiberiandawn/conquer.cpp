@@ -66,6 +66,8 @@
 #include <string.h>
 #include <malloc.h>
 #include "common/framelimit.h"
+#include "common/vqatask.h"
+#include "common/vqaloader.h"
 
 #define SHAPE_TRANS 0x40
 
@@ -2055,9 +2057,6 @@ long MixFileHandler(VQAHandle* vqa, long action, void* buffer, long nbytes)
 #endif //(0)
 //#if (0)
 
-// PG_TO_FIX
-typedef void* VQAHandle;
-
 /***********************************************************************************************
  * MixFileHandler -- Handles VQ file access.                                                   *
  *                                                                                             *
@@ -2081,9 +2080,10 @@ typedef void* VQAHandle;
  *=============================================================================================*/
 long MixFileHandler(VQAHandle* vqa, long action, void* buffer, long nbytes)
 {
+#ifdef REMASTER_BUILD
     return 0;
     ;
-#if (0)
+#else
     CCFileClass* file;
     long error;
 
@@ -2138,9 +2138,8 @@ long MixFileHandler(VQAHandle* vqa, long action, void* buffer, long nbytes)
             error = file->Open((char*)buffer, READ);
 
             if (error != -1) {
-                vqa->VQAio = (unsigned long)file;
+                vqa->VQAio = (void*)file;
                 error = 0;
-                file->Set_Buffer_Size(8 * 1024);
             } else {
                 delete file;
                 file = 0;
@@ -2289,7 +2288,7 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn)
 
     Play_Movie_GlyphX(name, theme);
     return;
-#elif 0
+#else
     /*
     ** Don't play movies in editor mode
     */
@@ -3084,17 +3083,15 @@ void Trap_Object(void)
  * HISTORY:                                                                                    *
  *   06/24/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void VQA_PauseAudio(void){};
 void Check_VQ_Palette_Set(void);
 
 long VQ_Call_Back(unsigned char*, long)
 {
-// PG_TO_FIX - 1/2/2019 3:59PM
-#if (0)
+#ifndef REMASTER_BUILD
     int key = 0;
-    if (Keyboard::Check()) {
-        key = Keyboard::Get();
-        Keyboard::Clear();
+    if (Keyboard->Check()) {
+        key = Keyboard->Get();
+        Keyboard->Clear();
     }
 
     Check_VQ_Palette_Set();
@@ -3102,7 +3099,7 @@ long VQ_Call_Back(unsigned char*, long)
     Interpolate_2X_Scale(&SysMemPage, &SeenBuff, NULL);
     // Call_Back();
     if ((BreakoutAllowed || Debug_Flag) && key == KN_ESC) {
-        Keyboard::Clear();
+        Keyboard->Clear();
         Brokeout = true;
         return (true);
     }
@@ -3110,7 +3107,7 @@ long VQ_Call_Back(unsigned char*, long)
     if (!GameInFocus) {
         VQA_PauseAudio();
         while (!GameInFocus) {
-            Keyboard::Check();
+            Keyboard->Check();
             Check_For_Focus_Loss();
         }
     }

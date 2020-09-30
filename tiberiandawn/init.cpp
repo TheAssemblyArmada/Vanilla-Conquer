@@ -43,6 +43,7 @@
 #include "function.h"
 #include "loaddlg.h"
 #include "common/tcpip.h"
+#include "common/vqaconfig.h"
 #include <time.h>
 
 /****************************************
@@ -1559,8 +1560,9 @@ bool Select_Game(bool fade)
  *=============================================================================================*/
 static void Play_Intro(bool for_real)
 {
+#ifdef REMASTER_BUILD
     return; // No game intro movies. - LLL
-
+#else
     bool playright = !Keyboard->Down(KN_LCTRL) || !Keyboard->Down(KN_RCTRL);
     static int _counter = -1;
     static char* _names[] = {
@@ -1696,6 +1698,7 @@ static void Play_Intro(bool for_real)
             _counter = -1;
         }
     }
+#endif
 }
 
 /***********************************************************************************************
@@ -1713,12 +1716,13 @@ static void Play_Intro(bool for_real)
  * HISTORY:                                                                                    *
  *   12/20/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-// extern LPDIRECTSOUND			SoundObject;
-// extern	LPDIRECTSOUNDBUFFER  PrimaryBufferPtr;
+#ifdef DSOUND_BUILD
+extern LPDIRECTSOUND SoundObject;
+extern LPDIRECTSOUNDBUFFER PrimaryBufferPtr;
+#endif
 void Anim_Init(void)
 {
-// PG_TO_FIX
-#if (0)
+#ifndef REMASTER_BUILD
     /* Configure player with INI file */
     VQA_DefaultConfig(&AnimControl);
     //	void const * font = Load_Font(FONT8);
@@ -1747,7 +1751,6 @@ void Anim_Init(void)
     if (SlowPalette) {
         AnimControl.OptionFlags |= VQAOPTF_SLOWPAL;
     }
-#endif
     //	AnimControl.AudioBuf = (unsigned char *)HidPage.Get_Buffer();
     //	AnimControl.AudioBufSize = 32768U;
     // AnimControl.DigiCard = NewConfig.DigitCard;
@@ -1757,10 +1760,10 @@ void Anim_Init(void)
     // AnimControl.AudioRate = 22050;
     //	if (NewConfig.Speed) AnimControl.AudioRate = 11025;
 
-    // PG_TO_FIX
-#if (0)
-    AnimControl.SoundObject = SoundObject;           // Get_Sound_Object();
-    AnimControl.PrimaryBufferPtr = PrimaryBufferPtr; // Get_Primart_Buffer();
+#ifdef DSOUND_BUILD
+    AnimControl.SoundObject = SoundObject;
+    AnimControl.PrimaryBufferPtr = PrimaryBufferPtr;
+#endif
 #endif
 
     // if (!Debug_Quiet && Get_Digi_Handle() != -1) {
