@@ -83,7 +83,6 @@ set(REDALERT_SRC
     inibin.cpp
     inicode.cpp
     init.cpp
-    interpal.cpp
     intro.cpp
     iomap.cpp
     ioobj.cpp
