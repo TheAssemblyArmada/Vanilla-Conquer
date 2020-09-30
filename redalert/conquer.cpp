@@ -107,6 +107,8 @@ TcpipManagerClass Winsock;
 #include <share.h>
 #include "vortex.h"
 #include "common/framelimit.h"
+#include "common/vqatask.h"
+#include "common/vqaloader.h"
 
 #ifdef WOLAPI_INTEGRATION
 //#include "WolDebug.h"
@@ -2536,7 +2538,7 @@ void Go_Editor(bool flag)
 
 #endif
 
-#if (0)
+#ifndef REMASTER_BUILD
 /***********************************************************************************************
  * MixFileHandler -- Handles VQ file access.                                                   *
  *                                                                                             *
@@ -2614,7 +2616,7 @@ long MixFileHandler(VQAHandle* vqa, long action, void* buffer, long nbytes)
             error = file->Open((char*)buffer, READ);
 
             if (error != -1) {
-                vqa->VQAio = (unsigned long)file;
+                vqa->VQAio = (void*)file;
                 error = 0;
             } else {
                 delete file;
@@ -2670,7 +2672,7 @@ void Rebuild_Interpolated_Palette(unsigned char* interpal)
 }
 
 unsigned char* InterpolatedPalettes[100];
-BOOL PalettesRead;
+bool PalettesRead;
 unsigned PaletteCounter;
 
 /***********************************************************************************************
@@ -2788,7 +2790,7 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
 
     Play_Movie_GlyphX(name, theme, immediate);
     return;
-#elif 0 // Needs VQALib
+#else
 #ifdef MPEGMOVIE
     // theme = theme;
     // clrscrn = clrscrn;
@@ -3824,15 +3826,15 @@ TechnoTypeClass const* Fetch_Techno_Type(RTTIType type, int id)
  *   06/24/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
 #ifdef WIN32
-void VQA_PauseAudio(void){};
 void Check_VQ_Palette_Set(void);
 
 extern GraphicBufferClass VQ640;
 extern bool IsVQ640;
 long VQ_Call_Back(unsigned char*, long)
 {
+#ifdef REMASTER_BUILD
     return 0;
-#if (0) // PG
+#else
     int key = 0;
     if (Keyboard->Check()) {
         key = Keyboard->Get();

@@ -178,7 +178,7 @@ fixed EngineerCaptureLevel = 0x40; // Building damage level before engineer can 
 #ifdef WIN32
 unsigned short Hard_Error_Occured = 0;
 WWMouseClass* WWMouse = NULL;
-GraphicBufferClass SysMemPage(DEFAULT_SCREEN_WIDTH, 200, (void*)NULL);
+GraphicBufferClass SysMemPage(320, 200, (void*)NULL);
 int ScreenWidth = GBUFF_INIT_WIDTH;
 int ScreenHeight = GBUFF_INIT_HEIGHT;
 GraphicBufferClass ModeXBuff;
@@ -287,7 +287,7 @@ SelectedObjectsType CurrentObject;
 **	This is the VQ animation controller structure. It is filled in by reading
 **	the PLAYER.INI and overridden through program control.
 */
-// VQAConfig AnimControl;
+VQAConfig AnimControl;
 
 int PreserveVQAScreen;       // Used for screen mode transition control.
 bool BreakoutAllowed = true; // "true" if aborting of movies is allowed.
