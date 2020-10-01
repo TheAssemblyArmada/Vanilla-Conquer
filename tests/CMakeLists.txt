@@ -1,5 +1,5 @@
 add_custom_target(tests)
-add_dependencies(tests test_miscasm test_face test_rect test_fading test_lcw test_xordelta test_irandom test_fatpixel test_tobuff test_drawline test_putpixel)
+add_dependencies(tests test_miscasm test_face test_rect test_fading test_lcw test_xordelta test_irandom test_fatpixel test_tobuff test_drawline test_putpixel test_drawbuff)
 
 add_executable(test_miscasm miscasm.cpp)
 target_include_directories(test_miscasm PUBLIC .. ../common)
@@ -66,3 +66,9 @@ target_include_directories(test_putpixel PUBLIC .. ../common)
 target_compile_definitions(test_putpixel PUBLIC TRUE_FALSE_DEFINED ENGLISH $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE WINSOCK_IPX)
 target_link_libraries(test_putpixel PUBLIC commonv ${STATIC_LIBS})
 add_test(NAME putpixel COMMAND ${TARGET_SYSTEM_EMULATOR} $<TARGET_FILE:test_putpixel>)
+
+add_executable(test_drawbuff drawbuff.cpp ../tiberiandawn/stamp.asm ../tiberiandawn/miscasma.asm)
+target_include_directories(test_drawbuff PUBLIC .. ../common)
+target_compile_definitions(test_drawbuff PUBLIC TRUE_FALSE_DEFINED ENGLISH $<$<CONFIG:DEBUG>:_DEBUG> _WINDOWS _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE WINSOCK_IPX)
+target_link_libraries(test_drawbuff PUBLIC commonv ${STATIC_LIBS})
+add_test(NAME drawbuff COMMAND ${TARGET_SYSTEM_EMULATOR} $<TARGET_FILE:test_drawbuff>)
