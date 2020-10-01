@@ -32,8 +32,8 @@ externdef C Buffer_Put_Pixel:near
 externdef C Buffer_Get_Pixel:near
 externdef C Clip_Rect:near
 externdef C Confine_Rect:near
-ENDIF
 externdef C Buffer_To_Page:near
+ENDIF
 
 .code
 
@@ -2346,8 +2346,6 @@ Confine_Rect proc C x:dword, y:dword, w:dword, h:dword, widt:dword, height:dword
             ret
 Confine_Rect endp
 
-ENDIF
-
 ;***************************************************************************
 ;**   C O N F I D E N T I A L --- W E S T W O O D   A S S O C I A T E S   **
 ;***************************************************************************
@@ -2605,5 +2603,7 @@ Buffer_To_Page proc C x_pixel:dword, y_pixel:dword, pixel_width:dword, pixel_hei
             pop ebx
             ret
 Buffer_To_Page endp
+
+ENDIF
 
 end
