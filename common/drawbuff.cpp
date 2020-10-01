@@ -69,4 +69,16 @@ void Buffer_Fill_Rect(void* thisptr, int sx, int sy, int dx, int dy, unsigned ch
         offset += (vp.Get_Pitch() + vp.Get_XAdd() + vp.Get_Width());
     }
 }
+
+void Buffer_Clear(void* thisptr, unsigned char color)
+{
+    GraphicViewPortClass& vp = *static_cast<GraphicViewPortClass*>(thisptr);
+    unsigned char* offset = reinterpret_cast<unsigned char*>(vp.Get_Offset());
+
+    for (int h = 0; h < vp.Get_Height(); ++h) {
+        memset(offset, color, vp.Get_Width());
+        offset += (vp.Get_Pitch() + vp.Get_XAdd() + vp.Get_Width());
+    }
+}
+
 #endif
