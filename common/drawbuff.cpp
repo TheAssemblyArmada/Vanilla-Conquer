@@ -128,4 +128,55 @@ void Buffer_Remap(void* thisptr, int sx, int sy, int width, int height, void* re
     }
 }
 
+long Buffer_To_Page(int x, int y, int w, int h, void* buffer, void* view)
+{
+    GraphicViewPortClass& vp = *static_cast<GraphicViewPortClass*>(view);
+
+    int xstart = x;
+    int ystart = y;
+    int xend = x + w - 1;
+    int yend = y + h - 1;
+
+    int xoffset = 0;
+    int yoffset = 0;
+
+    if (buffer == nullptr) {
+        return 0;
+    }
+
+    // If we aren't drawing within the viewport, return
+    if (xstart >= vp.Get_Width() || ystart >= vp.Get_Height() || xend < 0 || yend < 0) {
+        return 0;
+    }
+
+    // Clipping
+    if (xstart < 0) {
+        xoffset = -xstart;
+        xstart = 0;
+    }
+
+    if (ystart < 0) {
+        yoffset += h * (-ystart);
+        ystart = 0;
+    }
+
+    xend = std::min(xend, vp.Get_Width() - 1);
+    yend = std::min(yend, vp.Get_Height() - 1);
+
+    int pitch = vp.Get_Pitch() + vp.Get_Width() + vp.Get_XAdd();
+    unsigned char* dst = y * pitch + x + reinterpret_cast<unsigned char*>(vp.Get_Offset());
+    unsigned char* src = xoffset + w * yoffset + static_cast<unsigned char*>(buffer);
+    int lines = yend - ystart + 1;
+    int blit_width = xend - xstart + 1;
+
+    // blit
+    while (lines--) {
+        memcpy(dst, src, blit_width);
+        src += w;
+        dst += pitch;
+    }
+
+    return 0;
+}
+
 #endif
