@@ -22,8 +22,8 @@ include graphicviewport.inc
 
 IFNDEF NOASM
 externdef C Buffer_Draw_Line:near
-ENDIF
 externdef C Buffer_Fill_Rect:near
+ENDIF
 externdef C Buffer_Clear:near
 IFNDEF NOASM
 externdef C Linear_Blit_To_Linear_ASM:near
@@ -40,6 +40,14 @@ ENDIF
 externdef C Buffer_To_Page:near
 
 .code
+
+;******************************************************************************
+; Much testing was done to determine that only when there are 14 or more bytes
+; being copied does it speed the time it takes to do copies in this algorithm.
+; For this reason and because 1 and 2 byte copies crash, is the special case
+; used.  SKB 4/21/94.  Tested on 486 66mhz.  Copied by PWG 6/7/04.
+
+OPTIMAL_BYTE_COPY equ 14
 
 IFNDEF NOASM
 ;***************************************************************************
@@ -407,7 +415,6 @@ Buffer_Draw_Line proc C this_object:dword, x1_pixel:dword, y1_pixel:dword, x2_pi
     pop ebx
     ret
 Buffer_Draw_Line endp
-ENDIF
 
 ;***************************************************************************
 ;* GVPC::FILL_RECT -- Fills a rectangular region of a graphic view port	   *
@@ -426,14 +433,6 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   06/07/1994 PWG : Created.                                             *
 ;*=========================================================================*
-
-;******************************************************************************
-; Much testing was done to determine that only when there are 14 or more bytes
-; being copied does it speed the time it takes to do copies in this algorithm.
-; For this reason and because 1 and 2 byte copies crash, is the special case
-; used.  SKB 4/21/94.  Tested on 486 66mhz.  Copied by PWG 6/7/04.
-
-OPTIMAL_BYTE_COPY equ 14
 
 ;void __cdecl Buffer_Fill_Rect(void* thisptr, int sx, int sy, int dx, int dy, unsigned char color)
 Buffer_Fill_Rect proc C this_object:dword, x1_pixel:dword, y1_pixel:dword, x2_pixel:dword, y2_pixel:dword, color:byte
@@ -644,7 +643,7 @@ Buffer_Fill_Rect proc C this_object:dword, x1_pixel:dword, y1_pixel:dword, x2_pi
         pop ebx
         ret
 Buffer_Fill_Rect endp
-
+ENDIF
 ;***************************************************************************
 ;* VVPC::CLEAR -- Clears a virtual viewport instance                       *
 ;*                                                                         *
