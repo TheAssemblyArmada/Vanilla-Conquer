@@ -81,4 +81,51 @@ void Buffer_Clear(void* thisptr, unsigned char color)
     }
 }
 
+void Buffer_Remap(void* thisptr, int sx, int sy, int width, int height, void* remap)
+{
+    GraphicViewPortClass& vp = *static_cast<GraphicViewPortClass*>(thisptr);
+
+    if (remap == nullptr) {
+        return;
+    }
+
+    int xstart = sx;
+    int ystart = sy;
+    int xend = sx + width - 1;
+    int yend = sy + height - 1;
+
+    // If we aren't drawing within the viewport, return
+    if (xstart >= vp.Get_Width() || ystart >= vp.Get_Height() || xend < 0 || yend < 0) {
+        return;
+    }
+
+    // Clipping
+    if (xstart < 0) {
+        xstart = 0;
+    }
+
+    if (ystart < 0) {
+        ystart = 0;
+    }
+
+    xend = std::min(xend, vp.Get_Width() - 1);
+    yend = std::min(yend, vp.Get_Height() - 1);
+
+    // Setup parameters for blit
+    unsigned char* offset = ystart * (vp.Get_Pitch() + vp.Get_XAdd() + vp.Get_Width()) + xstart
+                            + reinterpret_cast<unsigned char*>(vp.Get_Offset());
+    int lines = yend - ystart + 1;
+    int blit_width = xend - xstart + 1;
+    unsigned char* fading_table = static_cast<unsigned char*>(remap);
+
+    // remap blit
+    while (lines--) {
+        for (int i = 0; i < blit_width; ++i) {
+            offset[i] = fading_table[offset[i]];
+        }
+
+        offset += (vp.Get_Pitch() + vp.Get_XAdd() + vp.Get_Width());
+    }
+}
+
 #endif
