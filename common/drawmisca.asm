@@ -23,9 +23,7 @@ include graphicviewport.inc
 IFNDEF NOASM
 externdef C Buffer_Draw_Line:near
 externdef C Buffer_Fill_Rect:near
-ENDIF
 externdef C Buffer_Clear:near
-IFNDEF NOASM
 externdef C Linear_Blit_To_Linear_ASM:near
 externdef C Linear_Scale_To_Linear:near
 ENDIF
@@ -643,7 +641,7 @@ Buffer_Fill_Rect proc C this_object:dword, x1_pixel:dword, y1_pixel:dword, x2_pi
         pop ebx
         ret
 Buffer_Fill_Rect endp
-ENDIF
+
 ;***************************************************************************
 ;* VVPC::CLEAR -- Clears a virtual viewport instance                       *
 ;*                                                                         *
@@ -733,8 +731,6 @@ Buffer_Clear proc C this_object:dword, color:byte
         pop ebx
         ret
 Buffer_Clear endp
-
-IFNDEF NOASM
 
 ;BOOL __cdecl Linear_Blit_To_Linear_ASM(void* this_object, void* dest, int x_pixel, int y_pixel, int dest_x0, int dest_y0, int pixel_width, int pixel_height, BOOL trans)
 Linear_Blit_To_Linear_ASM proc C this_object:dword, dest:dword, x_pixel:dword, y_pixel:dword, dest_x0:dword, dest_y0:dword, pixel_width:dword, pixel_height:dword, trans:dword
