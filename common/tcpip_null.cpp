@@ -62,7 +62,7 @@
 bool Server; // Is this player acting as client or server
 /* these are temporary to allow linking, this manager class is not used at the moment -hifi */
 char PlanetWestwoodIPAddress[IP_ADDRESS_MAX];
-long PlanetWestwoodPortNumber;
+unsigned short PlanetWestwoodPortNumber;
 bool PlanetWestwoodIsHost;
 
 TcpipManagerClass Winsock; // The object for interfacing with Winsock
