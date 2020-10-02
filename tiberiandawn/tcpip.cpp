@@ -60,7 +60,7 @@
 
 /* these are temporary to allow linking, this manager class is not used at the moment -hifi */
 char PlanetWestwoodIPAddress[IP_ADDRESS_MAX];
-long PlanetWestwoodPortNumber;
+unsigned short PlanetWestwoodPortNumber;
 bool PlanetWestwoodIsHost;
 
 /*
