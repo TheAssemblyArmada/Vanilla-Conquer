@@ -29,7 +29,7 @@ void Convert_RGB_To_HSV(unsigned int r,
     ** Set the value (brightness) to match the brightest color gun.
     */
     *v = (red > green) ? red : green;
-    if (blue > *v)
+    if ((unsigned)blue > *v)
         *v = blue;
 
     /*
