@@ -91,7 +91,7 @@ int Convert_HMI_To_Direct_Sound_Volume(int vol)
 
     // Simple clamping. 10000.99 would clamp to 9999.99.
     // Flip the value as we need a inverted value for DirectSound.
-    return -(v + -1.0);
+    return int(-(v + -1.0));
 }
 
 void Maintenance_Callback()

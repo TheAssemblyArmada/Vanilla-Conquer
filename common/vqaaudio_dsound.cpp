@@ -534,7 +534,7 @@ unsigned VQA_GetTime(VQAHandle* handle)
     case VQA_AUDIO_TIMER_METHOD_DOS: {
         struct timeb mytime;
         ftime(&mytime);
-        result_time = (TickOffset + 60 * (mytime.millitm + 1000 * mytime.time) / 1000);
+        result_time = unsigned(TickOffset + 60 * (mytime.millitm + 1000 * mytime.time) / 1000);
         break;
     }
 
