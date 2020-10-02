@@ -44,14 +44,14 @@ class MonoClass
     */
     typedef struct
     {
-        char UpperLeft;
-        char TopEdge;
-        char UpperRight;
-        char RightEdge;
-        char BottomRight;
-        char BottomEdge;
-        char BottomLeft;
-        char LeftEdge;
+        unsigned char UpperLeft;
+        unsigned char TopEdge;
+        unsigned char UpperRight;
+        unsigned char RightEdge;
+        unsigned char BottomRight;
+        unsigned char BottomEdge;
+        unsigned char BottomLeft;
+        unsigned char LeftEdge;
     } BoxDataType;
 
     /*
@@ -63,8 +63,8 @@ class MonoClass
     */
     typedef struct
     {
-        char Character; // Character to display.
-        char Attribute; // Attribute.
+        unsigned char Character; // Character to display.
+        unsigned char Attribute; // Attribute.
     } CellType;
 
     /*
