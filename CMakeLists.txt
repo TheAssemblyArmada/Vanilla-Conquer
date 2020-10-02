@@ -14,23 +14,46 @@ endif()
 
 project(VanillaConquer)
 
+# For now build the dll files by default only for windows while there is only the proprietary GlyphX frontend for them.
+if(WIN32)
+    set(DEFAULT_REMASTER ON)
+else()
+    set(DEFAULT_REMASTER OFF)
+endif()
+
+option(BUILD_REMASTERTD "Build Tiberian Dawn remaster dll." ${DEFAULT_REMASTER})
+option(BUILD_REMASTERRA "Build Red Alert remaster dll." ${DEFAULT_REMASTER})
+option(BUILD_VANILLATD "Build Tiberian Dawn executable." ON)
+option(BUILD_VANILLARA "Build Red Alert executable." ON)
+option(MAP_EDITORTD "Include internal scenario editor in Tiberian Dawn build." OFF)
+option(MAP_EDITORRA "Include internal scenario editor in Red Alert build." OFF)
+option(NETWORKING "Enable network play." ON)
+option(DSOUND "Enable DirectSound audio." ON)
+option(DDRAW "Enable DirectDraw video backend." ON)
+option(USE_ASM "Use x86 assembly optimizations." OFF)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 if(MSVC)
-    enable_language(ASM_MASM)
-    set(CMAKE_ASM_MASM_FLAGS "/Zm /Cp /safeseh" CACHE INTERNAL "MASM flags")
+    if(USE_ASM)
+        enable_language(ASM_MASM)
+        set(CMAKE_ASM_MASM_FLAGS "/Zm /Cp /safeseh" CACHE INTERNAL "MASM flags")
+    endif()
+
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zp1")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Zp1")
     add_definitions(-DWINDOWS_IGNORE_PACKING_MISMATCH)
 else()
-    set(ASM_DIALECT "_JWASM")
-    enable_language(ASM_JWASM)
+    if(USE_ASM)
+        set(ASM_DIALECT "_JWASM")
+        enable_language(ASM_JWASM)
 
-    # use native object format and disable cdecl decorations for non-Windows
-    if(NOT WIN32)
-        set(CMAKE_ASM_JWASM_FLAGS "-elf -zcw")
-    else()
-        set(CMAKE_ASM_JWASM_FLAGS "-coff")
+        # use native object format and disable cdecl decorations for non-Windows
+        if(NOT WIN32)
+            set(CMAKE_ASM_JWASM_FLAGS "-elf -zcw")
+        else()
+            set(CMAKE_ASM_JWASM_FLAGS "-coff")
+        endif()
     endif()
 
     set(CMAKE_CXX_FLAGS_DEBUG "-gstabs3")
@@ -64,24 +87,6 @@ endif()
 
 find_package(ClangFormat)
 include(ClangFormat)
-
-# For now build the dll files by default only for windows while there is only the proprietary GlyphX frontend for them.
-if(WIN32)
-    set(DEFAULT_REMASTER ON)
-else()
-    set(DEFAULT_REMASTER OFF)
-endif()
-
-option(BUILD_REMASTERTD "Build Tiberian Dawn remaster dll." ${DEFAULT_REMASTER})
-option(BUILD_REMASTERRA "Build Red Alert remaster dll." ${DEFAULT_REMASTER})
-option(BUILD_VANILLATD "Build Tiberian Dawn executable." ON)
-option(BUILD_VANILLARA "Build Red Alert executable." ON)
-option(MAP_EDITORTD "Include internal scenario editor in Tiberian Dawn build." OFF)
-option(MAP_EDITORRA "Include internal scenario editor in Red Alert build." OFF)
-option(NETWORKING "Enable network play." ON)
-option(DSOUND "Enable DirectSound audio." ON)
-option(DDRAW "Enable DirectDraw video backend." ON)
-option(USE_ASM "Use x86 assembly optimizations." ON)
 
 if(NOT USE_ASM)
     add_definitions(-DNOASM)

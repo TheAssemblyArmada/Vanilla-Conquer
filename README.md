@@ -41,13 +41,16 @@ This will build all available targets to the build directory.
 
 #### Requirements
 
-Recent enough MinGW-w64 packages, CMake and [JWasm](https://www.japheth.de/JWasm.html). On Ubuntu you can install the first two with:
+- MinGW-w64
+- CMake
+
+On Debian/Ubuntu you can install the build requirements as follows:
 
 ```
 sudo apt install mingw-w64 cmake
 ```
 
-JWasm needs to be compiled from sources and added to `$PATH`.
+If you want to build with x86 assembly, [JWasm](https://www.japheth.de/JWasm.html) needs to be compiled from sources and added to `$PATH`.
 
 #### Building
 
