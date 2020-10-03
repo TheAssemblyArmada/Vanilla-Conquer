@@ -116,7 +116,7 @@ void GraphicBufferClass::Init(int w, int h, void* buffer, long size, GBC_Enum fl
             Buffer = new char[Size]; // otherwise allocate it and
             Allocated = true;        //     mark it system alloced
         }
-        Offset = (long)Buffer; // Get offset to the buffer
+        Offset = (intptr_t)Buffer; // Get offset to the buffer
         IsHardware = false;
     }
 
@@ -295,7 +295,7 @@ bool GraphicBufferClass::Lock()
     bool result = false;
 
     if (VideoSurfacePtr->LockWait()) {
-        Offset = (unsigned long)VideoSurfacePtr->GetData();
+        Offset = (intptr_t)VideoSurfacePtr->GetData();
         Pitch = VideoSurfacePtr->GetPitch();
         Pitch -= Width;
         LockCount++;  // increment count so we can track if
