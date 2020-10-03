@@ -5161,7 +5161,7 @@ COORDINATE HouseClass::Find_Build_Location(BuildingClass* building) const
     **	Could not build in preferred zone, so try building in any zone.
     */
     static ZoneType _zones[] = {ZONE_CORE, ZONE_NORTH, ZONE_SOUTH, ZONE_EAST, ZONE_WEST};
-    int start = Random_Pick(0U, ARRAY_SIZE(_zones) - 1);
+    int start = Random_Pick(0U, (unsigned)ARRAY_SIZE(_zones) - 1);
     for (int zz = 0; zz < ARRAY_SIZE(_zones); zz++) {
         ZoneType tryzone = _zones[(zz + start) % ARRAY_SIZE(_zones)];
         zcell = Find_Cell_In_Zone(building, tryzone);
