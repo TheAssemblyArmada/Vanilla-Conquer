@@ -36,6 +36,7 @@
 #define CRC_H
 
 #include <stdlib.h>
+#include <stdint.h>
 
 /*
 **	This is a CRC engine class. It will process submitted data and generate a CRC from it.
@@ -48,7 +49,7 @@ class CRCEngine
 {
 public:
     // Constructor for CRC engine (it can have an override initial CRC value).
-    CRCEngine(long initial = 0)
+    CRCEngine(int32_t initial = 0)
         : CRC(initial)
         , Index(0)
     {
@@ -56,7 +57,7 @@ public:
     };
 
     // Fetches CRC value.
-    long operator()(void) const
+    int32_t operator()(void) const
     {
         return (Value());
     };
@@ -65,10 +66,10 @@ public:
     void operator()(char datum);
 
     // Submits an arbitrary buffer to the CRC accumulator.
-    long operator()(void const* buffer, int length);
+    int32_t operator()(void const* buffer, long length);
 
     // Implicit conversion operator so this object appears like a 'long integer'.
-    operator long(void) const
+    operator int32_t(void) const
     {
         return (Value());
     };
@@ -79,12 +80,12 @@ protected:
         return (Index != 0);
     };
 
-    inline unsigned long lrotl(unsigned long value, int shift) const
+    inline uint32_t lrotl(uint32_t value, int shift) const
     {
-        return (value << shift) | (value >> (sizeof(unsigned long) * 8 - shift));
+        return (value << shift) | (value >> (sizeof(uint32_t) * 8 - shift));
     }
 
-    long Value(void) const
+    int32_t Value(void) const
     {
         if (Buffer_Needs_Data()) {
             return (lrotl(CRC, 1) + StagingBuffer.Composite);
@@ -96,7 +97,7 @@ protected:
     **	Current accumulator of the CRC value. This value doesn't take into
     **	consideration any pending data in the staging buffer.
     */
-    long CRC;
+    int32_t CRC;
 
     /*
     **	This is the sub index into the staging buffer used to keep track of
@@ -111,11 +112,11 @@ protected:
     */
     union
     {
-        long Composite;
-        char Buffer[sizeof(long)];
+        int32_t Composite;
+        char Buffer[sizeof(int32_t)];
     } StagingBuffer;
 };
 
-long Calculate_CRC(void* buffer, long length);
+int32_t Calculate_CRC(void* buffer, long length);
 
 #endif
