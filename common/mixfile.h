@@ -62,11 +62,12 @@ public:
     Offset(char const* filename, void** realptr = 0, MixFileClass** mixfile = 0, long* offset = 0, long* size = 0);
     static void const* Retrieve(char const* filename);
 
+#pragma pack(push, 4)
     struct SubBlock
     {
-        long CRC;    // CRC code for embedded file.
-        long Offset; // Offset from start of data section.
-        long Size;   // Size of data subfile.
+        int32_t CRC;    // CRC code for embedded file.
+        int32_t Offset; // Offset from start of data section.
+        int32_t Size;   // Size of data subfile.
 
         int operator<(SubBlock& two) const
         {
@@ -81,6 +82,7 @@ public:
             return (CRC == two.CRC);
         };
     };
+#pragma pack(pop)
 
 private:
     static MixFileClass* Finder(char const* filename);
@@ -106,15 +108,17 @@ private:
     */
     unsigned IsAllocated : 1;
 
-    /*
+/*
     **	This is the initial file header. It tells how many files are embedded
     **	within this mixfile and the total size of all embedded files.
     */
+#pragma pack(push, 2)
     typedef struct
     {
-        short count;
-        long size;
+        int16_t count;
+        int32_t size;
     } FileHeader;
+#pragma pack(pop)
 
     /*
     **	The number of files within the mixfile.
@@ -275,11 +279,13 @@ MixFileClass<T>::MixFileClass(char const* filename)
     **	Stuctures used to hold the various file headers.
     */
     FileHeader fileheader;
+#pragma pack(push, 2)
     struct
     {
-        short First;  // Always zero for extended mixfile format.
-        short Second; // Bitfield of extensions to this mixfile.
+        int16_t First;  // Always zero for extended mixfile format.
+        int16_t Second; // Bitfield of extensions to this mixfile.
     } alternate;
+#pragma pack(pop)
 
     /*
     **	Fetch the first bit of the file. From this bit, it is possible to detect
@@ -389,8 +395,8 @@ MixFileClass<T>::MixFileClass(char const* filename, PKey const* key)
     FileHeader fileheader;
     struct
     {
-        short First;  // Always zero for extended mixfile format.
-        short Second; // Bitfield of extensions to this mixfile.
+        int16_t First;  // Always zero for extended mixfile format.
+        int16_t Second; // Bitfield of extensions to this mixfile.
     } alternate;
 
     /*
@@ -675,9 +681,9 @@ template <class T> void MixFileClass<T>::Free(void)
 
 inline int compfunc(void const* ptr1, void const* ptr2)
 {
-    if (*(long const*)ptr1 < *(long const*)ptr2)
+    if (*(int32_t const*)ptr1 < *(int32_t const*)ptr2)
         return (-1);
-    if (*(long const*)ptr1 > *(long const*)ptr2)
+    if (*(int32_t const*)ptr1 > *(int32_t const*)ptr2)
         return (1);
     return (0);
 }
@@ -730,7 +736,7 @@ bool MixFileClass<T>::Offset(char const* filename, void** realptr, MixFileClass*
     char filename_upper[_MAX_PATH];
     strcpy(filename_upper, filename);
     strupr(filename_upper);
-    long crc = Calculate_CRC(strupr(filename_upper), strlen(filename_upper));
+    int32_t crc = Calculate_CRC(strupr(filename_upper), strlen(filename_upper));
     SubBlock key;
     key.CRC = crc;
 
