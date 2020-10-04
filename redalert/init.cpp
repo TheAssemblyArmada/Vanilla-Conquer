@@ -2123,10 +2123,10 @@ long Obfuscate(char const* string)
         val2 ^= s3;
         val3 ^= s2;
 
-        buffer[index] = val1;
-        buffer[index + 1] = val2;
-        buffer[index + 2] = val3;
-        buffer[index + 3] = val4;
+        buffer[index] = (char)val1;
+        buffer[index + 1] = (char)val2;
+        buffer[index + 2] = (char)val3;
+        buffer[index + 3] = (char)val4;
     }
 
     /*
@@ -2168,7 +2168,7 @@ void Init_Random(void)
     */
     SYSTEMTIME t;
     GetSystemTime(&t);
-    CryptRandom.Seed_Byte(t.wMilliseconds);
+    CryptRandom.Seed_Byte((char)t.wMilliseconds);
     CryptRandom.Seed_Bit(t.wSecond);
     CryptRandom.Seed_Bit(t.wSecond >> 1);
     CryptRandom.Seed_Bit(t.wSecond >> 2);
@@ -2239,7 +2239,7 @@ void Init_Random(void)
         if (CustomSeed != 0) {
             Seed = CustomSeed;
         } else {
-            srand(time(NULL));
+            srand((unsigned)time(NULL));
             Seed = rand();
         }
     }
