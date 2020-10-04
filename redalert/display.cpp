@@ -1764,12 +1764,12 @@ bool DisplayClass::Coord_To_Pixel(COORDINATE coord, int& x, int& y) const
         int xoff = Pixel_To_Lepton(Lepton_To_Pixel(Coord_X(coord)));
 
         xoff = (xoff + EDGE_ZONE) - xtac;
-        if ((unsigned)xoff <= TacLeptonWidth + EDGE_ZONE * 2) {
+        if ((unsigned)xoff <= (unsigned)(TacLeptonWidth + EDGE_ZONE * 2)) {
             int ytac = Pixel_To_Lepton(Lepton_To_Pixel(Coord_Y(TacticalCoord)));
             int yoff = Pixel_To_Lepton(Lepton_To_Pixel(Coord_Y(coord)));
 
             yoff = (yoff + EDGE_ZONE) - ytac;
-            if ((unsigned)yoff <= TacLeptonHeight + EDGE_ZONE * 2) {
+            if ((unsigned)yoff <= (unsigned)(TacLeptonHeight + EDGE_ZONE * 2)) {
                 x = Lepton_To_Pixel(xoff) - CELL_PIXEL_W * 2;
                 y = Lepton_To_Pixel(yoff) - CELL_PIXEL_H * 2;
                 return (true);
