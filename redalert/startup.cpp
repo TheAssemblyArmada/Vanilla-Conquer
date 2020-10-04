@@ -773,7 +773,7 @@ bool InitDDraw(void)
         unsigned video_memory = Get_Free_Video_Memory();
         unsigned video_capabilities = Get_Video_Hardware_Capabilities();
 
-        if (video_memory < ScreenWidth * ScreenHeight || (!(video_capabilities & VIDEO_BLITTER))
+        if (video_memory < (unsigned)(ScreenWidth * ScreenHeight) || (!(video_capabilities & VIDEO_BLITTER))
             || (video_capabilities & VIDEO_NO_HARDWARE_ASSIST) || !VideoBackBufferAllowed) {
             HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
         } else {
