@@ -36,6 +36,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
+#include <stdint.h>
 
 typedef enum
 {
@@ -641,6 +642,12 @@ private:
     */
     int Head;
     int Tail;
+
+    /*
+    ** Large bit array to hold which keys are held down
+    */
+    uint8_t DownState[(UINT16_MAX / 8) + 1];
+    int DownSkip;
 };
 
 #endif

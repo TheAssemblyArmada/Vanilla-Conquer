@@ -52,6 +52,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "wwkeyboard.h"
+#include "miscasm.h"
 #include <string.h>
 
 #define ARRAY_SIZE(x) int(sizeof(x) / sizeof(x[0]))
@@ -71,8 +72,10 @@ WWKeyboardClass::WWKeyboardClass(void)
     , MouseQY(0)
     , Head(0)
     , Tail(0)
+    , DownSkip(0)
 {
     memset(KeyState, '\0', sizeof(KeyState));
+    memset(DownState, '\0', sizeof(DownState));
 }
 
 /***********************************************************************************************
@@ -181,7 +184,6 @@ bool WWKeyboardClass::Put(unsigned short key)
     return (false);
 }
 
-#ifdef _WIN32
 /***********************************************************************************************
  * WWKeyboardClass::Put_Key_Message -- Translates and inserts wParam into Keyboard Buffer      *
  *                                                                                             *
@@ -203,15 +205,13 @@ bool WWKeyboardClass::Put_Key_Message(unsigned short vk_key, bool release)
     ** would be incompatible with the dos version.
     */
     if (!Is_Mouse_Key(vk_key)) {
-        if (((GetKeyState(VK_SHIFT) & 0x8000) != 0) || ((GetKeyState(VK_CAPITAL) & 0x0008) != 0)
-            || ((GetKeyState(VK_NUMLOCK) & 0x0008) != 0)) {
-
+        if (Down(VK_SHIFT) || Down(VK_CAPITAL) || Down(VK_NUMLOCK)) {
             vk_key |= WWKEY_SHIFT_BIT;
         }
-        if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) {
+        if (Down(VK_CONTROL)) {
             vk_key |= WWKEY_CTRL_BIT;
         }
-        if ((GetKeyState(VK_MENU) & 0x8000) != 0) {
+        if (Down(VK_MENU)) {
             vk_key |= WWKEY_ALT_BIT;
         }
     }
@@ -226,7 +226,6 @@ bool WWKeyboardClass::Put_Key_Message(unsigned short vk_key, bool release)
     */
     return (Put(vk_key));
 }
-#endif
 
 /***********************************************************************************************
  * WWKeyboardClass::Put_Mouse_Message -- Stores a mouse type message into the keyboard buffer. *
@@ -349,11 +348,7 @@ KeyASCIIType WWKeyboardClass::To_ASCII(unsigned short key)
  *=============================================================================================*/
 bool WWKeyboardClass::Down(unsigned short key)
 {
-#ifdef _WIN32
-    return (GetAsyncKeyState(key & 0xFF) == 0 ? false : true);
-#else
-    return false;
-#endif
+    return Get_Bit(DownState, key);
 }
 
 /***********************************************************************************************
@@ -430,6 +425,20 @@ bool WWKeyboardClass::Put_Element(unsigned short val)
         int temp = (Tail + 1) % ARRAY_SIZE(Buffer);
         Buffer[Tail] = val;
         Tail = temp;
+
+        /* set cached down state for given key, remove all bits */
+        if (DownSkip == 0) {
+            bool isDown = !(val & KN_RLSE_BIT);
+            val &= ~(KN_SHIFT_BIT|KN_CTRL_BIT|KN_ALT_BIT|KN_RLSE_BIT|KN_BUTTON);
+            Set_Bit(DownState, val, isDown);
+
+            if (Is_Mouse_Key(val)) {
+                DownSkip = 2;
+            }
+        } else {
+            DownSkip--;
+        }
+
         return (true);
     }
     return (false);
@@ -541,6 +550,11 @@ void WWKeyboardClass::Clear(void)
     */
     Fill_Buffer_From_System();
     Head = Tail;
+
+    /*
+    **  Reset all keys to not being held down to prevent stuck modifiers.
+    */
+    memset(DownState, '\0', sizeof(DownState));
 }
 
 /***********************************************************************************************
