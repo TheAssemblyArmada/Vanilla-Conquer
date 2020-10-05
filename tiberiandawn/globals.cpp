@@ -319,7 +319,7 @@ unsigned BuildLevel = 3; // Buildable level (1 = simplest)
 ** This value is computed every time a new scenario is loaded; it's a
 ** CRC of the INI and binary map files.
 */
-unsigned long ScenarioCRC;
+uint32_t ScenarioCRC;
 
 /***************************************************************************
 **	The various tutor and dialog messages are located in the data block

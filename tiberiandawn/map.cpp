@@ -942,7 +942,7 @@ long MapClass::Overpass(void)
 #ifdef DEMO
 bool MapClass::Read_Binary(char const* root, unsigned long*)
 #else
-bool MapClass::Read_Binary(char const* root, unsigned long* crc)
+bool MapClass::Read_Binary(char const* root, uint32_t* crc)
 #endif
 {
     CCFileClass file;
@@ -1007,8 +1007,8 @@ bool MapClass::Read_Binary(char const* root, unsigned long* crc)
         cellptr->Recalc_Attributes();
 
 #ifndef DEMO
-        Add_CRC(crc, (unsigned long)cellptr->TType);
-        Add_CRC(crc, (unsigned long)cellptr->TIcon);
+        Add_CRC(crc, (uint32_t)cellptr->TType);
+        Add_CRC(crc, (uint32_t)cellptr->TIcon);
 #endif
 
         cellptr++;
@@ -1038,7 +1038,7 @@ bool MapClass::Read_Binary(char const* root, unsigned long* crc)
  * HISTORY:                                                                                    *
  *   10/28/2019 JAS : Created.                                                                  *
  *=============================================================================================*/
-bool MapClass::Read_Binary_File(char const* fname, unsigned long* crc)
+bool MapClass::Read_Binary_File(char const* fname, uint32_t* crc)
 {
     CCFileClass file;
 
@@ -1096,8 +1096,8 @@ bool MapClass::Read_Binary_File(char const* fname, unsigned long* crc)
         cellptr->Recalc_Attributes();
 
 #ifndef DEMO
-        Add_CRC(crc, (unsigned long)cellptr->TType);
-        Add_CRC(crc, (unsigned long)cellptr->TIcon);
+        Add_CRC(crc, (uint32_t)cellptr->TType);
+        Add_CRC(crc, (uint32_t)cellptr->TIcon);
 #endif
 
         cellptr++;

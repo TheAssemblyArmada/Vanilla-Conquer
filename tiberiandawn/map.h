@@ -72,12 +72,12 @@ public:
     void Pick_Up(CELL cell, ObjectClass* object);
     void Overlap_Down(CELL cell, ObjectClass* object);
     void Overlap_Up(CELL cell, ObjectClass* object);
-    bool Read_Binary(char const* root, unsigned long* crc);
+    bool Read_Binary(char const* root, uint32_t* crc);
     bool Write_Binary(char const* root);
     bool Place_Random_Crate(void);
 
     // Added for loading custom maps - 2019/10/28 JAS
-    bool Read_Binary_File(char const* fname, unsigned long* crc);
+    bool Read_Binary_File(char const* fname, uint32_t* crc);
 
     long Overpass(void);
 
