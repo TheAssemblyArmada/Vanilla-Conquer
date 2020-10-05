@@ -87,7 +87,7 @@ int tmp_flag = 0;
 // ColorNames is for debug output in Print_CRCs
 //---------------------------------------------------------------------------
 #ifndef DEMO
-static unsigned long GameCRC;
+static uint32_t GameCRC;
 static unsigned long CRC[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -213,7 +213,7 @@ static void Print_Framesync_Values(long curframe,
                                    unsigned short* their_sent,
                                    unsigned short my_sent);
 #endif // DEMO
-void Add_CRC(unsigned long* crc, unsigned long val);
+void Add_CRC(uint32_t* crc, uint32_t val);
 void Print_CRCs(EventClass*);
 
 extern void Keyboard_Process(KeyNumType& input);
@@ -3312,7 +3312,7 @@ static void Compute_Game_CRC(void)
  * HISTORY:                                                                *
  *   05/09/1995 BRR : Created.                                             *
  *=========================================================================*/
-void Add_CRC(unsigned long* crc, unsigned long val)
+void Add_CRC(uint32_t* crc, uint32_t val)
 {
     int hibit;
 

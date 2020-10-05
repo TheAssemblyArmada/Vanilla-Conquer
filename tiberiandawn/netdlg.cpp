@@ -4072,17 +4072,17 @@ static JoinEventType Get_NewGame_Responses(ColorListClass* playerlist)
  * HISTORY:                                                                *
  *   06/29/1995 BRR : Created.                                             *
  *=========================================================================*/
-unsigned long Compute_Name_CRC(char* name)
+uint32_t Compute_Name_CRC(char* name)
 {
     char buf[80];
-    unsigned long crc = 0L;
+    uint32_t crc = 0L;
     int i;
 
     strcpy(buf, name);
     strupr(buf);
 
     for (i = 0; i < (int)strlen(buf); i++) {
-        Add_CRC(&crc, (unsigned long)buf[i]);
+        Add_CRC(&crc, (uint32_t)buf[i]);
     }
 
     return (crc);
