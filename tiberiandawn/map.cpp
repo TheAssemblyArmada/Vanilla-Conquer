@@ -971,11 +971,13 @@ bool MapClass::Read_Binary(char const* root, uint32_t* crc)
     */
     CellClass* cellptr = &Map[0];
     for (i = 0; i < MAP_CELL_TOTAL; i++) {
+#pragma pack(push, 1)
         struct
         {
             TemplateType TType;  // Template type.
             unsigned char TIcon; // Template icon number.
         } temp;
+#pragma pack(pop)
 
         if (file.Read(&temp, sizeof(temp)) != sizeof(temp))
             break;
@@ -1061,11 +1063,13 @@ bool MapClass::Read_Binary_File(char const* fname, uint32_t* crc)
     */
     CellClass* cellptr = &Map[0];
     for (i = 0; i < MAP_CELL_TOTAL; i++) {
+#pragma pack(push, 1)
         struct
         {
             TemplateType TType;  // Template type.
             unsigned char TIcon; // Template icon number.
         } temp;
+#pragma pack(pop)
 
         if (file.Read(&temp, sizeof(temp)) != sizeof(temp))
             break;
