@@ -1098,8 +1098,6 @@ extern CCPtr<TemplateTypeClass> y24;
 extern CCPtr<TerrainTypeClass> y25;
 extern CCPtr<OverlayTypeClass> y26;
 extern CCPtr<SmudgeTypeClass> y27;
-template <> class DynamicVectorClass<EgoClass*>;
-extern DynamicVectorClass<EgoClass*> whatever;
 
 /*
 ** Debug output. ST - 6/27/2019 10:00PM
