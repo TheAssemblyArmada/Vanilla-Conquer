@@ -973,7 +973,7 @@ void Do_Win(void)
         /*
         ** If this scenario is flagged as ending the game then print the credits and exit.
         */
-#if (0) // PG
+#ifndef REMASTER_BUILD
         if (Scen.IsEndOfGame) {
             if (PlayerPtr->ActLike == HOUSE_USSR) {
                 Play_Movie(VQ_SOVFINAL);
