@@ -53,26 +53,20 @@
  *=============================================================================================*/
 int AbstractClass::Distance(TARGET target) const
 {
-    /*
-    **	Should subtract a fudge-factor distance for building targets.
-    */
+    // Should subtract a fudge-factor distance for building targets.
     BuildingClass* obj = As_Building(target);
     int dist = Distance(As_Coord(target));
 
-    /*
-    ** If the object is a building the adjust it by the average radius
-    ** of the object.
-    */
+    // If the object is a building the adjust it by the average radius of the object.
     if (obj && obj->IsActive) {
         dist -= ((obj->Class->Width() + obj->Class->Height()) * (0x100 / 4));
-        if (dist < 0)
+        if (dist < 0) {
             dist = 0;
+        }
     }
 
-    /*
-    ** Return the distance to the target
-    */
-    return (dist);
+    // Return the distance to the target
+    return dist;
 }
 
 /***********************************************************************************************
@@ -103,14 +97,17 @@ RTTIType AbstractTypeClass::What_Am_I(void) const
 {
     return RTTI_ABSTRACTTYPE;
 };
+
 COORDINATE AbstractTypeClass::Coord_Fixup(COORDINATE coord) const
 {
     return coord;
 }
+
 int AbstractTypeClass::Full_Name(void) const
 {
     return Name;
 };
+
 unsigned short AbstractTypeClass::Get_Ownable(void) const
 {
     return 0xffff;
@@ -119,25 +116,20 @@ unsigned short AbstractTypeClass::Get_Ownable(void) const
 void AbstractClass::Delete_This(void)
 {
     /*
-    ** Apparently Watcom preserved the vtable through the virtual destructor chain, otherwise C&C would crash all the
-    *time.
+    ** Apparently Watcom preserved the vtable through the virtual destructor chain, otherwise C&C would crash all the time.
     **
     ** MSVC doesn't. It overwrites the vtable pointer with the vtable of the class currently being destructed -
-    *presumably to
-    ** prevent virtual functions of the classes already destructed from being called.
+    ** presumably to prevent virtual functions of the classes already destructed from being called.
     **
-    ** So this is a hacky workaround to restore the original vtable pointer after the destructor chain has finished, for
-    *when the
-    ** C&C code wants to call a virtual function on an object it just 'deleted'.
+    ** So this is a hacky workaround to restore the original vtable pointer after the destructor chain has finished, 
+    ** for when the C&C code wants to call a virtual function on an object it just 'deleted'.
     **
     ** ST - 1/9/2019 6:02PM
     */
     unsigned long* this_ptr = (unsigned long*)this;
     unsigned long vtable_ptr = *this_ptr;
 
-    /*
-    ** delete this calls the operator delete, it doesn't actually deallocate the memory.
-    */
+    // delete this calls the operator delete, it doesn't actually deallocate the memory.
     delete this;
 
     *this_ptr = vtable_ptr;
