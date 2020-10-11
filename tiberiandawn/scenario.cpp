@@ -92,11 +92,20 @@ bool Start_Scenario(char* root, bool briefing)
         if (Scenario != 1 || Whom == HOUSE_GOOD) {
             Play_Movie(IntroMovie);
         }
-
-        if (briefing) {
+#ifndef REMASTER_BUILD
+        if (Scenario > 1 || Whom == HOUSE_BAD) {
+            if (briefing) {
+                PreserveVQAScreen = (Scenario == 1);
+                Play_Movie(BriefMovie);
+            }
+        
+        }
+#else
+        if(briefing) {
             PreserveVQAScreen = (Scenario == 1);
             Play_Movie(BriefMovie);
         }
+#endif
         Play_Movie(ActionMovie, TransitTheme);
         if (TransitTheme == THEME_NONE) {
             Theme.Queue_Song(THEME_AOI);
