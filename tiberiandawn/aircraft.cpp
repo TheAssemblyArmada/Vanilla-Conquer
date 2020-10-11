@@ -664,7 +664,7 @@ int AircraftClass::Mission_Hunt(void)
             // return(FootClass::Mission_Hunt());
         }
     }
-    return (TICKS_PER_SECOND);
+    return TICKS_PER_SECOND;
 }
 
 /***********************************************************************************************
@@ -949,7 +949,7 @@ short const* AircraftClass::Overlap_List(void) const
         return _list;
         // return Coord_Spillage_List(Coord, 25);
     }
-    return (Class->Overlap_List());
+    return Class->Overlap_List();
 }
 
 /***********************************************************************************************
@@ -2252,7 +2252,7 @@ int AircraftClass::Mission_Attack(void)
     case FIRE_AT_TARGET:
         if (!Target_Legal(TarCom)) {
             Status = RETURN_TO_BASE;
-            return (1);
+            return 1;
         }
 
         // Clear second shot flag so fire burst works correctly.
@@ -2621,9 +2621,9 @@ bool AircraftClass::Process_Take_Off(void)
     case FLIGHT_LEVEL:
         Set_Speed(0xFF);
         IsTakingOff = false;
-        return (true);
+        return true;
     }
-    return (false);
+    return false;
 }
 
 /***********************************************************************************************
@@ -2651,7 +2651,7 @@ bool AircraftClass::Process_Landing(void)
     switch (Altitude) {
     case 0:
         IsLanding = false;
-        return (true);
+        return true;
 
     case FLIGHT_LEVEL / 2:
         Set_Speed(0);
@@ -2660,7 +2660,7 @@ bool AircraftClass::Process_Landing(void)
     case FLIGHT_LEVEL:
         break;
     }
-    return (false);
+    return false;
 }
 
 /***********************************************************************************************
@@ -2682,20 +2682,20 @@ MoveType AircraftClass::Can_Enter_Cell(CELL cell, FacingType) const
 {
     Validate();
     if (!Map.In_Radar(cell)) {
-        return (MOVE_NO);
+        return MOVE_NO;
     }
 
     CellClass* cellptr = &Map[cell];
 
     if (!cellptr->Is_Generally_Clear(true)) {
-        return (MOVE_NO);
+        return MOVE_NO;
     }
 
     if (GameToPlay == GAME_NORMAL && IsOwnedByPlayer && !cellptr->Is_Visible(PlayerPtr)) {
-        return (MOVE_NO);
+        return MOVE_NO;
     }
 
-    return (MOVE_OK);
+    return MOVE_OK;
 }
 
 /***********************************************************************************************
@@ -2798,11 +2798,11 @@ bool AircraftClass::Cell_Seems_Ok(CELL cell, bool strict) const
         AircraftClass* air = Aircraft.Ptr(index);
         if (air && (strict || air != this) && !air->IsInLimbo) {
             if (Coord_Cell(air->Coord) == cell || air->NavCom == astarget) {
-                return (false);
+                return false;
             }
         }
     }
-    return (true);
+    return true;
 }
 
 /***********************************************************************************************
@@ -2837,7 +2837,7 @@ int AircraftClass::Pip_Count(void) const
             }             
         }
     }
-    return (retval);
+    return retval;
 }
 
 /***********************************************************************************************
@@ -3305,7 +3305,7 @@ int AircraftClass::Mission_Guard_Area(void)
 
     if (House->IsHuman) {
         return TICKS_PER_SECOND;
-    }      
+    }
 
     if (Altitude == 0 && !In_Radio_Contact()) {
         Scatter(0, true);

@@ -55,9 +55,7 @@
 
 #include "function.h"
 
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
+// This contains the value of the Virtual Function Table Pointer
 void* AnimClass::VTable;
 
 /***********************************************************************************************
@@ -83,9 +81,10 @@ int AnimClass::Validate(void) const
     num = Anims.ID(this);
     if (num < 0 || num >= ANIM_MAX) {
         Validate_Error("ANIM");
-        return (0);
-    } else
-        return (1);
+        return 0;
+    } else {
+        return 1;
+    }     
 }
 #else
 #define Validate()
@@ -110,13 +109,13 @@ int AnimClass::Validate(void) const
  * HISTORY:                                                                                    *
  *   12/11/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void Shorten_Attached_Anims(ObjectClass* obj)
+void Shorten_Attached_Anims(ObjectClass* object)
 {
-    if (obj) {
+    if (object) {
         for (int index = 0; index < Anims.Count(); index++) {
             AnimClass& anim = *Anims.Ptr(index);
 
-            if (anim.Object == obj) {
+            if (anim.Object == object) {
                 anim.Loops = 0;
             }
         }
@@ -143,21 +142,21 @@ COORDINATE AnimClass::Sort_Y(void) const
 {
     Validate();
     if (Object) {
-        return (Coord_Add(Object->Sort_Y(), 0x00010000L));
+        return Coord_Add(Object->Sort_Y(), 0x00010000L);
     }
     if (Target_Legal(SortTarget)) {
         ObjectClass* obj = As_Object(SortTarget);
         if (obj && obj->IsActive) {
-            return (Coord_Add(obj->Sort_Y(), 0x00010000L));
+            return Coord_Add(obj->Sort_Y(), 0x00010000L);
         }
     }
     if (*this == ANIM_MOVE_FLASH) {
-        return (Coord_Add(Center_Coord(), XYP_COORD(0, -24)));
+        return Coord_Add(Center_Coord(), XYP_COORD(0, -24));
     }
     if (*this == ANIM_LZ_SMOKE) {
-        return (Coord_Add(Center_Coord(), XYP_COORD(0, 14)));
+        return Coord_Add(Center_Coord(), XYP_COORD(0, 14));
     }
-    return (Coord);
+    return Coord;
 }
 
 /***********************************************************************************************
@@ -181,9 +180,9 @@ COORDINATE AnimClass::Center_Coord(void) const
 {
     Validate();
     if (Object) {
-        return (Coord_Add(Coord, Object->Center_Coord()));
+        return Coord_Add(Coord, Object->Center_Coord());
     }
-    return (Coord);
+    return Coord;
 }
 
 /***********************************************************************************************
@@ -204,10 +203,11 @@ COORDINATE AnimClass::Center_Coord(void) const
 bool AnimClass::Render(bool forced)
 {
     Validate();
-    if (Delay)
-        return (false);
+    if (Delay) {
+        return false;
+    }
     IsToDisplay = true;
-    return (ObjectClass::Render(forced));
+    return ObjectClass::Render(forced);
 }
 
 /***********************************************************************************************
@@ -218,7 +218,7 @@ bool AnimClass::Render(bool forced)
  *                                                                                             *
  * INPUT:   x,y      -- The pixel coordinates to draw the animation at.                        *
  *                                                                                             *
- *          window   -- The to base the draw coordinates upon.                                 *
+ *          window   -- The base to draw the coordinates upon.                                 *
  *                                                                                             *
  * OUTPUT:  none                                                                               *
  *                                                                                             *
@@ -245,9 +245,7 @@ void AnimClass::Draw_It(int x, int y, WindowNumberType window)
             int width = 0;
             int height = 0;
 
-            /*
-            **	Some animations require special fixups.
-            */
+            // Some animations require special fixups.
             switch (Class->Type) {
             case ANIM_ION_CANNON:
                 if (window != WINDOW_VIRTUAL) {
@@ -279,19 +277,18 @@ void AnimClass::Draw_It(int x, int y, WindowNumberType window)
                 break;
             }
 
-            /*
-            **	If the translucent table hasn't been determined yet, then check to see if it
-            **	should use the white or normal translucent tables.
-            */
-            if (!transtable && Class->IsWhiteTrans)
+            // If the translucent table hasn't been determined yet, then check to see if it
+            // should use the white or normal translucent tables.
+            if (!transtable && Class->IsWhiteTrans) {
                 transtable = Map.WhiteTranslucentTable;
-            if (!transtable && Class->IsTranslucent)
+            }
+                
+            if (!transtable && Class->IsTranslucent) {
                 transtable = Map.TranslucentTable;
+            }   
 
-            /*
-            **	Set the shape flags to properly take into account any fading or ghosting
-            **	table necessary.
-            */
+            // Set the shape flags to properly take into account any fading or ghosting
+            // table necessary.
             if (IsAlternate) {
                 flags = flags | SHAPE_FADING;
                 if (OwnerHouse != HOUSE_NONE) {
@@ -300,12 +297,11 @@ void AnimClass::Draw_It(int x, int y, WindowNumberType window)
                     remap = Map.RemapTables[HOUSE_GOOD][0];
                 }
             }
-            if (transtable)
+            if (transtable) {
                 flags = flags | SHAPE_GHOST;
+            }     
 
-            /*
-            **	Draw the animation shape, but ignore legacy if beyond normal stage count.
-            */
+            // Draw the animation shape, but ignore legacy if beyond normal stage count.
             if ((window == WINDOW_VIRTUAL) || (Fetch_Stage() < Class->Stages)) {
                 CC_Draw_Shape(this,
                               shapefile,
@@ -349,10 +345,10 @@ bool AnimClass::Mark(MarkType mark)
     Validate();
     if (ObjectClass::Mark(mark)) {
         Map.Refresh_Cells(Coord_Cell(Center_Coord()), Overlap_List());
-        //		ObjectClass::Mark(mark);
-        return (true);
+        // ObjectClass::Mark(mark);
+        return true;
     }
-    return (false);
+    return false;
 }
 
 /***********************************************************************************************
@@ -382,6 +378,7 @@ short const* AnimClass::Overlap_List(void) const
                                      -(2 * MAP_CELL_W - 1),
                                      -(2 * MAP_CELL_W + 1),
                                      REFRESH_EOL};
+
     static short const OverlapNW[] = {0,
                                       -1,
                                       -MAP_CELL_W,
@@ -390,9 +387,23 @@ short const* AnimClass::Overlap_List(void) const
                                       -(MAP_CELL_W * 2 + 2),
                                       -(MAP_CELL_W * 2 + 1),
                                       REFRESH_EOL};
-    static short const OverlapW[] = {0, -1, -2, -(MAP_CELL_W + 1), -(MAP_CELL_W + 2), REFRESH_EOL};
-    static short const OverlapSW[] = {
-        0, -1, MAP_CELL_W, (MAP_CELL_W - 1), (MAP_CELL_W - 2), (MAP_CELL_W * 2 - 2), (MAP_CELL_W * 2 - 1), REFRESH_EOL};
+
+    static short const OverlapW[] = {0, 
+                                     -1, 
+                                     -2, 
+                                     -(MAP_CELL_W + 1), 
+                                     -(MAP_CELL_W + 2), 
+                                     REFRESH_EOL};
+
+    static short const OverlapSW[] = {0, 
+                                      -1, 
+                                      MAP_CELL_W, 
+                                      (MAP_CELL_W - 1), 
+                                      (MAP_CELL_W - 2), 
+                                      (MAP_CELL_W * 2 - 2), 
+                                      (MAP_CELL_W * 2 - 1), 
+                                      REFRESH_EOL};
+
     static short const OverlapS[] = {0,
                                      MAP_CELL_W - 1,
                                      MAP_CELL_W,
@@ -401,9 +412,23 @@ short const* AnimClass::Overlap_List(void) const
                                      2 * MAP_CELL_W,
                                      2 * MAP_CELL_W - 1,
                                      REFRESH_EOL};
-    static short const OverlapSE[] = {
-        0, 1, MAP_CELL_W, (MAP_CELL_W + 1), (MAP_CELL_W + 2), (MAP_CELL_W * 2 + 2), (MAP_CELL_W * 2 + 1), REFRESH_EOL};
-    static short const OverlapE[] = {0, 1, 2, -(MAP_CELL_W - 1), -(MAP_CELL_W - 2), REFRESH_EOL};
+
+    static short const OverlapSE[] = {0, 
+                                      1, 
+                                      MAP_CELL_W, 
+                                      (MAP_CELL_W + 1), 
+                                      (MAP_CELL_W + 2), 
+                                      (MAP_CELL_W * 2 + 2), 
+                                      (MAP_CELL_W * 2 + 1), 
+                                      REFRESH_EOL};
+
+    static short const OverlapE[] = {0, 
+                                     1, 
+                                     2, 
+                                     -(MAP_CELL_W - 1), 
+                                     -(MAP_CELL_W - 2), 
+                                     REFRESH_EOL};
+
     static short const OverlapNE[] = {0,
                                       1,
                                       -MAP_CELL_W,
@@ -412,6 +437,7 @@ short const* AnimClass::Overlap_List(void) const
                                       -(MAP_CELL_W * 2 - 2),
                                       -(MAP_CELL_W * 2 - 1),
                                       REFRESH_EOL};
+
     static short const OverlapIon[] = {(-MAP_CELL_W * 7) - 1,
                                        (-MAP_CELL_W * 7),
                                        (-MAP_CELL_W * 7) + 1,
@@ -455,54 +481,60 @@ short const* AnimClass::Overlap_List(void) const
                                         (MAP_CELL_W * 2) + 1,
                                         REFRESH_EOL};
 
-    static short const OverlapFlag[] = {0, 1, -MAP_CELL_W, -(MAP_CELL_W - 1), MAP_CELL_W, MAP_CELL_W + 1, REFRESH_EOL};
+    static short const OverlapFlag[] = {0, 
+                                        1, 
+                                        -MAP_CELL_W, 
+                                        -(MAP_CELL_W - 1), 
+                                        MAP_CELL_W, 
+                                        MAP_CELL_W + 1, 
+                                        REFRESH_EOL};
 
     switch (Class->Type) {
     case ANIM_CHEM_N:
     case ANIM_FLAME_N:
-        return (OverlapN);
+        return OverlapN;
 
     case ANIM_CHEM_NW:
     case ANIM_FLAME_NW:
-        return (OverlapNW);
+        return OverlapNW;
 
     case ANIM_CHEM_W:
     case ANIM_FLAME_W:
-        return (OverlapW);
+        return OverlapW;
 
     case ANIM_CHEM_SW:
     case ANIM_FLAME_SW:
-        return (OverlapSW);
+        return OverlapSW;
 
     case ANIM_CHEM_S:
     case ANIM_FLAME_S:
-        return (OverlapS);
+        return OverlapS;
 
     case ANIM_CHEM_SE:
     case ANIM_FLAME_SE:
-        return (OverlapSE);
+        return OverlapSE;
 
     case ANIM_CHEM_E:
     case ANIM_FLAME_E:
-        return (OverlapE);
+        return OverlapE;
 
     case ANIM_CHEM_NE:
     case ANIM_FLAME_NE:
-        return (OverlapNE);
+        return OverlapNE;
 
     case ANIM_ION_CANNON:
-        return (OverlapIon);
+        return OverlapIon;
 
     case ANIM_ATOM_BLAST:
-        return (OverlapAtom);
+        return OverlapAtom;
 
     case ANIM_FLAG:
-        return (OverlapFlag);
+        return OverlapFlag;
 
     default:
         break;
     }
-    return (Coord_Spillage_List(Center_Coord(), Class->Size));
+    return Coord_Spillage_List(Center_Coord(), Class->Size);
 }
 
 /***********************************************************************************************
@@ -525,7 +557,7 @@ short const* AnimClass::Occupy_List(void) const
     Validate();
     static short _simple[] = {REFRESH_EOL};
 
-    return (_simple);
+    return _simple;
 }
 
 /***********************************************************************************************
@@ -546,9 +578,7 @@ short const* AnimClass::Occupy_List(void) const
 void AnimClass::Init(void)
 {
     AnimClass* ptr;
-
     Anims.Free_All();
-
     ptr = new AnimClass();
     VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
     delete ptr;
@@ -575,7 +605,7 @@ void* AnimClass::operator new(size_t)
     if (ptr) {
         ((AnimClass*)ptr)->Set_Active();
     }
-    return (ptr);
+    return ptr;
 }
 
 /***********************************************************************************************
@@ -599,7 +629,6 @@ void AnimClass::operator delete(void* ptr)
         ((AnimClass*)ptr)->IsActive = false;
     }
     Anims.Free((AnimClass*)ptr);
-
     // Map.Validate();
 }
 
@@ -652,19 +681,15 @@ AnimClass::AnimClass(AnimType animnum, COORDINATE coord, unsigned char timedelay
 
     VisibleFlags = static_cast<unsigned int>(-1);
 
-    /*
-    **	Drop zone smoke always reveals the map around itself.
-    */
+    // Drop zone smoke always reveals the map around itself.
     if (*this == ANIM_LZ_SMOKE) {
         // Added PlayerPtr here as Sight_From now needs to know who to perform the action for. This should be OK as it's
         // not used in MP. ST - 3/28/2019 2:43PM
         Map.Sight_From(PlayerPtr, Coord_Cell(coord), 4, false);
     }
 
-    /*
-    **	Determine the time before the first animation process. For time delayed
-    **	animations, this is the value passed as a parameter.
-    */
+    // Determine the time before the first animation process. For time delayed
+    // animations, this is the value passed as a parameter.
     Delay = timedelay;
 
     if (Class->Loops >= 0) {
@@ -679,16 +704,12 @@ AnimClass::AnimClass(AnimType animnum, COORDINATE coord, unsigned char timedelay
     IsAlternate = alt;
     IsInvisible = false;
 
-    /*
-    **	If the animation starts immediately, then play the associated sound effect now.
-    */
+    // If the animation starts immediately, then play the associated sound effect now.
     if (!Delay) {
         Start();
     }
 
-    /*
-    **	Check for a virtual animation
-    */
+    // Check for a virtual animation
     if (Class->VirtualAnim != ANIM_NONE) {
         VirtualAnim = new AnimClass(Class->VirtualAnim, Coord, timedelay, loop, alt);
         if (VirtualAnim != NULL) {
@@ -726,9 +747,7 @@ AnimClass::~AnimClass(void)
         **	an animation.
         */
         if (Object) {
-            /*
-            **	Remove the object from the appropriate display list.
-            */
+            // Remove the object from the appropriate display list.
             Map.Remove(this, In_Which_Layer());
 
             /*
@@ -742,9 +761,7 @@ AnimClass::~AnimClass(void)
                     break;
             }
 
-            /*
-            **	Tell the object that it is no longer being damaged.
-            */
+            // Tell the object that it is no longer being damaged.
             if (index == Anims.Count()) {
                 Object->Fire_Out();
                 if (Object->In_Which_Layer() == LAYER_GROUND)
@@ -753,6 +770,7 @@ AnimClass::~AnimClass(void)
                 if (Object->In_Which_Layer() == LAYER_GROUND)
                     Object->Mark(MARK_OVERLAP_DOWN);
             }
+
             Coord = Coord_Add(Object->Center_Coord(), Coord);
             Object = NULL;
         }
@@ -779,25 +797,20 @@ AnimClass::~AnimClass(void)
 void AnimClass::AI(void)
 {
     Validate();
-    /*
-    **	For ground level based animations (ones that can run slowly as well as
-    **	occur behind other ground objects) always cause the cell to be redrawn.
-    */
+
+    // For ground level based animations (ones that can run slowly as well as
+    // occur behind other ground objects) always cause the cell to be redrawn.
     if (!Delay && Class->IsGroundLayer) {
         Map.Refresh_Cells(Coord_Cell(Center_Coord()), Overlap_List());
     }
 
-    /*
-    **	Special case check to make sure that building on top of a smoke marker
-    **	causes the smoke marker to vanish.
-    */
+    // Special case check to make sure that building on top of a smoke marker
+    // causes the smoke marker to vanish.
     if (Class->Type == ANIM_LZ_SMOKE && Map[Coord_Cell(Center_Coord())].Cell_Building()) {
         IsToDelete = true;
     }
 
-    /*
-    **	Check the kill time.
-    */
+    // Check the kill time.
     if (KillTime > 0ULL) {
 #ifdef _WIN32
         FILETIME ft;
@@ -811,10 +824,8 @@ void AnimClass::AI(void)
 #endif
     }
 
-    /*
-    **	Delete this animation and bail early if the animation is flagged to be deleted
-    **	immediately.
-    */
+    // Delete this animation and bail early if the animation is flagged to be deleted
+    // immediately.
     if (IsToDelete) {
         Delete_This();
         return;
@@ -830,9 +841,7 @@ void AnimClass::AI(void)
         return;
     }
 
-    /*
-    **	Lazy-initialize animation data (for loaded saves).
-    */
+    // Lazy-initialize animation data (for loaded saves).
     if (Class->Stages == -1) {
         ((int&)Class->Stages) = Get_Build_Frame_Count(Class->Get_Image_Data());
     }
@@ -865,15 +874,11 @@ void AnimClass::AI(void)
             */
             if (Object && Class->Damage && stage < Class->Stages) {
                 unsigned int accum = Accum;
-
                 accum += Class->Damage;
-
                 if (accum > 255) {
 
-                    /*
-                    **	Administer the damage. If the object was destroyed by this anim,
-                    **	then the attached damaging anim is also destroyed.
-                    */
+                    // Administer the damage. If the object was destroyed by this anim,
+                    // then the attached damaging anim is also destroyed.
                     int damage = accum >> 8;
                     if (Object->Take_Damage(damage, 0, WARHEAD_FIRE) == RESULT_DESTROYED) {
                         // Object = 0;
@@ -896,16 +901,12 @@ void AnimClass::AI(void)
                 Middle();
             }
 
-            /*
-            **	Check to see if the last frame has been displayed. If so, then the
-            **	animation either ends or loops.
-            */
+            // Check to see if the last frame has been displayed. If so, then the
+            // animation either ends or loops.
             if ((Loops <= 1 && stage >= Class->Stages) || (Loops > 1 && stage >= Class->LoopEnd - Class->Start)) {
 
-                /*
-                **	Determine if this animation should loop another time. If so, then start the loop
-                **	but if not, then proceed into the animation termination handler.
-                */
+                // Determine if this animation should loop another time. If so, then start the loop
+                // but if not, then proceed into the animation termination handler.
                 if (Loops > 0)
                     Loops--;
                 if (Loops != 0) {
@@ -954,14 +955,19 @@ void AnimClass::AI(void)
 void AnimClass::Attach_To(ObjectClass* obj)
 {
     Validate();
-    if (!obj)
+    if (!obj) {
         return;
-
-    if (obj->In_Which_Layer() == LAYER_GROUND)
+    }
+        
+    if (obj->In_Which_Layer() == LAYER_GROUND) {
         obj->Mark(MARK_OVERLAP_UP);
+    }
+        
     obj->IsAnimAttached = true;
-    if (obj->In_Which_Layer() == LAYER_GROUND)
+    if (obj->In_Which_Layer() == LAYER_GROUND) {
         obj->Mark(MARK_OVERLAP_DOWN);
+    }
+        
     Map.Remove(this, In_Which_Layer());
     Object = obj;
     Map.Submit(this, In_Which_Layer());
@@ -1008,9 +1014,9 @@ LayerType AnimClass::In_Which_Layer(void) const
 {
     Validate();
     if (Object || Class->IsGroundLayer) {
-        return (LAYER_GROUND);
+        return LAYER_GROUND;
     }
-    return (LAYER_AIR);
+    return LAYER_AIR;
 }
 
 /***********************************************************************************************
@@ -1037,9 +1043,7 @@ void AnimClass::Start(void)
 
     Mark();
 
-    /*
-    **	Play the sound effect for this animation.
-    */
+    // Play the sound effect for this animation.
     Sound_Effect(Class->Sound, Coord);
 
     /*
@@ -1109,8 +1113,9 @@ void AnimClass::Middle(void)
                 }
             }
 
-            if (!building)
+            if (!building) {
                 building = (BuildingClass*)backup;
+            }            
         }
 
         int radius = 3;
@@ -1120,6 +1125,7 @@ void AnimClass::Middle(void)
             rawdamage = 1000;
             Fade_Palette_To(WhitePalette, 30, NULL);
         }
+
         for (int x = -radius; x <= radius; x++) {
             for (int y = -radius; y <= radius; y++) {
                 int xpos = Cell_X(cell) + x;
@@ -1151,35 +1157,24 @@ void AnimClass::Middle(void)
         }
     }
 
-    /*
-    **	If this animation leaves scorch marks (e.g., napalm), then do so at this time.
-    */
+    // If this animation leaves scorch marks (e.g., napalm), then do so at this time.
     if (Class->IsScorcher) {
         new SmudgeClass(Random_Pick(SMUDGE_SCORCH1, SMUDGE_SCORCH6), Center_Coord());
     }
 
-    /*
-    **	Some animations leave a crater when they occur. Artillery is a good example.
-    **	Craters always remove the Tiberium where they occur.
-    */
+    // Some animations leave a crater when they occur. Artillery is a good example.
+    // Craters always remove the Tiberium where they occur.
     if (Class->IsCraterForming) {
 
-        /*
-        **	Craters reduce the level of Tiberium in the cell.
-        */
+        // Craters reduce the level of Tiberium in the cell.
         cellptr->Reduce_Tiberium(6);
 
-        /*
-        **	If there already is a crater in the cell, then just expand the
-        **	crater.
-        */
+        // If there already is a crater in the cell, then just expand the crater.
         new SmudgeClass(SMUDGE_CRATER1, Center_Coord());
     }
 
-    /*
-    **	Flame throwers leave scorch marks in unusual positions. In addition, they leave fire
-    **	shards in unusual positions as well.
-    */
+    // Flame throwers leave scorch marks in unusual positions. In addition, they leave fire
+    // shards in unusual positions as well.
     if (Class->IsFlameThrower) {
         COORDINATE c2 = Coord_Move(Center_Coord(), (DirType)((Class->Type - ANIM_FLAME_N) << 5), 0x00E0);
         CELL cell = Coord_Cell(c2);
@@ -1207,10 +1202,8 @@ void AnimClass::Middle(void)
 
     AnimClass* newanim;
 
-    /*
-    **	If this animation spawns side effects during its lifetime, then
-    **	do so now.
-    */
+    // If this animation spawns side effects during its lifetime, then
+    // do so now.
     switch (Class->Type) {
     case ANIM_ION_CANNON: {
         BuildingClass* building = NULL;
@@ -1228,8 +1221,9 @@ void AnimClass::Middle(void)
                 }
             }
 
-            if (!building)
+            if (!building) {
                 building = (BuildingClass*)backup;
+            }            
         }
         Explosion_Damage(Center_Coord(), 600, building, WARHEAD_PB);
     } break;
@@ -1241,12 +1235,14 @@ void AnimClass::Middle(void)
                       Map.Closest_Free_Spot(Coord_Scatter(Center_Coord(), 0x0040), true),
                       0,
                       ((Random_Pick(0, 1) == 1) ? 1 : 2));
+
         if (Random_Pick(0, 1) == 1) {
             new AnimClass(ANIM_FIRE_SMALL,
                           Map.Closest_Free_Spot(Coord_Scatter(Center_Coord(), 0x00A0), true),
                           0,
                           ((Random_Pick(0, 1) == 1) ? 1 : 2));
         }
+
         if (Random_Pick(0, 1) == 1) {
             new AnimClass(ANIM_FIRE_MED,
                           Map.Closest_Free_Spot(Coord_Scatter(Center_Coord(), 0x0070), true),
@@ -1257,7 +1253,11 @@ void AnimClass::Middle(void)
 
     case ANIM_FIRE_MED:
     case ANIM_FIRE_MED2:
-        newanim = new AnimClass(ANIM_FIRE_SMALL, Center_Coord(), 0, ((Random_Pick(0, 1) == 1) ? 1 : 2));
+        newanim = new AnimClass(ANIM_FIRE_SMALL, 
+                                Center_Coord(), 
+                                0, 
+                                ((Random_Pick(0, 1) == 1) ? 1 : 2));
+
         if (newanim && Object) {
             newanim->Attach_To(Object);
         }
@@ -1306,7 +1306,7 @@ void AnimClass::Chain(void)
 TARGET AnimClass::As_Target(void) const
 {
     Validate();
-    return (Build_Target(KIND_ANIMATION, Anims.ID(this)));
+    return Build_Target(KIND_ANIMATION, Anims.ID(this));
 }
 
 /***************************************************************************
@@ -1331,11 +1331,11 @@ COORDINATE AnimClass::Adjust_Coord(COORDINATE coord)
         break;
 
     default:
-        return (coord);
+        return coord;
     }
     COORDINATE addval = XYPixel_Coord(x, y);
     coord = Coord_Add(coord, addval);
-    return (coord);
+    return coord;
 }
 
 /***********************************************************************************************
