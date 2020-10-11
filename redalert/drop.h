@@ -258,7 +258,7 @@ template <class T> int TDropListClass<T>::Current_Index(void)
 
 template <class T> void TDropListClass<T>::Set_Selected_Index(int index)
 {
-    if ((unsigned)index < List.Count()) {
+    if ((unsigned)index < (unsigned)List.Count()) {
         List.Set_Selected_Index(index);
         strncpy(String, List.Get_Item(Current_Index())->Description(), MaxLength);
     } else {

@@ -1199,7 +1199,7 @@ int RadarClass::Click_In_Radar(int& ptr_x, int& ptr_y, bool change) const
 
     x -= (RadX + RadOffX);
     y -= (RadY + RadOffY);
-    if ((unsigned)x < RadIWidth && (unsigned)y < RadIHeight) {
+    if ((unsigned)x < (unsigned)RadIWidth && (unsigned)y < (unsigned)RadIHeight) {
         x -= BaseX;
         y -= BaseY;
 

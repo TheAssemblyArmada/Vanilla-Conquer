@@ -37,6 +37,7 @@
  *                                                                         				*
  *                                                                         				*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+class GraphicBufferClass;
 
 class EgoClass
 {

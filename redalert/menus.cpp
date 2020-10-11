@@ -833,7 +833,7 @@ int Main_Menu(unsigned long)
 #ifdef WIN32
             SYSTEMTIME t;
             GetSystemTime(&t);
-            CryptRandom.Seed_Byte(t.wMilliseconds);
+            CryptRandom.Seed_Byte((char)t.wMilliseconds);
 #else
             struct timeb t;
             ftime(&t);
@@ -897,13 +897,12 @@ int Main_Menu(unsigned long)
             retval = (input & 0x7FFF) - BUTTON_EXPAND;
             process = false;
             break;
-#if (0)
+
         case KN_BACKSPACE:
             Show_Who_Was_Responsible();
             display = true;
             Theme.Play_Song(THEME_INTRO);
             break;
-#endif //(0)
         case KN_UP:
             buttons[curbutton]->Turn_Off();
             buttons[curbutton]->Flag_To_Redraw();
@@ -976,7 +975,6 @@ int Main_Menu(unsigned long)
             break;
 
         case KN_LMOUSE:
-#if (0) // PG
             if (Coordinates_In_Region(Keyboard->MouseQX,
                                       Keyboard->MouseQY,
 
@@ -990,7 +988,6 @@ int Main_Menu(unsigned long)
 
                 break;
             }
-#endif
 #ifdef FIXIT_ANTS
 #ifdef FIXIT_PATCH_108
             if (Is_Counterstrike_Installed() == true) {

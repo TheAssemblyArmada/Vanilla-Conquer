@@ -69,8 +69,8 @@
  *=========================================================================*/
 int LCW_Uncompress(void const* source, void* dest, unsigned length)
 {
-    unsigned char *source_ptr, *dest_ptr, *copy_ptr, *dest_end, op_code, data;
-    unsigned count, *word_dest_ptr, word_data;
+    unsigned char *source_ptr, *dest_ptr, *copy_ptr, *dest_end, op_code;
+    unsigned count;
 
     /* Copy the source and destination ptrs. */
     source_ptr = (unsigned char*)source;
@@ -89,7 +89,7 @@ int LCW_Uncompress(void const* source, void* dest, unsigned length)
             copy_ptr = dest_ptr - ((unsigned)*source_ptr++ + (((unsigned)op_code & 0x0f) << 8));
 
             /* Check we aren't going to write past the end of the destination buffer */
-            if (count > dest_end - dest_ptr) {
+            if (count > (unsigned)(dest_end - dest_ptr)) {
                 count = dest_end - dest_ptr;
             }
 
@@ -111,7 +111,7 @@ int LCW_Uncompress(void const* source, void* dest, unsigned length)
                     count = op_code & 0x3f;
 
                     /* Check we aren't going to write past the end of the destination buffer */
-                    if (count > dest_end - dest_ptr) {
+                    if (count > (unsigned)(dest_end - dest_ptr)) {
                         count = dest_end - dest_ptr;
                     }
 
@@ -127,7 +127,7 @@ int LCW_Uncompress(void const* source, void* dest, unsigned length)
                     count = *source_ptr++;
                     count += (*source_ptr++) << 8;
 
-                    if (count > dest_end - dest_ptr) {
+                    if (count > (unsigned)(dest_end - dest_ptr)) {
                         count = dest_end - dest_ptr;
                     }
 
@@ -144,7 +144,7 @@ int LCW_Uncompress(void const* source, void* dest, unsigned length)
                         copy_ptr = (unsigned char*)dest + *source_ptr++;
                         copy_ptr += (*source_ptr++) << 8;
 
-                        if (count > dest_end - dest_ptr) {
+                        if (count > (unsigned)(dest_end - dest_ptr)) {
                             count = dest_end - dest_ptr;
                         }
 
@@ -158,7 +158,7 @@ int LCW_Uncompress(void const* source, void* dest, unsigned length)
                         copy_ptr = (unsigned char*)dest + *source_ptr + ((unsigned)*(source_ptr + 1) << 8);
                         source_ptr += 2;
 
-                        if (count > dest_end - dest_ptr) {
+                        if (count > (unsigned)(dest_end - dest_ptr)) {
                             count = dest_end - dest_ptr;
                         }
 
@@ -210,7 +210,7 @@ int LCW_Comp(const void* src, void* dst, unsigned int bytes)
             if (run_length >= 0x41) {
                 cmd_one = false;
                 *putp++ = 0xFE;
-                *putp++ = run_length;
+                *putp++ = (unsigned char)run_length;
                 *putp++ = run_length >> 8;
                 *putp++ = *getp;
                 getp = rlep;
@@ -292,7 +292,7 @@ int LCW_Comp(const void* src, void* dst, unsigned int bytes)
             } else {
                 offset = rel_offset << 8 | (16 * (block_size - 3) + (rel_offset >> 8));
             }
-            *putp++ = offset;
+            *putp++ = (unsigned char)offset;
             *putp++ = offset >> 8;
             getp += block_size;
             cmd_one = false;
