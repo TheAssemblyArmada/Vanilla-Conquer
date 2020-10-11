@@ -84,7 +84,7 @@ int AnimClass::Validate(void) const
         return 0;
     } else {
         return 1;
-    }     
+    }
 }
 #else
 #define Validate()
@@ -282,10 +282,10 @@ void AnimClass::Draw_It(int x, int y, WindowNumberType window)
             if (!transtable && Class->IsWhiteTrans) {
                 transtable = Map.WhiteTranslucentTable;
             }
-                
+
             if (!transtable && Class->IsTranslucent) {
                 transtable = Map.TranslucentTable;
-            }   
+            }
 
             // Set the shape flags to properly take into account any fading or ghosting
             // table necessary.
@@ -299,7 +299,7 @@ void AnimClass::Draw_It(int x, int y, WindowNumberType window)
             }
             if (transtable) {
                 flags = flags | SHAPE_GHOST;
-            }     
+            }
 
             // Draw the animation shape, but ignore legacy if beyond normal stage count.
             if ((window == WINDOW_VIRTUAL) || (Fetch_Stage() < Class->Stages)) {
@@ -388,21 +388,10 @@ short const* AnimClass::Overlap_List(void) const
                                       -(MAP_CELL_W * 2 + 1),
                                       REFRESH_EOL};
 
-    static short const OverlapW[] = {0, 
-                                     -1, 
-                                     -2, 
-                                     -(MAP_CELL_W + 1), 
-                                     -(MAP_CELL_W + 2), 
-                                     REFRESH_EOL};
+    static short const OverlapW[] = {0, -1, -2, -(MAP_CELL_W + 1), -(MAP_CELL_W + 2), REFRESH_EOL};
 
-    static short const OverlapSW[] = {0, 
-                                      -1, 
-                                      MAP_CELL_W, 
-                                      (MAP_CELL_W - 1), 
-                                      (MAP_CELL_W - 2), 
-                                      (MAP_CELL_W * 2 - 2), 
-                                      (MAP_CELL_W * 2 - 1), 
-                                      REFRESH_EOL};
+    static short const OverlapSW[] = {
+        0, -1, MAP_CELL_W, (MAP_CELL_W - 1), (MAP_CELL_W - 2), (MAP_CELL_W * 2 - 2), (MAP_CELL_W * 2 - 1), REFRESH_EOL};
 
     static short const OverlapS[] = {0,
                                      MAP_CELL_W - 1,
@@ -413,21 +402,10 @@ short const* AnimClass::Overlap_List(void) const
                                      2 * MAP_CELL_W - 1,
                                      REFRESH_EOL};
 
-    static short const OverlapSE[] = {0, 
-                                      1, 
-                                      MAP_CELL_W, 
-                                      (MAP_CELL_W + 1), 
-                                      (MAP_CELL_W + 2), 
-                                      (MAP_CELL_W * 2 + 2), 
-                                      (MAP_CELL_W * 2 + 1), 
-                                      REFRESH_EOL};
+    static short const OverlapSE[] = {
+        0, 1, MAP_CELL_W, (MAP_CELL_W + 1), (MAP_CELL_W + 2), (MAP_CELL_W * 2 + 2), (MAP_CELL_W * 2 + 1), REFRESH_EOL};
 
-    static short const OverlapE[] = {0, 
-                                     1, 
-                                     2, 
-                                     -(MAP_CELL_W - 1), 
-                                     -(MAP_CELL_W - 2), 
-                                     REFRESH_EOL};
+    static short const OverlapE[] = {0, 1, 2, -(MAP_CELL_W - 1), -(MAP_CELL_W - 2), REFRESH_EOL};
 
     static short const OverlapNE[] = {0,
                                       1,
@@ -481,13 +459,7 @@ short const* AnimClass::Overlap_List(void) const
                                         (MAP_CELL_W * 2) + 1,
                                         REFRESH_EOL};
 
-    static short const OverlapFlag[] = {0, 
-                                        1, 
-                                        -MAP_CELL_W, 
-                                        -(MAP_CELL_W - 1), 
-                                        MAP_CELL_W, 
-                                        MAP_CELL_W + 1, 
-                                        REFRESH_EOL};
+    static short const OverlapFlag[] = {0, 1, -MAP_CELL_W, -(MAP_CELL_W - 1), MAP_CELL_W, MAP_CELL_W + 1, REFRESH_EOL};
 
     switch (Class->Type) {
     case ANIM_CHEM_N:
@@ -958,16 +930,16 @@ void AnimClass::Attach_To(ObjectClass* obj)
     if (!obj) {
         return;
     }
-        
+
     if (obj->In_Which_Layer() == LAYER_GROUND) {
         obj->Mark(MARK_OVERLAP_UP);
     }
-        
+
     obj->IsAnimAttached = true;
     if (obj->In_Which_Layer() == LAYER_GROUND) {
         obj->Mark(MARK_OVERLAP_DOWN);
     }
-        
+
     Map.Remove(this, In_Which_Layer());
     Object = obj;
     Map.Submit(this, In_Which_Layer());
@@ -1115,7 +1087,7 @@ void AnimClass::Middle(void)
 
             if (!building) {
                 building = (BuildingClass*)backup;
-            }            
+            }
         }
 
         int radius = 3;
@@ -1223,7 +1195,7 @@ void AnimClass::Middle(void)
 
             if (!building) {
                 building = (BuildingClass*)backup;
-            }            
+            }
         }
         Explosion_Damage(Center_Coord(), 600, building, WARHEAD_PB);
     } break;
@@ -1253,10 +1225,7 @@ void AnimClass::Middle(void)
 
     case ANIM_FIRE_MED:
     case ANIM_FIRE_MED2:
-        newanim = new AnimClass(ANIM_FIRE_SMALL, 
-                                Center_Coord(), 
-                                0, 
-                                ((Random_Pick(0, 1) == 1) ? 1 : 2));
+        newanim = new AnimClass(ANIM_FIRE_SMALL, Center_Coord(), 0, ((Random_Pick(0, 1) == 1) ? 1 : 2));
 
         if (newanim && Object) {
             newanim->Attach_To(Object);

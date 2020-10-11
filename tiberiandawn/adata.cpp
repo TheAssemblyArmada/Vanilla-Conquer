@@ -1142,9 +1142,9 @@ static AnimTypeClass const Fire3(ANIM_FIRE_SMALL, // Animation number.
                                  2,               // Number of times the animation loops.
                                  VOC_NONE,        // Sound effect to play.
                                  ANIM_NONE,
-                                 -1,                        // Virtual stages
-                                 0x100,                     // Virtual scale
-                                 ANIM_FIRE_SMALL_VIRTUAL);  // Virtual anim
+                                 -1,                       // Virtual stages
+                                 0x100,                    // Virtual scale
+                                 ANIM_FIRE_SMALL_VIRTUAL); // Virtual anim
 
 static AnimTypeClass const Fire3Virtual(ANIM_FIRE_SMALL_VIRTUAL, // Animation number.
                                         "FIRE3",                 // Data name of animation.
@@ -1189,9 +1189,9 @@ static AnimTypeClass const Fire1(ANIM_FIRE_MED2, // Animation number.
                                  3,              // Number of times the animation loops.
                                  VOC_NONE,       // Sound effect to play.
                                  ANIM_NONE,
-                                 -1,                        // Virtual stages
-                                 0x100,                     // Virtual scale
-                                 ANIM_FIRE_MED2_VIRTUAL);   // Virtual anim
+                                 -1,                      // Virtual stages
+                                 0x100,                   // Virtual scale
+                                 ANIM_FIRE_MED2_VIRTUAL); // Virtual anim
 
 static AnimTypeClass const Fire1Virtual(ANIM_FIRE_MED2_VIRTUAL, // Animation number.
                                         "FIRE1",                // Data name of animation.
@@ -1236,9 +1236,9 @@ static AnimTypeClass const Fire4(ANIM_FIRE_TINY, // Animation number.
                                  3,              // Number of times the animation loops.
                                  VOC_NONE,       // Sound effect to play.
                                  ANIM_NONE,
-                                 -1,                        // Virtual stages
-                                 0x100,                     // Virtual scale
-                                 ANIM_FIRE_TINY_VIRTUAL);   // Virtual anim
+                                 -1,                      // Virtual stages
+                                 0x100,                   // Virtual scale
+                                 ANIM_FIRE_TINY_VIRTUAL); // Virtual anim
 
 static AnimTypeClass const Fire4Virtual(ANIM_FIRE_TINY_VIRTUAL, // Animation number.
                                         "FIRE4",                // Data name of animation.
@@ -1261,7 +1261,7 @@ static AnimTypeClass const Fire4Virtual(ANIM_FIRE_TINY_VIRTUAL, // Animation num
                                         3,                      // Number of times the animation loops.
                                         VOC_NONE,               // Sound effect to play.
                                         ANIM_NONE,
-                                        30);                    // Virtual stages
+                                        30); // Virtual stages
 
 static AnimTypeClass const Fire2(ANIM_FIRE_MED, // Animation number.
                                  "FIRE2",       // Data name of animation.
@@ -1284,9 +1284,9 @@ static AnimTypeClass const Fire2(ANIM_FIRE_MED, // Animation number.
                                  3,             // Number of times the animation loops.
                                  VOC_NONE,      // Sound effect to play.
                                  ANIM_NONE,
-                                 -1,                        // Virtual stages
-                                 0x100,                     // Virtual scale
-                                 ANIM_FIRE_MED_VIRTUAL);    // Virtual anim
+                                 -1,                     // Virtual stages
+                                 0x100,                  // Virtual scale
+                                 ANIM_FIRE_MED_VIRTUAL); // Virtual anim
 
 static AnimTypeClass const Fire2Virtual(ANIM_FIRE_MED_VIRTUAL, // Animation number.
                                         "FIRE2",               // Data name of animation.
@@ -1332,7 +1332,7 @@ static AnimTypeClass const OilFieldBurn(ANIM_OILFIELD_BURN, // Animation number.
                                         VOC_NONE,           // Sound effect to play.
                                         ANIM_NONE);
 
-static AnimTypeClass const Gunfire(ANIM_MUZZLE_FLASH, // Animation number.  
+static AnimTypeClass const Gunfire(ANIM_MUZZLE_FLASH, // Animation number.
                                    "GUNFIRE",         // Data name of animation.
                                    16,                // Maximum dimension of animation.
                                    0,                 // Biggest animation stage.
@@ -1355,7 +1355,7 @@ static AnimTypeClass const Gunfire(ANIM_MUZZLE_FLASH, // Animation number.
                                    1,                 // Ending frame of loop back.
                                    VOC_NONE,          // Sound effect to play.
                                    ANIM_NONE,
-                                   10);                // Virtual stages   
+                                   10); // Virtual stages
 
 #ifdef NEVER
 static AnimTypeClass const E1RotFire(ANIM_E1_ROT_FIRE, // Animation number.
@@ -1718,7 +1718,7 @@ static AnimTypeClass const SmokeM(ANIM_SMOKE_M, // Animation number.
                                   ANIM_NONE,
                                   105); // Virtual stages
 
-// Mini-gun fire effect -- used by guard towers.	
+// Mini-gun fire effect -- used by guard towers.
 static AnimTypeClass const GUNN(ANIM_GUN_N, // Animation number.
                                 "MINIGUN",  // Data name of animation.
                                 18,         // Maximum dimension of animation.
@@ -1916,7 +1916,7 @@ static AnimTypeClass const IonCannon(ANIM_ION_CANNON, // Animation number.
                                      0,               // Number of times the animation loops.
                                      VOC_ION_CANNON,  // Sound effect to play.
                                      ANIM_ART_EXP1,
-                                     32,   // Virtual stages
+                                     32,     // Virtual stages
                                      0x200); // Virtual scale
 
 static AnimTypeClass const AtomBomb(ANIM_ATOM_BLAST,  // Animation number.
@@ -1940,8 +1940,8 @@ static AnimTypeClass const AtomBomb(ANIM_ATOM_BLAST,  // Animation number.
                                     0,                // Number of times the animation loops.
                                     VOC_NUKE_EXPLODE, // Sound effect to play.
                                     ANIM_NONE,
-                                    75,               // Virtual stages
-                                    0x300);           // Virtual scale
+                                    75,     // Virtual stages
+                                    0x300); // Virtual scale
 
 static AnimTypeClass const AtomDoor(ANIM_ATOM_DOOR, // Animation number.
                                     "ATOMDOOR",     // Data name of animation.

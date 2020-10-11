@@ -245,7 +245,7 @@ AircraftClass::AircraftClass(AircraftType classid, HousesType house)
     }
 
 #ifdef USE_RA_AI
-    
+
     // Added for RA AI in TD. ST - 7/26/2019 9:12AM
     House->Tracking_Add(this);
 #endif
@@ -468,11 +468,11 @@ void AircraftClass::Draw_It(int x, int y, WindowNumberType window)
  *=============================================================================================*/
 void AircraftClass::Read_INI(char* buffer)
 {
-    AircraftClass* air;         // Working unit pointer.
-    char* tbuffer;              // Accumulation buffer of unit IDs.
-    HousesType inhouse;         // Unit house.
-    AircraftType classid;       // Unit class.
-    int len;                    // Length of data in buffer.
+    AircraftClass* air;   // Working unit pointer.
+    char* tbuffer;        // Accumulation buffer of unit IDs.
+    HousesType inhouse;   // Unit house.
+    AircraftType classid; // Unit class.
+    int len;              // Length of data in buffer.
     char buf[128];
 
     len = strlen(buffer) + 2;
@@ -1165,7 +1165,7 @@ int AircraftClass::Mission_Unload(void)
             }
             break;
 
-        // Landing phase. Just delay until landing is complete. 
+        // Landing phase. Just delay until landing is complete.
         // Once complete, transition to the unloading phase.
         case LAND_ON_LZ:
             if (IsTakingOff) {
@@ -2070,7 +2070,7 @@ ActionType AircraftClass::What_Action(ObjectClass* target) const
     }
 
     // Changed for multiplayer ST - 3/13/2019 5:31PM
-    // if (IsOwnedByPlayer && House->Is_Ally(target) && target->What_Am_I() == RTTI_BUILDING && 
+    // if (IsOwnedByPlayer && House->Is_Ally(target) && target->What_Am_I() == RTTI_BUILDING &&
     // ((AircraftClass*)this)->Transmit_Message(RADIO_CAN_LOAD, (TechnoClass*)target) == RADIO_ROGER) {
     if (Is_Owned_By_Player() && House->Is_Ally(target) && target->What_Am_I() == RTTI_BUILDING
         && ((AircraftClass*)this)->Transmit_Message(RADIO_CAN_LOAD, (TechnoClass*)target) == RADIO_ROGER) {
@@ -2496,7 +2496,7 @@ RadioMessageType AircraftClass::Receive_Message(RadioClass* from, RadioMessageTy
 
                 Open_Door(5, 4);
 
-                // If the potential passenger needs someplace to go, 
+                // If the potential passenger needs someplace to go,
                 // then figure out a good spot and tell it to go.
                 if (Transmit_Message(RADIO_NEED_TO_MOVE, from) == RADIO_ROGER) {
                     CELL cell;
@@ -2566,14 +2566,16 @@ DirType AircraftClass::Desired_Load_Dir(ObjectClass* object, CELL& moveto) const
     CELL center = Coord_Cell(Center_Coord());
     for (int sweep = FACING_N; sweep < FACING_S; sweep++) {
         moveto = Adjacent_Cell(center, FACING_S + sweep);
-        if (Map.In_Radar(moveto) && (Coord_Cell(object->Center_Coord()) == moveto || Map[moveto].Is_Generally_Clear())) {
+        if (Map.In_Radar(moveto)
+            && (Coord_Cell(object->Center_Coord()) == moveto || Map[moveto].Is_Generally_Clear())) {
             return DIR_N;
         }
-            
+
         moveto = Adjacent_Cell(center, FACING_S - sweep);
-        if (Map.In_Radar(moveto) && (Coord_Cell(object->Center_Coord()) == moveto || Map[moveto].Is_Generally_Clear())) {
+        if (Map.In_Radar(moveto)
+            && (Coord_Cell(object->Center_Coord()) == moveto || Map[moveto].Is_Generally_Clear())) {
             return DIR_N;
-        }       
+        }
     }
     return DIR_N;
 }
@@ -2745,7 +2747,7 @@ TARGET AircraftClass::Good_Fire_Location(TARGET target) const
 
             if (bestval != -1) {
                 break;
-            }     
+            }
         }
 
         if (best2val == -1) {
@@ -2834,7 +2836,7 @@ int AircraftClass::Pip_Count(void) const
             retval = Fixed_To_Cardinal(Class->Max_Pips(), retval);
             if (!retval) {
                 retval = 1;
-            }             
+            }
         }
     }
     return retval;
@@ -3088,7 +3090,7 @@ AircraftClass::~AircraftClass(void)
 
     if (GameActive && Class && Team) {
         Team->Remove(this);
-    }     
+    }
 }
 
 /***********************************************************************************************
