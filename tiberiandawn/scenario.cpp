@@ -98,10 +98,9 @@ bool Start_Scenario(char* root, bool briefing)
                 PreserveVQAScreen = (Scenario == 1);
                 Play_Movie(BriefMovie);
             }
-        
         }
 #else
-        if(briefing) {
+        if (briefing) {
             PreserveVQAScreen = (Scenario == 1);
             Play_Movie(BriefMovie);
         }
@@ -132,7 +131,9 @@ bool Start_Scenario(char* root, bool briefing)
             InMainLoop = true;
 
             // TO_FIX - Covert ops missions want to pop up a dialog box. ST - 9/6/2019 1:48PM
-            // Restate_Mission(ScenarioName, TXT_OK, TXT_NONE);
+#ifndef REMASTER_BUILD
+            Restate_Mission(ScenarioName, TXT_OK, TXT_NONE);
+#endif
 
             InMainLoop = oldinmain;
             //			Hide_Mouse();
