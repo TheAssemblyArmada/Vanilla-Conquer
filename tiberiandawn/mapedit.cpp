@@ -1887,7 +1887,7 @@ HousesType MapEditClass::Cycle_House(HousesType curhouse, ObjectTypeClass const*
 void MapEditClass::Fatal(int txt)
 {
     Prog_End();
-    printf("%s\n", txt);
+    printf("%s\n", Text_String(txt));
     if (!RunningAsDLL) {
         exit(EXIT_FAILURE);
     }

@@ -34,11 +34,14 @@
 
 #include "function.h"
 #include "textblit.h"
+#include "common/vqatask.h"
+#include "common/vqaloader.h"
 
 #ifndef DEMO
+// From conquer.cpp
+long MixFileHandler(VQAHandle* vqa, long action, void* buffer, long nbytes);
 
-#if (0) // PG_TO_FIX
-VQAHandle* Open_Movie(char* name);
+#ifndef REMASTER_BUILD
 VQAHandle* Open_Movie(char* name)
 {
     if (!Debug_Quiet && Get_Digi_Handle() != -1) {
@@ -87,16 +90,15 @@ void Choose_Side(void)
 
 #else
 
-    static char const _yellowpal[] = {
+    static unsigned char const _yellowpal[] = {
         0x0, 0xC9, 0xBA, 0x93, 0x61, 0xEE, 0xee, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
-    static char const _redpal[] = {
+    static unsigned char const _redpal[] = {
         0x0, 0xa8, 0xd9, 0xda, 0xe1, 0xd4, 0xDA, 0x0, 0xE1, 0x0, 0x0, 0x0, 0x0, 0x0, 0xD4, 0x0};
-    static char const _graypal[] = {
+    static unsigned char const _graypal[] = {
         0x0, 0x17, 0x10, 0x12, 0x14, 0x1c, 0x12, 0x1c, 0x14, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1C, 0x0};
 
     void* anim;
-    // TODO: For now until we implement a VQA decoding lib.
-    // VQAHandle *gdibrief = 0, *nodbrief = 0;
+    VQAHandle *gdibrief = 0, *nodbrief = 0;
     void const *staticaud, *oldfont;
     void const *speechg, *speechn, *speech;
     int statichandle, speechhandle, speechplaying = 0;
@@ -138,11 +140,10 @@ void Choose_Side(void)
     InterpolationPalette = Palette;
     Read_Interpolation_Palette("SIDES.PAL");
 
-    // TODO: requires vqa lib
-    // nodbrief = Open_Movie("NOD1PRE.VQA");
+    nodbrief = Open_Movie("NOD1PRE.VQA");
     gdi_start_palette = Load_Interpolated_Palettes("NOD1PRE.VQP");
     Call_Back();
-    // gdibrief = Open_Movie("GDI1.VQA");
+    gdibrief = Open_Movie("GDI1.VQA");
     Load_Interpolated_Palettes("GDI1.VQP", true);
 
     WWMouse->Erase_Mouse(&HidPage, true);
@@ -214,7 +215,6 @@ void Choose_Side(void)
             if ((Keyboard->Get() & 0x10FF) == KN_LMOUSE) {
                 if ((Keyboard->MouseQY > 48 * 2) && (Keyboard->MouseQY < 150 * 2)) {
                     if ((Keyboard->MouseQX > 18 * 2) && (Keyboard->MouseQX < 148 * 2)) {
-
                         // Chose GDI
                         Whom = HOUSE_GOOD;
                         ScenPlayer = SCEN_PLAYER_GDI;
@@ -222,7 +222,6 @@ void Choose_Side(void)
                         speechhandle = Play_Sample(speechg);
                         speechplaying = true;
                         speech = speechg;
-
                     } else if ((Keyboard->MouseQX > 160 * 2) && (Keyboard->MouseQX < 300 * 2)) {
                         // Chose Nod
                         selection = 1;
@@ -252,8 +251,7 @@ void Choose_Side(void)
     ** Skip the briefings if we're in special mode.
     */
     if (Special.IsJurassic && AreThingiesEnabled) {
-        // TODO: Requires VQA lib.
-        /* if (nodbrief) {
+        if (nodbrief) {
             VQA_Close(nodbrief);
             VQA_Free(nodbrief);
             nodbrief = NULL;
@@ -262,11 +260,11 @@ void Choose_Side(void)
             VQA_Close(gdibrief);
             VQA_Free(gdibrief);
             gdibrief = NULL;
-        }*/
+        }
     }
 
     /* play the scenario 1 briefing movie */
-    /*if (Whom == HOUSE_GOOD) {
+    if (Whom == HOUSE_GOOD) {
         if (nodbrief) {
             VQA_Close(nodbrief);
             VQA_Free(nodbrief);
@@ -287,7 +285,7 @@ void Choose_Side(void)
             VQA_Close(nodbrief);
             VQA_Free(nodbrief);
         }
-    }*/
+    }
 
     Free_Interpolated_Palettes();
     Set_Primary_Buffer_Format();

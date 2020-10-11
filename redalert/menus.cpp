@@ -833,7 +833,7 @@ int Main_Menu(unsigned long)
 #ifdef WIN32
             SYSTEMTIME t;
             GetSystemTime(&t);
-            CryptRandom.Seed_Byte(t.wMilliseconds);
+            CryptRandom.Seed_Byte((char)t.wMilliseconds);
 #else
             struct timeb t;
             ftime(&t);

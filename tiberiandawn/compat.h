@@ -88,16 +88,13 @@ typedef enum MenuIndexType
     MENUPADDING = 0x1000
 } MenuIndexType;
 
+#ifdef NEVER
 #define BITSPERBYTE 8
 #define MAXSHORT    0x7fff
 #define HIBITS      0x8000
 //#define MAXLONG     0x7fffffffL
 #define HIBITL 0x80000000
 
-// PG_TO_FIX
-#ifndef MAXINT
-#define MAXINT MAXLONG
-#endif
 #define HIBITI HIBITL
 
 #define DMAXEXP 308
@@ -123,6 +120,7 @@ typedef enum MenuIndexType
 #define HIDDENBIT    1
 #define LN_MAXDOUBLE 7.0978E+2
 #define LN_MINDOUBLE -7.0840E+2
+#endif
 
 /* These defines handle the various names given to the same color. */
 #define DKGREEN GREEN

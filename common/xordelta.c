@@ -13,16 +13,16 @@
 #include <stdbool.h>
 
 #define XOR_SMALL 127
-#define XOR_MED 255
+#define XOR_MED   255
 #define XOR_LARGE 16383
-#define XOR_MAX 32767
+#define XOR_MAX   32767
 
 #ifdef NOASM
 
-void Apply_XOR_Delta(void *dst, const void *src)
+void Apply_XOR_Delta(void* dst, const void* src)
 {
-    unsigned char *putp = (unsigned char*)(dst);
-    const unsigned char *getp = (const unsigned char*)(src);
+    unsigned char* putp = (unsigned char*)(dst);
+    const unsigned char* getp = (const unsigned char*)(src);
     unsigned short count = 0;
     unsigned char value = 0;
     unsigned char cmd = 0;
@@ -85,10 +85,10 @@ void Apply_XOR_Delta(void *dst, const void *src)
     }
 }
 
-void Copy_Delta_Buffer(int width, void *offset, const void *delta, int pitch)
+void Copy_Delta_Buffer(int width, void* offset, const void* delta, int pitch)
 {
-    unsigned char *putp = (unsigned char*)(offset);
-    const unsigned char *getp = (const unsigned char*)(delta);
+    unsigned char* putp = (unsigned char*)(offset);
+    const unsigned char* getp = (const unsigned char*)(delta);
     unsigned char value = 0;
     unsigned char cmd = 0;
     int length = 0;
@@ -180,10 +180,10 @@ void Copy_Delta_Buffer(int width, void *offset, const void *delta, int pitch)
     }
 }
 
-void XOR_Delta_Buffer(int width, void *offset, const void *delta, int pitch)
+void XOR_Delta_Buffer(int width, void* offset, const void* delta, int pitch)
 {
-    unsigned char *putp = (unsigned char*)(offset);
-    const unsigned char *getp = (unsigned char*)(delta);
+    unsigned char* putp = (unsigned char*)(offset);
+    const unsigned char* getp = (unsigned char*)(delta);
     unsigned char value = 0;
     unsigned char cmd = 0;
     int length = 0;
@@ -275,7 +275,7 @@ void XOR_Delta_Buffer(int width, void *offset, const void *delta, int pitch)
     }
 }
 
-void Apply_XOR_Delta_To_Page_Or_Viewport(void *offset, const void *delta, int width, int pitch, int copy)
+void Apply_XOR_Delta_To_Page_Or_Viewport(void* offset, const void* delta, int width, int pitch, int copy)
 {
     if (copy) {
         Copy_Delta_Buffer(width, offset, delta, pitch);
@@ -288,10 +288,10 @@ void Apply_XOR_Delta_To_Page_Or_Viewport(void *offset, const void *delta, int wi
 
 int Generate_XOR_Delta(void* dst, const void* src, const void* base, int size)
 {
-    unsigned char* putp = (unsigned char*)(dst);   // our delta
+    unsigned char* putp = (unsigned char*)(dst);               // our delta
     const unsigned char* getsp = (const unsigned char*)(src);  // This is the image we go to
     const unsigned char* getbp = (const unsigned char*)(base); // This is image we come from
-    unsigned char* getsendp = getsp + size;
+    const unsigned char* getsendp = getsp + size;
 
     // only check getsp. Both source and base should be same size and both pointers
     // should be incremented at the same time.
@@ -330,12 +330,12 @@ int Generate_XOR_Delta(void* dst, const void* src, const void* base, int size)
             // cmd 0???????
             if (xorcount < XOR_MED) {
                 count = xorcount <= XOR_SMALL ? xorcount : XOR_SMALL;
-                *putp++ = count;
+                *putp++ = (unsigned char)count;
                 // cmd 10000000 10?????? ??????
             } else {
                 count = xorcount <= XOR_LARGE ? xorcount : XOR_LARGE;
                 *putp++ = 0x80;
-                *putp++ = count;
+                *putp++ = count & 0xFF;
                 *putp++ = (count >> 8) | 0x80;
             }
 
@@ -353,12 +353,12 @@ int Generate_XOR_Delta(void* dst, const void* src, const void* base, int size)
             if (fillcount <= XOR_MED) {
                 count = fillcount;
                 *putp++ = 0;
-                *putp++ = count;
+                *putp++ = (unsigned char)count;
                 // cmd 10000000 11?????? ??????
             } else {
                 count = fillcount <= XOR_LARGE ? fillcount : XOR_LARGE;
                 *putp++ = 0x80;
-                *putp++ = count;
+                *putp++ = count & 0xFF;
                 *putp++ = (count >> 8) | 0xC0;
             }
             *putp++ = *getsp ^ *getbp;
@@ -383,7 +383,7 @@ int Generate_XOR_Delta(void* dst, const void* src, const void* base, int size)
             } else {
                 count = skipcount <= XOR_MAX ? skipcount : XOR_MAX;
                 *putp++ = 0x80;
-                *putp++ = count;
+                *putp++ = count & 0xFF;
                 *putp++ = count >> 8;
             }
             skipcount -= count;

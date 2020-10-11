@@ -791,7 +791,6 @@ bool Select_Game(bool fade)
     bool process = true;     // false = break out of while loop
     bool display = true;
     CountDownTimerClass count;
-    int cd_index;
 
     if (Special.IsFromInstall) {
         display = false;
@@ -2789,10 +2788,10 @@ long Obfuscate(char const* string)
         val2 ^= s3;
         val3 ^= s2;
 
-        buffer[index] = val1;
-        buffer[index + 1] = val2;
-        buffer[index + 2] = val3;
-        buffer[index + 3] = val4;
+        buffer[index] = (char)val1;
+        buffer[index + 1] = (char)val2;
+        buffer[index + 2] = (char)val3;
+        buffer[index + 3] = (char)val4;
     }
 
     /*

@@ -171,7 +171,7 @@ void LogicClass::Debug_Dump(MonoClass* mono) const
     mono->Sub_Window(15, 13, 64, 10);
     int graph = RECORDHEIGHT * fixed(TIMER_SECOND - SpareTicks, TIMER_SECOND);
     for (int row = 1; row < RECORDHEIGHT; row += 2) {
-        static char _barchar[4] = {' ', 220, 0, 219};
+        static char _barchar[4] = {' ', '\xDC', '\0', '\xDB'};
         char str[2];
         int index = 0;
 

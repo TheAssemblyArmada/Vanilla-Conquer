@@ -189,7 +189,7 @@ private:
 extern TcpipManagerClass Winsock;
 
 extern char PlanetWestwoodIPAddress[IP_ADDRESS_MAX];
-extern long PlanetWestwoodPortNumber;
+extern unsigned short PlanetWestwoodPortNumber;
 extern bool PlanetWestwoodIsHost;
 extern int Read_Game_Options(char*);
 extern bool UseVirtualSubnetServer;
