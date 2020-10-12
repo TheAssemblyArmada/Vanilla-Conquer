@@ -93,6 +93,7 @@ public:
     unsigned IsScoreRepeat : 1;   // Score should repeat?
     unsigned IsScoreShuffle : 1;  // Score list should shuffle?
     unsigned IsPaletteScroll : 1; // Allow palette scrolling?
+    unsigned ToggleSidebar : 1;   // Allow sidebar to be toggled?
 
     /*
     **	These are the hotkeys used for keyboard control.

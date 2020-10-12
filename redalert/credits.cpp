@@ -91,9 +91,9 @@ void CreditClass::Graphic_Logic(bool forced)
         /*
         ** Adjust the credits display to be above the sidebar for 640x400
         */
-#ifdef WIN32
-        xx += 80 * RESFACTOR;
-#endif
+        if (!Options.ToggleSidebar) {
+            xx += 80 * RESFACTOR;
+        }
 
         /*
         **	Play a sound effect when the money display changes, but only if a sound
@@ -163,9 +163,11 @@ void CreditClass::Graphic_Logic(bool forced)
 #endif
 #ifdef WIN32
 #ifndef REMASTER_BUILD
+            int text_x = Options.ToggleSidebar ? 120 * RESFACTOR : 200 * RESFACTOR;
+
             if (hours) {
                 Fancy_Text_Print(TXT_TIME_FORMAT_HOURS,
-                                 200 * RESFACTOR,
+                                 text_x,
                                  0,
                                  &MetalScheme,
                                  TBLACK,
@@ -175,7 +177,7 @@ void CreditClass::Graphic_Logic(bool forced)
                                  secs);
             } else {
                 Fancy_Text_Print(TXT_TIME_FORMAT_NO_HOURS,
-                                 200 * RESFACTOR,
+                                 text_x,
                                  0,
                                  &MetalScheme,
                                  TBLACK,
