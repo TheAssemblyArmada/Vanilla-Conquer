@@ -108,6 +108,7 @@ OptionsClass::OptionsClass(void)
     , IsScoreRepeat(false)
     , IsScoreShuffle(false)
     , IsPaletteScroll(true)
+    , ToggleSidebar(true)
     ,
 
     KeyForceMove1(KN_LALT)
@@ -583,6 +584,7 @@ void OptionsClass::Load_Settings(void)
     Set_Shuffle(ini.Get_Bool(OPTIONS, "IsScoreShuffle", IsScoreShuffle));
     SlowPalette = ini.Get_Bool(OPTIONS, "SlowPalette", SlowPalette);
     IsPaletteScroll = ini.Get_Bool(OPTIONS, "PaletteScroll", IsPaletteScroll);
+    ToggleSidebar = ini.Get_Bool(OPTIONS, "AllowSidebarToggle", ToggleSidebar);
 
     KeyForceMove1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceMove1", KeyForceMove1);
     KeyForceMove2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceMove2", KeyForceMove2);
@@ -742,6 +744,7 @@ void OptionsClass::Save_Settings(void)
     ini.Put_Bool(OPTIONS, "IsScoreRepeat", IsScoreRepeat);
     ini.Put_Bool(OPTIONS, "IsScoreShuffle", IsScoreShuffle);
     ini.Put_Bool(OPTIONS, "PaletteScroll", IsPaletteScroll);
+    ini.Put_Bool(OPTIONS, "AllowSidebarToggle", ToggleSidebar);
 
     ini.Put_Int(HotkeyName, "KeyForceMove1", KeyForceMove1);
     ini.Put_Int(HotkeyName, "KeyForceMove2", KeyForceMove2);

@@ -829,15 +829,13 @@ void SidebarClass::AI(KeyNumType& input, int x, int y)
     /*
     **	Toggle the sidebar in and out with the <TAB> key.
     */
-#ifndef WIN32
-    if (input == KN_TAB) {
-        Activate(-1);
-    }
-#else
-    if (!Debug_Map) {
+    if (Options.ToggleSidebar) {
+        if (input == KN_TAB) {
+            Activate(-1);
+        }
+    } else if (!Debug_Map) {
         Activate(1); // Force the sidebar always on in Win95 mode
     }
-#endif // WIN32
     if (!Debug_Map) {
         Column[0].AI(input, x, y);
         Column[1].AI(input, x, y);

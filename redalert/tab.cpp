@@ -132,10 +132,9 @@ void TabClass::Draw_It(bool complete)
                          TBLACK,
                          TPF_METAL12 | TPF_NOSHADOW | TPF_CENTER | TPF_BRIGHT_COLOR);
 #endif // WIN32
-        if (IsSidebarActive) {
 #ifndef WIN32
+        if (IsSidebarActive) {
             TabClass::Hilite_Tab(1);
-#endif // WIN32
         } else {
             CC_Draw_Shape(TabShape, 0, width - (EVA_WIDTH * RESFACTOR), 0, WINDOW_MAIN, SHAPE_NORMAL);
             Fancy_Text_Print(TXT_TAB_SIDEBAR,
@@ -145,6 +144,17 @@ void TabClass::Draw_It(bool complete)
                              TBLACK,
                              TPF_METAL12 | TPF_NOSHADOW | TPF_CENTER | TPF_BRIGHT_COLOR);
         }
+#else
+        if (Options.ToggleSidebar) {
+            CC_Draw_Shape(TabShape, 6, width - (EVA_WIDTH * RESFACTOR), 0, WINDOW_MAIN, SHAPE_NORMAL);
+            Fancy_Text_Print(TXT_TAB_SIDEBAR,
+                             width - ((EVA_WIDTH / 2) * RESFACTOR),
+                             0,
+                             &MetalScheme,
+                             TBLACK,
+                             TPF_METAL12 | TPF_CENTER | TPF_USE_GRAD_PAL);
+        }
+#endif
 
         LogicPage->Unlock();
     }
@@ -159,8 +169,17 @@ void TabClass::Draw_Credits_Tab(void)
     /*
     ** Use the new sidebar art for 640x400
     */
-    CC_Draw_Shape(
-        TabShape, Map.MoneyFlashTimer > 1 ? 8 : 6, (320 - EVA_WIDTH) * RESFACTOR, 0, WINDOW_MAIN, SHAPE_NORMAL);
+    if (Options.ToggleSidebar) {
+        CC_Draw_Shape(TabShape,
+                      Map.MoneyFlashTimer > 1 ? 5 : 2,
+                      (320 - (EVA_WIDTH * 2)) * RESFACTOR,
+                      0,
+                      WINDOW_MAIN,
+                      SHAPE_NORMAL);
+    } else {
+        CC_Draw_Shape(
+            TabShape, Map.MoneyFlashTimer > 1 ? 8 : 6, (320 - EVA_WIDTH) * RESFACTOR, 0, WINDOW_MAIN, SHAPE_NORMAL);
+    }
 #else
     CC_Draw_Shape(TabShape, 4, (320 - (EVA_WIDTH * 2)) * RESFACTOR, 0, WINDOW_MAIN, SHAPE_NORMAL);
 #endif
@@ -168,7 +187,11 @@ void TabClass::Draw_Credits_Tab(void)
     if (Scen.MissionTimer.Is_Active()) {
         bool light = ((int)Scen.MissionTimer < TICKS_PER_MINUTE * Rule.TimerWarning) || Map.FlasherTimer > 0;
 #ifdef WIN32
-        CC_Draw_Shape(TabShape, light ? 4 : 2, 320, 0, WINDOW_MAIN, SHAPE_NORMAL);
+        if (Options.ToggleSidebar) {
+            CC_Draw_Shape(TabShape, light ? 4 : 2, (320 - (EVA_WIDTH * 3)) * RESFACTOR, 0, WINDOW_MAIN, SHAPE_NORMAL);
+        } else {
+            CC_Draw_Shape(TabShape, light ? 4 : 2, (320 - (EVA_WIDTH * 2)) * RESFACTOR, 0, WINDOW_MAIN, SHAPE_NORMAL);
+        }
 #else
         CC_Draw_Shape(TabShape, light ? 6 : 5, EVA_WIDTH * RESFACTOR, 0, WINDOW_MAIN, SHAPE_NORMAL);
 #endif
@@ -250,10 +273,10 @@ void TabClass::AI(KeyNumType& input, int x, int y)
                 int sel = -1;
                 if (x < EVA_WIDTH * RESFACTOR)
                     sel = 0;
-#ifndef WIN32 // No Sidebar tab in hires - sidebar is always active.
-                if (x > (320 - 80) * RESFACTOR)
-                    sel = 1;
-#endif // WIN32
+                if (Options.ToggleSidebar) {
+                    if (x > (320 - 80) * RESFACTOR)
+                        sel = 1;
+                }
                 if (sel >= 0) {
                     Set_Active(sel);
                     input = KN_NONE;
