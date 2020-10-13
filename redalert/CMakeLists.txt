@@ -95,7 +95,6 @@ set(REDALERT_SRC
     ipxmgr.cpp
     jshell.cpp
     layer.cpp
-    link.cpp
     list.cpp
     loaddlg.cpp
     logic.cpp

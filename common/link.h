@@ -13,9 +13,9 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\link.h_v   2.17   16 Oct 1995 16:45:52   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/LINK.H 1     3/03/97 10:25a Joe_bostic $ */
 /***********************************************************************************************
- ***             C O N F I D E N T I A L  ---  W E S T W O O D   S T U D I O S               ***
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
@@ -35,6 +35,8 @@
 #ifndef LINK_H
 #define LINK_H
 
+struct NoInitClass;
+
 /*
 **	This implements a simple linked list. It is possible to add, remove, and traverse the
 **	list. Since this is a doubly linked list, it is possible to remove an entry from the
@@ -43,7 +45,10 @@
 class LinkClass
 {
 public:
-    LinkClass(void);
+    LinkClass(NoInitClass const&){};
+    LinkClass(void)
+        : Next(0)
+        , Prev(0){};
     virtual ~LinkClass(void);
 
     virtual LinkClass* Get_Next(void) const;
@@ -51,21 +56,13 @@ public:
     virtual LinkClass& Add(LinkClass& object);
     virtual LinkClass& Add_Tail(LinkClass& object);
     virtual LinkClass& Add_Head(LinkClass& object);
-    virtual LinkClass const& Head_Of_List(void) const;
-    virtual LinkClass& Head_Of_List(void)
-    {
-        return (LinkClass&)(((LinkClass const*)this)->Head_Of_List());
-    };
-    virtual LinkClass const& Tail_Of_List(void) const;
-    virtual LinkClass& Tail_Of_List(void)
-    {
-        return (LinkClass&)(((LinkClass const*)this)->Tail_Of_List());
-    };
+    virtual LinkClass& Head_Of_List(void);
+    virtual LinkClass& Tail_Of_List(void);
     virtual void Zap(void);
     virtual LinkClass* Remove(void);
 
-    LinkClass& operator=(LinkClass& link); // Assignment operator.
-    LinkClass(LinkClass& link);            // Copy constructor.
+    LinkClass& operator=(LinkClass const& link); // Assignment operator.
+    LinkClass(LinkClass const& link);            // Copy constructor.
 
 private:
     /*
