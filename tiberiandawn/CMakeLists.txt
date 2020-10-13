@@ -72,7 +72,6 @@ set(TIBDAWN_SRC
     jshell.cpp
     layer.cpp
     lib.cpp
-    link.cpp
     list.cpp
     loaddlg.cpp
     logic.cpp

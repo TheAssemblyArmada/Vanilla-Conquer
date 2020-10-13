@@ -48,6 +48,7 @@ set(COMMON_SRC
     lcwpipe.cpp
     lcwstraw.cpp
     linear.cpp
+    link.cpp
     load.cpp
     loadpal.cpp
     memrev.c

@@ -13,9 +13,9 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\link.cpv   2.18   16 Oct 1995 16:52:18   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/LINK.CPP 1     3/03/97 10:25a Joe_bostic $ */
 /***********************************************************************************************
- ***             C O N F I D E N T I A L  ---  W E S T W O O D   S T U D I O S               ***
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
@@ -30,48 +30,26 @@
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
- *   LinkClass::LinkClass -- Default constructor for linked list object.                       *
- *   LinkClass::LinkClass -- Copy constructor for linked list object.                          *
- *   LinkClass::~LinkClass -- Default destructor for linked list object.                       *
- *   LinkClass::Zap -- Forces the link pointers to NULL.                                       *
- *   LinkClass::operator= -- Assignment operator for linked list class object.                 *
- *   LinkClass::Get_Next -- Fetches the next object in list.                                   *
- *   LinkClass::Get_Prev -- Fetches previous object in linked list.                            *
- *   LinkClass::Head_Of_List -- Finds the head of the list.                                    *
- *   LinkClass::Tail_Of_List -- Scans for the object at the end of the list.                   *
  *   LinkClass::Add -- This object adds itself to the given list                               *
  *   LinkClass::Add_Head -- This gadget makes itself the head of the given list.               *
  *   LinkClass::Add_Tail -- Add myself to the end of the given list.                           *
+ *   LinkClass::Get_Next -- Fetches the next object in list.                                   *
+ *   LinkClass::Get_Prev -- Fetches previous object in linked list.                            *
+ *   LinkClass::Head_Of_List -- Finds the head of the list.                                    *
+ *   LinkClass::LinkClass -- Copy constructor for linked list object.                          *
  *   LinkClass::Remove -- Removes the specified object from the list.                          *
+ *   LinkClass::Tail_Of_List -- Scans for the object at the end of the list.                   *
+ *   LinkClass::Zap -- Forces the link pointers to nullptr.                                    *
+ *   LinkClass::operator= -- Assignment operator for linked list class object.                 *
+ *   LinkClass::~LinkClass -- Default destructor for linked list object.                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
 #include "link.h"
-
-/***********************************************************************************************
- * LinkClass::LinkClass -- Default constructor for linked list object.                         *
- *                                                                                             *
- *    This is the default constructor for a linked list object. It merely initializes the      *
- *    next and previous pointers to NULL.                                                      *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   01/15/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
-LinkClass::LinkClass(void)
-{
-    LinkClass::Zap();
-}
 
 /***********************************************************************************************
  * LinkClass::LinkClass -- Copy constructor for linked list object.                            *
  *                                                                                             *
- *    This copy constructor, unlike the assigment operator, doesn't have to deal with an       *
+ *    This copy constructor, unlike the assignment operator, doesn't have to deal with an      *
  *    already initialized and legal link object to the left of the "=". It merely puts the     *
  *    destination object into the same list as the source object.                              *
  *                                                                                             *
@@ -84,10 +62,15 @@ LinkClass::LinkClass(void)
  * HISTORY:                                                                                    *
  *   01/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass::LinkClass(LinkClass& link)
+LinkClass::LinkClass(LinkClass const& link)
+    : Next(0)
+    , Prev(0)
 {
-    LinkClass::Zap();
-    Add(link);
+    /*
+    **	Add this object to the same list that the copy object
+    **	resides in.
+    */
+    Add((LinkClass&)link);
 }
 
 /***********************************************************************************************
@@ -110,12 +93,12 @@ LinkClass::~LinkClass(void)
 }
 
 /***********************************************************************************************
- * LinkClass::Zap -- Forces the link pointers to NULL.                                         *
+ * LinkClass::Zap -- Forces the link pointers to nullptr.                                      *
  *                                                                                             *
  *    This routine will "zap" out the link pointers. This is usually necessary when the link   *
  *    pointers start in an undefined state, but we KNOW that they aren't pointing to anything  *
  *    valid. In such a case it becomes necessary to zap them so that when the object is added  *
- *    to a list, it will be added corrrectly.                                                  *
+ *    to a list, it will be added correctly.                                                   *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
@@ -147,29 +130,33 @@ void LinkClass::Zap(void)
  *                                                                                             *
  * INPUT:   link  -- The object to the right of the "=" operator.                              *
  *                                                                                             *
- * OUTPUT:  Returns a reference to the rightmost object -- per standard assigment rules.       *
+ * OUTPUT:  Returns a reference to the rightmost object -- per standard assignment rules.      *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   01/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass& LinkClass::operator=(LinkClass& link)
+LinkClass& LinkClass::operator=(LinkClass const& link)
 {
+    if (&link == this)
+        return (*this);
+
     Remove();
-    Add(link);
-    return (link);
+    Add((LinkClass&)link);
+
+    return (*this);
 }
 
 /***********************************************************************************************
  * LinkClass::Get_Next -- Fetches the next object in list.                                     *
  *                                                                                             *
  *    This routine will return with a pointer to the next object in the list. If there are     *
- *    no more objects, then NULL is returned.                                                  *
+ *    no more objects, then nullptr is returned.                                               *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
- * OUTPUT:  Returns with pointer to next object in list or NULL if at end of list.             *
+ * OUTPUT:  Returns with pointer to next object in list or nullptr if at end of list.          *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
@@ -185,11 +172,11 @@ LinkClass* LinkClass::Get_Next(void) const
  * LinkClass::Get_Prev -- Fetches previous object in linked list.                              *
  *                                                                                             *
  *    Use this routine to get a pointer to the previous object in the linked list. If there    *
- *    are no previous objects (such as at the head of the list), then NULL is returned.        *
+ *    are no previous objects (such as at the head of the list), then nullptr is returned.     *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
- * OUTPUT:  Returns with a pointer to the previous object in the list or NULL if none.         *
+ * OUTPUT:  Returns with a pointer to the previous object in the list or nullptr if none.      *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
@@ -216,9 +203,9 @@ LinkClass* LinkClass::Get_Prev(void) const
  * HISTORY:                                                                                    *
  *   01/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass const& LinkClass::Head_Of_List(void) const
+LinkClass& LinkClass::Head_Of_List(void)
 {
-    LinkClass const* link = this;
+    LinkClass* link = this;
     while (link->Prev) {
         link = link->Prev;
         if (link == this)
@@ -242,9 +229,9 @@ LinkClass const& LinkClass::Head_Of_List(void) const
  * HISTORY:                                                                                    *
  *   01/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-LinkClass const& LinkClass::Tail_Of_List(void) const
+LinkClass& LinkClass::Tail_Of_List(void)
 {
-    LinkClass const* link = this;
+    LinkClass* link = this;
     while (link->Next) {
         link = link->Next;
         if (link == this)
@@ -322,7 +309,7 @@ LinkClass& LinkClass::Add_Head(LinkClass& list)
     */
     ptr->Prev = this;
     Next = ptr;
-    Prev = NULL;
+    Prev = nullptr;
 
     return (*this);
 }
@@ -354,7 +341,7 @@ LinkClass& LinkClass::Add_Tail(LinkClass& list)
     */
     ptr->Next = this;
     Prev = ptr;
-    Next = NULL;
+    Next = nullptr;
 
     return (Head_Of_List());
 }
