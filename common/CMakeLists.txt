@@ -5,7 +5,9 @@ include(GitWatcher)
 
 set(COMMON_SRC
     ${GIT_POST_CONFIGURE_FILE}
-    lcwcompa.asm
+    _diptabl.cpp
+    alloc.cpp
+    auduncmp.c
     b64pipe.cpp
     b64straw.cpp
     base64.cpp
@@ -13,76 +15,74 @@ set(COMMON_SRC
     blowfish.cpp
     blowpipe.cpp
     blwstraw.cpp
-    cdfile.cpp
+    buff.cpp
+    buffer.cpp
+    buffglbl.cpp
     ccfile.cpp
+    cdfile.cpp
+    cliprect.c
+    crc.cpp
+    delay.cpp
+    dipthong.cpp
+    drawbuff.cpp
+    drawline.cpp
+    drawmisc.cpp
+    drawmisca.asm
+    face.cpp
+    fading.c
+    field.cpp
+    file.cpp
+    font.cpp
+    framelimit.cpp
+    getshape.cpp
+    graphicsviewport.cpp
+    iff.cpp
+    int.cpp
+    irandom.cpp
+    irandoma.asm
+    keybuff.cpp
+    keyfbuffa.asm
+    keyframe.cpp
+    lcw.cpp
+    lcwcompa.asm
+    lcwpipe.cpp
+    lcwstraw.cpp
+    linear.cpp
+    load.cpp
+    loadpal.cpp
     memrev.c
-    mixfile.cpp
-    sha.cpp
-    shapipe.cpp
-    shastraw.cpp
+    misc.c
     miscasm.asm
+    mixfile.cpp
+    mp.cpp
+    packet.cpp
+    palette.cpp
+    pipe.cpp
     pk.cpp
     pkpipe.cpp
     pkstraw.cpp
-    misc.c
-    mp.cpp
-    int.cpp
-    irandoma.asm
-    keyfbuffa.asm
-    buff.cpp
-    irandom.cpp
-    drawmisca.asm
-    drawmisc.cpp
-    drawline.cpp
-    drawbuff.cpp
-    xordeltaa.asm
-    auduncmp.c
     random.cpp
-    linear.cpp
+    rawfile.cpp
+    rect.cpp
     rndstraw.cpp
-    fading.c
-    framelimit.cpp
+    sha.cpp
+    shapipe.cpp
+    shastraw.cpp
     soscodec.c
-    winasm.c
-    keybuff.cpp
-    alloc.cpp
-    buffer.cpp
-    tobuff.cpp
-    tobuffa.asm
-    pipe.cpp
+    stamp.cpp
     straw.cpp
-    face.cpp
-    font.cpp
     timer.cpp
     timerdwn.cpp
-    palette.cpp
-    buffglbl.cpp
-    iff.cpp
-    lcw.cpp
-    lcwpipe.cpp
-    lcwstraw.cpp
-    load.cpp
-    loadpal.cpp
-    dipthong.cpp
-    wsa.cpp
-    _diptabl.cpp
-    rawfile.cpp
-    getshape.cpp
+    tobuff.cpp
+    tobuffa.asm
+    txtprnt.asm
+    winasm.c
     windows.cpp
     winhide.cpp
     writepcx.cpp
-    delay.cpp
-    file.cpp
-    stamp.cpp
-    packet.cpp
-    field.cpp
-    rect.cpp
-    cliprect.c
-    txtprnt.asm
-    graphicsviewport.cpp
+    wsa.cpp
     xordelta.c
-    crc.cpp
-    keyframe.cpp
+    xordeltaa.asm
     xpipe.cpp
     xstraw.cpp
 )
@@ -96,18 +96,16 @@ endif()
 set(COMMONR_SRC
     gbuffer.cpp
     interpal.cpp
-    wwmouse.cpp
-    wwkeyboard.cpp
     soundio_null.cpp
     tcpip_null.cpp
     video_null.cpp
+    wwkeyboard.cpp
+    wwmouse.cpp
 )
 
 set(COMMONV_SRC
     gbuffer.cpp
     interpal.cpp
-    wwmouse.cpp
-    wwkeyboard.cpp
     tcpip_null.cpp
     unvqbuff.c
     vqaconfig.cpp
@@ -116,6 +114,8 @@ set(COMMONV_SRC
     vqapalette.cpp
     vqatask.cpp
     vqaver.cpp
+    wwkeyboard.cpp
+    wwmouse.cpp
 )
 
 if(DSOUND)

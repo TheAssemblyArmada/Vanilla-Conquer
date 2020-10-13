@@ -55,6 +55,7 @@ set(TIBDAWN_SRC
     heap.cpp
     help.cpp
     house.cpp
+    iconset.cpp
     idata.cpp
     infantry.cpp
     ini.cpp
@@ -87,11 +88,13 @@ set(TIBDAWN_SRC
     miscasma.asm
     mission.cpp
     monoc.cpp
+    morphpal.cpp
     mouse.cpp
     mplayer.cpp
     msgbox.cpp
     msglist.cpp
     netdlg.cpp
+    newdel.cpp
     noseqcon.cpp
     nullconn.cpp
     nulldlg.cpp
@@ -146,9 +149,6 @@ set(TIBDAWN_SRC
     utracker.cpp
     vector.cpp
     visudlg.cpp
-    iconset.cpp
-    morphpal.cpp
-    newdel.cpp
     winstub.cpp
 )
 

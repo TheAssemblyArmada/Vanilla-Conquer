@@ -77,6 +77,7 @@ set(REDALERT_SRC
     house.cpp
     hsv.cpp
     iconlist.cpp
+    iconset.cpp
     idata.cpp
     infantry.cpp
     ini.cpp
@@ -160,8 +161,8 @@ set(REDALERT_SRC
     smudge.cpp
     sounddlg.cpp
     special.cpp
-    stamp.asm
     sprite.cpp
+    stamp.asm
     startup.cpp
     statbtn.cpp
     stats.cpp
@@ -200,11 +201,7 @@ set(REDALERT_SRC
     w95trace.cpp
     warhead.cpp
     weapon.cpp
-    iconset.cpp
     winstub.cpp
-    wolapiob.cpp
-    woledit.cpp
-    wolstrng.cpp
     wol_cgam.cpp
     wol_chat.cpp
     wol_dnld.cpp
@@ -212,6 +209,9 @@ set(REDALERT_SRC
     wol_logn.cpp
     wol_main.cpp
     wol_opt.cpp
+    wolapiob.cpp
+    woledit.cpp
+    wolstrng.cpp
     wsproto.cpp
     wspudp.cpp
 )
