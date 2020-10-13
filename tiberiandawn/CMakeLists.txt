@@ -94,7 +94,6 @@ set(TIBDAWN_SRC
     msgbox.cpp
     msglist.cpp
     netdlg.cpp
-    newdel.cpp
     noseqcon.cpp
     nullconn.cpp
     nulldlg.cpp
