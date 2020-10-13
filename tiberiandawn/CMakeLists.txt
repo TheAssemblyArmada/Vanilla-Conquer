@@ -147,7 +147,6 @@ set(TIBDAWN_SRC
     udata.cpp
     unit.cpp
     utracker.cpp
-    vector.cpp
     visudlg.cpp
     winstub.cpp
 )

@@ -76,6 +76,7 @@ set(COMMON_SRC
     tobuff.cpp
     tobuffa.asm
     txtprnt.asm
+    vector.cpp
     winasm.c
     windows.cpp
     winhide.cpp
