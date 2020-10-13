@@ -193,7 +193,6 @@ set(REDALERT_SRC
     unit.cpp
     utracker.cpp
     vdata.cpp
-    vector.cpp
     version.cpp
     vessel.cpp
     visudlg.cpp

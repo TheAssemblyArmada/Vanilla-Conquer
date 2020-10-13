@@ -50,21 +50,11 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#ifdef NEVER
-#ifndef false
-#define false 0
-#endif
-#ifndef true
-#define true 1
-#endif
-#endif
-
+#include <new>
 #include <stdlib.h>
 #include <stddef.h>
 
-// ST - 5/8/1029
-// inline void * operator new(size_t , void * pointer) {return(pointer);}
-// inline void * operator new[](size_t , void * pointer) {return(pointer);}
+struct NoInitClass;
 
 /**************************************************************************
 **	This is a general purpose vector class. A vector is defined by this
