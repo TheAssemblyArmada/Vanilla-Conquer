@@ -30,7 +30,7 @@ jobs:
 
     - name: Build common and tests
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE= -DCMAKE_BUILD_TYPE=Debug -DBUILD_REMASTERTD=ON -DBUILD_REMASTERRA=ON -DBUILD_VANILLATD=ON -DBUILD_VANILLARA=ON -DDSOUND=OFF -DDDRAW=OFF -DUSE_ASM=${{ matrix.asm }} -DNETWORKING=OFF -B build
+        cmake -DCMAKE_TOOLCHAIN_FILE= -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DBUILD_REMASTERTD=ON -DBUILD_REMASTERRA=ON -DBUILD_VANILLATD=ON -DBUILD_VANILLARA=ON -DDSOUND=OFF -DDDRAW=OFF -DUSE_ASM=${{ matrix.asm }} -DNETWORKING=OFF -B build
         cmake --build build --target common --target commonr --target commonv --target VanillaTD --target tests -- -j 4
 
     - name: Run unit tests

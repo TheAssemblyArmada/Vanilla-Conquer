@@ -31,6 +31,7 @@ option(NETWORKING "Enable network play." ON)
 option(DSOUND "Enable DirectSound audio." ON)
 option(DDRAW "Enable DirectDraw video backend." ON)
 option(USE_ASM "Use x86 assembly optimizations." OFF)
+option(BUILD_TESTS "Build unit tests." OFF)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
@@ -92,9 +93,11 @@ if(NOT USE_ASM)
     add_definitions(-DNOASM)
 endif()
 
-# Tests need to respect some options so need to occur after the options are set.
-enable_testing()
-add_subdirectory(tests)
+if(BUILD_TESTS)
+    # Tests need to respect some options so need to occur after the options are set.
+    enable_testing()
+    add_subdirectory(tests)
+endif()
 
 if(NOT BUILD_VANILLATD AND MAP_EDTITORTD)
     message(WARNING "Internal scenario editor requires a Tiberian Dawn executable to be built, but it was not enabled.")
@@ -163,4 +166,10 @@ if(USE_ASM)
     message(STATUS "  Using x86 assembly optimizations.")
 else()
     message(STATUS "  Using C replacements for x86 assembly.")
+endif()
+
+if(BUILD_TESTS)
+    message(STATUS "  Unit tests will be built.")
+else()
+    message(STATUS "  Unit tests will not be built.")
 endif()

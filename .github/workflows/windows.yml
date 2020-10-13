@@ -24,7 +24,7 @@ jobs:
 
     - name: Build Vanilla Conquer
       run: |
-        cmake -A Win32 -DDSOUND=${{ matrix.features }} -DDDRAW=${{ matrix.features }} -DUSE_ASM=${{ matrix.features }} -DNETWORKING=${{ matrix.features }} -DMAP_EDITORRA=${{ matrix.features }} -DMAP_EDITORTD=${{ matrix.features }} -B build
+        cmake -A Win32 -DBUILD_TESTS=ON -DDSOUND=${{ matrix.features }} -DDDRAW=${{ matrix.features }} -DUSE_ASM=${{ matrix.features }} -DNETWORKING=${{ matrix.features }} -DMAP_EDITORRA=${{ matrix.features }} -DMAP_EDITORTD=${{ matrix.features }} -B build
         cmake --build build --parallel --config ${{ matrix.buildtype }}
 
     - name: Run unit tests
