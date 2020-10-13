@@ -55,6 +55,7 @@ set(COMMON_SRC
     miscasm.asm
     mixfile.cpp
     mp.cpp
+    newdel.cpp
     packet.cpp
     palette.cpp
     pipe.cpp
