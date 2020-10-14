@@ -13,9 +13,9 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\gadget.cpv   2.18   16 Oct 1995 16:49:40   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/GADGET.CPP 1     3/03/97 10:24a Joe_bostic $ */
 /***********************************************************************************************
- ***             C O N F I D E N T I A L  ---  W E S T W O O D   S T U D I O S               ***
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
@@ -27,14 +27,14 @@
  *                                                                                             *
  *                   Start Date : 01/03/95                                                     *
  *                                                                                             *
- *                  Last Update : July 8, 1995 [JLB]                                           *
+ *                  Last Update : August 1, 1996 [JLB]                                         *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   GadgetClass::Action -- Base action for gadget.                                            *
  *   GadgetClass::Clear_Focus -- Clears the focus if this gadget has it.                       *
  *   GadgetClass::Delete_List -- Deletes all gadget objects in list.                           *
- *   GadgetClass::Disable -- Disables the gaget from input processing.                         *
+ *   GadgetClass::Disable -- Disables the gadget from input processing.                        *
  *   GadgetClass::Draw_All -- Forces all gadgets in list to be redrawn.                        *
  *   GadgetClass::Draw_Me -- Gadget redraw action (flag control).                              *
  *   GadgetClass::Enable -- Enables the gadget.                                                *
@@ -45,20 +45,25 @@
  *   GadgetClass::Get_Next -- Returns a pointer to the next gadget in the chain.               *
  *   GadgetClass::Get_Prev -- Fetches a pointer to the previous gadget.                        *
  *   GadgetClass::Has_Focus -- Checks if this object currently has the keyboard focus.         *
- *   GadgetClass::Remove -- Removes the specified gagdet from the list.                        *
+ *   GadgetClass::Remove -- Removes the specified gadget from the list.                        *
  *   GadgetClass::Set_Focus -- Sets focus to this gadget.                                      *
  *   GadgetClass::Sticky_Process -- Handles the sticky flag processing.                        *
  *   GadgetClass::~GadgetClass -- Destructor for gadget object.                                *
  *   GadgetClass::Is_List_To_Redraw -- tells if any gadget in the list needs redrawing         *
+ *   GadgetClass::GadgetClass -- Constructor for the gadget object.                            *
+ *   GadgetClass::Set_Position -- Set the coordinate position of this gadget.                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
-#include "common/filepcx.h"
+#include "gadget.h"
+#include "filepcx.h"
+#include "wwmouse.h"
 #ifdef _WIN32
 #include <io.h>
 #else
 #include <unistd.h>
 #endif
+
+extern WWKeyboardClass* Keyboard;
 
 /*
 **	This records the current gadget the the gadget system is "stuck on". Such a
@@ -77,6 +82,12 @@ GadgetClass* GadgetClass::LastList = 0;
 **	This points to the gadget that is intercepting all keyboard events.
 */
 GadgetClass* GadgetClass::Focused = 0;
+
+/*
+** This points to the current color scheme for drawing all gadgets.
+*/
+static RemapControlType _GreyScheme = {15};
+RemapControlType* GadgetClass::ColorScheme = &_GreyScheme;
 
 /***********************************************************************************************
  * GadgetClass::GadgetClass -- Constructor for gadget object.                                  *
@@ -101,19 +112,45 @@ GadgetClass* GadgetClass::Focused = 0;
  *   01/03/1995 MML : Created.                                                                 *
  *=============================================================================================*/
 GadgetClass::GadgetClass(int x, int y, int w, int h, unsigned flags, int sticky)
+    : X(x)
+    , Y(y)
+    , Width(w)
+    , Height(h)
+    , IsToRepaint(false)
+    , IsSticky(sticky)
+    , IsDisabled(false)
+    , Flags(flags)
 {
-    X = x;
-    Y = y;
-    Width = w;
-    Height = h;
-    Flags = flags;
-    IsToRepaint = false;
-    IsSticky = sticky;
-    IsDisabled = false;
-
     if (IsSticky) {
         Flags |= LEFTPRESS | LEFTRELEASE;
     }
+}
+
+/***********************************************************************************************
+ * GadgetClass::GadgetClass -- Constructor for the gadget object.                              *
+ *                                                                                             *
+ *    This is the copy constructor for the gadget object. It will try to duplicate the         *
+ *    righthand gadget.                                                                        *
+ *                                                                                             *
+ * INPUT:   gadget   -- Reference to the initilization gadget.                                 *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/01/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+GadgetClass::GadgetClass(GadgetClass const& gadget)
+    : X(gadget.X)
+    , Y(gadget.Y)
+    , Width(gadget.Width)
+    , Height(gadget.Height)
+    , IsToRepaint(gadget.IsToRepaint)
+    , IsSticky(gadget.IsSticky)
+    , IsDisabled(gadget.IsDisabled)
+    , Flags(gadget.Flags)
+{
 }
 
 /***********************************************************************************************
@@ -135,6 +172,18 @@ GadgetClass::~GadgetClass(void)
 {
     if (Has_Focus()) {
         Clear_Focus();
+    }
+
+    if (this == StuckOn) {
+        StuckOn = NULL;
+    }
+
+    if (this == LastList) {
+        LastList = NULL;
+    }
+
+    if (this == Focused) {
+        Focused = NULL;
     }
 }
 
@@ -198,7 +247,7 @@ void GadgetClass::Enable(void)
 }
 
 /***********************************************************************************************
- * GadgetClass::Disable -- Disables the gaget from input processing.                           *
+ * GadgetClass::Disable -- Disables the gadget from input processing.                          *
  *                                                                                             *
  *    This routine will disable the gadget. A disabled gadget might be rendered, but is        *
  *    ignored for input processing.                                                            *
@@ -220,7 +269,7 @@ void GadgetClass::Disable(void)
 }
 
 /***********************************************************************************************
- * GadgetClass::Remove -- Removes the specified gagdet from the list.                          *
+ * GadgetClass::Remove -- Removes the specified gadget from the list.                          *
  *                                                                                             *
  *    Use this routine if an individual gadget needs to be removed from the list of gadgets.   *
  *                                                                                             *
@@ -331,7 +380,7 @@ void GadgetClass::Delete_List(void)
  *    for some other reason.                                                                   *
  *                                                                                             *
  * INPUT:   flag  -- The input event bits that qualify for this gadget. A NULL indicates that  *
- *                   no qualifying event occured.                                              *
+ *                   no qualifying event occurred.                                             *
  *                                                                                             *
  * OUTPUT:  bool; Should further gadget list processing be aborted?                            *
  *                                                                                             *
@@ -438,44 +487,46 @@ KeyNumType GadgetClass::Input(void)
     **	Fetch any pending keyboard input.
     */
     key = Keyboard->Check();
-    if (key) {
+    if (key != 0) {
         key = Keyboard->Get();
     }
 
-#ifdef SCENARIO_EDITOR
-
-    if (key == KN_K) {
+#ifdef WIN32
+#ifdef CHEAT_KEYS
+    if (key == KN_K && !Debug_Map && (Debug_Flag || Debug_Playtest)) {
         /*
         ** time to create a screen shot using the PCX code (if it works)
         */
-        GraphicBufferClass temp_page(
-            SeenBuff.Get_Width(), SeenBuff.Get_Height(), NULL, SeenBuff.Get_Width() * SeenBuff.Get_Height());
-        char filename[30];
+        if (!Debug_MotionCapture) {
+            GraphicBufferClass temp_page(
+                SeenBuff.Get_Width(), SeenBuff.Get_Height(), NULL, SeenBuff.Get_Width() * SeenBuff.Get_Height());
+            CDFileClass file;
+            char filename[30];
 
-        SeenBuff.Blit(temp_page);
-        for (int lp = 0; lp < 99; lp++) {
-            if (lp < 10) {
-                sprintf(filename, "scrsht0%d.pcx", lp);
-            } else {
-                sprintf(filename, "scrsht%d.pcx", lp);
+            //			Hide_Mouse();
+            SeenBuff.Blit(temp_page);
+            //			Show_Mouse();
+            for (int lp = 0; lp < 99; lp++) {
+                sprintf(filename, "scrsht%02d.pcx", lp);
+                file.Set_Name(filename);
+                if (!file.Is_Available())
+                    break;
             }
-            if (access(filename, 0) == -1)
-                break;
+
+            Write_PCX_File(filename, temp_page, (unsigned char*)&GamePalette);
+            Sound_Effect(VOC_BEEP);
         }
-
-        Write_PCX_File(filename, temp_page, (unsigned char*)CurrentPalette);
-        // Map.Place_Random_Crate();
     }
-
-#endif // SCENARIO_EDITOR
+#endif
+#endif
 
     /*
     **	For mouse button clicks, the mouse position is actually held in the MouseQ...
     **	globals rather than their normal Mouse... globals. This is because we need to
-    **	know the position of the mouse at the exact instant when the click occured
+    **	know the position of the mouse at the exact instant when the click occurred
     **	rather the the mouse position at the time we get around to this function.
     */
-    if (((key & 0x10FF) == KN_LMOUSE) || ((key & 0x10FF) == KN_RMOUSE)) {
+    if (((key & 0xFF) == KN_LMOUSE) || ((key & 0xFF) == KN_RMOUSE)) {
         mousex = Keyboard->MouseQX;
         mousey = Keyboard->MouseQY;
     } else {
@@ -542,9 +593,12 @@ KeyNumType GadgetClass::Input(void)
     */
     if (StuckOn) {
         StuckOn->Draw_Me(false);
+        GadgetClass* oldstuck = StuckOn;
         StuckOn->Clicked_On(key, flags, mousex, mousey);
         if (StuckOn) {
             StuckOn->Draw_Me(false);
+        } else {
+            oldstuck->Draw_Me(false);
         }
     } else {
 
@@ -623,8 +677,8 @@ ControlClass* GadgetClass::Extract_Gadget(unsigned id)
 {
     GadgetClass* g = this;
 
-    if (id) {
-        while (g) {
+    if (id != 0) {
+        while (g != NULL) {
             if (g->Get_ID() == id) {
                 return ((ControlClass*)g);
             }
@@ -772,9 +826,31 @@ int GadgetClass::Is_List_To_Redraw(void)
     GadgetClass* gadget = this;
 
     while (gadget != NULL) {
-        if (gadget->IsToRepaint)
+        if (gadget->IsToRepaint) {
             return (true);
+        }
         gadget = gadget->Get_Next();
     }
     return (false);
+}
+
+/***********************************************************************************************
+ * GadgetClass::Set_Position -- Set the coordinate position of this gadget.                    *
+ *                                                                                             *
+ *    This routine helps with moving a gadget's location. It will set the gadgets upper        *
+ *    left corner to the pixel location specified.                                             *
+ *                                                                                             *
+ * INPUT:   x,y   -- The X and Y position to put the gadget's upper left corner to.            *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/01/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+void GadgetClass::Set_Position(int x, int y)
+{
+    X = x;
+    Y = y;
 }

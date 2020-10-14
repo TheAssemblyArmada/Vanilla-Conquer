@@ -65,7 +65,6 @@ set(REDALERT_SRC
     fly.cpp
     foot.cpp
     fuse.cpp
-    gadget.cpp
     gamedlg.cpp
     gauge.cpp
     globals.cpp

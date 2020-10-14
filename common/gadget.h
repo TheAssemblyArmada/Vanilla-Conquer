@@ -13,7 +13,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\gadget.h_v   2.17   16 Oct 1995 16:46:34   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/GADGET.H 1     3/03/97 10:24a Joe_bostic $ */
 /***********************************************************************************************
  ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
@@ -30,55 +30,55 @@
  *                                                                                             *
  *                                                                                             *
  *        LinkClass [This is the linked list manager class. It keeps a record                  *
- *            ≥      of the next and previous gadget in the list. It is possible               *
- *            ≥      delete a gadget out of the middle of the list with this                   *
- *            ≥      class.]                                                                   *
- *            ≥                                                                                *
+ *            ‚îÇ      of the next and previous gadget in the list. It is possible               *
+ *            ‚îÇ      delete a gadget out of the middle of the list with this                   *
+ *            ‚îÇ      class.]                                                                   *
+ *            ‚îÇ                                                                                *
  *       GadgetClass [The is the basic gadget class. It handles processing of                  *
- *            ≥       input events and dispatching the appropriate functions.                  *
- *            ≥       All gadgets must be derived from this class.]                            *
- *            √ƒƒƒƒø                                                                           *
- *            ≥    ≥                                                                           *
- *            ≥  ListClass [Ths list class functions like a list box does in Windows. It       *
- *            ≥             keeps track of a list of text strings. This list can be            *
- *            ≥             scrolled and an item selected. If the list becomes larger than     *
- *            ≥             can be completely displayed, it will automatically create a        *
- *            ≥             slider (at the right edge) to manage the scrolling.]               *
- *            ≥                                                                                *
+ *            ‚îÇ       input events and dispatching the appropriate functions.                  *
+ *            ‚îÇ       All gadgets must be derived from this class.]                            *
+ *            ‚îú‚îÄ‚îÄ‚îÄ‚îÄ‚îê                                                                           *
+ *            ‚îÇ    ‚îÇ                                                                           *
+ *            ‚îÇ  ListClass [This list class functions like a list box does in Windows. It      *
+ *            ‚îÇ             keeps track of a list of text strings. This list can be            *
+ *            ‚îÇ             scrolled and an item selected. If the list becomes larger than     *
+ *            ‚îÇ             can be completely displayed, it will automatically create a        *
+ *            ‚îÇ             slider (at the right edge) to manage the scrolling.]               *
+ *            ‚îÇ                                                                                *
  *      ControlClass [This class adds the concept of giving an ID number to the                *
- *            ≥       gadget. This ID can then be returned from the Input()                    *
- *            ≥       function as if it were a pseudo-keystroke. Additionally,                 *
- *            ≥       the ability to inform another button that this button has                *
- *            ≥       been actioned is allowed. This ability allows one button                 *
- *            ≥       to watch what happens to another button. Example: a list                 *
- *            ≥       box gadget can tell when an attached slider has been                     *
- *            ≥       touched.]                                                                *
- *    ⁄ƒƒƒƒƒƒƒ≈ƒƒƒƒø                                                                           *
- *    ≥       ≥    ≥                                                                           *
- *    ≥       ≥  GaugeClass [This class looks similar to Windows slider, but has               *
- *    ≥       ≥    ≥         a different controlling logic. There is no thumb and              *
- *    ≥       ≥    ≥         it serves as a simple variable control setting. This              *
- *    ≥       ≥    ≥         is analagous to a volume slider.]                                 *
- *    ≥       ≥    ≥                                                                           *
- *    ≥       ≥ SliderClass [The slider class is similar to the typical Windows slider. It     *
- *    ≥       ≥              has a current setting, a thumb, and a controlable scale. This     *
- *    ≥       ≥              is the object created to handle a scrolling list box.]            *
- *    ≥       ≥                                                                                *
- *    ≥   EditClass                                                                            *
- *    ≥                                                                                        *
- *    ≥                                                                                        *
+ *            ‚îÇ       gadget. This ID can then be returned from the Input()                    *
+ *            ‚îÇ       function as if it were a pseudo-keystroke. Additionally,                 *
+ *            ‚îÇ       the ability to inform another button that this button has                *
+ *            ‚îÇ       been actioned is allowed. This ability allows one button                 *
+ *            ‚îÇ       to watch what happens to another button. Example: a list                 *
+ *            ‚îÇ       box gadget can tell when an attached slider has been                     *
+ *            ‚îÇ       touched.]                                                                *
+ *    ‚îå‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îº‚îÄ‚îÄ‚îÄ‚îÄ‚îê                                                                           *
+ *    ‚îÇ       ‚îÇ    ‚îÇ                                                                           *
+ *    ‚îÇ       ‚îÇ  GaugeClass [This class looks similar to Windows slider, but has               *
+ *    ‚îÇ       ‚îÇ    ‚îÇ         a different controlling logic. There is no thumb and              *
+ *    ‚îÇ       ‚îÇ    ‚îÇ         it serves as a simple variable control setting. This              *
+ *    ‚îÇ       ‚îÇ    ‚îÇ         is analogous to a volume slider.]                                 *
+ *    ‚îÇ       ‚îÇ    ‚îÇ                                                                           *
+ *    ‚îÇ       ‚îÇ SliderClass [The slider class is similar to the typical Windows slider. It     *
+ *    ‚îÇ       ‚îÇ              has a current setting, a thumb, and a controllable scale. This    *
+ *    ‚îÇ       ‚îÇ              is the object created to handle a scrolling list box.]            *
+ *    ‚îÇ       ‚îÇ                                                                                *
+ *    ‚îÇ   EditClass                                                                            *
+ *    ‚îÇ                                                                                        *
+ *    ‚îÇ                                                                                        *
  * ToggleClass [The toggle class is used for buttons that have an image and behave just        *
- *    ≥         like the buttons in Windows do. That is, they have a separate visual for       *
- *    ≥         when they are pressed and raised. They are officially triggered (return        *
- *    ≥         their ID number) when the mouse button is released while over the button.      *
- *    ≥         This class doesn't perform any rendering itself. It merely provides the        *
- *    ≥         logic so that the derived classes will function correctly.]                    *
- *  ⁄ƒ¡ƒƒƒƒø                                                                                   *
- *  ≥      ≥                                                                                   *
- *  ≥   TextButtonClass [The text button functions like a normal Windows style button, but     *
- *  ≥                    the imagery is based on text that is displayed on the button. A       *
- *  ≥                    typical example would be the "OK" or "Cancel" buttons.]               *
- *  ≥                                                                                          *
+ *    ‚îÇ         like the buttons in Windows do. That is, they have a separate visual for       *
+ *    ‚îÇ         when they are pressed and raised. They are officially triggered (return        *
+ *    ‚îÇ         their ID number) when the mouse button is released while over the button.      *
+ *    ‚îÇ         This class doesn't perform any rendering itself. It merely provides the        *
+ *    ‚îÇ         logic so that the derived classes will function correctly.]                    *
+ *  ‚îå‚îÄ‚î¥‚îÄ‚îÄ‚îÄ‚îÄ‚îê                                                                                   *
+ *  ‚îÇ      ‚îÇ                                                                                   *
+ *  ‚îÇ   TextButtonClass [The text button functions like a normal Windows style button, but     *
+ *  ‚îÇ                    the imagery is based on text that is displayed on the button. A       *
+ *  ‚îÇ                    typical example would be the "OK" or "Cancel" buttons.]               *
+ *  ‚îÇ                                                                                          *
  * ShapeButtonClass [The shape buttons is similar to the TextButton but instead of text        *
  *                   being used to give the button its imagery, an actual shape is used        *
  *                   instead. This allows graphic buttons. These are similar to the up/down    *
@@ -90,12 +90,16 @@
 #define GADGET_H
 
 #include "link.h"
+#include "remapcontrol.h"
+#include "wwkeyboard.h"
 
 class ControlClass;
 
 class GadgetClass : public LinkClass
 {
 public:
+    friend class DLLExportClass; // ST - 5/13/2019
+
     typedef enum FlagEnum
     {
         LEFTPRESS = 0x0001,    // Left mouse button press.
@@ -106,13 +110,15 @@ public:
         RIGHTHELD = 0x0020,    // Right mouse button is being held down.
         RIGHTRELEASE = 0x0040, // Right mouse button released.
         RIGHTUP = 0x0080,      // Right mouse button is being held up.
-        KEYBOARD = 0x0100,     // Keyboard input processing (maybe).
+        KEYBOARD = 0x0100      // Keyboard input processing (maybe).
     } FlagEnum;
 
     GadgetClass(int x, int y, int w, int h, unsigned flags, int sticky = false);
+    GadgetClass(NoInitClass const& x)
+        : LinkClass(x){};
     GadgetClass(void){};
+    GadgetClass(GadgetClass const& gadget);
     virtual ~GadgetClass(void);
-    //		static GadgetClass * Create_One_Of(int x, int y, int w, int h, unsigned flags, int sticky=false);
 
     /*
     **	Gadget list management functions.
@@ -144,11 +150,29 @@ public:
     virtual void Clear_Focus(void);
     virtual bool Has_Focus(void);
     virtual int Is_List_To_Redraw(void);
+    virtual bool Is_To_Redraw(void)
+    {
+        return (IsToRepaint);
+    }
+    virtual void Set_Position(int x, int y);
 
     /*
     **	General render function.
     */
     virtual int Draw_Me(int forced = false);
+
+    /*
+    ** Sets the current color scheme
+    */
+    static void Set_Color_Scheme(RemapControlType* scheme)
+    {
+        ColorScheme = scheme;
+    }
+
+    static RemapControlType* Get_Color_Scheme(void)
+    {
+        return (ColorScheme);
+    }
 
     /*
     **	This is the coordinates and dimensions of the gadget region. These are in
@@ -170,18 +194,11 @@ protected:
     virtual void Sticky_Process(unsigned flags);
 
     /*
-    **	This is the action functio that will be called whenever the flags and mouse
+    **	This is the action function that will be called whenever the flags and mouse
     **	input indicates. This is the main method by which this button performs a useful
     **	function.
     */
     virtual int Action(unsigned flags, KeyNumType& key);
-
-    /*
-    **	If there is a sticky button being processed, then this will point to it. A sticky
-    **	button is one that will ONLY be processed while the mouse button is being
-    **	held down.
-    */
-    static GadgetClass* StuckOn;
 
     /*
     **	This is a record of the last list passed to the Input() function. If a list
@@ -203,7 +220,7 @@ protected:
     */
     unsigned IsToRepaint : 1;
 
-public: // HACK HACK HACK.. this is here becuase the sidebar buttons are static.
+public: // HACK HACK HACK.. this is here because the sidebar buttons are static.
     /*
     **	A sticky button is one that is processed to the exclusion of all other buttons
     **	IF the mouse was pressed down while over this button and the mouse continues
@@ -211,6 +228,14 @@ public: // HACK HACK HACK.. this is here becuase the sidebar buttons are static.
     **	buttons.
     */
     unsigned IsSticky : 1;
+
+    //	ajw - Publicized StuckOn 7/30/98 (was protected)
+    /*
+    **	If there is a sticky button being processed, then this will point to it. A sticky
+    **	button is one that will ONLY be processed while the mouse button is being
+    **	held down.
+    */
+    static GadgetClass* StuckOn;
 
 protected:
     /*
@@ -229,11 +254,17 @@ protected:
     */
     unsigned Flags;
 
+    /*
+    ** This is the current color scheme; it must be initialized by the app.
+    */
+    static RemapControlType* ColorScheme;
+
 private:
-public: // ST - 1/21/2019 12:06PM
+public: // ST - 5/14/2019
     virtual int Clicked_On(KeyNumType& key, unsigned flags, int x, int y);
 };
 
+// PG
 // inline GadgetClass::FlagEnum operator |(GadgetClass::FlagEnum, GadgetClass::FlagEnum);
 // inline GadgetClass::FlagEnum operator &(GadgetClass::FlagEnum, GadgetClass::FlagEnum);
 // inline GadgetClass::FlagEnum operator ~(GadgetClass::FlagEnum);

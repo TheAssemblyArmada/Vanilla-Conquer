@@ -34,6 +34,7 @@ set(COMMON_SRC
     file.cpp
     font.cpp
     framelimit.cpp
+    gadget.cpp
     getshape.cpp
     graphicsviewport.cpp
     iff.cpp
