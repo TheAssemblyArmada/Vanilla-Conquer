@@ -38,7 +38,7 @@
  *   ControlClass::Make_Peer -- Assigns a peer gadget to this gadget.                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
+#include "control.h"
 
 /***********************************************************************************************
  * ControlClass::ControlClass -- Constructor for control class objects.                        *

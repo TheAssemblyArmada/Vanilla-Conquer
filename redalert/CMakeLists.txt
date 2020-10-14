@@ -32,7 +32,6 @@ set(REDALERT_SRC
     connect.cpp
     conquer.cpp
     const.cpp
-    control.cpp
     coord.cpp
     crate.cpp
     crcpipe.cpp

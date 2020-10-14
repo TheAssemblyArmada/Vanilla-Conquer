@@ -21,6 +21,7 @@ set(COMMON_SRC
     ccfile.cpp
     cdfile.cpp
     cliprect.c
+    control.cpp
     crc.cpp
     delay.cpp
     dipthong.cpp
