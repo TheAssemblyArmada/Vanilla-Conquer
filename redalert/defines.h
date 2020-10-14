@@ -3513,25 +3513,7 @@ typedef enum SourceType : char
     SOURCE_FIRST = 0
 } SourceType;
 
-/****************************************************************************
-**	This entry defines a complete color scheme, with the player's remap table,
-** the font remap table, and a color scheme for dialog boxes and buttons.
-*/
-typedef struct RemapControlType
-{
-    unsigned char BrightColor;     // Highlight (bright) color index.
-    unsigned char Color;           // Normal color index.
-    unsigned char RemapTable[256]; // Actual remap table.
-    unsigned char FontRemap[16];   // Remap table for gradient font.
-    unsigned char Shadow;          // Color of shadowed edge of a raised button.
-    unsigned char Background;      // Background fill color for buttons.
-    unsigned char Corners;         // Transition color between shadow and highlight.
-    unsigned char Highlight;       // Bright edge of raised button.
-    unsigned char Box;             // Color for dialog box border.
-    unsigned char Bright;          // Color used for highlighted text.
-    unsigned char Underline;       // Color for underlining dialog box titles.
-    unsigned char Bar;             // Selected entry list box background color.
-} RemapControlType;
+#include "common/remapcontrol.h"
 
 /****************************************************************************
 **	Each type of terrain has certain characteristics. These are indicated
