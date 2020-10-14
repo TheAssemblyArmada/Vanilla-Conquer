@@ -23,7 +23,6 @@ set(TIBDAWN_SRC
     connect.cpp
     conquer.cpp
     const.cpp
-    control.cpp
     coord.cpp
     credits.cpp
     crew.cpp
