@@ -56,7 +56,7 @@ fixed::fixed(int numerator, int denominator)
     if (denominator == 0) {
         Data.Raw = 0U;
     } else {
-        Data.Raw = (unsigned int)(((unsigned __int64)numerator * PRECISION) / denominator);
+        Data.Raw = (unsigned int)(((uint64_t)numerator * PRECISION) / denominator);
     }
 }
 
@@ -117,7 +117,7 @@ fixed::fixed(char const* ascii)
     **	divided by 100 to get mathematical fixed point percentage value.
     */
     if (*tptr == '%') { // Removed '/' preceding '%'. ST - 5/8/2019
-        Data.Raw = (unsigned int)(((unsigned __int64)atoi(ascii) * PRECISION) / 100ULL);
+        Data.Raw = (unsigned int)(((uint64_t)atoi(ascii) * PRECISION) / 100ULL);
     } else {
 
         Data.Composite.Whole = Data.Composite.Fraction = 0U;
@@ -140,7 +140,7 @@ fixed::fixed(char const* ascii)
                 base *= 10U;
             }
 
-            Data.Composite.Fraction = (unsigned short)(((unsigned __int64)frac * PRECISION) / base);
+            Data.Composite.Fraction = (unsigned short)(((uint64_t)frac * PRECISION) / base);
         }
     }
 }

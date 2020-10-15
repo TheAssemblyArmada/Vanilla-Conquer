@@ -59,7 +59,6 @@ set(REDALERT_SRC
     facing.cpp
     factory.cpp
     findpath.cpp
-    fixed.cpp
     flasher.cpp
     fly.cpp
     foot.cpp
