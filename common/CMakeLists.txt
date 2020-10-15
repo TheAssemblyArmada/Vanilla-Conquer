@@ -33,6 +33,7 @@ set(COMMON_SRC
     fading.c
     field.cpp
     file.cpp
+    fixed.cpp
     font.cpp
     framelimit.cpp
     gadget.cpp

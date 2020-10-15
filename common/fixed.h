@@ -38,26 +38,6 @@
 #include <stdint.h>
 
 /*
-**	The "bool" integral type was defined by the C++ committee in
-**	November of '94. Until the compiler supports this, use the following
-**	definition.
-*/
-#ifndef __BORLANDC__
-#ifndef TRUE_FALSE_DEFINED
-#define TRUE_FALSE_DEFINED
-enum
-{
-    false = 0,
-    true = 1
-};
-typedef int bool;
-#endif
-#endif
-
-//#pragma warning 604 9
-//#pragma warning 595 9
-
-/*
 **	This is a very simple fixed point class that functions like a regular integral type. However
 **	it is under certain restrictions. The whole part must not exceed 65535. The fractional part is
 **	limited to an accuracy of 1/65536. It cannot represent or properly handle negative values. It
@@ -106,20 +86,20 @@ public:
     fixed(int value)
     {
         Data.Composite.Fraction = 0U;
-        Data.Composite.Whole = (unsigned short)value;
+        Data.Composite.Whole = (uint16_t)value;
     }
     fixed(unsigned int value)
     {
         Data.Composite.Fraction = 0U;
-        Data.Composite.Whole = (unsigned short)value;
+        Data.Composite.Whole = (uint16_t)value;
     }
 
     // Conversion constructor to get fixed point from floating-point.
     fixed(float value)
     {
         value += 1.0f / (PRECISION << 1);
-        Data.Composite.Fraction = (unsigned short)((value - (unsigned short)value) * PRECISION);
-        Data.Composite.Whole = (unsigned short)value;
+        Data.Composite.Fraction = (uint16_t)((value - (uint16_t)value) * PRECISION);
+        Data.Composite.Whole = (uint16_t)value;
     }
 
     // Constructor if ASCII image of number is known.
@@ -128,7 +108,7 @@ public:
     // Convert to integer when implicitly required.
     operator unsigned(void) const
     {
-        return (unsigned)(((unsigned __int64)Data.Raw + (PRECISION >> 1)) / PRECISION);
+        return (unsigned)(((uint64_t)Data.Raw + (PRECISION >> 1)) / PRECISION);
     }
 
     /*
@@ -136,24 +116,24 @@ public:
     */
     fixed& operator*=(fixed const& rvalue)
     {
-        Data.Raw = (unsigned int)(((unsigned __int64)Data.Raw * rvalue.Data.Raw) / PRECISION);
+        Data.Raw = (uint32_t)(((uint64_t)Data.Raw * rvalue.Data.Raw) / PRECISION);
         return (*this);
     }
     fixed& operator*=(int rvalue)
     {
-        Data.Raw *= (unsigned int)rvalue;
+        Data.Raw *= (uint32_t)rvalue;
         return (*this);
     }
     fixed& operator/=(fixed const& rvalue)
     {
         if (rvalue.Data.Raw != 0U && rvalue.Data.Raw != PRECISION)
-            Data.Raw = (unsigned int)((((unsigned __int64)Data.Raw * PRECISION) + (PRECISION >> 1)) / rvalue.Data.Raw);
+            Data.Raw = (uint32_t)((((uint64_t)Data.Raw * PRECISION) + (PRECISION >> 1)) / rvalue.Data.Raw);
         return (*this);
     }
     fixed& operator/=(int rvalue)
     {
         if (rvalue)
-            Data.Raw /= (unsigned int)rvalue;
+            Data.Raw /= (uint32_t)rvalue;
         return (*this);
     }
     fixed& operator+=(fixed const& rvalue)
@@ -263,27 +243,27 @@ public:
     */
     bool operator<(int rvalue) const
     {
-        return (Data.Raw < ((unsigned int)rvalue * PRECISION));
+        return (Data.Raw < ((uint32_t)rvalue * PRECISION));
     }
     bool operator>(int rvalue) const
     {
-        return (Data.Raw > ((unsigned int)rvalue * PRECISION));
+        return (Data.Raw > ((uint32_t)rvalue * PRECISION));
     }
     bool operator<=(int rvalue) const
     {
-        return (Data.Raw <= ((unsigned int)rvalue * PRECISION));
+        return (Data.Raw <= ((uint32_t)rvalue * PRECISION));
     }
     bool operator>=(int rvalue) const
     {
-        return (Data.Raw >= ((unsigned int)rvalue * PRECISION));
+        return (Data.Raw >= ((uint32_t)rvalue * PRECISION));
     }
     bool operator==(int rvalue) const
     {
-        return (Data.Raw == ((unsigned int)rvalue * PRECISION));
+        return (Data.Raw == ((uint32_t)rvalue * PRECISION));
     }
     bool operator!=(int rvalue) const
     {
-        return (Data.Raw != ((unsigned int)rvalue * PRECISION));
+        return (Data.Raw != ((uint32_t)rvalue * PRECISION));
     }
 
     /*
@@ -467,14 +447,14 @@ private:
         struct
         {
 #ifdef BIG_ENDIAN
-            unsigned short Whole;
-            unsigned short Fraction;
+            uint16_t Whole;
+            uint16_t Fraction;
 #else
-            unsigned short Fraction;
-            unsigned short Whole;
+            uint16_t Fraction;
+            uint16_t Whole;
 #endif
         } Composite;
-        unsigned int Raw;
+        uint32_t Raw;
     } Data;
 };
 
