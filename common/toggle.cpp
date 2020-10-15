@@ -13,9 +13,9 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\toggle.cpv   2.18   16 Oct 1995 16:50:56   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/TOGGLE.CPP 1     3/03/97 10:26a Joe_bostic $ */
 /***********************************************************************************************
- ***             C O N F I D E N T I A L  ---  W E S T W O O D   S T U D I O S               ***
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
@@ -35,14 +35,14 @@
  *   ToggleClass::Turn_On -- Turns the toggle button to the "ON" state.                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
 #include "toggle.h"
+#include "wwmouse.h"
 
 /***********************************************************************************************
  * ToggleClass::ToggleClass -- Normal constructor for toggle button gadgets.                   *
  *                                                                                             *
  *    This is the normal constructor for toggle buttons. A toggle button is one that most      *
- *    closesly resembles the Windows style. It has an up and down state as well as an on       *
+ *    closely resembles the Windows style. It has an up and down state as well as an on        *
  *    and off state.                                                                           *
  *                                                                                             *
  * INPUT:   id    -- ID number for this button.                                                *
@@ -60,10 +60,10 @@
  *=============================================================================================*/
 ToggleClass::ToggleClass(unsigned id, int x, int y, int w, int h)
     : ControlClass(id, x, y, w, h, LEFTPRESS | LEFTRELEASE, true)
+    , IsPressed(false)
+    , IsOn(false)
+    , IsToggleType(false)
 {
-    IsPressed = false;
-    IsOn = false;
-    IsToggleType = false;
 }
 
 /***********************************************************************************************
@@ -137,8 +137,9 @@ int ToggleClass::Action(unsigned flags, KeyNumType& key)
     **	must never actually function like a real call, but rather only performs any necessary
     **	graphic updating.
     */
+    bool overbutton = ((Get_Mouse_X() - X) < Width && (Get_Mouse_Y() - Y) < Height);
     if (!flags) {
-        if ((unsigned)(Get_Mouse_X() - X) < (unsigned)Width && (unsigned)(Get_Mouse_Y() - Y) < (unsigned)Height) {
+        if (overbutton) {
             if (!IsPressed) {
                 IsPressed = true;
                 Flag_To_Redraw();
@@ -173,10 +174,11 @@ int ToggleClass::Action(unsigned flags, KeyNumType& key)
 
     if (flags & LEFTRELEASE) {
         if (IsPressed) {
-            if (IsToggleType) {
+            if (IsToggleType && overbutton) {
                 IsOn = (IsOn == false);
             }
             IsPressed = false;
+            Flag_To_Redraw();
         } else {
             flags &= ~LEFTRELEASE;
         }

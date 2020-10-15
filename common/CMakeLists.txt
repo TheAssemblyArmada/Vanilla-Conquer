@@ -79,6 +79,7 @@ set(COMMON_SRC
     timerdwn.cpp
     tobuff.cpp
     tobuffa.asm
+    toggle.cpp
     txtprnt.asm
     vector.cpp
     winasm.c
