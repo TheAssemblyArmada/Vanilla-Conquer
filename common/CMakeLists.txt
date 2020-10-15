@@ -68,6 +68,7 @@ set(COMMON_SRC
     pkstraw.cpp
     random.cpp
     rawfile.cpp
+    readline.cpp
     rect.cpp
     rndstraw.cpp
     sha.cpp

@@ -13,10 +13,9 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-#include "function.h"
 #include <ctype.h>
 #include <string.h>
-#include "common/wwfile.h"
+#include "wwfile.h"
 #include "xstraw.h"
 #include "readline.h"
 #include "miscasm.h"
