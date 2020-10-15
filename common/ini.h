@@ -37,12 +37,14 @@
 
 #include <stdlib.h>
 #include "listnode.h"
-#include "pipe.h"
-#include "common/wwfile.h"
 #include "pk.h"
 #include "fixed.h"
 #include "crc.h"
 #include "search.h"
+
+class FileClass;
+class Straw;
+class Pipe;
 
 /*
 **	This is an INI database handler class. It handles a database with a disk format identical

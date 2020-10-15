@@ -40,6 +40,7 @@ set(COMMON_SRC
     getshape.cpp
     graphicsviewport.cpp
     iff.cpp
+    ini.cpp
     int.cpp
     irandom.cpp
     irandoma.asm
