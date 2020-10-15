@@ -136,7 +136,6 @@ set(REDALERT_SRC
     ramfile.cpp
     rand.cpp
     rawolapi.cpp
-    readline.cpp
     reinf.cpp
     rgb.cpp
     rotbmp.cpp
