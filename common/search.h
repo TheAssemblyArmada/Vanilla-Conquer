@@ -50,26 +50,7 @@
 #ifndef SEARCH_H
 #define SEARCH_H
 
-/*
-**	The "bool" integral type was defined by the C++ committee in
-**	November of '94. Until the compiler supports this, use the following
-**	definition.
-*/
-#ifndef __BORLANDC__
-#ifndef TRUE_FALSE_DEFINED
-#define TRUE_FALSE_DEFINED
-enum
-{
-    false = 0,
-    true = 1
-};
-typedef int bool;
-#endif
-#endif
-
-#ifndef __BORLANDC__
-#define _USERENTRY
-#endif
+#include <stdlib.h>
 
 /*
 **	This class is used to create and maintain an index. It does this by assigning a unique
@@ -190,7 +171,7 @@ private:
     */
     NodeElement const* Search_For_Node(int id) const;
 
-    static int _USERENTRY search_compfunc(void const* ptr, void const* ptr2);
+    static int search_compfunc(void const* ptr, void const* ptr2);
 };
 
 /***********************************************************************************************
@@ -603,7 +584,7 @@ template <class T> bool IndexClass<T>::Remove_Index(int id)
  * HISTORY:                                                                                    *
  *   11/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template <class T> int _USERENTRY IndexClass<T>::search_compfunc(void const* ptr1, void const* ptr2)
+template <class T> int IndexClass<T>::search_compfunc(void const* ptr1, void const* ptr2)
 {
     if (*(int const*)ptr1 == *(int const*)ptr2) {
         return (0);
