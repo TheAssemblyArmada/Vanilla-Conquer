@@ -136,7 +136,6 @@ set(TIBDAWN_SRC
     terrain.cpp
     textbtn.cpp
     theme.cpp
-    toggle.cpp
     trigger.cpp
     turret.cpp
     txtlabel.cpp

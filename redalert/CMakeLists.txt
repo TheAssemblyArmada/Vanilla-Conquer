@@ -179,7 +179,6 @@ set(REDALERT_SRC
     tevent.cpp
     textbtn.cpp
     theme.cpp
-    toggle.cpp
     tooltip.cpp
     tracker.cpp
     trigger.cpp
