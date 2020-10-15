@@ -3510,24 +3510,26 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             **	Cooerce the movement mission into a queued movement mission if the ALT key was
             **	held down.
             */
+#ifndef REMASTER_BUILD
             //
             // MBL 04.14.2020 Original code KO, since is still active and can still hit
             //
-            // if (mission == MISSION_MOVE && (Keyboard->Down(Options.KeyQueueMove1) ||
-            // Keyboard->Down(Options.KeyQueueMove2))) { 	mission = MISSION_QMOVE;
-            // }
-
-            //
-            // MBL 04.14.2020 - Apply the same logic as above, using what is assigned as hotkeys
-            //
-            if (PlayerPtr && House) {
-                if (PlayerPtr == House) {
-                    if (mission == MISSION_MOVE && PlayerPtr->IsQueuedMovementToggle) {
-                        mission = MISSION_QMOVE;
-                    }
+            if (mission == MISSION_MOVE
+                && (Keyboard->Down(Options.KeyQueueMove1) || Keyboard->Down(Options.KeyQueueMove2))) {
+                mission = MISSION_QMOVE;
+            }
+#else
+        //
+        // MBL 04.14.2020 - Apply the same logic as above, using what is assigned as hotkeys
+        //
+        if (PlayerPtr && House) {
+            if (PlayerPtr == House) {
+                if (mission == MISSION_MOVE && PlayerPtr->IsQueuedMovementToggle) {
+                    mission = MISSION_QMOVE;
                 }
             }
-
+        }
+#endif
             Queue_Mission(TargetClass(this), mission, target, destination);
         }
     }
