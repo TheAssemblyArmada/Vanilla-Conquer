@@ -72,6 +72,7 @@
 #include "b64pipe.h"
 #include "xstraw.h"
 #include "b64straw.h"
+#include "miscasm.h"
 
 #ifdef FIXIT_FAST_LOAD
 #include "cstraw.h"

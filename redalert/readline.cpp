@@ -19,37 +19,7 @@
 #include "common/wwfile.h"
 #include "xstraw.h"
 #include "readline.h"
-
-// Disable the "temporary object used to initialize a non-constant reference" warning.
-//#pragma warning 665 9
-
-void strtrimcpp(char* buffer)
-{
-    if (buffer) {
-
-        /*
-        **	Strip leading white space from the string.
-        */
-        char* source = buffer;
-        while (isspace(*source)) {
-            source++;
-        }
-        if (source != buffer) {
-            strcpy(buffer, source);
-        }
-
-        /*
-        **	Clip trailing white space from the string.
-        */
-        for (int index = strlen(buffer) - 1; index >= 0; index--) {
-            if (isspace(buffer[index])) {
-                buffer[index] = '\0';
-            } else {
-                break;
-            }
-        }
-    }
-}
+#include "miscasm.h"
 
 int Read_Line(FileClass& file, char* buffer, int len, bool& eof)
 {
@@ -79,6 +49,6 @@ int Read_Line(Straw& file, char* buffer, int len, bool& eof)
     }
     buffer[count] = '\0';
 
-    strtrimcpp(buffer);
+    strtrim(buffer);
     return (strlen(buffer));
 }

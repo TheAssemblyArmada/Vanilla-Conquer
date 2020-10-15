@@ -13,9 +13,10 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-#include "common/wwfile.h"
-#include "straw.h"
+#ifndef READLINE_H
+#define READLINE_H
 
-extern "C" void __cdecl strtrim(char* buffer);
 int Read_Line(FileClass& file, char* buffer, int len, bool& eof);
 int Read_Line(Straw& file, char* buffer, int len, bool& eof);
+
+#endif
