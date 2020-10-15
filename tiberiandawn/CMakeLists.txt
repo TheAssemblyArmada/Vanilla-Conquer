@@ -56,7 +56,6 @@ set(TIBDAWN_SRC
     iconset.cpp
     idata.cpp
     infantry.cpp
-    ini.cpp
     init.cpp
     intro.cpp
     iomap.cpp
@@ -109,6 +108,7 @@ set(TIBDAWN_SRC
     rules.cpp
     saveload.cpp
     scenario.cpp
+    scenarioini.cpp
     score.cpp
     scroll.cpp
     sdata.cpp
