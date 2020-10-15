@@ -77,7 +77,6 @@ set(REDALERT_SRC
     iconset.cpp
     idata.cpp
     infantry.cpp
-    ini.cpp
     inibin.cpp
     inicode.cpp
     init.cpp
