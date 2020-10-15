@@ -38,7 +38,6 @@ set(REDALERT_SRC
     crcstraw.cpp
     credits.cpp
     crew.cpp
-    cstraw.cpp
     debug.cpp
     descdlg.cpp
     dial8.cpp
