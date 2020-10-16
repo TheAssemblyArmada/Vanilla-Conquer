@@ -48,7 +48,6 @@ set(REDALERT_SRC
     door.cpp
     drive.cpp
     drop.cpp
-    dynavec.cpp
     edit.cpp
     egos.cpp
     ending.cpp
@@ -76,7 +75,6 @@ set(REDALERT_SRC
     iconset.cpp
     idata.cpp
     infantry.cpp
-    inibin.cpp
     inicode.cpp
     init.cpp
     intro.cpp
@@ -107,14 +105,11 @@ set(REDALERT_SRC
     mapedsel.cpp
     mapedtm.cpp
     mapsel.cpp
-    mci.cpp
-    mcimovie.cpp
     menus.cpp
     miscasm.cpp
     mission.cpp
     monoc.cpp
     mouse.cpp
-    mpgset.cpp
     mplayer.cpp
     mpmgrw.cpp
     mpu.cpp
