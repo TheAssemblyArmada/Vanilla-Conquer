@@ -1283,7 +1283,9 @@ void AnimClass::Do_Atom_Damage(HousesType ownerhouse, CELL cell)
     if (Session.Type == GAME_NORMAL) {
         radius = 4;
         rawdamage = Rule.AtomDamage;
-        // WhitePalette.Set(FADE_PALETTE_SLOW, Call_Back);		//TO_FIX. ST 5/8/2019
+#ifndef REMASTER_BUILD
+        WhitePalette.Set(FADE_PALETTE_SLOW, Call_Back); //TO_FIX. ST 5/8/2019
+#endif
     } else {
         radius = 3;
         rawdamage = Rule.AtomDamage / 5;
@@ -1292,7 +1294,9 @@ void AnimClass::Do_Atom_Damage(HousesType ownerhouse, CELL cell)
     Wide_Area_Damage(Cell_Coord(cell), radius * CELL_LEPTON_W, rawdamage, building, WARHEAD_FIRE);
     Shake_The_Screen(3);
     if (Session.Type == GAME_NORMAL) {
-        // GamePalette.Set(FADE_PALETTE_SLOW, Call_Back);	//TO_FIX. ST 5/8/2019
+#ifndef REMASTER_BUILD
+        GamePalette.Set(FADE_PALETTE_SLOW, Call_Back); //TO_FIX. ST 5/8/2019
+#endif
     }
 #endif
 }
