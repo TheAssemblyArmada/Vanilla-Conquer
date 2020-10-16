@@ -5183,6 +5183,7 @@ int Owner_From_Name(char const* text)
  *=============================================================================================*/
 void Shake_The_Screen(int shakes, HousesType house)
 {
+#ifdef REMASTER_BUILD
     for (char h = HOUSE_FIRST; h < HOUSE_COUNT; ++h) {
         if ((house != HOUSE_NONE) && (h != house)) {
             continue;
@@ -5193,7 +5194,7 @@ void Shake_The_Screen(int shakes, HousesType house)
             hptr->ScreenShakeTime.Start();
         }
     }
-#if (0)
+#else
 #ifdef WIN32
     shakes += shakes;
 
@@ -5202,8 +5203,6 @@ void Shake_The_Screen(int shakes, HousesType house)
     int oldyoff = 0;
     int newyoff = 0;
     while (shakes--) {
-        int x = TickCount;
-        //		CountDownTimer = 1;
         do {
             newyoff = Sim_Random_Pick(0, 2) - 1;
         } while (newyoff == oldyoff);
@@ -5218,9 +5217,7 @@ void Shake_The_Screen(int shakes, HousesType house)
             HidPage.Blit(SeenPage, 0, 0, 0, 2, 640, 398);
             break;
         }
-        while (x == TickCount)
-            ;
-        //		} while (CountDownTimer != 0) ;
+        Frame_Limiter();
     }
     HidPage.Blit(SeenPage);
     Show_Mouse();
