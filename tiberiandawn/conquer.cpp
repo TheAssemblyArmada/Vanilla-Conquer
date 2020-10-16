@@ -4242,6 +4242,7 @@ void Blit_Hid_Page_To_Seen_Buff(void)
  *=============================================================================================*/
 void Shake_The_Screen(int shakes, HousesType house)
 {
+#ifdef REMASTER_BUILD
     for (char h = HOUSE_FIRST; h < HOUSE_COUNT; ++h) {
         if ((house != HOUSE_NONE) && (h != house)) {
             continue;
@@ -4251,4 +4252,31 @@ void Shake_The_Screen(int shakes, HousesType house)
             hptr->ScreenShakeTime = hptr->ScreenShakeTime + shakes + shakes;
         }
     }
+#else
+    shakes += shakes;
+
+    Hide_Mouse();
+    SeenBuff.Blit(HidPage);
+    int oldyoff = 0;
+    int newyoff = 0;
+    while (shakes--) {
+        do {
+            newyoff = Sim_Random_Pick(0, 2) - 1;
+        } while (newyoff == oldyoff);
+        switch (newyoff) {
+        case -1:
+            HidPage.Blit(SeenBuff, 0, 2, 0, 0, 640, 398);
+            break;
+        case 0:
+            HidPage.Blit(SeenBuff);
+            break;
+        case 1:
+            HidPage.Blit(SeenBuff, 0, 0, 0, 2, 640, 398);
+            break;
+        }
+        Frame_Limiter();
+    }
+    HidPage.Blit(SeenBuff);
+    Show_Mouse();
+#endif
 }
