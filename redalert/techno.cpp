@@ -7143,7 +7143,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         }
         IsDiscoveredByPlayerMask |= (1 << shift);
 
-        if (Session.Type == GAME_NORMAL && player == PlayerPtr) {
+        if (Session.Type != GAME_GLYPHX_MULTIPLAYER && player == PlayerPtr) {
             IsDiscoveredByPlayer = true;
         }
     }
