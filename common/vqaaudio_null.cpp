@@ -13,8 +13,11 @@
 #include "vqafile.h"
 #include "vqaloader.h"
 #include "vqatask.h"
+#include "timer.h"
 #include <algorithm>
 #include <sys/timeb.h>
+
+static TimerClass timer;
 
 int VQA_StartTimerInt(VQAHandle* handle, int a2)
 {
@@ -58,11 +61,12 @@ int VQA_CopyAudio(VQAHandle* handle)
 
 void VQA_SetTimer(VQAHandle* handle, int time, int method)
 {
+    timer.Set(0);
 }
 
 unsigned VQA_GetTime(VQAHandle* handle)
 {
-    return 0;
+    return timer.Time();
 }
 
 int VQA_TimerMethod()
