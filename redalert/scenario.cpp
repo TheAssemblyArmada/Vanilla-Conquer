@@ -2368,20 +2368,6 @@ bool Read_Scenario_INI(char* fname, bool)
     Call_Back();
 
     /*
-    **	Read in the trigger data. The triggers must be created before any other
-    **	objects can be initialized.
-    */
-    TriggerTypeClass::Read_INI(ini);
-    Call_Back();
-
-    /*
-    **	Read in the map control values. This includes dimensions
-    **	as well as theater information.
-    */
-    Map.Read_INI(ini);
-    Call_Back();
-
-    /*
     **	Assign PlayerPtr by reading the player's house from the INI;
     **	Must be done before any TechnoClass objects are created.
     */
@@ -2415,6 +2401,20 @@ bool Read_Scenario_INI(char* fname, bool)
     //	if (NewINIFormat < 2 || !ini.Is_Present("MapPack")) {
     //		Map.Read_Binary(root, &ScenarioCRC);
     //	}
+
+    /*
+    **	Read in the trigger data. The triggers must be created before any other
+    **	objects can be initialized.
+    */
+    TriggerTypeClass::Read_INI(ini);
+    Call_Back();
+
+    /*
+    **	Read in the map control values. This includes dimensions
+    **	as well as theater information.
+    */
+    Map.Read_INI(ini);
+    Call_Back();
 
     /*
     **	Read in and place the 3D terrain objects.
