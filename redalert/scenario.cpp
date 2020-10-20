@@ -2656,6 +2656,20 @@ bool Read_Scenario_INI(char* fname, bool)
                 Map.Place_Random_Crate();
             }
         }
+
+#ifndef REMASTER_BUILD
+        /*
+        ** All this was originally done within Compute_Start_Pos.
+        */
+        long start_x = 0;
+        long start_y = 0;
+        Map.Compute_Start_Pos(start_x, start_y);
+        for (int i = 0; i < ARRAY_SIZE(Scen.Views); ++i) {
+            Scen.Views[i] = XY_Cell(start_x, start_y);
+        }
+        Scen.Waypoint[98] = XY_Cell(start_x, start_y);
+        Map.Set_Tactical_Position(Cell_Coord(XY_Cell(start_x, start_y)));
+#endif
     }
 
     Call_Back();
@@ -2979,7 +2993,9 @@ static void Remove_AI_Players(void)
 #endif
 }
 
+#ifdef REMASTER_BUILD
 #define USE_GLYPHX_START_LOCATIONS 1
+#endif
 
 /***********************************************************************************************
  * Create_Units -- Creates infantry & units, for non-base multiplayer                          *
