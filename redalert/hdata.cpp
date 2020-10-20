@@ -468,8 +468,13 @@ bool HouseTypeClass::Read_INI(CCINIClass& ini)
         FirepowerBias = ini.Get_Fixed(Name(), "Firepower", FirepowerBias);
         GroundspeedBias = ini.Get_Fixed(Name(), "Groundspeed", GroundspeedBias);
         AirspeedBias = ini.Get_Fixed(Name(), "Airspeed", AirspeedBias);
-        ArmorBias = ini.Get_Fixed(Name(), "Armor", ArmorBias);
-        ROFBias = ini.Get_Fixed(Name(), "ROF", ROFBias);
+
+        /*
+        **	- Properly fix a legacy bug with England and France country bonuses.
+        */
+        ArmorBias = fixed(1, 1) / ini.Get_Fixed(Name(), "Armor", fixed(1, 1) / ArmorBias);
+        ROFBias = fixed(1, 1) / ini.Get_Fixed(Name(), "ROF", fixed(1, 1) / ROFBias);
+
         CostBias = ini.Get_Fixed(Name(), "Cost", CostBias);
         BuildSpeedBias = ini.Get_Fixed(Name(), "BuildTime", BuildSpeedBias);
         return (true);
