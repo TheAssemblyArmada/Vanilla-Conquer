@@ -2951,7 +2951,7 @@ static void Remove_AI_Players(void)
     HousesType house;
     HouseClass* housep;
 
-#if (0)
+#ifndef REMASTER_BUILD
     for (i = 0; i < MAX_PLAYERS; i++) {
         house = (HousesType)(i + (int)HOUSE_MULTI1);
         housep = HouseClass::As_Pointer(house);
