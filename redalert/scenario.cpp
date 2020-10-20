@@ -2299,13 +2299,9 @@ bool Read_Scenario_INI(char* fname, bool)
     Rule.Difficulty(ini);
 
     /*
-    **	- Fix a legacy bug with England and France country bonuses.
     **	- Use ore growth and spread values from the special settings.
     */
     if (Session.Type != GAME_NORMAL) {
-        HouseTypeClass::As_Reference(HOUSE_ENGLAND).ArmorBias = fixed(9, 10);
-        HouseTypeClass::As_Reference(HOUSE_FRANCE).ROFBias = fixed(9, 10);
-
         Rule.IsTGrowth = Special.IsTGrowth;
         Rule.IsTSpread = Special.IsTSpread;
     }
