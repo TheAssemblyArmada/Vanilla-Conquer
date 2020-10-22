@@ -118,23 +118,17 @@ bool Remote_Connect(void)
     return false;
 }
 
-#if (0) // PG
-
 #ifdef WIN32
 #ifdef WINSOCK_IPX
-#include "WSProto.h"
+#include "wsproto.h"
 #else // WINSOCK_IPX
 #include "common/tcpip.h"
 #endif // WINSOCK_IPX
-#include "ccdde.h"
-#else // WIN32
+#else  // WIN32
 #include "fakesock.h"
 #endif // WIN32
 
 #include <time.h>
-//#include <dos.h>
-
-//#include "WolDebug.h"
 
 #define SHOW_MONO 0
 //#define OLDWAY			1
@@ -161,8 +155,6 @@ bool Force_Scenario_Available(const char* szName);
 #include "WolapiOb.h"
 extern WolapiObject* pWolapi;
 #endif
-
-#include "COORDA.h"
 
 //---------------------------------------------------------------------------
 //	The possible states of the join-game dialog
@@ -1381,6 +1373,7 @@ char const* EngMisStr[] = {
     NULL};
 #endif
 
+#if (0) // PG
 /*
 ******************************** Prototypes *********************************
 */
