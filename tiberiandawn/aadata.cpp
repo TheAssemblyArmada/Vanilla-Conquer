@@ -378,11 +378,11 @@ AircraftType AircraftTypeClass::From_Name(char const* name)
     if (name) {
         for (AircraftType classid = AIRCRAFT_FIRST; classid < AIRCRAFT_COUNT; classid++) {
             if (stricmp(Pointers[classid]->IniName, name) == 0) {
-                return (classid);
+                return classid;
             }
         }
     }
-    return (AIRCRAFT_NONE);
+    return AIRCRAFT_NONE;
 }
 
 /***********************************************************************************************
@@ -408,9 +408,7 @@ void AircraftTypeClass::One_Time(void)
         char fullname[_MAX_FNAME + _MAX_EXT];
         AircraftTypeClass const& uclass = As_Reference(index);
 
-        /*
-        **	Fetch the supporting data files for the unit.
-        */
+        // Fetch the supporting data files for the unit.
         char buffer[_MAX_FNAME];
         if (Get_Resolution_Factor()) {
             sprintf(buffer, "%sICNH", uclass.IniName);
@@ -420,9 +418,7 @@ void AircraftTypeClass::One_Time(void)
         _makepath(fullname, NULL, NULL, buffer, ".SHP");
         ((void const*&)uclass.CameoData) = MFCD::Retrieve(fullname);
 
-        /*
-        **	Generic shape for all houses load method.
-        */
+        // Generic shape for all houses load method.
         _makepath(fullname, NULL, NULL, uclass.IniName, ".SHP");
         ((void const*&)uclass.ImageData) = MFCD::Retrieve(fullname);
     }
@@ -449,7 +445,7 @@ void AircraftTypeClass::One_Time(void)
  *=============================================================================================*/
 ObjectClass* AircraftTypeClass::Create_One_Of(HouseClass* house) const
 {
-    return (new AircraftClass(Type, house->Class->House));
+    return new AircraftClass(Type, house->Class->House);
 }
 
 #ifdef SCENARIO_EDITOR
@@ -532,7 +528,7 @@ void AircraftTypeClass::Display(int x, int y, WindowNumberType window, HousesTyp
 short const* AircraftTypeClass::Occupy_List(bool) const
 {
     static short const _list[] = {0, REFRESH_EOL};
-    return (_list);
+    return _list;
 }
 
 /***********************************************************************************************
@@ -560,7 +556,7 @@ short const* AircraftTypeClass::Overlap_List(void) const
                                   MAP_CELL_W,
                                   (MAP_CELL_W + 1),
                                   REFRESH_EOL};
-    return (_list);
+    return _list;
 }
 
 /***********************************************************************************************
@@ -597,12 +593,14 @@ BuildingClass* AircraftTypeClass::Who_Can_Build_Me(bool, bool legal, HousesType 
             && (!legal || building->House->Can_Build(Type, building->ActLike))
             && building->Class->ToBuild == RTTI_AIRCRAFTTYPE) {
 
-            if (building->IsLeader)
-                return (building);
+            if (building->IsLeader) {
+                return building;
+            }
+
             anybuilding = building;
         }
     }
-    return (anybuilding);
+    return anybuilding;
 }
 
 /***********************************************************************************************
@@ -621,7 +619,7 @@ BuildingClass* AircraftTypeClass::Who_Can_Build_Me(bool, bool legal, HousesType 
  *=============================================================================================*/
 int AircraftTypeClass::Repair_Cost(void) const
 {
-    return (Fixed_To_Cardinal(Cost / (MaxStrength / REPAIR_STEP), REPAIR_PERCENT));
+    return Fixed_To_Cardinal(Cost / (MaxStrength / REPAIR_STEP), REPAIR_PERCENT);
 }
 
 /***********************************************************************************************
@@ -640,7 +638,7 @@ int AircraftTypeClass::Repair_Cost(void) const
  *=============================================================================================*/
 int AircraftTypeClass::Repair_Step(void) const
 {
-    return (REPAIR_STEP);
+    return REPAIR_STEP;
 }
 
 /***********************************************************************************************
@@ -661,13 +659,13 @@ int AircraftTypeClass::Repair_Step(void) const
 int AircraftTypeClass::Max_Pips(void) const
 {
     if (IsTransporter) {
-        return (Max_Passengers());
+        return Max_Passengers();
     } else {
         if (Primary != WEAPON_NONE) {
-            return (5);
+            return 5;
         }
     }
-    return (0);
+    return 0;
 }
 
 /***********************************************************************************************
@@ -687,7 +685,7 @@ int AircraftTypeClass::Max_Pips(void) const
  *=============================================================================================*/
 bool AircraftTypeClass::Create_And_Place(CELL, HousesType) const
 {
-    return (false);
+    return false;
 }
 
 /***********************************************************************************************
@@ -718,13 +716,13 @@ void AircraftTypeClass::Init(TheaterType theater)
             for (index = AIRCRAFT_FIRST; index < AIRCRAFT_COUNT; index++) {
                 AircraftTypeClass const& uclass = As_Reference(index);
 
-                ((void const*&)uclass.CameoData) = NULL;
+                (void const*&)uclass.CameoData = NULL;
 
                 sprintf(buffer, "%.4sICNH", uclass.IniName);
                 _makepath(fullname, NULL, NULL, buffer, Theaters[theater].Suffix);
                 cameo_ptr = MFCD::Retrieve(fullname);
                 if (cameo_ptr) {
-                    ((void const*&)uclass.CameoData) = cameo_ptr;
+                    (void const*&)uclass.CameoData = cameo_ptr;
                 }
             }
         }

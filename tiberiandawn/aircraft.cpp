@@ -84,27 +84,25 @@
  *   AircraftClass::operator delete -- Deletes the aircraft object.                            *
  *   AircraftClass::operator new -- Allocates a new aircraft object from the pool              *
  *   AircraftClass::~AircraftClass -- Destructor for aircraft object.                          *
- *   AircraftClass::Validate -- validates aircraft pointer												  *
+ *   AircraftClass::Validate -- validates aircraft pointer									   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
 
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
+// This contains the value of the Virtual Function Table Pointer
 void* AircraftClass::VTable;
 
 /***********************************************************************************************
- * AircraftClass::Validate -- validates aircraft pointer													  *
+ * AircraftClass::Validate -- validates aircraft pointer									   *
  *                                                                                             *
  * INPUT:                                                                                      *
- *		none. *
+ *		none.                                                                                  *
  *                                                                                             *
  * OUTPUT:                                                                                     *
- *		1 = ok, 0 = error *
+ *		1 = ok, 0 = error                                                                      *
  *                                                                                             *
  * WARNINGS:                                                                                   *
- *		none. *
+ *		none.                                                                                  *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   08/09/1995 BRR : Created.                                                                 *
@@ -117,9 +115,9 @@ int AircraftClass::Validate(void) const
     num = Aircraft.ID(this);
     if (num < 0 || num >= AIRCRAFT_MAX) {
         Validate_Error("AIRCRAFT");
-        return (0);
+        return 0;
     } else
-        return (1);
+        return 1;
 }
 #else
 #define Validate()
@@ -143,7 +141,7 @@ int AircraftClass::Validate(void) const
 TARGET AircraftClass::As_Target(void) const
 {
     Validate();
-    return (Build_Target(KIND_AIRCRAFT, Aircraft.ID(this)));
+    return Build_Target(KIND_AIRCRAFT, Aircraft.ID(this));
 }
 
 /***********************************************************************************************
@@ -168,7 +166,7 @@ void* AircraftClass::operator new(size_t)
     if (ptr) {
         ((AircraftClass*)ptr)->Set_Active();
     }
-    return (ptr);
+    return ptr;
 }
 
 /***********************************************************************************************
@@ -191,7 +189,6 @@ void AircraftClass::operator delete(void* ptr)
         ((AircraftClass*)ptr)->IsActive = false;
     }
     Aircraft.Free((AircraftClass*)ptr);
-
     // Map.Validate();
 }
 
@@ -227,6 +224,7 @@ AircraftClass::AircraftClass(AircraftType classid, HousesType house)
     } else {
         IsSecondShot = true;
     }
+
     Ammo = Class->MaxAmmo;
     AttacksRemaining = 3;
     Altitude = FLIGHT_LEVEL;
@@ -240,18 +238,15 @@ AircraftClass::AircraftClass(AircraftType classid, HousesType house)
     Jitter = 0;
     ReinforcementStart = -1;
 
-    /*
-    ** Keep count of the number of units created. Dont track cargo planes as they are created
-    ** automatically, not bought.
-    */
+    // Keep count of the number of units created. Dont track cargo planes as they are created
+    // automatically, not bought.
     if (classid != AIRCRAFT_CARGO && GameToPlay == GAME_INTERNET) {
         House->AircraftTotals->Increment_Unit_Total((int)classid);
     }
 
 #ifdef USE_RA_AI
-    //
+
     // Added for RA AI in TD. ST - 7/26/2019 9:12AM
-    //
     House->Tracking_Add(this);
 #endif
 }
@@ -267,9 +262,9 @@ AircraftClass::AircraftClass(AircraftType classid, HousesType house)
  *                                                                                             *
  *          dir   -- The direction it should start facing.                                     *
  *                                                                                             *
- *				strength (optional) -- sets initial strength													  *
+ *				strength (optional) -- sets initial strength								   *
  *                                                                                             *
- *				mission (optional) -- sets initial mission													  *
+ *				mission (optional) -- sets initial mission									   *
  *                                                                                             *
  * OUTPUT:  bool; Was the aircraft unlimboed successfully?                                     *
  *                                                                                             *
@@ -283,35 +278,27 @@ bool AircraftClass::Unlimbo(COORDINATE coord, DirType dir)
     Validate();
     if (FootClass::Unlimbo(coord, dir)) {
 
-        /*
-        **	Ensure that the owning house knows about the
-        **	new object.
-        */
+        // Ensure that the owning house knows about the new object.
         House->AScan |= (1L << Class->Type);
         House->ActiveAScan |= (1L << Class->Type);
 
-        /*
-        **	Forces the body of the helicopter to face the correct direction.
-        */
+        // Forces the body of the helicopter to face the correct direction.
         SecondaryFacing = dir;
 
-        /*
-        **	Start rotor animation.
-        */
+        // Start rotor animation.
         Set_Rate(1);
         Set_Stage(0);
 
-        /*
-        **	Presume it starts in flight?
-        */
+        // Presume it starts in flight?
         if (Altitude == FLIGHT_LEVEL) {
             Set_Speed(0xFF);
         } else {
             Set_Speed(0);
         }
-        return (true);
+
+        return true;
     }
-    return (false);
+    return false;
 }
 
 /***********************************************************************************************
@@ -338,60 +325,47 @@ void AircraftClass::Draw_It(int x, int y, WindowNumberType window)
     int shapenum = 0;
     int facing = Facing_To_32(SecondaryFacing);
 
-    /*
-    **	Don't draw Cargo aircraft that are delayed.
-    */
+    // Don't draw Cargo aircraft that are delayed.
     if (Special.ModernBalance) {
         if (*this == AIRCRAFT_CARGO && !Map.In_Radar(Coord_Cell(Coord)) && ReinforcementStart > Frame) {
             return;
         }
     }
 
-    /*
-    **	Verify the legality of the unit class.
-    */
+    // Verify the legality of the unit class.
     shapefile = Class->Get_Image_Data();
-    if (!shapefile)
+    if (!shapefile) {
         return;
+    }
+
     shapenum = UnitClass::BodyShape[facing];
 
-    /*
-    **	The orca attack helicopter uses a special shape set when it is travelling
-    **	forward above a certain speed.
-    */
+    // The orca attack helicopter uses a special shape set when it is travelling
+    // forward above a certain speed.
     if (*this == AIRCRAFT_ORCA && Get_Speed() >= MPH_MEDIUM_FAST) {
         shapenum += 32;
     }
 
-    /*
-    **	If there is a door on this aircraft (Chinook), then adjust the
-    **	shape number to match the door open state.
-    */
+    // If there is a door on this aircraft (Chinook), then adjust the
+    // shape number to match the door open state.
     if (!Is_Door_Closed()) {
         shapenum = 32 + Door_Stage();
     }
 
-    /*
-    **	Helicopters that are flying have a "bobbing" effect.
-    */
+    // Helicopters that are flying have a "bobbing" effect.
     int jitter = 0;
     if (Altitude == FLIGHT_LEVEL && !Class->IsFixedWing) {
         Jitter++;
-
         static int _jitter[] = {0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, -1, -1, -1, 0};
         jitter = _jitter[Jitter % 16];
     }
 
     // Virtual window needs to draw the body first so it's considered the primary object and the shadow is a sub-object
     if (window == WINDOW_VIRTUAL) {
-        /*
-        **	Draw the root body of the unit.
-        */
+        // Draw the root body of the unit.
         Techno_Draw_Object(shapefile, shapenum, x, (y - Altitude) + jitter, window);
 
-        /*
-        **	Special manual shadow draw code.
-        */
+        // Special manual shadow draw code.
         if (Visual_Character() <= VISUAL_DARKEN) {
             CC_Draw_Shape(this,
                           shapefile,
@@ -404,9 +378,7 @@ void AircraftClass::Draw_It(int x, int y, WindowNumberType window)
                           NULL);
         }
     } else {
-        /*
-        **	Special manual shadow draw code.
-        */
+        // Special manual shadow draw code.
         if (Visual_Character() <= VISUAL_DARKEN) {
             CC_Draw_Shape(this,
                           shapefile,
@@ -419,24 +391,18 @@ void AircraftClass::Draw_It(int x, int y, WindowNumberType window)
                           NULL);
         }
 
-        /*
-        **	Draw the root body of the unit.
-        */
+        // Draw the root body of the unit.
         Techno_Draw_Object(shapefile, shapenum, x, (y - Altitude) + jitter, window);
     }
 
-    /*
-    **	Draw rotor effects. The rotor art can be either generic or custom. Custom rotor
-    **	art has a different rotor set for each facing. Rotor shapes occur after the first
-    **	32 shapes of the helicopter body.
-    */
+    // Draw rotor effects. The rotor art can be either generic or custom. Custom rotor
+    // art has a different rotor set for each facing. Rotor shapes occur after the first
+    // 32 shapes of the helicopter body.
     if (Class->IsRotorEquipped) {
         ShapeFlags_Type flags = SHAPE_CENTER | SHAPE_WIN_REL;
 
-        /*
-        **	The rotor shape number depends on whether the helicopter is idling
-        **	or not. A landed helicopter uses slow moving "idling" blades.
-        */
+        // The rotor shape number depends on whether the helicopter is idling
+        // or not. A landed helicopter uses slow moving "idling" blades.
         if (Altitude == 0) {
             shapenum = (Fetch_Stage() % 8) + 4;
             flags = flags | SHAPE_GHOST;
@@ -448,27 +414,24 @@ void AircraftClass::Draw_It(int x, int y, WindowNumberType window)
         if (*this == AIRCRAFT_TRANSPORT) {
             int _stretch[FACING_COUNT] = {8, 9, 10, 9, 8, 9, 10, 9};
 
-            /*
-            **	Dual rotors offset along flight axis.
-            */
+            // Dual rotors offset along flight axis.
             short xx = x;
             short yy = y - Altitude;
             FacingType face = Dir_Facing(SecondaryFacing);
             Move_Point(xx, yy, SecondaryFacing.Current(), _stretch[face]);
+
             // CC_Draw_Shape(Class->RRotorData, shapenum, xx, yy-2, window, flags, NULL, Map.UnitShadow);		// 6/18/2019
             // - ST
             CC_Draw_Shape(this, "RROTOR", Class->RRotorData, shapenum, xx, yy - 2, window, flags, NULL, Map.UnitShadow);
-
             Move_Point(xx, yy, SecondaryFacing.Current() + DIR_S, _stretch[face] * 2);
+
             // CC_Draw_Shape(this, Class->LRotorData, shapenum, xx, yy-2, window, flags, NULL, Map.UnitShadow);			//
             // 6/18/2019 - ST
             CC_Draw_Shape(this, "LROTOR", Class->LRotorData, shapenum, xx, yy - 2, window, flags, NULL, Map.UnitShadow);
 
         } else {
 
-            /*
-            **	Single rotor centered about shape.
-            */
+            // Single rotor centered about shape.
             // CC_Draw_Shape(this, Class->RRotorData, shapenum, x, (y-Altitude)-2, window, flags, NULL, Map.UnitShadow);
             // // 6/18/2019 - ST
             CC_Draw_Shape(this,
@@ -532,9 +495,7 @@ void AircraftClass::Read_INI(char* buffer)
                         int strength;
                         DirType dir;
 
-                        /*
-                        **	Read the raw data.
-                        */
+                        // Read the raw data.
                         strength = atoi(strtok(NULL, ","));
                         coord = Cell_Coord((CELL)atoi(strtok(NULL, ",")));
                         dir = (DirType)atoi(strtok(NULL, ","));
@@ -580,9 +541,7 @@ void AircraftClass::Write_INI(char* buffer)
     char buf[128];
     char* tbuffer; // Accumulation buffer of unit IDs.
 
-    /*
-    **	First, clear out all existing unit data from the ini file.
-    */
+    // First, clear out all existing unit data from the ini file.
     tbuffer = buffer + strlen(buffer) + 2;
     WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - strlen(buffer), buffer);
     while (*tbuffer != '\0') {
@@ -590,9 +549,7 @@ void AircraftClass::Write_INI(char* buffer)
         tbuffer += strlen(tbuffer) + 1;
     }
 
-    /*
-    **	Write the unit data out.
-    */
+    // Write the unit data out.
     for (index = 0; index < Aircraft.Count(); index++) {
         AircraftClass* unit;
 
@@ -635,7 +592,7 @@ int AircraftClass::Mission_Hunt(void)
     if (Class->IsFixedWing) {
         if (Class->Primary == WEAPON_NONE && Class->Secondary == WEAPON_NONE) {
             Assign_Mission(MISSION_RETREAT);
-            return (1);
+            return 1;
         }
         enum
         {
@@ -645,28 +602,22 @@ int AircraftClass::Mission_Hunt(void)
         };
         switch (Status) {
 
-        /*
-        **	Acquiring target stage.
-        */
+        // Acquiring target stage.
         case LOOK_FOR_TARGET:
             if (Target_Legal(TarCom)) {
                 Status = FLY_TO_TARGET;
-                return (1);
+                return 1;
             } else {
                 Assign_Target(Greatest_Threat(THREAT_NORMAL));
 
-                /*
-                **	If there is no target, then this aircraft should just do its normal thing.
-                */
+                // If there is no target, then this aircraft should just do its normal thing.
                 if (!Target_Legal(TarCom)) {
                     Enter_Idle_Mode();
                 }
             }
             break;
 
-        /*
-        **	Homing in on target stage.
-        */
+        // Homing in on target stage.
         case FLY_TO_TARGET:
             if (Target_Legal(TarCom)) {
                 IsHoming = true;
@@ -676,16 +627,14 @@ int AircraftClass::Mission_Hunt(void)
                 if (Distance(TarCom) < 0x0380) {
                     IsHoming = false;
                     Status = DROP_BOMBS;
-                    return (1);
+                    return 1;
                 }
             } else {
                 Status = LOOK_FOR_TARGET;
             }
             break;
 
-        /*
-        **	Dropping a stream of bombs phase.
-        */
+        // Dropping a stream of bombs phase.
         case DROP_BOMBS:
             if (!Ammo) {
                 AttacksRemaining--;
@@ -702,7 +651,7 @@ int AircraftClass::Mission_Hunt(void)
             } else {
                 Fire_At(TarCom, 0);
                 Map[::As_Cell(TarCom)].Incoming(Coord, true);
-                return (5);
+                return 5;
             }
             break;
         }
@@ -711,11 +660,11 @@ int AircraftClass::Mission_Hunt(void)
             Enter_Idle_Mode();
         } else {
             Assign_Mission(MISSION_ATTACK);
-            return (1);
-            //			return(FootClass::Mission_Hunt());
+            return 1;
+            // return(FootClass::Mission_Hunt());
         }
     }
-    return (TICKS_PER_SECOND);
+    return TICKS_PER_SECOND;
 }
 
 /***********************************************************************************************
@@ -736,26 +685,21 @@ int AircraftClass::Mission_Hunt(void)
 void AircraftClass::AI(void)
 {
     Validate();
-    /*
-    **	A Mission change can always occur if the aircraft is landed or flying.
-    */
+
+    // A Mission change can always occur if the aircraft is landed or flying.
     if (!IsLanding && !IsTakingOff) {
         Commence();
     }
 
     FootClass::AI();
 
-    /*
-    **	A Mission change can always occur if the aircraft is landed or flying.
-    */
+    // A Mission change can always occur if the aircraft is landed or flying.
     if (!IsLanding && !IsTakingOff) {
         Commence();
     }
 
-    /*
-    **	Handle any body rotation at this time. Body rotation can occur even if the
-    **	flying object is not actually moving.
-    */
+    // Handle any body rotation at this time. Body rotation can occur even if the
+    // flying object is not actually moving.
     if (PrimaryFacing.Is_Rotating()) {
         if (PrimaryFacing.Rotation_Adjust(Class->ROT)) {
             Mark();
@@ -770,9 +714,7 @@ void AircraftClass::AI(void)
         }
     }
 
-    /*
-    **	Handle reinforcement delay.
-    */
+    // Handle reinforcement delay.
     bool do_physics = true;
     if (Special.ModernBalance) {
         if (*this == AIRCRAFT_CARGO && !Map.In_Radar(Coord_Cell(Coord)) && ReinforcementStart > Frame) {
@@ -783,10 +725,8 @@ void AircraftClass::AI(void)
         Mark();
     }
 
-    /*
-    **	Perform sighting every so often as controlled by the sight timer.
-    */
-    // if (IsOwnedByPlayer && Class->SightRange && SightTimer.Expired()) {		// Changed for multiple player mapping
+    // Perform sighting every so often as controlled by the sight timer.
+    // if (IsOwnedByPlayer && Class->SightRange && SightTimer.Expired()) { // Changed for multiple player mapping
     if (House->IsHuman && Class->SightRange && SightTimer.Expired()) {
         Map.Sight_From(House, Coord_Cell(Coord), Class->SightRange, false);
         SightTimer = TICKS_PER_SECOND;
@@ -803,8 +743,9 @@ void AircraftClass::AI(void)
         LayerType layer = In_Which_Layer();
 
         if (IsLanding) {
-            if (Altitude)
+            if (Altitude) {
                 Altitude--;
+            }
             if (!Altitude) {
                 IsLanding = false;
                 Set_Speed(0);
@@ -823,10 +764,7 @@ void AircraftClass::AI(void)
             }
         }
 
-        /*
-        **	Make adjustments for altitude by moving from one layer to another as
-        **	necessary.
-        */
+        // Make adjustments for altitude by moving from one layer to another as necessary.
         if (layer != In_Which_Layer()) {
 
             /*
@@ -845,22 +783,18 @@ void AircraftClass::AI(void)
             }
 
             if (ok) {
-                /*
-                **	If landing in a cell that already contains an object, then
-                **	the landing attempt must be aborted.
-                */
+                // If landing in a cell that already contains an object, then the landing attempt must be aborted.
                 Map.Remove(this, layer);
                 Map.Submit(this, In_Which_Layer());
 
-                /*
-                **	When the aircraft is close to the ground, it should exist as a ground object.
-                **	This aspect is controlled by the Place_Down and Pick_Up functions.
-                */
+                // When the aircraft is close to the ground, it should exist as a ground object.
+                // This aspect is controlled by the Place_Down and Pick_Up functions.
                 if (In_Which_Layer() == LAYER_GROUND) {
                     Assign_Destination(TARGET_NONE); // Clear the navcom.
                     Transmit_Message(RADIO_TETHER);
                     Map.Place_Down(Coord_Cell(Coord), this);
-                    // if (IsOwnedByPlayer) {				// Changed for multiple player mapping. ST - 3/6/2019 1:31PM
+
+                    // if (IsOwnedByPlayer) { // Changed for multiple player mapping. ST - 3/6/2019 1:31PM
                     if (House->IsHuman) {
                         Map.Sight_From(House, Coord_Cell(Coord), 1, false);
                     }
@@ -899,10 +833,8 @@ void AircraftClass::AI(void)
     if (!Map.In_Radar(Coord_Cell(Coord))) {
         if (Mission == MISSION_RETREAT /*|| (*this == AIRCRAFT_CARGO && !Is_Something_Attached())*/) {
 
-            /*
-            **	Check to see if there are any civilians aboard. If so, then flag the house
-            **	that the civilian evacuation trigger event has been fulfilled.
-            */
+            // Check to see if there are any civilians aboard. If so, then flag the house
+            // that the civilian evacuation trigger event has been fulfilled.
             while (Is_Something_Attached()) {
                 FootClass* obj = Detach_Object();
                 if (obj->What_Am_I() == RTTI_INFANTRY && ((InfantryClass*)obj)->Class->IsCivilian
@@ -910,10 +842,8 @@ void AircraftClass::AI(void)
                     House->IsCivEvacuated = true;
                 }
 
-                /*
-                **	Transport planes that leave can only be because they carry purchased
-                **	equipment and must be have their cost refunded.
-                */
+                // Transport planes that leave can only be because they carry purchased
+                // equipment and must be have their cost refunded.
                 if (*this == AIRCRAFT_CARGO) {
                     House->Refund_Money(obj->Class_Of().Cost_Of());
                 }
@@ -925,7 +855,7 @@ void AircraftClass::AI(void)
         }
     } else {
         IsLocked = true;
-        //		House->NewAScan |= (1L << Class->Type);
+        // House->NewAScan |= (1L << Class->Type);
 
 #ifdef NEVER
         /*
@@ -972,9 +902,9 @@ bool AircraftClass::Mark(MarkType mark)
     if (FootClass::Mark(mark)) {
         Map.Refresh_Cells(Coord_Cell(Coord), Occupy_List());
         Map.Refresh_Cells(Coord_Cell(Coord), Overlap_List());
-        return (true);
+        return true;
     }
-    return (false);
+    return false;
 }
 
 /***********************************************************************************************
@@ -1016,10 +946,10 @@ short const* AircraftClass::Overlap_List(void) const
                                   REFRESH_EOL};
 
     if (Altitude) {
-        return (_list);
+        return _list;
         // return Coord_Spillage_List(Coord, 25);
     }
-    return (Class->Overlap_List());
+    return Class->Overlap_List();
 }
 
 /***********************************************************************************************
@@ -1077,9 +1007,7 @@ int AircraftClass::Mission_Unload(void)
 
         switch (Status) {
 
-        /*
-        **	Find a suitable airfield to land at.
-        */
+        // Find a suitable airfield to land at.
         case PICK_AIRSTRIP:
             if (!Target_Legal(NavCom) || !In_Radio_Contact()) {
 
@@ -1098,46 +1026,36 @@ int AircraftClass::Mission_Unload(void)
                     }
                 }
 
-                /*
-                **	If a suitable airfield could not be found, then just randomly change
-                **	direction and then try again later.
-                */
+                // If a suitable airfield could not be found, then just randomly change
+                // direction and then try again later.
                 if (Status == PICK_AIRSTRIP) {
 
-                    /*
-                    **	If there are no more airstrips, regardless of busy state, then
-                    **	abort this transport plane completely.
-                    */
+                    // If there are no more airstrips, regardless of busy state,
+                    // then **abort this transport plane completely.
                     if (!(House->ActiveBScan & STRUCTF_AIRSTRIP)) {
                         Assign_Mission(MISSION_RETREAT);
                     }
 
-                    /*
-                    **	Pick a new direction and fly off.
-                    */
+                    // Pick a new direction and fly off.
                     PrimaryFacing.Set_Desired(Random_Pick(DIR_N, DIR_MAX));
                     SecondaryFacing.Set_Desired(PrimaryFacing.Desired());
-                    return (TICKS_PER_SECOND * 3);
+                    return TICKS_PER_SECOND * 3;
                 }
             } else {
                 Status = FLY_TO_AIRSTRIP;
             }
             break;
 
-        /*
-        **	Home in on target. When close enough, drop the cargo.
-        */
+        // Home in on target. When close enough, drop the cargo.
         case FLY_TO_AIRSTRIP:
             if (!Target_Legal(NavCom) || !In_Radio_Contact()) {
                 Status = PICK_AIRSTRIP;
             } else {
 
-                /*
-                **	If, for some reason, there is no cargo, then don't stick around.
-                */
+                // If, for some reason, there is no cargo, then don't stick around.
                 if (!Is_Something_Attached()) {
                     Status = BUG_OUT;
-                    return (1);
+                    return 1;
                 }
 
                 if (!PrimaryFacing.Is_Rotating()) {
@@ -1162,10 +1080,7 @@ int AircraftClass::Mission_Unload(void)
                                 Attach(unit);
                             } else {
 
-                                /*
-                                **	Cargo planes announce reinforcements when they unload
-                                **	their cargo.
-                                */
+                                // Cargo planes announce reinforcements when they unload their cargo.
                                 if (*this == AIRCRAFT_CARGO && House == PlayerPtr) {
                                     Speak(VOX_REINFORCEMENTS, NULL, Cell_Coord(cell));
                                 }
@@ -1190,16 +1105,14 @@ int AircraftClass::Mission_Unload(void)
                         Status = BUG_OUT;
                     }
                 }
-                return (1);
+                return 1;
             }
             break;
 
-        /*
-        **	All cargo unloaded, head off the map.
-        */
+        // All cargo unloaded, head off the map.
         case BUG_OUT:
             Assign_Mission(MISSION_RETREAT);
-            return (1);
+            return 1;
         }
 
     } else {
@@ -1214,9 +1127,7 @@ int AircraftClass::Mission_Unload(void)
 
         switch (Status) {
 
-        /*
-        **	Search for an appropriate destination spot if one isn't already assigned.
-        */
+        // Search for an appropriate destination spot if one isn't already assigned.
         case SEARCH_FOR_LZ:
             if (Altitude == 0 && (Target_Legal(NavCom) || Coord == As_Coord(NavCom))) {
                 Status = UNLOAD_PASSENGERS;
@@ -1233,9 +1144,7 @@ int AircraftClass::Mission_Unload(void)
             }
             break;
 
-        /*
-        **	Fly to destination.
-        */
+        // Fly to destination.
         case FLY_TO_LZ:
             if (Is_LZ_Clear(NavCom)) {
                 int distance = Process_Fly_To(true);
@@ -1246,20 +1155,18 @@ int AircraftClass::Mission_Unload(void)
                     if (distance < 0x0010) {
                         Status = LAND_ON_LZ;
                     }
-                    return (1);
+                    return 1;
                 } else {
                     SecondaryFacing.Set_Desired(PrimaryFacing.Desired());
-                    return (5);
+                    return 5;
                 }
             } else {
                 Status = SEARCH_FOR_LZ;
             }
             break;
 
-        /*
-        **	Landing phase. Just delay until landing is complete. At that time,
-        **	transition to the unloading phase.
-        */
+        // Landing phase. Just delay until landing is complete.
+        // Once complete, transition to the unloading phase.
         case LAND_ON_LZ:
             if (IsTakingOff) {
                 Status = TAKE_OFF;
@@ -1268,30 +1175,24 @@ int AircraftClass::Mission_Unload(void)
                     Status = UNLOAD_PASSENGERS;
                 }
             }
-            return (1);
+            return 1;
 
-        /*
-        **	Hold while unloading passengers. When passengers are unloaded the order for this
-        **	transport gets changed to MISSION_RETREAT.
-        */
+        // Hold while unloading passengers. When passengers are unloaded the order for this
+        // transport gets changed to MISSION_RETREAT.
         case UNLOAD_PASSENGERS:
             if (!IsTethered) {
                 if (Is_Something_Attached()) {
                     FootClass* unit = (FootClass*)Detach_Object();
 
-                    /*
-                    **	First thing is to lift the transport off of the map so that the unlimbo
-                    **	process for the passengers is more likely to succeed.
-                    */
+                    // First thing is to lift the transport off of the map so that the unlimbo
+                    // process for the passengers is more likely to succeed.
                     Map.Pick_Up(Coord_Cell(Coord), this);
 
                     if (!Exit_Object(unit)) {
                         delete unit;
                     }
 
-                    /*
-                    **	Restore the transport back down on the map.
-                    */
+                    // Restore the transport back down on the map.
                     Map.Place_Down(Coord_Cell(Coord), this);
 
                     if (!Is_Something_Attached()) {
@@ -1299,24 +1200,19 @@ int AircraftClass::Mission_Unload(void)
                     }
 
                 } else {
-
                     Enter_Idle_Mode();
                 }
             }
             break;
 
-        /*
-        **	Aircraft is now taking off. Once the aircraft reaches flying altitude then it
-        **	will either take off or look for another landing spot to try again.
-        */
+        // Aircraft is now taking off. Once the aircraft reaches flying altitude then it
+        // will either take off or look for another landing spot to try again.
         case TAKE_OFF: {
             if (Process_Take_Off()) {
                 if (Is_Something_Attached()) {
                     Status = SEARCH_FOR_LZ;
 
-                    /*
-                    **	Break off radio contact with the helipad it is taking off from.
-                    */
+                    // Break off radio contact with the helipad it is taking off from.
                     if (In_Radio_Contact() && Map[Coord_Cell(Coord)].Cell_Building() == Contact_With_Whom()) {
                         Transmit_Message(RADIO_OVER_OUT);
                     }
@@ -1324,11 +1220,11 @@ int AircraftClass::Mission_Unload(void)
                     Enter_Idle_Mode();
                 }
             }
-            return (1);
+            return 1;
         }
         }
     }
-    return (10);
+    return 10;
 }
 
 /***********************************************************************************************
@@ -1351,27 +1247,32 @@ int AircraftClass::Mission_Unload(void)
 bool AircraftClass::Is_LZ_Clear(TARGET target) const
 {
     Validate();
-    if (!Target_Legal(target))
-        return (false);
+    if (!Target_Legal(target)) {
+        return false;
+    }
+
     CELL cell = ::As_Cell(target);
-    if (!Map.In_Radar(cell))
-        return (false);
+    if (!Map.In_Radar(cell)) {
+        return false;
+    }
 
     ObjectClass* object = Map[cell].Cell_Object();
     if (object) {
-        if (object == this)
-            return (true);
+        if (object == this) {
+            return true;
+        }
 
         if (In_Radio_Contact() && Contact_With_Whom() == object) {
-            return (true);
+            return true;
         }
-        return (false);
+        return false;
     }
 
-    if (!Map[cell].Is_Generally_Clear())
-        return (false);
+    if (!Map[cell].Is_Generally_Clear()) {
+        return false;
+    }
 
-    return (true);
+    return true;
 }
 
 /***********************************************************************************************
@@ -1393,13 +1294,15 @@ bool AircraftClass::Is_LZ_Clear(TARGET target) const
 LayerType AircraftClass::In_Which_Layer(void) const
 {
     Validate();
-    if (Class->IsFixedWing)
-        return (LAYER_TOP);
+    if (Class->IsFixedWing) {
+        return LAYER_TOP;
+    }
 
     if (Altitude < FLIGHT_LEVEL - (FLIGHT_LEVEL / 3)) {
-        return (LAYER_GROUND);
+        return LAYER_GROUND;
     }
-    return (LAYER_TOP);
+
+    return LAYER_TOP;
 }
 
 /***********************************************************************************************
@@ -1422,7 +1325,7 @@ LayerType AircraftClass::In_Which_Layer(void) const
 COORDINATE AircraftClass::Sort_Y(void) const
 {
     Validate();
-    return (Coord_Add(Coord, 0x00800000L));
+    return Coord_Add(Coord, 0x00800000L);
 }
 
 /***********************************************************************************************
@@ -1450,11 +1353,13 @@ int AircraftClass::Mission_Retreat(void)
             PrimaryFacing.Set_Desired(DIR_W);
             SecondaryFacing.Set_Desired(PrimaryFacing.Desired());
         }
+
         if (Altitude < FLIGHT_LEVEL) {
             Altitude++;
-            return (1);
+            return 1;
         }
-        return (TICKS_PER_SECOND * 10);
+
+        return TICKS_PER_SECOND * 10;
     }
 
     enum
@@ -1463,20 +1368,17 @@ int AircraftClass::Mission_Retreat(void)
         FACE_MAP_EDGE,
         KEEP_FLYING
     };
+
     switch (Status) {
 
-    /*
-    **	Take off if landed.
-    */
+    // Take off if landed.
     case TAKE_OFF:
         if (Process_Take_Off()) {
             Status = FACE_MAP_EDGE;
         }
-        return (1);
+        return 1;
 
-    /*
-    **	Set facing and speed toward the friendly map edge.
-    */
+    // Set facing and speed toward the friendly map edge.
     case FACE_MAP_EDGE:
         Set_Speed(0xFF);
 
@@ -1492,17 +1394,15 @@ int AircraftClass::Mission_Retreat(void)
         Status = KEEP_FLYING;
         break;
 
-    /*
-    **	Just do nothing since we are headed toward the map edge. When the edge is
-    **	reached, the aircraft should be automatically eliminated.
-    */
+    // Just do nothing since we are headed toward the map edge. When the edge is
+    // reached, the aircraft should be automatically eliminated.
     case KEEP_FLYING:
         break;
 
     default:
         break;
     }
-    return (TICKS_PER_SECOND);
+    return TICKS_PER_SECOND;
 }
 
 /***********************************************************************************************
@@ -1531,14 +1431,13 @@ int AircraftClass::Exit_Object(TechnoClass* unit)
         FACING_S, FACING_SW, FACING_SE, FACING_NW, FACING_NE, FACING_N, FACING_W, FACING_E};
     CELL cell;
 
-    /*
-    **	Find a free cell to drop the unit off at.
-    */
+    // Find a free cell to drop the unit off at.
     FacingType face;
     for (face = FACING_N; face < FACING_COUNT; face++) {
         cell = Adjacent_Cell(Coord_Cell(Coord), _toface[face]);
-        if (unit->Can_Enter_Cell(cell) == MOVE_OK)
+        if (unit->Can_Enter_Cell(cell) == MOVE_OK) {
             break;
+        }
     }
 
     // Should perform a check here to see if no cell could be found.
@@ -1552,13 +1451,15 @@ int AircraftClass::Exit_Object(TechnoClass* unit)
     if (unit->Unlimbo(Coord, Facing_Dir(_toface[face]))) {
         unit->Assign_Mission(MISSION_MOVE);
         unit->Assign_Destination(::As_Target(cell));
+
         if (Transmit_Message(RADIO_HELLO, unit) == RADIO_ROGER) {
             Transmit_Message(RADIO_UNLOAD);
         }
+
         unit->Look(false);
-        return (1);
+        return 1;
     }
-    return (0);
+    return 0;
 }
 
 /***********************************************************************************************
@@ -1585,29 +1486,22 @@ BulletClass* AircraftClass::Fire_At(TARGET target, int which)
     BulletClass* bullet = FootClass::Fire_At(target, which);
 
     if (bullet) {
-
-        /*
-        **	Aircraft reveal when firing
-        */
+        // Aircraft reveal when firing
         HouseClass* player = HouseClass::As_Pointer(Owner());
         if (player != nullptr && player->IsHuman) {
             Map.Sight_From(player, Coord_Cell(Center_Coord()), 1, false);
         }
 
-        /*
-        **	Play the sound effect associated with this weapon.
-        */
+        // Play the sound effect associated with this weapon.
         WeaponTypeClass const* weapon = (which == 0) ? &Weapons[Class->Primary] : &Weapons[Class->Secondary];
         Sound_Effect(weapon->Sound, Coord);
 
-        /*
-        **	Falling bullets move at a speed proportionate to the delivery craft.
-        */
+        // Falling bullets move at a speed proportionate to the delivery craft.
         if (bullet->Class->IsDropping) {
             bullet->Fly_Speed(40, bullet->Class->MaxSpeed);
         }
     }
-    return (bullet);
+    return bullet;
 }
 
 /***********************************************************************************************
@@ -1639,17 +1533,12 @@ ResultType AircraftClass::Take_Damage(int& damage, int distance, WarheadType war
     Validate();
     ResultType res = RESULT_NONE;
 
-    /*
-    **	Flying aircraft take half damage.
-    */
+    // Flying aircraft take half damage.
     if (Altitude) {
         damage /= 2;
     }
 
-    /*
-    **	In order for a this to be damaged, it must either be a unit
-    **	with a crew or a sandworm.
-    */
+    // In order for a this to be damaged, it must either be a unit with a crew or a sandworm.
     res = FootClass::Take_Damage(damage, distance, warhead, source);
 
     switch (res) {
@@ -1668,7 +1557,7 @@ ResultType AircraftClass::Take_Damage(int& damage, int distance, WarheadType war
         break;
     }
 
-    return (res);
+    return res;
 }
 
 /***********************************************************************************************
@@ -1693,14 +1582,11 @@ int AircraftClass::Mission_Move(void)
     Validate();
     if (Class->IsFixedWing) {
 
-        /*
-        **	Force aircraft in movement mission into a retreat
-        **	mission so that it leaves the map.
-        */
+        // Force aircraft in movement mission into a retreat mission so that it leaves the map.
         if (*this == AIRCRAFT_A10) {
             Assign_Mission(MISSION_RETREAT);
             Commence();
-            return (1);
+            return 1;
         }
 
         enum
@@ -1708,21 +1594,19 @@ int AircraftClass::Mission_Move(void)
             FLY_TO_AIRSTRIP,
             BUG_OUT
         };
+
         switch (Status) {
-        /*
-        **	Home in on target. When close enough, drop the cargo.
-        */
+
+        // Home in on target. When close enough, drop the cargo.
         case FLY_TO_AIRSTRIP:
             if (!Target_Legal(NavCom) || !In_Radio_Contact()) {
-                return (TICKS_PER_SECOND);
+                return TICKS_PER_SECOND;
             } else {
 
-                /*
-                **	If, for some reason, there is no cargo, then don't stick around.
-                */
+                // If, for some reason, there is no cargo, then don't stick around.
                 if (!Is_Something_Attached()) {
                     Status = BUG_OUT;
-                    return (1);
+                    return 1;
                 }
 
                 if (!PrimaryFacing.Is_Rotating()) {
@@ -1745,12 +1629,12 @@ int AircraftClass::Mission_Move(void)
                     Status = BUG_OUT;
                 }
             }
-            return (1);
+            return 1;
 
         case BUG_OUT:
-            return (TICKS_PER_SECOND);
+            return TICKS_PER_SECOND;
         }
-        return (5);
+        return 5;
     }
 
     enum
@@ -1760,11 +1644,10 @@ int AircraftClass::Mission_Move(void)
         FLY_TO_LZ,
         LAND
     };
+
     switch (Status) {
 
-    /*
-    **	Double check and change LZ if necessary.
-    */
+    // Double check and change LZ if necessary.
     case VALIDATE_LZ:
         if (!Target_Legal(NavCom)) {
             Enter_Idle_Mode();
@@ -1777,31 +1660,26 @@ int AircraftClass::Mission_Move(void)
         }
         break;
 
-    /*
-    **	Take off if necessary.
-    */
+    // Take off if necessary.
     case TAKE_OFF:
         if (!Target_Legal(NavCom)) {
             Status = VALIDATE_LZ;
         } else {
             if (Process_Take_Off()) {
-                /*
-                **	After takeoff is complete, break radio contact with any helipad that this
-                **	helicopter is taking off from.
-                */
+
+                // After takeoff is complete, break radio contact with any helipad that this
+                // helicopter is taking off from.
                 if (In_Radio_Contact() && Map[Coord_Cell(Coord)].Cell_Building() == Contact_With_Whom()) {
                     Transmit_Message(RADIO_OVER_OUT);
                 }
 
                 Status = FLY_TO_LZ;
             }
-            return (1);
+            return 1;
         }
         break;
 
-    /*
-    **	Fly toward target.
-    */
+    // Fly toward target.
     case FLY_TO_LZ:
         if (Is_LZ_Clear(NavCom)) {
             int distance = Process_Fly_To(true);
@@ -1816,7 +1694,7 @@ int AircraftClass::Mission_Move(void)
                 if (distance < 0x0010) {
                     Status = LAND;
                 }
-                return (1);
+                return 1;
             }
 
             SecondaryFacing.Set_Desired(::Direction(Fire_Coord(0), As_Coord(NavCom)));
@@ -1826,11 +1704,9 @@ int AircraftClass::Mission_Move(void)
                 Status = LAND;
             }
         }
-        return (1);
+        return 1;
 
-    /*
-    **	Land on target.
-    */
+    // Land on target.
     case LAND:
         if (IsTakingOff) {
             Assign_Destination(New_LZ(NavCom));
@@ -1841,10 +1717,10 @@ int AircraftClass::Mission_Move(void)
                 Enter_Idle_Mode();
             }
         }
-        return (1);
+        return 1;
     }
 
-    return (TICKS_PER_SECOND);
+    return TICKS_PER_SECOND;
 }
 
 /***********************************************************************************************
@@ -1902,10 +1778,8 @@ void AircraftClass::Enter_Idle_Mode(bool)
             }
         } else {
 
-            /*
-            **	If this transport is a loaner and part of a team, then remove it from
-            **	the team it is attached to.
-            */
+            // If this transport is a loaner and part of a team, then remove it from
+            // the team it is attached to.
             if (IsALoaner) {
                 if (Team) {
                     Team->Remove(this);
@@ -1914,22 +1788,17 @@ void AircraftClass::Enter_Idle_Mode(bool)
 
             if (Class->Primary != WEAPON_NONE) {
 
-                /*
-                **	Weapon equipped helicopters that run out of ammo and were
-                **	brought in as reinforcements will leave the map.
-                */
+                // Weapon equipped helicopters that run out of ammo and were
+                // brought in as reinforcements will leave the map.
                 if (Ammo == 0 && !House->IsHuman && IsALoaner) {
                     mission = MISSION_RETREAT;
                 } else {
 
-                    /*
-                    **	Continue with the current helipad if there is one.
-                    */
+                    // Continue with the current helipad if there is one.
                     if (!In_Radio_Contact() || Contact_With_Whom()->What_Am_I() != RTTI_BUILDING
                         || *((BuildingClass*)Contact_With_Whom()) != STRUCT_HELIPAD) {
-                        /*
-                        **	Normal aircraft try to find a good landing spot to rest.
-                        */
+
+                        // Normal aircraft try to find a good landing spot to rest.
                         BuildingClass* building = Find_Docking_Bay(STRUCT_HELIPAD, false);
                         Assign_Destination(TARGET_NONE);
                         if (building && Transmit_Message(RADIO_HELLO, building) == RADIO_ROGER) {
@@ -1943,8 +1812,9 @@ void AircraftClass::Enter_Idle_Mode(bool)
                     }
                 }
             } else {
-                if (Team)
+                if (Team) {
                     return;
+                }
 
                 Assign_Destination(Good_LZ());
                 mission = MISSION_MOVE;
@@ -1976,13 +1846,14 @@ int AircraftClass::Process_Fly_To(bool slowdown)
 {
     Validate();
     COORDINATE coord;
+
     if (Is_Target_Building(NavCom)) {
         coord = As_Building(NavCom)->Docking_Coord();
     } else {
         coord = As_Coord(NavCom);
     }
-    int distance = Distance(coord);
 
+    int distance = Distance(coord);
     PrimaryFacing.Set_Desired(Direction(coord));
 
     if (slowdown) {
@@ -1999,7 +1870,8 @@ int AircraftClass::Process_Fly_To(bool slowdown)
         }
         distance = 0;
     }
-    return (distance);
+
+    return distance;
 }
 
 #ifdef CHEAT_KEYS
@@ -2198,13 +2070,13 @@ ActionType AircraftClass::What_Action(ObjectClass* target) const
     }
 
     // Changed for multiplayer ST - 3/13/2019 5:31PM
-    // if (IsOwnedByPlayer && House->Is_Ally(target) && target->What_Am_I() == RTTI_BUILDING && ((AircraftClass
-    // *)this)->Transmit_Message(RADIO_CAN_LOAD, (TechnoClass*)target) == RADIO_ROGER) {
+    // if (IsOwnedByPlayer && House->Is_Ally(target) && target->What_Am_I() == RTTI_BUILDING &&
+    // ((AircraftClass*)this)->Transmit_Message(RADIO_CAN_LOAD, (TechnoClass*)target) == RADIO_ROGER) {
     if (Is_Owned_By_Player() && House->Is_Ally(target) && target->What_Am_I() == RTTI_BUILDING
         && ((AircraftClass*)this)->Transmit_Message(RADIO_CAN_LOAD, (TechnoClass*)target) == RADIO_ROGER) {
         action = ACTION_ENTER;
     }
-    return (action);
+    return action;
 }
 
 /***********************************************************************************************
@@ -2229,7 +2101,7 @@ ActionType AircraftClass::What_Action(CELL cell) const
     Validate();
     ActionType action = FootClass::What_Action(cell);
 
-    // using function for IsVisible so we have different results for different players - JAS 2019/09/30
+    // Using function for IsVisible so we have different results for different players - JAS 2019/09/30
     if ((action == ACTION_MOVE || action == ACTION_ATTACK) && !Map[cell].Is_Visible(PlayerPtr)) {
         action = ACTION_NOMOVE;
     }
@@ -2237,7 +2109,7 @@ ActionType AircraftClass::What_Action(CELL cell) const
     if (action == ACTION_ATTACK && Class->Primary == WEAPON_NONE) {
         action = ACTION_NONE;
     }
-    return (action);
+    return action;
 }
 
 /***********************************************************************************************
@@ -2258,9 +2130,9 @@ DirType AircraftClass::Pose_Dir(void) const
 {
     Validate();
     if (*this == AIRCRAFT_TRANSPORT) {
-        return (DIR_N);
+        return DIR_N;
     }
-    return (DIR_NE);
+    return DIR_NE;
 }
 
 /***********************************************************************************************
@@ -2284,7 +2156,7 @@ int AircraftClass::Mission_Attack(void)
     Validate();
     if (Class->IsFixedWing) {
         Assign_Mission(MISSION_HUNT);
-        return (1);
+        return 1;
     }
 
     enum
@@ -2299,9 +2171,7 @@ int AircraftClass::Mission_Attack(void)
     };
     switch (Status) {
 
-    /*
-    **	Double check target and validate the attack zone.
-    */
+    // Double check target and validate the attack zone.
     case VALIDATE_AZ:
         if (!Target_Legal(TarCom)) {
             Status = RETURN_TO_BASE;
@@ -2310,9 +2180,7 @@ int AircraftClass::Mission_Attack(void)
         }
         break;
 
-    /*
-    **	Pick a good location to attack from.
-    */
+    // Pick a good location to attack from.
     case PICK_ATTACK_LOCATION:
         if (!Target_Legal(TarCom)) {
             Status = RETURN_TO_BASE;
@@ -2326,9 +2194,7 @@ int AircraftClass::Mission_Attack(void)
         }
         break;
 
-    /*
-    **	Take off (if necessary).
-    */
+    // Take off (if necessary).
     case TAKE_OFF:
         if (!Target_Legal(TarCom)) {
             Status = RETURN_TO_BASE;
@@ -2336,40 +2202,32 @@ int AircraftClass::Mission_Attack(void)
             if (Process_Take_Off()) {
                 Status = FLY_TO_POSITION;
 
-                /*
-                **	Break off radio contact with the helipad it is taking off from.
-                */
+                // Break off radio contact with the helipad it is taking off from.
                 if (In_Radio_Contact() && Map[Coord_Cell(Coord)].Cell_Building() == Contact_With_Whom()) {
                     Transmit_Message(RADIO_OVER_OUT);
                 }
 
-                /*
-                **	Start flying toward the destination by skewing at first.
-                **	As the flight progresses, the body will rotate to face
-                **	the direction of travel.
-                */
+                // Start flying toward the destination by skewing at first.
+                // As the flight progresses, the body will rotate to face
+                // the direction of travel.
                 int diff = SecondaryFacing.Difference(Direction(NavCom));
                 diff = Bound(diff, -128, 128);
                 PrimaryFacing = SecondaryFacing.Current() + diff;
             }
-            return (1);
+            return 1;
         }
         break;
 
-    /*
-    **	Fly to attack location.
-    */
+    // Fly to attack location.
     case FLY_TO_POSITION:
         if (Target_Legal(TarCom)) {
 
-            /*
-            **	If the navcom was cleared mysteriously, then try to pick
-            **	a new attack location. This is a likely event if the player
-            **	clicks on a new target while in flight to an existing target.
-            */
+            // If the navcom was cleared mysteriously, then try to pick
+            // a new attack location. This is a likely event if the player
+            // clicks on a new target while in flight to an existing target.
             if (!Target_Legal(NavCom)) {
                 Status = PICK_ATTACK_LOCATION;
-                return (1);
+                return 1;
             }
 
             int distance = Process_Fly_To(true);
@@ -2383,25 +2241,21 @@ int AircraftClass::Mission_Attack(void)
                 }
             } else {
                 SecondaryFacing.Set_Desired(::Direction(Fire_Coord(0), As_Coord(NavCom)));
-                return (1);
+                return 1;
             }
         } else {
             Status = RETURN_TO_BASE;
         }
-        return (1);
+        return 1;
 
-    /*
-    **	Fire at the target.
-    */
+    // Fire at the target.
     case FIRE_AT_TARGET:
         if (!Target_Legal(TarCom)) {
             Status = RETURN_TO_BASE;
-            return (1);
+            return 1;
         }
 
-        /*
-        **	Clear second shot flag so fire burst works correctly.
-        */
+        // Clear second shot flag so fire burst works correctly.
         IsSecondShot = false;
 
         PrimaryFacing.Set_Desired(Direction(TarCom));
@@ -2425,15 +2279,13 @@ int AircraftClass::Mission_Attack(void)
             }
             break;
         }
-        return (1);
+        return 1;
 
-    /*
-    **	Fire at the target.
-    */
+    // Fire at the target.
     case FIRE_AT_TARGET2:
         if (!Target_Legal(TarCom)) {
             Status = RETURN_TO_BASE;
-            return (1);
+            return 1;
         }
 
         PrimaryFacing.Set_Desired(Direction(TarCom));
@@ -2467,16 +2319,14 @@ int AircraftClass::Mission_Attack(void)
         }
         break;
 
-    /*
-    **	Fly back to landing spot.
-    */
+    // Fly back to landing spot.
     case RETURN_TO_BASE:
         Assign_Destination(TARGET_NONE);
         Enter_Idle_Mode();
         break;
     }
 
-    return (TICKS_PER_SECOND / 2);
+    return TICKS_PER_SECOND / 2;
 }
 
 /***********************************************************************************************
@@ -2502,32 +2352,28 @@ TARGET AircraftClass::New_LZ(TARGET oldlz, bool stable) const
     if (Target_Legal(oldlz) && (!Is_LZ_Clear(oldlz) || !Cell_Seems_Ok(As_Cell(oldlz)))) {
         COORDINATE coord = As_Coord(oldlz);
 
-        /*
-        **	Scan outward in a series of concentric rings up to certain distance
-        **	in cells.
-        */
+        // Scan outward in a series of concentric rings up to certain distance in cells.
         for (int radius = 0; radius < 16; radius++) {
             FacingType modifier = stable ? FACING_N : Random_Pick(FACING_N, FACING_NW);
             CELL lastcell = -1;
 
-            /*
-            **	Perform a radius scan out from the original center location. Try to
-            **	find a cell that is allowed to be a legal LZ.
-            */
+            // Perform a radius scan out from the original center location.
+            // Try to find a cell that is allowed to be a legal LZ.
             for (FacingType facing = FACING_N; facing < FACING_COUNT; facing++) {
                 CELL newcell = Coord_Cell(Coord_Move(coord, Facing_Dir(facing + modifier), radius * ICON_LEPTON_W));
+
                 if (Map.In_Radar(newcell)) {
                     TARGET newtarget = ::As_Target(newcell);
 
                     if (newcell != lastcell && Is_LZ_Clear(newtarget) && Cell_Seems_Ok(newcell)) {
-                        return (newtarget);
+                        return newtarget;
                     }
                     lastcell = newcell;
                 }
             }
         }
     }
-    return (oldlz);
+    return oldlz;
 }
 
 /***********************************************************************************************
@@ -2548,13 +2394,13 @@ TARGET AircraftClass::New_LZ(TARGET oldlz, bool stable) const
 COORDINATE AircraftClass::Fire_Coord(int) const
 {
     Validate();
-    return (Coord_Move(Coord_Add(XYP_Coord(0, -Altitude), Coord), SecondaryFacing, 0x040));
+    return Coord_Move(Coord_Add(XYP_Coord(0, -Altitude), Coord), SecondaryFacing, 0x040);
 }
 
 COORDINATE AircraftClass::Target_Coord(void) const
 {
     Validate();
-    return (Coord_Add(XYP_Coord(0, -Altitude), Coord));
+    return Coord_Add(XYP_Coord(0, -Altitude), Coord);
 }
 
 /***********************************************************************************************
@@ -2585,31 +2431,28 @@ RadioMessageType AircraftClass::Receive_Message(RadioClass* from, RadioMessageTy
 
     case RADIO_PREPARED:
         if (Target_Legal(TarCom))
-            return (RADIO_NEGATIVE);
+            return RADIO_NEGATIVE;
         if ((Altitude == 0 && Ammo == Class->MaxAmmo) || (Altitude > 0 && Ammo > 0))
-            return (RADIO_ROGER);
-        return (RADIO_NEGATIVE);
+            return RADIO_ROGER;
+        return RADIO_NEGATIVE;
 
-    /*
-    **	Something disasterous has happened to the object in contact with. Fall back
-    **	and regroup. This means that any landing process is immediately aborted.
-    */
+    // Something disasterous has happened to the object in contact with. Fall back
+    // and regroup. This means that any landing process is immediately aborted.
     case RADIO_RUN_AWAY:
         if (IsLanding) {
             IsLanding = false;
             IsTakingOff = true;
         }
+
         Scatter(0, true);
         break;
 
-    /*
-    **	The ground control requests that this specified landing spot be used.
-    */
+    // The ground control requests that this specified landing spot be used.
     case RADIO_MOVE_HERE:
         FootClass::Receive_Message(from, message, param);
         if (Is_Target_Building((TARGET)param)) {
             if (Transmit_Message(RADIO_CAN_LOAD, As_Techno((TARGET)param)) != RADIO_ROGER) {
-                return (RADIO_NEGATIVE);
+                return RADIO_NEGATIVE;
             }
             Assign_Mission(MISSION_ENTER);
             Assign_Destination((TARGET)param);
@@ -2618,41 +2461,33 @@ RadioMessageType AircraftClass::Receive_Message(RadioClass* from, RadioMessageTy
             Assign_Destination((TARGET)param);
         }
         Commence();
-        return (RADIO_ROGER);
+        return RADIO_ROGER;
 
-    /*
-    **	Ground control is requesting if the aircraft requires navigation direction.
-    */
+    // Ground control is requesting if the aircraft requires navigation direction.
     case RADIO_NEED_TO_MOVE:
         FootClass::Receive_Message(from, message, param);
         if (!Target_Legal(NavCom) && !IsTakingOff && !IsLanding) {
-            return (RADIO_ROGER);
+            return RADIO_ROGER;
         }
-        return (RADIO_NEGATIVE);
+        return RADIO_NEGATIVE;
 
-    /*
-    **	This message is sent by the passenger when it determines that it has
-    **	entered the transport.
-    */
+    // This message is sent by the passenger when it determines that it has
+    // entered the transport.
     case RADIO_IM_IN:
         if (How_Many() == Class->Max_Passengers()) {
             Close_Door(5, 4);
         }
 
-        /*
-        **	If a civilian has entered the transport, then the transport will immediately
-        **	fly off the map.
-        */
+        // If a civilian has entered the transport, then the transport will immediately
+        // fly off the map.
         if (from->What_Am_I() == RTTI_INFANTRY && ((InfantryClass*)from)->Class->IsCivilian
             && !((InfantryClass*)from)->IsTechnician) {
             Assign_Mission(MISSION_RETREAT);
         }
-        return (RADIO_ATTACH);
+        return RADIO_ATTACH;
 
-    /*
-    **	Docking maintenance message received. Check to see if new orders should be given
-    **	to the impatient unit.
-    */
+    // Docking maintenance message received. Check to see if new orders should be given
+    // to the impatient unit.
     case RADIO_DOCKING:
         if (Class->IsTransporter && How_Many() < Class->Max_Passengers()) {
             FootClass::Receive_Message(from, message, param);
@@ -2661,28 +2496,22 @@ RadioMessageType AircraftClass::Receive_Message(RadioClass* from, RadioMessageTy
 
                 Open_Door(5, 4);
 
-                /*
-                **	If the potential passenger needs someplace to go, then figure out a good
-                **	spot and tell it to go.
-                */
+                // If the potential passenger needs someplace to go,
+                // then figure out a good spot and tell it to go.
                 if (Transmit_Message(RADIO_NEED_TO_MOVE, from) == RADIO_ROGER) {
                     CELL cell;
                     DirType dir = Desired_Load_Dir(from, cell);
 
-                    /*
-                    **	If no adjacent free cells are detected, then passenger loading
-                    **	cannot occur. Break radio contact.
-                    */
+                    // If no adjacent free cells are detected, then passenger loading
+                    // cannot occur. Break radio contact.
                     if (cell == 0) {
                         Transmit_Message(RADIO_OVER_OUT, from);
                     } else {
                         param = (long)::As_Target(cell);
 
-                        /*
-                        **	Tell the potential passenger where it should go. If the passenger is
-                        **	already at the staging location, then tell it to move onto the transport
-                        **	directly.
-                        */
+                        // Tell the potential passenger where it should go. If the passenger is
+                        // already at the staging location, then tell it to move onto the transport
+                        // directly.
                         if (Transmit_Message(RADIO_MOVE_HERE, param, from) == RADIO_YEA_NOW_WHAT) {
                             param = (long)As_Target();
                             Transmit_Message(RADIO_TETHER);
@@ -2695,25 +2524,21 @@ RadioMessageType AircraftClass::Receive_Message(RadioClass* from, RadioMessageTy
                     }
                 }
             }
-            return (RADIO_ROGER);
+            return RADIO_ROGER;
         }
         break;
 
-    /*
-    **	Asks if the passenger can load on this transport.
-    */
+    // Asks if the passenger can load on this transport.
     case RADIO_CAN_LOAD:
         if (!In_Radio_Contact() && Class->IsTransporter && How_Many() < Class->Max_Passengers() && from
             && House->Class->House == from->Owner() && Altitude == 0) {
-            return (RADIO_ROGER);
+            return RADIO_ROGER;
         }
-        return (RADIO_NEGATIVE);
+        return RADIO_NEGATIVE;
     }
 
-    /*
-    **	Let the base class take over processing this message.
-    */
-    return (FootClass::Receive_Message(from, message, param));
+    // Let the base class take over processing this message.
+    return FootClass::Receive_Message(from, message, param);
 }
 
 /***********************************************************************************************
@@ -2741,14 +2566,18 @@ DirType AircraftClass::Desired_Load_Dir(ObjectClass* object, CELL& moveto) const
     CELL center = Coord_Cell(Center_Coord());
     for (int sweep = FACING_N; sweep < FACING_S; sweep++) {
         moveto = Adjacent_Cell(center, FACING_S + sweep);
-        if (Map.In_Radar(moveto) && (Coord_Cell(object->Center_Coord()) == moveto || Map[moveto].Is_Generally_Clear()))
-            return (DIR_N);
+        if (Map.In_Radar(moveto)
+            && (Coord_Cell(object->Center_Coord()) == moveto || Map[moveto].Is_Generally_Clear())) {
+            return DIR_N;
+        }
 
         moveto = Adjacent_Cell(center, FACING_S - sweep);
-        if (Map.In_Radar(moveto) && (Coord_Cell(object->Center_Coord()) == moveto || Map[moveto].Is_Generally_Clear()))
-            return (DIR_N);
+        if (Map.In_Radar(moveto)
+            && (Coord_Cell(object->Center_Coord()) == moveto || Map[moveto].Is_Generally_Clear())) {
+            return DIR_N;
+        }
     }
-    return (DIR_N);
+    return DIR_N;
 }
 
 /***********************************************************************************************
@@ -2771,6 +2600,7 @@ bool AircraftClass::Process_Take_Off(void)
     Validate();
     IsLanding = false;
     IsTakingOff = true;
+
     switch (Altitude) {
     case 0:
         Close_Door(5, 4);
@@ -2793,9 +2623,9 @@ bool AircraftClass::Process_Take_Off(void)
     case FLIGHT_LEVEL:
         Set_Speed(0xFF);
         IsTakingOff = false;
-        return (true);
+        return true;
     }
-    return (false);
+    return false;
 }
 
 /***********************************************************************************************
@@ -2819,10 +2649,11 @@ bool AircraftClass::Process_Landing(void)
     Validate();
     IsTakingOff = false;
     IsLanding = true;
+
     switch (Altitude) {
     case 0:
         IsLanding = false;
-        return (true);
+        return true;
 
     case FLIGHT_LEVEL / 2:
         Set_Speed(0);
@@ -2831,7 +2662,7 @@ bool AircraftClass::Process_Landing(void)
     case FLIGHT_LEVEL:
         break;
     }
-    return (false);
+    return false;
 }
 
 /***********************************************************************************************
@@ -2852,18 +2683,21 @@ bool AircraftClass::Process_Landing(void)
 MoveType AircraftClass::Can_Enter_Cell(CELL cell, FacingType) const
 {
     Validate();
-    if (!Map.In_Radar(cell))
-        return (MOVE_NO);
+    if (!Map.In_Radar(cell)) {
+        return MOVE_NO;
+    }
 
     CellClass* cellptr = &Map[cell];
 
-    if (!cellptr->Is_Generally_Clear(true))
-        return (MOVE_NO);
+    if (!cellptr->Is_Generally_Clear(true)) {
+        return MOVE_NO;
+    }
 
-    if (GameToPlay == GAME_NORMAL && IsOwnedByPlayer && !cellptr->Is_Visible(PlayerPtr))
-        return (MOVE_NO);
+    if (GameToPlay == GAME_NORMAL && IsOwnedByPlayer && !cellptr->Is_Visible(PlayerPtr)) {
+        return MOVE_NO;
+    }
 
-    return (MOVE_OK);
+    return MOVE_OK;
 }
 
 /***********************************************************************************************
@@ -2910,27 +2744,26 @@ TARGET AircraftClass::Good_Fire_Location(TARGET target) const
                     }
                 }
             }
-            if (bestval != -1)
+
+            if (bestval != -1) {
                 break;
+            }
         }
 
         if (best2val == -1) {
             best2cell = bestcell;
         }
 
-        /*
-        **	If it found a good firing location, then return this location as
-        **	a target value.
-        */
+        // If it found a good firing location, then return this location as a target value.
         if (bestval != -1) {
             if (Random_Pick(0, 1) == 0) {
-                return (::As_Target(bestcell));
+                return ::As_Target(bestcell);
             } else {
-                return (::As_Target(best2cell));
+                return ::As_Target(best2cell);
             }
         }
     }
-    return (TARGET_NONE);
+    return TARGET_NONE;
 }
 
 /***********************************************************************************************
@@ -2958,21 +2791,20 @@ TARGET AircraftClass::Good_Fire_Location(TARGET target) const
 bool AircraftClass::Cell_Seems_Ok(CELL cell, bool strict) const
 {
     Validate();
-    /*
-    **	Make sure that no other aircraft are heading to the selected location. If they
-    **	are, then don't consider the location as valid.
-    */
+
+    // Make sure that no other aircraft are heading to the selected location. If they
+    // are, then don't consider the location as valid.
     TARGET astarget = ::As_Target(cell);
     bool ok = true;
     for (int index = 0; index < Aircraft.Count(); index++) {
         AircraftClass* air = Aircraft.Ptr(index);
         if (air && (strict || air != this) && !air->IsInLimbo) {
             if (Coord_Cell(air->Coord) == cell || air->NavCom == astarget) {
-                return (false);
+                return false;
             }
         }
     }
-    return (true);
+    return true;
 }
 
 /***********************************************************************************************
@@ -3002,11 +2834,12 @@ int AircraftClass::Pip_Count(void) const
         if (Ammo) {
             retval = Cardinal_To_Fixed(Class->MaxAmmo, Ammo);
             retval = Fixed_To_Cardinal(Class->Max_Pips(), retval);
-            if (!retval)
+            if (!retval) {
                 retval = 1;
+            }
         }
     }
-    return (retval);
+    return retval;
 }
 
 /***********************************************************************************************
@@ -3029,6 +2862,7 @@ int AircraftClass::Pip_Count(void) const
 int AircraftClass::Mission_Enter(void)
 {
     Validate();
+
     enum
     {
         INITIAL,
@@ -3037,6 +2871,7 @@ int AircraftClass::Mission_Enter(void)
         TRAVEL,
         LANDING
     };
+
     switch (Status) {
     case INITIAL:
         if (Altitude < FLIGHT_LEVEL || IsLanding) {
@@ -3048,10 +2883,9 @@ int AircraftClass::Mission_Enter(void)
 
     case TAKEOFF:
         if (Process_Take_Off()) {
-            /*
-            **	After takeoff is complete, break radio contact with any helipad that this
-            **	helicopter is taking off from.
-            */
+
+            // After takeoff is complete, break radio contact with any helipad that this
+            // helicopter is taking off from.
             if (In_Radio_Contact() && Map[Coord_Cell(Coord)].Cell_Building() == Contact_With_Whom()) {
                 Transmit_Message(RADIO_OVER_OUT);
             }
@@ -3060,10 +2894,8 @@ int AircraftClass::Mission_Enter(void)
         break;
 
     case ALTITUDE:
-        /*
-        **	Establish radio contact with the building this helicopter is trying
-        **	to land at.
-        */
+
+        // Establish radio contact with the building this helicopter is trying to land at.
         if (In_Radio_Contact()) {
             Status = TRAVEL;
         } else {
@@ -3101,7 +2933,7 @@ int AircraftClass::Mission_Enter(void)
             } else {
                 SecondaryFacing.Set_Desired(::Direction(Fire_Coord(0), As_Coord(NavCom)));
             }
-            return (3);
+            return 3;
         }
         break;
 
@@ -3127,7 +2959,7 @@ int AircraftClass::Mission_Enter(void)
         }
         break;
     }
-    return (1);
+    return 1;
 }
 
 /***********************************************************************************************
@@ -3151,10 +2983,9 @@ int AircraftClass::Mission_Enter(void)
 TARGET AircraftClass::Good_LZ(void) const
 {
     Validate();
-    /*
-    **	Scan through all of the buildings and try to land near
-    **	the helipad (if there is one) or the nearest friendly building.
-    */
+
+    // Scan through all of the buildings and try to land near
+    // the helipad (if there is one) or the nearest friendly building.
     CELL bestcell;
     int bestdist = -1;
     for (int index = 0; index < Buildings.Count(); index++) {
@@ -3172,17 +3003,13 @@ TARGET AircraftClass::Good_LZ(void) const
         }
     }
 
-    /*
-    **	Return with the suitable location if one was found.
-    */
+    // Return with the suitable location if one was found.
     if (bestdist != -1) {
-        return (::As_Target(bestcell));
+        return ::As_Target(bestcell);
     }
 
-    /*
-    **	No good location was found. Just try to land here.
-    */
-    return (::As_Target(Coord_Cell(Coord)));
+    // No good location was found. Just try to land here.
+    return ::As_Target(Coord_Cell(Coord));
 }
 
 /***********************************************************************************************
@@ -3226,7 +3053,7 @@ void AircraftClass::Set_Speed(int speed)
 DirType AircraftClass::Fire_Direction(void) const
 {
     Validate();
-    return (SecondaryFacing.Current());
+    return SecondaryFacing.Current();
 }
 
 /***********************************************************************************************
@@ -3249,15 +3076,11 @@ AircraftClass::~AircraftClass(void)
     if (GameActive && Class) {
 
 #ifdef USE_RA_AI
-        //
         // Added for RA AI in TD. ST - 7/26/2019 9:12AM
-        //
         House->Tracking_Remove(this);
 #endif
 
-        /*
-        **	If there are any cargo members, delete them.
-        */
+        // If there are any cargo members, delete them.
         while (Is_Something_Attached()) {
             delete Detach_Object();
         }
@@ -3265,8 +3088,9 @@ AircraftClass::~AircraftClass(void)
         Limbo();
     }
 
-    if (GameActive && Class && Team)
+    if (GameActive && Class && Team) {
         Team->Remove(this);
+    }
 }
 
 /***********************************************************************************************
@@ -3316,7 +3140,7 @@ void AircraftClass::Scatter(COORDINATE, bool, bool)
 int AircraftClass::Rearm_Delay(bool second) const
 {
     Validate();
-    return (FootClass::Rearm_Delay(second) / 2);
+    return FootClass::Rearm_Delay(second) / 2;
 }
 
 /***********************************************************************************************
@@ -3343,14 +3167,16 @@ int AircraftClass::Rearm_Delay(bool second) const
 int AircraftClass::Threat_Range(int control) const
 {
     Validate();
-    if (control == -1)
-        return (-1);
+    if (control == -1) {
+        return -1;
+    }
 
     int range = 20 * ICON_LEPTON_W;
     if (control == 1) {
         range *= 2;
     }
-    return (range);
+
+    return range;
 }
 
 /***********************************************************************************************
@@ -3373,16 +3199,14 @@ int AircraftClass::Mission_Guard(void)
     Validate();
     if (Altitude == FLIGHT_LEVEL) {
 
-        /*
-        **	If part of a team, then do nothing, since the team
-        **	handler will take care of giving this aircraft a
-        **	mission.
-        */
+        // If part of a team, then do nothing, since the team
+        // handler will take care of giving this aircraft a
+        // mission.
         if (Team) {
             if (Target_Legal(NavCom)) {
                 Assign_Mission(MISSION_MOVE);
             }
-            return (TICKS_PER_SECOND);
+            return TICKS_PER_SECOND;
         }
 
         if (Class->Primary == WEAPON_NONE) {
@@ -3391,23 +3215,19 @@ int AircraftClass::Mission_Guard(void)
         } else {
             Enter_Idle_Mode();
         }
-        return (1);
+        return 1;
     }
-    if (House->IsHuman)
-        return (TICKS_PER_SECOND);
+    if (House->IsHuman) {
+        return TICKS_PER_SECOND;
+    }
 
-    /*
-    **	Special case to force the GDI helicopter to be brain dead in the Nod
-    **	mission where it is supposed to be captured.
-    */
+    // Special case to force the GDI helicopter to be brain dead in the Nod
+    // mission where it is supposed to be captured.
     if (GameToPlay == GAME_NORMAL && Scenario == 7 && House->Class->House == HOUSE_GOOD) {
-        return (TICKS_PER_SECOND * 20);
+        return TICKS_PER_SECOND * 20;
     }
 
-    /*
-    **	If the aircraft is very badly damaged, then it will search for a
-    **	repair bay first.
-    */
+    // If the aircraft is very badly damaged, then it will search for a repair bay first.
     if (House->Available_Money() >= 100 && Health_Ratio() <= 0x0080) {
         if (!In_Radio_Contact()
             || (Altitude == 0
@@ -3419,16 +3239,13 @@ int AircraftClass::Mission_Guard(void)
                 Assign_Destination(building->As_Target());
                 Assign_Target(TARGET_NONE);
                 Assign_Mission(MISSION_ENTER);
-                return (1);
+                return 1;
             }
         }
     }
 
-    /*
-    **	If the aircraft cannot attack anything because of lack of ammo,
-    **	abort any normal guard logic in order to look for a helipad
-    **	to rearm.
-    */
+    // If the aircraft cannot attack anything because of lack of ammo,
+    // abort any normal guard logic in order to look for a helipad to rearm.
     if (Ammo == 0 && Class->Primary != WEAPON_NONE) {
         if (!In_Radio_Contact()) {
             BuildingClass* building = Find_Docking_Bay(STRUCT_HELIPAD, false);
@@ -3436,37 +3253,31 @@ int AircraftClass::Mission_Guard(void)
                 Assign_Destination(building->As_Target());
                 Assign_Target(TARGET_NONE);
                 Assign_Mission(MISSION_ENTER);
-                return (1);
+                return 1;
             }
         }
         //		return(TICKS_PER_SECOND*3);
     }
 
-    /*
-    **	If the aircraft already has a target, then attack it if possible.
-    */
+    // If the aircraft already has a target, then attack it if possible.
     if (Target_Legal(TarCom)) {
         Assign_Mission(MISSION_ATTACK);
-        return (1);
+        return 1;
     }
 
-    /*
-    **	Transport helicopters don't really do anything but just sit there.
-    */
+    // Transport helicopters don't really do anything but just sit there.
     if (Class->Primary == WEAPON_NONE) {
-        return (TICKS_PER_SECOND * 3);
+        return TICKS_PER_SECOND * 3;
     }
 
-    /*
-    **	Computer controlled helicopters will defend themselves by bouncing around
-    **	and looking for a free helipad.
-    */
+    // Computer controlled helicopters will defend themselves by bouncing around
+    // and looking for a free helipad.
     if (Altitude == 0 && !In_Radio_Contact()) {
         Scatter(0, true);
-        return (TICKS_PER_SECOND * 3);
+        return TICKS_PER_SECOND * 3;
     }
 
-    return (FootClass::Mission_Guard());
+    return FootClass::Mission_Guard();
 }
 
 /***********************************************************************************************
@@ -3491,21 +3302,24 @@ int AircraftClass::Mission_Guard_Area(void)
     Validate();
     if (Altitude == FLIGHT_LEVEL) {
         Enter_Idle_Mode();
-        return (1);
+        return 1;
     }
-    if (House->IsHuman)
-        return (TICKS_PER_SECOND);
+
+    if (House->IsHuman) {
+        return TICKS_PER_SECOND;
+    }
 
     if (Altitude == 0 && !In_Radio_Contact()) {
         Scatter(0, true);
-        return (TICKS_PER_SECOND * 3);
+        return TICKS_PER_SECOND * 3;
     }
 
     if (Target_Legal(TarCom)) {
         Assign_Mission(MISSION_ATTACK);
-        return (1);
+        return 1;
     }
-    return (FootClass::Mission_Guard_Area());
+
+    return FootClass::Mission_Guard_Area();
 }
 
 /***********************************************************************************************
@@ -3527,6 +3341,7 @@ void AircraftClass::Response_Attack(void)
     Validate();
     static VocType _response[] = {VOC_AFFIRM, VOC_ACKNOWL, VOC_YESSIR, VOC_YESSIR, VOC_YESSIR};
     VocType response = _response[Sim_Random_Pick(0, (int)(sizeof(_response) / sizeof(_response[0])) - 1)];
+
     if (AllowVoice) {
         Sound_Effect(response, 0, -(Aircraft.ID(this) + 1));
     }
@@ -3551,6 +3366,7 @@ void AircraftClass::Response_Move(void)
     Validate();
     static VocType _response[] = {VOC_MOVEOUT, VOC_MOVEOUT, VOC_MOVEOUT, VOC_ACKNOWL, VOC_AFFIRM, VOC_AFFIRM};
     VocType response = _response[Sim_Random_Pick(0, (int)(sizeof(_response) / sizeof(_response[0])) - 1)];
+
     if (AllowVoice) {
         Sound_Effect(response, 0, -(Aircraft.ID(this) + 1));
     }
@@ -3575,6 +3391,7 @@ void AircraftClass::Response_Select(void)
     Validate();
     static VocType _response[] = {VOC_VEHIC, VOC_UNIT, VOC_YESSIR, VOC_YESSIR, VOC_YESSIR, VOC_AWAIT};
     VocType response = _response[Sim_Random_Pick(0, (int)(sizeof(_response) / sizeof(_response[0])) - 1)];
+
     if (AllowVoice) {
         Sound_Effect(response, 0, -(Aircraft.ID(this) + 1));
     }
