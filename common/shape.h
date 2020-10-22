@@ -107,30 +107,34 @@ inline ShapeFlags_Type operator~(ShapeFlags_Type a)
 /*
 ------------------------------- Shape header --------------------------------
 */
+#pragma pack(push, 1)
 typedef struct
 {
-    unsigned short ShapeType;     // 0 = normal, 1 = 16 colors,
-                                  //  2 = uncompressed, 4 = 	<16 colors
-    unsigned char Height;         // Height of the shape in scan lines
-    unsigned short Width;         // Width of the shape in bytes
-    unsigned char OriginalHeight; // Original height of shape in scan lines
-    unsigned short ShapeSize;     // Size of the shape, including header
-    unsigned short DataLength;    // Size of the uncompressed shape (just data)
-    unsigned char Colortable[16]; // Optional color table for compact shape
+    uint16_t ShapeType;     // 0 = normal, 1 = 16 colors,
+                            //  2 = uncompressed, 4 = 	<16 colors
+    uint8_t Height;         // Height of the shape in scan lines
+    uint16_t Width;         // Width of the shape in bytes
+    uint8_t OriginalHeight; // Original height of shape in scan lines
+    uint16_t ShapeSize;     // Size of the shape, including header
+    uint16_t DataLength;    // Size of the uncompressed shape (just data)
+    uint8_t Colortable[16]; // Optional color table for compact shape
 } Shape_Type;
+#pragma pack(pop)
 
 /*
 ------------------------------- Shape block ---------------------------------
 */
 #pragma warning(disable : 4200)
+#pragma pack(push, 2)
 typedef struct
 {
-    unsigned short NumShapes; // number of shapes in the block
-    long Offsets[];           // array of offsets to shape data
-                              //  (offsets within the shape block, with
-                              //  0 being the first offset value, not the
-                              //  start of the shape block)
+    uint16_t NumShapes; // number of shapes in the block
+    int32_t Offsets[];  // array of offsets to shape data
+                        //  (offsets within the shape block, with
+                        //  0 being the first offset value, not the
+                        //  start of the shape block)
 } ShapeBlock_Type;
+#pragma pack(pop)
 
 /*
 ******************************** Prototypes *********************************

@@ -572,7 +572,7 @@ void Shutdown_Network(void);
 bool Remote_Connect(void);
 void Destroy_Connection(int id, int error);
 bool Process_Global_Packet(GlobalPacketType* packet, IPXAddressClass* address);
-unsigned long Compute_Name_CRC(char* name);
+uint32_t Compute_Name_CRC(char* name);
 void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned long timeval);
 
 /*
@@ -616,7 +616,7 @@ bool Queue_Mission(TARGET whom, MissionType mission, TARGET target, TARGET desti
 bool Queue_Options(void);
 bool Queue_Exit(void);
 void Queue_AI(void);
-void Add_CRC(unsigned long* crc, unsigned long val);
+void Add_CRC(uint32_t* crc, uint32_t val);
 
 /*
 **	RAND.CPP

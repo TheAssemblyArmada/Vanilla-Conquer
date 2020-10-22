@@ -188,7 +188,7 @@ public:
     /*===================================================================*/
     /* define functions to get at the private data members               */
     /*===================================================================*/
-    long Get_Offset()
+    intptr_t Get_Offset()
     {
         return Offset;
     }
