@@ -1345,7 +1345,7 @@ bool Select_Game(bool fade)
     /*
     ** Sidebar is always active in hi-res.
     */
-    if (!Debug_Map) {
+    if (!Debug_Map && !Options.ToggleSidebar) {
         Map.SidebarClass::Activate(1);
     }
 #endif // WIN32
