@@ -113,6 +113,7 @@ set(REDALERT_SRC
     msgbox.cpp
     msglist.cpp
     netdlg.cpp
+    nulldlg.cpp
     object.cpp
     odata.cpp
     options.cpp
