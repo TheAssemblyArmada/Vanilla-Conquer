@@ -907,7 +907,7 @@ bool Select_Game(bool fade)
                         break;
 
                     case GAME_SKIRMISH:
-#if (0) // PG
+#ifndef REMASTER_BUILD
                         if (!Com_Scenario_Dialog(true)) {
                             Session.Type = Select_MPlayer_Game();
                             if (Session.Type == GAME_NORMAL) { // user hit Cancel
@@ -916,7 +916,7 @@ bool Select_Game(bool fade)
                             }
                         } else {
                             //	Ever hits? Session.Type set to GAME_SKIRMISH without user selecting in
-                            //Select_MPlayer_Game()?
+                            // Select_MPlayer_Game();
 #ifdef FIXIT_VERSION_3
                             //	If mission is Counterstrike, CS CD will be required. But aftermath units require AM CD.
                             bAftermathMultiplayer =
@@ -927,41 +927,6 @@ bool Select_Game(bool fade)
 #endif
                         }
 #endif // PG
-                        break;
-
-                    case GAME_NULL_MODEM:
-                    case GAME_MODEM:
-#if (0)
-                        if (Session.Type != GAME_SKIRMISH && NullModem.Num_Connections()) {
-                            NullModem.Init_Send_Queue();
-
-                            if ((Session.Type == GAME_NULL_MODEM && Session.ModemType == MODEM_NULL_HOST)
-                                || (Session.Type == GAME_MODEM && Session.ModemType == MODEM_DIALER)) {
-
-                                if (!Com_Scenario_Dialog()) {
-                                    Session.Type = Select_Serial_Dialog();
-                                    if (Session.Type == GAME_NORMAL) { // user hit Cancel
-                                        display = true;
-                                        selection = SEL_NONE;
-                                    }
-                                }
-                            } else {
-                                if (!Com_Show_Scenario_Dialog()) {
-                                    Session.Type = Select_Serial_Dialog();
-                                    if (Session.Type == GAME_NORMAL) { // user hit Cancel
-                                        display = true;
-                                        selection = SEL_NONE;
-                                    }
-                                }
-                            }
-                        } else {
-                            Session.Type = Select_MPlayer_Game();
-                            if (Session.Type == GAME_NORMAL) { // 'Cancel'
-                                display = true;
-                                selection = SEL_NONE;
-                            }
-                        }
-#endif
                         break;
 
 #ifndef WOLAPI_INTEGRATION
@@ -981,11 +946,6 @@ bool Select_Game(bool fade)
 #endif
                 // debugprint( "Session.Type = %i\n", Session.Type );
                 switch (Session.Type) {
-                /*
-                **	Modem, Null-Modem or internet
-                */
-                case GAME_MODEM:
-                case GAME_NULL_MODEM:
 #ifndef WOLAPI_INTEGRATION
                 case GAME_INTERNET:
 #endif
@@ -1167,8 +1127,6 @@ bool Select_Game(bool fade)
 
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
     switch (Session.Type) {
-    case GAME_MODEM:
-    case GAME_NULL_MODEM:
     case GAME_IPX:
 #ifdef FIXIT_VERSION_3
         if (!bAftermathMultiplayer) {
