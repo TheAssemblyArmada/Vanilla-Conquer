@@ -594,7 +594,7 @@ void Fill_In_Data(void)
     **	Since the sidebar starts up activated, adjust the home start position so that
     **	the right edge of the map will still be visible.
     */
-    if (!Debug_Map) {
+    if (!Debug_Map && !Options.ToggleSidebar) {
         Map.SidebarClass::Activate(1);
         //		if (Session.Type == GAME_NORMAL) {
         Scen.Views[0] = Scen.Views[1] = Scen.Views[2] = Scen.Views[3] = Scen.Waypoint[WAYPT_HOME];
