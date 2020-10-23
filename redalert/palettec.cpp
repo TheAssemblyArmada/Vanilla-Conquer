@@ -51,7 +51,6 @@ public:
 void __cdecl Set_Palette(void* palette);
 
 #include "function.h"
-#include "watcom.h"
 #include "common/palette.h"
 #include "palettec.h"
 #include "ftimer.h"
