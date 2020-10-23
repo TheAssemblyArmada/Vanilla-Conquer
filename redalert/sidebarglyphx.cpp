@@ -66,6 +66,7 @@
  *   11/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
 SidebarGlyphxClass::SidebarGlyphxClass(void)
+    : SidebarPlayerPtr(NULL)
 {
     // IsRepairActive = false;
     // IsUpgradeActive = false;
@@ -285,7 +286,7 @@ SidebarGlyphxClass::StripClass::StripClass(void)
         Buildables[index].BuildableID = 0;
         Buildables[index].BuildableType = RTTI_NONE;
         Buildables[index].Factory = -1;
-        Buildables[index].BuildableViaCapture = false;
+        Buildables[index].BuildableViaCapture = false; // Added for new sidebar functionality. ST - 9/24/2019 3:10PM
     }
     ParentSidebar = NULL;
 }
@@ -314,7 +315,7 @@ void SidebarGlyphxClass::StripClass::Init_Clear(void)
         Buildables[index].BuildableID = 0;
         Buildables[index].BuildableType = RTTI_NONE;
         Buildables[index].Factory = -1;
-        Buildables[index].BuildableViaCapture = false;
+        Buildables[index].BuildableViaCapture = false; // Added for new sidebar functionality. ST - 9/24/2019 3:10PM
     }
 }
 

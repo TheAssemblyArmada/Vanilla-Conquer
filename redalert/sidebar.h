@@ -64,7 +64,7 @@ public:
         COLUMN_TWO_Y = 7 + 70 + 13,
 
 // BGA: changes to all buttons
-#ifdef GERMAN
+#if (GERMAN | FRENCH)
         BUTTON_ONE_WIDTH = 20,        // Button width.
         BUTTON_TWO_WIDTH = 27,        // Button width.
         BUTTON_THREE_WIDTH = 26,      // Button width.
@@ -75,22 +75,7 @@ public:
         BUTTON_TWO_Y = SIDE_Y + 2,    // Right button Y coordinate.
         BUTTON_THREE_X = SIDE_X + 53, // Right button X coordinate.
         BUTTON_THREE_Y = SIDE_Y + 2,  // Right button Y coordinate.
-#endif
-
-#ifdef FRENCH
-        BUTTON_ONE_WIDTH = 20,        // Button width.
-        BUTTON_TWO_WIDTH = 27,        // Button width.
-        BUTTON_THREE_WIDTH = 26,      // Button width.
-        BUTTON_HEIGHT = 9,            // Button height.
-        BUTTON_ONE_X = SIDE_X + 2,    // Left button X coordinate.
-        BUTTON_ONE_Y = SIDE_Y + 2,    // Left button Y coordinate.
-        BUTTON_TWO_X = SIDE_X + 24,   // Right button X coordinate.
-        BUTTON_TWO_Y = SIDE_Y + 2,    // Right button Y coordinate.
-        BUTTON_THREE_X = SIDE_X + 53, // Right button X coordinate.
-        BUTTON_THREE_Y = SIDE_Y + 2,  // Right button Y coordinate.
-#endif
-
-#ifdef ENGLISH
+#else
         BUTTON_ONE_WIDTH = 32,             // Button width.
         BUTTON_TWO_WIDTH = 20,             // Button width.
         BUTTON_THREE_WIDTH = 20,           // Button width.
@@ -167,7 +152,7 @@ public:
 
         bool Add(RTTIType type,
                  int ID,
-                 bool via_capture); // Added via_capture for new sidebar functionality. ST - 9/24/2019 3:15PM  );
+                 bool via_capture); // Added via_capture for new sidebar functionality. ST - 9/24/2019 3:15PM
         bool Abandon_Production(int factory);
         bool Scroll(bool up);
         bool AI(KeyNumType& input, int x, int y);
@@ -206,7 +191,7 @@ public:
 #ifdef WIN32
             SCROLL_RATE = 12, // The pixel jump while scrolling (larger is faster).
 #else
-            SCROLL_RATE = 8, // The pixel jump while scrolling (larger is faster).
+            SCROLL_RATE = 8,               // The pixel jump while scrolling (larger is faster).
 #endif
             UP_X_OFFSET = 2, // Scroll up arrow coordinates.
 #ifdef WIN32
@@ -349,7 +334,7 @@ public:
         **	for. If the current theater differs from this recorded value, then the
         **	remap tables are reloaded.
         */
-        //				static TheaterType LastTheater;
+        // static TheaterType LastTheater;
 
         static ShapeButtonClass UpButton[COLUMNS];
         static ShapeButtonClass DownButton[COLUMNS];

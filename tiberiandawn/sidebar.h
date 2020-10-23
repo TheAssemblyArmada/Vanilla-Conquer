@@ -63,45 +63,47 @@ public:
         BUTTON_ACTIVATOR = 100, // Button ID for the activator.
         SIDEBARWIDTH = 80,
 #if 0
-			SIDE_X=RADAR_X,					// The X position of sidebar upper left corner.
-			SIDE_Y=RADAR_Y+RADAR_HEIGHT,	// The Y position of sidebar upper left corner.
-			SIDE_WIDTH=320-SIDE_X,			// Width of the entire sidebar (in pixels).
-			SIDE_HEIGHT=200-SIDE_Y,			// Height of the entire sidebar (in pixels).
-			TOP_HEIGHT=13,						// Height of top section (with repair/sell buttons).
-			COLUMN_ONE_X=SIDE_X+8,			// Sidestrip upper left coordinates...
-			COLUMN_ONE_Y=SIDE_Y+TOP_HEIGHT,
-			COLUMN_TWO_X=COLUMN_ONE_X+((SIDE_WIDTH-16)/2)+3,
-			COLUMN_TWO_Y=SIDE_Y+TOP_HEIGHT,
-#if (GERMAN | FRENCH)
+		SIDE_X=RADAR_X,					// The X position of sidebar upper left corner.
+		SIDE_Y=RADAR_Y+RADAR_HEIGHT,	// The Y position of sidebar upper left corner.
+		SIDE_WIDTH=320-SIDE_X,			// Width of the entire sidebar (in pixels).
+		SIDE_HEIGHT=200-SIDE_Y,			// Height of the entire sidebar (in pixels).
+		TOP_HEIGHT=13,					// Height of top section (with repair/sell buttons).
+		COLUMN_ONE_X=SIDE_X+8,			// Sidestrip upper left coordinates...
+		COLUMN_ONE_Y=SIDE_Y+TOP_HEIGHT,
+		COLUMN_TWO_X=COLUMN_ONE_X+((SIDE_WIDTH-16)/2)+3,
+		COLUMN_TWO_Y=SIDE_Y+TOP_HEIGHT,
+
 //BGA: changes to all buttons
-			BUTTON_ONE_WIDTH=20,				// Button width.
-			BUTTON_TWO_WIDTH=27,				// Button width.
-			BUTTON_THREE_WIDTH=26,			// Button width.
-			BUTTON_HEIGHT=9,					// Button height.
-			BUTTON_ONE_X=SIDE_X+2,			// Left button X coordinate.
-			BUTTON_ONE_Y=SIDE_Y+2,			// Left button Y coordinate.
-			BUTTON_TWO_X=SIDE_X+24,			// Right button X coordinate.
-			BUTTON_TWO_Y=SIDE_Y+2,			// Right button Y coordinate.
-			BUTTON_THREE_X=SIDE_X+53,			// Right button X coordinate.
-			BUTTON_THREE_Y=SIDE_Y+2,			// Right button Y coordinate.
+#if (GERMAN | FRENCH)
+		BUTTON_ONE_WIDTH=20,			// Button width.
+		BUTTON_TWO_WIDTH=27,			// Button width.
+		BUTTON_THREE_WIDTH=26,			// Button width.
+		BUTTON_HEIGHT=9,				// Button height.
+		BUTTON_ONE_X=SIDE_X+2,			// Left button X coordinate.
+		BUTTON_ONE_Y=SIDE_Y+2,			// Left button Y coordinate.
+		BUTTON_TWO_X=SIDE_X+24,			// Right button X coordinate.
+		BUTTON_TWO_Y=SIDE_Y+2,			// Right button Y coordinate.
+		BUTTON_THREE_X=SIDE_X+53,		// Right button X coordinate.
+		BUTTON_THREE_Y=SIDE_Y+2,		// Right button Y coordinate.
 #else
-			BUTTON_ONE_WIDTH=32,				// Button width.
-			BUTTON_TWO_WIDTH=20,				// Button width.
-			BUTTON_THREE_WIDTH=20,			// Button width.
-			BUTTON_HEIGHT=9,					// Button height.
-			BUTTON_ONE_X=SIDE_X+2,			// Left button X coordinate.
-			BUTTON_ONE_Y=SIDE_Y+2,			// Left button Y coordinate.
-			BUTTON_TWO_X=SIDE_X+36,			// Right button X coordinate.
-			BUTTON_TWO_Y=SIDE_Y+2,			// Right button Y coordinate.
-			BUTTON_THREE_X=SIDE_X+58,			// Right button X coordinate.
-			BUTTON_THREE_Y=SIDE_Y+2,			// Right button Y coordinate.
+		BUTTON_ONE_WIDTH=32,			// Button width.
+		BUTTON_TWO_WIDTH=20,			// Button width.
+		BUTTON_THREE_WIDTH=20,			// Button width.
+		BUTTON_HEIGHT=9,				// Button height.
+		BUTTON_ONE_X=SIDE_X+2,			// Left button X coordinate.
+		BUTTON_ONE_Y=SIDE_Y+2,			// Left button Y coordinate.
+		BUTTON_TWO_X=SIDE_X+36,			// Right button X coordinate.
+		BUTTON_TWO_Y=SIDE_Y+2,			// Right button Y coordinate.
+		BUTTON_THREE_X=SIDE_X+58,		// Right button X coordinate.
+		BUTTON_THREE_Y=SIDE_Y+2,		// Right button Y coordinate.
 #endif
-			BUTTON_ONE_WIDTH=32,				// Button width.
-			BUTTON_TWO_WIDTH=20,				// Button width.
-			BUTTON_THREE_WIDTH=20,			// Button width.
-			BUTTON_HEIGHT=9,					// Button height.
+		BUTTON_ONE_WIDTH=32,			// Button width.
+		BUTTON_TWO_WIDTH=20,			// Button width.
+		BUTTON_THREE_WIDTH=20,			// Button width.
+		BUTTON_HEIGHT=9,				// Button height.
 #endif
-        COLUMNS = 2, // Number of side strips on sidebar.
+
+        COLUMNS = 2 // Number of side strips on sidebar.
     };
 
     SidebarClass(void);
@@ -118,6 +120,7 @@ public:
     virtual void Draw_It(bool complete);
     virtual void Refresh_Cells(CELL cell, short const* list);
 
+    void Zoom_Mode_Control(void);
     bool Abandon_Production(RTTIType type, int factory);
     bool Activate(int control);
     bool Add(RTTIType type,
@@ -207,11 +210,11 @@ public:
             DOWN_Y_OFFSET = MAX_VISIBLE * OBJECT_HEIGHT + 1,
             BUTTON_WIDTH = 16,  // Width of the mini-scroll button.
             BUTTON_HEIGHT = 12, // Height of the mini-scroll button.
-            // LEFT_EDGE_OFFSET=2,			// Offset from left edge for building shapes.
+            // LEFT_EDGE_OFFSET=2,		// Offset from left edge for building shapes.
             TEXT_X_OFFSET = 18, // X offset to print "ready" text.
             TEXT_Y_OFFSET = 15, // Y offset to print "ready" text.
             TEXT_COLOR = 255,   // Color to use for the "Ready" text.
-                                // BUTTON_SPACING_OFFSET = 4, // spacing info for buttons
+            // BUTTON_SPACING_OFFSET = 4, // spacing info for buttons
             // LEFT_EDGE_OFFSET=0,			// Offset from left edge for building shapes.
             // BUTTON_SPACING_OFFSET = 0, // spacing info for buttons
 
@@ -381,6 +384,8 @@ public:
     static ShapeButtonClass Zoom;
     static SBGadgetClass Background;
 
+    bool Scroll(bool up, int column);
+
     /*
     **	Pointer to the shape data for the sidebar
     */
@@ -391,7 +396,6 @@ private:
     bool Activate_Repair(int control);
     bool Activate_Upgrade(int control);
     bool Activate_Demolish(int control);
-    bool Scroll(bool up, int column);
     int Which_Column(RTTIType type);
 
     unsigned IsRepairActive : 1;

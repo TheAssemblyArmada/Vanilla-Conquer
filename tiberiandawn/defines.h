@@ -209,7 +209,9 @@ typedef enum RTTIType : unsigned char
     RTTI_TEMPLATETYPE,
     RTTI_TERRAINTYPE,
     RTTI_OBJECT,
-    RTTI_SPECIAL
+    RTTI_SPECIAL,
+
+    RTTI_COUNT
 } RTTIType;
 
 /**********************************************************************
