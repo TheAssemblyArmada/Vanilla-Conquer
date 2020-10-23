@@ -38,6 +38,24 @@
 #include "visudlg.h"
 #include "common/framelimit.h"
 
+int VisualControlsClass::Init(void)
+{
+    int factor = (SeenBuff.Get_Width() == 320) ? 1 : 2;
+    OptionWidth = 216 * factor;  // Width of dialog box.
+    OptionHeight = 122 * factor; // Height of dialog box.
+    OptionX = ((SeenBuff.Get_Width() - OptionWidth) / 2);
+    OptionY = ((SeenBuff.Get_Height() - OptionHeight) / 2);
+    TextX = OptionX + (28 * factor);
+    TextY = OptionY + (30 * factor);
+    SliderX = OptionX + (105 * factor);
+    SliderY = OptionY + (30 * factor);
+    SliderWidth = 70 * factor;          // Width of each control slider.
+    SliderHeight = 5 * factor;          // Height of each control slider.
+    SliderYSpacing = 11 * factor;       // Vertical spacing between sliders.
+    ButtonX = OptionX + (63 * factor);  // Options button x pos
+    ButtonY = OptionY + (102 * factor); // Options button x pos
+    return factor;
+}
 /***********************************************************************************************
  * VisualControlsClass::Process -- Process the visual control dialog box.                      *
  *                                                                                             *
@@ -62,79 +80,62 @@ void VisualControlsClass::Process(void)
     };
 
     /*
-    ** Make em resolution independent
-    */
-    int option_width = OPTION_WIDTH * RESFACTOR;   // Width of dialog box.
-    int option_height = OPTION_HEIGHT * RESFACTOR; // Height of dialog box.
-    int option_x = OPTION_X * RESFACTOR;
-    int option_y = OPTION_Y * RESFACTOR;
-    int text_x = TEXT_X * RESFACTOR;
-    int text_y = TEXT_Y * RESFACTOR;
-    int slider_x = SLIDER_X * RESFACTOR;
-    int slider_y = SLIDER_Y * RESFACTOR;
-    int slider_width = SLIDER_WIDTH * RESFACTOR;         // Width of each control slider.
-    int slider_height = SLIDER_HEIGHT * RESFACTOR;       // Height of each control slider.
-    int slider_y_spacing = SLIDER_Y_SPACING * RESFACTOR; // Vertical spacing between sliders.
-    int button_x = BUTTON_X * RESFACTOR;                 // Options button x pos
-    int button_y = BUTTON_Y * RESFACTOR;                 // Options button y pos
-
-    /*
     **	Variables.
     */
     int selection;
+    int factor;
     bool pressed;
     int curbutton;
     TextButtonClass* buttons[NUM_OF_BUTTONS];
     SliderClass* buttonsliders[NUM_OF_BUTTONS];
 
+    factor = Init();
     Set_Logic_Page(SeenBuff);
 
     /*
     **	Create Buttons.  Button coords are in pixels, but are window-relative.
     */
-    TextButtonClass optionsbtn(BUTTON_OPTIONS, TXT_OK, TPF_BUTTON, 0, button_y, 60 * RESFACTOR);
-    //	TextButtonClass optionsbtn(BUTTON_OPTIONS, TXT_OPTIONS_MENU, TPF_BUTTON, 0, button_y);
-    TextButtonClass resetbtn(BUTTON_RESET, TXT_RESET_MENU, TPF_BUTTON, 0, button_y, 80 * RESFACTOR);
+    TextButtonClass optionsbtn(BUTTON_OPTIONS, TXT_OK, TPF_BUTTON, 0, ButtonY, 60 * factor);
+    //	TextButtonClass optionsbtn(BUTTON_OPTIONS, TXT_OPTIONS_MENU, TPF_BUTTON, 0, ButtonY);
+    TextButtonClass resetbtn(BUTTON_RESET, TXT_RESET_MENU, TPF_BUTTON, 0, ButtonY, 80 * factor);
 
     /*
     **	Centers options button.
     */
-    optionsbtn.X = option_x + (option_width - optionsbtn.Width - (17 * RESFACTOR));
-    resetbtn.X = option_x + (17 * RESFACTOR);
+    optionsbtn.X = OptionX + (OptionWidth - optionsbtn.Width - (17 * factor));
+    resetbtn.X = OptionX + (17 * factor);
 
     resetbtn.Add_Tail(optionsbtn);
 
     /*
     **	Brightness (value) control.
     */
-    SliderClass brightness(
-        BUTTON_BRIGHTNESS, slider_x, slider_y + (slider_y_spacing * 0), slider_width, slider_height, true);
-    brightness.Set_Thumb_Size(20 * RESFACTOR);
+    SliderClass brightness(BUTTON_BRIGHTNESS, SliderX, SliderY + (SliderYSpacing * 0), SliderWidth, SliderHeight, true);
+    brightness.Set_Thumb_Size(20 * factor);
     brightness.Set_Value(Options.Get_Brightness() * 256);
     brightness.Add_Tail(optionsbtn);
 
     /*
     **	Color (saturation) control.
     */
-    SliderClass color(BUTTON_COLOR, slider_x, slider_y + (slider_y_spacing * 1), slider_width, slider_height, true);
-    color.Set_Thumb_Size(20 * RESFACTOR);
+    SliderClass color(BUTTON_COLOR, SliderX, SliderY + (SliderYSpacing * 1), SliderWidth, SliderHeight, true);
+    color.Set_Thumb_Size(20 * factor);
     color.Set_Value(Options.Get_Saturation() * 256);
     color.Add_Tail(optionsbtn);
 
     /*
     **	Contrast control.
     */
-    SliderClass contrast(
-        BUTTON_CONTRAST, slider_x, slider_y + (slider_y_spacing * 2), slider_width, slider_height, true);
-    contrast.Set_Thumb_Size(20 * RESFACTOR);
+    SliderClass contrast(BUTTON_CONTRAST, SliderX, SliderY + (SliderYSpacing * 2), SliderWidth, SliderHeight, true);
+    contrast.Set_Thumb_Size(20 * factor);
     contrast.Set_Value(Options.Get_Contrast() * 256);
     contrast.Add_Tail(optionsbtn);
 
     /*
     **	Tint (hue) control.
     */
-    SliderClass tint(BUTTON_TINT, slider_x, slider_y + (slider_y_spacing * 3), slider_width, slider_height, true);
-    tint.Set_Thumb_Size(20 * RESFACTOR);
+    SliderClass tint(BUTTON_TINT, SliderX, SliderY + (SliderYSpacing * 3), SliderWidth, SliderHeight, true);
+    tint.Set_Thumb_Size(20 * factor);
     tint.Set_Value(Options.Get_Tint() * 256);
     tint.Add_Tail(optionsbtn);
 
@@ -142,7 +143,7 @@ void VisualControlsClass::Process(void)
     **	This causes left mouse button clicking within the confines of the dialog to
     **	be ignored if it wasn't recognized by any other button or slider.
     */
-    GadgetClass dialog(option_x, option_y, option_width, option_height, GadgetClass::LEFTPRESS);
+    GadgetClass dialog(OptionX, OptionY, OptionWidth, OptionHeight, GadgetClass::LEFTPRESS);
     dialog.Add_Tail(optionsbtn);
 
     /*
@@ -198,7 +199,7 @@ void VisualControlsClass::Process(void)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = true;
         }
 #endif
@@ -207,8 +208,8 @@ void VisualControlsClass::Process(void)
         */
         if (display) {
             Hide_Mouse();
-            Dialog_Box(option_x, option_y, option_width, option_height);
-            Draw_Caption(TXT_VISUAL_CONTROLS, option_x, option_y, option_width);
+            Dialog_Box(OptionX, OptionY, OptionWidth, OptionHeight);
+            Draw_Caption(TXT_VISUAL_CONTROLS, OptionX, OptionY, OptionWidth);
             Show_Mouse();
             display = false;
             partial = true;
@@ -225,8 +226,8 @@ void VisualControlsClass::Process(void)
             */
             for (int i = 0; i < (sizeof(_titles) / sizeof(_titles[0])); i++) {
                 Fancy_Text_Print(_titles[i],
-                                 slider_x - (8 * RESFACTOR),
-                                 text_y + (i * slider_y_spacing),
+                                 SliderX - (8 * factor),
+                                 TextY + (i * SliderYSpacing),
                                  GadgetClass::Get_Color_Scheme(),
                                  TBLACK,
                                  TPF_TEXT | TPF_RIGHT | ((curbutton == i) ? TPF_BRIGHT_COLOR : TPF_TEXT));

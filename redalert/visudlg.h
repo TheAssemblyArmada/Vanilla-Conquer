@@ -22,8 +22,8 @@
  *                                                                                             *
  *                    File Name : VISUDLG.H                                                    *
  *                                                                                             *
- *                   Programmer : Maria del Mar McCready Legg											  *
- *											 Joe L. Bostic                                                *
+ *                   Programmer : Maria del Mar McCready Legg                                  *
+ *                                           Joe L. Bostic                                     *
  *                                                                                             *
  *                   Start Date : Jan 8, 1995                                                  *
  *                                                                                             *
@@ -67,6 +67,21 @@ private:
 public:
     VisualControlsClass(void){};
     void Process(void);
+    int Init(void);
+
+    int OptionWidth;  // Width of dialog box.
+    int OptionHeight; // Height of dialog box.
+    int OptionX;
+    int OptionY;
+    int TextX;          // Title's x pos
+    int TextY;          // Add 11 for each following line
+    int SliderX;        // Slider's x pos
+    int SliderY;        // Add 11 for each following line
+    int SliderWidth;    // Width of each control slider.
+    int SliderHeight;   // Height of each control slider.
+    int SliderYSpacing; // Vertical spacing between sliders.
+    int ButtonX;        // Options button x pos
+    int ButtonY;        // Options button y pos
 };
 
 #endif

@@ -108,41 +108,41 @@ int LoadOptionsClass::Process(void)
     /*
     ** Dialog & button dimensions
     */
-    int d_dialog_w = 250 * RESFACTOR;                        // dialog width
-    int d_dialog_h = 156 * RESFACTOR;                        // dialog height
-    int d_dialog_x = (((320 * RESFACTOR) - d_dialog_w) / 2); // centered x-coord
-    int d_dialog_y = (((200 * RESFACTOR) - d_dialog_h) / 2); // centered y-coord
-    int d_dialog_cx = d_dialog_x + (d_dialog_w / 2);         // coord of x-center
-
-    int d_txt8_h = 11 * RESFACTOR; // ht of 8-pt text
-    int d_margin = 7 * RESFACTOR;  // margin width/height
-    int x_margin = 16 * RESFACTOR; // margin width/height
+    int factor = (SeenBuff.Get_Width() == 320) ? 1 : 2;
+    int d_dialog_w = 250 * factor;                             // dialog width
+    int d_dialog_h = 156 * factor;                             // dialog height
+    int d_dialog_x = (SeenBuff.Get_Width() - d_dialog_w) / 2;  // centered x-coord
+    int d_dialog_y = (SeenBuff.Get_Height() - d_dialog_h) / 2; // centered y-coord
+    int d_dialog_cx = d_dialog_x + (d_dialog_w / 2);           // coord of x-center
+    int d_txt8_h = 11 * factor;                                // ht of 8-pt text
+    int d_margin = 7 * factor;                                 // margin width/height
+    int x_margin = 16 * factor;                                // margin width/height
 
     int d_list_w = d_dialog_w - (x_margin * 2);
-    int d_list_h = 104 * RESFACTOR;
+    int d_list_h = 104 * factor;
     int d_list_x = d_dialog_x + x_margin;
     int d_list_y = d_dialog_y + d_margin + d_txt8_h + d_margin;
 
     int d_edit_w = d_dialog_w - (x_margin * 2);
-    int d_edit_h = 13 * RESFACTOR;
+    int d_edit_h = 13 * factor;
     int d_edit_x = d_dialog_x + x_margin;
-    int d_edit_y = d_list_y + d_list_h - (30 * RESFACTOR) + d_margin + d_txt8_h;
+    int d_edit_y = d_list_y + d_list_h - (30 * factor) + d_margin + d_txt8_h;
 
 #if (GERMAN | FRENCH)
-    int d_button_w = 50 * RESFACTOR;
+    int d_button_w = 50 * factor;
 #else
-    int d_button_w = 40 * RESFACTOR;
+    int d_button_w = 40 * factor;
 #endif
-    int d_button_h = 13 * RESFACTOR;
+    int d_button_h = 13 * factor;
     int d_button_x = d_dialog_cx - d_button_w - d_margin;
     int d_button_y = d_dialog_y + d_dialog_h - d_button_h - d_margin;
 
 #if defined(GERMAN) || defined(FRENCH)
-    int d_cancel_w = 60 * RESFACTOR; // BG:40
+    int d_cancel_w = 60 * factor; // BG:40
 #else
-    int d_cancel_w = 40 * RESFACTOR;
+    int d_cancel_w = 40 * factor;
 #endif
-    int d_cancel_h = 13 * RESFACTOR;
+    int d_cancel_h = 13 * factor;
     int d_cancel_x = d_dialog_cx + d_margin;
     int d_cancel_y = d_dialog_y + d_dialog_h - d_cancel_h - d_margin;
 
@@ -289,7 +289,7 @@ int LoadOptionsClass::Process(void)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = true;
         }
 
