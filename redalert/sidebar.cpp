@@ -264,7 +264,6 @@ void SidebarClass::One_Time(void)
  *=============================================================================================*/
 void SidebarClass::Init_Clear(void)
 {
-
     PowerClass::Init_Clear();
 
     IsToRedraw = true;
@@ -1792,6 +1791,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
             }
 
             remapper = 0;
+
             /*
             **	Now that the shape of the object at the current working slot has been found,
             **	draw it and any graphic overlays as necessary.
@@ -1840,7 +1840,6 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                                   WINDOW_SIDEBAR,
                                   SHAPE_CENTER);
                 } else {
-
                     CC_Draw_Shape(ClockShapes,
                                   stage + 1,
                                   x - (WindowList[WINDOW_SIDEBAR][WINDOWX]) + (LEFT_EDGE_OFFSET * RESFACTOR),
@@ -1960,10 +1959,12 @@ bool SidebarClass::StripClass::Recalc(void)
  *   01/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
 SidebarClass::StripClass::SelectClass::SelectClass(void)
-    : ControlClass(0, 0, 0, (OBJECT_WIDTH - 1) * RESFACTOR, OBJECT_HEIGHT * RESFACTOR, LEFTPRESS | RIGHTPRESS | LEFTUP)
+    : ControlClass(0, 0, 0, 0, 0, LEFTPRESS | RIGHTPRESS | LEFTUP)
     , Strip(0)
     , Index(0)
 {
+    Width = (OBJECT_WIDTH - 1) * RESFACTOR;
+    Height = OBJECT_HEIGHT * RESFACTOR;
 }
 
 /***********************************************************************************************
