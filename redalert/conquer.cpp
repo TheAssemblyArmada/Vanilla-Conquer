@@ -3573,29 +3573,15 @@ void CC_Draw_Shape(void const* shapefile,
 #ifdef WIN32
                 buffer = (unsigned char*)Get_Shape_Header_Data((void*)shape_pointer);
 #endif
+                BitmapClass bm(width, height, buffer);
+                width *= 2;
+                height *= 2;
+                memset(_xbuffer, '\0', SHAPE_BUFFER_SIZE);
+                GraphicBufferClass gb(width, height, _xbuffer);
+                TPoint2D pt(width / 2, height / 2);
 
-                if (Debug_Rotate) {
-#if (0) // PG
-                    GraphicBufferClass src(width, height, buffer);
-                    width *= 2;
-                    height *= 2;
-                    memset(_xbuffer, '\0', SHAPE_BUFFER_SIZE);
-                    GraphicBufferClass dst(width, height, _xbuffer);
-                    Rotate_Bitmap(&src, &dst, rotation);
-                    buffer = _xbuffer;
-#endif
-                } else {
-
-                    BitmapClass bm(width, height, buffer);
-                    width *= 2;
-                    height *= 2;
-                    memset(_xbuffer, '\0', SHAPE_BUFFER_SIZE);
-                    GraphicBufferClass gb(width, height, _xbuffer);
-                    TPoint2D pt(width / 2, height / 2);
-
-                    gb.Scale_Rotate(bm, pt, 0x0100, (256 - (rotation - 64)));
-                    buffer = _xbuffer;
-                }
+                gb.Scale_Rotate(bm, pt, 0x0100, (256 - (rotation - 64)));
+                buffer = _xbuffer;
             }
 
             /*

@@ -131,7 +131,6 @@ set(REDALERT_SRC
     rawolapi.cpp
     reinf.cpp
     rgb.cpp
-    rotbmp.cpp
     rules.cpp
     saveload.cpp
     scenario.cpp
@@ -155,7 +154,6 @@ set(REDALERT_SRC
     statbtn.cpp
     stats.cpp
     super.cpp
-    surface.cpp
     tab.cpp
     taction.cpp
     target.cpp

@@ -97,9 +97,6 @@ Map(screen) class heirarchy.
                    ³                          ³ AircraftTypeClass InfantryTypeClass
 #endif
 
-#include "watcom.h"
-#include "lint.h"
-
 #ifdef WIN32
 //#define WIN32_LEAN_AND_MEAN
 #include <windows.h>

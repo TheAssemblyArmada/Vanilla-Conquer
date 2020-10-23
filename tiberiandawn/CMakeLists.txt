@@ -84,7 +84,6 @@ set(TIBDAWN_SRC
     miscasma.asm
     mission.cpp
     monoc.cpp
-    morphpal.cpp
     mouse.cpp
     mplayer.cpp
     msgbox.cpp

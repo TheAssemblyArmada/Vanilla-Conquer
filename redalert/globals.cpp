@@ -36,7 +36,6 @@
 bool IsVQ640 = false;
 unsigned long GameVersion = 0;
 bool Debug_MotionCapture = false;
-bool Debug_Rotate = false; // Rotation algorithm control.
 bool Debug_Quiet = false;
 bool Debug_Cheat = false;
 bool Debug_Remap = false;

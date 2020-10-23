@@ -57,11 +57,6 @@ void Fade_Palette_To(void* palette1, unsigned int delay, void (*callback)());
 void Load_Palette(char* palette_file_name, void* palette_pointer);
 
 /*
-------------------------------- morphpal.cpp --------------------------------
-*/
-void Morph_Palette(void* src_palette, void* dst_palette, unsigned int delay, void* callback);
-
-/*
 ---------------------------------- pal.asm ----------------------------------
 */
 #ifdef __cplusplus
