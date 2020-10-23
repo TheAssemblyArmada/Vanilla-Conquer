@@ -6216,26 +6216,6 @@ void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned long
                 sprintf(buf1, Text_String(TXT_WAITING_FOR_CONNECTIONS));
             }
             break;
-
-#if (TEN)
-        case GAME_TEN:
-            if (reconn) {
-                id = Ten->Connection_ID(oldest_index);
-                sprintf(buf1, Text_String(TXT_RECONNECTING_TO), Ten->Connection_Name(id));
-            } else {
-                sprintf(buf1, Text_String(TXT_WAITING_FOR_CONNECTIONS));
-            }
-#endif // TEN
-
-#if (MPATH)
-        case GAME_MPATH:
-            if (reconn) {
-                id = MPath->Connection_ID(oldest_index);
-                sprintf(buf1, Text_String(TXT_RECONNECTING_TO), MPath->Connection_Name(id));
-            } else {
-                sprintf(buf1, Text_String(TXT_WAITING_FOR_CONNECTIONS));
-            }
-#endif // MPATH
         }
 
         sprintf(buf2, Text_String(TXT_TIME_ALLOWED), timeval + 1);

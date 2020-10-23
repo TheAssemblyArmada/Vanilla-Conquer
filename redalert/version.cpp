@@ -821,14 +821,6 @@ char const* Version_Name(void)
         strcat(buffer, "AM");
     }
 
-#if (TEN)
-    strcat(buffer, "Ten");   // Ten version
-#endif
-
-#if (MPATH)
-    strcat(buffer, "MPath"); // MPath version
-#endif
-
     RawFileClass file("VERSION.TXT");
     if (file.Is_Available()) {
         strcat(buffer, "\r");

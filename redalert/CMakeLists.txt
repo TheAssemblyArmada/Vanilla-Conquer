@@ -17,9 +17,7 @@ set(REDALERT_SRC
     cargo.cpp
     carry.cpp
     ccini.cpp
-    ccmpath.cpp
     ccptr.cpp
-    ccten.cpp
     cdata.cpp
     cell.cpp
     checkbox.cpp
@@ -111,7 +109,6 @@ set(REDALERT_SRC
     monoc.cpp
     mouse.cpp
     mplayer.cpp
-    mpmgrw.cpp
     mpu.cpp
     msgbox.cpp
     msglist.cpp
@@ -163,7 +160,6 @@ set(REDALERT_SRC
     teamtype.cpp
     techno.cpp
     template.cpp
-    tenmgr.cpp
     terrain.cpp
     tevent.cpp
     textbtn.cpp

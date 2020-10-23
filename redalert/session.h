@@ -121,8 +121,6 @@ typedef enum GameEnum
     GAME_IPX,               // IPX Network game
     GAME_INTERNET,          // Internet H2H
     GAME_SKIRMISH,          // 1 plr vs. AI's
-    GAME_TEN,               // TEN Network game
-    GAME_MPATH,             // MPath Network game
     GAME_GLYPHX_MULTIPLAYER // Multiplayer game controlled by the GLYPHX engine. ST - 5/14/2019 11:41AM
 } GameType;
 
@@ -258,12 +256,6 @@ typedef struct NodeNameTag
 {
     char Name[MPLAYER_NAME_MAX]; // player or game name
     IPXAddressClass Address;
-#if (TEN)
-    int TenAddress;
-#endif
-#if (MPATH)
-    int MPathAddress;
-#endif
     union
     {
         struct
@@ -536,14 +528,6 @@ public:
     bool Am_I_Master(void);
     unsigned long Compute_Unique_ID(void);
 
-#if (TEN)
-    int Create_TEN_Connections(void);
-#endif // TEN
-
-#if (MPATH)
-    int Create_MPATH_Connections(void);
-#endif // MPATH
-
     //.....................................................................
     // File I/O
     //.....................................................................
@@ -716,33 +700,6 @@ public:
     CellClass* TrapCell;       // Ptr to cell to trap (watch)
     int TrapCheckHeap;         // true = check the heap as of TrapFrame
     long TrapPrintCRC;         // Frame # to print CRC state file
-
-#if (TEN)
-    //
-    // TEN-specific variables
-    //
-    char* TenPacket;
-    int TenSize;
-    int TenMessageAddress;
-    int TenAddress;
-    int TenPlayerID;
-    char OptionsFile[256];
-    int AllowSolo;
-    int NetResponseTime;
-#endif // TEN
-
-#if (MPATH)
-    //
-    // MPATH-specific variables
-    //
-    char* MPathPacket;
-    int MPathSize;
-    int MPathMessageAddress;
-    int MPathAddress;
-    char OptionsFile[256];
-    int AllowSolo;
-    int NetResponseTime;
-#endif // MPATH
 };
 
 #endif // SESSION_H

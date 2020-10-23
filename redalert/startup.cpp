@@ -355,44 +355,6 @@ int main(int argc, char* argv[])
 
     if (Parse_Command_Line(argc, argv)) {
 
-#if (TEN)
-        //
-        // Only allow the TEN version of the game to run if the TEN
-        // or AllowSoloPlayOptions arguments are specified.
-        //
-        if (Session.AllowSolo == 0 && Session.Type != GAME_TEN) {
-#ifdef WIN32
-            MessageBoxA(NULL, "Red Alert for TEN\n (c) 1996 Westwood Studios", "Red Alert", MB_OK);
-            exit(0);
-#else
-            printf("\n");
-            printf("                         Red Alert for TEN\n");
-            printf("                     (c) 1996 Westwood Studios\n");
-            printf("\n");
-            exit(0);
-#endif // WIN32
-        }
-#endif // TEN
-
-#if (MPATH)
-        //
-        // Only allow the MPATH version of the game to run if the MPATH
-        // or AllowSoloPlayOptions arguments are specified.
-        //
-        if (Session.AllowSolo == 0 && Session.Type != GAME_MPATH) {
-#ifdef WIN32
-            MessageBoxA(NULL, "Red Alert for MPATH\n (c) 1996 Westwood Studios", "Red Alert", MB_OK);
-            exit(0);
-#else
-            printf("\n");
-            printf("                        Red Alert for MPATH\n");
-            printf("                     (c) 1996 Westwood Studios\n");
-            printf("\n");
-            exit(0);
-#endif // WIN32
-        }
-#endif // MPATH
-
         WinTimerClass::Init(60);
 
 #ifdef REMASTER_BUILD
@@ -624,9 +586,8 @@ int main(int argc, char* argv[])
             /*
             **	Check for forced intro movie run disabling. If the conquer
             **	configuration file says "no", then don't run the intro.
-            ** Don't do this for TEN & MPath.
             */
-            if (!Special.IsFromInstall && Session.Type != GAME_TEN && Session.Type != GAME_MPATH) {
+            if (!Special.IsFromInstall) {
                 Special.IsFromInstall = ini.Get_Bool("Intro", "PlayIntro", true);
             }
             SlowPalette = ini.Get_Bool("Options", "SlowPalette", false);
