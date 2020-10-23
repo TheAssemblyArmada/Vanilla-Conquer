@@ -352,18 +352,6 @@ CELL Coord_Cell(COORDINATE coord);
 //#include	"pcx.h"
 #endif
 
-#if (TEN)
-#include "tenmgr.h"
-#endif
-
-#if (MPATH)
-#ifdef WIN32
-#include "mpmgrw.h"
-#else
-#include "mpmgrd.h"
-#endif
-#endif
-
 // Denzil 5/18/98 - Mpeg movie playback
 #ifdef MPEGMOVIE
 bool InitDDraw(void);
@@ -465,14 +453,6 @@ bool Is_Counterstrike_Installed(void);
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
 bool Is_Aftermath_Installed(void);
 #endif
-
-#if (TEN)
-void Ten_Call_Back(void);
-#endif // TEN
-
-#if (MPATH)
-void MPATH_Call_Back(void);
-#endif // MPATH
 
 #define ALWAYS_RELOAD_CD 1000
 
@@ -759,38 +739,6 @@ bool Determine_If_Using_DVD();
 bool Using_DVD();
 #endif
 int Abort_Dialog(void);
-
-#if (TEN)
-int Read_TEN_Game_Options(void);
-#endif // TEN
-
-#if (MPATH)
-int Read_MPATH_Game_Options(void);
-#endif // MPATH
-
-#if (TEN)
-/*
-** CCTEN.CPP
-*/
-int Init_TEN(void);
-void Shutdown_TEN(void);
-void Connect_TEN(void);
-void Destroy_TEN_Connection(int id, int error);
-void Send_TEN_Win_Packet(void);
-void Send_TEN_Alliance(char* whom, int ally);
-void Send_TEN_Out_Of_Sync(void);
-void Send_TEN_Packet_Too_Late(void);
-#endif // TEN
-
-#if (MPATH)
-/*
-** CCMPATH.CPP
-*/
-int Init_MPATH(void);
-void Shutdown_MPATH(void);
-void Connect_MPATH(void);
-void Destroy_MPATH_Connection(int id, int error);
-#endif // MPATH
 
 /*
 ** NETDLG.CPP

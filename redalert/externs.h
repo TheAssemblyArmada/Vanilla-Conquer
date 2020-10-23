@@ -350,14 +350,6 @@ extern SessionClass Session;
 // extern NullModemClass 			NullModem;
 extern IPXManagerClass Ipx;
 
-#if (TEN)
-extern TenConnManClass* Ten;
-#endif
-
-#if (MPATH)
-extern MPlayerManClass* MPath;
-#endif
-
 #if (TIMING_FIX)
 extern int NewMaxAheadFrame1;
 extern int NewMaxAheadFrame2;

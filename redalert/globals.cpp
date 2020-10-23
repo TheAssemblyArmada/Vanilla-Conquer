@@ -603,28 +603,6 @@ IPXManagerClass Ipx(MAX(sizeof(GlobalPacketType), sizeof(RemoteFileTransferType)
                     VIRGIN_SOCKET,                             // Socket ID #
                     IPXGlobalConnClass::COMMAND_AND_CONQUER0); // Product ID #
 
-#if (TEN)
-/***************************************************************************
-** This is the connection manager for Ten.  Special Ten notes:
-** - TEN connection ID's are equal to the HousesType for that player.
-** - The TEN internal player ID is used to determine the player's color.
-** - Ten's broadcast destination address -1
-*/
-TenConnManClass* Ten = NULL;
-
-#endif
-
-#if (MPATH)
-/***************************************************************************
-** This is the connection manager for Ten.  Special Ten notes:
-** - MPATH connection ID's are equal to the HousesType for that player.
-** - The player's color is read from the OPTIONS.INI file
-** - MPath's broadcast destination address is 0
-*/
-MPlayerManClass* MPath = NULL;
-
-#endif
-
 /***************************************************************************
 **	This is the random-number seed; it's synchronized between systems for
 ** multiplayer games.

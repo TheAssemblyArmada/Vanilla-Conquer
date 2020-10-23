@@ -2333,24 +2333,6 @@ void HouseClass::Make_Ally(HousesType house)
                                              TICKS_PER_MINUTE * Rule.MessageDelay);
             }
 
-#if (TEN)
-            //
-            // Notify the TEN server of the new alliance
-            //
-            if (this == PlayerPtr && hptr != NULL && Session.Type == GAME_TEN) {
-                Send_TEN_Alliance(hptr->IniName, 1);
-            }
-#endif // TEN
-
-#if (MPATH)
-            //
-            // Notify the MPATH server of the new alliance
-            //
-            // if (this == PlayerPtr && hptr != NULL && Session.Type == GAME_MPATH) {
-            // Send_MPATH_Alliance(hptr->IniName, 1);
-            //}
-#endif // MPATH
-
             Map.Flag_To_Redraw(false);
         }
     }
@@ -2408,24 +2390,6 @@ void HouseClass::Make_Enemy(HousesType house)
                                          TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW,
                                          TICKS_PER_MINUTE * Rule.MessageDelay);
             Map.Flag_To_Redraw(false);
-
-#if (TEN)
-            //
-            // Notify the TEN server of the broken alliance
-            //
-            if (this == PlayerPtr && enemy != NULL && Session.Type == GAME_TEN) {
-                Send_TEN_Alliance(enemy->IniName, 0);
-            }
-#endif // TEN
-
-#if (MPATH)
-            //
-            // Notify the MPATH server of the broken alliance
-            //
-            // if (this == PlayerPtr && enemy != NULL && Session.Type == GAME_MPATH) {
-            // Send_MPATH_Alliance(enemy->IniName, 0);
-            //}
-#endif // MPATH
         }
     }
 }
@@ -4020,35 +3984,6 @@ void HouseClass::MPlayer_Defeated(void)
             }
             Session.NumPlayers = 0;
         }
-
-#if (TEN)
-        //
-        // Tell the TEN server who won
-        //
-        if (Session.Type == GAME_TEN) {
-            Send_TEN_Win_Packet();
-        }
-#endif // TEN
-
-#if (MPATH)
-        //
-        // Tell the MPATH server who won
-        //
-        if (Session.Type == GAME_MPATH) {
-            FILE* fp;
-
-            fp = fopen("winner.txt", "wt");
-            if (fp) {
-                for (i = 0; i < Session.Players.Count(); i++) {
-                    hptr = HouseClass::As_Pointer(Session.Players[i]->Player.ID);
-                    if (!hptr->IsDefeated) {
-                        fprintf(fp, "%s\n", hptr->IniName);
-                    }
-                }
-                fclose(fp);
-            }
-        }
-#endif // MPATH
     }
 }
 
