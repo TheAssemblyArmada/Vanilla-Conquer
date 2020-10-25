@@ -777,8 +777,7 @@ bool Select_Game(bool fade)
         SEL_START_NEW_GAME, // start a new game
 #ifdef BONUS_MISSIONS
         SEL_BONUS_MISSIONS,
-#endif // BONUS_MISSIONS
-        SEL_INTERNET,
+#endif                        // BONUS_MISSIONS
         SEL_LOAD_MISSION,     // load a saved game
         SEL_MULTIPLAYER_GAME, // play modem/null-modem/network game
         SEL_INTRO,            // replay the intro
@@ -968,9 +967,6 @@ bool Select_Game(bool fade)
             switch (selection) {
 
 #ifdef NEWMENU
-
-            case SEL_INTERNET:
-                break;
 
             /*
             **	Pick an expansion scenario.
