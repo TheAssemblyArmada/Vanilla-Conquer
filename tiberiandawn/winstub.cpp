@@ -358,7 +358,7 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
 int ShowCommand;
 
 #ifdef _WIN32
-void Create_Main_Window(HANDLE instance, int command_show, int width, int height)
+void Create_Main_Window(HANDLE instance, int width, int height)
 
 {
 #ifdef REMASTER_BUILD
@@ -367,6 +367,19 @@ void Create_Main_Window(HANDLE instance, int command_show, int width, int height
 #else
     HWND hwnd;
     WNDCLASS wndclass;
+
+    STARTUPINFOA sinfo;
+    int command_show;
+
+    sinfo.dwFlags = 0;
+    GetStartupInfoA(&sinfo);
+
+    if (sinfo.dwFlags & STARTF_USESHOWWINDOW) {
+        command_show = sinfo.wShowWindow;
+    } else {
+        command_show = SW_SHOWDEFAULT;
+    }
+
     //
     // Register the window class
     //

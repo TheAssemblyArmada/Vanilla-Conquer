@@ -42,7 +42,7 @@ void Delete_Swap_Files(void);
 void Print_Error_End_Exit(char* string);
 void Print_Error_Exit(char* string);
 #ifdef _WIN32
-extern void Create_Main_Window(HANDLE instance, int command_show, int width, int height);
+extern void Create_Main_Window(HANDLE instance, int width, int height);
 HINSTANCE ProgramInstance;
 #endif
 
@@ -313,7 +313,7 @@ int main(int argc, char** argv)
             CCDebugString("C&C95 - Creating main window.\n");
 
 #ifdef _WIN32
-            Create_Main_Window(ProgramInstance, 0, ScreenWidth, ScreenHeight);
+            Create_Main_Window(ProgramInstance, ScreenWidth, ScreenHeight);
 #endif
 
             CCDebugString("C&C95 - Initialising audio.\n");
