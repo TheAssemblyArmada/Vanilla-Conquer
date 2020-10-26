@@ -44,21 +44,13 @@
 /*
 ********************************* Includes **********************************
 */
-#ifdef SEQ_NET
-#include "seqconn.h"
-#else
 #include "noseqcon.h"
-#endif
 #include "ipxaddr.h"
 
 /*
 ***************************** Class Declaration *****************************
 */
-#ifdef SEQ_NET
-class IPXConnClass : public SequencedConnClass
-#else
 class IPXConnClass : public NonSequencedConnClass
-#endif
 {
     /*
     ---------------------------- Public Interface ----------------------------

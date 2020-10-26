@@ -8372,8 +8372,6 @@ int Com_Show_Fake_Scenario_Dialog(void)
 
 #endif //(0)
 
-#endif //(0)
-
 void Smart_Printf(char* format, ...)
 {
     va_list arglist;
@@ -8505,3 +8503,4 @@ void itoh(int i, char* s)
     }
     *s = 0; /* null terminate it */
 }
+#endif //(0)

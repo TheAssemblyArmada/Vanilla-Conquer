@@ -137,7 +137,6 @@ set(REDALERT_SRC
     sdata.cpp
     seditdlg.cpp
     sendfile.cpp
-    seqconn.cpp
     session.cpp
     shape.cpp
     shapebtn.cpp
