@@ -3314,7 +3314,7 @@ void Heap_Dump_Check(char* string)
 
     //	Debug_Heap_Dump = true;
 
-    Smart_Printf("%s\n", string);
+    //Smart_Printf("%s\n", string);
 
     Dump_Heap_Pointers();
 
@@ -3605,7 +3605,7 @@ void Dump_Heap_Pointers(void)
 
 void Error_In_Heap_Pointers(char* string)
 {
-    Smart_Printf("Error in Heap for %s\n", string);
+    //Smart_Printf("Error in Heap for %s\n", string);
 }
 #endif
 

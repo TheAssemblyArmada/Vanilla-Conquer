@@ -90,9 +90,7 @@ set(TIBDAWN_SRC
     msglist.cpp
     netdlg.cpp
     noseqcon.cpp
-    nullconn.cpp
     nulldlg.cpp
-    nullmgr.cpp
     object.cpp
     odata.cpp
     options.cpp
@@ -111,7 +109,6 @@ set(TIBDAWN_SRC
     score.cpp
     scroll.cpp
     sdata.cpp
-    seqconn.cpp
     shape.cpp
     shapebtn.cpp
     sidebar.cpp
