@@ -6199,7 +6199,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         */
         if (Is_Foot() && ((FootClass*)this)->Group != 0xFF && ((FootClass*)this)->Group < 10) {
             int yval = -1;
-            int group = ((FootClass*)this)->Group;
+            int group = ((FootClass*)this)->Group + 1;
 
             if (Class_Of().Max_Pips())
                 yval -= 4;
