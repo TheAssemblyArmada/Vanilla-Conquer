@@ -6201,6 +6201,12 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             int yval = -1;
             int group = ((FootClass*)this)->Group;
 
+#ifndef REMASTER_BUILD
+            // Original code was Group + 1, remaster changed that and it affects legacy renderer.
+            // Add 1 here to correct standalone group number.
+            ++group;
+#endif
+
             if (Class_Of().Max_Pips())
                 yval -= 4;
             if (group == 10)
