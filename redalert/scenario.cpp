@@ -2629,7 +2629,9 @@ bool Read_Scenario_INI(char* fname, bool)
             Scen.Views[i] = XY_Cell(start_x, start_y);
         }
         Scen.Waypoint[98] = XY_Cell(start_x, start_y);
-        Map.Set_Tactical_Position(Cell_Coord(XY_Cell(start_x, start_y)));
+        COORDINATE pos = Cell_Coord(XY_Cell(start_x, start_y));
+        Map.Set_Tactical_Position(pos);
+        Map.Center_Map(pos);
 #endif
     }
 
