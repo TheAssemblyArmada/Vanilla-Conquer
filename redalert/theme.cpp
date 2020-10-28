@@ -83,7 +83,7 @@ ThemeClass::ThemeControl ThemeClass::_themes[THEME_COUNT] = {
     {"CREDITS", TXT_THEME_CREDITS, 0, 163, false, true, true, HOUSEF_NONE},
 
     {"2ND_HAND", TXT_THEME_2ND_HAND, 0, 268, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
-    {"ARAZOID", TXT_THEME_ARAZOID, 0, 257, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
+    {"ARAZIOD", TXT_THEME_ARAZOID, 0, 257, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
     {"BACKSTAB", TXT_THEME_BACKSTAB, 0, 278, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
     {"CHAOS2", TXT_THEME_CHAOS2, 0, 250, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
     {"SHUT_IT", TXT_THEME_SHUT_IT, 0, 261, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
@@ -541,11 +541,11 @@ ThemeType ThemeClass::From_Name(char const* name) const
         **	a substring within the full name of the score. This might
         **	yield a match, but is not guaranteed to be unique.
         */
-        for (ThemeType theme = THEME_FIRST; theme < THEME_COUNT; theme++) {
+/*        for (ThemeType theme = THEME_FIRST; theme < THEME_COUNT; theme++) {
             if (strstr(Text_String(_themes[theme].Fullname), name) != NULL) {
                 return (theme);
             }
-        }
+        }*/
     }
 
     return (THEME_NONE);

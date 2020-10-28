@@ -96,7 +96,7 @@ public:
     bool Init(void);
     void Start_Server(void);
     void Start_Client(void);
-    void Close_Socket(unsigned s);
+    void Close_Socket(SOCKET s);
 #ifdef _WIN32
     void Message_Handler(HWND window, UINT message, UINT wParam, LONG lParam);
 #endif
@@ -107,7 +107,7 @@ public:
     void Close(void);
     void Set_Host_Address(char* address);
     void Set_Protocol_UDP(bool state);
-    void Clear_Socket_Error(unsigned socket);
+    void Clear_Socket_Error(SOCKET socket);
 
     inline bool Get_Connected(void)
     {
