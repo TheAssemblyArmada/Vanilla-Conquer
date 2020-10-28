@@ -309,6 +309,10 @@ bool ScenarioClass::Set_Global_To(int global, bool value)
  *=============================================================================================*/
 bool Start_Scenario(char* name, bool briefing)
 {
+    if (Session.Type != GAME_NORMAL) {
+        briefing = false;
+    }
+
     // BG	Theme.Queue_Song(THEME_QUIET);
     Theme.Stop();
     IsTanyaDead = SaveTanya;
@@ -377,7 +381,7 @@ bool Start_Scenario(char* name, bool briefing)
     if (Scen.BriefMovie != VQ_NONE) {
         sprintf(buffer, "%s.VQA", VQName[Scen.BriefMovie]);
     }
-    if (Session.Type == GAME_NORMAL && Scen.BriefMovie == VQ_NONE || !CCFileClass(buffer).Is_Available()) {
+    if (Session.Type == GAME_NORMAL && (Scen.BriefMovie == VQ_NONE || !CCFileClass(buffer).Is_Available())) {
         /*
         ** Make sure the mouse is visible before showing the restatement.
         */
