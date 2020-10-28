@@ -264,3 +264,9 @@ void TabClass::One_Time(void)
     SidebarClass::One_Time();
     TabShape = Hires_Retrieve("TABS.SHP");
 }
+
+void TabClass::Init_Clear(void)
+{
+    SidebarClass::Init_Clear();
+    Credits.Init_Clear();
+}

@@ -47,6 +47,8 @@ public:
     virtual void Draw_It(bool complete = false);
 
     virtual void One_Time(void); // One-time inits
+    virtual void Init_Clear(void);
+
     static void Draw_Credits_Tab(void);
     static void Hilite_Tab(int tab);
     void Redraw_Tab(void)

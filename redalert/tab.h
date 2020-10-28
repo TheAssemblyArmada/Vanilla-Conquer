@@ -55,6 +55,8 @@ public:
     void Flash_Money(void);
 
     virtual void One_Time(void); // One-time inits
+    virtual void Init_Clear(void);
+
     void Redraw_Tab(void)
     {
         IsToRedraw = true;

@@ -182,3 +182,8 @@ void CreditClass::AI(bool forced, HouseClass* player_ptr, bool logic_only)
         Map.Flag_To_Redraw(false);
     }
 }
+
+void CreditClass::Init_Clear()
+{
+    Current = 0;
+}
