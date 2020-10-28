@@ -356,3 +356,9 @@ void TabClass::Flash_Money(void)
     Flag_To_Redraw(false);
     MoneyFlashTimer = 7;
 }
+
+void TabClass::Init_Clear(void)
+{
+    SidebarClass::Init_Clear();
+    Credits.Init_Clear();
+}
