@@ -1313,6 +1313,10 @@ bool Select_Game(bool fade)
  *=============================================================================================*/
 static void Play_Intro(bool sequenced)
 {
+	if (LaunchedFromSpawner) {
+		return;
+	}
+
     static VQType _counter = VQ_FIRST;
 
     Keyboard->Clear();
@@ -3630,10 +3634,7 @@ bool Read_Spawner_Game_Options_And_Launch_Match()
 	}
 
 	Session.Create_Connections();
-	Map.SidebarClass::Activate(1);
 	Call_Back();
-	Queue_AI();
-	Call_Back();
-	
+
 	return true;
 }
