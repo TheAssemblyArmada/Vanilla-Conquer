@@ -2779,6 +2779,57 @@ void Write_Scenario_INI(char* fname)
 #endif
 }
 
+extern bool LaunchedFromSpawner;
+
+void Assign_Houses_Spawner_Overrides() {
+	if (!LaunchedFromSpawner) {
+		return;
+	}
+
+	HousesType house;
+	HouseClass *housep;
+
+	Debug_Unshroud = true;
+
+	for (int i = 0; i < Session.Players.Count() + Session.Options.AIPlayers; i++) {
+		house = (HousesType)(i + HOUSE_MULTI1);
+		housep = HouseClass::As_Pointer(house);
+
+		if (Session.HouseColorOverrides[i] != -1) {
+			housep->RemapColor = Session.HouseColorOverrides[i];
+		}
+
+		if (Session.HouseCountryOverrides[i] != -1) {
+			housep->ActLike = Session.HouseCountryOverrides[i];
+		}
+
+		if (Session.HouseHandicapOverrides[i] < 3) {
+			housep->Assign_Handicap(Session.HouseHandicapOverrides[i]);
+		}
+
+		if (Session.SpawnLocationOverrides[i] != -1) {
+			housep->StartLocationOverride = Session.SpawnLocationOverrides[i];
+		}
+
+		
+		if (Session.SpectatorHouses[i] == true) {
+			housep->IsDefeated = true;
+			housep->IsSpectator = true;
+			if (housep == PlayerPtr) {
+				Debug_Unshroud = true;
+				Session.ObiWan = 1;
+			}
+		}
+
+		for (int j = 0; j < 32; j++) {
+			int bits = Session.HouseAlliances[i];
+			if (bits >> j & 1) {
+				housep->Make_Ally((HousesType)j);
+			}
+		}
+	}
+}
+
 /***********************************************************************************************
  * Assign_Houses -- Assigns multiplayer houses to various players                              *
  *                                                                                             *
@@ -2947,7 +2998,12 @@ void Assign_Houses(void)
             housep->IsDefeated = true;
         }
     }
+
+	Assign_Houses_Spawner_Overrides();
+
 }
+
+
 
 /***********************************************************************************************
  * Remove_AI_Players -- Removes the computer AI houses & their units                           *
@@ -3222,92 +3278,101 @@ static void Create_Units(bool official)
     **	AI logic.)
     */
     int numtaken = 0;
-    for (HousesType house = HOUSE_MULTI1; house < (HOUSE_MULTI1 + Session.MaxPlayers); house++) {
+	for (HousesType house = HOUSE_MULTI1; house < (HOUSE_MULTI1 + Session.MaxPlayers); house++) {
 
-        /*
-        **	Get a pointer to this house; if there is none, go to the next house
-        */
-        HouseClass* hptr = HouseClass::As_Pointer(house);
-        if (hptr == NULL) {
-            continue;
-        }
+		/*
+		**	Get a pointer to this house; if there is none, go to the next house
+		*/
+		HouseClass* hptr = HouseClass::As_Pointer(house);
+		if (hptr == NULL) {
+			continue;
+		}
 
-        /*
-        **	Pick the starting location for this house. The first house just picks
-        **	one of the valid locations at random. The other houses pick the furthest
-        **	wapoint from the existing houses.
-        */
+		/*
+		**	Pick the starting location for this house. The first house just picks
+		**	one of the valid locations at random. The other houses pick the furthest
+		**	wapoint from the existing houses.
+		*/
+
+		if (hptr->StartLocationOverride != -1) {
+			centroid = waypts[hptr->StartLocationOverride];
+		}
+		else {
 #ifdef REMASTER_BUILD
-        if (!UseGlyphXStartLocations) {
+			if (!UseGlyphXStartLocations) {
 #endif
-            if (numtaken == 0) {
-                int pick = Random_Pick(0, num_waypts - 1);
-                centroid = waypts[pick];
-                hptr->StartLocationOverride = pick;
-                taken[pick] = true;
-                numtaken++;
-            } else {
+				if (numtaken == 0) {
+					int pick = Random_Pick(0, num_waypts - 1);
+					centroid = waypts[pick];
+					hptr->StartLocationOverride = pick;
+					taken[pick] = true;
+					numtaken++;
+				}
+				else {
 
-                /*
-                **	Set all waypoints to have a score of zero in preparation for giving
-                **	a distance score to all waypoints.
-                */
-                int score[26];
-                memset(score, '\0', sizeof(score));
+					/*
+					**	Set all waypoints to have a score of zero in preparation for giving
+					**	a distance score to all waypoints.
+					*/
+					int score[26];
+					memset(score, '\0', sizeof(score));
 
-                /*
-                **	Scan through all waypoints and give a score as a value of the sum
-                **	of the distances from this waypoint to all taken waypoints.
-                */
-                for (int index = 0; index < num_waypts; index++) {
+					/*
+					**	Scan through all waypoints and give a score as a value of the sum
+					**	of the distances from this waypoint to all taken waypoints.
+					*/
+					for (int index = 0; index < num_waypts; index++) {
 
-                    /*
-                    **	If this waypoint has not already been taken, then accumulate the
-                    **	sum of the distance between this waypoint and all other taken
-                    **	waypoints.
-                    */
-                    if (!taken[index]) {
-                        for (int trypoint = 0; trypoint < num_waypts; trypoint++) {
+						/*
+						**	If this waypoint has not already been taken, then accumulate the
+						**	sum of the distance between this waypoint and all other taken
+						**	waypoints.
+						*/
+						if (!taken[index]) {
+							for (int trypoint = 0; trypoint < num_waypts; trypoint++) {
 
-                            if (taken[trypoint]) {
-                                score[index] += Distance(Cell_Coord(waypts[index]), Cell_Coord(waypts[trypoint]));
-                            }
-                        }
-                    }
-                }
+								if (taken[trypoint]) {
+									score[index] += Distance(Cell_Coord(waypts[index]), Cell_Coord(waypts[trypoint]));
+								}
+							}
+						}
+					}
 
-                /*
-                **	Now find the waypoint with the largest score. This waypoint is the one
-                **	that is furthest from all other taken waypoints.
-                */
-                int best = 0;
-                int bestvalue = 0;
-                for (int searchindex = 0; searchindex < num_waypts; searchindex++) {
-                    if (score[searchindex] > bestvalue || bestvalue == 0) {
-                        bestvalue = score[searchindex];
-                        best = searchindex;
-                    }
-                }
+					/*
+					**	Now find the waypoint with the largest score. This waypoint is the one
+					**	that is furthest from all other taken waypoints.
+					*/
+					int best = 0;
+					int bestvalue = 0;
+					for (int searchindex = 0; searchindex < num_waypts; searchindex++) {
+						if (score[searchindex] > bestvalue || bestvalue == 0) {
+							bestvalue = score[searchindex];
+							best = searchindex;
+						}
+					}
 
-                /*
-                **	Assign this best position to the house.
-                */
-                centroid = waypts[best];
-                hptr->StartLocationOverride = best;
-                taken[best] = true;
-                numtaken++;
-            }
+					/*
+					**	Assign this best position to the house.
+					*/
+					centroid = waypts[best];
+					hptr->StartLocationOverride = best;
+					taken[best] = true;
+					numtaken++;
+				}
 #ifdef REMASTER_BUILD
-        } else {
+			}
+			else {
 
-            /*
-            ** New code that respects the start locations passed in from GlyphX.
-            **
-            ** ST - 1/8/2020 3:39PM
-            */
-            centroid = waypts[hptr->StartLocationOverride];
-        }
+				/*
+				** New code that respects the start locations passed in from GlyphX.
+				**
+				** ST - 1/8/2020 3:39PM
+				*/
+				centroid = waypts[hptr->StartLocationOverride];
+			}
+		
 #endif
+		}
         /*
         **	Assign the center of this house to the waypoint location.
         */

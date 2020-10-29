@@ -597,6 +597,9 @@ bool Select_Game(bool fade)
 		if (Read_Spawner_Game_Options_And_Launch_Match()) {
 			return true;
 		}
+		else {
+			return false;
+		}
 	}
 
     /*
@@ -3318,23 +3321,105 @@ void Free_Heaps(void)
     }
 }
 
-/***************************************************************************
- * Read_Game_Options -- reads multiplayer game options from disk           *
- *                                                                         *
- * This routine is used for multiplayer games which read the game options	*
- * from disk, rather than through a connection dialog.							*
- *                                                                         *
- * INPUT:                                                                  *
- *		name of C&CSPAWN.INI file. Null if data should be got from DDE server*                                                                         *
- * OUTPUT:                                                                 *
- *		1 = OK, 0 = error																		*
- *                                                                         *
- * WARNINGS:                          \                                     *
- *		none.																						*
- *                                                                         *
- * HISTORY:                                                                *
- *   01/11/1996 BRR : Created.                                             *
- *=========================================================================*/
+void Read_Spawner_Alliances_Settings(INIClass &spawnini) {
+
+	char Section[32];
+
+	for (int i = 0; i < 8; i++) {
+		Session.HouseAlliances.Add(0);
+
+		sprintf(Section, "Multi%d_Alliances", i+1);
+
+
+		
+		int house = spawnini.Get_Int(Section, "HouseAllyOne", -1);
+		if (house != -1) {
+			Session.HouseAlliances[i] |= 1UL << house;
+		}
+
+		house = spawnini.Get_Int(Section, "HouseAllyTwo", -1);
+		if (house != -1) {
+			Session.HouseAlliances[i] |= 1UL << house;
+		}
+
+		house = spawnini.Get_Int(Section, "HouseAllyThree", -1);
+		if (house != -1) {
+			Session.HouseAlliances[i] |= 1UL << house;
+		}
+
+		house = spawnini.Get_Int(Section, "HouseAllyFour", -1);
+		if (house != -1) {
+			Session.HouseAlliances[i] |= 1UL << house;
+		}
+
+		house = spawnini.Get_Int(Section, "HouseAllyFive", -1);
+		if (house != -1) {
+			Session.HouseAlliances[i] |= 1UL << house;
+		}
+
+		house = spawnini.Get_Int(Section, "HouseAllySix", -1);
+		if (house != -1) {
+			Session.HouseAlliances[i] |= 1UL << house;
+		}
+
+		house = spawnini.Get_Int(Section, "HouseAllySeven", -1);
+		if (house != -1) {
+			Session.HouseAlliances[i] |= 1UL << house;
+		}
+	}
+
+}
+
+void Read_Spawner_Houses_Settings(INIClass &spawnini) {
+	Session.SpawnLocationOverrides.Add(spawnini.Get_Int("SpawnLocations", "Multi1", -1));
+	Session.SpawnLocationOverrides.Add(spawnini.Get_Int("SpawnLocations", "Multi2", -1));
+	Session.SpawnLocationOverrides.Add(spawnini.Get_Int("SpawnLocations", "Multi3", -1));
+	Session.SpawnLocationOverrides.Add(spawnini.Get_Int("SpawnLocations", "Multi4", -1));
+	Session.SpawnLocationOverrides.Add(spawnini.Get_Int("SpawnLocations", "Multi5", -1));
+	Session.SpawnLocationOverrides.Add(spawnini.Get_Int("SpawnLocations", "Multi6", -1));
+	Session.SpawnLocationOverrides.Add(spawnini.Get_Int("SpawnLocations", "Multi7", -1));
+	Session.SpawnLocationOverrides.Add(spawnini.Get_Int("SpawnLocations", "Multi8", -1));
+
+	Session.HouseColorOverrides.Add((PlayerColorType)spawnini.Get_Int("HouseColours", "Multi1", -1));
+	Session.HouseColorOverrides.Add((PlayerColorType)spawnini.Get_Int("HouseColours", "Multi2", -1));
+	Session.HouseColorOverrides.Add((PlayerColorType)spawnini.Get_Int("HouseColours", "Multi3", -1));
+	Session.HouseColorOverrides.Add((PlayerColorType)spawnini.Get_Int("HouseColours", "Multi4", -1));
+	Session.HouseColorOverrides.Add((PlayerColorType)spawnini.Get_Int("HouseColours", "Multi5", -1));
+	Session.HouseColorOverrides.Add((PlayerColorType)spawnini.Get_Int("HouseColours", "Multi6", -1));
+	Session.HouseColorOverrides.Add((PlayerColorType)spawnini.Get_Int("HouseColours", "Multi7", -1));
+	Session.HouseColorOverrides.Add((PlayerColorType)spawnini.Get_Int("HouseColours", "Multi8", -1));
+
+	Session.HouseCountryOverrides.Add((HousesType)spawnini.Get_Int("HouseCountries", "Multi1", -1));
+	Session.HouseCountryOverrides.Add((HousesType)spawnini.Get_Int("HouseCountries", "Multi2", -1));
+	Session.HouseCountryOverrides.Add((HousesType)spawnini.Get_Int("HouseCountries", "Multi3", -1));
+	Session.HouseCountryOverrides.Add((HousesType)spawnini.Get_Int("HouseCountries", "Multi4", -1));
+	Session.HouseCountryOverrides.Add((HousesType)spawnini.Get_Int("HouseCountries", "Multi5", -1));
+	Session.HouseCountryOverrides.Add((HousesType)spawnini.Get_Int("HouseCountries", "Multi6", -1));
+	Session.HouseCountryOverrides.Add((HousesType)spawnini.Get_Int("HouseCountries", "Multi7", -1));
+	Session.HouseCountryOverrides.Add((HousesType)spawnini.Get_Int("HouseCountries", "Multi8", -1));
+
+	Session.HouseHandicapOverrides.Add((DiffType)spawnini.Get_Int("HouseHandicaps", "Multi1", -1));
+	Session.HouseHandicapOverrides.Add((DiffType)spawnini.Get_Int("HouseHandicaps", "Multi2", -1));
+	Session.HouseHandicapOverrides.Add((DiffType)spawnini.Get_Int("HouseHandicaps", "Multi3", -1));
+	Session.HouseHandicapOverrides.Add((DiffType)spawnini.Get_Int("HouseHandicaps", "Multi4", -1));
+	Session.HouseHandicapOverrides.Add((DiffType)spawnini.Get_Int("HouseHandicaps", "Multi5", -1));
+	Session.HouseHandicapOverrides.Add((DiffType)spawnini.Get_Int("HouseHandicaps", "Multi6", -1));
+	Session.HouseHandicapOverrides.Add((DiffType)spawnini.Get_Int("HouseHandicaps", "Multi7", -1));
+	Session.HouseHandicapOverrides.Add((DiffType)spawnini.Get_Int("HouseHandicaps", "Multi8", -1));
+
+	Session.SpectatorHouses.Add(spawnini.Get_Bool("IsSpectator", "Multi1", false));
+	Session.SpectatorHouses.Add(spawnini.Get_Bool("IsSpectator", "Multi2", false));
+	Session.SpectatorHouses.Add(spawnini.Get_Bool("IsSpectator", "Multi3", false));
+	Session.SpectatorHouses.Add(spawnini.Get_Bool("IsSpectator", "Multi4", false));
+	Session.SpectatorHouses.Add(spawnini.Get_Bool("IsSpectator", "Multi5", false));
+	Session.SpectatorHouses.Add(spawnini.Get_Bool("IsSpectator", "Multi6", false));
+	Session.SpectatorHouses.Add(spawnini.Get_Bool("IsSpectator", "Multi7", false));
+	Session.SpectatorHouses.Add(spawnini.Get_Bool("IsSpectator", "Multi8", false));
+
+	Read_Spawner_Alliances_Settings(spawnini);
+}
+
+
 bool Read_Spawner_Game_Options_And_Launch_Match()
 {
 	if (SpawnerActive == true)
@@ -3371,60 +3456,7 @@ bool Read_Spawner_Game_Options_And_Launch_Match()
 	//TunnelPort = htonl(port & 0xffff);
 	//TunnelID = TunnelPort;
 
-	/*
-	SpawnLocations[0] = spawnini.Get_Int("SpawnLocations", "Multi1", -1);
-	SpawnLocations[1] = spawnini.Get_Int("SpawnLocations", "Multi2", -1);
-	SpawnLocations[2] = spawnini.Get_Int("SpawnLocations", "Multi3", -1);
-	SpawnLocations[3] = spawnini.Get_Int("SpawnLocations", "Multi4", -1);
-	SpawnLocations[4] = spawnini.Get_Int("SpawnLocations", "Multi5", -1);
-	SpawnLocations[5] = spawnini.Get_Int("SpawnLocations", "Multi6", -1);
-	SpawnLocations[6] = spawnini.Get_Int("SpawnLocations", "Multi7", -1);
-	SpawnLocations[7] = spawnini.Get_Int("SpawnLocations", "Multi8", -1);
-	*/
-
-	/*
-	HouseColors[0] = spawnini.Get_Int("HouseColors", "Multi1", -1);
-	HouseColors[1] = spawnini.Get_Int("HouseColors", "Multi2", -1);
-	HouseColors[2] = spawnini.Get_Int("HouseColors", "Multi3", -1);
-	HouseColors[3] = spawnini.Get_Int("HouseColors", "Multi4", -1);
-	HouseColors[4] = spawnini.Get_Int("HouseColors", "Multi5", -1);
-	HouseColors[5] = spawnini.Get_Int("HouseColors", "Multi6", -1);
-	HouseColors[6] = spawnini.Get_Int("HouseColors", "Multi7", -1);
-	HouseColors[7] = spawnini.Get_Int("HouseColors", "Multi8", -1);
-	*/
-
-	/*
-	HouseCountries[0] = spawnini.Get_Int("HouseCountries", "Multi1", -1);
-	HouseCountries[1] = spawnini.Get_Int("HouseCountries", "Multi2", -1);
-	HouseCountries[2] = spawnini.Get_Int("HouseCountries", "Multi3", -1);
-	HouseCountries[3] = spawnini.Get_Int("HouseCountries", "Multi4", -1);
-	HouseCountries[4] = spawnini.Get_Int("HouseCountries", "Multi5", -1);
-	HouseCountries[5] = spawnini.Get_Int("HouseCountries", "Multi6", -1);
-	HouseCountries[6] = spawnini.Get_Int("HouseCountries", "Multi7", -1);
-	HouseCountries[7] = spawnini.Get_Int("HouseCountries", "Multi8", -1);
-	*/
-
-	/*
-	HouseHandicaps[0] = spawnini.Get_Int("HouseHandicaps", "Multi1", -1);
-	HouseHandicaps[1] = spawnini.Get_Int("HouseHandicaps", "Multi2", -1);
-	HouseHandicaps[2] = spawnini.Get_Int("HouseHandicaps", "Multi3", -1);
-	HouseHandicaps[3] = spawnini.Get_Int("HouseHandicaps", "Multi4", -1);
-	HouseHandicaps[4] = spawnini.Get_Int("HouseHandicaps", "Multi5", -1);
-	HouseHandicaps[5] = spawnini.Get_Int("HouseHandicaps", "Multi6", -1);
-	HouseHandicaps[6] = spawnini.Get_Int("HouseHandicaps", "Multi7", -1);
-	HouseHandicaps[7] = spawnini.Get_Int("HouseHandicaps", "Multi8", -1);
-	*/
-
-	/*
-	IsSpectator[0] = spawnini.Get_Int("IsSpectator", "Multi1", -1);
-	IsSpectator[1] = spawnini.Get_Int("IsSpectator", "Multi2", -1);
-	IsSpectator[2] = spawnini.Get_Int("IsSpectator", "Multi3", -1);
-	IsSpectator[3] = spawnini.Get_Int("IsSpectator", "Multi4", -1);
-	IsSpectator[4] = spawnini.Get_Int("IsSpectator", "Multi5", -1);
-	IsSpectator[5] = spawnini.Get_Int("IsSpectator", "Multi6", -1);
-	IsSpectator[6] = spawnini.Get_Int("IsSpectator", "Multi7", -1);
-	IsSpectator[7] = spawnini.Get_Int("IsSpectator", "Multi8", -1);
-	*/
+	Read_Spawner_Houses_Settings(spawnini);
 
 
 	//if (TunnelPort == 0) {

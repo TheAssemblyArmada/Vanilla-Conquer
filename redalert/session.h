@@ -700,6 +700,17 @@ public:
     CellClass* TrapCell;       // Ptr to cell to trap (watch)
     int TrapCheckHeap;         // true = check the heap as of TrapFrame
     long TrapPrintCRC;         // Frame # to print CRC state file
+
+	// Extra variables added for spawner code by iran
+	DynamicVectorClass<PlayerColorType> HouseColorOverrides;
+	DynamicVectorClass<HousesType> HouseCountryOverrides;
+	// Index into spawn location waypoint for spawner
+	DynamicVectorClass<int> SpawnLocationOverrides;
+	DynamicVectorClass<DiffType> HouseHandicapOverrides;
+	DynamicVectorClass<bool> SpectatorHouses;
+	// this is a bit set, bit on = ally with housetype at that position
+	DynamicVectorClass<int> HouseAlliances;
+
 };
 
 #endif // SESSION_H

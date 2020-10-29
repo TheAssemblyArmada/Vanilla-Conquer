@@ -518,6 +518,9 @@ public:
     */
     int StartLocationOverride;
 
+	// Is spectator house, for spawner code
+	bool IsSpectator;
+
     /*
     **	This records information about the location and size of
     **	the base.
