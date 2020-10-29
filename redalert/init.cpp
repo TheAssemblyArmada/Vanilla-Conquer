@@ -500,11 +500,7 @@ bool Select_Game(bool fade)
     };
 #endif                                       //	FIXIT_VERSION_3
 
-	if (LaunchedFromSpawner) {
-		if (Read_Spawner_Game_Options_And_Launch_Match()) {
-			return false;
-		}
-	}
+
 
     bool gameloaded = false; // Has the game been loaded from the menu?
     int selection;           // the default selection
@@ -596,6 +592,12 @@ bool Select_Game(bool fade)
     **	Set default mouse shape
     */
     Map.Set_Default_Mouse(MOUSE_NORMAL, false);
+
+	if (LaunchedFromSpawner) {
+		if (Read_Spawner_Game_Options_And_Launch_Match()) {
+			return true;
+		}
+	}
 
     /*
     **	If the last game we played was a multiplayer game, jump right to that
@@ -3335,10 +3337,15 @@ void Free_Heaps(void)
  *=========================================================================*/
 bool Read_Spawner_Game_Options_And_Launch_Match()
 {
-	const char* spawnxdp = "spawn.xdp";
+	if (SpawnerActive == true)
+	{
+		return false;
+	}
+
+	SpawnerActive = true;
 
 	CCFileClass spawnfile;
-	spawnfile.Open("spawn.xdp");
+	spawnfile.Open("spawn.ini");
 
 	if (!spawnfile.Is_Available()) {
 		return false;
@@ -3351,7 +3358,7 @@ bool Read_Spawner_Game_Options_And_Launch_Match()
 		return false;
 	}
 
-	SpawnerActive = true;
+	
 	Session.Type = GAME_SKIRMISH;
 	Session.CommProtocol = (CommProtocolEnum)spawnini.Get_Int("Settings", "NetworkVersionProtocol", 0);
 	Session.Options.ScenarioIndex = 0;
@@ -3499,7 +3506,7 @@ bool Read_Spawner_Game_Options_And_Launch_Match()
 		char OtherPlayerNameBuf[32];
 		spawnini.Get_String(OtherBuf, "Name", "", OtherPlayerNameBuf, 32);
 
-		if (OtherPlayerNameBuf == "") {
+		if (*OtherPlayerNameBuf == NULL) {
 			break;
 		}
 
@@ -3520,13 +3527,13 @@ bool Read_Spawner_Game_Options_And_Launch_Match()
 
 		NetNodeType netnode;
 		NetNumType netnum;
-		memcpy(netnum, (void*)OtherPlayerPort, 4);
+		memcpy(netnum, &OtherPlayerPort, 4);
 
 		// yes nasty hack ahead
 		// zero out all 6 bytes from ipx
-		memset((void*)&netnode, 0x0, sizeof(netnode));
+		memset(&netnode, 0x0, sizeof(netnode));
 		// set first 4 byts to ip
-		memcpy((void*)&netnode, (void*)OtherPlayerIP, 4);
+		memcpy(&netnode, &OtherPlayerIP, 4);
 
 		nnt->Address.Set_Address(netnum, netnode);
 
@@ -3534,10 +3541,10 @@ bool Read_Spawner_Game_Options_And_Launch_Match()
 	}
 
 	Options.GameSpeed = spawnini.Get_Int("Settings", "GameSpeed", 1);
-	GameActive = 1;
+
 
 	// Initialize networking
-	if (Session.Type = GAME_INTERNET) {
+	if (Session.Type == GAME_INTERNET) {
 		PacketTransport = new UDPInterfaceClass;
 		PacketTransport->Init();
 		PacketTransport->Open_Socket(0);
@@ -3558,7 +3565,9 @@ bool Read_Spawner_Game_Options_And_Launch_Match()
 
 	Init_Random();
 
-	spawnini.Get_String("Settings", "Scenario", "", Scen.ScenarioName, 512);
+	char ScenBuf[512];
+	spawnini.Get_String("Settings", "Scenario", "", ScenBuf, 512);
+	strcpy(Scen.ScenarioName, ScenBuf);
 
 	// Should be done after loading scenario according to WW dev comment
 	// but it works just fine beforescenario load in cncnet spawner asm code
@@ -3589,5 +3598,10 @@ bool Read_Spawner_Game_Options_And_Launch_Match()
 	}
 
 	Session.Create_Connections();
+	Map.SidebarClass::Activate(1);
+	Call_Back();
+	Queue_AI();
+	Call_Back();
+	
 	return true;
 }
