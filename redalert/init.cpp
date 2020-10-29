@@ -64,6 +64,7 @@
 #include "internet.h"
 
 #endif
+#include "wspudp.h"
 #include <conio.h>
 #include <dos.h>
 #ifndef WIN32
@@ -167,6 +168,8 @@ static void Load_Prolog_Page(void)
     CCPalette.Set();
     Show_Mouse();
 }
+
+bool Read_Spawner_Game_Options_And_Launch_Match();
 
 /***********************************************************************************************
  * Init_Game -- Main game initialization routine.                                              *
@@ -441,6 +444,9 @@ bool Init_Game(int, char*[])
 
 extern bool Get_Broadcast_Addresses(void);
 
+bool SpawnerActive;
+bool LaunchedFromSpawner;
+
 /***********************************************************************************************
  * Select_Game -- The game's main menu                                                         *
  *                                                                                             *
@@ -493,6 +499,12 @@ bool Select_Game(bool fade)
         SEL_NONE,             // placeholder default value
     };
 #endif                                       //	FIXIT_VERSION_3
+
+	if (LaunchedFromSpawner) {
+		if (Read_Spawner_Game_Options_And_Launch_Match()) {
+			return false;
+		}
+	}
 
     bool gameloaded = false; // Has the game been loaded from the menu?
     int selection;           // the default selection
@@ -1570,6 +1582,11 @@ bool Parse_Command_Line(int argc, char* argv[])
             CCFileClass::Set_Search_Drives(&string[3]);
             continue;
         }
+
+		if (strstr(string, "-SPAWN")) {
+			LaunchedFromSpawner = true;
+			continue;
+		}
 
 #if (0)
         /*
@@ -3297,4 +3314,280 @@ void Free_Heaps(void)
         delete TheaterBuffer;
         TheaterBuffer = NULL;
     }
+}
+
+/***************************************************************************
+ * Read_Game_Options -- reads multiplayer game options from disk           *
+ *                                                                         *
+ * This routine is used for multiplayer games which read the game options	*
+ * from disk, rather than through a connection dialog.							*
+ *                                                                         *
+ * INPUT:                                                                  *
+ *		name of C&CSPAWN.INI file. Null if data should be got from DDE server*                                                                         *
+ * OUTPUT:                                                                 *
+ *		1 = OK, 0 = error																		*
+ *                                                                         *
+ * WARNINGS:                          \                                     *
+ *		none.																						*
+ *                                                                         *
+ * HISTORY:                                                                *
+ *   01/11/1996 BRR : Created.                                             *
+ *=========================================================================*/
+bool Read_Spawner_Game_Options_And_Launch_Match()
+{
+	const char* spawnxdp = "spawn.xdp";
+
+	CCFileClass spawnfile;
+	spawnfile.Open("spawn.xdp");
+
+	if (!spawnfile.Is_Available()) {
+		return false;
+	}
+
+
+	INIClass spawnini;
+
+	if (!spawnini.Load(spawnfile)) {
+		return false;
+	}
+
+	SpawnerActive = true;
+	Session.Type = GAME_SKIRMISH;
+	Session.CommProtocol = (CommProtocolEnum)spawnini.Get_Int("Settings", "NetworkVersionProtocol", 0);
+	Session.Options.ScenarioIndex = 0;
+
+	char ip[35];
+	spawnini.Get_String("Tunnel", "IP", "", ip, 32);
+	//TunnelIP = inet_addr(ip);
+
+	int port = spawnini.Get_Int("Tunnel", "Port", 0);
+	//TunnelPort = htonl(port & 0xffff);
+	//TunnelID = TunnelPort;
+
+	/*
+	SpawnLocations[0] = spawnini.Get_Int("SpawnLocations", "Multi1", -1);
+	SpawnLocations[1] = spawnini.Get_Int("SpawnLocations", "Multi2", -1);
+	SpawnLocations[2] = spawnini.Get_Int("SpawnLocations", "Multi3", -1);
+	SpawnLocations[3] = spawnini.Get_Int("SpawnLocations", "Multi4", -1);
+	SpawnLocations[4] = spawnini.Get_Int("SpawnLocations", "Multi5", -1);
+	SpawnLocations[5] = spawnini.Get_Int("SpawnLocations", "Multi6", -1);
+	SpawnLocations[6] = spawnini.Get_Int("SpawnLocations", "Multi7", -1);
+	SpawnLocations[7] = spawnini.Get_Int("SpawnLocations", "Multi8", -1);
+	*/
+
+	/*
+	HouseColors[0] = spawnini.Get_Int("HouseColors", "Multi1", -1);
+	HouseColors[1] = spawnini.Get_Int("HouseColors", "Multi2", -1);
+	HouseColors[2] = spawnini.Get_Int("HouseColors", "Multi3", -1);
+	HouseColors[3] = spawnini.Get_Int("HouseColors", "Multi4", -1);
+	HouseColors[4] = spawnini.Get_Int("HouseColors", "Multi5", -1);
+	HouseColors[5] = spawnini.Get_Int("HouseColors", "Multi6", -1);
+	HouseColors[6] = spawnini.Get_Int("HouseColors", "Multi7", -1);
+	HouseColors[7] = spawnini.Get_Int("HouseColors", "Multi8", -1);
+	*/
+
+	/*
+	HouseCountries[0] = spawnini.Get_Int("HouseCountries", "Multi1", -1);
+	HouseCountries[1] = spawnini.Get_Int("HouseCountries", "Multi2", -1);
+	HouseCountries[2] = spawnini.Get_Int("HouseCountries", "Multi3", -1);
+	HouseCountries[3] = spawnini.Get_Int("HouseCountries", "Multi4", -1);
+	HouseCountries[4] = spawnini.Get_Int("HouseCountries", "Multi5", -1);
+	HouseCountries[5] = spawnini.Get_Int("HouseCountries", "Multi6", -1);
+	HouseCountries[6] = spawnini.Get_Int("HouseCountries", "Multi7", -1);
+	HouseCountries[7] = spawnini.Get_Int("HouseCountries", "Multi8", -1);
+	*/
+
+	/*
+	HouseHandicaps[0] = spawnini.Get_Int("HouseHandicaps", "Multi1", -1);
+	HouseHandicaps[1] = spawnini.Get_Int("HouseHandicaps", "Multi2", -1);
+	HouseHandicaps[2] = spawnini.Get_Int("HouseHandicaps", "Multi3", -1);
+	HouseHandicaps[3] = spawnini.Get_Int("HouseHandicaps", "Multi4", -1);
+	HouseHandicaps[4] = spawnini.Get_Int("HouseHandicaps", "Multi5", -1);
+	HouseHandicaps[5] = spawnini.Get_Int("HouseHandicaps", "Multi6", -1);
+	HouseHandicaps[6] = spawnini.Get_Int("HouseHandicaps", "Multi7", -1);
+	HouseHandicaps[7] = spawnini.Get_Int("HouseHandicaps", "Multi8", -1);
+	*/
+
+	/*
+	IsSpectator[0] = spawnini.Get_Int("IsSpectator", "Multi1", -1);
+	IsSpectator[1] = spawnini.Get_Int("IsSpectator", "Multi2", -1);
+	IsSpectator[2] = spawnini.Get_Int("IsSpectator", "Multi3", -1);
+	IsSpectator[3] = spawnini.Get_Int("IsSpectator", "Multi4", -1);
+	IsSpectator[4] = spawnini.Get_Int("IsSpectator", "Multi5", -1);
+	IsSpectator[5] = spawnini.Get_Int("IsSpectator", "Multi6", -1);
+	IsSpectator[6] = spawnini.Get_Int("IsSpectator", "Multi7", -1);
+	IsSpectator[7] = spawnini.Get_Int("IsSpectator", "Multi8", -1);
+	*/
+
+
+	//if (TunnelPort == 0) {
+
+	PlanetWestwoodPortNumber = spawnini.Get_Int("Settings", "Port", 1234);
+	//}
+
+	Session.Options.Bases = spawnini.Get_Int("Settings", "Bases", 1);
+	Session.Options.Credits = spawnini.Get_Int("Settings", "Credits", 10000);
+	Session.Options.Tiberium = spawnini.Get_Int("Settings", "Credits", 1);
+
+	if (Session.Options.Tiberium) {
+		Special.IsTGrowth = 1;
+		Special.IsTSpread = 1;
+	}
+	else {
+		Special.IsTGrowth = 0;
+		Special.IsTSpread = 0;
+	}
+
+	Session.Options.Goodies = spawnini.Get_Int("Settings", "Crates", 0);
+	Session.Options.UnitCount = spawnini.Get_Int("Settings", "UnitCount", 0);
+	Session.Options.AIPlayers = spawnini.Get_Int("Settings", "AIPlayers", 0);
+
+	Special.IsCaptureTheFlag = (unsigned int)spawnini.Get_Bool("Settings", "CaptureTheFlag", false);
+
+	Seed = spawnini.Get_Int("Settings", "Seed", 0);
+	RandNumb = Seed;
+	Scen.RandomNumber = Seed;
+	CustomSeed = Seed;
+
+	UnitBuildPenalty = 0x64;
+	if (spawnini.Get_Bool("Settings", "SlowBuild", false)) {
+		UnitBuildPenalty = 0xFA;
+	}
+
+	Special.IsShadowGrow = (unsigned int)spawnini.Get_Bool("Settings", "ShroudRegrows", false);
+	BuildLevel = spawnini.Get_Int("Settings", "TechLevel", 10);
+
+	int AIDifficulty = spawnini.Get_Int("Settings", "AIDifficulty", 2);
+
+	Scen.Difficulty = DIFF_NORMAL;
+	Scen.CDifficulty = DIFF_NORMAL;
+
+
+	if (AIDifficulty < 2) {
+		Scen.Difficulty = DIFF_EASY;
+		Scen.CDifficulty = DIFF_HARD;
+	}
+	if (AIDifficulty > 2) {
+		Scen.Difficulty = DIFF_HARD;
+		Scen.CDifficulty = DIFF_EASY;
+	}
+
+	if (spawnini.Get_Bool("Settings", "Aftermath", false)) {
+		bAftermathMultiplayer = NewUnitsEnabled = true;
+	}
+
+	NodeNameType *nnt = new NodeNameType;
+
+	char NameBuf[32];
+	spawnini.Get_String("Settings", "Name", "", NameBuf, 32);
+	strcpy(nnt->Name, NameBuf);
+
+	nnt->Player.House = (HousesType)spawnini.Get_Int("Settings", "Side", 0);
+	nnt->Player.Color = (PlayerColorType)spawnini.Get_Int("Settings", "Color", 0);
+	Session.ColorIdx = nnt->Player.Color;
+	Session.PrefColor = nnt->Player.Color;
+
+	Session.Players.Add(nnt);
+
+	char OtherBuf[32];
+	int playercounter = 0;
+
+	while (true) {
+		playercounter++;
+		sprintf(OtherBuf, "Other%d", playercounter);
+
+		char OtherPlayerNameBuf[32];
+		spawnini.Get_String(OtherBuf, "Name", "", OtherPlayerNameBuf, 32);
+
+		if (OtherPlayerNameBuf == "") {
+			break;
+		}
+
+		NodeNameType *nnt = new NodeNameType;
+
+		strcpy(nnt->Name, OtherPlayerNameBuf);
+		nnt->Player.House = (HousesType)spawnini.Get_Int(OtherBuf, "Side", 0);
+		nnt->Player.Color = (PlayerColorType)spawnini.Get_Int(OtherBuf, "Color", 0);
+
+		// Make sure we're in online mode if there are more playres than just ourself
+		Session.Type = GAME_INTERNET;
+
+		char OtherPlayerIPBuf[32];
+		spawnini.Get_String(OtherBuf, "IP", "", OtherPlayerIPBuf, 32);
+		int OtherPlayerIP = inet_addr(OtherPlayerIPBuf);
+
+		int OtherPlayerPort = htonl(spawnini.Get_Int(OtherBuf, "Port", 1234) & 0xffff);
+
+		NetNodeType netnode;
+		NetNumType netnum;
+		memcpy(netnum, (void*)OtherPlayerPort, 4);
+
+		// yes nasty hack ahead
+		// zero out all 6 bytes from ipx
+		memset((void*)&netnode, 0x0, sizeof(netnode));
+		// set first 4 byts to ip
+		memcpy((void*)&netnode, (void*)OtherPlayerIP, 4);
+
+		nnt->Address.Set_Address(netnum, netnode);
+
+		Session.Players.Add(nnt);
+	}
+
+	Options.GameSpeed = spawnini.Get_Int("Settings", "GameSpeed", 1);
+	GameActive = 1;
+
+	// Initialize networking
+	if (Session.Type = GAME_INTERNET) {
+		PacketTransport = new UDPInterfaceClass;
+		PacketTransport->Init();
+		PacketTransport->Open_Socket(0);
+		PacketTransport->Start_Listening();
+		PacketTransport->Discard_In_Buffers();
+		PacketTransport->Discard_Out_Buffers();
+
+		Init_Network();
+
+		Session.MaxAhead = spawnini.Get_Int("Settings", "MaxAhead", 15);
+		Session.FrameSendRate = spawnini.Get_Int("Settings", "FrameSendRate", 3);
+
+		Ipx.Set_Timing(25, -1, 744);
+	}
+
+	//PlanetWestwoodStartTime = (int)time(0);
+	//PlanetWestwoodGameID = spawnini.Get_Int("Settings", "GameID", 0);
+
+	Init_Random();
+
+	spawnini.Get_String("Settings", "Scenario", "", Scen.ScenarioName, 512);
+
+	// Should be done after loading scenario according to WW dev comment
+	// but it works just fine beforescenario load in cncnet spawner asm code
+	// so I dunno if this needs to be moved
+	Session.Messages.Init(Map.TacPixelX,
+		Map.TacPixelY,           // x,y for messages
+		6,                       // max # msgs
+		MAX_MESSAGE_LENGTH - 14, // max msg length
+		7 * RESFACTOR,           // font height in pixels
+		-1,
+		-1,                      // x,y for edit line (appears above msgs)
+		0,                       // BG		1,							// enable edit overflow
+		20,                      // min,
+		MAX_MESSAGE_LENGTH - 14, //    max for trimming overflow
+		Lepton_To_Pixel(Map.TacLeptonWidth)); // Width in pixels of buffer
+
+	if (spawnini.Get_Bool("Settings", "IsSinglePlayer", false)) {
+		Session.Type = GAME_NORMAL;
+	}
+
+	if (spawnini.Get_Bool("Settings", "LoadSaveGame", 0)) {
+		char SaveGameName[128];
+		spawnini.Get_String("Settings", "SaveGameName", "", SaveGameName, 128);
+		Load_Game(SaveGameName);
+	}
+	else {
+		Start_Scenario(Scen.ScenarioName, 1);
+	}
+
+	Session.Create_Connections();
+	return true;
 }
