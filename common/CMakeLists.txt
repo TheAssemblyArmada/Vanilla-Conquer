@@ -55,7 +55,6 @@ set(COMMON_SRC
     linear.cpp
     link.cpp
     load.cpp
-    loadpal.cpp
     memrev.c
     misc.c
     miscasm.asm

@@ -30,7 +30,6 @@
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
- *   Delete_Swap_Files -- Deletes previously existing swap files.                              *
  *   Prog_End -- Cleans up library systems in prep for game exit.                              *
  *   main -- Initial startup routine (preps library systems).                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -38,7 +37,6 @@
 #include "function.h"
 
 bool Read_Private_Config_Struct(char* profile, NewConfigType* config);
-void Delete_Swap_Files(void);
 void Print_Error_End_Exit(char* string);
 void Print_Error_Exit(char* string);
 #ifdef _WIN32
@@ -52,32 +50,6 @@ void Read_Setup_Options(RawFileClass* config_file);
 bool VideoBackBufferAllowed = true;
 void Check_From_WChat(char* wchat_name);
 bool ProgEndCalled = false;
-
-#if (0)
-char WibbleBuffer[1024 * 1024];
-
-void CD_Test(void)
-{
-    HANDLE handle;
-    DWORD size;
-
-    handle =
-        CreateFile("e:\\scores.mix", GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-
-    if (handle == INVALID_HANDLE_VALUE) {
-        return;
-    }
-
-    unsigned bytes_read;
-
-    do {
-        bytes_read = ReadFile(handle, WibbleBuffer, 1024 * 1024, &size, NULL);
-
-    } while (size == 1024 * 1024);
-
-    CloseHandle(handle);
-}
-#endif //(0)
 
 /***********************************************************************************************
  * main -- Initial startup routine (preps library systems).                                    *
@@ -615,36 +587,6 @@ void Prog_End(const char* why, bool fatal) // Added why and fatal parameters. ST
     }
 
     ProgEndCalled = true;
-}
-
-/***********************************************************************************************
- * Delete_Swap_Files -- Deletes previously existing swap files.                                *
- *                                                                                             *
- *    This routine will scan through the current directory and delete any swap files it may    *
- *    find. This is used to clear out any left over swap files from previous runs (crashes)    *
- *    of the game. This routine presumes that it cannot delete the swap file that is created   *
- *    by the current run of the game.                                                          *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/27/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
-void Delete_Swap_Files(void)
-{
-#if (0)
-    struct find_t ff; // for _dos_findfirst
-
-    if (!_dos_findfirst("*.SWP", _A_NORMAL, &ff)) {
-        do {
-            unlink(ff.name);
-        } while (!_dos_findnext(&ff));
-    }
-#endif
 }
 
 void Print_Error_End_Exit(char* string)
