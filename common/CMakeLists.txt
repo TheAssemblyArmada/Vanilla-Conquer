@@ -70,11 +70,13 @@ set(COMMON_SRC
     pkpipe.cpp
     pkstraw.cpp
     random.cpp
+    rand.cpp
     rawfile.cpp
     readline.cpp
     rect.cpp
     rndstraw.cpp
     sha.cpp
+    shape.cpp
     shapipe.cpp
     shastraw.cpp
     soscodec.c
@@ -86,6 +88,7 @@ set(COMMON_SRC
     tobuffa.asm
     toggle.cpp
     txtprnt.asm
+    utracker.cpp
     vector.cpp
     winasm.c
     windows.cpp
@@ -117,6 +120,7 @@ set(COMMONR_SRC
 set(COMMONV_SRC
     gbuffer.cpp
     interpal.cpp
+    tcpip.cpp
     tcpip_null.cpp
     unvqbuff.c
     vqaconfig.cpp

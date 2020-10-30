@@ -30,8 +30,6 @@ set(REDALERT_SRC
     const.cpp
     coord.cpp
     crate.cpp
-    crcpipe.cpp
-    crcstraw.cpp
     credits.cpp
     crew.cpp
     debug.cpp
@@ -123,7 +121,6 @@ set(REDALERT_SRC
     radar.cpp
     radio.cpp
     ramfile.cpp
-    rand.cpp
     rawolapi.cpp
     reinf.cpp
     rgb.cpp
@@ -136,7 +133,6 @@ set(REDALERT_SRC
     seditdlg.cpp
     sendfile.cpp
     session.cpp
-    shape.cpp
     shapebtn.cpp
     sidebar.cpp
     slider.cpp
@@ -151,7 +147,6 @@ set(REDALERT_SRC
     tab.cpp
     taction.cpp
     target.cpp
-    tcpip.cpp
     tdata.cpp
     team.cpp
     teamtype.cpp
@@ -169,7 +164,6 @@ set(REDALERT_SRC
     udata.cpp
     udpaddr.cpp
     unit.cpp
-    utracker.cpp
     vdata.cpp
     version.cpp
     vessel.cpp

@@ -181,7 +181,6 @@ public:
 #include "lcwpipe.h"
 #include "lzwpipe.h"
 #include "lzopipe.h"
-#include "crcpipe.h"
 #include "shapipe.h"
 #include "b64pipe.h"
 #include "straw.h"
@@ -190,7 +189,6 @@ public:
 #include "lcwstraw.h"
 #include "lzwstraw.h"
 #include "lzostraw.h"
-#include "crcstraw.h"
 #include "shastraw.h"
 #include "rndstraw.h"
 

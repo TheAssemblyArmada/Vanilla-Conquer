@@ -98,7 +98,6 @@ set(TIBDAWN_SRC
     queue.cpp
     radar.cpp
     radio.cpp
-    rand.cpp
     reinf.cpp
     rules.cpp
     saveload.cpp
@@ -107,7 +106,6 @@ set(TIBDAWN_SRC
     score.cpp
     scroll.cpp
     sdata.cpp
-    shape.cpp
     shapebtn.cpp
     sidebar.cpp
     slider.cpp
@@ -121,7 +119,6 @@ set(TIBDAWN_SRC
     tab.cpp
     tarcom.cpp
     target.cpp
-    tcpip.cpp
     tdata.cpp
     team.cpp
     teamtype.cpp
@@ -135,7 +132,6 @@ set(TIBDAWN_SRC
     txtlabel.cpp
     udata.cpp
     unit.cpp
-    utracker.cpp
     visudlg.cpp
     winstub.cpp
 )
