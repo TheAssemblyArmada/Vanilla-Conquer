@@ -34,39 +34,6 @@
 #include "gbuffer.h"
 
 /*=========================================================================*/
-/* The following PRIVATE functions are in this file:                       */
-/*=========================================================================*/
-
-/*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
-
-/*=========================================================================*/
-/* Globals required by GraphicBufferClass for function pointers.  These		*/
-/*   pointers will be set to the proper function when set mode is called.	*/
-/*=========================================================================*/
-bool (*GVPC_Blit_to_VVPC_Func)(void*, void*, int, int, int, int, int, int, bool);
-bool (*GVPC_Scale_To_VVPC)(void*, void*, int, int, int, int, int, int, int, int, bool, char*);
-
-#ifdef not_any_more_it_doesnt
-/*=========================================================================*/
-/* Globals required by VideoBufferClass for function pointers.  These		*/
-/*   pointers will be set to the proper function when set mode is called.	*/
-/*=========================================================================*/
-void (*VVPC_Clear_Func)(void*, unsigned char);
-long (*VVPC_To_Buffer_Func)(void*, int x, int y, int w, int h, void* buff, long size);
-void (*VVPC_Put_Pixel_Func)(void*, int x, int y, unsigned char color);
-int (*VVPC_Get_Pixel_Func)(void*, int x, int y);
-long (*VVPC_Buffer_To_Page)(int x, int y, int w, int h, void* Buffer, void* view);
-bool (*VVPC_Blit_to_GVPC_Func)(void*, void*, int, int, int, int, int, int, bool);
-bool (*VVPC_Blit_to_VVPC_Func)(void*, void*, int, int, int, int, int, int, bool);
-bool (*VVPC_Scale_To_GVPC)(void*, void*, int, int, int, int, int, int, int, int, bool, char*);
-bool (*VVPC_Scale_To_VVPC)(void*, void*, int, int, int, int, int, int, int, int, bool, char*);
-long (*VVPC_Print_Func)(void*, const char*, int, int, int, int);
-void (*VVPC_Draw_Stamp)(void*, void*, int, int, int, void*);
-long (*VVPC_Size_Of_Region)(void*, int, int);
-
-#endif // not_any_more_it_doesnt
-
-/*=========================================================================*/
 /* We need to keep a pointer to the logic page hanging around somewhere		*/
 /*=========================================================================*/
 GraphicViewPortClass* LogicPage;

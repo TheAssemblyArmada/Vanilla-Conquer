@@ -439,8 +439,6 @@ bool Init_Game(int, char*[])
     return (true);
 }
 
-extern bool Get_Broadcast_Addresses(void);
-
 /***********************************************************************************************
  * Select_Game -- The game's main menu                                                         *
  *                                                                                             *
@@ -2645,46 +2643,10 @@ static void Init_Bootstrap_Mixfiles(void)
  * HISTORY:                                                                                    *
  *   06/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-//#define DENZIL_MIXEXTRACT
-#ifdef DENZIL_MIXEXTRACT
-void Extract(char* filename, char* outfile);
-#endif
-
 static void Init_Secondary_Mixfiles(void)
 {
     MainMix = new MFCD("MAIN.MIX", &FastKey);
     assert(MainMix != NULL);
-
-// Denzil extract mixfile
-#ifdef DENZIL_MIXEXTRACT
-#if (0)
-    Extract("CONQUER.MIX", "o:\\projects\\radvd\\data\\extract\\conquer.mix");
-    Extract("EDHI.MIX", "o:\\projects\\radvd\\data\\extract\\edhi.mix");
-    Extract("EDLO.MIX", "o:\\projects\\radvd\\data\\extract\\edlo.mix");
-    Extract("GENERAL.MIX", "o:\\projects\\radvd\\data\\extract\\general.mix");
-    Extract("INTERIOR.MIX", "o:\\projects\\radvd\\data\\extract\\interior.mix");
-    Extract("MOVIES1.MIX", "o:\\projects\\radvd\\data\\extract\\movies1.mix");
-    Extract("SCORES.MIX", "o:\\projects\\radvd\\data\\extract\\scores.mix");
-    Extract("SNOW.MIX", "o:\\projects\\radvd\\data\\extract\\snow.mix");
-    Extract("SOUNDS.MIX", "o:\\projects\\radvd\\data\\extract\\sounds.mix");
-    Extract("RUSSIAN.MIX", "o:\\projects\\radvd\\data\\extract\\russian.mix");
-    Extract("ALLIES.MIX", "o:\\projects\\radvd\\data\\extract\\allies.mix");
-    Extract("TEMPERAT.MIX", "o:\\projects\\radvd\\data\\extract\\temperat.mix");
-#else
-    Extract("CONQUER.MIX", "o:\\projects\\radvd\\data\\extract\\conquer.mix");
-    Extract("EDHI.MIX", "o:\\projects\\radvd\\data\\extract\\edhi.mix");
-    Extract("EDLO.MIX", "o:\\projects\\radvd\\data\\extract\\edlo.mix");
-    Extract("GENERAL.MIX", "o:\\projects\\radvd\\data\\extract\\general.mix");
-    Extract("INTERIOR.MIX", "o:\\projects\\radvd\\data\\extract\\interior.mix");
-    Extract("MOVIES2.MIX", "o:\\projects\\radvd\\data\\extract\\movies2.mix");
-    Extract("SCORES.MIX", "o:\\projects\\radvd\\data\\extract\\scores.mix");
-    Extract("SNOW.MIX", "o:\\projects\\radvd\\data\\extract\\snow.mix");
-    Extract("SOUNDS.MIX", "o:\\projects\\radvd\\data\\extract\\sounds.mix");
-    Extract("RUSSIAN.MIX", "o:\\projects\\radvd\\data\\extract\\russian.mix");
-    Extract("ALLIES.MIX", "o:\\projects\\radvd\\data\\extract\\allies.mix");
-    Extract("TEMPERAT.MIX", "o:\\projects\\radvd\\data\\extract\\temperat.mix");
-#endif
-#endif
 
     /*
     **	Inform the file system of the various MIX files.
@@ -3161,32 +3123,6 @@ void __PRO(void)
     //	printf("_pro\n");
 }
 }
-
-#ifdef DENZIL_MIXEXTRACT
-void Extract(char* filename, char* outname)
-{
-    CCFileClass inFile(filename);
-    CCFileClass outFile(outname);
-
-    inFile.Open();
-    outFile.Open(WRITE);
-
-    void* buffer = malloc(32768);
-
-    if (buffer) {
-        unsigned long size = inFile.Size();
-        unsigned long bytes;
-
-        while (size > 0) {
-            bytes = inFile.Read(buffer, 32768);
-            outFile.Write(buffer, bytes);
-            size -= bytes;
-        }
-
-        free(buffer);
-    }
-}
-#endif
 
 /***********************************************************************************************
  * Free_Heaps -- Clear out the heaps before exit                                               *
