@@ -2,14 +2,20 @@ cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-if(NOT WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    # until we are truly portable, assume MinGW if no toolchain is set (use -DCMAKE_TOOLCHAIN_FILE= to force native build)
-    set(CMAKE_TOOLCHAIN_FILE "cmake/mingw-toolchain.cmake")
-    message(STATUS "Cross-compiling for Win32 with MinGW-W64")
-endif()
-
 if(NOT DEFINED CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build, options are: Debug Release" FORCE)
+endif()
+
+option(FORCE_32BIT "Build 32-bit binaries on a 64-bit host" ON)
+option(USE_ASM "Use x86 assembly optimizations." OFF)
+
+if(USE_ASM)
+    set(FORCE_32BIT ON)
+endif()
+
+if(FORCE_32BIT AND NOT MSVC)
+    list(APPEND CMAKE_CXX_FLAGS_INIT "-m32")
+    list(APPEND CMAKE_C_FLAGS_INIT "-m32")
 endif()
 
 project(VanillaConquer)
@@ -30,7 +36,6 @@ option(MAP_EDITORRA "Include internal scenario editor in Red Alert build." OFF)
 option(NETWORKING "Enable network play." ON)
 option(DSOUND "Enable DirectSound audio." ON)
 option(DDRAW "Enable DirectDraw video backend." ON)
-option(USE_ASM "Use x86 assembly optimizations." OFF)
 option(BUILD_TESTS "Build unit tests." OFF)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -57,10 +62,16 @@ else()
         endif()
     endif()
 
-    set(CMAKE_CXX_FLAGS_DEBUG "-gstabs3")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32 -w -fpermissive -fpack-struct=1 -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
-    set(CMAKE_C_FLAGS_DEBUG "-gstabs3")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -w -fpermissive -fpack-struct=1 -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
+    if(WIN32)
+        set(CMAKE_CXX_FLAGS_DEBUG "-gstabs3")
+        set(CMAKE_C_FLAGS_DEBUG "-gstabs3")
+    else()
+        set(CMAKE_CXX_FLAGS_DEBUG "-g3")
+        set(CMAKE_C_FLAGS_DEBUG "-g3")
+    endif()
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fpermissive -fpack-struct=1 -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fpermissive -fpack-struct=1 -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
     set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
 endif()
 
@@ -119,6 +130,10 @@ add_subdirectory(tiberiandawn)
 add_subdirectory(redalert)
 
 message(STATUS "VanillaConquer will be built with the following configuration:")
+
+if(FORCE_32BIT)
+    message(STATUS "  Forced 32-bit build on a 64-bit host.")
+endif()
 
 if(BUILD_REMASTERTD)
     message(STATUS "  Build a Tiberian Dawn Remastered dll.")
