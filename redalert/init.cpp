@@ -2200,34 +2200,40 @@ static void Init_Color_Remaps(void)
         ColorRemaps[pcolor].Box = HidPage.Get_Pixel(4, pcolor);
     }
 
-    /* 12/9/2019 SKY - Swap Blue and Grey color remaps */
-    {
-        RemapControlType temp;
-        memcpy(&temp, &ColorRemaps[PCOLOR_BLUE], sizeof(RemapControlType));
-        memcpy(&ColorRemaps[PCOLOR_BLUE], &ColorRemaps[PCOLOR_GREY], sizeof(RemapControlType));
-        memcpy(&ColorRemaps[PCOLOR_GREY], &temp, sizeof(RemapControlType));
-    }
+	
+#ifdef REMASTER_BUILD
+	/* 12/9/2019 SKY - Swap Blue and Grey color remaps */
+	/*
+	{
+		RemapControlType temp;
+		memcpy(&temp, &ColorRemaps[PCOLOR_BLUE], sizeof(RemapControlType));
+		memcpy(&ColorRemaps[PCOLOR_BLUE], &ColorRemaps[PCOLOR_GREY], sizeof(RemapControlType));
+		memcpy(&ColorRemaps[PCOLOR_GREY], &temp, sizeof(RemapControlType));
+	}
+	*/
+#endif
 
-    /*
-    ** Now do the special dim grey scheme
-    */
-    for (int color = 0; color < 256; color++) {
-        GreyScheme.RemapTable[color] = color;
-    }
-    for (int index = 0; index < 6; index++) {
-        GreyScheme.FontRemap[10 + index] = HidPage.Get_Pixel(9 + index, PCOLOR_GREY) & 0x00FF;
-    }
-    GreyScheme.BrightColor = HidPage.Get_Pixel(3, PCOLOR_GREY) & 0x00FF;
-    GreyScheme.Color = HidPage.Get_Pixel(7, PCOLOR_GREY) & 0x00FF;
+	/*
+** Now do the special dim grey scheme
+*/
+	for (int color = 0; color < 256; color++) {
+		GreyScheme.RemapTable[color] = color;
+	}
 
-    GreyScheme.Shadow = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(15, PCOLOR_GREY) & 0x00FF];
-    GreyScheme.Background = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(14, PCOLOR_GREY) & 0x00FF];
-    GreyScheme.Corners = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(13, PCOLOR_GREY) & 0x00FF];
-    GreyScheme.Highlight = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(9, PCOLOR_GREY) & 0x00FF];
-    GreyScheme.Bright = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(5, PCOLOR_GREY) & 0x00FF];
-    GreyScheme.Underline = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(5, PCOLOR_GREY) & 0x00FF];
-    GreyScheme.Bar = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(11, PCOLOR_GREY) & 0x00FF];
-    GreyScheme.Box = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(11, PCOLOR_GREY) & 0x00FF];
+	for (int index = 0; index < 6; index++) {
+		GreyScheme.FontRemap[10 + index] = HidPage.Get_Pixel(9 + index, PCOLOR_GREY) & 0x00FF;
+	}
+	GreyScheme.BrightColor = HidPage.Get_Pixel(3, PCOLOR_GREY) & 0x00FF;
+	GreyScheme.Color = HidPage.Get_Pixel(7, PCOLOR_GREY) & 0x00FF;
+
+	GreyScheme.Shadow = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(15, PCOLOR_GREY) & 0x00FF];
+	GreyScheme.Background = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(14, PCOLOR_GREY) & 0x00FF];
+	GreyScheme.Corners = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(13, PCOLOR_GREY) & 0x00FF];
+	GreyScheme.Highlight = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(9, PCOLOR_GREY) & 0x00FF];
+	GreyScheme.Bright = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(5, PCOLOR_GREY) & 0x00FF];
+	GreyScheme.Underline = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(5, PCOLOR_GREY) & 0x00FF];
+	GreyScheme.Bar = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(11, PCOLOR_GREY) & 0x00FF];
+	GreyScheme.Box = ColorRemaps[PCOLOR_GREY].RemapTable[HidPage.Get_Pixel(11, PCOLOR_GREY) & 0x00FF];
 
     /*
     ** Set up the metallic remap table for the font that prints over the tabs
