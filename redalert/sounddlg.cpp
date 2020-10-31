@@ -56,6 +56,54 @@ protected:
     virtual void Draw_Entry(int index, int x, int y, int width, int selected);
 };
 
+int SoundControlsClass::Init(void)
+{
+    int factor = (SeenBuff.Get_Width() == 320) ? 1 : 2;
+    OptionWidth = OPTION_WIDTH * factor;
+    OptionHeight = 146 * factor;
+
+    OptionX = ((SeenBuff.Get_Width() - OptionWidth) / 2);
+    OptionY = (SeenBuff.Get_Height() - OptionHeight) / 2;
+
+    ListboxX = 17 * factor;
+    ListboxY = 54 * factor;
+    ListboxW = OptionWidth - (ListboxX * 2);
+#ifdef FIXIT_CSII //	checked - ajw 9/28/98
+    ListboxH = (72 * factor) + 2;
+#else
+    ListboxH = 72 * factor;
+#endif
+
+    ButtonWidth = 70 * factor;
+    ButtonX = OptionWidth - (ButtonWidth + (17 * factor));
+    ButtonY = 128 * factor;
+
+    StopX = 17 * factor;
+    StopY = 128 * factor;
+
+    PlayX = 35 * factor;
+    PlayY = 128 * factor;
+
+    OnOffWidth = 25 * factor;
+
+    ShuffleX = SHUFFLE_X * factor;
+    ShuffleY = 128 * factor;
+
+    RepeatX = REPEAT_X * factor;
+    RepeatY = 128 * factor;
+
+    MSliderX = 147 * factor;
+    MSliderY = 28 * factor;
+    MSliderW = 108 * factor;
+    MSliderHeight = 5 * factor;
+
+    FXSliderX = 147 * factor;
+    FXSliderY = 40 * factor;
+    FXSliderW = 108 * factor;
+    FXSliderHeight = 5 * factor;
+    return (factor);
+}
+
 /***********************************************************************************************
  * SoundControlsClass::Process -- Handles all the options graphic interface.                   *
  *                                                                                             *
@@ -72,118 +120,60 @@ protected:
  *=============================================================================================*/
 void SoundControlsClass::Process(void)
 {
-
-    /*
-    ** Adjust dialog controls for resolution
-    */
-    int option_width = OPTION_WIDTH * RESFACTOR;
-    int option_height = OPTION_HEIGHT * RESFACTOR;
-
-    int option_x = OPTION_X * RESFACTOR;
-    int option_y = OPTION_Y * RESFACTOR;
-
-    int listbox_x = LISTBOX_X * RESFACTOR;
-    int listbox_y = LISTBOX_Y * RESFACTOR;
-    int listbox_w = LISTBOX_W * RESFACTOR;
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-#ifdef WIN32
-    int listbox_h = (LISTBOX_H * RESFACTOR) + 2;
-#else
-    int listbox_h = LISTBOX_H * RESFACTOR;
-#endif
-#else
-    int listbox_h = LISTBOX_H * RESFACTOR;
-#endif
-
-    int button_width = BUTTON_WIDTH * RESFACTOR;
-    int button_x = BUTTON_X * RESFACTOR;
-    int button_y = BUTTON_Y * RESFACTOR;
-
-    int stop_x = STOP_X * RESFACTOR;
-    int stop_y = STOP_Y * RESFACTOR;
-
-    int play_x = PLAY_X * RESFACTOR;
-    int play_y = PLAY_Y * RESFACTOR;
-
-    int onoff_width = ONOFF_WIDTH * RESFACTOR;
-    int shuffle_x = SHUFFLE_X * RESFACTOR;
-    int shuffle_y = SHUFFLE_Y * RESFACTOR;
-    int repeat_x = REPEAT_X * RESFACTOR;
-    int repeat_y = REPEAT_Y * RESFACTOR;
-
-    int mslider_x = MSLIDER_X * RESFACTOR;
-    int mslider_y = MSLIDER_Y * RESFACTOR;
-    int mslider_w = MSLIDER_W * RESFACTOR;
-    int mslider_height = MSLIDER_HEIGHT * RESFACTOR;
-
-    int fxslider_x = FXSLIDER_X * RESFACTOR;
-    int fxslider_y = FXSLIDER_Y * RESFACTOR;
-    int fxslider_w = FXSLIDER_W * RESFACTOR;
-    int fxslider_height = FXSLIDER_HEIGHT * RESFACTOR;
-
-    int button_stop = BUTTON_STOP;
-    int button_play = BUTTON_PLAY;
-    int button_shuffle = BUTTON_SHUFFLE;
-    int button_repeat = BUTTON_REPEAT;
-    int button_options = BUTTON_OPTIONS;
-    int slider_music = SLIDER_MUSIC;
-    int slider_sound = SLIDER_SOUND;
-    int button_listbox = BUTTON_LISTBOX;
-
     RemapControlType* scheme = GadgetClass::Get_Color_Scheme();
     //	ThemeType theme;
 
+    int factor = (SeenBuff.Get_Width() == 320) ? 1 : 2;
+
+    Init();
     /*
     **	List box that holds the score text strings.
     */
-    MusicListClass listbox(0, option_x + listbox_x, option_y + listbox_y, listbox_w, listbox_h);
+    MusicListClass listbox(0, OptionX + ListboxX, OptionY + ListboxY, ListboxW, ListboxH);
 
     /*
     **	Return to options menu button.
     */
-    TextButtonClass returnto(
-        BUTTON_OPTIONS, TXT_OK, TPF_BUTTON, option_x + button_x, option_y + button_y, button_width);
+    TextButtonClass returnto(BUTTON_OPTIONS, TXT_OK, TPF_BUTTON, OptionX + ButtonX, OptionY + ButtonY, ButtonWidth);
     //	TextButtonClass returnto(BUTTON_OPTIONS, TXT_OPTIONS_MENU, TPF_BUTTON,
 
     /*
     **	Stop playing button.
     */
-    ShapeButtonClass stopbtn(BUTTON_STOP, MFCD::Retrieve("BTN-ST.SHP"), option_x + stop_x, option_y + stop_y);
+    ShapeButtonClass stopbtn(BUTTON_STOP, MFCD::Retrieve("BTN-ST.SHP"), OptionX + StopX, OptionY + StopY);
 
     /*
     **	Start playing button.
     */
-    ShapeButtonClass playbtn(BUTTON_PLAY, MFCD::Retrieve("BTN-PL.SHP"), option_x + play_x, option_y + play_y);
+    ShapeButtonClass playbtn(BUTTON_PLAY, MFCD::Retrieve("BTN-PL.SHP"), OptionX + PlayX, OptionY + PlayY);
 
     /*
     **	Shuffle control.
     */
-    TextButtonClass shufflebtn(
-        BUTTON_SHUFFLE, TXT_OFF, TPF_BUTTON, option_x + shuffle_x, option_y + shuffle_y, onoff_width);
+    TextButtonClass shufflebtn(BUTTON_SHUFFLE, TXT_OFF, TPF_BUTTON, OptionX + ShuffleX, OptionY + ShuffleY, OnOffWidth);
     //	TextButtonClass shufflebtn(BUTTON_SHUFFLE, TXT_OFF, TPF_BUTTON, option_x+shuffle_x, option_y+shuffle_y,
     //ONOFF_WIDTH);
 
     /*
     **	Repeat control.
     */
-    TextButtonClass repeatbtn(
-        BUTTON_REPEAT, TXT_OFF, TPF_BUTTON, option_x + repeat_x, option_y + repeat_y, onoff_width);
+    TextButtonClass repeatbtn(BUTTON_REPEAT, TXT_OFF, TPF_BUTTON, OptionX + RepeatX, OptionY + RepeatY, OnOffWidth);
 
     /*
     **	Music volume slider.
     */
-    SliderClass music(SLIDER_MUSIC, option_x + mslider_x, option_y + mslider_y, mslider_w, mslider_height, true);
+    SliderClass music(SLIDER_MUSIC, OptionX + MSliderX, OptionY + MSliderY, MSliderW, MSliderHeight, true);
 
     /*
     **	Sound volume slider.
     */
-    SliderClass sound(SLIDER_SOUND, option_x + fxslider_x, option_y + fxslider_y, fxslider_w, fxslider_height, true);
+    SliderClass sound(SLIDER_SOUND, OptionX + FXSliderX, OptionY + FXSliderY, FXSliderW, FXSliderHeight, true);
 
     /*
     **	Causes left mouse clicks inside the dialog area, but not on any
     **	particular button, to be ignored.
     */
-    GadgetClass area(option_x, option_y, option_width, option_height, GadgetClass::LEFTPRESS);
+    GadgetClass area(OptionX, OptionY, OptionWidth, OptionHeight, GadgetClass::LEFTPRESS);
 
     /*
     **	Causes right clicks anywhere or left clicks outside of the dialog
@@ -272,7 +262,7 @@ void SoundControlsClass::Process(void)
             }
         }
     }
-    static int _tabs[] = {55 * RESFACTOR, 72 * RESFACTOR, 90 * RESFACTOR};
+    static int _tabs[] = {55 * factor, 72 * factor, 90 * factor};
     listbox.Set_Tabs(_tabs);
 
     /*
@@ -294,16 +284,15 @@ void SoundControlsClass::Process(void)
             }
         }
 
-#ifdef WIN32
         /*
         ** If we have just received input focus again after running in the background then
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = true;
         }
-#endif
+
         /*
         **	Refresh display if needed.
         */
@@ -314,47 +303,39 @@ void SoundControlsClass::Process(void)
             /*
             **	Draw the background.
             */
-            Dialog_Box(option_x, option_y, option_width, option_height);
+            Dialog_Box(OptionX, OptionY, OptionWidth, OptionHeight);
 
-            Draw_Caption(TXT_SOUND_CONTROLS, option_x, option_y, option_width);
+            Draw_Caption(TXT_SOUND_CONTROLS, OptionX, OptionY, OptionWidth);
 
             /*
             ** Draw the Music, Speech & Sound titles.
             */
             Fancy_Text_Print(TXT_MUSIC_VOLUME,
-                             option_x + mslider_x - (5 * RESFACTOR),
-                             option_y + mslider_y - (2 * RESFACTOR),
+                             OptionX + MSliderX - 10,
+                             OptionY + MSliderY - 4,
                              scheme,
                              TBLACK,
                              TPF_TEXT | TPF_RIGHT);
             Fancy_Text_Print(TXT_SOUND_VOLUME,
-                             option_x + fxslider_x - (5 * RESFACTOR),
-                             option_y + fxslider_y - (2 * RESFACTOR),
+                             OptionX + FXSliderX - 10,
+                             OptionY + FXSliderY - 4,
                              scheme,
                              TBLACK,
                              TPF_TEXT | TPF_RIGHT);
 
 #if defined(GERMAN) || defined(FRENCH)
             Fancy_Text_Print(TXT_SHUFFLE,
-                             option_x + 4 + shuffle_x - (5 * RESFACTOR),
-                             option_y + shuffle_y + (1 * RESFACTOR),
+                             Option_X + 4 + Shuffle_X - 10,
+                             Option_Y + Shuffle_Y + 2,
                              scheme,
                              TBLACK,
                              TPF_TEXT | TPF_RIGHT);
 #else
-            Fancy_Text_Print(TXT_SHUFFLE,
-                             option_x + shuffle_x - (5 * RESFACTOR),
-                             option_y + shuffle_y + (1 * RESFACTOR),
-                             scheme,
-                             TBLACK,
-                             TPF_TEXT | TPF_RIGHT);
+            Fancy_Text_Print(
+                TXT_SHUFFLE, OptionX + ShuffleX - 10, OptionY + ShuffleY + 2, scheme, TBLACK, TPF_TEXT | TPF_RIGHT);
 #endif
-            Fancy_Text_Print(TXT_REPEAT,
-                             option_x + repeat_x - (5 * RESFACTOR),
-                             option_y + repeat_y + (1 * RESFACTOR),
-                             scheme,
-                             TBLACK,
-                             TPF_TEXT | TPF_RIGHT);
+            Fancy_Text_Print(
+                TXT_REPEAT, OptionX + RepeatX - 10, OptionY + RepeatY + 2, scheme, TBLACK, TPF_TEXT | TPF_RIGHT);
 
             optionsbtn->Draw_All();
             Show_Mouse();
@@ -411,7 +392,9 @@ void SoundControlsClass::Process(void)
         */
         case KN_SPACE:
         case BUTTON_PLAY | KN_BUTTON:
-            Theme.Queue_Song((ThemeType) * ((unsigned char*)listbox.Current_Item()));
+            if (listbox.Count()) {
+                Theme.Queue_Song((ThemeType) * ((unsigned char*)listbox.Current_Item()));
+            }
             break;
 
         /*
