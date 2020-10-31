@@ -101,7 +101,6 @@ class SoundControlsClass
         BUTTON_REPEAT,
         BUTTON_OPTIONS,
         SLIDER_MUSIC,
-        //		SLIDER_SPEECH,
         SLIDER_SOUND,
         BUTTON_LISTBOX,
     };

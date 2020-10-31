@@ -110,6 +110,47 @@ public:
     {
     }
     void Process(void);
+    int Init(void);
+
+private:
+    int OptionWidth;
+    int OptionHeight;
+
+    int OptionX;
+    int OptionY;
+
+    int ListboxX;
+    int ListboxY;
+    int ListboxW;
+    int ListboxH;
+
+    int ButtonWidth;
+    int ButtonX;
+    int ButtonY;
+
+    int StopX;
+    int StopY;
+
+    int PlayX;
+    int PlayY;
+
+    int OnOffWidth;
+
+    int ShuffleX;
+    int ShuffleY;
+
+    int RepeatX;
+    int RepeatY;
+
+    int MSliderX;
+    int MSliderY;
+    int MSliderW;
+    int MSliderHeight;
+
+    int FXSliderX;
+    int FXSliderY;
+    int FXSliderW;
+    int FXSliderHeight;
 };
 
 #endif
