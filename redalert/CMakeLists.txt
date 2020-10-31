@@ -145,7 +145,6 @@ set(REDALERT_SRC
     smudge.cpp
     sounddlg.cpp
     special.cpp
-    sprite.cpp
     stamp.asm
     startup.cpp
     statbtn.cpp
