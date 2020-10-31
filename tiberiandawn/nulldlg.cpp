@@ -3605,7 +3605,7 @@ int Com_Scenario_Dialog(void)
 ---------------------------- Init Mono Output ----------------------------
 */
 #if (SHOW_MONO)
-    NullModem.Configure_Debug(sizeof(CommHeaderType), sizeof(SerialCommandType), SerialPacketNames, 106);
+    NullModem.Configure_Debug(sizeof(CommHeaderType), sizeof(SerialCommandType), SerialPacketNames, 0, 108);
     NullModem.Mono_Debug_Print(1);
 #endif
 
@@ -4927,7 +4927,7 @@ int Com_Show_Scenario_Dialog(void)
 ---------------------------- Init Mono Output ----------------------------
 */
 #if (SHOW_MONO)
-    NullModem.Configure_Debug(sizeof(CommHeaderType), sizeof(SerialCommandType), SerialPacketNames, 106);
+    NullModem.Configure_Debug(sizeof(CommHeaderType), sizeof(SerialCommandType), SerialPacketNames, 0, 108);
     NullModem.Mono_Debug_Print(1);
 #endif
 

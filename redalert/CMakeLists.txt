@@ -24,8 +24,6 @@ set(REDALERT_SRC
     cheklist.cpp
     colrlist.cpp
     combat.cpp
-    combuf.cpp
-    comqueue.cpp
     confdlg.cpp
     connect.cpp
     conquer.cpp

@@ -1577,11 +1577,12 @@ void IPXManagerClass::Set_Bridge(NetNumType bridge)
  * CommHeaderType values.																	*
  *                                                                         *
  * INPUT:                                                                  *
- *		index			connection index to configure (-1 = Global Channel)		*
- *		offset		ID's byte offset into packet										*
- *		size			size of ID, in bytes; 0 if none									*
- *		names			ptr to array of names; use ID as an index into this		*
- *		maxnames		max # in the names array; 0 if none.							*
+ *		index				connection index to configure (-1 = Global Channel)	*
+ *		type_offset		ID's byte offset into packet									*
+ *		type_size		size of ID, in bytes; 0 if none								*
+ *		names				ptr to array of names; use ID as an index into this	*
+ *		namestart		numerical value of 1st name in the array					*
+ *		namecount		# in the names array; 0 if none.								*
  *                                                                         *
  * OUTPUT:                                                                 *
  *		none.																						*
@@ -1592,14 +1593,17 @@ void IPXManagerClass::Set_Bridge(NetNumType bridge)
  * HISTORY:                                                                *
  *   05/31/1995 BRR : Created.                                             *
  *=========================================================================*/
-void IPXManagerClass::Configure_Debug(int index, int offset, int size, char** names, int maxnames)
+void IPXManagerClass::Configure_Debug(int index,
+                                      int type_offset,
+                                      int type_size,
+                                      char** names,
+                                      int namestart,
+                                      int namecount)
 {
     if (index == -1) {
-        GlobalChannel->Queue->Configure_Debug(offset, size, names, maxnames);
-    } else {
-        if (Connection[index]) {
-            Connection[index]->Queue->Configure_Debug(offset, size, names, maxnames);
-        }
+        GlobalChannel->Queue->Configure_Debug(type_offset, type_size, names, namestart, namecount);
+    } else if (Connection[index]) {
+        Connection[index]->Queue->Configure_Debug(type_offset, type_size, names, namestart, namecount);
     }
 }
 
