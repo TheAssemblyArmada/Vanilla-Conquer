@@ -13,55 +13,55 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\comqueue.cpv   1.10   16 Oct 1995 16:49:14   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/COMBUF.CPP 1     3/03/97 10:24a Joe_bostic $ */
 /***************************************************************************
  **   C O N F I D E N T I A L --- W E S T W O O D    S T U D I O S        **
  ***************************************************************************
  *                                                                         *
  *                 Project Name : Command & Conquer                        *
  *                                                                         *
- *                    File Name : COMQUEUE.CPP                             *
+ *                    File Name : COMBUF.CPP                             	*
  *                                                                         *
  *                   Programmer : Bill Randolph                            *
  *                                                                         *
  *                   Start Date : December 19, 1994                        *
  *                                                                         *
- *                  Last Update : May 31, 1995 [BRR]                       *
+ *                  Last Update : October 23, 1995 [BRR]                   *
  *                                                                         *
  *-------------------------------------------------------------------------*
  * Functions:                                                              *
- *   CommQueueClass::CommQueueClass -- class constructor                   *
- *   CommQueueClass::~CommQueueClass -- class destructor                   *
- *   CommQueueClass::Init -- initializes this queue                        *
- *   CommQueueClass::Queue_Send -- queues a message for sending            *
- *   CommQueueClass::UnQueue_Send -- removes next entry from send queue    *
- *   CommQueueClass::Next_Send -- gets ptr to next entry in send queue     *
- *   CommQueueClass::Get_Send -- gets ptr to queue entry                   *
- *   CommQueueClass::Queue_Receive -- queues a received message            *
- *   CommQueueClass::UnQueue_Receive -- removes next entry from send queue *
- *   CommQueueClass::Next_Receive -- gets ptr to next entry in send queue  *
- *   CommQueueClass::Get_Receive -- gets ptr to queue entry                *
- *   CommQueueClass::Add_Delay -- adds a new delay value for response time *
- *   CommQueueClass::Avg_Response_Time -- returns average response time    *
- *   CommQueueClass::Max_Response_Time -- returns max response time        *
- *   CommQueueClass::Reset_Response_Time -- resets computations            *
- *   CommQueueClass::Configure_Debug -- sets up special debug values       *
- *   CommQueueClass::Mono_Debug_Print -- Debug output routine              *
- *   CommQueueClass::Mono_Debug_Print2 -- Debug output; alternate format   *
+ *   CommBufferClass::CommBufferClass -- class constructor           		*
+ *   CommBufferClass::~CommBufferClass -- class destructor           		*
+ *   CommBufferClass::Init -- initializes this queue                       *
+ *   CommBufferClass::Init_Send_Queue -- Clears the send queue             *
+ *   CommBufferClass::Queue_Send -- queues a message for sending           *
+ *   CommBufferClass::UnQueue_Send -- removes next entry from send queue	*
+ *   CommBufferClass::Get_Send -- gets ptr to queue entry                  *
+ *   CommBufferClass::Queue_Receive -- queues a received message				*
+ *   CommBufferClass::UnQueue_Receive -- removes next entry from send queue*
+ *   CommBufferClass::Get_Receive -- gets ptr to queue entry               *
+ *   CommBufferClass::Add_Delay -- adds a new delay value for response time*
+ *   CommBufferClass::Avg_Response_Time -- returns average response time  	*
+ *   CommBufferClass::Max_Response_Time -- returns max response time  		*
+ *   CommBufferClass::Reset_Response_Time -- resets computations				*
+ *   Mono_Debug_Print -- Debug output routine                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#if (0)
 
-#include "function.h"
+#include <stdio.h>
+#include <string.h>
+#include "combuf.h"
 
-#ifndef DEMO
+// todo for ConnectionClass::Command_Name in Mono_Debug_Print2, fix when moved
+//#include "connect.h"        // for command names for debug output
 
 /***************************************************************************
- * CommQueueClass::CommQueueClass -- class constructor             			*
+ * CommBufferClass::CommBufferClass -- class constructor             		*
  *                                                                         *
  * INPUT:                                                                  *
  *		numsend		# queue entries for sending										*
  *		numreceive	# queue entries for receiving										*
  *		maxlen		maximum desired packet length, in bytes						*
+ *		extralen		max size of app-specific extra bytes (optional)				*
  *                                                                         *
  * OUTPUT:                                                                 *
  *		none.																						*
@@ -72,40 +72,54 @@
  * HISTORY:                                                                *
  *   12/19/1994 BR : Created.                                              *
  *=========================================================================*/
-CommQueueClass::CommQueueClass(int numsend, int numreceive, int maxlen)
+CommBufferClass::CommBufferClass(int numsend, int numreceive, int maxlen, int extralen)
 {
     int i;
 
-    /*
-    ----------------------------- Init variables -----------------------------
-    */
+    //------------------------------------------------------------------------
+    //	Init variables
+    //------------------------------------------------------------------------
     MaxSend = numsend;
     MaxReceive = numreceive;
     MaxPacketSize = maxlen;
+    MaxExtraSize = extralen;
 
-    /*
-    ----------------------- Allocate the queue entries -----------------------
-    */
+    //------------------------------------------------------------------------
+    //	Allocate the queue entries
+    //------------------------------------------------------------------------
     SendQueue = new SendQueueType[numsend];
     ReceiveQueue = new ReceiveQueueType[numreceive];
 
-    /*
-    ---------------------- Allocate queue entry buffers ----------------------
-    */
+    SendIndex = new int[numsend];
+    ReceiveIndex = new int[numreceive];
+
+    //------------------------------------------------------------------------
+    //	Allocate queue entry buffers
+    //------------------------------------------------------------------------
     for (i = 0; i < MaxSend; i++) {
         SendQueue[i].Buffer = new char[maxlen];
+        if (MaxExtraSize > 0) {
+            SendQueue[i].ExtraBuffer = new char[MaxExtraSize];
+        } else {
+            SendQueue[i].ExtraBuffer = NULL;
+        }
     }
 
     for (i = 0; i < MaxReceive; i++) {
         ReceiveQueue[i].Buffer = new char[maxlen];
+        if (MaxExtraSize > 0) {
+            ReceiveQueue[i].ExtraBuffer = new char[MaxExtraSize];
+        } else {
+            ReceiveQueue[i].ExtraBuffer = NULL;
+        }
     }
 
     Init();
 
-} /* end of CommQueueClass */
+} /* end of CommBufferClass */
 
 /***************************************************************************
- * CommQueueClass::~CommQueueClass -- class destructor             			*
+ * CommBufferClass::~CommBufferClass -- class destructor             		*
  *                                                                         *
  * INPUT:                                                                  *
  *		none.																						*
@@ -119,28 +133,37 @@ CommQueueClass::CommQueueClass(int numsend, int numreceive, int maxlen)
  * HISTORY:                                                                *
  *   12/19/1994 BR : Created.                                              *
  *=========================================================================*/
-CommQueueClass::~CommQueueClass()
+CommBufferClass::~CommBufferClass()
 {
     int i;
 
-    /*
-    ------------------------ Free queue entry buffers ------------------------
-    */
+    //------------------------------------------------------------------------
+    //	Free queue entry buffers
+    //------------------------------------------------------------------------
     for (i = 0; i < MaxSend; i++) {
         delete[] SendQueue[i].Buffer;
+        if (SendQueue[i].ExtraBuffer) {
+            delete[] SendQueue[i].ExtraBuffer;
+        }
     }
 
     for (i = 0; i < MaxReceive; i++) {
         delete[] ReceiveQueue[i].Buffer;
+        if (ReceiveQueue[i].ExtraBuffer) {
+            delete[] ReceiveQueue[i].ExtraBuffer;
+        }
     }
 
     delete[] SendQueue;
     delete[] ReceiveQueue;
 
-} /* end of ~CommQueueClass */
+    delete[] SendIndex;
+    delete[] ReceiveIndex;
+
+} /* end of ~CommBufferClass */
 
 /***************************************************************************
- * CommQueueClass::Init -- initializes this queue                          *
+ * CommBufferClass::Init -- initializes this queue                         *
  *                                                                         *
  * INPUT:                                                                  *
  *		none.																						*
@@ -154,13 +177,13 @@ CommQueueClass::~CommQueueClass()
  * HISTORY:                                                                *
  *   01/20/1995 BR : Created.                                              *
  *=========================================================================*/
-void CommQueueClass::Init(void)
+void CommBufferClass::Init(void)
 {
     int i;
 
-    /*------------------------------------------------------------------------
-    Init data members
-    ------------------------------------------------------------------------*/
+    //------------------------------------------------------------------------
+    //	Init data members
+    //------------------------------------------------------------------------
     SendTotal = 0L;
     ReceiveTotal = 0L;
 
@@ -170,47 +193,93 @@ void CommQueueClass::Init(void)
     MaxDelay = 0L;
 
     SendCount = 0;
-    SendNext = 0;
-    SendEmpty = 0;
 
     ReceiveCount = 0;
-    ReceiveNext = 0;
-    ReceiveEmpty = 0;
 
-    /*------------------------------------------------------------------------
-    Init the queue entries
-    ------------------------------------------------------------------------*/
+    //------------------------------------------------------------------------
+    //	Init the queue entries
+    //------------------------------------------------------------------------
     for (i = 0; i < MaxSend; i++) {
         SendQueue[i].IsActive = 0;
         SendQueue[i].IsACK = 0;
         SendQueue[i].FirstTime = 0L;
         SendQueue[i].LastTime = 0L;
         SendQueue[i].SendCount = 0L;
-        ReceiveQueue[i].BufLen = 0;
+        SendQueue[i].BufLen = 0;
+        SendQueue[i].ExtraLen = 0;
+
+        SendIndex[i] = 0;
     }
+
     for (i = 0; i < MaxReceive; i++) {
         ReceiveQueue[i].IsActive = 0;
         ReceiveQueue[i].IsRead = 0;
         ReceiveQueue[i].IsACK = 0;
         ReceiveQueue[i].BufLen = 0;
+        ReceiveQueue[i].ExtraLen = 0;
+
+        ReceiveIndex[i] = 0;
     }
 
-    /*------------------------------------------------------------------------
-    Init debug values
-    ------------------------------------------------------------------------*/
+    //------------------------------------------------------------------------
+    //	Init debug values
+    //------------------------------------------------------------------------
     DebugOffset = 0;
     DebugSize = 0;
     DebugNames = NULL;
-    DebugMaxNames = 0;
+    DebugNameCount = 0;
 
 } /* end of Init */
 
 /***************************************************************************
- * CommQueueClass::Queue_Send -- queues a message for sending              *
+ * CommBufferClass::Init_Send_Queue -- Clears the send queue               *
+ *                                                                         *
+ * INPUT:                                                                  *
+ *		none.																						*
+ *                                                                         *
+ * OUTPUT:                                                                 *
+ *		none.																						*
+ *                                                                         *
+ * WARNINGS:                                                               *
+ *		none.																						*
+ *                                                                         *
+ * HISTORY:                                                                *
+ *   10/23/1995 BRR : Created.                                             *
+ *=========================================================================*/
+void CommBufferClass::Init_Send_Queue(void)
+{
+    int i;
+
+    //------------------------------------------------------------------------
+    //	Init data members
+    //------------------------------------------------------------------------
+    SendCount = 0;
+
+    //------------------------------------------------------------------------
+    //	Init the queue entries
+    //------------------------------------------------------------------------
+    for (i = 0; i < MaxSend; i++) {
+        SendQueue[i].IsActive = 0;
+        SendQueue[i].IsACK = 0;
+        SendQueue[i].FirstTime = 0L;
+        SendQueue[i].LastTime = 0L;
+        SendQueue[i].SendCount = 0L;
+        SendQueue[i].BufLen = 0;
+        SendQueue[i].ExtraLen = 0;
+
+        SendIndex[i] = 0;
+    }
+
+} /* end of Init_Send_Queue */
+
+/***************************************************************************
+ * CommBufferClass::Queue_Send -- queues a message for sending             *
  *                                                                         *
  * INPUT:                                                                  *
  *		buf			buffer containing the message										*
  *		buflen		length of 'buf'														*
+ *		extrabuf		buffer containing extra data (optional)						*
+ *		extralen		length of extra data (optional)									*
  *                                                                         *
  * OUTPUT:                                                                 *
  *		1 = OK, 0 = no room in the queue													*
@@ -221,37 +290,64 @@ void CommQueueClass::Init(void)
  * HISTORY:                                                                *
  *   12/20/1994 BR : Created.                                              *
  *=========================================================================*/
-int CommQueueClass::Queue_Send(void* buf, int buflen)
+int CommBufferClass::Queue_Send(void* buf, int buflen, void* extrabuf, int extralen)
 {
-    /*
-    --------------------- Error if no room in the queue ----------------------
-    */
-    if (SendCount == MaxSend || SendQueue[SendEmpty].IsActive != 0)
+    int i;
+    int index;
+
+    //------------------------------------------------------------------------
+    //	Error if no room in the queue
+    //------------------------------------------------------------------------
+    if (SendCount == MaxSend || buflen > MaxPacketSize)
         return (0);
 
-    /*
-    ---------------------------- Set entry flags -----------------------------
-    */
-    SendQueue[SendEmpty].IsActive = 1;    // entry is now active
-    SendQueue[SendEmpty].IsACK = 0;       // entry hasn't been ACK'd
-    SendQueue[SendEmpty].FirstTime = 0L;  // filled in by Manager when sent
-    SendQueue[SendEmpty].LastTime = 0L;   // filled in by Manager when sent
-    SendQueue[SendEmpty].SendCount = 0L;  // filled in by Manager when sent
-    SendQueue[SendEmpty].BufLen = buflen; // save buffer size
+    //------------------------------------------------------------------------
+    //	Find an empty slot
+    //------------------------------------------------------------------------
+    index = -1;
+    for (i = 0; i < MaxSend; i++) {
+        if (SendQueue[i].IsActive == 0) {
+            index = i;
+            break;
+        }
+    }
+    if (index == -1)
+        return (0);
 
-    /*
-    ------------------------- Copy the packet data ---------------------------
-    */
-    memcpy(SendQueue[SendEmpty].Buffer, buf, buflen);
+    //------------------------------------------------------------------------
+    //	Set entry flags
+    //------------------------------------------------------------------------
+    SendQueue[index].IsActive = 1;    // entry is now active
+    SendQueue[index].IsACK = 0;       // entry hasn't been ACK'd
+    SendQueue[index].FirstTime = 0L;  // filled in by Manager when sent
+    SendQueue[index].LastTime = 0L;   // filled in by Manager when sent
+    SendQueue[index].SendCount = 0L;  // filled in by Manager when sent
+    SendQueue[index].BufLen = buflen; // save buffer size
 
-    /*
-    -------------------- Increment counters & entry ptr ----------------------
-    */
+    //------------------------------------------------------------------------
+    //	Copy the packet data
+    //------------------------------------------------------------------------
+    memcpy(SendQueue[index].Buffer, buf, buflen);
+
+    //------------------------------------------------------------------------
+    //	Fill in the extra data, if there is any
+    //------------------------------------------------------------------------
+    if (extrabuf != NULL && extralen > 0 && extralen <= MaxExtraSize) {
+        memcpy(SendQueue[index].ExtraBuffer, extrabuf, extralen);
+        SendQueue[index].ExtraLen = extralen;
+    } else {
+        SendQueue[index].ExtraLen = 0;
+    }
+
+    //------------------------------------------------------------------------
+    //	Save this entry's index
+    //------------------------------------------------------------------------
+    SendIndex[SendCount] = index;
+
+    //------------------------------------------------------------------------
+    //	Increment counters & entry ptr
+    //------------------------------------------------------------------------
     SendCount++;
-    SendEmpty++;
-    if (SendEmpty == MaxSend)
-        SendEmpty = 0;
-
     SendTotal++;
 
     return (1);
@@ -259,14 +355,21 @@ int CommQueueClass::Queue_Send(void* buf, int buflen)
 } /* end of Queue_Send */
 
 /***************************************************************************
- * CommQueueClass::UnQueue_Send -- removes next entry from send queue		*
+ * CommBufferClass::UnQueue_Send -- removes next entry from send queue		*
+ *                                                                         *
+ * Frees the given entry; the index given by the caller is the "active"		*
+ * index value (ie the "nth" active entry), not the actual index in the		*
+ * array.																						*
  *                                                                         *
  * INPUT:                                                                  *
  *		buf			buffer to store entry's data in; if NULL, it's discarded	*
  *		buflen		filled in with length of entry retrieved						*
+ *		index			"index" of entry to un-queue										*
+ *		extrabuf		buffer for extra data (optional)									*
+ *		extralen		ptr to length of extra data (optional)							*
  *                                                                         *
  * OUTPUT:                                                                 *
- *		1 = OK, 0 = no entry to retreive													*
+ *		1 = OK, 0 = no entry to retrieve													*
  *                                                                         *
  * WARNINGS:                                                               *
  *		none.																						*
@@ -274,69 +377,62 @@ int CommQueueClass::Queue_Send(void* buf, int buflen)
  * HISTORY:                                                                *
  *   12/20/1994 BR : Created.                                              *
  *=========================================================================*/
-int CommQueueClass::UnQueue_Send(void* buf, int* buflen)
+int CommBufferClass::UnQueue_Send(void* buf, int* buflen, int index, void* extrabuf, int* extralen)
 {
-    /*
-    --------------------- Error if no entry to retrieve ----------------------
-    */
-    if (SendCount == 0 || SendQueue[SendNext].IsActive == 0)
-        return (0);
+    int i;
 
-    /*
-    ---------------------- Copy the data from the entry ----------------------
-    */
-    if (buf != NULL) {
-        memcpy(buf, SendQueue[SendNext].Buffer, SendQueue[SendNext].BufLen);
-        (*buflen) = SendQueue[SendNext].BufLen;
+    //------------------------------------------------------------------------
+    //	Error if no entry to retrieve
+    //------------------------------------------------------------------------
+    if (SendCount == 0 || SendQueue[SendIndex[index]].IsActive == 0) {
+        return (0);
     }
 
-    /*
-    ---------------------------- Set entry flags -----------------------------
-    */
-    SendQueue[SendNext].IsActive = 0;
-    SendQueue[SendNext].IsACK = 0;
-    SendQueue[SendNext].FirstTime = 0L;
-    SendQueue[SendNext].LastTime = 0L;
-    SendQueue[SendNext].SendCount = 0L;
-    SendQueue[SendNext].BufLen = 0;
+    //------------------------------------------------------------------------
+    //	Copy the data from the entry
+    //------------------------------------------------------------------------
+    if (buf != NULL) {
+        memcpy(buf, SendQueue[SendIndex[index]].Buffer, SendQueue[SendIndex[index]].BufLen);
+        (*buflen) = SendQueue[SendIndex[index]].BufLen;
+    }
+
+    //------------------------------------------------------------------------
+    //	Copy the extra data
+    //------------------------------------------------------------------------
+    if (extrabuf != NULL && extralen != NULL) {
+        memcpy(extrabuf, SendQueue[SendIndex[index]].ExtraBuffer, SendQueue[SendIndex[index]].ExtraLen);
+        (*extralen) = SendQueue[SendIndex[index]].ExtraLen;
+    }
+
+    //------------------------------------------------------------------------
+    //	Set entry flags
+    //------------------------------------------------------------------------
+    SendQueue[SendIndex[index]].IsActive = 0;
+    SendQueue[SendIndex[index]].IsACK = 0;
+    SendQueue[SendIndex[index]].FirstTime = 0L;
+    SendQueue[SendIndex[index]].LastTime = 0L;
+    SendQueue[SendIndex[index]].SendCount = 0L;
+    SendQueue[SendIndex[index]].BufLen = 0;
+    SendQueue[SendIndex[index]].ExtraLen = 0;
+
+    //------------------------------------------------------------------------
+    //	Move Indices back one
+    //------------------------------------------------------------------------
+    for (i = index; i < SendCount - 1; i++) {
+        SendIndex[i] = SendIndex[i + 1];
+    }
+    SendIndex[SendCount - 1] = 0;
     SendCount--;
-    SendNext++;
-    if (SendNext == MaxSend)
-        SendNext = 0;
 
     return (1);
 
 } /* end of UnQueue_Send */
 
 /***************************************************************************
- * CommQueueClass::Next_Send -- gets ptr to next entry in send queue       *
- *                                                                         *
- * INPUT:                                                                  *
- *		none.																						*
- *                                                                         *
- * OUTPUT:                                                                 *
- *		ptr to entry, NULL if there is none.											*
- *                                                                         *
- * WARNINGS:                                                               *
- *		none.																						*
- *                                                                         *
- * HISTORY:                                                                *
- *   12/20/1994 BR : Created.                                              *
- *=========================================================================*/
-SendQueueType* CommQueueClass::Next_Send(void)
-{
-    if (SendCount == 0) {
-        return (NULL);
-    } else {
-        return (&SendQueue[SendNext]);
-    }
-}
-
-/***************************************************************************
- * CommQueueClass::Get_Send -- gets ptr to queue entry                     *
+ * CommBufferClass::Get_Send -- gets ptr to queue entry                    *
  *                                                                         *
  * This routine gets a pointer to the indicated queue entry.  The index		*
- * value is relative to the next-accessable queue entry; 0 = get the			*
+ * value is relative to the next-accessible queue entry; 0 = get the			*
  * next available queue entry, 1 = get the one behind that, etc.				*
  *                                                                         *
  * INPUT:                                                                  *
@@ -351,27 +447,24 @@ SendQueueType* CommQueueClass::Next_Send(void)
  * HISTORY:                                                                *
  *   12/21/1994 BR : Created.                                              *
  *=========================================================================*/
-SendQueueType* CommQueueClass::Get_Send(int index)
+SendQueueType* CommBufferClass::Get_Send(int index)
 {
-    int i;
-
-    i = SendNext + index;
-    if (i >= MaxSend)
-        i -= MaxSend;
-
-    if (SendQueue[i].IsActive == 0) {
+    if (SendQueue[SendIndex[index]].IsActive == 0) {
         return (NULL);
     } else {
-        return (&SendQueue[i]);
+        return (&SendQueue[SendIndex[index]]);
     }
-}
+
+} /* end of Get_Send */
 
 /***************************************************************************
- * CommQueueClass::Queue_Receive -- queues a received message					*
+ * CommBufferClass::Queue_Receive -- queues a received message					*
  *                                                                         *
  * INPUT:                                                                  *
  *		buf			buffer containing the message										*
  *		buflen		length of 'buf'														*
+ *		extrabuf		buffer containing extra data (optional)						*
+ *		extralen		length of extra data (optional)									*
  *                                                                         *
  * OUTPUT:                                                                 *
  *		1 = OK, 0 = no room in the queue													*
@@ -382,39 +475,63 @@ SendQueueType* CommQueueClass::Get_Send(int index)
  * HISTORY:                                                                *
  *   12/20/1994 BR : Created.                                              *
  *=========================================================================*/
-int CommQueueClass::Queue_Receive(void* buf, int buflen)
+int CommBufferClass::Queue_Receive(void* buf, int buflen, void* extrabuf, int extralen)
 {
-    /*
-    --------------------- Error if no room in the queue ----------------------
-    */
-    if (ReceiveCount == MaxReceive || ReceiveQueue[ReceiveEmpty].IsActive != 0) {
+    int i;
+    int index;
+
+    //------------------------------------------------------------------------
+    //	Error if no room in the queue
+    //------------------------------------------------------------------------
+    if (ReceiveCount == MaxReceive || buflen > MaxPacketSize) {
         return (0);
     }
 
-    /*
-    ---------------------------- Set entry flags -----------------------------
-    */
-    ReceiveQueue[ReceiveEmpty].IsActive = 1;
-    ReceiveQueue[ReceiveEmpty].IsRead = 0;
-    ReceiveQueue[ReceiveEmpty].IsACK = 0;
-    ReceiveQueue[ReceiveEmpty].BufLen = buflen;
-
-    /*
-    ------------------------- Copy the packet data ---------------------------
-    */
-    if (buflen > MaxPacketLen) {
-        CCDebugString("C&C95 - Error. Incoming packet too large");
+    //------------------------------------------------------------------------
+    //	Find an empty slot
+    //------------------------------------------------------------------------
+    index = -1;
+    for (i = 0; i < MaxReceive; i++) {
+        if (ReceiveQueue[i].IsActive == 0) {
+            index = i;
+            break;
+        }
     }
-    memcpy(ReceiveQueue[ReceiveEmpty].Buffer, buf, buflen);
+    if (index == -1)
+        return (0);
 
-    /*
-    -------------------- Increment counters & entry ptr ----------------------
-    */
+    //------------------------------------------------------------------------
+    //	Set entry flags
+    //------------------------------------------------------------------------
+    ReceiveQueue[index].IsActive = 1;
+    ReceiveQueue[index].IsRead = 0;
+    ReceiveQueue[index].IsACK = 0;
+    ReceiveQueue[index].BufLen = buflen;
+
+    //------------------------------------------------------------------------
+    //	Copy the packet data
+    //------------------------------------------------------------------------
+    memcpy(ReceiveQueue[index].Buffer, buf, buflen);
+
+    //------------------------------------------------------------------------
+    //	Fill in the extra data, if there is any
+    //------------------------------------------------------------------------
+    if (extrabuf != NULL && extralen > 0 && extralen <= MaxExtraSize) {
+        memcpy(ReceiveQueue[index].ExtraBuffer, extrabuf, extralen);
+        ReceiveQueue[index].ExtraLen = extralen;
+    } else {
+        ReceiveQueue[index].ExtraLen = 0;
+    }
+
+    //------------------------------------------------------------------------
+    //	Save this entry's index
+    //------------------------------------------------------------------------
+    ReceiveIndex[ReceiveCount] = index;
+
+    //------------------------------------------------------------------------
+    //	Increment counters & entry ptr
+    //------------------------------------------------------------------------
     ReceiveCount++;
-    ReceiveEmpty++;
-    if (ReceiveEmpty == MaxReceive)
-        ReceiveEmpty = 0;
-
     ReceiveTotal++;
 
     return (1);
@@ -422,14 +539,21 @@ int CommQueueClass::Queue_Receive(void* buf, int buflen)
 } /* end of Queue_Receive */
 
 /***************************************************************************
- * CommQueueClass::UnQueue_Receive -- removes next entry from send queue	*
+ * CommBufferClass::UnQueue_Receive -- removes next entry from send queue	*
+ *                                                                         *
+ * Frees the given entry; the index given by the caller is the "active"		*
+ * index value (ie the "nth" active entry), not the actual index in the		*
+ * array.																						*
  *                                                                         *
  * INPUT:                                                                  *
  *		buf			buffer to store entry's data in; if NULL, it's discarded	*
  *		buflen		filled in with length of entry retrieved						*
+ *		index			index of entry to un-queue											*
+ *		extrabuf		buffer for extra data (optional)									*
+ *		extralen		ptr to length of extra data (optional)							*
  *                                                                         *
  * OUTPUT:                                                                 *
- *		1 = OK, 0 = no entry to retreive													*
+ *		1 = OK, 0 = no entry to retrieve													*
  *                                                                         *
  * WARNINGS:                                                               *
  *		none.																						*
@@ -437,68 +561,60 @@ int CommQueueClass::Queue_Receive(void* buf, int buflen)
  * HISTORY:                                                                *
  *   12/20/1994 BR : Created.                                              *
  *=========================================================================*/
-int CommQueueClass::UnQueue_Receive(void* buf, int* buflen)
+int CommBufferClass::UnQueue_Receive(void* buf, int* buflen, int index, void* extrabuf, int* extralen)
 {
-    /*
-    --------------------- Error if no entry to retrieve ----------------------
-    */
-    if (ReceiveCount == 0 || ReceiveQueue[ReceiveNext].IsActive == 0) {
+    int i;
+
+    //------------------------------------------------------------------------
+    //	Error if no entry to retrieve
+    //------------------------------------------------------------------------
+    if (ReceiveCount == 0 || ReceiveQueue[ReceiveIndex[index]].IsActive == 0) {
         return (0);
     }
 
-    /*
-    ---------------------- Copy the data from the entry ----------------------
-    */
+    //------------------------------------------------------------------------
+    //	Copy the data from the entry
+    //------------------------------------------------------------------------
     if (buf != NULL) {
-        memcpy(buf, ReceiveQueue[ReceiveNext].Buffer, ReceiveQueue[ReceiveNext].BufLen);
-        (*buflen) = ReceiveQueue[ReceiveNext].BufLen;
+        memcpy(buf, ReceiveQueue[ReceiveIndex[index]].Buffer, ReceiveQueue[ReceiveIndex[index]].BufLen);
+        (*buflen) = ReceiveQueue[ReceiveIndex[index]].BufLen;
     }
 
-    /*
-    ---------------------------- Set entry flags -----------------------------
-    */
-    ReceiveQueue[ReceiveNext].IsActive = 0;
-    ReceiveQueue[ReceiveNext].IsRead = 0;
-    ReceiveQueue[ReceiveNext].IsACK = 0;
-    ReceiveQueue[ReceiveNext].BufLen = 0;
+    //------------------------------------------------------------------------
+    //	Copy the extra data
+    //------------------------------------------------------------------------
+    if (extrabuf != NULL && extralen != NULL) {
+        memcpy(extrabuf, ReceiveQueue[ReceiveIndex[index]].ExtraBuffer, ReceiveQueue[ReceiveIndex[index]].ExtraLen);
+        (*extralen) = ReceiveQueue[ReceiveIndex[index]].ExtraLen;
+    }
+
+    //------------------------------------------------------------------------
+    //	Set entry flags
+    //------------------------------------------------------------------------
+    ReceiveQueue[ReceiveIndex[index]].IsActive = 0;
+    ReceiveQueue[ReceiveIndex[index]].IsRead = 0;
+    ReceiveQueue[ReceiveIndex[index]].IsACK = 0;
+    ReceiveQueue[ReceiveIndex[index]].BufLen = 0;
+    ReceiveQueue[ReceiveIndex[index]].ExtraLen = 0;
+
+    //------------------------------------------------------------------------
+    //	Move Indices back one
+    //------------------------------------------------------------------------
+    for (i = index; i < ReceiveCount - 1; i++) {
+        ReceiveIndex[i] = ReceiveIndex[i + 1];
+    }
+    ReceiveIndex[ReceiveCount - 1] = 0;
     ReceiveCount--;
-    ReceiveNext++;
-    if (ReceiveNext == MaxReceive)
-        ReceiveNext = 0;
 
     return (1);
 
 } /* end of UnQueue_Receive */
 
 /***************************************************************************
- * CommQueueClass::Next_Receive -- gets ptr to next entry in send queue    *
- *                                                                         *
- * INPUT:                                                                  *
- *		none.																						*
- *                                                                         *
- * OUTPUT:                                                                 *
- *		ptr to entry, NULL if there is none.											*
- *                                                                         *
- * WARNINGS:                                                               *
- *		none.																						*
- *                                                                         *
- * HISTORY:                                                                *
- *   12/20/1994 BR : Created.                                              *
- *=========================================================================*/
-ReceiveQueueType* CommQueueClass::Next_Receive(void)
-{
-    if (ReceiveCount == 0) {
-        return (NULL);
-    } else {
-        return (&ReceiveQueue[ReceiveNext]);
-    }
-}
-
-/***************************************************************************
- * CommQueueClass::Get_Receive -- gets ptr to queue entry                  *
+ * CommBufferClass::Get_Receive -- gets ptr to queue entry                 *
  *                                                                         *
  * This routine gets a pointer to the indicated queue entry.  The index		*
- * value is relative to the next-accessable queue entry; 0 = get the			*
+ * value is relative to the next-accessible queue entry; 0 = get the			*
  * next available queue entry, 1 = get the one behind that, etc.				*
  *                                                                         *
  * INPUT:                                                                  *
@@ -513,23 +629,18 @@ ReceiveQueueType* CommQueueClass::Next_Receive(void)
  * HISTORY:                                                                *
  *   12/21/1994 BR : Created.                                              *
  *=========================================================================*/
-ReceiveQueueType* CommQueueClass::Get_Receive(int index)
+ReceiveQueueType* CommBufferClass::Get_Receive(int index)
 {
-    int i;
-
-    i = ReceiveNext + index;
-    if (i >= MaxReceive)
-        i -= MaxReceive;
-
-    if (ReceiveQueue[i].IsActive == 0) {
+    if (ReceiveQueue[ReceiveIndex[index]].IsActive == 0) {
         return (NULL);
     } else {
-        return (&ReceiveQueue[i]);
+        return (&ReceiveQueue[ReceiveIndex[index]]);
     }
-}
+
+} /* end of Get_Receive */
 
 /***************************************************************************
- * CommQueueClass::Add_Delay -- adds a new delay value for response time   *
+ * CommBufferClass::Add_Delay -- adds a new delay value for response time  *
  *                                                                         *
  * This routine updates the average response time for this queue.  The		*
  * computation is based on the average of the last 'n' delay values given,	*
@@ -553,7 +664,7 @@ ReceiveQueueType* CommQueueClass::Get_Receive(int index)
  * HISTORY:                                                                *
  *   01/19/1995 BR : Created.                                              *
  *=========================================================================*/
-void CommQueueClass::Add_Delay(unsigned long delay)
+void CommBufferClass::Add_Delay(unsigned long delay)
 {
     int roundoff = 0;
 
@@ -576,7 +687,7 @@ void CommQueueClass::Add_Delay(unsigned long delay)
 } /* end of Add_Delay */
 
 /***************************************************************************
- * CommQueueClass::Avg_Response_Time -- returns average response time    	*
+ * CommBufferClass::Avg_Response_Time -- returns average response time    	*
  *                                                                         *
  * INPUT:                                                                  *
  *		none.																						*
@@ -590,14 +701,14 @@ void CommQueueClass::Add_Delay(unsigned long delay)
  * HISTORY:                                                                *
  *   01/19/1995 BR : Created.                                              *
  *=========================================================================*/
-unsigned long CommQueueClass::Avg_Response_Time(void)
+unsigned long CommBufferClass::Avg_Response_Time(void)
 {
     return (MeanDelay);
 
 } /* end of Avg_Response_Time */
 
 /***************************************************************************
- * CommQueueClass::Max_Response_Time -- returns max response time    		*
+ * CommBufferClass::Max_Response_Time -- returns max response time    		*
  *                                                                         *
  * INPUT:                                                                  *
  *		none.																						*
@@ -611,14 +722,14 @@ unsigned long CommQueueClass::Avg_Response_Time(void)
  * HISTORY:                                                                *
  *   01/19/1995 BR : Created.                                              *
  *=========================================================================*/
-unsigned long CommQueueClass::Max_Response_Time(void)
+unsigned long CommBufferClass::Max_Response_Time(void)
 {
     return (MaxDelay);
 
 } /* end of Max_Response_Time */
 
 /***************************************************************************
- * CommQueueClass::Reset_Response_Time -- resets computations					*
+ * CommBufferClass::Reset_Response_Time -- resets computations					*
  *                                                                         *
  * INPUT:                                                                  *
  *		none.																						*
@@ -632,7 +743,7 @@ unsigned long CommQueueClass::Max_Response_Time(void)
  * HISTORY:                                                                *
  *   01/19/1995 BR : Created.                                              *
  *=========================================================================*/
-void CommQueueClass::Reset_Response_Time(void)
+void CommBufferClass::Reset_Response_Time(void)
 {
     DelaySum = 0L;
     NumDelay = 0L;
@@ -642,7 +753,7 @@ void CommQueueClass::Reset_Response_Time(void)
 } /* end of Reset_Response_Time */
 
 /***************************************************************************
- * CommQueueClass::Configure_Debug -- sets up special debug values         *
+ * CommBufferClass::Configure_Debug -- sets up special debug values        *
  *                                                                         *
  * Mono_Debug_Print2() can look into a packet to pull out a particular		*
  * ID, and can print both that ID and a string corresponding to				*
@@ -651,10 +762,10 @@ void CommQueueClass::Reset_Response_Time(void)
  * CommHeaderType values.																	*
  *                                                                         *
  * INPUT:                                                                  *
- *		offset		ID's byte offset into packet										*
- *		size			size of ID, in bytes; 0 if none									*
- *		names			ptr to array of names; use ID as an index into this		*
- *		maxnames		max # in the names array; 0 if none.							*
+ *		type_offset		ID's byte offset into packet									*
+ *		type_size		size of ID, in bytes; 0 if none								*
+ *		names				ptr to array of names; use ID as an index into this	*
+ *		maxnames			max # in the names array; 0 if none.						*
  *                                                                         *
  * OUTPUT:                                                                 *
  *		none.																						*
@@ -665,12 +776,13 @@ void CommQueueClass::Reset_Response_Time(void)
  * HISTORY:                                                                *
  *   05/31/1995 BRR : Created.                                             *
  *=========================================================================*/
-void CommQueueClass::Configure_Debug(int offset, int size, char** names, int maxnames)
+void CommBufferClass::Configure_Debug(int type_offset, int type_size, char** names, int namestart, int namecount)
 {
-    DebugOffset = offset;
-    DebugSize = size;
+    DebugOffset = type_offset;
+    DebugSize = type_size;
     DebugNames = names;
-    DebugMaxNames = maxnames;
+    DebugNameStart = namestart;
+    DebugNameCount = namecount;
 
 } /* end of Configure_Debug */
 
@@ -691,7 +803,7 @@ void CommQueueClass::Configure_Debug(int offset, int size, char** names, int max
  * HISTORY:                                                                *
  *   05/02/1995 BRR : Created.                                             *
  *=========================================================================*/
-void CommQueueClass::Mono_Debug_Print(int refresh)
+void CommBufferClass::Mono_Debug_Print(int refresh)
 {
 #ifdef WWLIB32_H
     int i;                                   // loop counter
@@ -707,17 +819,17 @@ void CommQueueClass::Mono_Debug_Print(int refresh)
         unsigned long PacketID;
     } * hdr;
 
-    /*------------------------------------------------------------------------
-    If few enough entries, call the verbose debug version
-    ------------------------------------------------------------------------*/
+    //------------------------------------------------------------------------
+    //	If few enough entries, call the verbose debug version
+    //------------------------------------------------------------------------
     if (MaxSend <= 16) {
         Mono_Debug_Print2(refresh);
         return;
     }
 
-    /*------------------------------------------------------------------------
-    Refresh the screen
-    ------------------------------------------------------------------------*/
+    //------------------------------------------------------------------------
+    //	Refresh the screen
+    //------------------------------------------------------------------------
     if (refresh) {
         Mono_Clear_Screen();
         Mono_Printf("ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿\n");
@@ -747,9 +859,9 @@ void CommQueueClass::Mono_Debug_Print(int refresh)
         Mono_Printf("ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ");
     }
 
-    /*------------------------------------------------------------------------
-    Print Send Queue items
-    ------------------------------------------------------------------------*/
+    //------------------------------------------------------------------------
+    //	Print Send Queue items
+    //------------------------------------------------------------------------
     if (MaxSend <= 48) {
         num = MaxSend;
     } else {
@@ -775,9 +887,9 @@ void CommQueueClass::Mono_Debug_Print(int refresh)
         }
     }
 
-    /*------------------------------------------------------------------------
-    Print Receive Queue items
-    ------------------------------------------------------------------------*/
+    //------------------------------------------------------------------------
+    //	Print Receive Queue items
+    //------------------------------------------------------------------------
     if (MaxReceive <= 48) {
         num = MaxSend;
     } else {
@@ -807,7 +919,7 @@ void CommQueueClass::Mono_Debug_Print(int refresh)
 } /* end of Mono_Debug_Print */
 
 /***************************************************************************
- * CommQueueClass::Mono_Debug_Print2 -- Debug output; alternate format     *
+ * CommBufferClass::Mono_Debug_Print2 -- Debug output; alternate format    *
  *                                                                         *
  * This routine prints more information than the other version; it's			*
  * called only if the number of queue entries is small enough to support	*
@@ -825,7 +937,7 @@ void CommQueueClass::Mono_Debug_Print(int refresh)
  * HISTORY:                                                                *
  *   05/31/1995 BRR : Created.                                             *
  *=========================================================================*/
-void CommQueueClass::Mono_Debug_Print2(int refresh)
+void CommBufferClass::Mono_Debug_Print2(int refresh)
 {
 #ifdef WWLIB32_H
     int i; // loop counter
@@ -839,9 +951,9 @@ void CommQueueClass::Mono_Debug_Print2(int refresh)
         unsigned long PacketID;
     } * hdr;
 
-    /*------------------------------------------------------------------------
-    Refresh the screen
-    ------------------------------------------------------------------------*/
+    //------------------------------------------------------------------------
+    //	Refresh the screen
+    //------------------------------------------------------------------------
     if (refresh) {
         Mono_Clear_Screen();
         Mono_Printf("ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿\n");
@@ -871,101 +983,110 @@ void CommQueueClass::Mono_Debug_Print2(int refresh)
         Mono_Printf("ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ");
     }
 
-    /*------------------------------------------------------------------------
-    Print Send Queue items
-    ------------------------------------------------------------------------*/
+    //------------------------------------------------------------------------
+    //	Print Send Queue items
+    //------------------------------------------------------------------------
     for (i = 0; i < MaxSend; i++) {
         Mono_Set_Cursor(1, 8 + i);
-        /*.....................................................................
-        Print an active entry
-        .....................................................................*/
+
+        //.....................................................................
+        //	Print an active entry
+        //.....................................................................
         if (SendQueue[i].IsActive) {
-            /*..................................................................
-            Get header info
-            ..................................................................*/
+
+            //..................................................................
+            //	Get header info
+            //..................................................................
             hdr = (CommHdr*)SendQueue[i].Buffer;
             hdr->MagicNumber = hdr->MagicNumber;
             hdr->Code = hdr->Code;
             sprintf(
                 txt, "%4d %2d %-5s  ", hdr->PacketID, SendQueue[i].SendCount, ConnectionClass::Command_Name(hdr->Code));
 
-            /*..................................................................
-            Decode app's ID & its name
-            ..................................................................*/
+            //..................................................................
+            //	Decode app's ID & its name
+            //..................................................................
             if (DebugSize && (DebugOffset + DebugSize) <= SendQueue[i].BufLen) {
                 if (DebugSize == 1) {
                     val = *(SendQueue[i].Buffer + DebugOffset);
-                } else {
-                    if (DebugSize == 2) {
-                        val = *((short*)(SendQueue[i].Buffer + DebugOffset));
-                    } else {
-                        if (DebugSize == 4) {
-                            val = *((int*)(SendQueue[i].Buffer + DebugOffset));
-                        }
-                    }
+
+                } else if (DebugSize == 2) {
+                    val = *((short*)(SendQueue[i].Buffer + DebugOffset));
+
+                } else if (DebugSize == 4) {
+                    val = *((int*)(SendQueue[i].Buffer + DebugOffset));
                 }
                 sprintf(txt + strlen(txt), "%4d  ", val);
 
-                if (DebugMaxNames && val > 0 && val < DebugMaxNames) {
-                    sprintf(txt + strlen(txt), "%-12s  %x", DebugNames[val], SendQueue[i].IsACK);
+                if (DebugNameCount > 0 && val >= 0 && val < DebugNameCount) {
+                    sprintf(txt + strlen(txt), "%-12s  %x", DebugNames[val - DebugNameStart], SendQueue[i].IsACK);
                 } else {
                     sprintf(txt + strlen(txt), "              %x", SendQueue[i].IsACK);
                 }
+            } else {
+                sprintf(txt + strlen(txt), "                    %x", SendQueue[i].IsACK);
             }
+
+            Mono_Printf("%s", txt);
         } else {
 
-            /*.....................................................................
-            Entry isn't active; print blanks
-            .....................................................................*/
+            //..................................................................
+            //	Entry isn't active; print blanks
+            //..................................................................
             Mono_Printf("____ __                            _");
         }
     }
 
-    /*------------------------------------------------------------------------
-    Print Receive Queue items
-    ------------------------------------------------------------------------*/
+    //------------------------------------------------------------------------
+    //	Print Receive Queue items
+    //------------------------------------------------------------------------
     for (i = 0; i < MaxReceive; i++) {
         Mono_Set_Cursor(40, 8 + i);
-        /*.....................................................................
-        Print an active entry
-        .....................................................................*/
+
+        //.....................................................................
+        //	Print an active entry
+        //.....................................................................
         if (ReceiveQueue[i].IsActive) {
-            /*..................................................................
-            Get header info
-            ..................................................................*/
+
+            //..................................................................
+            //	Get header info
+            //..................................................................
             hdr = (CommHdr*)ReceiveQueue[i].Buffer;
             hdr->MagicNumber = hdr->MagicNumber;
             hdr->Code = hdr->Code;
             sprintf(
                 txt, "%4d %2d %-5s  ", hdr->PacketID, ReceiveQueue[i].IsRead, ConnectionClass::Command_Name(hdr->Code));
-            /*..................................................................
-            Decode app's ID & its name
-            ..................................................................*/
-            if (DebugSize && (DebugOffset + DebugSize) <= SendQueue[i].BufLen) {
+
+            //..................................................................
+            //	Decode app's ID & its name
+            //..................................................................
+            if (DebugSize && (DebugOffset + DebugSize) <= ReceiveQueue[i].BufLen) {
                 if (DebugSize == 1) {
                     val = *(ReceiveQueue[i].Buffer + DebugOffset);
-                } else {
-                    if (DebugSize == 2) {
-                        val = *((short*)(ReceiveQueue[i].Buffer + DebugOffset));
-                    } else {
-                        if (DebugSize == 4) {
-                            val = *((int*)(ReceiveQueue[i].Buffer + DebugOffset));
-                        }
-                    }
+
+                } else if (DebugSize == 2) {
+                    val = *((short*)(ReceiveQueue[i].Buffer + DebugOffset));
+
+                } else if (DebugSize == 4) {
+                    val = *((int*)(ReceiveQueue[i].Buffer + DebugOffset));
                 }
                 sprintf(txt + strlen(txt), "%4d  ", val);
 
-                if (DebugMaxNames && val > 0 && val < DebugMaxNames) {
-                    sprintf(txt + strlen(txt), "%-12s  %x", DebugNames[val], ReceiveQueue[i].IsACK);
+                if (DebugNameCount > 0 && val >= 0 && val < DebugNameCount) {
+                    sprintf(txt + strlen(txt), "%-12s  %x", DebugNames[val - DebugNameStart], ReceiveQueue[i].IsACK);
                 } else {
                     sprintf(txt + strlen(txt), "              %x", ReceiveQueue[i].IsACK);
                 }
+            } else {
+                sprintf(txt + strlen(txt), "                    %x", ReceiveQueue[i].IsACK);
             }
+
+            Mono_Printf("%s", txt);
         } else {
 
-            /*.....................................................................
-            Entry isn't active; print blanks
-            .....................................................................*/
+            //..................................................................
+            //	Entry isn't active; print blanks
+            //..................................................................
             Mono_Printf("____ __                            _");
         }
     }
@@ -975,6 +1096,4 @@ void CommQueueClass::Mono_Debug_Print2(int refresh)
 #endif
 } /* end of Mono_Debug_Print2 */
 
-#endif
-
-#endif
+/************************** end of combuf.cpp ******************************/
