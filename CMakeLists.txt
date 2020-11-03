@@ -83,9 +83,14 @@ else()
         set(CMAKE_C_FLAGS_DEBUG "-g3")
     endif()
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fpermissive -fpack-struct=1 -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fpermissive -fpack-struct=1 -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fpermissive -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fpermissive -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
     set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
+
+    if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpack-struct=1")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fpack-struct=1")
+    endif()
 endif()
 
 add_definitions(-DENGLISH -DTRUE_FALSE_DEFINED)
