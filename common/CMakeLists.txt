@@ -37,7 +37,6 @@ set(COMMON_SRC
     file.cpp
     fixed.cpp
     font.cpp
-    framelimit.cpp
     gadget.cpp
     getshape.cpp
     graphicsviewport.cpp
@@ -108,6 +107,7 @@ else()
 endif()
 
 set(COMMONR_SRC
+    framelimit.cpp
     gbuffer.cpp
     interpal.cpp
     soundio_null.cpp
@@ -118,6 +118,7 @@ set(COMMONR_SRC
 )
 
 set(COMMONV_SRC
+    framelimit.cpp
     gbuffer.cpp
     interpal.cpp
     tcpip.cpp
