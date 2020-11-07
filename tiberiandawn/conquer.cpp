@@ -1201,16 +1201,6 @@ void Call_Back(void)
             }
         }
     }
-
-    /*
-    **	Modem and Null Modem maintenance
-    */
-    if (GameToPlay == GAME_NULL_MODEM || ((GameToPlay == GAME_MODEM) && ModemService)) {
-        //|| GameToPlay == GAME_INTERNET) {
-
-        // PG_TO_FIX
-        // NullModem.Service();
-    }
 #endif
 }
 
@@ -2807,7 +2797,7 @@ void CC_Draw_Shape(void const* shapefile,
 #if true
     int predoffset;
     char* shape_pointer;
-    unsigned long shape_size;
+    uintptr_t shape_size;
 
     if (shapefile && shapenum != -1) {
 
