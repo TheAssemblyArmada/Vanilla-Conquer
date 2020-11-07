@@ -161,8 +161,6 @@ endif()
 include(ProductVersion)
 
 if(BUILD_REMASTERTD)
-    include(BuildIcons)
-
     if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
         # Generate windows version info.
         generate_product_version(
@@ -192,6 +190,8 @@ if(BUILD_REMASTERTD)
 endif()
 
 if(BUILD_VANILLATD)
+    include(BuildIcons)
+
     if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
         # Create the custom command for generating the ico file for windows.
         make_icon(INPUT "${CMAKE_SOURCE_DIR}/resources/vanillatd_icon.svg" OUTPUT VANILLATD_ICON)
