@@ -131,7 +131,7 @@ void Reallocate_Big_Shape_Buffer()
 {
     if (ReallocShapeBufferFlag) {
         BigShapeBufferLength += 2000 * 1024; // Extra 2 Mb of uncompressed shape space
-        BigShapeBufferPtr -= (unsigned)BigShapeBufferStart;
+        BigShapeBufferPtr -= (uintptr_t)BigShapeBufferStart;
         Memory_Error = nullptr;
         BigShapeBufferStart = (char*)Resize_Alloc(BigShapeBufferStart, BigShapeBufferLength);
         Memory_Error = &Memory_Error_Handler;
@@ -143,7 +143,7 @@ void Reallocate_Big_Shape_Buffer()
             UseBigShapeBuffer = false;
             return;
         }
-        BigShapeBufferPtr += (unsigned)BigShapeBufferStart;
+        BigShapeBufferPtr += (uintptr_t)BigShapeBufferStart;
         ReallocShapeBufferFlag = false;
     }
 }
@@ -211,7 +211,7 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
     unsigned short buffsize, currframe, subframe;
     unsigned long length = 0;
     char frameflags;
-    unsigned long return_value;
+    uintptr_t return_value;
     char* temp_shape_ptr;
 
     //
@@ -427,7 +427,7 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
 
         } else {
 
-            return_value = (unsigned long)BigShapeBufferPtr;
+            return_value = (uintptr_t)BigShapeBufferPtr;
             temp_shape_ptr = BigShapeBufferPtr + keyfr->height + sizeof(ShapeHeaderType);
             /*
             ** align the actual shape data
@@ -443,7 +443,7 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
             *(KeyFrameSlots[keyfr->y] + framenumber) = BigShapeBufferPtr - (uintptr_t)BigShapeBufferStart;
             BigShapeBufferPtr = (char*)(length + (uintptr_t)temp_shape_ptr);
             // Align the next shape
-            if (3 & (unsigned)BigShapeBufferPtr) {
+            if (3 & (uintptr_t)BigShapeBufferPtr) {
                 BigShapeBufferPtr = (char*)((uintptr_t)(BigShapeBufferPtr + 3) & ~3);
             }
             Length = length;
