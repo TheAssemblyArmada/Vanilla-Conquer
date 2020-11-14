@@ -194,7 +194,7 @@ char const* Map_Selection(void)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             CopyType = 1;
             Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, NULL);
             CopyType = 0;

@@ -1973,10 +1973,10 @@ void DisplayClass::Draw_It(bool forced)
             /*
             ** Work out which map edges need to be redrawn
             */
-            BOOL redraw_right = (oldx < 0) ? true : false;  // Right hand edge
-            BOOL redraw_left = (oldx > 0) ? true : false;   // Left hand edge
-            BOOL redraw_bottom = (oldy < 0) ? true : false; // Bottom edge
-            BOOL redraw_top = (oldy > 0) ? true : false;    // Top edge
+            bool redraw_right = (oldx < 0) ? true : false;  // Right hand edge
+            bool redraw_left = (oldx > 0) ? true : false;   // Left hand edge
+            bool redraw_bottom = (oldy < 0) ? true : false; // Bottom edge
+            bool redraw_top = (oldy > 0) ? true : false;    // Top edge
 
             /*
             **	Blit any replicable block to avoid having to drawstamp.

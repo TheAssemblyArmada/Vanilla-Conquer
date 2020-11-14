@@ -509,7 +509,10 @@ typedef union
 } COORD_COMPOSITE;
 
 typedef signed short CELL;
-#define SLUFF_BITS (sizeof(CELL) * CHAR_BIT) - (14)
+#ifdef BIG_ENDIAN
+#warning "FIXME"
+//#define SLUFF_BITS (sizeof(CELL) * CHAR_BIT) - (14)
+#endif
 typedef union
 {
     CELL Cell;

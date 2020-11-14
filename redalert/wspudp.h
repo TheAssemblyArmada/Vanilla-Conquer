@@ -35,7 +35,6 @@
 #define WSPUDP_H
 
 #include "wsproto.h"
-#include <nspapi.h>
 
 /*
 ** Class to allow access to UDP specific portions of the Winsock interface.
@@ -48,7 +47,9 @@ public:
     UDPInterfaceClass(void);
     virtual ~UDPInterfaceClass(void);
 
+#ifdef _WIN32
     virtual long Message_Handler(HWND window, UINT message, UINT wParam, LONG lParam);
+#endif
     virtual bool Open_Socket(SOCKET socketnum);
     virtual void Set_Broadcast_Address(void* address);
     virtual void Broadcast(void* buffer, int buffer_len);

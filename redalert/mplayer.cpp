@@ -240,7 +240,7 @@ GameType Select_MPlayer_Game(void)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             seen_buff_save.Blit(VisiblePage);
             display = REDRAW_ALL;
         }

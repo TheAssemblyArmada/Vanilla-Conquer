@@ -112,7 +112,7 @@ void* Load_Icon_Set(char const* filename, void* iconsetptr, long buffsize)
     unsigned long mapsize;       // Icon map chunk size.
     void* mapptr = NULL;         // Icon map pointer.
     void* returnptr = NULL;      // Iconset pointer returned by routine.
-    BOOL allocated = FALSE;      // Was the iconset block allocated?
+    bool allocated = false;      // Was the iconset block allocated?
     IControl_Type* idata = NULL; // Icon data loaded.
     long id;                     // ID of file openned.
     struct
@@ -149,7 +149,7 @@ void* Load_Icon_Set(char const* filename, void* iconsetptr, long buffsize)
             **	Allocate the icon buffer if one isn't provided.  First try EMS and
             **	then try conventional RAM.
             */
-            allocated = FALSE;
+            allocated = false;
             if (!iconsetptr) {
                 buffsize = size + transsize + mapsize + sizeof(IControl_Type);
 
@@ -287,7 +287,7 @@ void* Get_Icon_Set_Icondata(void const* iconset)
     IControl_Type* icontrol;
     icontrol = (IControl_Type*)iconset;
     if (icontrol)
-        return (Add_Long_To_Pointer(iconset, (LONG)icontrol->Icons));
+        return (Add_Long_To_Pointer(iconset, (long)icontrol->Icons));
     return (NULL);
 }
 
@@ -320,6 +320,6 @@ void* Get_Icon_Set_Map(void const* iconset)
     IControl_Type* icontrol;
     icontrol = (IControl_Type*)iconset;
     if (icontrol)
-        return (Add_Long_To_Pointer(iconset, (LONG)icontrol->Map));
+        return (Add_Long_To_Pointer(iconset, (long)icontrol->Map));
     return (NULL);
 }

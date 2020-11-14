@@ -174,13 +174,12 @@ fixed EngineerCaptureLevel = 0x40; // Building damage level before engineer can 
 #endif
 #endif
 
-unsigned short Hard_Error_Occured = 0;
 WWMouseClass* WWMouse = NULL;
 GraphicBufferClass SysMemPage(320, 200, (void*)NULL);
 int ScreenWidth = GBUFF_INIT_WIDTH;
 int ScreenHeight = GBUFF_INIT_HEIGHT;
 GraphicBufferClass ModeXBuff;
-bool InMovie = FALSE; // Are we currently playing a VQ movie?
+bool InMovie = false; // Are we currently playing a VQ movie?
 #ifdef _WIN32
 HANDLE hInstance;
 #endif

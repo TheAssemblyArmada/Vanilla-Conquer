@@ -48,7 +48,7 @@ public:
 };
 #endif
 
-void __cdecl Set_Palette(void* palette);
+void Set_Palette(void* palette);
 
 #include "function.h"
 #include "common/palette.h"

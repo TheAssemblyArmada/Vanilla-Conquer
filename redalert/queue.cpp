@@ -1232,7 +1232,7 @@ static RetcodeType Wait_For_Players(int first_time,
         //---------------------------------------------------------------------
         Call_Back();
         if (!first_time && SpecialDialog == SDLG_NONE && reconnect_dlg == 0) {
-            WWMouse->Erase_Mouse(&HidPage, TRUE);
+            WWMouse->Erase_Mouse(&HidPage, true);
             Map.Input(input, x, y);
             if (input)
                 Keyboard_Process(input);

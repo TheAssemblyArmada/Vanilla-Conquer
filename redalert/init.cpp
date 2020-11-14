@@ -59,9 +59,11 @@
 #include "function.h"
 #include "loaddlg.h"
 
+#ifdef NETWORKING
 #include "wsproto.h"
 #include "wspudp.h"
 #include "internet.h"
+#endif
 
 #include <time.h>
 
@@ -994,12 +996,13 @@ bool Select_Game(bool fade)
                     /*
                     ** Init network system & remote-connect
                     */
+#ifdef NETWORKING
                     if (PacketTransport)
                         delete PacketTransport;
-#ifdef NETWORKING
+
                     PacketTransport = new UDPInterfaceClass;
-#endif
                     assert(PacketTransport != NULL);
+#endif
 
                     WWDebugString("RA95 - About to call Init_Network.\n");
                     if (Session.Type == GAME_IPX && Init_Network() && Remote_Connect()) {
@@ -1014,8 +1017,10 @@ bool Select_Game(bool fade)
                         Session.Type = GAME_NORMAL;
                         display = true;
                         selection = SEL_NONE;
+#ifdef NETWORKING
                         delete PacketTransport;
                         PacketTransport = NULL;
+#endif
                     }
                     break;
                 }
@@ -1899,29 +1904,9 @@ long Obfuscate(char const* string)
 void Init_Random(void)
 {
     /*
-    **	Gather some "random" bits from the system timer. Actually, only the
-    **	low order millisecond bits are secure. The other bits could be
-    **	easily guessed from the system clock (most clocks are fairly accurate
-    **	and thus predictable).
+    ** Initialize RNG with the current system time in seconds.
     */
-    SYSTEMTIME t;
-    GetSystemTime(&t);
-    CryptRandom.Seed_Byte((char)t.wMilliseconds);
-    CryptRandom.Seed_Bit(t.wSecond);
-    CryptRandom.Seed_Bit(t.wSecond >> 1);
-    CryptRandom.Seed_Bit(t.wSecond >> 2);
-    CryptRandom.Seed_Bit(t.wSecond >> 3);
-    CryptRandom.Seed_Bit(t.wSecond >> 4);
-    CryptRandom.Seed_Bit(t.wMinute);
-    CryptRandom.Seed_Bit(t.wMinute >> 1);
-    CryptRandom.Seed_Bit(t.wMinute >> 2);
-    CryptRandom.Seed_Bit(t.wMinute >> 3);
-    CryptRandom.Seed_Bit(t.wMinute >> 4);
-    CryptRandom.Seed_Bit(t.wHour);
-    CryptRandom.Seed_Bit(t.wDay);
-    CryptRandom.Seed_Bit(t.wDayOfWeek);
-    CryptRandom.Seed_Bit(t.wMonth);
-    CryptRandom.Seed_Bit(t.wYear);
+    CryptRandom.Seed_Long(time(NULL));
 
 #ifdef FIXIT_MULTI_SAVE
     //
@@ -2213,6 +2198,7 @@ static void Init_Expansion_Files(void)
     char search_path[_MAX_PATH];
     char scan_path[_MAX_PATH];
 
+#ifdef _WIN32
     for (int p = 0; p < 100; p++) {
 
         strcpy(search_path, path);
@@ -2252,6 +2238,7 @@ static void Init_Expansion_Files(void)
             break;
         }
     }
+#endif
 
 #if (0)
     /*

@@ -165,7 +165,6 @@ set(REDALERT_SRC
     vessel.cpp
     visudlg.cpp
     vortex.cpp
-    w95trace.cpp
     warhead.cpp
     weapon.cpp
     winstub.cpp

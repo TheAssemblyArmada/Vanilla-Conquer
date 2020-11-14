@@ -48,7 +48,6 @@
 #include "goptions.h"
 #include "options.h"
 #include "infantry.h"
-#include "dsound.h"
 #include "common/vqaconfig.h"
 
 #ifdef REMASTER_BUILD

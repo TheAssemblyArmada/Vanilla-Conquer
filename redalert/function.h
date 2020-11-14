@@ -98,11 +98,10 @@ Map(screen) class heirarchy.
 #endif
 
 #ifdef _WIN32
-
 #define MONOC_H
-#define _MAX_NAME _MAX_FNAME
-
 #endif
+
+#define _MAX_NAME _MAX_FNAME
 
 /**********************************************************************
 **	This class is solely used as a parameter to a constructor that does
@@ -329,7 +328,7 @@ void Assert_Failure(char* expression, int line, char* file);
 #endif //__BORLANDC__
 
 extern void Free_Interpolated_Palettes(void);
-extern int Load_Interpolated_Palettes(char const* filename, BOOL add = FALSE);
+extern int Load_Interpolated_Palettes(char const* filename, bool add = false);
 extern void Rebuild_Interpolated_Palette(unsigned char* interpal);
 
 /*
@@ -518,7 +517,7 @@ void Conquer_Clip_Text_Print(char const*,
                              int width = -1,
                              int const* tabs = 0);
 void Draw_Box(int x, int y, int w, int h, BoxStyleEnum up, bool filled);
-int cdecl Dialog_Message(char* errormsg, ...);
+int Dialog_Message(char* errormsg, ...);
 void Window_Box(WindowNumberType window, BoxStyleEnum style);
 void Fancy_Text_Print(char const* text,
                       unsigned x,
@@ -634,7 +633,7 @@ void* Make_Fading_Table(PaletteClass const& palette, void* dest, int color, int 
 **	KEYFBUFF.ASM
 */
 extern "C" {
-long __cdecl Buffer_Frame_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortClass& view, int flags, ...);
+long Buffer_Frame_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortClass& view, int flags, ...);
 }
 
 /*

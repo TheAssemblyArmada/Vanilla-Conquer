@@ -368,7 +368,7 @@ void ScoreClass::Presentation(void)
 
     VisiblePage.Clear();
     SysMemPage.Clear();
-    WWMouse->Erase_Mouse(&HidPage, TRUE);
+    WWMouse->Erase_Mouse(&HidPage, true);
     HiddenPage.Clear();
     Set_Logic_Page(SysMemPage);
     BlackPalette.Set();
@@ -1608,7 +1608,7 @@ void Animate_Score_Objs()
     ** we need to redraw.
     */
     if (AllSurfaces.SurfacesRestored) {
-        AllSurfaces.SurfacesRestored = FALSE;
+        AllSurfaces.SurfacesRestored = false;
         PseudoSeenBuff->Blit(SeenPage);
     }
     for (int i = 0; i < MAXSCOREOBJS; i++) {
