@@ -78,11 +78,6 @@ TcpipManagerClass Winsock;
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <direct.h>
-#include <fcntl.h>
-#include <io.h>
-#include <dos.h>
-#include <share.h>
 #include "vortex.h"
 #include "common/framelimit.h"
 #include "common/vqatask.h"
@@ -1784,7 +1779,7 @@ static void Sync_Delay(void)
         Call_Back();
 
         if (SpecialDialog == SDLG_NONE) {
-            WWMouse->Erase_Mouse(&HidPage, TRUE);
+            WWMouse->Erase_Mouse(&HidPage, true);
             KeyNumType input = KN_NONE;
             int x, y;
             Map.Input(input, x, y);
@@ -1908,7 +1903,7 @@ bool Main_Loop()
     */
     if (!Session.Play) {
         if (SpecialDialog == SDLG_NONE && GameInFocus) {
-            WWMouse->Erase_Mouse(&HidPage, TRUE);
+            WWMouse->Erase_Mouse(&HidPage, true);
             Map.Input(input, x, y);
             if (input) {
                 Keyboard_Process(input);
@@ -1977,7 +1972,7 @@ bool Main_Loop()
     **	Check for player wins or loses according to global event flag.
     */
     if (PlayerWins) {
-        WWMouse->Erase_Mouse(&HidPage, TRUE);
+        WWMouse->Erase_Mouse(&HidPage, true);
         PlayerLoses = false;
         PlayerWins = false;
         PlayerRestarts = false;
@@ -1986,7 +1981,7 @@ bool Main_Loop()
         return (!GameActive);
     }
     if (PlayerLoses) {
-        WWMouse->Erase_Mouse(&HidPage, TRUE);
+        WWMouse->Erase_Mouse(&HidPage, true);
         PlayerWins = false;
         PlayerLoses = false;
         PlayerRestarts = false;
@@ -1995,7 +1990,7 @@ bool Main_Loop()
         return (!GameActive);
     }
     if (PlayerRestarts) {
-        WWMouse->Erase_Mouse(&HidPage, TRUE);
+        WWMouse->Erase_Mouse(&HidPage, true);
         PlayerWins = false;
         PlayerLoses = false;
         PlayerRestarts = false;
@@ -2008,7 +2003,7 @@ bool Main_Loop()
     if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH && Session.Players.Count() == 2
         && Scen.bLocalProposesDraw && Scen.bOtherProposesDraw) {
         //	End game in a draw.
-        WWMouse->Erase_Mouse(&HidPage, TRUE);
+        WWMouse->Erase_Mouse(&HidPage, true);
         Map.Help_Text(TXT_NONE);
         Do_Draw();
         return (!GameActive);
@@ -2114,7 +2109,7 @@ bool Map_Edit_Loop(void)
     */
     KeyNumType input;
 
-    WWMouse->Erase_Mouse(&HidPage, TRUE);
+    WWMouse->Erase_Mouse(&HidPage, true);
 
     int x;
     int y;
@@ -2360,13 +2355,13 @@ unsigned PaletteCounter;
  * HISTORY:                                                                                    *
  *    5/7/96 9:49AM ST : Created                                                               *
  *=============================================================================================*/
-int Load_Interpolated_Palettes(char const* filename, BOOL add)
+int Load_Interpolated_Palettes(char const* filename, bool add)
 {
     int num_palettes = 0;
     int i;
     int start_palette;
 
-    PalettesRead = FALSE;
+    PalettesRead = false;
     CCFileClass file(filename);
 
     if (!add) {
@@ -2404,7 +2399,7 @@ int Load_Interpolated_Palettes(char const* filename, BOOL add)
             Rebuild_Interpolated_Palette(InterpolatedPalettes[i + start_palette]);
         }
 
-        PalettesRead = TRUE;
+        PalettesRead = true;
         file.Close();
     }
     PaletteCounter = 0;
@@ -2569,7 +2564,7 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
                 VQA_Play(vqa, VQAMODE_RUN);
                 VQA_Close(vqa);
                 // Resume_Audio_Thread();
-                InMovie = FALSE;
+                InMovie = false;
 #ifdef MOVIE640
                 if (!IsVQ640) {
                     Free_Interpolated_Palettes();
@@ -4243,7 +4238,7 @@ bool Force_CD_Available(int cd_desired) //	ajw
             while (Get_Mouse_State())
                 Show_Mouse();
 
-            if (WWMessageBox().Process(buffer, TXT_OK, TXT_CANCEL, TXT_NONE, TRUE) == 1) {
+            if (WWMessageBox().Process(buffer, TXT_OK, TXT_CANCEL, TXT_NONE, true) == 1) {
                 Set_Logic_Page(oldpage);
 #ifdef FIXIT_VERSION_3
                 while (hidden--)
@@ -4620,7 +4615,7 @@ bool Force_CD_Available(int cd)
             while (Get_Mouse_State())
                 Show_Mouse();
 
-            if (WWMessageBox().Process(buffer, TXT_OK, TXT_CANCEL, TXT_NONE, TRUE) == 1) {
+            if (WWMessageBox().Process(buffer, TXT_OK, TXT_CANCEL, TXT_NONE, true) == 1) {
                 Set_Logic_Page(oldpage);
                 Hide_Mouse();
                 return (false);

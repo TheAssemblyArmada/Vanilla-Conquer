@@ -40,7 +40,6 @@
 #include "common/font.h"
 #include "common/iff.h"
 #include "common/misc.h"
-#include "common/mono.h"
 #include "common/wwmem.h"
 #include "common/wwkeyboard.h"
 #include "common/wwmouse.h"

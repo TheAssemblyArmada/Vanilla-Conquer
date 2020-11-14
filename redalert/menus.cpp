@@ -35,6 +35,7 @@
 
 #include "function.h"
 #include "common/framelimit.h"
+#include <time.h>
 
 /*****************************
 **	Function prototypes
@@ -711,7 +712,7 @@ int Main_Menu(unsigned long)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = true;
         }
 
@@ -793,9 +794,13 @@ int Main_Menu(unsigned long)
         **	to the cryptographic random number generator.
         */
         if (input != 0) {
+#ifdef _WIN32
             SYSTEMTIME t;
             GetSystemTime(&t);
             CryptRandom.Seed_Byte((char)t.wMilliseconds);
+#else
+            CryptRandom.Seed_Long(time(NULL));
+#endif
         }
 
         /*

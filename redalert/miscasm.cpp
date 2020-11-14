@@ -25,7 +25,7 @@
 
 #include "function.h"
 
-extern "C" void __cdecl Mem_Copy(void const* source, void* dest, unsigned long bytes_to_copy)
+extern "C" void Mem_Copy(void const* source, void* dest, unsigned long bytes_to_copy)
 {
     memcpy(dest, source, bytes_to_copy);
 }
@@ -61,7 +61,7 @@ CELL __cdecl Coord_Cell(COORDINATE coord)
 ;
 ;*
 */
-void __cdecl Shake_Screen(int shakes)
+void Shake_Screen(int shakes)
 {
     // PG_TO_FIX
     // Need a different solution for shaking the screen
@@ -184,7 +184,7 @@ dx = 3B4H
                                                           END
 */
 
-extern "C" void __cdecl Set_Palette_Range(void* palette)
+extern "C" void Set_Palette_Range(void* palette)
 {
     if (palette == NULL) {
         return;

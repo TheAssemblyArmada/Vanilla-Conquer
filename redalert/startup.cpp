@@ -35,8 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include <conio.h>
-#include <io.h>
 
 #include "ipx95.h"
 
@@ -54,9 +52,11 @@ bool Read_Private_Config_Struct(FileClass& file, NewConfigType* config);
 void Print_Error_End_Exit(char* string);
 void Print_Error_Exit(char* string);
 
+#ifdef _WIN32
 extern void Create_Main_Window(HANDLE instance, int command_show, int width, int height);
-extern BOOL RA95AlreadyRunning;
 HINSTANCE ProgramInstance;
+#endif
+extern bool RA95AlreadyRunning;
 void Check_Use_Compressed_Shapes(void);
 void Read_Setup_Options(RawFileClass* config_file);
 bool VideoBackBufferAllowed = true;
@@ -394,38 +394,42 @@ int main(int argc, char* argv[])
             */
             Read_Setup_Options(&cfile);
 
+#ifdef _WIN32
             Create_Main_Window(instance, command_show, ScreenWidth, ScreenHeight);
+#endif
             SoundOn = Audio_Init(16, false, 11025 * 2, 0);
 
 #ifdef MPEGMOVIE // Denzil 6/10/98
             if (!InitDDraw())
                 return (EXIT_FAILURE);
 #else
-            BOOL video_success = FALSE;
+            bool video_success = false;
             /*
             ** Set 640x400 video mode. If its not available then try for 640x480
             */
 #ifdef REMASTER_BUILD
-            video_success = TRUE;
+            video_success = true;
 #else
             if (ScreenHeight == 400) {
                 if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
-                    video_success = TRUE;
+                    video_success = true;
                 } else {
                     if (Set_Video_Mode(ScreenWidth, 480, 8)) {
-                        video_success = TRUE;
+                        video_success = true;
                         ScreenHeight = 480;
                     }
                 }
             } else {
                 if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
-                    video_success = TRUE;
+                    video_success = true;
                 }
             }
 #endif
 
             if (!video_success) {
+#ifdef _WIN32
                 MessageBoxA(MainWindow, TEXT_VIDEO_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
+#endif
                 // if (Palette) delete Palette;
                 return (EXIT_FAILURE);
             }
@@ -452,7 +456,9 @@ int main(int argc, char* argv[])
                     */
                     WWDebugString(TEXT_DDRAW_ERROR);
                     WWDebugString("\n");
+#ifdef _WIN32
                     MessageBoxA(MainWindow, TEXT_DDRAW_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
+#endif
                     return (EXIT_FAILURE);
                 }
 
@@ -519,7 +525,7 @@ int main(int argc, char* argv[])
             // The editor needs to not start the mouse up. - 7/22/2019 JAS
             if (!RunningFromEditor) {
                 WWMouse = new WWMouseClass(&SeenBuff, 48, 48);
-                MouseInstalled = TRUE;
+                MouseInstalled = true;
             }
 
 #ifndef REMASTER_BUILD
@@ -591,7 +597,9 @@ int main(int argc, char* argv[])
             /*
             ** Post a message to our message handler to tell it to clean up.
             */
+#ifdef _WIN32
             PostMessage(MainWindow, WM_DESTROY, 0, 0);
+#endif
 
             /*
             ** Wait until the message handler has dealt with the message
@@ -625,26 +633,28 @@ bool InitDDraw(void)
     HidPage.Attach(&HiddenPage, 0, 0, 3072, 3072);
 
 #else
-    BOOL video_success = FALSE;
+    bool video_success = false;
 
     /* Set 640x400 video mode. If its not available then try for 640x480 */
     if (ScreenHeight == 400) {
         if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
-            video_success = TRUE;
+            video_success = true;
         } else {
             if (Set_Video_Mode(ScreenWidth, 480, 8)) {
-                video_success = TRUE;
+                video_success = true;
                 ScreenHeight = 480;
             }
         }
     } else {
         if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
-            video_success = TRUE;
+            video_success = true;
         }
     }
 
     if (!video_success) {
+#ifdef _WIN32
         MessageBoxA(MainWindow, TEXT_VIDEO_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
+#endif
         return false;
     }
 
@@ -659,7 +669,9 @@ bool InitDDraw(void)
             /* Aaaarrgghh! */
             WWDebugString(TEXT_DDRAW_ERROR);
             WWDebugString("\n");
+#ifdef _WIN32
             MessageBoxA(MainWindow, TEXT_DDRAW_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
+#endif
             return false;
         }
 
@@ -724,7 +736,7 @@ bool InitDDraw(void)
  *   03/20/1995 JLB : Created.                                                                 *
  *   08/07/2019  ST : Added why and fatal params                                               *
  *=============================================================================================*/
-void __cdecl Prog_End(const char* why, bool fatal)
+void Prog_End(const char* why, bool fatal)
 {
     GlyphX_Debug_Print("Prog_End()");
 
@@ -804,7 +816,9 @@ void Emergency_Exit(int code)
     /*
     ** Post a message to our message handler to tell it to clean up.
     */
+#ifdef _WIN32
     PostMessage(MainWindow, WM_DESTROY, 0, 0);
+#endif
 
     /*
     ** Wait until the message handler has dealt with the message

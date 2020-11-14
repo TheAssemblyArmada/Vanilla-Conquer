@@ -433,7 +433,7 @@ char const* Fetch_Password(int caption, int message, int btext)
         ** Handle possible surface loss due to a focus switch
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             process = false;
             break;
         }
@@ -609,7 +609,7 @@ int Fetch_Difficulty(void)
         ** Handle possible surface loss due to a focus switch
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             redraw = true;
             continue;
         }

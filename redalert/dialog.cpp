@@ -129,7 +129,7 @@ void Dialog_Box(int x, int y, int w, int h)
 
     WWMouse->Draw_Mouse(&HidPage);
     HidPage.Blit(SeenBuff, x, y, x, y, w, h, false);
-    WWMouse->Erase_Mouse(&HidPage, FALSE);
+    WWMouse->Erase_Mouse(&HidPage, false);
     Set_Logic_Page(oldpage);
 }
 

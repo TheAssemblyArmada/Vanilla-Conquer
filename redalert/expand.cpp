@@ -455,7 +455,7 @@ bool Expansion_Dialog(void)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = true;
         }
 

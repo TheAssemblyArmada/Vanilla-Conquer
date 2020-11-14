@@ -48,7 +48,6 @@
 
 #include <assert.h>
 #include <stdio.h>
-#include <svcguid.h>
 
 #ifdef NETWORKING
 

@@ -696,7 +696,7 @@ void RadarClass::Render_Terrain(CELL cell, int x, int y, int size)
         if (!icon)
             continue;
         Buffer_To_Page(0, 0, 3, 3, icon, _IconStage);
-        _IconStage.Scale(*LogicPage, 0, 0, x, y, 3, 3, ZoomFactor, ZoomFactor, TRUE, (char*)&FadingBrighten[0]);
+        _IconStage.Scale(*LogicPage, 0, 0, x, y, 3, 3, ZoomFactor, ZoomFactor, true, (char*)&FadingBrighten[0]);
     }
 }
 
@@ -797,7 +797,7 @@ void RadarClass::Render_Overlay(CELL cell, int x, int y, int size)
                     //					_IconStage.Scale(*LogicPage, 0, 0, x, y, 3, 3, size, size, TRUE, (char
                     //*)&FadingShade[0]);
                 } else {
-                    _IconStage.Scale(*LogicPage, 0, 0, x, y, 3, 3, size, size, TRUE, (char*)&FadingYellow[0]);
+                    _IconStage.Scale(*LogicPage, 0, 0, x, y, 3, 3, size, size, true, (char*)&FadingYellow[0]);
                 }
                 //				_IconStage.Scale(*LogicPage, 0, 0, x, y, 3, 3, size, size, TRUE, (char
                 //*)&FadingGreen[0]); 			} else { 				_IconStage.Scale(*LogicPage, 0, 0, x, y, 3, 3, size, size, TRUE, (char
@@ -1046,7 +1046,7 @@ void RadarClass::Plot_Radar_Pixel(CELL cell)
 
                 unsigned char* data = (unsigned char*)icondata + icon * (24 * 24);
                 Buffer_To_Page(0, 0, 24, 24, data, _TileStage);
-                _TileStage.Scale(*LogicPage, 0, 0, x, y, 24, 24, ZoomFactor, ZoomFactor, TRUE);
+                _TileStage.Scale(*LogicPage, 0, 0, x, y, 24, 24, ZoomFactor, ZoomFactor, true);
             } else {
                 //				LogicPage->Fill_Rect(x, y, x+ZoomFactor-1, y+ZoomFactor-1, cellptr->Cell_Color(false));
                 /*BG*/ LogicPage->Put_Pixel(x, y, cellptr->Cell_Color(false));
@@ -1226,7 +1226,7 @@ void RadarClass::Cursor_Cell(CELL cell, int value)
             /*
             **	If we are erasing then erase the cell.
             */
-            if (value == FALSE) {
+            if (value == 0) {
                 Plot_Radar_Pixel(cell);
             }
         }
@@ -1442,7 +1442,7 @@ void RadarClass::Radar_Cursor(int forced)
         /*
         ** Finally mark the map (actually remove the marks that indicate the radar cursor was there
         */
-        Mark_Radar(x1, y1, x2, y2, FALSE, barlen);
+        Mark_Radar(x1, y1, x2, y2, false, barlen);
     }
 
     /*
@@ -1465,7 +1465,7 @@ void RadarClass::Radar_Cursor(int forced)
     x2 += SpecialRadarFrame;
     y2 += SpecialRadarFrame;
 
-    Mark_Radar(x1, y1, x2, y2, TRUE, barlen);
+    Mark_Radar(x1, y1, x2, y2, true, barlen);
 
     /*
     ** setup a graphic view port class so we can write all the pixels relative
@@ -1496,7 +1496,7 @@ void RadarClass::Radar_Cursor(int forced)
     Set_Logic_Page(oldpage);
     _last_pos = tac_cell;
     _last_frame = SpecialRadarFrame;
-    RadarCursorRedraw = FALSE;
+    RadarCursorRedraw = false;
 }
 
 /***************************************************************************
@@ -1565,9 +1565,9 @@ void RadarClass::AI(KeyNumType& input, int x, int y)
     */
     if (IsRadarActive && Map.IsSidebarActive && SpecialRadarFrame) {
         SpecialRadarFrame--;
-        RadarCursorRedraw = TRUE;
-        IsToRedraw = TRUE;
-        Flag_To_Redraw(FALSE);
+        RadarCursorRedraw = true;
+        IsToRedraw = true;
+        Flag_To_Redraw(false);
     }
 
     /*
@@ -1901,7 +1901,7 @@ void RadarClass::Set_Radar_Position(CELL cell)
     newcell = XY_Cell(newx, newy);
 
     if (RadarCell != newcell) {
-        int forced = FALSE;
+        bool forced = false;
         int xmod = newx;
         int ymod = newy;
 
@@ -2278,7 +2278,7 @@ bool RadarClass::Draw_House_Info(void)
         y += (6 * RESFACTOR) + 1;
 
         // count & print buildings
-        itoa(ptr->CurBuildings, txt, 10);
+        sprintf(txt, "%d", ptr->CurBuildings);
         Fancy_Text_Print(txt, RadX + RadOffX + (6 * RESFACTOR), y, color, BLACK, style);
         y += (6 * RESFACTOR) + 1;
 
@@ -2290,7 +2290,7 @@ bool RadarClass::Draw_House_Info(void)
                          TPF_6PT_GRAD | TPF_NOSHADOW);
         y += (6 * RESFACTOR) + 1;
         // count & print units
-        itoa(ptr->CurUnits, txt, 10);
+        sprintf(txt, "%d", ptr->CurUnits);
         Fancy_Text_Print(txt, RadX + RadOffX + 6 * RESFACTOR, y, color, BLACK, style);
         y += (6 * RESFACTOR) + 1;
 
@@ -2302,7 +2302,7 @@ bool RadarClass::Draw_House_Info(void)
                          TPF_6PT_GRAD | TPF_NOSHADOW);
         y += (6 * RESFACTOR) + 1;
         // count & print infantry
-        itoa(ptr->CurInfantry, txt, 10);
+        sprintf(txt, "%d", ptr->CurInfantry);
         Fancy_Text_Print(txt, RadX + RadOffX + (6 * RESFACTOR), y, color, BLACK, style);
 #if (0)
         y += (6 * RESFACTOR) + 1;
@@ -2314,7 +2314,7 @@ bool RadarClass::Draw_House_Info(void)
         for (i = AIRCRAFT_NONE + 1, count = 0; i < AIRCRAFT_COUNT; i++) {
             count += ptr->AQuantity[i];
         }
-        itoa(count, txt, 10);
+        sprintf(txt, "%d", count);
         Fancy_Text_Print(txt, RadX + RadOffX, y, color, BLACK, style);
 #endif
         return (true);

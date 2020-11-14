@@ -56,7 +56,9 @@ void output(short, short)
 {
 }
 
+#ifdef _WIN32
 unsigned long CCFocusMessage = WM_USER + 50; // Private message for receiving application focus
+#endif
 
 //#include "WolDebug.h"
 
@@ -86,7 +88,7 @@ void Focus_Loss(void)
 void Focus_Restore(void)
 {
     Map.Flag_To_Redraw(true);
-    Start_Primary_Sound_Buffer(TRUE);
+    Start_Primary_Sound_Buffer(true);
     if (WWMouse)
         WWMouse->Set_Cursor_Clip();
     VisiblePage.Clear();
@@ -110,7 +112,7 @@ void Focus_Restore(void)
 
 void Check_For_Focus_Loss(void)
 {
-#ifndef REMASTER_BUILD // PG
+#if defined(_WIN32) && !defined(REMASTER_BUILD) // PG
     static BOOL focus_last_time = 1;
     MSG msg;
 
@@ -154,7 +156,7 @@ void Check_For_Focus_Loss(void)
 }
 
 extern bool InMovie;
-#ifndef REMASTER_BUILD // PG
+#if defined(_WIN32) && !defined(REMASTER_BUILD) // PG
 long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 {
 
@@ -332,7 +334,9 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
 }
 #endif
 
+#if 0
 HANDLE DebugFile = INVALID_HANDLE_VALUE;
+#endif
 
 /***********************************************************************************************
  * WWDebugString -- sends a string to the debugger and echos it to disk                        *
@@ -371,8 +375,11 @@ void WWDebugString(const char* string)
     OutputDebugString(string);
 #else //(0)
 
+#ifndef _WIN32
+    fprintf(stderr, "%s", string);
+#else
     string = string;
-    //	debugprint( string );
+#endif
 
 #endif //(0)
 }
@@ -406,6 +413,7 @@ void WWDebugString(const char* string)
 #define WINDOW_NAME "Alarmstufe Rot"
 #endif
 
+#ifdef _WIN32
 void Create_Main_Window(HANDLE instance, int command_show, int width, int height)
 
 {
@@ -502,6 +510,7 @@ void Window_Dialog_Box(HANDLE hinst, LPCTSTR lpszTemplate, HWND hwndOwner, DLGPR
     Show_Mouse();
 #endif
 }
+#endif
 
 typedef struct tColourList
 {
@@ -630,9 +639,13 @@ void Assert_Failure(char* expression, int line, char* file)
 {
     char assertbuf[256];
     char timebuff[512];
+#ifdef _WIN32
     SYSTEMTIME time;
+#endif
 
     sprintf(assertbuf, "assert '%s' failed at line %d in module %s.\n", expression, line, file);
+
+#ifdef _WIN32
 
     if (!MonoClass::Is_Enabled())
         MonoClass::Enable();
@@ -671,6 +684,9 @@ void Assert_Failure(char* expression, int line, char* file)
     //	WWMessageBox().Process("Red Alert demo timed out - Aborting");
     // Get_Key();
 
+#else
+    fputs(assertbuf, stderr);
+#endif // _WIN32
     Prog_End(assertbuf, false);
     // PostQuitMessage( 0 );
     // ExitProcess(0);
@@ -702,12 +718,14 @@ void Memory_Error_Handler(void)
 
     ReadyToQuit = 1;
 
+#ifdef _WIN32
     PostMessage(MainWindow, WM_DESTROY, 0, 0);
+#endif
     do {
         Keyboard->Check();
     } while (ReadyToQuit == 1);
 
-    ExitProcess(0);
+    exit(1);
 }
 
 GraphicBufferClass* Read_PCX_File(char* name, char* Palette, void* Buff, long Size);

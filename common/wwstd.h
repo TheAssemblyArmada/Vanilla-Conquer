@@ -276,6 +276,15 @@ inline static void strrev(char* str)
     }
 }
 
+inline static void _strlwr(char* str)
+{
+    int len = strlen(str);
+
+    for (int i = 0; i < len; i++) {
+        str[i] = tolower(str[i]);
+    }
+}
+
 #endif // not _WIN32
 
 #endif // WWSTD_H
