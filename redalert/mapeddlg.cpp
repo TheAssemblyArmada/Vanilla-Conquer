@@ -2602,9 +2602,7 @@ int MapEditClass::Load_Scenario(void)
             /*
             ** Remove any old theater specific uncompressed shapes
             */
-#ifdef WIN32
             Reset_Theater_Shapes();
-#endif // WIN32
             /*
             ** Force shapes to reload
             */

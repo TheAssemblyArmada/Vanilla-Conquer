@@ -90,7 +90,6 @@ void Debug_Key(unsigned input)
             }
             break;
 
-#ifdef WIN32
         case KN_J:
             Debug_MotionCapture = true;
             break;
@@ -119,7 +118,6 @@ void Debug_Key(unsigned input)
                 Sound_Effect(VOC_BEEP);
             }
             break;
-#endif
 #endif
 
         case KN_P: {

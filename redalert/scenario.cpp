@@ -60,9 +60,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#ifdef WIN32
 #include "common/tcpip.h"
-#endif
 #include "common/framelimit.h"
 
 extern int PreserveVQAScreen;
@@ -589,7 +587,6 @@ void Fill_In_Data(void)
     */
     Map.Zone_Reset(MZONEF_ALL);
 
-#ifdef WIN32
     /*
     **	Since the sidebar starts up activated, adjust the home start position so that
     **	the right edge of the map will still be visible.
@@ -602,7 +599,6 @@ void Fill_In_Data(void)
             Cell_Coord((Scen.Waypoint[WAYPT_HOME] - (MAP_CELL_W * 4 * RESFACTOR)) - (5 * RESFACTOR)));
         //		}
     }
-#endif
 
     /*
     **	Handle any data resetting that can be safely inferred from the actual
@@ -886,27 +882,12 @@ void Do_Win(void)
         Set_Logic_Page(SeenBuff);
         Map.Flag_To_Redraw(true);
         Map.Render();
-#ifdef WIN32
         Fancy_Text_Print(TXT_SCENARIO_WON,
                          x,
                          90 * RESFACTOR,
                          &ColorRemaps[PCOLOR_RED],
                          TBLACK,
                          TPF_CENTER | TPF_VCR | TPF_USE_GRAD_PAL | TPF_DROPSHADOW);
-#else
-        Fancy_Text_Print(TXT_MISSION,
-                         x,
-                         90 * RESFACTOR,
-                         &ColorRemaps[PCOLOR_RED],
-                         TBLACK,
-                         TPF_CENTER | TPF_VCR | TPF_USE_GRAD_PAL | TPF_DROPSHADOW);
-        Fancy_Text_Print(TXT_HACKHACK,
-                         x,
-                         110 * RESFACTOR,
-                         &ColorRemaps[PCOLOR_RED],
-                         TBLACK,
-                         TPF_CENTER | TPF_VCR | TPF_USE_GRAD_PAL | TPF_DROPSHADOW);
-#endif
         CountDownTimer = TIMER_SECOND * 3;
         while (Is_Speaking()) {
         };
@@ -1436,9 +1417,7 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
         b3txt = "";
     }
 
-#ifdef WIN32
     GraphicBufferClass seen_buff_save(VisiblePage.Get_Width(), VisiblePage.Get_Height(), (void*)NULL);
-#endif
 
     /*
     ** If there's no text for button one, zero it out.
@@ -1584,24 +1563,14 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
     Hide_Mouse();
 
     PaletteClass temp;
-#ifdef WIN32
     char* filename = "SOVPAPER.PCX";
     if (PlayerPtr->Class->House != HOUSE_USSR && PlayerPtr->Class->House != HOUSE_UKRAINE) {
         filename = "ALIPAPER.PCX";
     }
     Load_Title_Screen(filename, &HidPage, (unsigned char*)temp.Get_Data());
-#else
-    char* filename = "SOVPAPER.CPS";
-    if (PlayerPtr->Class->House != HOUSE_USSR && PlayerPtr->Class->House != HOUSE_UKRAINE) {
-        filename = "ALIPAPER.CPS";
-    }
-    Load_Uncompress(CCFileClass(filename), HidPage, HidPage, temp);
-#endif
     HidPage.Blit(SeenPage);
 
-#ifdef WIN32
     VisiblePage.Blit(seen_buff_save);
-#endif
 
     static unsigned char _scorepal[] = {0, 1, 12, 13, 4, 5, 6, 7, 8, 9, 10, 255, 252, 253, 14, 248};
     Set_Font_Palette(_scorepal);
@@ -1619,7 +1588,6 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
     int xprint = x + 20;
     int yprint = y + 25;
     do {
-#ifdef WIN32
         /*
         ** If we have just received input focus again after running in the background then
         ** we need to redraw.
@@ -1631,7 +1599,6 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
             display = true;
             Show_Mouse();
         }
-#endif
         char bufprint[2];
         bufprint[1] = 0;
         bufprint[0] = buffer[bufindex];
@@ -1642,18 +1609,12 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
         } else {
             if (bufprint[0] != 20) {
                 SeenPage.Print(bufprint, xprint, yprint, TBLACK, TBLACK);
-#ifdef WIN32
                 seen_buff_save.Print(bufprint, xprint, yprint, TBLACK, TBLACK);
-#endif
                 xprint += Char_Pixel_Width(bufprint[0]);
             }
         }
         if (bufprint[0] == '\r' || bufprint[0] == '@') {
-#ifdef WIN32
             Play_Sample(briefsnd, 255, Options.Normalize_Volume(135));
-#else
-            Play_Sample(briefsnd, 255, Options.Normalize_Volume(45));
-#endif
             CDTimerClass<SystemTimerClass> cd;
             cd = 5;
             do {
@@ -1669,7 +1630,6 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
         process = true;
         pressed = false;
         while (process) {
-#ifdef WIN32
             /*
             ** If we have just received input focus again after running in the background then
             ** we need to redraw.
@@ -1681,7 +1641,6 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
                 display = true;
                 Show_Mouse();
             }
-#endif
 
             if (display) {
                 display = false;

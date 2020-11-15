@@ -77,26 +77,16 @@ template <class T> inline T operator~(T t1)
     return ((T)(~(int)t1));
 }
 
-#ifndef WIN32
-template <class T> inline T min(T value1, T value2)
+#ifdef NOMINMAX
+inline int min(int a, int b)
 {
-    if (value1 < value2) {
-        return (value1);
-    }
-    return (value2);
+    return a < b ? a : b;
 }
-int min(int, int);
-long min(long, long);
 
-template <class T> inline T max(T value1, T value2)
+inline int max(int a, int b)
 {
-    if (value1 > value2) {
-        return (value1);
-    }
-    return (value2);
+    return a > b ? a : b;
 }
-int max(int, int);
-long max(long, long);
 #endif
 
 template <class T> inline void swap(T& value1, T& value2)

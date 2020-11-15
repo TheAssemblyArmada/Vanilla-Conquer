@@ -112,20 +112,8 @@ void CreditClass::Graphic_Logic(bool forced)
         */
 #ifndef REMASTER_BUILD
         TabClass::Draw_Credits_Tab();
-#endif
-#ifdef WIN32
-#ifndef REMASTER_BUILD
         Fancy_Text_Print("%ld", xx, 0, &MetalScheme, TBLACK, TPF_METAL12 | TPF_CENTER | TPF_USE_GRAD_PAL, Current);
 #endif
-#else
-        Fancy_Text_Print("%ld",
-                         xx,
-                         0,
-                         &ColorRemaps[PCOLOR_GREY],
-                         TBLACK,
-                         TPF_NOSHADOW | TPF_6PT_GRAD | TPF_CENTER | TPF_BRIGHT_COLOR,
-                         Current);
-#endif // WIN32
 
         if (Scen.MissionTimer.Is_Active()) {
             long secs = Scen.MissionTimer / TICKS_PER_SECOND;
@@ -161,7 +149,6 @@ void CreditClass::Graphic_Logic(bool forced)
                 Map.FlasherTimer = 7;
             }
 #endif
-#ifdef WIN32
 #ifndef REMASTER_BUILD
             int text_x = Options.ToggleSidebar ? 120 * RESFACTOR : 200 * RESFACTOR;
 
@@ -186,28 +173,6 @@ void CreditClass::Graphic_Logic(bool forced)
                                  secs);
             }
 #endif
-#else
-            if (hours) {
-                Fancy_Text_Print("%02d:%02d:%02d",
-                                 120 * RESFACTOR,
-                                 0,
-                                 &ColorRemaps[PCOLOR_GREY],
-                                 TBLACK,
-                                 TPF_NOSHADOW | TPF_6PT_GRAD | TPF_CENTER | TPF_BRIGHT_COLOR,
-                                 hours,
-                                 mins,
-                                 secs);
-            } else {
-                Fancy_Text_Print("%02d:%02d",
-                                 120 * RESFACTOR,
-                                 0,
-                                 &ColorRemaps[PCOLOR_GREY],
-                                 TBLACK,
-                                 TPF_NOSHADOW | TPF_6PT_GRAD | TPF_CENTER | TPF_BRIGHT_COLOR,
-                                 mins,
-                                 secs);
-            }
-#endif // WIN32
         }
 
         IsToRedraw = false;

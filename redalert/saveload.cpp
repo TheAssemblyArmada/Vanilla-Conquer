@@ -46,14 +46,11 @@
 
 #include "function.h"
 #include "vortex.h"
-#ifdef WIN32
 #include "common/tcpip.h"
 
-//#include "WolDebug.h"
-
+#ifdef REMASTER_BUILD
 extern bool DLLSave(Pipe& file);
 extern bool DLLLoad(Straw& file);
-
 #endif
 
 //#define	SAVE_BLOCK_SIZE	512

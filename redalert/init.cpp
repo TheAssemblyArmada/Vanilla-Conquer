@@ -58,17 +58,10 @@
 
 #include "function.h"
 #include "loaddlg.h"
-#ifdef WIN32
+
 #include "wsproto.h"
 #include "wspudp.h"
 #include "internet.h"
-
-#endif
-#include <conio.h>
-#include <dos.h>
-#ifndef WIN32
-#include <sys\timeb.h>
-#endif
 
 #include <time.h>
 
@@ -113,9 +106,6 @@ extern int UnitBuildPenalty;
 extern "C" {
 extern long RandNumb;
 }
-#ifndef WIN32
-static int UsePageFaultHandler = 1; // 1 = install PFH
-#endif                              // WIN32
 
 // extern int SimRandIndex;
 void Init_Random(void);
@@ -157,13 +147,8 @@ extern bool Is_Mission_Counterstrike(char* file_name);
 static void Load_Prolog_Page(void)
 {
     Hide_Mouse();
-#ifdef WIN32
     Load_Title_Screen("PROLOG.PCX", &HidPage, (unsigned char*)CCPalette.Get_Data());
     HidPage.Blit(SeenPage);
-#else
-    Load_Picture("PROLOG.CPS", HidPage, HidPage, CCPalette, BM_DEFAULT);
-    HidPage.Blit(SeenPage);
-#endif
     CCPalette.Set();
     Show_Mouse();
 }
@@ -471,15 +456,15 @@ bool Select_Game(bool fade)
         SEL_FAME,             // view the hall o' fame
         SEL_NONE,             // placeholder default value
     };
-#else                                        //	FIXIT_VERSION_3
+#else                //	FIXIT_VERSION_3
     enum
     {
         SEL_TIMEOUT = -1,   // main menu timeout--go into attract mode
         SEL_NEW_SCENARIO,   // Expansion scenario to play.
         SEL_START_NEW_GAME, // start a new game
-#if defined(WIN32) && !defined(INTERNET_OFF) // Denzil 5/1/98 - Internet play
+#ifndef INTERNET_OFF // Denzil 5/1/98 - Internet play
         SEL_INTERNET,
-#endif                                       // WIN32
+#endif
         //#if defined(MPEGMOVIE) // Denzil 6/25/98
         //		SEL_MOVIESETTINGS,
         //#endif
@@ -490,7 +475,7 @@ bool Select_Game(bool fade)
         SEL_FAME,             // view the hall o' fame
         SEL_NONE,             // placeholder default value
     };
-#endif                                       //	FIXIT_VERSION_3
+#endif //	FIXIT_VERSION_3
 
     bool gameloaded = false; // Has the game been loaded from the menu?
     int selection;           // the default selection
@@ -1175,13 +1160,8 @@ bool Select_Game(bool fade)
 
         if (selection != SEL_START_NEW_GAME) {
             BlackPalette.Set(FADE_PALETTE_MEDIUM, Call_Back);
-#ifdef WIN32
             HiddenPage.Clear();
             VisiblePage.Clear();
-#else
-            HidPage.Clear();
-            SeenPage.Clear();
-#endif // WIN32
         }
         Show_Mouse();
         // Mono_Printf("About to call Start Scenario with %s\n", Scen.ScenarioName);
@@ -1204,15 +1184,11 @@ bool Select_Game(bool fade)
                           MAX_MESSAGE_LENGTH - 14, // max msg length
                           7 * RESFACTOR,           // font height in pixels
                           -1,
-                          -1,                      // x,y for edit line (appears above msgs)
-                          0,                       // BG		1,							// enable edit overflow
-                          20,                      // min,
-                          MAX_MESSAGE_LENGTH - 14, //    max for trimming overflow
-#ifdef WIN32
+                          -1,                                   // x,y for edit line (appears above msgs)
+                          0,                                    // BG		1,							// enable edit overflow
+                          20,                                   // min,
+                          MAX_MESSAGE_LENGTH - 14,              //    max for trimming overflow
                           Lepton_To_Pixel(Map.TacLeptonWidth)); // Width in pixels of buffer
-#else
-                          (320 - SIDEBAR_WID)); // Width in pixels of buffer
-#endif
 
     if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH && !Session.Play) {
         Session.Create_Connections();
@@ -1235,24 +1211,17 @@ bool Select_Game(bool fade)
     Call_Back();
     Hide_Mouse();
     BlackPalette.Set(FADE_PALETTE_MEDIUM, Call_Back);
-//	Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-#ifdef WIN32
+    //	Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
     HiddenPage.Clear();
     VisiblePage.Clear();
-#else
-    HidPage.Clear();
-    SeenPage.Clear();
-#endif // WIN32
     Show_Mouse();
     Set_Logic_Page(SeenBuff);
-#ifdef WIN32
     /*
     ** Sidebar is always active in hi-res.
     */
     if (!Debug_Map && !Options.ToggleSidebar) {
         Map.SidebarClass::Activate(1);
     }
-#endif // WIN32
     Map.Flag_To_Redraw();
     Call_Back();
     Map.Render();
@@ -1316,11 +1285,7 @@ static void Play_Intro(bool sequenced)
         Hide_Mouse();
         VisiblePage.Clear();
         Show_Mouse();
-#ifdef WIN32
         Play_Movie(VQ_REDINTRO, THEME_NONE, false);
-#else
-        Play_Movie(VQ_TITLE, THEME_NONE, false);
-#endif
     }
 }
 
@@ -1350,8 +1315,6 @@ GraphicBufferClass VQ640(640, 400, nullptr);
 void Anim_Init(void)
 {
 #ifndef REMASTER_BUILD
-#ifdef WIN32
-
     /* Configure player with INI file */
     VQA_DefaultConfig(&AnimControl);
     AnimControl.DrawFlags = VQACFGF_TOPLEFT;
@@ -1385,38 +1348,6 @@ void Anim_Init(void)
     if (MonoClass::Is_Enabled()) {
         AnimControl.OptionFlags |= VQAOPTF_MONO;
     }
-
-#else // WIN32
-    /* Configure player with INI file */
-    VQA_DefaultConfig(&AnimControl);
-    //	void const * font = Load_Font(FONT8);
-    //	AnimControl.EVAFont = (char *)font;
-    //	AnimControl.CapFont = (char *)font;
-    AnimControl.DrawerCallback = VQ_Call_Back;
-    AnimControl.ImageWidth = 320;
-    AnimControl.ImageHeight = 200;
-    AnimControl.Vmode = MCGA_MODE;
-    AnimControl.VBIBit = VertBlank;
-    AnimControl.DrawFlags |= VQACFGF_TOPLEFT;
-    AnimControl.OptionFlags |= VQAOPTF_HMIINIT | VQAOPTF_CAPTIONS | VQAOPTF_EVA;
-    //	AnimControl.AudioBuf = (unsigned char *)HidPage.Get_Buffer();
-    //	AnimControl.AudioBufSize = 32768U;
-    AnimControl.DigiCard = NewConfig.DigitCard;
-    AnimControl.HMIBufSize = 8192;
-    AnimControl.DigiHandle = Get_Digi_Handle();
-    AnimControl.Volume = 0x00FF;
-    AnimControl.AudioRate = 22050;
-    //	if (NewConfig.Speed) AnimControl.AudioRate = 11025;
-
-    if (!Debug_Quiet && Get_Digi_Handle() != -1) {
-        AnimControl.OptionFlags |= VQAOPTF_AUDIO;
-    }
-
-    if (MonoClass::Is_Enabled()) {
-        AnimControl.OptionFlags |= VQAOPTF_MONO;
-    }
-
-#endif // WIN32
 #endif
 }
 
@@ -1655,7 +1586,6 @@ bool Parse_Command_Line(int argc, char* argv[])
             continue;
         }
 
-#ifdef WIN32
         /*
         ** Set screen to 640x480 instead of 640x400
         */
@@ -1663,7 +1593,6 @@ bool Parse_Command_Line(int argc, char* argv[])
             ScreenHeight = 480;
             continue;
         }
-#endif
 
 #ifdef CHEAT_KEYS
         /*
@@ -1673,17 +1602,6 @@ bool Parse_Command_Line(int argc, char* argv[])
             CustomSeed = (unsigned short)(atoi(string + strlen("SEED")));
             continue;
         }
-
-#ifndef WIN32
-        /*
-        **	Don't install Page Fault Handler (MUST use this for debugger)
-        */
-        if (stricmp(string, "-NOPFS") == 0) {
-            UsePageFaultHandler = 0;
-            continue;
-        }
-#endif
-
 #endif
 
 #ifdef NEVER
@@ -1980,8 +1898,6 @@ long Obfuscate(char const* string)
  *=========================================================================*/
 void Init_Random(void)
 {
-#ifdef WIN32
-
     /*
     **	Gather some "random" bits from the system timer. Actually, only the
     **	low order millisecond bits are secure. The other bits could be
@@ -2006,16 +1922,6 @@ void Init_Random(void)
     CryptRandom.Seed_Bit(t.wDayOfWeek);
     CryptRandom.Seed_Bit(t.wMonth);
     CryptRandom.Seed_Bit(t.wYear);
-#else
-
-    /*
-    **	Gather some "random" bits from the DOS mode timer.
-    */
-    struct timeb t;
-    ftime(&t);
-    CryptRandom.Seed_Byte(t.millitm);
-    CryptRandom.Seed_Byte(t.time);
-#endif
 
 #ifdef FIXIT_MULTI_SAVE
     //
@@ -2091,17 +1997,10 @@ void Init_Random(void)
  *=============================================================================================*/
 void Load_Title_Page(bool visible)
 {
-#ifdef WIN32
     Load_Title_Screen("TITLE.PCX", &HidPage, (unsigned char*)CCPalette.Get_Data());
     if (visible) {
         HidPage.Blit(SeenPage);
     }
-#else
-    Load_Picture("TITLE.CPS", HidPage, HidPage, CCPalette, BM_DEFAULT);
-    if (visible) {
-        HidPage.Blit(SeenPage);
-    }
-#endif
 }
 
 /***********************************************************************************************
@@ -2130,14 +2029,10 @@ static void Init_Color_Remaps(void)
     ** after that are the remap colors.
     */
 
-#ifdef WIN32
     GraphicBufferClass temp_page(320, 200, (void*)NULL);
     temp_page.Clear();
     Load_Picture("PALETTE.CPS", temp_page, temp_page, NULL, BM_DEFAULT);
     temp_page.Blit(HidPage);
-#else
-    Load_Picture("PALETTE.CPS", HidPage, HidPage, NULL, BM_DEFAULT);
-#endif
     for (PlayerColorType pcolor = PCOLOR_FIRST; pcolor < PCOLOR_COUNT; pcolor++) {
 
         unsigned char* ptr = ColorRemaps[pcolor].RemapTable;
@@ -2623,7 +2518,7 @@ static void Init_Bootstrap_Mixfiles(void)
     new MFCD("LORES.MIX", &FastKey);
     ok = MFCD::Cache("LORES.MIX");
     assert(ok);
-#endif // WIN32
+#endif // REMASTER_BUILD
 
     RequiredCD = temp;
 }
@@ -2714,12 +2609,10 @@ static void Bootstrap(void)
     ** the screen.
     */
 #ifndef REMASTER_BUILD
-#ifdef WIN32
     do {
         Keyboard->Check();
     } while (!GameInFocus);
     AllSurfaces.SurfacesRestored = false;
-#endif
 
     /*
     **	Perform any special debug-only processing. This includes preparing the
@@ -2739,31 +2632,10 @@ static void Bootstrap(void)
     */
     Init_Fonts();
 
-#ifndef WIN32
     /*
-    **	Install the hard error handler.
+    **	Setup the keyboard processor in preparation for the game.
     */
-    _harderr(harderr_handler); // BG: Install hard error handler
-
-    /*
-    ** Install a Page Fault handler
-    */
-    if (UsePageFaultHandler) {
-        Install_Page_Fault_Handle();
-    }
-#endif
-
-/*
-**	Setup the keyboard processor in preparation for the game.
-*/
-#ifdef WIN32
     Keyboard->Clear();
-#else
-    Keyboard_Attributes_Off(BREAKON | SCROLLLOCKON | TRACKEXT | PAUSEON | CTRLSON | CTRLCON | FILTERONLY
-                            | TASKSWITCHABLE);
-    Keyboard_Attributes_On(PASSBREAKS);
-    Keyboard->Clear();
-#endif
 
     /*
     **	This is the shape staging buffer. It must always be available, so it is
@@ -2837,7 +2709,7 @@ static void Init_Mouse(void)
     ** Since there is no mouse shape currently available we need
     ** to set one of our own.
     */
-#ifdef WIN32
+#ifdef _WIN32
     ShowCursor(false);
 #endif
     if (MouseInstalled) {
@@ -2887,12 +2759,7 @@ static void Init_Authorization(void)
         return;
 
     Load_Title_Page();
-#ifdef WIN32
     Wait_Vert_Blank();
-#else  // WIN32
-    Init_Delay();
-    Wait_Vert_Blank(VertBlank);
-#endif // WIN32
 
     CCPalette.Set();
     //		Set_Palette(Palette);

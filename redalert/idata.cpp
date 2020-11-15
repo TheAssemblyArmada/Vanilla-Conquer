@@ -1478,11 +1478,6 @@ bool InfantryTypeClass::Read_INI(CCINIClass& ini)
 
 void InfantryTypeClass::Dimensions(int& width, int& height) const
 {
-#ifdef WIN32
     width = 14;
     height = 20;
-#else
-    width = 12;
-    height = 16;
-#endif
 }

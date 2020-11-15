@@ -252,7 +252,6 @@ const char* SimpleEditDlgClass::Show()
         */
         Call_Back();
 
-#ifdef WIN32
         /*
         ** If we have just received input focus again after running in the background then
         ** we need to redraw.
@@ -261,7 +260,6 @@ const char* SimpleEditDlgClass::Show()
             AllSurfaces.SurfacesRestored = FALSE;
             display = true;
         }
-#endif
 
         /*
         **	Refresh display if needed.

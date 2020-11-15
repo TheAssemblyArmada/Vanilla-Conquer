@@ -38,9 +38,7 @@
 #include <conio.h>
 #include <io.h>
 
-#ifdef WIN32
 #include "ipx95.h"
-#endif // WIN32
 
 #ifdef MCIMPEG // Denzil 6/15/98
 #include "mcimovie.h"
@@ -167,14 +165,11 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 #else
 int main(int argc, char* argv[])
 {
-#endif // WIN32
+#endif // _WIN32
 
-#ifdef WIN32
-
-#endif
 // printf("in program.\n");getch();
 // printf("ram free = %ld\n",Ram_Free(MEM_NORMAL));getch();
-#ifdef WIN32
+#ifdef _WIN32
     if (Ram_Free(MEM_NORMAL) < 7000000) {
 #else
 
@@ -183,15 +178,8 @@ int main(int argc, char* argv[])
         free(temp_mem);
     } else {
 
-        // if (Ram_Free(MEM_NORMAL) < 13000000) {
-//	if (Ram_Free(MEM_NORMAL) < 3500000) {
 #endif
         printf(TEXT_NO_RAM);
-
-#ifndef WIN32
-        printf(TEXT_USE_START_MENU);
-        getch();
-#endif
 
 #if (0)
 
@@ -213,7 +201,7 @@ int main(int argc, char* argv[])
         return (EXIT_FAILURE);
     }
 
-#ifdef WIN32
+#ifdef _WIN32
 
     if (strstr(command_line, "f:\\projects\\c&c0") != NULL || strstr(command_line, "F:\\PROJECTS\\C&C0") != NULL) {
         MessageBoxA(0, "Playing off of the network is not allowed.", "Red Alert", MB_OK | MB_ICONSTOP);
@@ -275,7 +263,7 @@ int main(int argc, char* argv[])
 
     } while (command_char != 0 && command_char != 13 && argc < 20);
 
-#endif // WIN32
+#endif // _WIN32
 
     /*
     **	Remember the current working directory and drive.
@@ -374,25 +362,19 @@ int main(int argc, char* argv[])
 #else
         RawFileClass cfile(CONFIG_FILE_NAME);
 #endif
-#ifndef WIN32
-        Install_Keyboard_Interrupt(Get_RM_Keyboard_Address(), Get_RM_Keyboard_Size());
-#endif // WIN32
 
         Keyboard = new WWKeyboardClass();
 
-#ifdef WIN32
         /*
         ** If there is loads of memory then use uncompressed shapes
         */
         Check_Use_Compressed_Shapes();
-#endif
 
         /*
         ** If there is not enough disk space free, don't allow the product to run.
         */
         if (Disk_Space_Available() < INIT_FREE_DISK_SPACE) {
 
-#ifdef WIN32
 #if (0) // PG
             char disk_space_message[512];
             sprintf(disk_space_message, TEXT_CRITICALLY_LOW); // PG , (INIT_FREE_DISK_SPACE) / (1024 * 1024));
@@ -401,23 +383,11 @@ int main(int argc, char* argv[])
                 return (EXIT_FAILURE);
             }
 #endif
-#else
-            printf(TEXT_INSUFFICIENT);
-            printf(TEXT_MUST_HAVE, INIT_FREE_DISK_SPACE / (1024 * 1024));
-            printf("\n");
-            if (Keyboard)
-                Keyboard->Get();
-            Remove_Keyboard_Interrupt();
-            Remove_Timer_System();
-            return (EXIT_FAILURE);
-#endif
         }
 
         if (cfile.Is_Available()) {
 
             Read_Private_Config_Struct(cfile, &NewConfig);
-
-#ifdef WIN32
 
             /*
             ** Set the options as requested by the ccsetup program
@@ -426,26 +396,7 @@ int main(int argc, char* argv[])
 
             Create_Main_Window(instance, command_show, ScreenWidth, ScreenHeight);
             SoundOn = Audio_Init(16, false, 11025 * 2, 0);
-#else  // WIN32
-            if (!Debug_Quiet) {
-                Audio_Init(NewConfig.DigitCard,
-                           NewConfig.Port,
-                           NewConfig.IRQ,
-                           NewConfig.DMA,
-                           PLAYBACK_RATE_NORMAL,
-                           //						(NewConfig.Speed) ? PLAYBACK_RATE_SLOW : PLAYBACK_RATE_NORMAL,
-                           NewConfig.BitsPerSample,
-                           //						4,
-                           (Get_CPU() < 5) ? 3 : 5,
-                           //						(NewConfig.Speed) ? 3 : 5,
-                           NewConfig.Reverse);
-                SoundOn = true;
-            } else {
-                Audio_Init(0, -1, -1, -1, PLAYBACK_RATE_NORMAL, 8, 5, false);
-            }
-#endif // WIN32
 
-#ifdef WIN32
 #ifdef MPEGMOVIE // Denzil 6/10/98
             if (!InitDDraw())
                 return (EXIT_FAILURE);
@@ -575,8 +526,6 @@ int main(int argc, char* argv[])
             CDFileClass::Set_CD_Drive(CDList.Get_First_CD_Drive());
 #endif
 
-#endif // WIN32
-
             /*
             ** See if we should run the intro
             */
@@ -634,7 +583,6 @@ int main(int argc, char* argv[])
             HiddenPage.Clear();
             Memory_Error_Exit = Print_Error_Exit;
 
-#ifdef WIN32
             /*
             ** Flag that this is a clean shutdown (not killed with Ctrl-Alt-Del)
             */
@@ -653,11 +601,6 @@ int main(int argc, char* argv[])
             } while (ReadyToQuit == 1);
 
             return (EXIT_SUCCESS);
-
-#else  // WIN32
-            Remove_Mouse();
-            Sound_End();
-#endif // WIN32
         } else {
             if (!RunningFromEditor) {
                 puts(TEXT_SETUP_FIRST);
@@ -668,10 +611,6 @@ int main(int argc, char* argv[])
     /*
     **	Restore the current drive and directory.
     */
-#ifndef WIN32
-    _dos_setdrive(olddrive, &drivecount);
-    chdir(oldpath);
-#endif // WIN32
     return (EXIT_SUCCESS);
 }
 
@@ -848,8 +787,6 @@ void Emergency_Exit(int code)
         return;
     }
 
-#ifdef WIN32
-
     /*
     ** Clear out the video buffers so we dont glitch when we lose focus
     */
@@ -876,18 +813,8 @@ void Emergency_Exit(int code)
         Keyboard->Check();
     } while (ReadyToQuit == 3);
 
-#else // WIN32
-    /*
-    ** Do the DOS end
-    */
-    Prog_End();
-
-#endif // WIN32
-
     exit(code);
 }
-
-#ifdef WIN32
 
 /***********************************************************************************************
  * Read_Setup_Options -- Read stuff in from the INI file that we need to know sooner           *
@@ -990,5 +917,3 @@ void Get_OS_Version(void)
     }
 #endif //(0)
 }
-
-#endif // WIN32

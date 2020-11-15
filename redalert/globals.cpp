@@ -174,7 +174,6 @@ fixed EngineerCaptureLevel = 0x40; // Building damage level before engineer can 
 #endif
 #endif
 
-#ifdef WIN32
 unsigned short Hard_Error_Occured = 0;
 WWMouseClass* WWMouse = NULL;
 GraphicBufferClass SysMemPage(320, 200, (void*)NULL);
@@ -182,7 +181,9 @@ int ScreenWidth = GBUFF_INIT_WIDTH;
 int ScreenHeight = GBUFF_INIT_HEIGHT;
 GraphicBufferClass ModeXBuff;
 bool InMovie = FALSE; // Are we currently playing a VQ movie?
+#ifdef _WIN32
 HANDLE hInstance;
+#endif
 int AllDone;
 
 /***************************************************************************
@@ -190,8 +191,6 @@ int AllDone;
 **
 */
 bool GameInFocus = false;
-
-#endif
 
 /***************************************************************************
 **	Encryption keys.
@@ -651,21 +650,10 @@ int MenuList[][8] = {
     {1, 3, 12, 3, 0, WHITE, PINK, 0},
 };
 
-#ifdef WIN32
 GraphicBufferClass VisiblePage;
 GraphicBufferClass HiddenPage;
 GraphicViewPortClass SeenBuff(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
 GraphicViewPortClass HidPage(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-#else
-GraphicBufferClass HidPage(DEFAULT_SCREEN_WIDTH, 201, (void*)NULL);
-GraphicBufferClass SeenBuff(320, 200, (void*)0xA0000L);
-VideoBufferClass SeenPage;
-GraphicBufferClass& VisiblePage = SeenBuff;
-#endif
-
-#ifdef WIN32
-#else
-#endif
 
 int SoundOn;
 CDTimerClass<SystemTimerClass> FrameTimer;

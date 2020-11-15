@@ -437,11 +437,7 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
     if (preserve) {
         Hide_Mouse();
         if (SeenBuff.Lock()) {
-#ifdef WIN32
             Buffer_To_Page(x, y, width, height, back, &SeenBuff);
-#else
-            MCGA_Buffer_To_Page(preservex, preservey, preservew, preserveh, back, &SeenBuff);
-#endif
         }
         SeenBuff.Unlock();
 
