@@ -287,24 +287,6 @@ int PaletteClass::Closest_Color(RGBClass const& rgb) const
     return (closest);
 }
 
-#ifndef WIN32
-extern void Vsync(void);
-#pragma aux Vsync modify[edx ebx eax] = "mov	edx,03DAh"                                                                \
-                                        "mov	ebx,[VertBlank]"                                                          \
-                                        "and	bl,001h"                                                                  \
-                                        "shl	bl,3"                                                                     \
-                                        "in_vbi:"                                                                      \
-                                        "in	al,dx"                                                                     \
-                                        "and	al,008h"                                                                  \
-                                        "xor	al,bl"                                                                    \
-                                        "je	in_vbi"                                                                    \
-                                        "out_vbi:"                                                                     \
-                                        "in	al,dx"                                                                     \
-                                        "and	al,008h"                                                                  \
-                                        "xor	al,bl"                                                                    \
-                                        "jne	out_vbi"
-#endif // WIN32
-
 /***********************************************************************************************
  * PaletteClass::Set -- Fade the display palette to this palette.                              *
  *                                                                                             *
@@ -353,11 +335,7 @@ void PaletteClass::Set(int time, void (*callback)(void)) const
         **	Set the palette to this intermediate palette and then loop back
         **	to calculate and set a new intermediate palette.
         */
-#ifdef WIN32
         Set_Palette((void*)&palette[0]);
-#else
-        palette.Set();
-#endif // WIN32
 
         /*
         **	If the callback routine was specified, then call it once per palette
@@ -382,16 +360,5 @@ void PaletteClass::Set(int time, void (*callback)(void)) const
     **	Ensure that the final palette exactly matches the requested
     **	palette before exiting the fading routine.
     */
-#ifndef WIN32
-    Vsync();
-    RGBClass const* rgbptr = &Palette[0];
-    RGBClass::Raw_Color_Prep(0);
-    for (int index = 0; index < COLOR_COUNT; index++) {
-        rgbptr->Raw_Set();
-        rgbptr++;
-    }
-    ((PaletteClass&)CurrentPalette) = *this;
-#else // WIN32
     Set_Palette((void*)&Palette[0]);
-#endif
 }

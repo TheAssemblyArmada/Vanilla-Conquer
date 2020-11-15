@@ -45,7 +45,6 @@
 
 #include "function.h"
 #include <stdio.h>
-//#include <mem.h>
 #include <string.h>
 #include "ipxconn.h"
 
@@ -55,11 +54,11 @@
 #else
 
 #include "ipx95.h"
-#ifdef WIN32
+#ifdef _WIN32
 #include "common/tcpip.h"
-#else // WIN32
+#else // _WIN32
 #include "fakesock.h"
-#endif // WIN32
+#endif // _WIN32
 #endif // WINSOCK_IPX
 
 /*
@@ -276,8 +275,6 @@ void IPXConnClass::Configure(unsigned short socket,
  *=========================================================================*/
 int IPXConnClass::Start_Listening(void)
 {
-#ifdef WIN32
-
 #ifdef WINSOCK_IPX
     /*
     ** Open the socket.
@@ -314,70 +311,6 @@ int IPXConnClass::Start_Listening(void)
         return (false);
     }
 #endif // WINSOCK_IPX
-
-#else // WIN32
-
-    void* hdr_ptr;
-    unsigned long hdr_val;
-    void* buf_ptr;
-    unsigned long buf_val;
-    int rc;
-
-    /*------------------------------------------------------------------------
-    Don't do a thing unless we've been configured, and we're not listening.
-    ------------------------------------------------------------------------*/
-    if (Configured == 0 || Listening == 1) {
-        return (0);
-    }
-
-    /*------------------------------------------------------------------------
-    Open the Socket
-    ------------------------------------------------------------------------*/
-    if (!Open_Socket(Socket)) {
-        return (0);
-    }
-
-    /*------------------------------------------------------------------------
-    Clear the ECB & header
-    ------------------------------------------------------------------------*/
-    memset(ListenECB, 0, sizeof(ECBType));
-    memset(ListenHeader, 0, sizeof(IPXHeaderType));
-
-    /*------------------------------------------------------------------------
-    Convert protected-mode ptrs to real-mode ptrs
-    ------------------------------------------------------------------------*/
-    hdr_val = (unsigned long)ListenHeader;
-    hdr_ptr = (void*)(((hdr_val & 0xffff0) << 12) | (hdr_val & 0x000f));
-
-    buf_val = (unsigned long)ListenBuf;
-    buf_ptr = (void*)(((buf_val & 0xffff0) << 12) | (buf_val & 0x000f));
-
-    /*------------------------------------------------------------------------
-    Fill in the ECB
-    ------------------------------------------------------------------------*/
-    ListenECB->SocketNumber = Socket;
-    ListenECB->PacketCount = 2;
-    ListenECB->Packet[0].Address = hdr_ptr;
-    ListenECB->Packet[0].Length = sizeof(IPXHeaderType);
-    ListenECB->Packet[1].Address = buf_ptr;
-    ListenECB->Packet[1].Length = (unsigned short)PacketLen;
-
-    ((long&)ListenECB->Event_Service_Routine) = Handler;
-
-    /*------------------------------------------------------------------------
-    Command IPX to listen
-    ------------------------------------------------------------------------*/
-    rc = IPX_Listen_For_Packet(ListenECB);
-    if (rc != 0) {
-        Close_Socket(Socket);
-        return (0);
-    } else {
-        Listening = 1;
-        return (1);
-    }
-
-#endif // WIN32
-
 } /* end of Start_Listening */
 
 /***************************************************************************
@@ -412,8 +345,6 @@ int IPXConnClass::Stop_Listening(void)
         return (0);
     }
 
-#ifdef WIN32
-
     if (Winsock.Get_Connected()) {
         Listening = 0;
         return (true);
@@ -421,16 +352,6 @@ int IPXConnClass::Stop_Listening(void)
         IPX_Shut_Down95();
         Close_Socket(Socket);
     }
-
-#else // WIN32
-
-    /*------------------------------------------------------------------------
-    Shut IPX down.
-    ------------------------------------------------------------------------*/
-    IPX_Cancel_Event(ListenECB);
-    Close_Socket(Socket);
-
-#endif // WIN32
 
     Listening = 0;
 
@@ -497,7 +418,7 @@ int IPXConnClass::Open_Socket(unsigned short socket)
     SocketOpen = rc;
     return (rc);
 
-#else // WINSOCK_IPX
+#else  // WINSOCK_IPX
     if (Winsock.Get_Connected()) {
         SocketOpen = 1;
         return (true);
@@ -517,9 +438,7 @@ int IPXConnClass::Open_Socket(unsigned short socket)
         If already open, close & reopen it
         .....................................................................*/
         if (rc == IPXERR_SOCKET_ERROR) {
-#ifdef WIN32
             WWDebugString("Error -- Specified socket is already open");
-#endif // WIN32
             IPX_Close_Socket(socket);
             rc = IPX_Open_Socket(socket);
         }
@@ -622,8 +541,6 @@ int IPXConnClass::Send_To(char* buf, int buflen, IPXAddressClass* address, NetNo
     NetNodeType node;
     int rc;
 
-#ifdef WIN32
-
     unsigned char send_address[6];
 
     if (Winsock.Get_Connected()) {
@@ -663,95 +580,6 @@ int IPXConnClass::Send_To(char* buf, int buflen, IPXAddressClass* address, NetNo
 
     return (
         IPX_Send_Packet95(&send_address[0], (unsigned char*)buf, buflen, (unsigned char*)net, (unsigned char*)node));
-
-#else // WIN32
-
-    void* hdr_ptr;
-    void* buf_ptr;
-    unsigned long hdr_val;
-    unsigned long buf_val;
-
-    /*------------------------------------------------------------------------
-    Clear the ECB & header
-    ------------------------------------------------------------------------*/
-    memset(SendECB, 0, sizeof(ECBType));
-    memset(SendHeader, 0, sizeof(IPXHeaderType));
-
-    /*------------------------------------------------------------------------
-    Copy the message into the SendBuf
-    ------------------------------------------------------------------------*/
-    memcpy(SendBuf, buf, buflen);
-
-    /*------------------------------------------------------------------------
-    Convert protected-mode ptrs to real-mode ptrs
-    ------------------------------------------------------------------------*/
-    hdr_val = (unsigned long)SendHeader;
-    hdr_ptr = (void*)(((hdr_val & 0xffff0) << 12) | (hdr_val & 0x000f));
-    buf_val = (unsigned long)SendBuf;
-    buf_ptr = (void*)(((buf_val & 0xffff0) << 12) | (buf_val & 0x000f));
-
-    /*------------------------------------------------------------------------
-    Fill in ECB
-    ------------------------------------------------------------------------*/
-    SendECB->SocketNumber = Socket; // my output socket
-    SendECB->PacketCount = 2;       // 2 data areas
-    SendECB->Packet[0].Address = hdr_ptr;
-    SendECB->Packet[0].Length = sizeof(IPXHeaderType);
-    SendECB->Packet[1].Address = buf_ptr;
-    SendECB->Packet[1].Length = (unsigned short)buflen;
-
-    /*------------------------------------------------------------------------
-    Get the bridge address
-    ------------------------------------------------------------------------*/
-    if (immed) {
-        memcpy(SendECB->ImmediateAddress, immed, 6);
-    } else {
-        address->Get_Address(net, node);
-
-        /*.....................................................................
-        If the user is logged in & has a valid Novell Connection Number, get
-        the bridge address the "official" way
-        .....................................................................*/
-        if (ConnectionNum != 0) {
-            rc = IPX_Get_Local_Target(net, node, Socket, SendECB->ImmediateAddress);
-            if (rc != 0) {
-                return (0);
-            }
-        }
-        /*.....................................................................
-        Otherwise, use the destination node address as the ImmediateAddress,
-        and just hope there's no network bridge in the path.
-        .....................................................................*/
-        else {
-            memcpy(SendECB->ImmediateAddress, node, 6);
-        }
-    }
-
-    /*------------------------------------------------------------------------
-    Fill in outgoing header
-    ------------------------------------------------------------------------*/
-    SendHeader->PacketType = 4;             // 4 = IPX packet
-    address->Get_Address(SendHeader);       // fill in header addresses
-    SendHeader->DestNetworkSocket = Socket; // destination socket id
-
-    /*------------------------------------------------------------------------
-    Send the packet
-    ------------------------------------------------------------------------*/
-    IPX_Send_Packet(SendECB);
-
-    /*------------------------------------------------------------------------
-    Wait for send to complete
-    ------------------------------------------------------------------------*/
-    while (SendECB->InUse)
-        Let_IPX_Breath();
-
-    if (SendECB->CompletionCode != 0) {
-        return (0);
-    } else {
-        return (1);
-    }
-
-#endif // WIN32
 #endif // WINSOCK_IPX
 
 } /* end of Send_To */
@@ -777,94 +605,13 @@ int IPXConnClass::Broadcast(char* buf, int buflen)
     PacketTransport->Broadcast(buf, buflen);
     return (true);
 
-#else // WINSOCK_IPX
-
-#ifdef WIN32
-
+#else  // WINSOCK_IPX
     if (Winsock.Get_Connected()) {
         Winsock.Write((void*)buf, buflen);
         return (true);
     } else {
         return (IPX_Broadcast_Packet95((unsigned char*)buf, buflen));
     }
-
-#else // WIN32
-
-    void* hdr_ptr;
-    void* buf_ptr;
-    unsigned long hdr_val;
-    unsigned long buf_val;
-
-    /*------------------------------------------------------------------------
-    Clear the ECB & header
-    ------------------------------------------------------------------------*/
-    memset(SendECB, 0, sizeof(ECBType));
-    memset(SendHeader, 0, sizeof(IPXHeaderType));
-
-    /*------------------------------------------------------------------------
-    Copy the message into the SendBuf
-    ------------------------------------------------------------------------*/
-    memcpy(SendBuf, buf, buflen);
-
-    /*------------------------------------------------------------------------
-    Convert protected-mode ptrs to real-mode ptrs
-    ------------------------------------------------------------------------*/
-    hdr_val = (unsigned long)SendHeader;
-    hdr_ptr = (void*)(((hdr_val & 0xffff0) << 12) | (hdr_val & 0x000f));
-    buf_val = (unsigned long)SendBuf;
-    buf_ptr = (void*)(((buf_val & 0xffff0) << 12) | (buf_val & 0x000f));
-
-    /*------------------------------------------------------------------------
-    Fill in ECB
-    ------------------------------------------------------------------------*/
-    SendECB->SocketNumber = Socket; // my output socket
-    SendECB->PacketCount = 2;       // 2 data areas
-    SendECB->Packet[0].Address = hdr_ptr;
-    SendECB->Packet[0].Length = sizeof(IPXHeaderType);
-    SendECB->Packet[1].Address = buf_ptr;
-    SendECB->Packet[1].Length = (unsigned short)buflen;
-    SendECB->ImmediateAddress[0] = 0xff;
-    SendECB->ImmediateAddress[1] = 0xff;
-    SendECB->ImmediateAddress[2] = 0xff;
-    SendECB->ImmediateAddress[3] = 0xff;
-    SendECB->ImmediateAddress[4] = 0xff;
-    SendECB->ImmediateAddress[5] = 0xff;
-
-    /*------------------------------------------------------------------------
-    Fill in outgoing header
-    ------------------------------------------------------------------------*/
-    SendHeader->PacketType = 4;              // 4 = IPX packet
-    SendHeader->DestNetworkNumber[0] = 0xff; // 0xff = broadcast
-    SendHeader->DestNetworkNumber[1] = 0xff;
-    SendHeader->DestNetworkNumber[2] = 0xff;
-    SendHeader->DestNetworkNumber[3] = 0xff;
-    SendHeader->DestNetworkNode[0] = 0xff; // 0xff = broadcast
-    SendHeader->DestNetworkNode[1] = 0xff;
-    SendHeader->DestNetworkNode[2] = 0xff;
-    SendHeader->DestNetworkNode[3] = 0xff;
-    SendHeader->DestNetworkNode[4] = 0xff;
-    SendHeader->DestNetworkNode[5] = 0xff;
-    SendHeader->DestNetworkSocket = Socket; // destination socket #
-
-    /*------------------------------------------------------------------------
-    Send the packet
-    ------------------------------------------------------------------------*/
-    IPX_Send_Packet(SendECB);
-
-    /*------------------------------------------------------------------------
-    Wait for send to complete
-    ------------------------------------------------------------------------*/
-    while (SendECB->InUse) {
-        Let_IPX_Breath();
-    }
-
-    if (SendECB->CompletionCode != 0) {
-        return (0);
-    } else {
-        return (1);
-    }
-
-#endif // WIN32
 #endif // WINSOCK_IPX
 } /* end of Broadcast */
 

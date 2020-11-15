@@ -247,8 +247,6 @@ int EditClass::Action(unsigned flags, KeyNumType& key)
             flags = 0;
 
         } else {
-#ifdef WIN32
-
             KeyASCIIType ascii = (KeyASCIIType)(Keyboard->To_ASCII(key) & 0xff);
 
             /*
@@ -282,14 +280,6 @@ int EditClass::Action(unsigned flags, KeyNumType& key)
                 }
             }
         }
-
-#else  // WIN32
-            if (Handle_Key(Keyboard->To_ASCII(key))) {
-                flags &= ~KEYBOARD;
-                key = KN_NONE;
-            }
-        }
-#endif // WIN32
     }
 
     return (ControlClass::Action(flags, key));

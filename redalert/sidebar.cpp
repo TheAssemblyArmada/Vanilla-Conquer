@@ -309,11 +309,7 @@ void SidebarClass::Init_IO(void)
 
         Upgrade.IsSticky = true;
         Upgrade.ID = BUTTON_UPGRADE;
-#ifdef WIN32
         Upgrade.X = 0x21f;
-#else
-        Upgrade.X = ((0x21f / 2) + 1) * RESFACTOR;
-#endif
         Upgrade.Y = (0x96 / 2) * RESFACTOR;
         Upgrade.IsPressed = false;
         Upgrade.IsToggleType = true;
@@ -1198,11 +1194,7 @@ void SidebarClass::StripClass::Init_IO(int id)
     UpButton[ID].Y = Y + (UP_Y_OFFSET * RESFACTOR);
 
 #if (FRENCH)
-#ifdef WIN32
     UpButton[ID].Set_Shape(MFCD::Retrieve("STRIPUP.SHP"));
-#else
-    UpButton[ID].Set_Shape(MFCD::Retrieve("STUP_FIX.SHP"));
-#endif
 #else  // FRENCH
     UpButton[ID].Set_Shape(MFCD::Retrieve("STRIPUP.SHP"));
 #endif // FRENCH
@@ -2396,7 +2388,6 @@ bool SidebarClass::StripClass::Abandon_Production(int factory)
  *=============================================================================================*/
 void SidebarClass::Zoom_Mode_Control(void)
 {
-#ifdef WIN32
     /*
     ** If radar is active, cycle as follows:
     ** Zoomed => not zoomed
@@ -2424,32 +2415,4 @@ void SidebarClass::Zoom_Mode_Control(void)
             Player_Names(Is_Player_Names() == 0);
         }
     }
-#else
-    /*
-    ** If radar is active, cycle as follows:
-    ** not zoomed => player status (multiplayer only)
-    ** player status => radar spying readout
-    ** radar spying readout => not zoomed
-    */
-    if (IsRadarActive) {
-        if (Session.Type == GAME_NORMAL) {
-            if (!Spy_Next_House()) {
-                Zoom_Mode(Coord_Cell(TacticalCoord));
-            }
-        } else {
-            if (!Spying_On_House() && !Is_Player_Names()) {
-                Player_Names(1);
-            } else {
-                Player_Names(0);
-                if (!Spy_Next_House()) {
-                    Zoom_Mode(Coord_Cell(TacticalCoord));
-                }
-            }
-        }
-    } else {
-        if (Session.Type != GAME_NORMAL) {
-            Player_Names(Is_Player_Names() == 0);
-        }
-    }
-#endif
 }

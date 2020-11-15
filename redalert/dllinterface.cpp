@@ -1855,11 +1855,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Advance_Instance(uint64 player
     **	a message has expired & been removed, and the entire map must be updated.
     */
     if (Session.Messages.Manage()) {
-#ifdef WIN32
         HiddenPage.Clear();
-#else  // WIN32
-        HidPage.Clear();
-#endif // WIN32
         Map.Flag_To_Redraw(true);
     }
 

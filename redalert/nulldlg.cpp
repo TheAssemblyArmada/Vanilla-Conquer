@@ -513,7 +513,6 @@ int Com_Scenario_Dialog(bool skirmish)
         */
         Call_Back();
 
-#ifdef WIN32
         /*
         ** If we have just received input focus again after running in the background then
         ** we need to redraw.
@@ -522,7 +521,6 @@ int Com_Scenario_Dialog(bool skirmish)
             AllSurfaces.SurfacesRestored = FALSE;
             display = REDRAW_ALL;
         }
-#endif
 
         /*
         ...................... Refresh display if needed ......................

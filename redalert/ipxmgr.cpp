@@ -78,11 +78,11 @@
 #else // WINSOCK_IPX
 
 #include "ipx95.h"
-#ifdef WIN32
+#ifdef _WIN32
 #include "common/tcpip.h"
 #else
 #include "fakesock.h"
-#endif // WIN32
+#endif // _WIN32
 
 #endif // WINSOCK_IPX
 
@@ -260,13 +260,6 @@ IPXManagerClass::~IPXManagerClass()
         Free_RealMode_Mem();
         RealMemAllocd = 0;
     }
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-#ifdef WIN32
-#ifndef WINSOCK_IPX
-// PG	Unload_IPX_Dll();
-#endif
-#endif
-#endif
 } /* end of ~IPXManagerClass */
 
 /***************************************************************************
@@ -1058,9 +1051,7 @@ int IPXManagerClass::Service(void)
         } while (packetlen);
     }
 
-#else // WINSOCK_IPX
-
-#ifdef WIN32
+#else   // WINSOCK_IPX
 
     unsigned char temp_receive_buffer[1024];
     int recv_length;
@@ -1160,88 +1151,6 @@ int IPXManagerClass::Service(void)
         }
 #endif
     }
-
-#else // WIN32
-
-    //------------------------------------------------------------------------
-    //	Error if IPX not installed or not Listening
-    //------------------------------------------------------------------------
-    if (!IPXStatus || !Listening) {
-        return (0);
-    }
-
-    //------------------------------------------------------------------------
-    //	Loop until there are no more packets to process.
-    //------------------------------------------------------------------------
-    while (1) {
-
-        //.....................................................................
-        //	Check the BufferFlags for the "current" buffer; if it's empty,
-        //	break; out of the loop.
-        //.....................................................................
-        if (BufferFlags[CurIndex] == 0) {
-            break;
-        }
-
-        //.....................................................................
-        //	Compute the length of the packet (byte-swap the length in the IPX hdr)
-        //.....................................................................
-        packetlen = ((CurHeaderBuf->Length & 0xff) << 8) | (CurHeaderBuf->Length >> 8);
-        packetlen -= sizeof(IPXHeaderType);
-
-        //.....................................................................
-        //	Extract the sender's address from the IPX header
-        //.....................................................................
-        address.Set_Address(CurHeaderBuf);
-
-        //.....................................................................
-        //	Examine the Magic Number of the received packet to determine if this
-        //	packet goes into the Global Queue, or into one of the Private Queues
-        //.....................................................................
-        packet = (CommHeaderType*)CurDataBuf;
-        if (packet->MagicNumber == GlobalChannel->Magic_Num()) {
-
-            //..................................................................
-            //	Put the packet in the Global Queue
-            //..................................................................
-            if (!GlobalChannel->Receive_Packet(packet, packetlen, &address)) {
-                ReceiveOverflows++;
-            }
-        }
-
-        //.....................................................................
-        //	Find the Private Queue that this packet is for
-        //.....................................................................
-        else if (packet->MagicNumber == ProductID) {
-            for (i = 0; i < NumConnections; i++) {
-                if (Connection[i]->Address == address) {
-                    if (!Connection[i]->Receive_Packet(packet, packetlen)) {
-                        ReceiveOverflows++;
-                    }
-                    break;
-                }
-            }
-        }
-
-        //.....................................................................
-        //	Set the current BufferFlags to 0 (since we've cleaned out this buffer)
-        //.....................................................................
-        BufferFlags[CurIndex] = 0;
-
-        //.....................................................................
-        //	Go to the next packet buffer
-        //.....................................................................
-        CurIndex++;
-        CurHeaderBuf = (IPXHeaderType*)(((char*)CurHeaderBuf) + FullPacketLen);
-        CurDataBuf = ((char*)CurDataBuf) + FullPacketLen;
-        if (CurIndex >= NumBufs) {
-            CurHeaderBuf = FirstHeaderBuf;
-            CurDataBuf = FirstDataBuf;
-            CurIndex = 0;
-        }
-    }
-
-#endif // WIN32
 #endif // WINSOCK_IPX
 
     //------------------------------------------------------------------------
@@ -1782,176 +1691,7 @@ void IPXManagerClass::Mono_Debug_Print(int index, int refresh)
  *=========================================================================*/
 int IPXManagerClass::Alloc_RealMode_Mem(void)
 {
-
-#ifdef WIN32
     return (1);
-#else
-
-    union REGS regs;
-    struct SREGS sregs;
-    int size;                // required size of allocation
-    unsigned char* realmode; // start addresses of real-mode data
-    int realmodelen;         // length of real-mode data
-    unsigned long func_val;
-    char* p; // for parsing buffer
-    int i;
-
-    //------------------------------------------------------------------------
-    //	Compute # of buffers we need to allocate, & the max size of each one
-    //------------------------------------------------------------------------
-    NumBufs = Glb_NumPackets + (Pvt_NumPackets * CONNECT_MAX);
-
-    PacketLen = Glb_MaxPacketLen + sizeof(GlobalHeaderType);
-    if (Pvt_MaxPacketLen + sizeof(CommHeaderType) > PacketLen)
-        PacketLen = Pvt_MaxPacketLen + sizeof(CommHeaderType);
-
-    FullPacketLen = PacketLen + sizeof(IPXHeaderType);
-
-    //------------------------------------------------------------------------
-    //	Compute the size of everything we'll ever need, allocate it in one big
-    //	chunk.  The memory is used as follows:
-    //	- Real-mode assembly IPX callback routine, plus its data,
-    //	  (which includes the ListenECB)
-    //	- Array of IPX Packet buffers (IPXHeader plus data buffer)
-    //	- SendECB: ECB for sending
-    //	- SendHeader: IPX Header for sending
-    //	- SendBuf: Packet buffer for sending
-    //	- BufferFlags: 1 byte for each incoming packet buffer; 1=in use, 0=free
-    //------------------------------------------------------------------------
-    realmode = (unsigned char*)Get_RM_IPX_Address();
-    realmodelen = Get_RM_IPX_Size();
-    size = realmodelen +               // assembly routine & its data
-           (FullPacketLen * NumBufs) + // array of packet buffers
-           sizeof(ECBType) +           // SendECB
-           FullPacketLen +             // SendHeader & SendBuf
-           NumBufs;                    // BufferFlags
-    if (size > 65535) {
-        return (0);
-    }
-
-    //------------------------------------------------------------------------
-    //	Allocate DOS memory for the ECB, IPXHeader & packet buffers:
-    //	AX = 0x100
-    //	BX = # paragraphs to allocate
-    //	- if Success, AX = real-mode segment, DX = selector
-    //	- if Failure, carry flag is set
-    //------------------------------------------------------------------------
-    memset(&regs, 0, sizeof(regs));
-    segread(&sregs);
-    regs.x.eax = DPMI_ALLOC_DOS_MEM;         // DPMI function to call
-    regs.x.ebx = ((size + 15) >> 4);         // # paragraphs to allocate
-    int386x(DPMI_INT, &regs, &regs, &sregs); // allocate the memory
-
-    //------------------------------------------------------------------------
-    //	If the carry flag is set, DPMI is indicating an error.
-    //------------------------------------------------------------------------
-    if (regs.x.cflag) {
-        return (0);
-    }
-
-    //------------------------------------------------------------------------
-    //	Save the values of the returned segment & selector
-    //------------------------------------------------------------------------
-    Selector = regs.w.dx;
-    Segment = regs.w.ax;
-    RealMemSize = size;
-    RealModeData = (RealModeDataType*)(((long)Segment) << 4);
-
-    //------------------------------------------------------------------------
-    //	Lock the memory (since we're servicing interrupts with it)
-    //	AX = 0x600
-    //	BX:CX = starting linear address of memory to lock
-    //	SI:DI = size of region to lock (in bytes)
-    //	- If Failure, carry flag is set.
-    //------------------------------------------------------------------------
-    memset(&regs, 0, sizeof(regs));
-    segread(&sregs);
-    regs.x.eax = DPMI_LOCK_MEM; // DPMI function to call
-    regs.x.ebx = ((long)RealModeData & 0xffff0000) >> 16;
-    regs.x.ecx = ((long)RealModeData & 0x0000ffff);
-    regs.x.esi = ((long)RealMemSize & 0xffff0000) >> 16;
-    regs.x.edi = ((long)RealMemSize & 0x0000ffff);
-    int386x(DPMI_INT, &regs, &regs, &sregs); // call DPMI
-
-    //------------------------------------------------------------------------
-    //	If the carry flag is set, DPMI is indicating an error.
-    //------------------------------------------------------------------------
-    if (regs.x.cflag) {
-        memset(&regs, 0, sizeof(regs));
-        segread(&sregs);
-        regs.x.eax = DPMI_FREE_DOS_MEM;          // DPMI function to call
-        regs.x.edx = Selector;                   // ptr to free
-        int386x(DPMI_INT, &regs, &regs, &sregs); // free the memory
-        return (0);
-    }
-
-    //------------------------------------------------------------------------
-    //	Copy the Real-mode code into our memory buffer
-    //------------------------------------------------------------------------
-    p = (char*)(((long)Segment) << 4);
-    memcpy(p, realmode, realmodelen);
-    p += realmodelen;
-
-    //------------------------------------------------------------------------
-    //	Compute & save the entry point for the real-mode packet handler
-    //------------------------------------------------------------------------
-    func_val = (unsigned long)RealModeData;
-    Handler = (((func_val & 0xffff0) << 12) | ((func_val & 0x000f) + RealModeData->FuncOffset));
-
-    //------------------------------------------------------------------------
-    //	Fill in buffer pointers
-    //------------------------------------------------------------------------
-    ListenECB = &(RealModeData->ListenECB);
-
-    FirstHeaderBuf = (IPXHeaderType*)p;
-    FirstDataBuf = (((char*)FirstHeaderBuf) + sizeof(IPXHeaderType));
-    CurIndex = 0;
-    CurHeaderBuf = FirstHeaderBuf;
-    CurDataBuf = FirstDataBuf;
-    p += FullPacketLen * NumBufs;
-
-    SendECB = (ECBType*)p;
-    p += sizeof(ECBType);
-
-    SendHeader = (IPXHeaderType*)p;
-    p += sizeof(IPXHeaderType);
-
-    SendBuf = (char*)p;
-    p += PacketLen;
-
-    BufferFlags = (char*)p;
-
-    //------------------------------------------------------------------------
-    //	Fill in the real-mode routine's data (The ECB will be filled in when we
-    //	command IPX to Listen).
-    //------------------------------------------------------------------------
-    RealModeData->NumBufs = (short)NumBufs;
-    RealModeData->BufferFlags = (char*)((((long)BufferFlags & 0xffff0) << 12) | ((long)BufferFlags & 0x0000f));
-    RealModeData->PacketSize = (short)FullPacketLen;
-    RealModeData->FirstPacketBuf =
-        (IPXHeaderType*)((((long)FirstHeaderBuf & 0xffff0) << 12) | ((long)FirstHeaderBuf & 0x0000f));
-    RealModeData->CurIndex = 0;
-    RealModeData->CurPacketBuf = RealModeData->FirstPacketBuf;
-    RealModeData->Semaphore = 0;
-    RealModeData->ReEntrantCount = 0;
-
-    //------------------------------------------------------------------------
-    //	Init state of all buffers to empty
-    //------------------------------------------------------------------------
-    for (i = 0; i < NumBufs; i++) {
-        BufferFlags[i] = 0;
-    }
-
-    //------------------------------------------------------------------------
-    //	Check the start & end markers in the real-mode memory area
-    //------------------------------------------------------------------------
-    if (RealModeData->Marker1 != 0x1111 || RealModeData->Marker2 != 0x2222) {
-        Free_RealMode_Mem();
-        return (0);
-    } else {
-        return (1);
-    }
-#endif // WIN32
 } /* end of Alloc_Realmode_Mem */
 
 /***************************************************************************
@@ -1971,48 +1711,7 @@ int IPXManagerClass::Alloc_RealMode_Mem(void)
  *=========================================================================*/
 int IPXManagerClass::Free_RealMode_Mem(void)
 {
-
-#ifdef WIN32
-
     return (1);
-
-#else  // WIN32
-
-    union REGS regs;
-    struct SREGS sregs;
-    int rc = 1;
-
-    //------------------------------------------------------------------------
-    //	Unlock the memory
-    //------------------------------------------------------------------------
-    memset(&regs, 0, sizeof(regs));
-    segread(&sregs);
-    regs.x.eax = DPMI_UNLOCK_MEM; // DPMI function to call
-    regs.x.ebx = ((long)RealModeData & 0xffff0000) >> 16;
-    regs.x.ecx = ((long)RealModeData & 0x0000ffff);
-    regs.x.esi = ((long)RealMemSize & 0xffff0000) >> 16;
-    regs.x.edi = ((long)RealMemSize & 0x0000ffff);
-    int386x(DPMI_INT, &regs, &regs, &sregs); // call DPMI
-
-    //------------------------------------------------------------------------
-    //	If the carry flag is set, DPMI is indicating an error.
-    //------------------------------------------------------------------------
-    if (regs.x.cflag) {
-        rc = 0;
-    }
-
-    //------------------------------------------------------------------------
-    //	Free DOS memory
-    //------------------------------------------------------------------------
-    memset(&regs, 0, sizeof(regs));
-    segread(&sregs);
-    regs.x.eax = DPMI_FREE_DOS_MEM;          // DPMI function to call
-    regs.x.edx = Selector;                   // ptr to free
-    int386x(DPMI_INT, &regs, &regs, &sregs); // free the memory
-
-    return (rc);
-#endif // WIN32
-
 } /* end of Free_Realmode_Mem */
 
 /*************************** end of ipxmgr.cpp *****************************/

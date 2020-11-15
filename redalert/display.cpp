@@ -369,10 +369,6 @@ void DisplayClass::Init_Theater(TheaterType theater)
     */
     sprintf(fullname, "%s.MIX", Theaters[theater].Root);
 
-#ifndef WIN32
-    LastTheater = THEATER_NONE;
-#endif
-
     if (Scen.Theater != LastTheater) {
         if (TheaterData != NULL) {
             delete TheaterData;
@@ -1974,8 +1970,6 @@ void DisplayClass::Draw_It(bool forced)
             if (oldh < 1)
                 forced = true;
 
-#ifdef WIN32 // For WIN32 only redraw the edges of the map that move into view
-
             /*
             ** Work out which map edges need to be redrawn
             */
@@ -2157,74 +2151,6 @@ void DisplayClass::Draw_It(bool forced)
             ScenarioInit--;
         }
 
-#else // WIN32
-            /*
-            **	Blit any replicable block to avoid having to drawstamp.
-            */
-            if (!forced && (oldw != Lepton_To_Pixel(TacLeptonWidth) || oldh != Lepton_To_Pixel(TacLeptonHeight))) {
-                Set_Cursor_Pos(-1);
-
-                HidPage.Blit(HidPage,
-                             ((oldx < 0) ? -oldx : 0) + TacPixelX,
-                             ((oldy < 0) ? -oldy : 0) + TacPixelY,
-                             ((oldx < 0) ? 0 : oldx) + TacPixelX,
-                             ((oldy < 0) ? 0 : oldy) + TacPixelY,
-                             oldw,
-                             oldh);
-            } else {
-                forced = true;
-            }
-
-            if (oldx < 0)
-                oldx = 0;
-            if (oldy < 0)
-                oldy = 0;
-
-            /*
-            ** Record new map position for future reference.
-            */
-            ScenarioInit++;
-            Set_Tactical_Position(DesiredTacticalCoord);
-            ScenarioInit--;
-
-            if (!forced) {
-
-                /*
-                **	Set the 'redraw stamp' bit for any cells that could not be copied.
-                */
-                int startx = -Lepton_To_Pixel(Coord_XLepton(TacticalCoord));
-                int starty = -Lepton_To_Pixel(Coord_YLepton(TacticalCoord));
-                oldw -= 24;
-                oldh -= 24;
-                for (y = starty; y <= Lepton_To_Pixel(TacLeptonHeight) + ((CELL_PIXEL_H * 2)); y += CELL_PIXEL_H) {
-                    for (x = startx; x <= Lepton_To_Pixel(TacLeptonWidth) + ((CELL_PIXEL_W * 2)); x += CELL_PIXEL_W) {
-                        if (x <= oldx || x >= oldx + oldw || y <= oldy || y >= oldy + oldh) {
-                            CELL c = Click_Cell_Calc(Bound(x, 0, Lepton_To_Pixel(TacLeptonWidth) - 1) + TacPixelX,
-                                                     Bound(y, 0, Lepton_To_Pixel(TacLeptonHeight) - 1) + TacPixelY);
-
-                            if (c > 0) {
-                                (*this)[c].Redraw_Objects(true);
-                            }
-                        }
-                    }
-                }
-            }
-
-        } else {
-
-            /*
-            **	Set the tactical coordinate just in case the desired tactical has changed but
-            **	not enough to result in any visible map change. This is likely to occur with very
-            **	slow scroll rates.
-            */
-            ScenarioInit++;
-            if (DesiredTacticalCoord != TacticalCoord) {
-                Set_Tactical_Position(DesiredTacticalCoord);
-            }
-            ScenarioInit--;
-        }
-#endif
-
         /*
         **	If the entire tactical map is forced to be redrawn, then set all the redraw flags
         **	and let the normal processing take care of the rest.
@@ -2261,15 +2187,6 @@ void DisplayClass::Draw_It(bool forced)
 
             HidPage.Unlock();
         }
-
-#ifndef WIN32
-        /*
-        **	Once the icons are drawn, duplicate the bottom line of the screen into the phantom
-        **	area one line below the screen. This causes the predator effect to work on any
-        **	shape drawn at the bottom of the screen.
-        */
-        HidPage.Blit(HidPage, 0, HidPage.Get_Height() - 1, 0, HidPage.Get_Height(), HidPage.Get_Width(), 1, false);
-#endif
 
         if (HidPage.Lock()) {
 
@@ -4812,11 +4729,9 @@ void DisplayClass::Read_INI(CCINIClass& ini)
     /*
     ** Remove any old theater specific uncompressed shapes
     */
-#ifdef WIN32
     if (Scen.Theater != LastTheater) {
         Reset_Theater_Shapes();
     }
-#endif // WIN32
 
     /*
     **	Now that the theater is known, init the entire map hierarchy

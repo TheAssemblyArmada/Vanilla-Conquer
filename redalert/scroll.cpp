@@ -37,11 +37,7 @@
 
 #include "function.h"
 
-#ifdef WIN32
 #define SCROLL_DELAY 1
-#else
-#define SCROLL_DELAY 2
-#endif
 
 CDTimerClass<SystemTimerClass> ScrollClass::Counter;
 

@@ -97,43 +97,11 @@ Map(screen) class heirarchy.
                    ³                          ³ AircraftTypeClass InfantryTypeClass
 #endif
 
-#ifdef WIN32
-//#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#define MONOC_H
+#ifdef _WIN32
 
+#define MONOC_H
 #define _MAX_NAME _MAX_FNAME
 
-#endif
-
-/*
-**	The "bool" integral type was defined by the C++ comittee in
-**	November of '94. Until the compiler supports this, use the following
-**	definition.
-*/
-#if (0)
-#ifndef __BORLANDC__
-#ifndef TRUE_FALSE_DEFINED
-#define TRUE_FALSE_DEFINED
-          enum {
-              false = 0,
-              true = 1
-          };
-typedef int bool;
-#endif
-#endif
-#endif
-
-#ifdef NOMINMAX
-inline int min(int a, int b)
-{
-    return a < b ? a : b;
-}
-
-inline int max(int a, int b)
-{
-    return a > b ? a : b;
-}
 #endif
 
 /**********************************************************************
@@ -147,7 +115,7 @@ inline int max(int a, int b)
 */
 #ifndef NOINITCLASS
 #define NOINITCLASS
-struct NoInitClass
+          struct NoInitClass
 {
 public:
     void operator()(void) const {};
@@ -155,10 +123,6 @@ public:
 #endif
 
 #define WWMEM_H
-
-#ifndef WIN32
-#define TIMER_H
-#endif
 
 #include "common/wwkeyboard.h"
 #include "common/wwlib32.h"
@@ -202,19 +166,9 @@ typedef struct
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
-//#include	<mem.h>
-//#include	<dos.h>
-#include <direct.h>
 #include <stdarg.h>
 #include <ctype.h>
 #include <assert.h>
-#include <process.h>
-//#include	<new.h>
-
-#ifdef WIN32
-#define int386x(a, b, c, d) 0
-#define int386(a, b, c)     0
-#endif
 
 /*
 **	VQ player specific includes.
@@ -343,9 +297,6 @@ CELL Coord_Cell(COORDINATE coord);
 #include "readline.h"
 #include "vortex.h"
 #include "egos.h"
-#ifdef WIN32
-//#include	"pcx.h"
-#endif
 
 // Denzil 5/18/98 - Mpeg movie playback
 #ifdef MPEGMOVIE
@@ -357,8 +308,6 @@ bool PlayMpegMovie(const char* name);
 
 extern int Get_CD_Drive(void);
 extern void Fatal(char const* message, ...);
-
-#ifdef WIN32
 
 /*
 ** For WIN32, replace the assert macro so we get an error on the debugger screen
@@ -382,7 +331,6 @@ void Assert_Failure(char* expression, int line, char* file);
 extern void Free_Interpolated_Palettes(void);
 extern int Load_Interpolated_Palettes(char const* filename, BOOL add = FALSE);
 extern void Rebuild_Interpolated_Palette(unsigned char* interpal);
-#endif
 
 /*
 **	ADATA.CPP
@@ -421,11 +369,7 @@ bool Is_Speaking(void);
 /*
 **	CDFILE.CPP
 */
-#ifdef WIN32
 int harderr_handler(unsigned, unsigned, unsigned*);
-#else
-int harderr_handler(unsigned, unsigned, unsigned __far*);
-#endif
 
 /*
 **	COMBAT.CPP

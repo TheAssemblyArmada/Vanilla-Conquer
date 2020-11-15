@@ -183,7 +183,6 @@ void PowerClass::Draw_It(bool complete)
                               flags | SHAPE_NORMAL | SHAPE_WIN_REL,
                               remap);
 
-#ifdef WIN32
                 /*
                 ** Hires power strip is too big to fit into a shape so it is in two parts
                 */
@@ -194,7 +193,6 @@ void PowerClass::Draw_It(bool complete)
                               WINDOW_MAIN,
                               flags | SHAPE_NORMAL | SHAPE_WIN_REL,
                               remap);
-#endif
                 /*
                 **	Determine how much the power production exceeds or falls short
                 **	of power demands.
@@ -232,10 +230,8 @@ void PowerClass::Draw_It(bool complete)
                     **
                     ** ST - 5/2/96 11:23AM
                     */
-#ifdef WIN32
                     power_height = (power_height * (76 * RESFACTOR + 1)) / (53 * RESFACTOR + 1);
                     drain_height = (drain_height * (76 * RESFACTOR + 1)) / (53 * RESFACTOR + 1);
-#endif
                     bottom = (175 * RESFACTOR) + 1;
 
                     LogicPage->Fill_Rect(245 * RESFACTOR, bottom - power_height, 245 * RESFACTOR + 1, bottom, color2);

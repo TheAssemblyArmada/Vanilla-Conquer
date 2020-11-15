@@ -770,17 +770,8 @@ void ChronalVortexClass::Coordinate_Remap(GraphicViewPortClass* inbuffer,
         ** Get a pointer to the section of buffer we are going to work on.
         */
         unsigned char* bufptr = (unsigned char*)inbuffer->Get_Offset() + destx
-#ifdef WIN32
                                 + desty * (inbuffer->Get_Width() + inbuffer->Get_XAdd() + inbuffer->Get_Pitch());
-#else
-                                + desty * (inbuffer->Get_Width() + inbuffer->Get_XAdd());
-#endif
-
-#ifdef WIN32
         int modulo = inbuffer->Get_Pitch() + inbuffer->Get_XAdd() + inbuffer->Get_Width();
-#else
-        int modulo = inbuffer->Get_XAdd() + inbuffer->Get_Width();
-#endif
 
         for (int yy = desty; yy < desty + dest_height; yy++) {
             for (int xx = destx; xx < destx + dest_width; xx++) {
@@ -867,11 +858,7 @@ void ChronalVortexClass::Render(void)
             TemplateTypeClass const* ttype = 0;
             int icon; // The icon number to use from the template set.
 
-#ifdef WIN32
             GraphicViewPortClass* oldpage = Set_Logic_Page(RenderBuffer);
-#else
-            GraphicBufferClass* oldpage = Set_Logic_Page(RenderBuffer);
-#endif
 
             /*
             ** Temporarily modify the tactical window so it works with our offscreen buffer

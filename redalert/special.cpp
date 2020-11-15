@@ -40,17 +40,10 @@
 #include "function.h"
 #include "common/framelimit.h"
 
-#ifdef WIN32
 #define OPTION_WIDTH  236 * 2
 #define OPTION_HEIGHT 162 * 2
 #define OPTION_X      ((640 - OPTION_WIDTH) / 2)
 #define OPTION_Y      (400 - OPTION_HEIGHT) / 2
-#else
-#define OPTION_WIDTH  236
-#define OPTION_HEIGHT 162
-#define OPTION_X      ((320 - OPTION_WIDTH) / 2)
-#define OPTION_Y      (200 - OPTION_HEIGHT) / 2
-#endif
 
 /***********************************************************************************************
  * SpecialClass::Init -- Initialize the special class of options.                              *
@@ -436,7 +429,6 @@ char const* Fetch_Password(int caption, int message, int btext)
         */
         Call_Back();
 
-#ifdef WIN32
         /*
         ** Handle possible surface loss due to a focus switch
         */
@@ -445,7 +437,6 @@ char const* Fetch_Password(int caption, int message, int btext)
             process = false;
             break;
         }
-#endif // WIN32
 
         /*
         **	Fetch and process input.
@@ -614,7 +605,6 @@ int Fetch_Difficulty(void)
         */
         Call_Back();
 
-#ifdef WIN32
         /*
         ** Handle possible surface loss due to a focus switch
         */
@@ -623,7 +613,6 @@ int Fetch_Difficulty(void)
             redraw = true;
             continue;
         }
-#endif // WIN32
 
         /*
         **	Fetch and process input.

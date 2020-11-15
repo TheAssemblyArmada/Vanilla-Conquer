@@ -276,7 +276,6 @@ void GameOptionsClass::Process(void)
             }
         }
 
-#ifdef WIN32
         /*
         ** If we have just received input focus again after running in the background then
         ** we need to redraw.
@@ -285,7 +284,6 @@ void GameOptionsClass::Process(void)
             AllSurfaces.SurfacesRestored = false;
             display = true;
         }
-#endif
 
         /*
         **	Refresh display if needed.
@@ -318,18 +316,6 @@ void GameOptionsClass::Process(void)
             /*
             **	Display the version number at the bottom of the dialog box.
             */
-#ifndef WIN32
-            Fancy_Text_Print("%s\rV%s",
-                             (OptionX + OptionWidth) - (17 * RESFACTOR),
-                             OptionY + OptionHeight
-                                 - ((Session.Type == GAME_NORMAL) ? (32 * RESFACTOR) : (24 * RESFACTOR)),
-                             GadgetClass::Get_Color_Scheme(),
-                             TBLACK,
-                             TPF_EFNT | TPF_NOSHADOW | TPF_RIGHT,
-                             Scen.ScenarioName,
-                             Version_Name());
-
-#else
 #ifndef REMASTER_BUILD
             Fancy_Text_Print("%s\rV%s",
                              (OptionX + OptionWidth) - (25 * RESFACTOR),
@@ -340,7 +326,6 @@ void GameOptionsClass::Process(void)
                              TPF_EFNT | TPF_NOSHADOW | TPF_RIGHT,
                              Scen.ScenarioName,
                              Version_Name());
-#endif
 #endif
 
             buttons->Draw_All();

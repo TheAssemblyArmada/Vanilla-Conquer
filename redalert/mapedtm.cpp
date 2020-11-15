@@ -543,13 +543,8 @@ int MapEditClass::Team_Members(HousesType house)
     /*
     **	Set up the team data arrays (ObjectTypeClass pointers & count)
     */
-#ifdef WIN32
     teamclass = (const TechnoTypeClass**)SysMemPage.Get_Buffer();
     teamcount = (int*)SysMemPage.Get_Buffer() + MAX_TEAM_CLASSES * sizeof(ObjectTypeClass*);
-#else
-    teamclass = (const TechnoTypeClass**)HidPage.Get_Buffer();
-    teamcount = (int*)HidPage.Get_Buffer() + MAX_TEAM_CLASSES * sizeof(ObjectTypeClass*);
-#endif
 
     /*
     **	Fill in the ObjectTypeClass array with all available object type ptrs,

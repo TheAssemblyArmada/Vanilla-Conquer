@@ -176,10 +176,8 @@ void MouseClass::Mouse_Small(bool wsmall)
  *   06/03/1994 JLB : Made into member function.                                               *
  *   12/24/1994 JLB : Added small control parameter.                                           *
  *=============================================================================================*/
-#ifdef WIN32
 void Block_Mouse(GraphicBufferClass* buffer);
 void Unblock_Mouse(GraphicBufferClass* buffer);
-#endif
 
 bool MouseClass::Override_Mouse_Shape(MouseType mouse, bool wsmall)
 {
