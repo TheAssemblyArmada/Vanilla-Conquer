@@ -30,10 +30,10 @@ jobs:
             sudo cp GccUnixR/jwasm /usr/local/bin/
         fi
 
-    - name: Build common, VanillaTD and tests
+    - name: Build Vanilla Conquer
       run: |
-        cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DBUILD_REMASTERTD=ON -DBUILD_REMASTERRA=ON -DBUILD_VANILLATD=ON -DBUILD_VANILLARA=ON -DDSOUND=OFF -DDDRAW=OFF -DUSE_ASM=${{ matrix.asm }} -DNETWORKING=OFF -DSDL2=ON -B build
-        cmake --build build --target common --target commonr --target commonv --target VanillaTD --target tests -- -j 4
+        cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DBUILD_VANILLATD=ON -DBUILD_VANILLARA=ON -DDSOUND=OFF -DDDRAW=OFF -DUSE_ASM=${{ matrix.asm }} -DNETWORKING=OFF -DSDL2=ON -B build
+        cmake --build build -- -j 4
 
     - name: Run unit tests
       run: |
