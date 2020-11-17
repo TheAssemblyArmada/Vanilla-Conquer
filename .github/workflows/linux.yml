@@ -21,7 +21,7 @@ jobs:
       run: |
         sudo dpkg --add-architecture i386
         sudo apt-get update
-        sudo apt-get install -y g++-multilib libsdl2-dev:i386 libsdl2-2.0-0:i386
+        sudo apt-get install -y g++-multilib libsdl2-dev:i386 libsdl2-2.0-0:i386 libopenal-dev:i386
         if [ ${{ matrix.asm }} == "ON" ]; then
             curl -L -O https://github.com/JWasm/JWasm/archive/45f69e4b96ff3e93522464f2c8bb2ff56e6ecbf8.zip
             unzip 45f69e4b96ff3e93522464f2c8bb2ff56e6ecbf8.zip
