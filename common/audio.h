@@ -46,13 +46,13 @@
 #pragma pack(push, 1)
 typedef struct
 {
-    unsigned short int Rate;   // Playback rate (hertz).
-    long Size;                 // Size of data (bytes).
-    long UncompSize;           // Size of data (bytes).
-    unsigned char Flags;       // Holds flags for info
-                               //  1: Is the sample stereo?
-                               //  2: Is the sample 16 bits?
-    unsigned char Compression; // What kind of compression for this sample?
+    uint16_t Rate;       // Playback rate (hertz).
+    int32_t Size;        // Size of data (bytes).
+    int32_t UncompSize;  // Size of data (bytes).
+    uint8_t Flags;       // Holds flags for info
+                         //  1: Is the sample stereo?
+                         //  2: Is the sample 16 bits?
+    uint8_t Compression; // What kind of compression for this sample?
 } AUDHeaderType;
 #pragma pack(pop)
 
