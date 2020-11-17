@@ -35,6 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "sound.h"
+#include <dsound.h>
 
 /*
 ** Define the different type of sound compression avaliable to the westwood

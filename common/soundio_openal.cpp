@@ -63,13 +63,6 @@ struct SampleTrackerType
     bool Loading;
 
     /*
-    **	This semaphore ensures that simultaneous update of this structure won't
-    **	occur.  This is necessary since both interrupt and regular code can modify
-    **	this structure.
-    */
-    bool DontTouch;
-
-    /*
     **	If this sample is really to be considered a score rather than
     **	a sound effect, then special rules apply.  These largely fall into
     **	the area of volume control.
@@ -102,12 +95,6 @@ struct SampleTrackerType
     ** Variable to keep track of the stereo ability of this buffer
     */
     //int Stereo;
-
-    /*
-    **	Object to use with Enter/LeaveCriticalSection
-    **
-    */
-    CRITICAL_SECTION AudioCriticalSection;
 
     /*
     **	Samples maintain a priority which is used to determine
@@ -224,12 +211,11 @@ void* FileStreamBuffer = nullptr;
 bool StreamLowImpact = false;
 bool StartingFileStream = false;
 bool volatile AudioDone = false;
-CRITICAL_SECTION GlobalAudioCriticalSection;
 ALCcontext* OpenALContext = nullptr;
 extern bool GameInFocus;
 static uint8_t ChunkBuffer[BUFFER_CHUNK_SIZE];
 
-UINT SoundTimerHandle;
+unsigned int SoundTimerHandle;
 
 bool Any_Locked(); // From each games winstub.cpp at the moment.
 void Maintenance_Callback();
@@ -415,17 +401,6 @@ int File_Stream_Sample(const char* filename, bool real_time_start)
     return File_Stream_Sample_Vol(filename, VOLUME_MAX, real_time_start);
 }
 
-void __stdcall Sound_Timer_Callback(UINT uID = 0, UINT uMsg = 0, DWORD_PTR dwUser = 0, DWORD_PTR dw1 = 0, DWORD_PTR dw2 = 0);
-
-void __stdcall Sound_Timer_Callback(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
-{
-    if (!AudioDone) {
-        EnterCriticalSection(&GlobalAudioCriticalSection);
-        Maintenance_Callback();
-        LeaveCriticalSection(&GlobalAudioCriticalSection);
-    }
-}
-
 int Stream_Sample_Vol(void* buffer, int size, bool (*callback)(short, short*, void**, int*), int volume, int handle)
 {
     if (AudioDone || buffer == nullptr || size == 0 || LockedData.DigiHandle == INVALID_AUDIO_HANDLE) {
@@ -464,16 +439,6 @@ bool File_Callback(short id, short* odd, void** buffer, int* size)
         return false;
     }
 
-    if (!AudioDone) {
-        EnterCriticalSection(&GlobalAudioCriticalSection);
-    }
-
-    st->DontTouch = true;
-
-    if (!AudioDone) {
-        LeaveCriticalSection(&GlobalAudioCriticalSection);
-    }
-
     if (*buffer == nullptr && st->FilePending) {
         *buffer =
             static_cast<char*>(st->FileBuffer) + LockedData.StreamBufferSize * (*odd % LockedData.StreamBufferCount);
@@ -482,17 +447,7 @@ bool File_Callback(short id, short* odd, void** buffer, int* size)
         *size = st->FilePending == 0 ? st->FilePendingSize : LockedData.StreamBufferSize;
     }
 
-    if (!AudioDone) {
-        EnterCriticalSection(&GlobalAudioCriticalSection);
-    }
-
-    st->DontTouch = false;
-
-    if (!AudioDone) {
-        LeaveCriticalSection(&GlobalAudioCriticalSection);
-    }
-
-    Sound_Timer_Callback();
+    Maintenance_Callback();
 
     int count = StreamLowImpact ? LockedData.StreamBufferCount / 2 : LockedData.StreamBufferCount - 3;
 
@@ -515,29 +470,12 @@ bool File_Callback(short id, short* odd, void** buffer, int* size)
                 }
 
                 if (psize > 0) {
-                    if (!AudioDone) {
-                        EnterCriticalSection(&GlobalAudioCriticalSection);
-                    }
-
-                    st->DontTouch = true;
                     st->FilePendingSize = psize;
                     ++st->FilePending;
-                    st->DontTouch = false;
-
-                    if (!AudioDone) {
-                        LeaveCriticalSection(&GlobalAudioCriticalSection);
-                    }
-
-                    Sound_Timer_Callback();
+                    Maintenance_Callback();
                 }
             }
         }
-
-        if (!AudioDone) {
-            EnterCriticalSection(&GlobalAudioCriticalSection);
-        }
-
-        st->DontTouch = true;
 
         if (st->QueueBuffer == nullptr && st->FilePending) {
             st->QueueBuffer = static_cast<char*>(st->FileBuffer)
@@ -547,13 +485,7 @@ bool File_Callback(short id, short* odd, void** buffer, int* size)
             st->QueueSize = st->FilePending > 0 ? LockedData.StreamBufferSize : st->FilePendingSize;
         }
 
-        st->DontTouch = false;
-
-        if (!AudioDone) {
-            LeaveCriticalSection(&GlobalAudioCriticalSection);
-        }
-
-        Sound_Timer_Callback();
+        Maintenance_Callback();
     }
 
     if (st->FilePending) {
@@ -586,7 +518,7 @@ void File_Stream_Preload(int index)
         }
     }
 
-    Sound_Timer_Callback();
+    Maintenance_Callback();
 
     if (LockedData.StreamBufferSize > st->FilePendingSize || i == maxnum) {
         int old_vol = LockedData.SoundVolume;
@@ -669,7 +601,7 @@ int File_Stream_Sample_Vol(char const* filename, int volume, bool real_time_star
 void Sound_Callback()
 {
     if (!AudioDone && LockedData.DigiHandle != INVALID_AUDIO_HANDLE) {
-        Sound_Timer_Callback();
+        Maintenance_Callback();
 
         for (int i = 0; i < MAX_SAMPLE_TRACKERS; ++i) {
             SampleTrackerType* st = &LockedData.SampleTracker[i];
@@ -720,13 +652,15 @@ void Sound_Callback()
 
 void Maintenance_Callback()
 {
+    if (AudioDone) {
+        return;
+    }
+
     SampleTrackerType* st = LockedData.SampleTracker;
 
     for (int i = 0; i < MAX_SAMPLE_TRACKERS; ++i) {
         if (st->Active) { // If this tracker needs processing and isn't already marked as being processed, then process it.
-            if (st->Service && !st->DontTouch) {
-                st->DontTouch = true;
-
+            if (st->Service) {
                 // Do we have more data in this tracker to play?
                 if (st->MoreSource) {
                     ALint processed_buffers;
@@ -767,11 +701,9 @@ void Maintenance_Callback()
                         Stop_Sample(i);
                     }
                 }
-
-                st->DontTouch = false;
             }
 
-            if (!st->DontTouch && !st->QueueBuffer && st->FilePending != 0) {
+            if (!st->QueueBuffer && st->FilePending != 0) {
                 st->QueueBuffer = static_cast<char*>(st->FileBuffer)
                                   + LockedData.StreamBufferSize * (st->Odd % LockedData.StreamBufferCount);
                 --st->FilePending;
@@ -904,10 +836,6 @@ bool Audio_Init(int bits_per_sample, bool stereo, int rate, bool reverse_channel
 
     LockedData.DigiHandle = 1;
 
-    InitializeCriticalSection(&GlobalAudioCriticalSection);
-
-    SoundTimerHandle = timeSetEvent(TIMER_DELAY, TIMER_RESOLUTION, Sound_Timer_Callback, 0, 1);
-
     LockedData.UncompBuffer = malloc(UNCOMP_BUFFER_SIZE);
 
     if (LockedData.UncompBuffer == nullptr) {
@@ -936,7 +864,6 @@ bool Audio_Init(int bits_per_sample, bool stereo, int rate, bool reverse_channel
 
         st->Frequency = rate;
         st->Format = Get_OpenAL_Format(bits_per_sample, stereo ? 2 : 1);
-        InitializeCriticalSection(&st->AudioCriticalSection);
     }
 
     SoundType = SFX_ALFX;
@@ -971,20 +898,12 @@ void Sound_End()
         LockedData.UncompBuffer = nullptr;
     }
 
-    if (SoundTimerHandle != 0) {
-        timeKillEvent(SoundTimerHandle);
-        SoundTimerHandle = 0;
-    }
-
-    DeleteCriticalSection(&GlobalAudioCriticalSection);
-
     AudioDone = true;
 };
 
 void Stop_Sample(int index)
 {
     if (LockedData.DigiHandle != INVALID_AUDIO_HANDLE && index < MAX_SAMPLE_TRACKERS && !AudioDone) {
-        EnterCriticalSection(&GlobalAudioCriticalSection);
         SampleTrackerType* st = &LockedData.SampleTracker[index];
 
         if (st->Active || st->Loading) {
@@ -1018,8 +937,6 @@ void Stop_Sample(int index)
 
             st->QueueBuffer = nullptr;
         }
-
-        LeaveCriticalSection(&GlobalAudioCriticalSection);
     }
 };
 
@@ -1092,16 +1009,7 @@ int Attempt_To_Play_Buffer(int id)
     alSourcePlay(st->OpenALSource);
 
     // Playback was started so we set some needed sample tracker values.
-    if (!AudioDone) {
-        EnterCriticalSection(&GlobalAudioCriticalSection);
-    }
-
     st->Active = true;
-    st->DontTouch = false;
-
-    if (!AudioDone) {
-        LeaveCriticalSection(&GlobalAudioCriticalSection);
-    }
 
     return id;
 }
@@ -1132,14 +1040,9 @@ int Play_Sample_Handle(const void* sample, int priority, int volume, signed shor
             raw_header.Rate = 22050;
         }
 
-        if (!AudioDone) {
-            EnterCriticalSection(&GlobalAudioCriticalSection);
-        }
-
         // Set up basic sample tracker info.
         st->Compression = SCompressType(raw_header.Compression);
         st->Original = sample;
-        st->DontTouch = true;
         st->Odd = 0;
         st->Reducer = 0;
         st->Restart = 0;
@@ -1150,10 +1053,6 @@ int Play_Sample_Handle(const void* sample, int priority, int volume, signed shor
         st->Service = 0;
         st->Remainder = raw_header.Size;
         st->Source = Add_Long_To_Pointer(sample, sizeof(AUDHeaderType));
-
-        if (!AudioDone) {
-            LeaveCriticalSection(&GlobalAudioCriticalSection);
-        }
 
         // Compression is ADPCM so we need to init it's stream info.
         if (st->Compression == SCOMP_SOS) {
