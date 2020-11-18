@@ -59,12 +59,13 @@ jobs:
     - name: Install Dependencies
       run: |
         choco install imagemagick.app
+        choco install openalsdk
         Invoke-WebRequest -Uri https://www.libsdl.org/release/SDL2-devel-2.0.12-VC.zip -OutFile $Env:TEMP\SDL2-devel.zip
         Expand-Archive $Env:TEMP\SDL2-devel.zip -DestinationPath $Env:TEMP
 
     - name: Build VanillaTD and remaster dlls
       run: |
-        cmake -A Win32 -DSDL2=ON "-DSDL2_ROOT_DIR=$($Env:TEMP)\SDL2-2.0.12" -B build
+        cmake -A Win32 -DSDL2=ON "-DSDL2_ROOT_DIR=$($Env:TEMP)\SDL2-2.0.12" -DOPENAL=ON "-DOPENAL_ROOT=C:\Program Files (x86)\OpenAL 1.1 SDK" -DUSE_ASM=OFF -B build
         cmake --build build --target VanillaTD --target TiberianDawn --target RedAlert --parallel --config ${{ matrix.buildtype }}
 
     - name: Create archives
