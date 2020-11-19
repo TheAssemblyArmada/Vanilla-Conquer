@@ -64,28 +64,6 @@
  *   Is_Aftermath_Installed -- Function to determine the availability of the AM expansion.
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifdef TESTCODE
-class A
-{
-public:
-    enum
-    {
-        VAR = 1
-    };
-};
-
-template <class T> class B
-{
-public:
-    enum
-    {
-        VAR2 = T::VAR
-    }; // this is the line in question.
-};
-
-B<A> test;
-#endif
-
 #include "function.h"
 #ifdef WIN32
 #ifdef WINSOCK_IPX
@@ -5262,18 +5240,6 @@ void List_Copy(short const* source, int len, short* dest)
         len--;
     }
 }
-
-#if 0
-//
-// Boy, this function sure is crummy
-//
-void Crummy(int crumb1, int crumb2)
-{
-	if (Debug_Check_Map && Debug_Heap_Dump) {
-		Mono_Printf("Hi, I'm Crummy.  And so are these: %d, %d\n",crumb1,crumb2);
-	}
-}
-#endif
 
 /***********************************************************************************************
  * Game_Registry_Key -- Returns pointer to string containing the registry subkey for the game.

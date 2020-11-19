@@ -89,9 +89,6 @@ set(REDALERT_SRC
     lzo1x_d.cpp
     lzopipe.cpp
     lzostraw.cpp
-    lzw.cpp
-    lzwpipe.cpp
-    lzwstraw.cpp
     map.cpp
     mapeddlg.cpp
     mapedit.cpp
@@ -162,7 +159,6 @@ set(REDALERT_SRC
     trigtype.cpp
     txtlabel.cpp
     udata.cpp
-    udpaddr.cpp
     unit.cpp
     vdata.cpp
     version.cpp
