@@ -1692,6 +1692,7 @@ bool Map_Edit_Loop(void)
 
     Call_Back(); // maintains Theme.AI() for music
     Color_Cycle();
+    Frame_Limiter();
 
     return (!GameActive);
 }
