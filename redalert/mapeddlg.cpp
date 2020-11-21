@@ -43,6 +43,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/framelimit.h"
 
 #ifdef SCENARIO_EDITOR
 
@@ -858,6 +859,8 @@ int MapEditClass::Load_Scenario(void)
             default:
                 break;
             }
+
+            Frame_Limiter();
         }
 
         /*
@@ -1570,6 +1573,8 @@ int MapEditClass::Load_Scenario(void)
                     break;
                 }
             }
+
+            Frame_Limiter();
         }
 
         /*
@@ -2503,6 +2508,8 @@ int MapEditClass::Load_Scenario(void)
                     }
                 }
             }
+
+            Frame_Limiter();
         }
 
         /*
@@ -2963,6 +2970,8 @@ int MapEditClass::Load_Scenario(void)
                 process = false;
                 break;
             }
+
+            Frame_Limiter();
         }
 
         /*

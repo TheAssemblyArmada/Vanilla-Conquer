@@ -56,6 +56,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/framelimit.h"
 
 #ifdef SCENARIO_EDITOR
 
@@ -1668,6 +1669,8 @@ void MapEditClass::Main_Menu(void)
             Start_Scenario(Scen.ScenarioName);
             return;
         }
+
+        Frame_Limiter();
     }
 
     /*
@@ -1763,6 +1766,8 @@ void MapEditClass::AI_Menu(void)
             process = false;
             break;
         }
+
+        Frame_Limiter();
     }
 }
 
@@ -2068,6 +2073,8 @@ bool MapEditClass::Get_Waypoint_Name(char wayptname[])
         default:
             break;
         }
+
+        Frame_Limiter();
     }
 
     Map.Flag_To_Redraw(true);

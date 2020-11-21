@@ -427,6 +427,8 @@ int Do_Menu(char const** strings, bool)
         selection = Check_Menu(0, strings, NULL, 0xFFL, 0);
         if (UnknownKey != 0 || UnknownKey == KN_ESC || UnknownKey == KN_LMOUSE || UnknownKey == KN_RMOUSE)
             break;
+
+        Frame_Limiter();
     }
     Keyboard->Clear();
     Hide_Mouse();

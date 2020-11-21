@@ -37,6 +37,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/framelimit.h"
 
 #ifdef SCENARIO_EDITOR
 
@@ -366,6 +367,8 @@ int MapEditClass::Select_Team(char const*)
             process = false;
             break;
         }
+
+        Frame_Limiter();
     }
 
     /*
@@ -874,6 +877,8 @@ int MapEditClass::Team_Members(HousesType house)
                 }
             }
         }
+
+        Frame_Limiter();
     }
 
     /*
