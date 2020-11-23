@@ -1232,7 +1232,7 @@ VQAData* VQA_AllocBuffers(VQAHeader* header, VQAConfig* config)
 
     // Make linked list of framenodes.
     for (int index = 0; index < config->NumFrameBufs; ++index) {
-        framenode = (VQAFrameNode*)malloc(data->MaxPalSize + data->MaxPtrSize + sizeof(VQAFrameNode));
+        framenode = (VQAFrameNode*)calloc(data->MaxPalSize + data->MaxPtrSize + sizeof(VQAFrameNode), 1);
 
         if (!framenode) {
             VQA_FreeBuffers(data, config, header);
@@ -1240,7 +1240,6 @@ VQAData* VQA_AllocBuffers(VQAHeader* header, VQAConfig* config)
         }
 
         data->MemUsed += data->MaxPalSize + data->MaxPtrSize + sizeof(VQAFrameNode);
-        memset(framenode, 0, sizeof(*framenode));
         framenode->Pointers = reinterpret_cast<uint8_t*>(&framenode[1]);
         framenode->Palette = reinterpret_cast<uint8_t*>(&framenode[1]) + data->MaxPtrSize;
         framenode->Codebook = data->CBData;
