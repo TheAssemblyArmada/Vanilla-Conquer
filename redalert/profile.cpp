@@ -250,7 +250,9 @@ char* WWGetPrivateProfileString(char const* section,
         if (retlen > 1 || retlen == 0)
             retbuffer[1] = '\0';
         if (def) {
-            strncpy(retbuffer, def, retlen);
+            if (retbuffer != def) {
+                strncpy(retbuffer, def, retlen);
+            }
         }
         retbuffer[retlen - 1] = '\0';
         orig_retbuf = retbuffer;
