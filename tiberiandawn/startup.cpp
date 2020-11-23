@@ -629,11 +629,12 @@ void Print_Error_Exit(char* string)
  *=============================================================================================*/
 void Read_Setup_Options(RawFileClass* config_file)
 {
-    char* buffer = new char[config_file->Size()];
+    char* buffer = new char[config_file->Size() + 1];
 
     if (config_file->Is_Available()) {
 
-        config_file->Read(buffer, config_file->Size());
+        int bytesread = config_file->Read(buffer, config_file->Size());
+        buffer[bytesread] = '\0';
 
         VideoBackBufferAllowed = WWGetPrivateProfileInt("Options", "VideoBackBuffer", 1, buffer);
         AllowHardwareBlitFills = WWGetPrivateProfileInt("Options", "HardwareFills", 1, buffer);
