@@ -58,8 +58,9 @@
 GaugeClass::GaugeClass(unsigned id, int x, int y, int w, int h)
     : ControlClass(id, x, y, w, h, LEFTHELD | LEFTPRESS | LEFTRELEASE, true)
 {
-    Set_Maximum(255);
-    Set_Value(0);
+    MaxValue = 255;
+    CurValue = 0;
+    IsToRepaint = true;
 
     HasThumb = true;
     IsHorizontal = (w > h);
