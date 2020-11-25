@@ -17,7 +17,14 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#ifndef OPENAL_BUILD
 #include <dsound.h>
+#endif
+#endif
+
+#ifdef OPENAL_BUILD
+#include <al.h>
+#include <alc.h>
 #endif
 
 typedef struct _VQAHandle VQAHandle;
@@ -46,6 +53,7 @@ typedef enum
 } VQAAudioFlags;
 
 extern int AudioFlags;
+#define OPENAL_BUFFER_COUNT 2
 
 typedef struct
 {
@@ -67,11 +75,11 @@ typedef struct
     int8_t BitsPerSample; // 8 bits = 8, 16 bits = 16, etc.
     int BytesPerSecond;   // Bytes or samples per second?
     _SOS_COMPRESS_INFO AdcpmInfo;
-#ifdef _WIN32
+#if defined _WIN32
     MMRESULT SoundTimerHandle;
 #endif
     int field_7C;
-#ifdef _WIN32
+#if defined _WIN32 && !defined OPENAL_BUILD
     LPDIRECTSOUNDBUFFER PrimaryBufferPtr;
     WAVEFORMATEX BuffFormat;
     DSBUFFERDESC BufferDesc;
@@ -83,6 +91,10 @@ typedef struct
     int field_B8;       // use to set LastChunkPosition in VQA_GetTime
     int field_BC;       // set when the sound object is created.
     int field_C0;       // set when the sound buffer is created.
+#ifdef OPENAL_BUILD
+    ALuint OpenALSource;
+    ALuint AudioBuffers[OPENAL_BUFFER_COUNT];
+#endif
 } VQAAudio;
 
 #ifdef __cplusplus

@@ -14,7 +14,7 @@
 
 #include <stdint.h>
 
-#ifdef _WIN32
+#if defined _WIN32 && !defined OPENAL_BUILD
 #include <windows.h>
 #include <dsound.h>
 #endif
@@ -68,7 +68,7 @@ typedef struct _VQAConfig
     int OptionFlags; // VQAOptionEnum
     int NumFrameBufs;
     int NumCBBufs;
-#ifdef _WIN32
+#if defined _WIN32 && !defined OPENAL_BUILD
     LPDIRECTSOUND SoundObject;
     LPDIRECTSOUNDBUFFER PrimaryBufferPtr;
 #endif
