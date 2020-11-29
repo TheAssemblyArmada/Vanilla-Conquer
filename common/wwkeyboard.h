@@ -540,12 +540,21 @@ typedef enum KeyASCIIType : unsigned short
     KA_RBRACE, /* ] */
     KA_TILDA,  /* ~ */
 
+#ifdef SDL2_BUILD
+    KA_ESC = 0x1B,
+    KA_EXTEND = 0x1B,
+    KA_RETURN = 0x0D,
+    KA_BACKSPACE = 0x08,
+    KA_TAB = 0x09,
+    KA_DELETE = 0x7F,
+#else
     KA_ESC = VK_ESCAPE,
     KA_EXTEND = VK_ESCAPE,
     KA_RETURN = VK_RETURN,
     KA_BACKSPACE = VK_BACK,
     KA_TAB = VK_TAB,
     KA_DELETE = VK_DELETE, /* <DELETE> */
+#endif
     KA_INSERT = VK_INSERT, /* <INSERT> */
     KA_PGDN = VK_NEXT,     /* <PAGE DOWN> */
     KA_DOWNRIGHT = VK_NEXT,

@@ -56,6 +56,7 @@
 #include <string.h>
 #ifdef SDL2_BUILD
 #include <SDL.h>
+#include "sdl_keymap.h"
 #endif
 
 #define ARRAY_SIZE(x) int(sizeof(x) / sizeof(x[0]))
@@ -307,7 +308,17 @@ KeyASCIIType WWKeyboardClass::To_ASCII(unsigned short key)
     int scancode = 0;
 
 #if defined(SDL2_BUILD)
-    buffer[0] = SDL_GetKeyFromScancode((SDL_Scancode)key);
+    key &= 0xFF; // drop all mods
+
+    if (key > ARRAY_SIZE(sdl_keymap) / 2 - 1) {
+        return KA_NONE;
+    }
+
+    if (SDL_GetModState() & KMOD_SHIFT) {
+        return sdl_keymap[key + ARRAY_SIZE(sdl_keymap) / 2];
+    } else {
+        return sdl_keymap[key];
+    }
 #elif defined(_WIN32)
     scancode = MapVirtualKeyA(key & 0xFF, 0);
     result = ToAscii((UINT)(key & 0xFF), (UINT)scancode, (PBYTE)KeyState, (LPWORD)buffer, (UINT)0);
@@ -522,12 +533,10 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
             exit(0);
             break;
         case SDL_KEYDOWN:
-            if (event.key.keysym.scancode < 256)
-                Put_Key_Message(event.key.keysym.scancode, false);
+            Put_Key_Message(event.key.keysym.scancode, false);
             break;
         case SDL_KEYUP:
-            if (event.key.keysym.scancode < 256)
-                Put_Key_Message(event.key.keysym.scancode, true);
+            Put_Key_Message(event.key.keysym.scancode, true);
             break;
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
