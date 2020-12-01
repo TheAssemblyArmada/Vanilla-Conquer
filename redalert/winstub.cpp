@@ -81,18 +81,24 @@ void Focus_Loss(void)
 {
     Theme.Suspend();
     Stop_Primary_Sound_Buffer();
-    if (WWMouse)
+
+    if (WWMouse && Is_Video_Fullscreen()) {
         WWMouse->Clear_Cursor_Clip();
+    }
 }
 
 void Focus_Restore(void)
 {
     Map.Flag_To_Redraw(true);
     Start_Primary_Sound_Buffer(true);
-    if (WWMouse)
-        WWMouse->Set_Cursor_Clip();
-    VisiblePage.Clear();
-    HiddenPage.Clear();
+
+    if (Is_Video_Fullscreen()) {
+        if (WWMouse) {
+            WWMouse->Set_Cursor_Clip();
+        }
+        VisiblePage.Clear();
+        HiddenPage.Clear();
+    }
 }
 
 /***********************************************************************************************

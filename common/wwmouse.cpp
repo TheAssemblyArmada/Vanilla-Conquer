@@ -35,6 +35,7 @@
 #include <string.h>
 #ifdef SDL2_BUILD
 #include <SDL.h>
+extern SDL_Window* window;
 #endif
 
 #ifndef min
@@ -175,7 +176,7 @@ void WWMouseClass::Set_Cursor_Clip(void)
 #if !defined(REMASTER_BUILD)
     if (Screen) {
 #if defined(SDL2_BUILD)
-        SDL_CaptureMouse(SDL_TRUE);
+        SDL_SetWindowGrab(window, SDL_TRUE);
 #elif defined(_WIN32)
         RECT region;
 
@@ -194,7 +195,7 @@ void WWMouseClass::Clear_Cursor_Clip(void)
 {
 #if !defined(REMASTER_BUILD)
 #if defined(SDL2_BUILD)
-    SDL_CaptureMouse(SDL_FALSE);
+    SDL_SetWindowGrab(window, SDL_FALSE);
 #elif defined(_WIN32)
     ClipCursor(nullptr);
 #endif
