@@ -37,23 +37,21 @@ cmake --build .
 
 This will build all available targets to the build directory.
 
-### Linux (x86)
+### Linux
 
 #### Requirements
 
 - GNU C++ Compiler (g++)
 - CMake
 - SDL2
+- OpenAL
 
 On 64-bit Debian/Ubuntu you can install the build requirements as follows:
 
 ```
-sudo dpkg --add-architecture i386
 sudo apt-get update
-sudo apt-get install g++-multilib cmake libsdl2-dev:i386
+sudo apt-get install g++ cmake libsdl2-dev libopenal-dev
 ```
-
-If you want to build with x86 assembly, [JWasm](https://www.japheth.de/JWasm.html) needs to be compiled from sources and added to `$PATH`.
 
 #### Building
 
@@ -78,8 +76,6 @@ On Debian/Ubuntu you can install the build requirements as follows:
 ```
 sudo apt install mingw-w64 cmake
 ```
-
-If you want to build with x86 assembly, [JWasm](https://www.japheth.de/JWasm.html) needs to be compiled from sources and added to `$PATH`.
 
 #### Building
 

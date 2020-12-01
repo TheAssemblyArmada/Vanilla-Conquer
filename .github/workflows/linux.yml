@@ -1,4 +1,4 @@
-name: linux32
+name: linux64
 
 on:
   pull_request:
@@ -9,9 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-18.04
-    strategy:
-      matrix:
-        asm: [ON, OFF]
     steps:
     - uses: actions/checkout@v2
       with:
@@ -19,20 +16,12 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo dpkg --add-architecture i386
         sudo apt-get update
-        sudo apt-get install -y g++-multilib libsdl2-dev:i386 libsdl2-2.0-0:i386 libopenal-dev:i386
-        if [ ${{ matrix.asm }} == "ON" ]; then
-            curl -L -O https://github.com/JWasm/JWasm/archive/45f69e4b96ff3e93522464f2c8bb2ff56e6ecbf8.zip
-            unzip 45f69e4b96ff3e93522464f2c8bb2ff56e6ecbf8.zip
-            cd JWasm-45f69e4b96ff3e93522464f2c8bb2ff56e6ecbf8
-            make -f GccUnix.mak
-            sudo cp GccUnixR/jwasm /usr/local/bin/
-        fi
+        sudo apt-get install -y g++ libsdl2-dev libsdl2-2.0-0 libopenal-dev
 
     - name: Build Vanilla Conquer
       run: |
-        cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DBUILD_VANILLATD=ON -DBUILD_VANILLARA=ON -DDSOUND=OFF -DDDRAW=OFF -DUSE_ASM=${{ matrix.asm }} -DNETWORKING=OFF -DSDL2=ON -B build
+        cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DBUILD_VANILLATD=ON -DBUILD_VANILLARA=ON -DDSOUND=OFF -DDDRAW=OFF -DNETWORKING=OFF -DSDL2=ON -B build
         cmake --build build -- -j 4
 
     - name: Run unit tests
