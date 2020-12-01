@@ -2115,7 +2115,7 @@ void SidebarClass::StripClass::SelectClass::Set_Owner(StripClass& strip, int ind
     Strip = &strip;
     Index = index;
     X = strip.X;
-    Y = strip.Y + ((index * OBJECT_HEIGHT) * factor);
+    Y = strip.Y + (index * (OBJECT_HEIGHT << factor));
 }
 
 /***********************************************************************************************
