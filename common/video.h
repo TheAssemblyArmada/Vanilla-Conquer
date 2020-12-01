@@ -54,6 +54,7 @@ public:
 extern SurfaceMonitorClass& AllSurfaces; // List of all surfaces
 
 bool Set_Video_Mode(int w, int h, int bits_per_pixel);
+bool Is_Video_Fullscreen();
 void Reset_Video_Mode();
 unsigned Get_Free_Video_Memory();
 void Wait_Blit();

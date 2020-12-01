@@ -61,6 +61,12 @@
 
 #define ARRAY_SIZE(x) int(sizeof(x) / sizeof(x[0]))
 
+/*
+**  Focus handlers for both games.
+*/
+extern void Focus_Loss();
+extern void Focus_Restore();
+
 /***********************************************************************************************
  * WWKeyboardClass::WWKeyBoardClass -- Construction for Westwood Keyboard Class                *
  *                                                                                             *
@@ -553,6 +559,20 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
                 break;
             }
             Put_Mouse_Message(key, event.button.x, event.button.y, event.type == SDL_MOUSEBUTTONDOWN ? false : true);
+            break;
+        case SDL_WINDOWEVENT:
+            switch (event.window.event) {
+            case SDL_WINDOWEVENT_EXPOSED:
+            case SDL_WINDOWEVENT_RESTORED:
+            case SDL_WINDOWEVENT_FOCUS_GAINED:
+                Focus_Restore();
+                break;
+            case SDL_WINDOWEVENT_HIDDEN:
+            case SDL_WINDOWEVENT_MINIMIZED:
+            case SDL_WINDOWEVENT_FOCUS_LOST:
+                Focus_Loss();
+                break;
+            }
             break;
         }
     }

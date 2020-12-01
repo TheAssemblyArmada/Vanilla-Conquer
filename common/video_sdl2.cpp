@@ -47,7 +47,7 @@
 
 extern WWKeyboardClass* Keyboard;
 
-static SDL_Window* window;
+SDL_Window* window;
 static SDL_Palette* palette;
 
 class SurfaceMonitorClassDummy : public SurfaceMonitorClass
@@ -95,6 +95,11 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     palette = SDL_AllocPalette(256);
 
     return true;
+}
+
+bool Is_Video_Fullscreen()
+{
+    return false;
 }
 
 /***********************************************************************************************

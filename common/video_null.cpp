@@ -83,6 +83,11 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     return true;
 }
 
+bool Is_Video_Fullscreen()
+{
+    return false;
+}
+
 /***********************************************************************************************
  * Reset_Video_Mode -- Resets video mode and deletes Direct Draw Object                        *
  *                                                                                             *
