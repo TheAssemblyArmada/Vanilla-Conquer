@@ -1553,8 +1553,8 @@ void ScoreClass::Count_Up_Print(char* str, int percent, int max, int xpos, int y
  *=============================================================================================*/
 void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
 {
-    int key = 0;
-    int ascii = 0;
+    KeyNumType key = KN_NONE;
+    KeyASCIIType ascii = KA_NONE;
     int index = 0;
 
     void const* keystrok = MFCD::Retrieve("KEYSTROK.AUD");
@@ -1575,8 +1575,8 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
         BlitList.Update();
         Blit_Hid_Page_To_Seen_Buff();
 
-        if (Keyboard->Check()) {   // if (Keyboard->Check()) {
-            key = Keyboard->Get(); // key = Keyboard->Get();
+        if (Keyboard->Check()) {
+            key = Keyboard->Get();
 
             if (index == MAX_FAMENAME_LENGTH - 2) {
                 while (Keyboard->Check()) {
@@ -1588,11 +1588,11 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
             ** If they hit 'backspace' when they're on the last letter,
             ** turn it into a space instead.
             */
-            if ((key == KA_BACKSPACE) && (index == MAX_FAMENAME_LENGTH - 2)) {
-                if (str[index] && str[index] != 32)
-                    key = 32;
+            if ((key == KN_BACKSPACE) && (index == MAX_FAMENAME_LENGTH - 2)) {
+                if (str[index] && str[index] != KA_SPACE)
+                    key = KN_SPACE;
             }
-            if (key == KA_BACKSPACE) { // if (key == KN_BACKSPACE) {
+            if (key == KN_BACKSPACE) {
                 if (index) {
                     str[--index] = 0;
 
@@ -1603,11 +1603,10 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
                     TextPrintBuffer->Fill_Rect(xposindex6 * 2, ypos * 2, (xposindex6 + 6) * 2, (ypos + 6) * 2, BLACK);
                 }
 
-            } else if (key != KA_RETURN) { // else if (key != KN_RETURN && key!=KN_KEYPAD_RETURN) {
-                ascii = key;               // ascii = KN_To_KA(key);
+            } else if (key != KN_RETURN && key != KN_KEYPAD_RETURN) {
+                ascii = Keyboard->To_ASCII(key);
                 if (ascii >= 'a' && ascii <= 'z')
-                    ascii -= ('a' - 'A');
-                // if (ascii >='A' && ascii<='Z' || ascii == ' ') {
+                    ascii = static_cast<KeyASCIIType>(ascii - ('a' - 'A'));
                 if ((ascii >= '!' && ascii <= KA_TILDA) || ascii == ' ') {
                     PseudoSeenBuff->Fill_Rect(xpos + (index * 6), ypos, xpos + (index * 6) + 6, ypos + 5, TBLACK);
                     SysMemPage.Fill_Rect(xpos + (index * 6), ypos, xpos + (index * 6) + 6, ypos + 5, TBLACK);
@@ -1627,7 +1626,7 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
                 }
             }
         }
-    } while (key != KA_RETURN); //	} while(key != KN_RETURN && key!=KN_KEYPAD_RETURN);
+    } while (key != KN_RETURN && key != KN_KEYPAD_RETURN);
 }
 
 void Animate_Cursor(int pos, int ypos)
