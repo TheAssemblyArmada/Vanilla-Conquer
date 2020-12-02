@@ -303,6 +303,9 @@ int main(int argc, char** argv)
             video_success = true;
 #else
 
+#ifdef SDL2_BUILD
+            video_success = static_cast<bool>(Set_Video_Mode(OutputWidth, OutputHeight, 8));
+#else
             if (ScreenHeight == 400) {
                 if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
                     video_success = true;
@@ -317,6 +320,8 @@ int main(int argc, char** argv)
                     video_success = true;
                 }
             }
+#endif // SDL2_BUILD
+
 #endif
 
             if (!video_success) {
@@ -634,6 +639,8 @@ void Read_Setup_Options(RawFileClass* config_file)
         AllowHardwareBlitFills = WWGetPrivateProfileInt("Options", "HardwareFills", 1, buffer);
         ScreenHeight =
             WWGetPrivateProfileInt("Options", "Resolution", 0, buffer) ? GBUFF_INIT_ALTHEIGHT : GBUFF_INIT_HEIGHT;
+        OutputWidth = WWGetPrivateProfileInt("Options", "OutputWidth", ScreenWidth, buffer);
+        OutputHeight = WWGetPrivateProfileInt("Options", "OutputHeight", ScreenHeight, buffer);
         IsV107 = WWGetPrivateProfileInt("Options", "Compatibility", 0, buffer);
 
         /*

@@ -64,6 +64,7 @@ public:
     int Get_Mouse_X(void);
     int Get_Mouse_Y(void);
     void Get_Mouse_XY(int& x, int& y);
+    void Get_Mouse_Scale_XY(float& x, float& y);
     //
     // The following two routines can be used to render the mouse onto a graphicbuffer
     // other than the hidpage.
@@ -124,6 +125,9 @@ private:
     CRITICAL_SECTION MouseCriticalSection; // Control for mouse re-enterancy
     unsigned TimerHandle;
 #endif
+
+    float MouseXScale;
+    float MouseYScale;
 };
 
 void Hide_Mouse(void);
@@ -134,5 +138,6 @@ int Get_Mouse_State(void);
 void* Set_Mouse_Cursor(int hotx, int hoty, void* cursor);
 int Get_Mouse_X(void);
 int Get_Mouse_Y(void);
+void Get_Mouse_Scale_XY(float& x, float& y);
 
 #endif

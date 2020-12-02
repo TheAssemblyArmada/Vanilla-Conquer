@@ -52,6 +52,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "wwkeyboard.h"
+#include "wwmouse.h"
 #include "miscasm.h"
 #include <string.h>
 #ifdef SDL2_BUILD
@@ -545,7 +546,8 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
             Put_Key_Message(event.key.keysym.scancode, true);
             break;
         case SDL_MOUSEBUTTONDOWN:
-        case SDL_MOUSEBUTTONUP:
+        case SDL_MOUSEBUTTONUP: {
+            float scale_x = 1.0f, scale_y = 1.0f;
             switch (event.button.button) {
             case SDL_BUTTON_LEFT:
             default:
@@ -558,8 +560,12 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
                 key = VK_MBUTTON;
                 break;
             }
-            Put_Mouse_Message(key, event.button.x, event.button.y, event.type == SDL_MOUSEBUTTONDOWN ? false : true);
-            break;
+            Get_Mouse_Scale_XY(scale_x, scale_y);
+            Put_Mouse_Message(key,
+                              event.button.x * scale_x,
+                              event.button.y * scale_y,
+                              event.type == SDL_MOUSEBUTTONDOWN ? false : true);
+        } break;
         case SDL_WINDOWEVENT:
             switch (event.window.event) {
             case SDL_WINDOWEVENT_EXPOSED:
