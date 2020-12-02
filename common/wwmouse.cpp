@@ -36,6 +36,7 @@
 #ifdef SDL2_BUILD
 #include <SDL.h>
 extern SDL_Window* window;
+extern SDL_Renderer* renderer;
 #endif
 
 #ifndef min
@@ -114,6 +115,18 @@ WWMouseClass::WWMouseClass(GraphicViewPortClass* scr, int mouse_max_width, int m
     ** Force the windows mouse pointer to stay withing the graphic view port region
     */
     Set_Cursor_Clip();
+
+#ifdef SDL2_BUILD
+    if (window) {
+        int w, h;
+        SDL_GetRendererOutputSize(renderer, &w, &h);
+        MouseXScale = scr->Get_Width() / (float)w;
+        MouseYScale = scr->Get_Height() / (float)h;
+    }
+#else
+    MouseXScale = 1.0f;
+    MouseYScale = 1.0f;
+#endif
 }
 
 WWMouseClass::~WWMouseClass()
@@ -661,6 +674,8 @@ void WWMouseClass::Get_Mouse_XY(int& x, int& y)
 {
 #if defined(SDL2_BUILD)
     SDL_GetMouseState(&x, &y);
+    x *= MouseXScale;
+    y *= MouseYScale;
 #elif defined(_WIN32)
     POINT pt;
 
@@ -668,6 +683,12 @@ void WWMouseClass::Get_Mouse_XY(int& x, int& y)
     x = pt.x;
     y = pt.y;
 #endif
+}
+
+void WWMouseClass::Get_Mouse_Scale_XY(float& x, float& y)
+{
+    x = MouseXScale;
+    y = MouseYScale;
 }
 
 void WWMouseClass::Mouse_Shadow_Buffer(GraphicViewPortClass* viewport,
@@ -976,4 +997,12 @@ int Get_Mouse_Y(void)
     if (!_Mouse)
         return (0);
     return (_Mouse->Get_Mouse_Y());
+}
+
+void Get_Mouse_Scale_XY(float& x, float& y)
+{
+    if (!_Mouse)
+        return;
+
+    _Mouse->Get_Mouse_Scale_XY(x, y);
 }

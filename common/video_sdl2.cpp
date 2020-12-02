@@ -48,6 +48,7 @@
 extern WWKeyboardClass* Keyboard;
 
 SDL_Window* window;
+SDL_Renderer* renderer;
 static SDL_Palette* palette;
 
 class SurfaceMonitorClassDummy : public SurfaceMonitorClass
@@ -93,6 +94,7 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
 
     window = SDL_CreateWindow("Vanilla Conquer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, 0);
     palette = SDL_AllocPalette(256);
+    renderer = SDL_CreateRenderer(window, -1, 0);
 
     return true;
 }
@@ -116,6 +118,9 @@ bool Is_Video_Fullscreen()
  *=============================================================================================*/
 void Reset_Video_Mode(void)
 {
+    SDL_DestroyRenderer(renderer);
+    renderer = nullptr;
+
     SDL_FreePalette(palette);
     palette = nullptr;
 
@@ -253,14 +258,29 @@ class VideoSurfaceSDL2 : public VideoSurface
 public:
     VideoSurfaceSDL2(int w, int h, GBC_Enum flags)
         : flags(flags)
+        , windowSurface(nullptr)
+        , texture(nullptr)
     {
         surface = SDL_CreateRGBSurface(0, w, h, 8, 0, 0, 0, 0);
         SDL_SetSurfacePalette(surface, palette);
+
+        if (flags & GBC_VISIBLE) {
+            windowSurface = SDL_CreateRGBSurface(0, w, h, 32, 0, 0, 0, 0);
+            texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, w, h);
+        }
     }
 
     virtual ~VideoSurfaceSDL2()
     {
         SDL_FreeSurface(surface);
+
+        if (texture) {
+            SDL_DestroyTexture(texture);
+        }
+
+        if (windowSurface) {
+            SDL_FreeSurface(windowSurface);
+        }
     }
 
     virtual void* GetData() const
@@ -295,9 +315,7 @@ public:
         SDL_UnlockSurface(surface);
 
         if (flags & GBC_VISIBLE) {
-            SDL_Surface* windowSurface = SDL_GetWindowSurface(window);
-            SDL_BlitSurface(surface, NULL, windowSurface, NULL);
-            SDL_UpdateWindowSurface(window);
+            RenderSurface();
         }
 
         return true;
@@ -308,9 +326,7 @@ public:
         SDL_BlitSurface(((VideoSurfaceSDL2*)src)->surface, (SDL_Rect*)(&srcRect), surface, (SDL_Rect*)&destRect);
 
         if (flags & GBC_VISIBLE) {
-            SDL_Surface* windowSurface = SDL_GetWindowSurface(window);
-            SDL_BlitSurface(surface, NULL, windowSurface, NULL);
-            SDL_UpdateWindowSurface(window);
+            RenderSurface();
         }
     }
 
@@ -320,7 +336,29 @@ public:
     }
 
 private:
+    void RenderSurface()
+    {
+        void* pixels;
+        int pitch;
+
+        SDL_BlitSurface(surface, NULL, windowSurface, NULL);
+        SDL_LockTexture(texture, NULL, &pixels, &pitch);
+        SDL_ConvertPixels(windowSurface->w,
+                          windowSurface->h,
+                          windowSurface->format->format,
+                          windowSurface->pixels,
+                          windowSurface->pitch,
+                          SDL_PIXELFORMAT_RGBA8888,
+                          pixels,
+                          pitch);
+        SDL_UnlockTexture(texture);
+        SDL_RenderCopy(renderer, texture, NULL, NULL);
+        SDL_RenderPresent(renderer);
+    }
+
     SDL_Surface* surface;
+    SDL_Surface* windowSurface;
+    SDL_Texture* texture;
     GBC_Enum flags;
 };
 
