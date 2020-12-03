@@ -5053,18 +5053,23 @@ void Shake_The_Screen(int shakes, HousesType house)
  *=============================================================================================*/
 void List_Copy(short const* source, int len, short* dest)
 {
-    if (dest == NULL || dest == NULL) {
+    if (len < 1 || dest == NULL || dest == NULL) {
         return;
     }
 
     while (len > 0) {
         *dest = *source;
         if (*dest == REFRESH_EOL)
-            break;
+            return;
         dest++;
         source++;
         len--;
     }
+
+    /*
+    **  Always end a list with EOL even when it is overflowing
+    */
+    *(--dest) = REFRESH_EOL;
 }
 
 /***********************************************************************************************

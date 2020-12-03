@@ -1912,7 +1912,7 @@ bool SidebarClass::StripClass::Recalc(void)
             **	Removes this entry from the list.
             */
             if (BuildableCount > 1 && index < BuildableCount - 1) {
-                memcpy(
+                memmove(
                     &Buildables[index], &Buildables[index + 1], sizeof(Buildables[0]) * ((BuildableCount - index) - 1));
             }
             TopIndex = 0;

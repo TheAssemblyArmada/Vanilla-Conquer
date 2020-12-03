@@ -1578,7 +1578,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
     **	If the object is in a "harmless" state, then don't bother to consider it
     **	a threat.
     */
-    if (MissionControl[object->Mission].IsNoThreat) {
+    if (object->Mission == MISSION_NONE || MissionControl[object->Mission].IsNoThreat) {
         BEnd(BENCH_EVAL_OBJECT);
         return (false);
     }
