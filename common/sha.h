@@ -38,6 +38,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <new>
 
 /*
@@ -68,7 +69,7 @@ public:
     // Fetch result as if source data were to stop now.
     int Result(void* result) const;
 
-    void Hash(void const* data, long length);
+    void Hash(void const* data, int32_t length);
 
     static int Digest_Size(void)
     {
@@ -78,8 +79,8 @@ public:
 private:
     typedef union
     {
-        unsigned long Long[5];
-        unsigned char Char[20];
+        uint32_t Long[5];
+        uint8_t Char[20];
     } SHADigest;
 
     /*
@@ -106,13 +107,13 @@ private:
         K4 = 0xca62c1d6L, // t=60..79		10^(1/2)/4
 
         // Source data is grouped into blocks of this size.
-        SRC_BLOCK_SIZE = 16 * sizeof(long),
+        SRC_BLOCK_SIZE = 16 * sizeof(int32_t),
 
         // Internal processing data is grouped into blocks this size.
-        PROC_BLOCK_SIZE = 80 * sizeof(long)
+        PROC_BLOCK_SIZE = 80 * sizeof(int32_t)
     };
 
-    long Get_Constant(int index) const
+    int32_t Get_Constant(int index) const
     {
         if (index < 20)
             return K1;
@@ -124,30 +125,30 @@ private:
     };
 
     // Used for 0..19
-    long Function1(long X, long Y, long Z) const
+    int32_t Function1(int32_t X, int32_t Y, int32_t Z) const
     {
         return (Z ^ (X & (Y ^ Z)));
     };
 
     // Used for 20..39
-    long Function2(long X, long Y, long Z) const
+    int32_t Function2(int32_t X, int32_t Y, int32_t Z) const
     {
         return (X ^ Y ^ Z);
     };
 
     // Used for 40..59
-    long Function3(long X, long Y, long Z) const
+    int32_t Function3(int32_t X, int32_t Y, int32_t Z) const
     {
         return ((X & Y) | (Z & (X | Y)));
     };
 
     // Used for 60..79
-    long Function4(long X, long Y, long Z) const
+    int32_t Function4(int32_t X, int32_t Y, int32_t Z) const
     {
         return (X ^ Y ^ Z);
     };
 
-    long Do_Function(int index, long X, long Y, long Z) const
+    int32_t Do_Function(int index, int32_t X, int32_t Y, int32_t Z) const
     {
         if (index < 20)
             return Function1(X, Y, Z);
@@ -162,7 +163,7 @@ private:
     void Process_Block(void const* source, SHADigest& acc) const;
 
     // Processes a partially filled source accumulator buffer.
-    void Process_Partial(void const*& data, long& length);
+    void Process_Partial(void const*& data, int32_t& length);
 
     /*
     **	This is the running accumulator values. These values
@@ -177,7 +178,7 @@ private:
     **	resulting hash value as if it were appended to the end
     **	of the source data.
     */
-    long Length;
+    int32_t Length;
 
     /*
     **	This holds any partial source block. Partial source blocks are
