@@ -393,11 +393,13 @@ MixFileClass<T>::MixFileClass(char const* filename, PKey const* key)
     **	Stuctures used to hold the various file headers.
     */
     FileHeader fileheader;
+#pragma pack(push, 2)
     struct
     {
         int16_t First;  // Always zero for extended mixfile format.
         int16_t Second; // Bitfield of extensions to this mixfile.
     } alternate;
+#pragma pack(pop)
 
     /*
     **	Fetch the first bit of the file. From this bit, it is possible to detect
