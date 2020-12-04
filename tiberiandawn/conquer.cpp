@@ -2820,7 +2820,8 @@ long VQ_Call_Back(unsigned char*, long)
     Check_VQ_Palette_Set();
 
     Interpolate_2X_Scale(&SysMemPage, &SeenBuff, NULL);
-    // Call_Back();
+    Frame_Limiter();
+
     if ((BreakoutAllowed || Debug_Flag) && key == KN_ESC) {
         Keyboard->Clear();
         Brokeout = true;

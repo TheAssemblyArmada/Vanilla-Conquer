@@ -3454,7 +3454,7 @@ long VQ_Call_Back(unsigned char*, long)
 #else
     Interpolate_2X_Scale(&SysMemPage, &SeenBuff, NULL);
 #endif
-    // Call_Back();
+    Frame_Limiter();
 
     if ((BreakoutAllowed || Debug_Flag) && key == KN_ESC) {
         Keyboard->Clear();
