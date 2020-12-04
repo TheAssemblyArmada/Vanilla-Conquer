@@ -253,6 +253,10 @@ SurfaceMonitorClass::SurfaceMonitorClass()
 ** VideoSurfaceDDraw
 */
 
+class VideoSurfaceSDL2;
+
+static VideoSurfaceSDL2* frontSurface = nullptr;
+
 class VideoSurfaceSDL2 : public VideoSurface
 {
 public:
@@ -267,11 +271,16 @@ public:
         if (flags & GBC_VISIBLE) {
             windowSurface = SDL_CreateRGBSurface(0, w, h, 32, 0, 0, 0, 0);
             texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, w, h);
+            frontSurface = this;
         }
     }
 
     virtual ~VideoSurfaceSDL2()
     {
+        if (frontSurface == this) {
+            frontSurface = nullptr;
+        }
+
         SDL_FreeSurface(surface);
 
         if (texture) {
@@ -313,21 +322,12 @@ public:
     virtual bool Unlock()
     {
         SDL_UnlockSurface(surface);
-
-        if (flags & GBC_VISIBLE) {
-            RenderSurface();
-        }
-
         return true;
     }
 
     virtual void Blt(const Rect& destRect, VideoSurface* src, const Rect& srcRect, bool mask)
     {
         SDL_BlitSurface(((VideoSurfaceSDL2*)src)->surface, (SDL_Rect*)(&srcRect), surface, (SDL_Rect*)&destRect);
-
-        if (flags & GBC_VISIBLE) {
-            RenderSurface();
-        }
     }
 
     virtual void FillRect(const Rect& rect, unsigned char color)
@@ -335,7 +335,6 @@ public:
         SDL_FillRect(surface, (SDL_Rect*)(&rect), color);
     }
 
-private:
     void RenderSurface()
     {
         void* pixels;
@@ -356,11 +355,19 @@ private:
         SDL_RenderPresent(renderer);
     }
 
+private:
     SDL_Surface* surface;
     SDL_Surface* windowSurface;
     SDL_Texture* texture;
     GBC_Enum flags;
 };
+
+void Video_Render_Frame()
+{
+    if (frontSurface) {
+        frontSurface->RenderSurface();
+    }
+}
 
 /*
 ** Video

@@ -10,6 +10,10 @@
 
 extern WWMouseClass* WWMouse;
 
+#ifdef SDL2_BUILD
+void Video_Render_Frame();
+#endif
+
 void Frame_Limiter()
 {
     // Crude limiter to limit refresh loops to occuring 120 times a second.
@@ -20,11 +24,12 @@ void Frame_Limiter()
     _last = now;
     auto remaining = _ms_per_tick - std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
 
+#ifdef SDL2_BUILD
+    WWMouse->Process_Mouse();
+    Video_Render_Frame();
+#endif
+
     if (remaining > 0) {
         ms_sleep(unsigned(remaining));
     }
-
-#ifdef SDL2_BUILD
-    WWMouse->Process_Mouse();
-#endif
 }
