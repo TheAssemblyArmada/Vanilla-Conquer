@@ -4234,7 +4234,7 @@ bool Force_CD_Available(int cd_desired) //	ajw
 #endif
 #endif
             } else if (cd_desired == CD_ANY) {
-                sprintf(buffer, Text_String(TXT_CD_DIALOG_1), cd_desired + 1, _cd_name[cd_desired]);
+                sprintf(buffer, Text_String(TXT_CD_DIALOG_1), cd_desired + 1, "CD1/CD2/CS/AM");
             } else //	0 or 1
             {
                 sprintf(buffer, Text_String(TXT_CD_DIALOG_2), cd_desired + 1, _cd_name[cd_desired]);
