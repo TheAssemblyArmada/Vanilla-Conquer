@@ -394,7 +394,7 @@ int main(int argc, char* argv[])
             */
             Read_Setup_Options(&cfile);
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
             Create_Main_Window(instance, command_show, ScreenWidth, ScreenHeight);
 #endif
             SoundOn = Audio_Init(16, false, 11025 * 2, 0);
@@ -603,7 +603,7 @@ int main(int argc, char* argv[])
             /*
             ** Post a message to our message handler to tell it to clean up.
             */
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
             PostMessage(MainWindow, WM_DESTROY, 0, 0);
 
             /*

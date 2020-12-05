@@ -498,7 +498,7 @@ int main(int argc, char** argv)
             CCDebugString("C&C95 - About to exit.\n");
             ReadyToQuit = 1;
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
             PostMessageA(MainWindow, WM_DESTROY, 0, 0);
             do {
                 Keyboard->Check();
