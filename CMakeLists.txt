@@ -82,8 +82,8 @@ else()
         set(CMAKE_C_FLAGS_DEBUG "-g3")
     endif()
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fpermissive -fcheck-new -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fpermissive -fcheck-new -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fpermissive -fcheck-new -fsigned-char -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fpermissive -fcheck-new -fsigned-char -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
     set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
 endif()
 
