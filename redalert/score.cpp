@@ -1325,6 +1325,8 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
                 }
             }
         }
+
+        Frame_Limiter();
     } while (key != KA_RETURN); //	} while(key != KN_RETURN && key!=KN_KEYPAD_RETURN);
 }
 

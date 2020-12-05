@@ -829,6 +829,8 @@ int Surrender_Dialog(int text)
         default:
             break;
         }
+
+        Frame_Limiter();
     }
 
     //------------------------------------------------------------------------
@@ -1023,6 +1025,8 @@ int Abort_Dialog(void)
         default:
             break;
         }
+
+        Frame_Limiter();
     }
 
     //------------------------------------------------------------------------

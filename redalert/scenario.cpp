@@ -894,6 +894,7 @@ void Do_Win(void)
         Speak(VOX_ACCOMPLISHED);
         while (CountDownTimer || Is_Speaking()) {
             Call_Back();
+            Frame_Limiter();
         }
     }
 
@@ -1621,6 +1622,7 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
                 Call_Back();
             } while (!Keyboard->Check() && cd);
         }
+        Frame_Limiter();
     } while (buffer[++bufindex]);
 
     Show_Mouse();
