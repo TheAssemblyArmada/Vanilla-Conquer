@@ -53,6 +53,7 @@
 #include <new>
 #include <stdlib.h>
 #include <stddef.h>
+#include <stdint.h>
 
 struct NoInitClass;
 
@@ -854,7 +855,7 @@ template <class T> int VectorClass<T>::operator==(VectorClass<T> const& vector) 
  *=============================================================================================*/
 template <class T> inline int VectorClass<T>::ID(T const* ptr)
 {
-    return (((unsigned long)ptr - (unsigned long)&(*this)[0]) / sizeof(T));
+    return int((((uintptr_t)ptr - (uintptr_t) & (*this)[0]) / sizeof(T)));
 }
 
 /***********************************************************************************************
