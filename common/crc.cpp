@@ -83,7 +83,7 @@ void CRCEngine::operator()(char datum)
  * HISTORY:                                                                                    *
  *   03/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-int32_t CRCEngine::operator()(void const* buffer, long length)
+int32_t CRCEngine::operator()(void const* buffer, size_t length)
 {
     if (buffer != NULL && length > 0) {
         char const* dataptr = (char const*)buffer;
