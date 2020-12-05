@@ -61,7 +61,11 @@
 #include "function.h"
 #include "options.h"
 
+#ifdef SDL2_BUILD
+char const* const OptionsClass::HotkeyName = "SDLHotkeys";
+#else
 char const* const OptionsClass::HotkeyName = "WinHotkeys";
+#endif
 
 /***********************************************************************************************
  * OptionsClass::OptionsClass -- The default constructor for the options class.                *
