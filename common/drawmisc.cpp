@@ -22,8 +22,6 @@ bool AllowHardwareBlitFills = true;
 void (*Misc_Focus_Loss_Function)(void) = nullptr;
 void (*Misc_Focus_Restore_Function)(void) = nullptr;
 
-#ifdef NOASM
-
 void Fat_Put_Pixel(int x, int y, int value, int size, GraphicViewPortClass& gvp)
 {
     char* buf;
@@ -47,5 +45,3 @@ void Fat_Put_Pixel(int x, int y, int value, int size, GraphicViewPortClass& gvp)
         buf += pitch;
     }
 }
-
-#endif

@@ -52,13 +52,6 @@
 #include <stdarg.h>
 #include <string.h>
 
-// extern void output(short port, short data);
-//#pragma aux output parm [dx] [ax] =		\
-//		"out	dx,al"		\
-//		"inc	dx"			\
-//		"mov	al,ah"		\
-//		"out	dx,al"
-
 int MonoClass::Enabled = 0;
 MonoClass* MonoClass::PageUsage[MonoClass::MAX_MONO_PAGES] = {0, 0, 0, 0, 0, 0, 0, 0};
 // DOSSegmentClass MonoClass::MonoSegment(MonoClass::SEGMENT);
@@ -226,40 +219,6 @@ void MonoClass::Draw_Box(int x, int y, int w, int h, char attrib, BoxStyleType t
  *=============================================================================================*/
 void MonoClass::Set_Cursor(int x, int y)
 {
-#ifdef FIX_ME_LATER
-    int pos = (y * COLUMNS) + x;
-
-    if (!Enabled)
-        return;
-
-    X = (char)(x % COLUMNS);
-    Y = (char)(y % LINES);
-
-    if (Page == 0) {
-        _DX = CONTROL_PORT;
-        _AX = (short)(0x0E | (pos & 0xFF00));
-        asm {
-			out	dx,al
-			inc	dx
-			mov	al,ah
-			out	dx,al
-        }
-
-        _DX = CONTROL_PORT;
-        _AX = (short)(0x0F | (pos << 8));
-        asm {
-			out	dx,al
-			inc	dx
-			mov	al,ah
-			out	dx,al
-        }
-
-        //		outportb(CONTROL_PORT,0x0E|(pos&0xFF00));
-        //		outportb(CONTROL_PORT,0x0F|(pos<<8));
-    }
-
-#endif // FIX_ME_LATER
-
     x = y;
     y = x;
 }

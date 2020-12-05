@@ -38,36 +38,6 @@
 class PaletteClass;
 class HSVClass;
 
-#if (0)
-
-#ifndef OUTPORTB
-#define OUTPORTB
-extern void outportb(int port, unsigned char data);
-#pragma aux outportb parm[edx][al] = "out	dx,al"
-
-extern void outport(int port, unsigned short data);
-#pragma aux outport parm[edx][ax] = "out	dx,al"                                                                        \
-                                    "inc	dx"                                                                           \
-                                    "mov	al,ah"                                                                        \
-                                    "out	dx,al"
-#endif
-
-extern void outrgb(unsigned char red, unsigned char green, unsigned char blue);
-#pragma aux outrgb parm[al][bl][cl] modify[dx al] = "mov	dx,03C9h"                                                     \
-                                                    "out	dx,al"                                                        \
-                                                    "jmp	e1"                                                           \
-                                                    "e1:"                                                              \
-                                                    "mov	al,bl"                                                        \
-                                                    "out	dx,al"                                                        \
-                                                    "jmp	e2"                                                           \
-                                                    "e2:"                                                              \
-                                                    "mov	al,cl"                                                        \
-                                                    "out	dx,al"                                                        \
-                                                    "jmp	e3"                                                           \
-                                                    "e3:"
-
-#endif
-
 /*
 **	Each color entry is represented by this class. It holds the values for the color
 **	guns. The gun values are recorded in device dependant format, but the interface

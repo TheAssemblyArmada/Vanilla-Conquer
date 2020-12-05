@@ -13,8 +13,6 @@
 #include "graphicsviewport.h"
 #include <string.h>
 
-#ifdef NOASM
-
 // Clipping functions for line drawing.
 static unsigned Line_Get_Clipping(GraphicViewPortClass& view, int x, int y)
 {
@@ -221,5 +219,3 @@ void Buffer_Draw_Line(void* this_object, int sx, int sy, int dx, int dy, unsigne
         }
     }
 }
-
-#endif

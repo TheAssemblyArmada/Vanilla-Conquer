@@ -78,7 +78,6 @@ set(TIBDAWN_SRC
     mapsel.cpp
     menus.cpp
     miscasm.cpp
-    miscasma.asm
     mission.cpp
     monoc.cpp
     mouse.cpp
@@ -111,7 +110,6 @@ set(TIBDAWN_SRC
     smudge.cpp
     sounddlg.cpp
     special.cpp
-    stamp.asm
     startup.cpp
     stats.cpp
     super.cpp

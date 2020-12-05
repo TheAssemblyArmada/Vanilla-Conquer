@@ -35,7 +35,6 @@
 
 extern "C" unsigned RandNumb = 0x12349876;
 
-#ifdef NOASM
 static bool bsr(unsigned int* index, unsigned mask)
 {
     if (mask == 0 || index == 0)
@@ -83,7 +82,6 @@ int Get_Random_Mask(int maxval)
 
     return mask;
 }
-#endif
 
 /* IRANDOM ----------------------------------------------------------
 

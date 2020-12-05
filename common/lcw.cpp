@@ -173,8 +173,6 @@ int LCW_Uncompress(void const* source, void* dest, unsigned length)
     return (int)(dest_ptr - (unsigned char*)dest);
 }
 
-#ifdef NOASM
-
 int LCW_Comp(const void* src, void* dst, unsigned int bytes)
 {
     if (!bytes) {
@@ -303,4 +301,3 @@ int LCW_Comp(const void* src, void* dst, unsigned int bytes)
     *putp++ = 0x80;
     return putp - putstart;
 }
-#endif
