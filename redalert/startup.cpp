@@ -599,7 +599,6 @@ int main(int argc, char* argv[])
             */
 #ifdef _WIN32
             PostMessage(MainWindow, WM_DESTROY, 0, 0);
-#endif
 
             /*
             ** Wait until the message handler has dealt with the message
@@ -607,6 +606,7 @@ int main(int argc, char* argv[])
             do {
                 Keyboard->Check();
             } while (ReadyToQuit == 1);
+#endif
 
             return (EXIT_SUCCESS);
         } else {
