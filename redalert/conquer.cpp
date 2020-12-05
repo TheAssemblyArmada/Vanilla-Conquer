@@ -254,6 +254,13 @@ void Main_Game(int argc, char* argv[])
                 }
 
                 if (SpecialDialog != SDLG_NONE) {
+                    /*
+                    **  Always release mouse cursor when a dialog is open.
+                    */
+                    if (!Is_Video_Fullscreen()) {
+                        WWMouse->Clear_Cursor_Clip();
+                    }
+
                     switch (SpecialDialog) {
                     case SDLG_SPECIAL:
                         Map.Help_Text(TXT_NONE);
@@ -283,6 +290,10 @@ void Main_Game(int argc, char* argv[])
 
                     default:
                         break;
+                    }
+
+                    if (!Is_Video_Fullscreen()) {
+                        WWMouse->Set_Cursor_Clip();
                     }
                 }
             } else {
@@ -319,6 +330,13 @@ void Main_Game(int argc, char* argv[])
             **	Main_Loop(), allowing the game to run in the background.
             */
             if (SpecialDialog != SDLG_NONE) {
+                /*
+                **  Always release mouse cursor when a dialog is open.
+                */
+                if (!Is_Video_Fullscreen()) {
+                    WWMouse->Clear_Cursor_Clip();
+                }
+
                 switch (SpecialDialog) {
                 case SDLG_SPECIAL:
                     Map.Help_Text(TXT_NONE);
@@ -370,6 +388,10 @@ void Main_Game(int argc, char* argv[])
                     */
                 default:
                     break;
+                }
+
+                if (!Is_Video_Fullscreen()) {
+                    WWMouse->Set_Cursor_Clip();
                 }
             }
         }
