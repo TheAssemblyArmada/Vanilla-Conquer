@@ -162,7 +162,7 @@ void Check_For_Focus_Loss(void)
 }
 
 extern bool InMovie;
-#if defined(_WIN32) && !defined(REMASTER_BUILD) // PG
+#if !defined(REMASTER_BUILD) && defined(_WIN32) && !defined(SDL2_BUILD)
 long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 {
 
@@ -419,7 +419,7 @@ void WWDebugString(const char* string)
 #define WINDOW_NAME "Alarmstufe Rot"
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
 void Create_Main_Window(HANDLE instance, int command_show, int width, int height)
 
 {
