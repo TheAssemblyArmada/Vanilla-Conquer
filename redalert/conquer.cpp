@@ -3147,7 +3147,7 @@ void CC_Draw_Shape(void const* shapefile,
                    DirType rotation)
 {
     int predoffset;
-    unsigned long shape_pointer;
+    uintptr_t shape_pointer;
 
     /*
     ** Special kludge for E3 to prevent crashes
