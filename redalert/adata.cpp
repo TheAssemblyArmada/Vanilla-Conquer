@@ -846,13 +846,17 @@ static AnimTypeClass const Fire3(ANIM_FIRE_SMALL, // Animation number.
                                  -1,              // Number of animation stages.
                                  2,               // Number of times the animation loops.
                                  VOC_NONE,        // Sound effect to play.
-                                 ANIM_NONE,
+                                 ANIM_NONE
+#ifdef REMASTER_BUILD
+                                 ,
                                  -1,                     // Virtual stages
                                  0x100,                  // Virtual scale
                                  NULL,                   // Virtual name
                                  ANIM_FIRE_SMALL_VIRTUAL // Virtual anim
+#endif
 );
 
+#ifdef REMASTER_BUILD
 static AnimTypeClass const Fire3Virtual(ANIM_FIRE_SMALL_VIRTUAL, // Animation number.
                                         "FIRE3",                 // Data name of animation.
                                         23,                      // Maximum dimension of animation.
@@ -875,6 +879,7 @@ static AnimTypeClass const Fire3Virtual(ANIM_FIRE_SMALL_VIRTUAL, // Animation nu
                                         2,                       // Number of times the animation loops.
                                         VOC_NONE,                // Sound effect to play.
                                         ANIM_NONE);
+#endif
 
 static AnimTypeClass const Fire1(ANIM_FIRE_MED2, // Animation number.
                                  "FIRE1",        // Data name of animation.
@@ -897,13 +902,17 @@ static AnimTypeClass const Fire1(ANIM_FIRE_MED2, // Animation number.
                                  -1,             // Number of animation stages.
                                  3,              // Number of times the animation loops.
                                  VOC_NONE,       // Sound effect to play.
-                                 ANIM_NONE,
+                                 ANIM_NONE
+#ifdef REMASTER_BUILD
+                                 ,
                                  -1,                    // Virtual stages
                                  0x100,                 // Virtual scale
                                  NULL,                  // Virtual name
                                  ANIM_FIRE_MED2_VIRTUAL // Virtual anim
+#endif
 );
 
+#ifdef REMASTER_BUILD
 static AnimTypeClass const Fire1Virtual(ANIM_FIRE_MED2_VIRTUAL, // Animation number.
                                         "FIRE1",                // Data name of animation.
                                         23,                     // Maximum dimension of animation.
@@ -926,6 +935,7 @@ static AnimTypeClass const Fire1Virtual(ANIM_FIRE_MED2_VIRTUAL, // Animation num
                                         3,                      // Number of times the animation loops.
                                         VOC_NONE,               // Sound effect to play.
                                         ANIM_NONE);
+#endif
 
 static AnimTypeClass const Fire4(ANIM_FIRE_TINY, // Animation number.
                                  "FIRE4",        // Data name of animation.
@@ -948,13 +958,17 @@ static AnimTypeClass const Fire4(ANIM_FIRE_TINY, // Animation number.
                                  -1,             // Number of animation stages.
                                  3,              // Number of times the animation loops.
                                  VOC_NONE,       // Sound effect to play.
-                                 ANIM_NONE,
+                                 ANIM_NONE
+#ifdef REMASTER_BUILD
+                                 ,
                                  -1,                    // Virtual stages
                                  0x100,                 // Virtual scale
                                  NULL,                  // Virtual name
                                  ANIM_FIRE_TINY_VIRTUAL // Virtual anim
+#endif
 );
 
+#ifdef REMASTER_BUILD
 static AnimTypeClass const Fire4Virtual(ANIM_FIRE_TINY_VIRTUAL, // Animation number.
                                         "FIRE4",                // Data name of animation.
                                         7,                      // Maximum dimension of animation.
@@ -977,6 +991,7 @@ static AnimTypeClass const Fire4Virtual(ANIM_FIRE_TINY_VIRTUAL, // Animation num
                                         3,                      // Number of times the animation loops.
                                         VOC_NONE,               // Sound effect to play.
                                         ANIM_NONE);
+#endif
 
 static AnimTypeClass const Fire2(ANIM_FIRE_MED, // Animation number.
                                  "FIRE2",       // Data name of animation.
@@ -999,13 +1014,17 @@ static AnimTypeClass const Fire2(ANIM_FIRE_MED, // Animation number.
                                  -1,            // Number of animation stages.
                                  3,             // Number of times the animation loops.
                                  VOC_NONE,      // Sound effect to play.
-                                 ANIM_NONE,
+                                 ANIM_NONE
+#ifdef REMASTER_BUILD
+                                 ,
                                  -1,                   // Virtual stages
                                  0x100,                // Virtual scale
                                  NULL,                 // Virtual name
                                  ANIM_FIRE_MED_VIRTUAL // Virtual anim
+#endif
 );
 
+#ifdef REMASTER_BUILD
 static AnimTypeClass const Fire2Virtual(ANIM_FIRE_MED_VIRTUAL, // Animation number.
                                         "FIRE2",               // Data name of animation.
                                         23,                    // Maximum dimension of animation.
@@ -1028,6 +1047,7 @@ static AnimTypeClass const Fire2Virtual(ANIM_FIRE_MED_VIRTUAL, // Animation numb
                                         3,                     // Number of times the animation loops.
                                         VOC_NONE,              // Sound effect to play.
                                         ANIM_NONE);
+#endif
 
 static AnimTypeClass const OilFieldBurn(ANIM_OILFIELD_BURN, // Animation number.
                                         "FLMSPT",           // Data name of animation.
@@ -2017,13 +2037,17 @@ static AnimTypeClass const Beacon(ANIM_BEACON, // Animation number.
                                   1,           // Number of animation stages.
                                   -1,          // Number of times the animation loops.
                                   VOC_NONE,    // Sound effect to play.
-                                  ANIM_NONE,
+                                  ANIM_NONE
+#ifdef REMASTER_BUILD
+                                  ,
                                   -1,                 // Virtual stages
                                   0x100,              // Virtual scale
                                   NULL,               // Virtual name
                                   ANIM_BEACON_VIRTUAL // Virtual anim
+#endif
 );
 
+#ifdef REMASTER_BUILD
 static AnimTypeClass const BeaconVirtual(ANIM_BEACON_VIRTUAL, // Animation number.
                                          "BEACON",            // Data name of animation.
                                          21,                  // Maximum dimension of animation.
@@ -2046,6 +2070,7 @@ static AnimTypeClass const BeaconVirtual(ANIM_BEACON_VIRTUAL, // Animation numbe
                                          -1,                  // Number of times the animation loops.
                                          VOC_NONE,            // Sound effect to play.
                                          ANIM_NONE);
+#endif
 
 #ifdef FIXIT_ANTS
 static AnimTypeClass const Ant1Death(ANIM_ANT1_DEATH, // Animation number.
@@ -2345,11 +2370,13 @@ void AnimTypeClass::Init_Heap(void)
     new AnimTypeClass(Ant2Death);
     new AnimTypeClass(Ant3Death);
 #endif
+#ifdef REMASTER_BUILD
     new AnimTypeClass(Fire3Virtual);
     new AnimTypeClass(Fire2Virtual);
     new AnimTypeClass(Fire1Virtual);
     new AnimTypeClass(Fire4Virtual);
     new AnimTypeClass(BeaconVirtual);
+#endif
 }
 
 /***********************************************************************************************
@@ -2420,8 +2447,10 @@ void AnimTypeClass::Init(TheaterType theater)
             }
         }
 
+#ifdef REMASTER_BUILD
         // Set up beacon image data manually since they're new animations only available in the virtual renderer
         ((void const*&)As_Reference(ANIM_BEACON_VIRTUAL).ImageData) = As_Reference(ANIM_BEACON).ImageData;
+#endif
     }
 }
 
