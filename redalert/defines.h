@@ -2318,11 +2318,13 @@ typedef enum AnimType : char
     ANIM_ANT3_DEATH,
 #endif
 
+#ifdef REMASTER_BUILD
     ANIM_FIRE_SMALL_VIRTUAL, // Small flame animation.
     ANIM_FIRE_MED_VIRTUAL,   // Medium flame animation.
     ANIM_FIRE_MED2_VIRTUAL,  // Medium flame animation (oranger).
     ANIM_FIRE_TINY_VIRTUAL,  // Very tiny flames.
     ANIM_BEACON_VIRTUAL,     // Beacon (virtual).
+#endif
 
     ANIM_COUNT,
     ANIM_FIRST = 0
