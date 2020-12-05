@@ -482,7 +482,7 @@ typedef union
     LEPTON Raw;
     struct
     {
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
         unsigned char Cell;
         unsigned char Lepton;
 #else
@@ -498,7 +498,7 @@ typedef union
     COORDINATE Coord;
     struct
     {
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
         LEPTON_COMPOSITE Y;
         LEPTON_COMPOSITE X;
 #else
@@ -509,7 +509,7 @@ typedef union
 } COORD_COMPOSITE;
 
 typedef signed short CELL;
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
 #warning "FIXME"
 //#define SLUFF_BITS (sizeof(CELL) * CHAR_BIT) - (14)
 #endif
@@ -518,7 +518,7 @@ typedef union
     CELL Cell;
     struct
     {
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
 #if SLUFF_BITS
         /*
         **	Unused upper bits will cause problems on a big-endian machine unless they
@@ -551,7 +551,7 @@ typedef union
     TARGET Target;
     struct
     {
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
         unsigned Exponent : TARGET_EXPONENT;
         unsigned Mantissa : TARGET_MANTISSA;
 #else

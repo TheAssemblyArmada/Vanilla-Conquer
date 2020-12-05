@@ -446,7 +446,7 @@ private:
     {
         struct
         {
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
             uint16_t Whole;
             uint16_t Fraction;
 #else

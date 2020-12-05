@@ -80,7 +80,7 @@ typedef union
 {
     struct
     {
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
         unsigned char C1;
         unsigned char C2;
         unsigned char C3;
@@ -93,7 +93,7 @@ typedef union
     } Char;
     struct
     {
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
         unsigned O1 : 6;
         unsigned O2 : 6;
         unsigned O3 : 6;

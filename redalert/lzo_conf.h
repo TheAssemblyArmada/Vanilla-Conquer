@@ -145,7 +145,7 @@ typedef long lzo_ptrdiff_t;
 #if !defined(LZO_BYTE_ORDER)
 #if defined(__LZO_i386)
 #define LZO_BYTE_ORDER LZO_LITTLE_ENDIAN
-#elif defined(__mc68000__)
+#elif defined(__BIG_ENDIAN__)
 #define LZO_BYTE_ORDER LZO_BIG_ENDIAN
 #elif defined(__BYTE_ORDER)
 #define LZO_BYTE_ORDER __BYTE_ORDER
