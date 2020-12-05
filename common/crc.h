@@ -66,7 +66,7 @@ public:
     void operator()(char datum);
 
     // Submits an arbitrary buffer to the CRC accumulator.
-    int32_t operator()(void const* buffer, long length);
+    int32_t operator()(void const* buffer, size_t length);
 
     // Implicit conversion operator so this object appears like a 'long integer'.
     operator int32_t(void) const

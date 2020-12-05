@@ -63,7 +63,7 @@ void Force_VM_Page_In(void* buffer, int length);
 
 void* operator new(size_t size, MemoryFlagType flag);
 void* operator new[](size_t size, MemoryFlagType flag);
-void* Alloc(unsigned long bytes_to_alloc, MemoryFlagType flags);
+void* Alloc(size_t bytes_to_alloc, MemoryFlagType flags);
 void Free(void const* pointer);
 void* Resize_Alloc(void* original_ptr, unsigned long new_size_in_bytes);
 long Ram_Free(MemoryFlagType flag);
