@@ -56,6 +56,7 @@ void Set_Palette(void* palette);
 #include "ftimer.h"
 #include "common/wwlib32.h"
 #include "common/timer.h"
+#include "common/framelimit.h"
 
 #include <string.h>
 
@@ -354,6 +355,11 @@ void PaletteClass::Set(int time, void (*callback)(void)) const
             if (callback)
                 callback();
         }
+
+        /*
+        ** Ensure the screen is updated.
+        */
+        Frame_Limiter();
     }
 
     /*
@@ -361,4 +367,9 @@ void PaletteClass::Set(int time, void (*callback)(void)) const
     **	palette before exiting the fading routine.
     */
     Set_Palette((void*)&Palette[0]);
+
+    /*
+    ** Ensure the screen is updated.
+    */
+    Frame_Limiter();
 }
