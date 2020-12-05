@@ -16,8 +16,6 @@
 #include <stdarg.h>
 #include <stdint.h>
 
-#ifdef NOASM
-
 #define SHP_HAS_PAL            0x0001
 #define SHP_LCW_FRAME          0x80
 #define SHP_XOR_FAR_FRAME      0x40
@@ -1381,5 +1379,3 @@ Buffer_Frame_To_Page(int x, int y, int width, int height, void* shape, GraphicVi
             blit_width, blit_height, dst, src, dst_pitch, src_pitch, ghost_lookup, ghost_table, fade_table, fade_count);
     }
 }
-
-#endif

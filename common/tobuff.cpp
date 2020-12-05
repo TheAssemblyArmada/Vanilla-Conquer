@@ -13,8 +13,6 @@
 #include <algorithm>
 #include <cstring>
 
-#ifdef NOASM
-
 extern "C" void Buffer_To_Buffer(void* thisptr, int x, int y, int w, int h, void* buff, int size)
 {
     GraphicViewPortClass& vp = *static_cast<GraphicViewPortClass*>(thisptr);
@@ -62,5 +60,3 @@ extern "C" void Buffer_To_Buffer(void* thisptr, int x, int y, int w, int h, void
         }
     }
 }
-
-#endif

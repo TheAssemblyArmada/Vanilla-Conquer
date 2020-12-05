@@ -30,7 +30,6 @@ set(COMMON_SRC
     drawbuff.cpp
     drawline.cpp
     drawmisc.cpp
-    drawmisca.asm
     face.cpp
     fading.c
     field.cpp
@@ -44,12 +43,9 @@ set(COMMON_SRC
     ini.cpp
     int.cpp
     irandom.cpp
-    irandoma.asm
     keybuff.cpp
-    keyfbuffa.asm
     keyframe.cpp
     lcw.cpp
-    lcwcompa.asm
     lcwpipe.cpp
     lcwstraw.cpp
     linear.cpp
@@ -57,7 +53,6 @@ set(COMMON_SRC
     load.cpp
     memrev.c
     misc.c
-    miscasm.asm
     mixfile.cpp
     mp.cpp
     newdel.cpp
@@ -83,9 +78,7 @@ set(COMMON_SRC
     timer.cpp
     timerdwn.cpp
     tobuff.cpp
-    tobuffa.asm
     toggle.cpp
-    txtprnt.asm
     utracker.cpp
     vector.cpp
     winasm.c
@@ -94,7 +87,6 @@ set(COMMON_SRC
     writepcx.cpp
     wsa.cpp
     xordelta.c
-    xordeltaa.asm
     xpipe.cpp
     xstraw.cpp
 )

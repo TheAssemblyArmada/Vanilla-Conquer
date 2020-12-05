@@ -16,8 +16,6 @@
 
 #define TD_TILESET_CHECK 0x20
 
-#ifdef NOASM
-
 #pragma pack(push, 1)
 struct IconControlType
 {
@@ -281,5 +279,3 @@ uint8_t* Get_Icon_Set_Map(void* temp)
 
     return nullptr;
 }
-
-#endif

@@ -96,7 +96,6 @@ set(REDALERT_SRC
     monoc.cpp
     mouse.cpp
     mplayer.cpp
-    mpu.cpp
     msgbox.cpp
     msglist.cpp
     netdlg.cpp
@@ -130,7 +129,6 @@ set(REDALERT_SRC
     smudge.cpp
     sounddlg.cpp
     special.cpp
-    stamp.asm
     startup.cpp
     statbtn.cpp
     stats.cpp

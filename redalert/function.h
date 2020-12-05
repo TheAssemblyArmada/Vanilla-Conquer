@@ -125,7 +125,6 @@ public:
 
 #include "common/wwkeyboard.h"
 #include "common/wwlib32.h"
-#include "mpu.h"
 #include "bench.h"
 #include "common/rect.h"
 #include "jshell.h"

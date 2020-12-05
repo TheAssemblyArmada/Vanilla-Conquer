@@ -11,8 +11,6 @@
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 #include "fading.h"
 
-#ifdef NOASM
-
 void* Build_Fading_Table(void const* palette, void* dest, int color, int frac)
 {
     const int ALLOWED_COUNT = 16;
@@ -165,5 +163,3 @@ void* Conquer_Build_Fading_Table(const void* palette, void* dest, int color, int
 
     return dest;
 }
-
-#endif

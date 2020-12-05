@@ -55,6 +55,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "miscasm.h"
+
 struct NoInitClass;
 
 /**************************************************************************
