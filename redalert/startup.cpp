@@ -410,6 +410,10 @@ int main(int argc, char* argv[])
 #ifdef REMASTER_BUILD
             video_success = true;
 #else
+
+#ifdef SDL2_BUILD
+            video_success = static_cast<bool>(Set_Video_Mode(OutputWidth, OutputHeight, 8));
+#else
             if (ScreenHeight == 400) {
                 if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
                     video_success = true;
@@ -424,6 +428,8 @@ int main(int argc, char* argv[])
                     video_success = true;
                 }
             }
+#endif // SDL2_BUILD
+
 #endif
 
             if (!video_success) {
@@ -859,6 +865,8 @@ void Read_Setup_Options(RawFileClass* config_file)
         VideoBackBufferAllowed = ini.Get_Bool("Options", "VideoBackBuffer", true);
         AllowHardwareBlitFills = ini.Get_Bool("Options", "HardwareFills", true);
         ScreenHeight = ini.Get_Bool("Options", "Resolution", false) ? GBUFF_INIT_ALTHEIGHT : GBUFF_INIT_HEIGHT;
+        OutputWidth = ini.Get_Int("Options", "OutputWidth", ScreenWidth);
+        OutputHeight = ini.Get_Int("Options", "OutputHeight", ScreenHeight);
 
         /*
         ** See if an alternative socket number has been specified
