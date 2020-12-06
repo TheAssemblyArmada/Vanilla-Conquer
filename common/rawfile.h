@@ -126,19 +126,9 @@ private:
     FILE* Handle;
 
     /*
-    **	This points to the filename as a NULL terminated string. It may point to either a
-    **	constant or an allocated string as indicated by the "Allocated" flag.
+    **	This points to a copy of the filename as a NULL terminated string.
     */
-    const char* Filename;
-
-    /*
-    **	Filenames that were assigned as part of the construction process
-    **	are not allocated. It is assumed that the filename string is a
-    **	constant in that case and thus making duplication unnecessary.
-    **	This value will be non-zero if the filename has be allocated
-    **	(using strdup()).
-    */
-    unsigned Allocated : 1;
+    char* Filename;
 };
 
 /***********************************************************************************************
@@ -184,7 +174,6 @@ inline RawFileClass::RawFileClass(void)
     , BiasLength(-1)
     , Handle(nullptr)
     , Filename(0)
-    , Allocated(false)
 {
 }
 
@@ -207,10 +196,9 @@ inline RawFileClass::RawFileClass(void)
 inline RawFileClass::~RawFileClass(void)
 {
     Close();
-    if (Allocated && Filename) {
+    if (Filename) {
         free((char*)Filename);
         ((char*&)Filename) = 0;
-        Allocated = false;
     }
 }
 
