@@ -263,7 +263,9 @@ void EgoClass::Wipe(GraphicBufferClass* background)
         }
     }
 
-    background->Blit(*LogicPage, x - 1, YPos, x - 1, YPos, width + 2, 7 * RESFACTOR + 1, false);
+    if (YPos < LogicPage->Get_Height() && YPos > 0) {
+        background->Blit(*LogicPage, x - 1, YPos, x - 1, YPos, width + 2, 7 * RESFACTOR + 1, false);
+    }
 }
 
 /***********************************************************************************************
