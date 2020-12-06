@@ -220,6 +220,8 @@ int Find_File_Index(char const* filename);
 /* The following prototypes are for the file: file.cpp                     */
 /*=========================================================================*/
 
+void Resolve_File(char* fname);
+
 class Find_File_Data
 {
 public:
