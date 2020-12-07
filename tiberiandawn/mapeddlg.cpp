@@ -46,6 +46,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/framelimit.h"
 
 #ifdef SCENARIO_EDITOR
 
@@ -866,6 +867,8 @@ int MapEditClass::Pick_Scenario(char const* caption,
         default:
             break;
         }
+
+        Frame_Limiter();
     }
 
     /*
@@ -1507,6 +1510,8 @@ int MapEditClass::Size_Map(int x, int y, int w, int h)
                 break;
             }
         }
+
+        Frame_Limiter();
     }
 
     /*
@@ -2173,6 +2178,8 @@ int MapEditClass::Scenario_Dialog(void)
         default:
             break;
         }
+
+        Frame_Limiter();
     }
 
     /*
@@ -2713,6 +2720,8 @@ int MapEditClass::Select_Trigger(void)
             process = false;
             break;
         }
+
+        Frame_Limiter();
     }
 
     /*
@@ -3384,6 +3393,8 @@ int MapEditClass::Edit_Trigger(void)
         default:
             break;
         }
+
+        Frame_Limiter();
     }
 
     /*
@@ -3739,6 +3750,8 @@ int MapEditClass::Import_Triggers(void)
             process = false;
             break;
         }
+
+        Frame_Limiter();
     }
 
     /*
@@ -4089,6 +4102,8 @@ int MapEditClass::Import_Teams(void)
             process = false;
             break;
         }
+
+        Frame_Limiter();
     }
 
     /*

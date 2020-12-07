@@ -32,8 +32,7 @@
  *   Sim_Random -- Returns 0 - 255                                         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
-#include "common/miscasm.h"
+#include "miscasm.h"
 int SimRandIndex = 0;
 
 /***************************************************************************

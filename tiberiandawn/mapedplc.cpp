@@ -52,6 +52,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/framelimit.h"
 
 #ifdef SCENARIO_EDITOR
 
@@ -889,6 +890,8 @@ int MapEditClass::Placement_Dialog(void)
         default:
             break;
         }
+
+        Frame_Limiter();
     }
 
     /*

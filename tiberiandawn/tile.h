@@ -49,7 +49,6 @@ void* Get_Icon_Set_Palettedata(void const* iconset);
 int Get_Icon_Set_Count(void const* iconset);
 void* Get_Icon_Set_Map(void const* iconset);
 
-#if (1)
 /*
 ** This is the control structure at the start of a loaded icon set.  It must match
 ** the structure in WWLIB.I!  This structure MUST be a multiple of 16 bytes long.
@@ -71,27 +70,5 @@ typedef struct
     int32_t Map;       // Icon map offset (if present).
 } IControl_Type;
 #pragma pack(pop)
-
-#else
-
-// RA version of struct
-typedef struct
-{
-    short Width;     // Width of icons (pixels).
-    short Height;    // Height of icons (pixels).
-    short Count;     // Number of (logical) icons in this set.
-    short Allocated; // Was this iconset allocated?
-    short MapWidth;  // Width of map (in icons).
-    short MapHeight; // Height of map (in icons).
-    long Size;       // Size of entire iconset memory block.
-    long Icons;      // Offset from buffer start to icon data.
-    long Palettes;   // Offset from buffer start to palette data.
-    long Remaps;     // Offset from buffer start to remap index data.
-    long TransFlag;  // Offset for transparency flag table.
-    long ColorMap;   // Offset for color control value table.
-    long Map;        // Icon map offset (if present).
-} IControl_Type;
-
-#endif
 
 #endif // TILE_H

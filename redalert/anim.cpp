@@ -277,11 +277,13 @@ void AnimClass::Draw_It(int x, int y, WindowNumberType window) const
                 alt = true;
                 break;
 
+#ifdef REMASTER_BUILD
             case ANIM_BEACON_VIRTUAL:
                 width = 29;
                 height = 39;
                 flags = flags | SHAPE_BOTTOM | SHAPE_COMPACT;
                 break;
+#endif
             }
 
             /*

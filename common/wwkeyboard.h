@@ -33,9 +33,10 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
 #include <windows.h>
 #endif
+#include <stdint.h>
 
 typedef enum
 {
@@ -47,6 +48,117 @@ typedef enum
     WWKEY_DBL_BIT = 0x2000,
     WWKEY_BTN_BIT = 0x8000,
 } WWKey_Type;
+
+#ifdef SDL2_BUILD
+
+#include <SDL_scancode.h>
+
+#define VK_NONE SDL_SCANCODE_UNKNOWN
+
+#define VK_LBUTTON 0x01
+#define VK_RBUTTON 0x02
+#define VK_MBUTTON 0x03
+
+#define VK_BACK     SDL_SCANCODE_BACKSPACE
+#define VK_TAB      SDL_SCANCODE_TAB
+#define VK_CLEAR    SDL_SCANCODE_CLEAR
+#define VK_RETURN   SDL_SCANCODE_RETURN
+#define VK_SHIFT    SDL_SCANCODE_LSHIFT
+#define VK_CONTROL  SDL_SCANCODE_LCTRL
+#define VK_MENU     SDL_SCANCODE_LALT
+#define VK_PAUSE    SDL_SCANCODE_PAUSE
+#define VK_CAPITAL  SDL_SCANCODE_CAPSLOCK
+#define VK_ESCAPE   SDL_SCANCODE_ESCAPE
+#define VK_SPACE    SDL_SCANCODE_SPACE
+#define VK_PRIOR    SDL_SCANCODE_PAGEUP
+#define VK_NEXT     SDL_SCANCODE_PAGEDOWN
+#define VK_END      SDL_SCANCODE_END
+#define VK_HOME     SDL_SCANCODE_HOME
+#define VK_LEFT     SDL_SCANCODE_LEFT
+#define VK_UP       SDL_SCANCODE_UP
+#define VK_RIGHT    SDL_SCANCODE_RIGHT
+#define VK_DOWN     SDL_SCANCODE_DOWN
+#define VK_SELECT   SDL_SCANCODE_SELECT
+#define VK_PRINT    SDL_SCANCODE_PRINTSCREEN
+#define VK_INSERT   SDL_SCANCODE_INSERT
+#define VK_DELETE   SDL_SCANCODE_DELETE
+#define VK_NUMPAD0  SDL_SCANCODE_KP_0
+#define VK_NUMPAD1  SDL_SCANCODE_KP_1
+#define VK_NUMPAD2  SDL_SCANCODE_KP_2
+#define VK_NUMPAD3  SDL_SCANCODE_KP_3
+#define VK_NUMPAD4  SDL_SCANCODE_KP_4
+#define VK_NUMPAD5  SDL_SCANCODE_KP_5
+#define VK_NUMPAD6  SDL_SCANCODE_KP_6
+#define VK_NUMPAD7  SDL_SCANCODE_KP_7
+#define VK_NUMPAD8  SDL_SCANCODE_KP_8
+#define VK_NUMPAD9  SDL_SCANCODE_KP_9
+#define VK_MULTIPLY SDL_SCANCODE_KP_MULTIPLY
+#define VK_ADD      SDL_SCANCODE_KP_PLUS
+#define VK_SUBTRACT SDL_SCANCODE_KP_MINUS
+#define VK_DIVIDE   SDL_SCANCODE_KP_DIVIDE
+#define VK_0        SDL_SCANCODE_0
+#define VK_1        SDL_SCANCODE_1
+#define VK_2        SDL_SCANCODE_2
+#define VK_3        SDL_SCANCODE_3
+#define VK_4        SDL_SCANCODE_4
+#define VK_5        SDL_SCANCODE_5
+#define VK_6        SDL_SCANCODE_6
+#define VK_7        SDL_SCANCODE_7
+#define VK_8        SDL_SCANCODE_8
+#define VK_9        SDL_SCANCODE_9
+#define VK_A        SDL_SCANCODE_A
+#define VK_B        SDL_SCANCODE_B
+#define VK_C        SDL_SCANCODE_C
+#define VK_D        SDL_SCANCODE_D
+#define VK_E        SDL_SCANCODE_E
+#define VK_F        SDL_SCANCODE_F
+#define VK_G        SDL_SCANCODE_G
+#define VK_H        SDL_SCANCODE_H
+#define VK_I        SDL_SCANCODE_I
+#define VK_J        SDL_SCANCODE_J
+#define VK_K        SDL_SCANCODE_K
+#define VK_L        SDL_SCANCODE_L
+#define VK_M        SDL_SCANCODE_M
+#define VK_N        SDL_SCANCODE_N
+#define VK_O        SDL_SCANCODE_O
+#define VK_P        SDL_SCANCODE_P
+#define VK_Q        SDL_SCANCODE_Q
+#define VK_R        SDL_SCANCODE_R
+#define VK_S        SDL_SCANCODE_S
+#define VK_T        SDL_SCANCODE_T
+#define VK_U        SDL_SCANCODE_U
+#define VK_V        SDL_SCANCODE_V
+#define VK_W        SDL_SCANCODE_W
+#define VK_X        SDL_SCANCODE_X
+#define VK_Y        SDL_SCANCODE_Y
+#define VK_Z        SDL_SCANCODE_Z
+#define VK_F1       SDL_SCANCODE_F1
+#define VK_F2       SDL_SCANCODE_F2
+#define VK_F3       SDL_SCANCODE_F3
+#define VK_F4       SDL_SCANCODE_F4
+#define VK_F5       SDL_SCANCODE_F5
+#define VK_F6       SDL_SCANCODE_F6
+#define VK_F7       SDL_SCANCODE_F7
+#define VK_F8       SDL_SCANCODE_F8
+#define VK_F9       SDL_SCANCODE_F9
+#define VK_F10      SDL_SCANCODE_F10
+#define VK_F11      SDL_SCANCODE_F11
+#define VK_F12      SDL_SCANCODE_F12
+#define VK_NUMLOCK  SDL_SCANCODE_NUMLOCKCLEAR
+#define VK_SCROLL   SDL_SCANCODE_SCROLLLOCK
+#define VK_NONE_BA  SDL_SCANCODE_SEMICOLON
+#define VK_NONE_BB  SDL_SCANCODE_EQUALS
+#define VK_NONE_BC  SDL_SCANCODE_COMMA
+#define VK_NONE_BD  SDL_SCANCODE_MINUS
+#define VK_NONE_BE  SDL_SCANCODE_PERIOD
+#define VK_NONE_BF  SDL_SCANCODE_SLASH
+#define VK_NONE_C0  SDL_SCANCODE_GRAVE
+#define VK_NONE_DB  SDL_SCANCODE_LEFTBRACKET
+#define VK_NONE_DC  SDL_SCANCODE_BACKSLASH
+#define VK_NONE_DD  SDL_SCANCODE_RIGHTBRACKET
+#define VK_NONE_DE  SDL_SCANCODE_APOSTROPHE
+
+#else
 
 #define VK_NONE      0x00
 #define VK_LBUTTON   0x01
@@ -304,6 +416,8 @@ typedef enum
 #define VK_NONE_FE   0xFE
 #define VK_NONE_FF   0xFF
 
+#endif // !SDL2_BUILD
+
 #define VK_UPLEFT    VK_HOME
 #define VK_UPRIGHT   VK_PRIOR
 #define VK_DOWNLEFT  VK_END
@@ -426,12 +540,21 @@ typedef enum KeyASCIIType : unsigned short
     KA_RBRACE, /* ] */
     KA_TILDA,  /* ~ */
 
+#ifdef SDL2_BUILD
+    KA_ESC = 0x1B,
+    KA_EXTEND = 0x1B,
+    KA_RETURN = 0x0D,
+    KA_BACKSPACE = 0x08,
+    KA_TAB = 0x09,
+    KA_DELETE = 0x7F,
+#else
     KA_ESC = VK_ESCAPE,
     KA_EXTEND = VK_ESCAPE,
     KA_RETURN = VK_RETURN,
     KA_BACKSPACE = VK_BACK,
     KA_TAB = VK_TAB,
     KA_DELETE = VK_DELETE, /* <DELETE> */
+#endif
     KA_INSERT = VK_INSERT, /* <INSERT> */
     KA_PGDN = VK_NEXT,     /* <PAGE DOWN> */
     KA_DOWNRIGHT = VK_NEXT,
@@ -600,7 +723,7 @@ public:
     KeyASCIIType To_ASCII(unsigned short num);
     bool Down(unsigned short key);
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
     /* Define the main hook for the message processing loop.					*/
     bool Message_Handler(HWND hwnd, UINT message, UINT wParam, LONG lParam);
 #endif
@@ -641,6 +764,12 @@ private:
     */
     int Head;
     int Tail;
+
+    /*
+    ** Large bit array to hold which keys are held down
+    */
+    uint8_t DownState[(UINT16_MAX / 8) + 1];
+    int DownSkip;
 };
 
 #endif

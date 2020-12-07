@@ -1836,8 +1836,8 @@ void InfantryClass::Enter_Idle_Mode(bool)
             }
         } else {
 
-            if (Mission == MISSION_GUARD || Mission == MISSION_GUARD_AREA || MissionControl[Mission].IsZombie
-                || MissionControl[Mission].IsParalyzed) {
+            if (Mission == MISSION_NONE || Mission == MISSION_GUARD || Mission == MISSION_GUARD_AREA
+                || MissionControl[Mission].IsZombie || MissionControl[Mission].IsParalyzed) {
                 return;
             }
 
@@ -2010,7 +2010,7 @@ void InfantryClass::Scatter(COORDINATE threat, bool forced, bool nokidding)
     **	Certain missions prevent scattering regardless of whether it would be
     **	a good idea or not.
     */
-    if (!MissionControl[Mission].IsScatter && !forced)
+    if (Mission == MISSION_NONE || !MissionControl[Mission].IsScatter && !forced)
         return;
 
     /*

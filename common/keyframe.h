@@ -1,6 +1,8 @@
 #ifndef KEYFRAME_H
 #define KEYFRAME_H
 
+#include <stdint.h>
+
 typedef enum
 {
     KF_NUMBER = 0x08,
@@ -19,7 +21,7 @@ extern char* TheaterShapeBufferStart;
 extern bool UseOldShapeDraw;
 }
 
-unsigned long Build_Frame(void const* dataptr, unsigned short framenumber, void* buffptr);
+uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buffptr);
 unsigned short Get_Build_Frame_Count(void const* dataptr);
 unsigned short Get_Build_Frame_X(void const* dataptr);
 unsigned short Get_Build_Frame_Y(void const* dataptr);

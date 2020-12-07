@@ -21,6 +21,7 @@ set(COMMON_SRC
     ccfile.cpp
     cdfile.cpp
     cliprect.c
+    combuf.cpp
     control.cpp
     crc.cpp
     cstraw.cpp
@@ -36,7 +37,6 @@ set(COMMON_SRC
     file.cpp
     fixed.cpp
     font.cpp
-    framelimit.cpp
     gadget.cpp
     getshape.cpp
     graphicsviewport.cpp
@@ -55,7 +55,6 @@ set(COMMON_SRC
     linear.cpp
     link.cpp
     load.cpp
-    loadpal.cpp
     memrev.c
     misc.c
     miscasm.asm
@@ -69,11 +68,13 @@ set(COMMON_SRC
     pkpipe.cpp
     pkstraw.cpp
     random.cpp
+    rand.cpp
     rawfile.cpp
     readline.cpp
     rect.cpp
     rndstraw.cpp
     sha.cpp
+    shape.cpp
     shapipe.cpp
     shastraw.cpp
     soscodec.c
@@ -85,6 +86,7 @@ set(COMMON_SRC
     tobuffa.asm
     toggle.cpp
     txtprnt.asm
+    utracker.cpp
     vector.cpp
     winasm.c
     windows.cpp
@@ -104,6 +106,7 @@ else()
 endif()
 
 set(COMMONR_SRC
+    framelimit.cpp
     gbuffer.cpp
     interpal.cpp
     soundio_null.cpp
@@ -114,8 +117,10 @@ set(COMMONR_SRC
 )
 
 set(COMMONV_SRC
+    framelimit.cpp
     gbuffer.cpp
     interpal.cpp
+    tcpip.cpp
     tcpip_null.cpp
     unvqbuff.c
     vqaconfig.cpp
@@ -131,6 +136,8 @@ set(COMMONV_SRC
 if(DSOUND)
     list(APPEND COMMONV_SRC soundio.cpp vqaaudio_dsound.cpp)
     list(APPEND VANILLA_LIBS dsound)
+elseif(OPENAL)
+    list(APPEND COMMONV_SRC soundio_openal.cpp vqaaudio_openal.cpp)
 else()
     list(APPEND COMMONV_SRC soundio_null.cpp vqaaudio_null.cpp)
 endif()
@@ -138,6 +145,8 @@ endif()
 if(DDRAW)
     list(APPEND COMMONV_SRC video_ddraw.cpp)
     list(APPEND VANILLA_LIBS ddraw)
+elseif(SDL2)
+    list(APPEND COMMONV_SRC video_sdl2.cpp)
 else()
     list(APPEND COMMONV_SRC video_null.cpp)
 endif()
@@ -168,5 +177,11 @@ if(BUILD_VANILLATD OR BUILD_VANILLARA)
     target_link_libraries(commonv PUBLIC common ${VANILLA_LIBS})
     if(DSOUND)
         target_compile_definitions(commonv PUBLIC DSOUND_BUILD)
+    endif()
+    if(OPENAL)
+        target_compile_definitions(commonv PUBLIC OPENAL_BUILD)
+    endif()
+    if(SDL2)
+        target_compile_definitions(commonv PUBLIC SDL2_BUILD)
     endif()
 endif()

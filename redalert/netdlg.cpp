@@ -118,15 +118,15 @@ bool Remote_Connect(void)
     return false;
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 #ifdef WINSOCK_IPX
 #include "wsproto.h"
 #else // WINSOCK_IPX
 #include "common/tcpip.h"
 #endif // WINSOCK_IPX
-#else  // WIN32
+#else  // _WIN32
 #include "fakesock.h"
-#endif // WIN32
+#endif // _WIN32
 
 #include <time.h>
 
@@ -2258,9 +2258,6 @@ static int Net_Join_Dialog(void)
     Ipx.Configure_Debug(-1, sizeof(GlobalHeaderType), sizeof(NetCommandType), GlobalPacketNames, 0, 13);
     Ipx.Mono_Debug_Print(-1, 1);
 #endif
-#ifdef WIN32
-// char *fred;
-#endif
     //------------------------------------------------------------------------
     //	Processing loop
     //------------------------------------------------------------------------
@@ -2294,7 +2291,6 @@ static int Net_Join_Dialog(void)
                 display = REDRAW_BACKGROUND;
         }
 
-#ifdef WIN32
         /*
         ** If we have just received input focus again after running in the background then
         ** we need to redraw.
@@ -2303,7 +2299,7 @@ static int Net_Join_Dialog(void)
             AllSurfaces.SurfacesRestored = FALSE;
             display = REDRAW_ALL;
         }
-#endif
+
         //.....................................................................
         //	Refresh display if needed
         //.....................................................................
@@ -4990,7 +4986,6 @@ static int Net_New_Dialog(void)
         Ipx.Mono_Debug_Print(-1, 0);
 #endif
 
-#ifdef WIN32
         /*
         ** If we have just received input focus again after running in the background then
         ** we need to redraw.
@@ -4999,7 +4994,7 @@ static int Net_New_Dialog(void)
             AllSurfaces.SurfacesRestored = FALSE;
             display = REDRAW_ALL;
         }
-#endif
+
         //.....................................................................
         //	Refresh display if needed
         //.....................................................................
@@ -5695,9 +5690,7 @@ static int Net_New_Dialog(void)
         memset(responses, 0, sizeof(responses));
         int num_responses = 0;
         bool send_scenario = false;
-#ifdef WIN32
         WWDebugString("RA95 - About to wait for 'GO' response.");
-#endif
         CDTimerClass<SystemTimerClass> response_timer; // timeout timer for waiting for responses
         response_timer = 60 * 10; // Wait for 10 seconds. If we dont hear by then assume someone crashed
 
@@ -5772,13 +5765,6 @@ static int Net_New_Dialog(void)
     //------------------------------------------------------------------------
     Hide_Mouse();
     Load_Title_Page(true);
-    //#ifdef WIN32
-    //	Load_Uncompress(CCFileClass("TITLE.CPS"), SysMemPage, SysMemPage, CCPalette);
-    //	SysMemPage.Scale(SeenPage);
-    //#else
-    //	Load_Uncompress(CCFileClass("TITLE.CPS"), HidPage, HidPage, CCPalette);
-    //	HidPage.Blit(SeenPage);
-    //#endif	//WIN32
     Show_Mouse();
 
     if (load_game) {
@@ -6179,7 +6165,6 @@ void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned long
 
     RemapControlType* scheme = GadgetClass::Get_Color_Scheme();
 
-#ifdef WIN32
     /*
     ** If we have just received input focus again after running in the background then
     ** we need to redraw.
@@ -6188,7 +6173,6 @@ void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned long
         AllSurfaces.SurfacesRestored = FALSE;
         fresh = true;
     }
-#endif
 
     //------------------------------------------------------------------------
     //	Draw the dialog from scratch

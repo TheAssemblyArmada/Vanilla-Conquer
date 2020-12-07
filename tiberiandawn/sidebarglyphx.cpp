@@ -648,7 +648,6 @@ void SidebarGlyphxClass::Code_Pointers(void)
  *=============================================================================================*/
 void SidebarGlyphxClass::Decode_Pointers(void)
 {
-
     if (*((HousesType*)&SidebarPlayerPtr) == HOUSE_NONE) {
         SidebarPlayerPtr = NULL;
     } else {

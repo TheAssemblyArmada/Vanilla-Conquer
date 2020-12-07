@@ -47,11 +47,11 @@
 #include "WSProto.h"
 #else
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "common/tcpip.h"
 #else
 #include "fakesock.h"
-#endif // WIN32
+#endif // _WIN32
 
 #endif // WINSOCK_IPX
 
@@ -335,7 +335,6 @@ bool Receive_Remote_File(char* file_name, unsigned int file_length, int gametype
     */
 
     do {
-#ifdef WIN32
         /*
         ** If we have just received input focus again after running in the background then
         ** we need to redraw.
@@ -344,7 +343,6 @@ bool Receive_Remote_File(char* file_name, unsigned int file_length, int gametype
             AllSurfaces.SurfacesRestored = FALSE;
             display = REDRAW_ALL;
         }
-#endif
 
 #ifdef WOLAPI_INTEGRATION
         if (Session.Type == GAME_INTERNET && pWolapi && (::timeGetTime() > pWolapi->dwTimeNextWolapiPump)) {
@@ -703,7 +701,6 @@ bool Send_Remote_File(char* file_name, int gametype)
 
     while (process) {
 
-#ifdef WIN32
         /*
         ** If we have just received input focus again after running in the background then
         ** we need to redraw.
@@ -712,7 +709,6 @@ bool Send_Remote_File(char* file_name, int gametype)
             AllSurfaces.SurfacesRestored = FALSE;
             display = REDRAW_ALL;
         }
-#endif
 
 #ifdef WOLAPI_INTEGRATION
         if (Session.Type == GAME_INTERNET && pWolapi && (::timeGetTime() > pWolapi->dwTimeNextWolapiPump)) {

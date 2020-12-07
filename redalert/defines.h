@@ -197,12 +197,7 @@
 ** This is the multiplier factor to convert low resution coordinates
 **	into their actual resolution counterparts.
 */
-#ifdef WIN32
 #define RESFACTOR 2
-#else
-//#undef SCENARIO_EDITOR
-#define RESFACTOR 1
-#endif
 
 #define SIDEBAR_WID 80
 
@@ -487,7 +482,7 @@ typedef union
     LEPTON Raw;
     struct
     {
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
         unsigned char Cell;
         unsigned char Lepton;
 #else
@@ -503,7 +498,7 @@ typedef union
     COORDINATE Coord;
     struct
     {
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
         LEPTON_COMPOSITE Y;
         LEPTON_COMPOSITE X;
 #else
@@ -514,13 +509,16 @@ typedef union
 } COORD_COMPOSITE;
 
 typedef signed short CELL;
-#define SLUFF_BITS (sizeof(CELL) * CHAR_BIT) - (14)
+#ifdef __BIG_ENDIAN__
+#warning "FIXME"
+//#define SLUFF_BITS (sizeof(CELL) * CHAR_BIT) - (14)
+#endif
 typedef union
 {
     CELL Cell;
     struct
     {
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
 #if SLUFF_BITS
         /*
         **	Unused upper bits will cause problems on a big-endian machine unless they
@@ -553,7 +551,7 @@ typedef union
     TARGET Target;
     struct
     {
-#ifdef BIG_ENDIAN
+#ifdef __BIG_ENDIAN__
         unsigned Exponent : TARGET_EXPONENT;
         unsigned Mantissa : TARGET_MANTISSA;
 #else
@@ -2326,11 +2324,13 @@ typedef enum AnimType : char
     ANIM_ANT3_DEATH,
 #endif
 
+#ifdef REMASTER_BUILD
     ANIM_FIRE_SMALL_VIRTUAL, // Small flame animation.
     ANIM_FIRE_MED_VIRTUAL,   // Medium flame animation.
     ANIM_FIRE_MED2_VIRTUAL,  // Medium flame animation (oranger).
     ANIM_FIRE_TINY_VIRTUAL,  // Very tiny flames.
     ANIM_BEACON_VIRTUAL,     // Beacon (virtual).
+#endif
 
     ANIM_COUNT,
     ANIM_FIRST = 0

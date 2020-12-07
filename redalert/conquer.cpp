@@ -64,30 +64,8 @@
  *   Is_Aftermath_Installed -- Function to determine the availability of the AM expansion.
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifdef TESTCODE
-class A
-{
-public:
-    enum
-    {
-        VAR = 1
-    };
-};
-
-template <class T> class B
-{
-public:
-    enum
-    {
-        VAR2 = T::VAR
-    }; // this is the line in question.
-};
-
-B<A> test;
-#endif
-
 #include "function.h"
-#ifdef WIN32
+#ifdef _WIN32
 #ifdef WINSOCK_IPX
 #include "wsproto.h"
 #else // WINSOCK_IPX
@@ -100,11 +78,6 @@ TcpipManagerClass Winsock;
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <direct.h>
-#include <fcntl.h>
-#include <io.h>
-#include <dos.h>
-#include <share.h>
 #include "vortex.h"
 #include "common/framelimit.h"
 #include "common/vqatask.h"
@@ -281,6 +254,13 @@ void Main_Game(int argc, char* argv[])
                 }
 
                 if (SpecialDialog != SDLG_NONE) {
+                    /*
+                    **  Always release mouse cursor when a dialog is open.
+                    */
+                    if (!Is_Video_Fullscreen()) {
+                        WWMouse->Clear_Cursor_Clip();
+                    }
+
                     switch (SpecialDialog) {
                     case SDLG_SPECIAL:
                         Map.Help_Text(TXT_NONE);
@@ -310,6 +290,10 @@ void Main_Game(int argc, char* argv[])
 
                     default:
                         break;
+                    }
+
+                    if (!Is_Video_Fullscreen()) {
+                        WWMouse->Set_Cursor_Clip();
                     }
                 }
             } else {
@@ -346,6 +330,13 @@ void Main_Game(int argc, char* argv[])
             **	Main_Loop(), allowing the game to run in the background.
             */
             if (SpecialDialog != SDLG_NONE) {
+                /*
+                **  Always release mouse cursor when a dialog is open.
+                */
+                if (!Is_Video_Fullscreen()) {
+                    WWMouse->Clear_Cursor_Clip();
+                }
+
                 switch (SpecialDialog) {
                 case SDLG_SPECIAL:
                     Map.Help_Text(TXT_NONE);
@@ -397,6 +388,10 @@ void Main_Game(int argc, char* argv[])
                     */
                 default:
                     break;
+                }
+
+                if (!Is_Video_Fullscreen()) {
+                    WWMouse->Set_Cursor_Clip();
                 }
             }
         }
@@ -484,19 +479,12 @@ void Keyboard_Process(KeyNumType& input)
     */
     Message_Input(input);
 
-#ifdef WIN32
     /*
     **	The VK_BIT must be stripped from the "plain" value of the key so that a comparison to
     **	KN_1, for example, will yield TRUE if in fact the "1" key was pressed.
     */
-
     KeyNumType plain = KeyNumType(input & ~(WWKEY_SHIFT_BIT | WWKEY_ALT_BIT | WWKEY_CTRL_BIT | WWKEY_VK_BIT));
     KeyNumType key = KeyNumType(input & ~WWKEY_VK_BIT);
-
-#else
-    KeyNumType plain = KeyNumType(input & ~(KN_SHIFT_BIT | KN_ALT_BIT | KN_CTRL_BIT));
-    KeyNumType key = plain;
-#endif
 
 #ifdef CHEAT_KEYS
 
@@ -526,11 +514,7 @@ void Keyboard_Process(KeyNumType& input)
 #endif
 
 #ifdef CHEAT_KEYS
-#ifdef WIN32
     if (Debug_Playtest && input == (KA_W | KN_ALT_BIT)) {
-#else
-    if (Debug_Playtest && input == (KN_W | KN_ALT_BIT)) {
-#endif
         PlayerPtr->Blockage = false;
         PlayerPtr->Flag_To_Win();
     }
@@ -558,21 +542,12 @@ void Keyboard_Process(KeyNumType& input)
     **	CTRL or ALT key is held down.
     */
     int action = 0;
-#ifdef WIN32
     if (input & WWKEY_SHIFT_BIT)
         action = 1;
     if (input & WWKEY_ALT_BIT)
         action = 3;
     if (input & WWKEY_CTRL_BIT)
         action = 2;
-#else
-    if (input & KN_SHIFT_BIT)
-        action = 1;
-    if (input & KN_ALT_BIT)
-        action = 3;
-    if (input & KN_CTRL_BIT)
-        action = 2;
-#endif
 
     /*
     **	If the "N" key is pressed, then select the next object.
@@ -662,9 +637,7 @@ void Keyboard_Process(KeyNumType& input)
     if (key != 0 && (key == Options.KeyHome1 || key == Options.KeyHome2)) {
         if (CurrentObject.Count()) {
             Map.Center_Map();
-#ifdef WIN32
             Map.Flag_To_Redraw(true);
-#endif
             input = KN_NONE;
         } else {
             input = Options.KeyBase;
@@ -1828,9 +1801,7 @@ static void Sync_Delay(void)
         Call_Back();
 
         if (SpecialDialog == SDLG_NONE) {
-#ifdef WIN32
-            WWMouse->Erase_Mouse(&HidPage, TRUE);
-#endif // WIN32
+            WWMouse->Erase_Mouse(&HidPage, true);
             KeyNumType input = KN_NONE;
             int x, y;
             Map.Input(input, x, y);
@@ -1860,10 +1831,8 @@ static void Sync_Delay(void)
  * HISTORY:                                                                                    *
  *   10/01/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-#ifdef WIN32
 extern void Check_For_Focus_Loss(void);
 void Reallocate_Big_Shape_Buffer(void);
-#endif // WIN32
 
 bool Main_Loop()
 {
@@ -1877,7 +1846,6 @@ bool Main_Loop()
     if (!GameActive)
         return (!GameActive);
 
-#ifdef WIN32
     /*
     ** Call the focus loss handler
     */
@@ -1887,7 +1855,6 @@ bool Main_Loop()
     ** Allocate extra memory for uncompressed shapes as needed
     */
     Reallocate_Big_Shape_Buffer();
-#endif
 
     /*
     ** Sync-bug trapping code
@@ -1957,12 +1924,8 @@ bool Main_Loop()
     **	Update the display, unless we're inside a dialog.
     */
     if (!Session.Play) {
-#ifdef WIN32
         if (SpecialDialog == SDLG_NONE && GameInFocus) {
-            WWMouse->Erase_Mouse(&HidPage, TRUE);
-#else
-        if (SpecialDialog == SDLG_NONE) {
-#endif
+            WWMouse->Erase_Mouse(&HidPage, true);
             Map.Input(input, x, y);
             if (input) {
                 Keyboard_Process(input);
@@ -2005,11 +1968,7 @@ bool Main_Loop()
     **	a message has expired & been removed, and the entire map must be updated.
     */
     if (Session.Messages.Manage()) {
-#ifdef WIN32
         HiddenPage.Clear();
-#else  // WIN32
-        HidPage.Clear();
-#endif // WIN32
         Map.Flag_To_Redraw(true);
     }
 
@@ -2035,10 +1994,7 @@ bool Main_Loop()
     **	Check for player wins or loses according to global event flag.
     */
     if (PlayerWins) {
-
-#ifdef WIN32
-        WWMouse->Erase_Mouse(&HidPage, TRUE);
-#endif // WIN32
+        WWMouse->Erase_Mouse(&HidPage, true);
         PlayerLoses = false;
         PlayerWins = false;
         PlayerRestarts = false;
@@ -2047,9 +2003,7 @@ bool Main_Loop()
         return (!GameActive);
     }
     if (PlayerLoses) {
-#ifdef WIN32
-        WWMouse->Erase_Mouse(&HidPage, TRUE);
-#endif // WIN32
+        WWMouse->Erase_Mouse(&HidPage, true);
         PlayerWins = false;
         PlayerLoses = false;
         PlayerRestarts = false;
@@ -2058,9 +2012,7 @@ bool Main_Loop()
         return (!GameActive);
     }
     if (PlayerRestarts) {
-#ifdef WIN32
-        WWMouse->Erase_Mouse(&HidPage, TRUE);
-#endif // WIN32
+        WWMouse->Erase_Mouse(&HidPage, true);
         PlayerWins = false;
         PlayerLoses = false;
         PlayerRestarts = false;
@@ -2073,7 +2025,7 @@ bool Main_Loop()
     if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH && Session.Players.Count() == 2
         && Scen.bLocalProposesDraw && Scen.bOtherProposesDraw) {
         //	End game in a draw.
-        WWMouse->Erase_Mouse(&HidPage, TRUE);
+        WWMouse->Erase_Mouse(&HidPage, true);
         Map.Help_Text(TXT_NONE);
         Do_Draw();
         return (!GameActive);
@@ -2099,7 +2051,6 @@ bool Main_Loop()
     }
 
 #if (0) // ST - 5/8/2019
-#ifdef WIN32
     if (Debug_MotionCapture) {
         static void** _array = 0;
         static int _sequence = 0;
@@ -2149,7 +2100,6 @@ bool Main_Loop()
         }
     }
 #endif
-#endif
     BEnd(BENCH_GAME_FRAME);
 
     Sync_Delay();
@@ -2181,9 +2131,7 @@ bool Map_Edit_Loop(void)
     */
     KeyNumType input;
 
-#ifdef WIN32
-    WWMouse->Erase_Mouse(&HidPage, TRUE);
-#endif // WIN32
+    WWMouse->Erase_Mouse(&HidPage, true);
 
     int x;
     int y;
@@ -2198,6 +2146,7 @@ bool Map_Edit_Loop(void)
 
     Call_Back(); // maintains Theme.AI() for music
     Color_Cycle();
+    Frame_Limiter();
 
     return (!GameActive);
 }
@@ -2244,11 +2193,7 @@ void Go_Editor(bool flag)
         /*
         ** Force a complete redraw of the screen
         */
-#ifdef WIN32
         HiddenPage.Clear();
-#else
-        HidPage.Clear();
-#endif
         Map.Flag_To_Redraw(true);
         Map.Render();
 
@@ -2432,13 +2377,13 @@ unsigned PaletteCounter;
  * HISTORY:                                                                                    *
  *    5/7/96 9:49AM ST : Created                                                               *
  *=============================================================================================*/
-int Load_Interpolated_Palettes(char const* filename, BOOL add)
+int Load_Interpolated_Palettes(char const* filename, bool add)
 {
     int num_palettes = 0;
     int i;
     int start_palette;
 
-    PalettesRead = FALSE;
+    PalettesRead = false;
     CCFileClass file(filename);
 
     if (!add) {
@@ -2476,7 +2421,7 @@ int Load_Interpolated_Palettes(char const* filename, BOOL add)
             Rebuild_Interpolated_Palette(InterpolatedPalettes[i + start_palette]);
         }
 
-        PalettesRead = TRUE;
+        PalettesRead = true;
         file.Close();
     }
     PaletteCounter = 0;
@@ -2513,13 +2458,11 @@ void Free_Interpolated_Palettes(void)
  * HISTORY:                                                                                    *
  *   12/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-#ifdef WIN32
 extern void Suspend_Audio_Thread(void);
 extern void Resume_Audio_Thread(void);
 
 #ifdef MOVIE640
 extern GraphicBufferClass VQ640;
-#endif
 #endif
 
 extern void Play_Movie_GlyphX(const char* movie_name, ThemeType theme, bool immediate);
@@ -2568,10 +2511,8 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
     if (name) {
         char fullname[_MAX_FNAME + _MAX_EXT];
         _makepath(fullname, NULL, NULL, name, ".VQA");
-#ifdef WIN32
         char palname[_MAX_FNAME + _MAX_EXT];
         _makepath(palname, NULL, NULL, name, ".VQP");
-#endif // WIN32
 #ifdef CHEAT_KEYS
 //			Mono_Set_Cursor(0, 0);Mono_Printf("[%s]", fullname);
 #endif
@@ -2608,7 +2549,6 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
 
         VQAHandle* vqa = NULL;
 
-#ifdef WIN32
 #ifdef MOVIE640
         if (IsVQ640) {
             AnimControl.ImageWidth = 640;
@@ -2619,7 +2559,6 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
             AnimControl.ImageHeight = 200;
             AnimControl.ImageBuf = (unsigned char*)SysMemPage.Get_Offset();
         }
-#endif
 #endif
 
         if (!Debug_Quiet && Get_Digi_Handle() != -1) {
@@ -2633,7 +2572,6 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
 
             if (VQA_Open(vqa, fullname, &AnimControl) == 0) {
                 Brokeout = false;
-#ifdef WIN32
 // Suspend_Audio_Thread();
 #ifdef MOVIE640
                 if (!IsVQ640) {
@@ -2645,12 +2583,10 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
                 // Set_Palette(BlackPalette);
                 SysMemPage.Clear();
                 InMovie = true;
-#endif // WIN32
                 VQA_Play(vqa, VQAMODE_RUN);
                 VQA_Close(vqa);
-#ifdef WIN32
                 // Resume_Audio_Thread();
-                InMovie = FALSE;
+                InMovie = false;
 #ifdef MOVIE640
                 if (!IsVQ640) {
                     Free_Interpolated_Palettes();
@@ -2660,7 +2596,6 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
 #endif
                 IsVQ640 = false;
                 Set_Primary_Buffer_Format();
-#endif // WIN32
 
                 /*
                 **	Any movie that ends prematurely must have the screen
@@ -3030,13 +2965,9 @@ void const* Get_Radar_Icon(void const* shapefile, int shapenum, int frames, int 
         ** just need to skip past this set of icons and try to build the
         ** next frame.
         */
-#ifdef WIN32
         void* ptr;
         if ((ptr = (void*)(Build_Frame(shapefile, shapenum + framelp, SysMemPage.Get_Buffer()))) != NULL) {
             ptr = Get_Shape_Header_Data(ptr);
-#else  // WIN#@
-        if (Build_Frame(shapefile, shapenum + framelp, HidPage.Get_Buffer()) <= (unsigned long)HidPage.Get_Size()) {
-#endif // WIN32
 
             /*
             ** Loop through the icon width and the icon height building icons
@@ -3045,8 +2976,6 @@ void const* Get_Radar_Icon(void const* shapefile, int shapenum, int frames, int 
             */
             for (int icony = 0; icony < icon_height; icony++) {
                 for (int iconx = 0; iconx < icon_width; iconx++) {
-#ifdef WIN32
-
                     for (int y = 0; y < zoomfactor; y++) {
                         for (int x = 0; x < zoomfactor; x++) {
                             int getx = (iconx * 24) + (x * val) + (zoomfactor / 2);
@@ -3055,17 +2984,6 @@ void const* Get_Radar_Icon(void const* shapefile, int shapenum, int frames, int 
                                 for (lp = 0; lp < 9; lp++) {
                                     pixel =
                                         *(char*)((char*)ptr + ((gety - _offy[lp]) * pixel_width) + getx - _offx[lp]);
-
-#else  // WIN32
-                    for (int y = 0; y < 3; y++) {
-                        for (int x = 0; x < 3; x++) {
-                            int getx = (iconx * 24) + (x << 3) + 4;
-                            int gety = (icony * 24) + (y << 3) + 4;
-                            if ((getx < pixel_width) && (gety < pixel_height)) {
-                                for (lp = 0; lp < 9; lp++) {
-                                    pixel = *(char*)((char*)HidPage.Get_Buffer(),
-                                                     ((gety - _offy[lp]) * pixel_width) + getx - _offx[lp]);
-#endif // WIN32
                                     if (pixel == LTGREEN)
                                         pixel = 0;
                                     if (pixel) {
@@ -3229,9 +3147,7 @@ void CC_Draw_Shape(void const* shapefile,
                    DirType rotation)
 {
     int predoffset;
-#ifdef WIN32
-    unsigned long shape_pointer;
-#endif // WIN32
+    uintptr_t shape_pointer;
 
     /*
     ** Special kludge for E3 to prevent crashes
@@ -3280,7 +3196,6 @@ void CC_Draw_Shape(void const* shapefile,
         }
 #endif
 
-#ifdef WIN32
         /*
         ** In WIn95, build shape returns a pointer to the shape not its size
         */
@@ -3293,16 +3208,6 @@ void CC_Draw_Shape(void const* shapefile,
                                              WindowList[window][WINDOWHEIGHT]);
             unsigned char* buffer = (unsigned char*)shape_pointer; // Get_Shape_Header_Data((void*)shape_pointer);
 
-#else  // WIN32
-        if (Build_Frame(shapefile, shapenum, _ShapeBuffer) <= (unsigned long)_ShapeBufferSize) {
-            GraphicViewPortClass draw_window(LogicPage,
-                                             WindowList[window][WINDOWX],
-                                             WindowList[window][WINDOWY],
-                                             WindowList[window][WINDOWWIDTH],
-                                             WindowList[window][WINDOWHEIGHT]);
-            unsigned char* buffer = (unsigned char*)_ShapeBuffer;
-#endif // WIN32
-
             UseOldShapeDraw = false;
             /*
             **	Rotation handler.
@@ -3313,9 +3218,7 @@ void CC_Draw_Shape(void const* shapefile,
                 ** Get the raw shape data without the new header and flag to use the old shape drawing
                 */
                 UseOldShapeDraw = true;
-#ifdef WIN32
                 buffer = (unsigned char*)Get_Shape_Header_Data((void*)shape_pointer);
-#endif
                 BitmapClass bm(width, height, buffer);
                 width *= 2;
                 height *= 2;
@@ -3405,16 +3308,11 @@ Rect const Shape_Dimensions(void const* shapedata, int shapenum)
     }
 
     char* shape;
-#ifdef WIN32
     void* sh = (void*)Build_Frame(shapedata, shapenum, _ShapeBuffer);
     if (sh == NULL)
         return (rect);
     //	shape = (char *)sh;
     shape = (char*)Get_Shape_Header_Data(sh);
-#else
-    Build_Frame(shapedata, shapenum, _ShapeBuffer);
-    shape = (char*)_ShapeBuffer;
-#endif
 
     int width = Get_Build_Frame_Width(shapedata);
     int height = Get_Build_Frame_Height(shapedata);
@@ -3554,7 +3452,6 @@ TechnoTypeClass const* Fetch_Techno_Type(RTTIType type, int id)
  * HISTORY:                                                                                    *
  *   06/24/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-#ifdef WIN32
 void Check_VQ_Palette_Set(void);
 
 extern GraphicBufferClass VQ640;
@@ -3579,7 +3476,7 @@ long VQ_Call_Back(unsigned char*, long)
 #else
     Interpolate_2X_Scale(&SysMemPage, &SeenBuff, NULL);
 #endif
-    // Call_Back();
+    Frame_Limiter();
 
     if ((BreakoutAllowed || Debug_Flag) && key == KN_ESC) {
         Keyboard->Clear();
@@ -3596,23 +3493,6 @@ long VQ_Call_Back(unsigned char*, long)
     return (false);
 #endif
 }
-
-#else  // WIN32
-
-long VQ_Call_Back(unsigned char*, long)
-{
-    Call_Back();
-    if ((BreakoutAllowed || Debug_Flag) && Keyboard->Check()) {
-        if (Keyboard->Get() == KN_ESC) {
-            Keyboard->Clear();
-            Brokeout = true;
-            return (true);
-        }
-        Keyboard->Clear();
-    }
-    return (false);
-}
-#endif // WIN32
 
 /***********************************************************************************************
  * Handle_Team -- Processes team selection command.                                            *
@@ -3712,9 +3592,7 @@ void Handle_Team(int team, int action)
         */
         if (action == 3) {
             Map.Center_Map();
-#ifdef WIN32
             Map.Flag_To_Redraw(true);
-#endif // WIn32
         }
         break;
 
@@ -3949,12 +3827,10 @@ void Handle_View(int view, int action)
             Map.Set_Tactical_Position(
                 Coord_Whole(Cell_Coord(Scen.Views[view] - (MAP_CELL_W * 4 * RESFACTOR) - (5 * RESFACTOR))));
 
-#ifdef WIN32
             /*
             ** Win95 scrolling logic cant handle just jumps in screen position so redraw the lot.
             */
             Map.Flag_To_Redraw(true);
-#endif // WIN32
         } else {
             Scen.Views[view] = Coord_Cell(Map.TacticalCoord) + (MAP_CELL_W * 4 * RESFACTOR) + (5 * RESFACTOR);
         }
@@ -3978,7 +3854,6 @@ static char* _CD_Volume_Label[] = {
 };
 static int _Num_Volumes = ARRAY_SIZE(_CD_Volume_Label);
 
-#ifdef WIN32
 /***********************************************************************************************
  * Get_CD_Index -- returns the volume type of the CD in the given drive                        *
  *                                                                                             *
@@ -4002,6 +3877,7 @@ static int _Num_Volumes = ARRAY_SIZE(_CD_Volume_Label);
  *=============================================================================================*/
 int Get_CD_Index(int cd_drive, int timeout)
 {
+#ifdef _WIN32
     char volume_name[128];
     char buffer[128];
     unsigned filename_length;
@@ -4067,70 +3943,10 @@ int Get_CD_Index(int cd_drive, int timeout)
                 return -1;
         }
     }
-}
 #else
-int Get_CD_Index(int cd_drive, int)
-{
-    char buffer[128];
-
-    /*
-    ** We need to do this twice because of the possibilities of a directory
-    ** being cached.  If this is so, it will only be discovered when we
-    ** actually attempt to read a file from the drive.
-    */
-    if (cd_drive)
-        for (int count = 0; count < 2; count++) {
-            struct find_t ft;
-            int file;
-            int open_failed;
-
-            /*
-            ** Create a path for the cd drive and attempt to read the volume label from
-            ** it.
-            */
-            sprintf(buffer, "%c:\\", 'A' + cd_drive);
-
-            /*
-            ** If we are able to read the volume label, this is good but not enough.
-            ** Further verification must be done.
-            */
-            if (!_dos_findfirst(buffer, _A_VOLID, &ft)) {
-                /*
-                ** Since some versions of disk cacheing software will cache the CD's
-                ** directory tracks, we may think the CD is in the drive when it is
-                ** actually not.  To resolve this we must attempt to open a file on
-                ** the cd.  Opening a file will always update the directory tracks
-                ** (suposedly).
-                */
-                sprintf(buffer, "%c:\\main.mix", 'A' + cd_drive);
-                open_failed = _dos_open(buffer, O_RDONLY | SH_DENYNO, &file);
-
-                if (!open_failed) {
-                    _dos_close(file);
-
-                    /*
-                    ** Hey some times the stupid dos driver appends a period to the
-                    ** name if it is eight characters long.  If the last char is a
-                    ** period then erase it.
-                    */
-                    if (ft.name[strlen(ft.name) - 1] == '.') {
-                        ft.name[strlen(ft.name) - 1] = 0;
-                    }
-
-                    /*
-                    ** Match the volume label to the list of known C&C volume labels.
-                    */
-                    for (int i = 0; i < _Num_Volumes; i++) {
-                        if (!stricmp(_CD_Volume_Label[i], ft.name))
-                            return (i);
-                    }
-                }
-            }
-        }
-
     return -1;
-}
 #endif
+}
 
 /***********************************************************************************************
  * Force_CD_Available -- Ensures that specified CD is available.                               *
@@ -4418,7 +4234,7 @@ bool Force_CD_Available(int cd_desired) //	ajw
 #endif
 #endif
             } else if (cd_desired == CD_ANY) {
-                sprintf(buffer, Text_String(TXT_CD_DIALOG_1), cd_desired + 1, _cd_name[cd_desired]);
+                sprintf(buffer, Text_String(TXT_CD_DIALOG_1), cd_desired + 1, "CD1/CD2/CS/AM");
             } else //	0 or 1
             {
                 sprintf(buffer, Text_String(TXT_CD_DIALOG_2), cd_desired + 1, _cd_name[cd_desired]);
@@ -4444,7 +4260,7 @@ bool Force_CD_Available(int cd_desired) //	ajw
             while (Get_Mouse_State())
                 Show_Mouse();
 
-            if (WWMessageBox().Process(buffer, TXT_OK, TXT_CANCEL, TXT_NONE, TRUE) == 1) {
+            if (WWMessageBox().Process(buffer, TXT_OK, TXT_CANCEL, TXT_NONE, true) == 1) {
                 Set_Logic_Page(oldpage);
 #ifdef FIXIT_VERSION_3
                 while (hidden--)
@@ -4801,11 +4617,7 @@ bool Force_CD_Available(int cd)
 #endif
             }
 
-#ifdef WIN32
             GraphicViewPortClass* oldpage = Set_Logic_Page(SeenBuff);
-#else
-            GraphicBufferClass* oldpage = Set_Logic_Page(SeenBuff);
-#endif
             theme_playing = Theme.What_Is_Playing();
             Theme.Stop();
             int hidden = Get_Mouse_State();
@@ -4825,7 +4637,7 @@ bool Force_CD_Available(int cd)
             while (Get_Mouse_State())
                 Show_Mouse();
 
-            if (WWMessageBox().Process(buffer, TXT_OK, TXT_CANCEL, TXT_NONE, TRUE) == 1) {
+            if (WWMessageBox().Process(buffer, TXT_OK, TXT_CANCEL, TXT_NONE, true) == 1) {
                 Set_Logic_Page(oldpage);
                 Hide_Mouse();
                 return (false);
@@ -5086,11 +4898,7 @@ void* Hires_Load(char* name)
     int length;
     void* return_ptr;
 
-#ifdef WIN32
     sprintf(filename, "H%s", name);
-#else
-    strcpy(filename, name);
-#endif
     CCFileClass file(filename);
 
     if (file.Is_Available()) {
@@ -5195,7 +5003,6 @@ void Shake_The_Screen(int shakes, HousesType house)
         }
     }
 #else
-#ifdef WIN32
     shakes += shakes;
 
     Hide_Mouse();
@@ -5221,9 +5028,6 @@ void Shake_The_Screen(int shakes, HousesType house)
     }
     HidPage.Blit(SeenPage);
     Show_Mouse();
-#else
-    Shake_Screen(shakes);
-#endif
 #endif
 }
 
@@ -5249,31 +5053,24 @@ void Shake_The_Screen(int shakes, HousesType house)
  *=============================================================================================*/
 void List_Copy(short const* source, int len, short* dest)
 {
-    if (dest == NULL || dest == NULL) {
+    if (len < 1 || dest == NULL || dest == NULL) {
         return;
     }
 
     while (len > 0) {
         *dest = *source;
         if (*dest == REFRESH_EOL)
-            break;
+            return;
         dest++;
         source++;
         len--;
     }
-}
 
-#if 0
-//
-// Boy, this function sure is crummy
-//
-void Crummy(int crumb1, int crumb2)
-{
-	if (Debug_Check_Map && Debug_Heap_Dump) {
-		Mono_Printf("Hi, I'm Crummy.  And so are these: %d, %d\n",crumb1,crumb2);
-	}
+    /*
+    **  Always end a list with EOL even when it is overflowing
+    */
+    *(--dest) = REFRESH_EOL;
 }
-#endif
 
 /***********************************************************************************************
  * Game_Registry_Key -- Returns pointer to string containing the registry subkey for the game.

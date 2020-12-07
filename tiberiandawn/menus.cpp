@@ -424,6 +424,8 @@ int Do_Menu(char const** strings, bool blue)
         selection = Check_Menu(0, strings, NULL, 0xFFL, 0);
         if (UnknownKey != 0 || UnknownKey == KN_ESC || UnknownKey == KN_LMOUSE || UnknownKey == KN_RMOUSE)
             break;
+
+        Frame_Limiter();
     }
     Keyboard->Clear();
     Hide_Mouse();
@@ -510,6 +512,7 @@ int Main_Menu(unsigned long timeout)
     int starty = 25 * 2;
 #endif
 
+    // Make sure any changes to buttons here are also reflected in the enum and handling in Select_Game in init.cpp.
     enum
     {
 #ifdef NEWMENU
@@ -518,7 +521,6 @@ int Main_Menu(unsigned long timeout)
 #ifdef BONUS_MISSIONS
         BUTTON_BONUS,
 #endif // BONUS_MISSIONS
-        BUTTON_INTERNET,
 #else
         BUTTON_START = 100 * 2,
 #endif
@@ -900,11 +902,6 @@ int Main_Menu(unsigned long timeout)
             process = false;
             break;
 
-        case (BUTTON_INTERNET | KN_BUTTON):
-            retval = (input & 0x7FFF) - BUTTON_EXPAND;
-            process = false;
-            break;
-
 #else
 #define BUTTON_EXPAND BUTTON_START
 #endif
@@ -960,11 +957,11 @@ int Main_Menu(unsigned long timeout)
 #ifdef NEWMENU
             if (expansions) {
                 if (curbutton < 0) {
-                    curbutton = 6;
+                    curbutton = 5;
                 }
             } else {
                 if (curbutton < 1) {
-                    curbutton = 6;
+                    curbutton = 5;
                 }
             }
 #else
@@ -981,7 +978,7 @@ int Main_Menu(unsigned long timeout)
             buttons[curbutton]->Flag_To_Redraw();
             curbutton++;
 #ifdef NEWMENU
-            if (curbutton > 6) {
+            if (curbutton > 5) {
                 if (expansions) {
                     curbutton = 0;
                 } else {

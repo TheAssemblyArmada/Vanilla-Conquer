@@ -36,15 +36,25 @@
  * Functions:                                                             	 			*
  *                                                                         				*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#ifndef WIN32
+#ifndef _WIN32
 
 class TcpipManagerClass
 {
 
 public:
-    inline BOOL Get_Connected(void)
+    inline bool Get_Connected(void)
     {
-        return (FALSE);
+        return false;
+    }
+
+    inline bool Write(void*, int)
+    {
+        return false;
+    }
+
+    inline int Read(void*, int)
+    {
+        return 0;
     }
 };
 

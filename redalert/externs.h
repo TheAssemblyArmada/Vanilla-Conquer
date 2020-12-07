@@ -48,7 +48,6 @@
 #include "goptions.h"
 #include "options.h"
 #include "infantry.h"
-#include "dsound.h"
 #include "common/vqaconfig.h"
 
 #ifdef REMASTER_BUILD
@@ -121,13 +120,14 @@ extern char const* NameOverride[25];
 extern int NameIDOverride[25];
 #endif
 
-#ifdef WIN32
 extern bool GameInFocus;
 extern unsigned char* InterpolatedPalettes[100];
 extern bool PalettesRead;
 extern unsigned PaletteCounter;
 extern int AllDone;
+#ifdef _WIN32
 extern HANDLE hInstance;
+#endif
 extern bool InMovie;
 extern WWMouseClass* WWMouse;
 extern GraphicBufferClass HiddenPage;
@@ -137,14 +137,9 @@ extern GraphicViewPortClass SeenBuff;
 extern GraphicBufferClass SysMemPage;
 extern int ScreenWidth;
 extern int ScreenHeight;
+extern int OutputWidth;
+extern int OutputHeight;
 extern GraphicBufferClass ModeXBuff;
-
-#else
-
-extern VideoBufferClass SeenPage;
-extern GraphicBufferClass SeenBuff;
-extern GraphicBufferClass& VisiblePage;
-#endif
 
 /*
 **	Dynamic global variables (these change or are initialized at run time).
@@ -403,11 +398,7 @@ extern unsigned char const RemapEmber[];
 
 extern int SoundOn;
 
-#ifdef WIN32
 extern GraphicViewPortClass HidPage;
-#else
-extern GraphicBufferClass HidPage;
-#endif
 extern int MenuList[][8];
 extern CDTimerClass<SystemTimerClass> FrameTimer;
 extern CDTimerClass<SystemTimerClass> CountDownTimer;
@@ -439,7 +430,6 @@ void Do_Vortex(int x, int y, int frame);
 /************************************************************
 ** Win32 specific externs
 */
-#ifdef WIN32
 extern int ReadyToQuit;          // Are we about to exit cleanly
 extern bool InDebugger;          // Are we being run from a debugger
 void Memory_Error_Handler(void); // Memory error handler function
@@ -447,12 +437,10 @@ void WWDebugString(const char* string);
 #ifndef REMASTER_BUILD
 #define GlyphX_Debug_Print(x) WWDebugString(x)
 #endif
-#endif // WIN32
 
 /*************************************************************
 ** Internet specific externs
 */
-#ifdef WIN32
 
 extern char PlanetWestwoodHandle[];             // Planet WW user name
 extern char PlanetWestwoodPassword[];           // Planet WW password
@@ -460,7 +448,9 @@ extern char PlanetWestwoodIPAddress[];          // IP of server or other player
 extern unsigned short PlanetWestwoodPortNumber; // Port number to send to
 extern bool PlanetWestwoodIsHost;               // Flag true if player has control of game options
 extern unsigned long PlanetWestwoodGameID;      // Game ID
-extern HWND WChatHWND;                          // Handle to Wchat window.
+#ifdef _WIN32
+extern HWND WChatHWND; // Handle to Wchat window.
+#endif
 extern bool GameStatisticsPacketSent;
 extern bool ConnectionLost;
 extern void* PacketLater;
@@ -474,8 +464,6 @@ bool Do_The_Internet_Menu_Thang(void);
 bool Server_Remote_Connect(void);
 bool Client_Remote_Connect(void);
 extern int UnitBuildPenalty;
-
-#endif // WIN32
 
 /*
 ** From SENDFILE.CPP - externs for scenario file transfers

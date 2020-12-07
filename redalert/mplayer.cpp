@@ -109,9 +109,7 @@ GameType Select_MPlayer_Game(void)
     int d_cancel_y = d_ipx_y + d_ipx_h + d_margin;
 #endif
 
-#ifdef WIN32
     GraphicBufferClass seen_buff_save(VisiblePage.Get_Width(), VisiblePage.Get_Height(), (void*)NULL);
-#endif
 
     //------------------------------------------------------------------------
     //	Button enumerations:
@@ -189,9 +187,7 @@ GameType Select_MPlayer_Game(void)
     //	Initialize
     //------------------------------------------------------------------------
     Set_Logic_Page(SeenBuff);
-#ifdef WIN32
     VisiblePage.Blit(seen_buff_save);
-#endif
     //------------------------------------------------------------------------
     //	Create the list
     //------------------------------------------------------------------------
@@ -239,17 +235,15 @@ GameType Select_MPlayer_Game(void)
     process = true;
     pressed = false;
     while (process) {
-#ifdef WIN32
         /*
         ** If we have just received input focus again after running in the background then
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             seen_buff_save.Blit(VisiblePage);
             display = REDRAW_ALL;
         }
-#endif
 
         //.....................................................................
         //	Invoke game callback
@@ -835,6 +829,8 @@ int Surrender_Dialog(int text)
         default:
             break;
         }
+
+        Frame_Limiter();
     }
 
     //------------------------------------------------------------------------
@@ -1029,6 +1025,8 @@ int Abort_Dialog(void)
         default:
             break;
         }
+
+        Frame_Limiter();
     }
 
     //------------------------------------------------------------------------

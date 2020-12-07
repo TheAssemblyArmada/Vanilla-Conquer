@@ -33,7 +33,7 @@ static VQAConfig _defaultconfig = {
     VQAOPTF_AUDIO, // OptionFlags
     6,             // NumFrameBufs
     3,             // NumCBBufs
-#ifdef _WIN32
+#if defined _WIN32 && !defined OPENAL_BUILD
     NULL, // SoundObject
     NULL, // PrimarySoundBuffer
 #endif

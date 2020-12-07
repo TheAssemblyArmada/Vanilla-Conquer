@@ -97,44 +97,11 @@ Map(screen) class heirarchy.
                    ³                          ³ AircraftTypeClass InfantryTypeClass
 #endif
 
-#ifdef WIN32
-//#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#ifdef _WIN32
 #define MONOC_H
+#endif
 
 #define _MAX_NAME _MAX_FNAME
-
-#endif
-
-/*
-**	The "bool" integral type was defined by the C++ comittee in
-**	November of '94. Until the compiler supports this, use the following
-**	definition.
-*/
-#if (0)
-#ifndef __BORLANDC__
-#ifndef TRUE_FALSE_DEFINED
-#define TRUE_FALSE_DEFINED
-          enum {
-              false = 0,
-              true = 1
-          };
-typedef int bool;
-#endif
-#endif
-#endif
-
-#ifdef NOMINMAX
-inline int min(int a, int b)
-{
-    return a < b ? a : b;
-}
-
-inline int max(int a, int b)
-{
-    return a > b ? a : b;
-}
-#endif
 
 /**********************************************************************
 **	This class is solely used as a parameter to a constructor that does
@@ -147,7 +114,7 @@ inline int max(int a, int b)
 */
 #ifndef NOINITCLASS
 #define NOINITCLASS
-struct NoInitClass
+          struct NoInitClass
 {
 public:
     void operator()(void) const {};
@@ -155,10 +122,6 @@ public:
 #endif
 
 #define WWMEM_H
-
-#ifndef WIN32
-#define TIMER_H
-#endif
 
 #include "common/wwkeyboard.h"
 #include "common/wwlib32.h"
@@ -177,20 +140,15 @@ public:
 #include "xpipe.h"
 #include "ramfile.h"
 #include "lcw.h"
-#include "lzw.h"
 #include "lcwpipe.h"
-#include "lzwpipe.h"
 #include "lzopipe.h"
-#include "crcpipe.h"
 #include "shapipe.h"
 #include "b64pipe.h"
 #include "straw.h"
 #include "xstraw.h"
 #include "b64straw.h"
 #include "lcwstraw.h"
-#include "lzwstraw.h"
 #include "lzostraw.h"
-#include "crcstraw.h"
 #include "shastraw.h"
 #include "rndstraw.h"
 
@@ -207,19 +165,9 @@ typedef struct
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
-//#include	<mem.h>
-//#include	<dos.h>
-#include <direct.h>
 #include <stdarg.h>
 #include <ctype.h>
 #include <assert.h>
-#include <process.h>
-//#include	<new.h>
-
-#ifdef WIN32
-#define int386x(a, b, c, d) 0
-#define int386(a, b, c)     0
-#endif
 
 /*
 **	VQ player specific includes.
@@ -348,9 +296,6 @@ CELL Coord_Cell(COORDINATE coord);
 #include "readline.h"
 #include "vortex.h"
 #include "egos.h"
-#ifdef WIN32
-//#include	"pcx.h"
-#endif
 
 // Denzil 5/18/98 - Mpeg movie playback
 #ifdef MPEGMOVIE
@@ -362,8 +307,6 @@ bool PlayMpegMovie(const char* name);
 
 extern int Get_CD_Drive(void);
 extern void Fatal(char const* message, ...);
-
-#ifdef WIN32
 
 /*
 ** For WIN32, replace the assert macro so we get an error on the debugger screen
@@ -385,9 +328,8 @@ void Assert_Failure(char* expression, int line, char* file);
 #endif //__BORLANDC__
 
 extern void Free_Interpolated_Palettes(void);
-extern int Load_Interpolated_Palettes(char const* filename, BOOL add = FALSE);
+extern int Load_Interpolated_Palettes(char const* filename, bool add = false);
 extern void Rebuild_Interpolated_Palette(unsigned char* interpal);
-#endif
 
 /*
 **	ADATA.CPP
@@ -426,11 +368,7 @@ bool Is_Speaking(void);
 /*
 **	CDFILE.CPP
 */
-#ifdef WIN32
 int harderr_handler(unsigned, unsigned, unsigned*);
-#else
-int harderr_handler(unsigned, unsigned, unsigned __far*);
-#endif
 
 /*
 **	COMBAT.CPP
@@ -579,7 +517,7 @@ void Conquer_Clip_Text_Print(char const*,
                              int width = -1,
                              int const* tabs = 0);
 void Draw_Box(int x, int y, int w, int h, BoxStyleEnum up, bool filled);
-int cdecl Dialog_Message(char* errormsg, ...);
+int Dialog_Message(char* errormsg, ...);
 void Window_Box(WindowNumberType window, BoxStyleEnum style);
 void Fancy_Text_Print(char const* text,
                       unsigned x,
@@ -695,20 +633,13 @@ void* Make_Fading_Table(PaletteClass const& palette, void* dest, int color, int 
 **	KEYFBUFF.ASM
 */
 extern "C" {
-long __cdecl Buffer_Frame_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortClass& view, int flags, ...);
+long Buffer_Frame_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortClass& view, int flags, ...);
 }
 
 /*
 **	KEYFRAME.CPP
 */
-unsigned long Build_Frame(void const* dataptr, unsigned short framenumber, void* buffptr);
-unsigned short Get_Build_Frame_Count(void const* dataptr);
-unsigned short Get_Build_Frame_X(void const* dataptr);
-unsigned short Get_Build_Frame_Y(void const* dataptr);
-unsigned short Get_Build_Frame_Width(void const* dataptr);
-unsigned short Get_Build_Frame_Height(void const* dataptr);
-bool Get_Build_Frame_Palette(void const* dataptr, void* palette);
-int Get_Last_Frame_Length(void);
+#include "common/keyframe.h"
 
 /*
 **	MAP.CPP

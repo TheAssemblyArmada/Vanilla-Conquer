@@ -217,18 +217,14 @@ bool MouseClass::Load(Straw& file)
         return (false);
     }
 
-#ifdef WIN32
     LastTheater = THEATER_NONE;
-#endif
 
     /*
     ** Remove any old theater specific uncompressed shapes
     */
-#ifdef WIN32
     //	if (theater != LastTheater) {
     Reset_Theater_Shapes();
-//	}
-#endif // WIN32
+    //	}
 
     /*
     **	Init display mixfiles

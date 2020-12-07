@@ -44,6 +44,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/framelimit.h"
+
 extern int PreserveVQAScreen;
 
 /***********************************************************************************************
@@ -399,6 +401,7 @@ void Do_Win(void)
     Speak(VOX_ACCOMPLISHED);
     while (CountDownTimer.Time() || Is_Speaking()) {
         Call_Back();
+        Frame_Limiter();
     }
 
     /*
@@ -623,6 +626,7 @@ void Do_Lose(void)
     Speak(VOX_FAIL);
     while (CountDownTimer.Time() || Is_Speaking()) {
         Call_Back();
+        Frame_Limiter();
     }
 
 #ifdef OBSOLETE

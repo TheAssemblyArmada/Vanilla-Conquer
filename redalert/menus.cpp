@@ -34,10 +34,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#ifndef WIN32
-#include <sys/timeb.h>
-#endif
 #include "common/framelimit.h"
+#include <time.h>
 
 /*****************************
 **	Function prototypes
@@ -235,13 +233,8 @@ int Check_Menu(int menu, char const* text[], char*, long field, int index)
     key = 0;
     UnknownKey = 0;
     if (Keyboard->Check()) {
-#ifdef WIN32
         /* mask off all but release bit	*/
         key = (Keyboard->Get() & ~(WWKEY_SHIFT_BIT | WWKEY_ALT_BIT | WWKEY_CTRL_BIT));
-#else
-        /* mask off all but release bit	*/
-        key = (Keyboard->Get() & 0x08FF);
-#endif
     }
 
     /*
@@ -435,6 +428,8 @@ int Do_Menu(char const** strings, bool)
         selection = Check_Menu(0, strings, NULL, 0xFFL, 0);
         if (UnknownKey != 0 || UnknownKey == KN_ESC || UnknownKey == KN_LMOUSE || UnknownKey == KN_RMOUSE)
             break;
+
+        Frame_Limiter();
     }
     Keyboard->Clear();
     Hide_Mouse();
@@ -470,16 +465,11 @@ int Main_Menu(unsigned long)
 #ifdef FIXIT_VERSION_3
     int d_dialog_h = 100 * RESFACTOR;
 #else
-    //#ifdef WIN32	//Extra 'Internet' option on WIN32 menu
-#if defined(WIN32) && !defined(INTERNET_OFF) // Denzil 5/1/98 - No internet play
+#ifdef INTERNET_OFF // Denzil 5/1/98 - No internet play
     int d_dialog_h = 100 * RESFACTOR;
 #else
-    //	#if defined(MPEGMOVIE) // Denzil 6/25/98 - Video settings
-    //	int	d_dialog_h = 100 * RESFACTOR;
-    //	#else
     int d_dialog_h = 80 * RESFACTOR;
-//	#endif
-#endif // WIN32
+#endif // INTERNET_OFF
 #endif // FIXIT_VERSION_3
     int d_dialog_x = 85 * RESFACTOR;
     int d_dialog_y = 75 * RESFACTOR;
@@ -488,13 +478,13 @@ int Main_Menu(unsigned long)
     int d_start_w = 118 * RESFACTOR;
     int d_start_h = 9 * RESFACTOR;
     int d_start_x = 102 * RESFACTOR;
-#ifndef FIXIT_VERSION_3                      //	Removed button from main menu.
-#if defined(WIN32) && !defined(INTERNET_OFF) // Denzil 5/1/98 - no internet play
+#ifndef FIXIT_VERSION_3 //	Removed button from main menu.
+#ifndef INTERNET_OFF    // Denzil 5/1/98 - no internet play
     int d_internet_w = 118 * RESFACTOR;
     int d_internet_h = 9 * RESFACTOR;
     int d_internet_x = 102 * RESFACTOR;
-#endif // WIN32
-#endif
+#endif // INTERNET_OFF
+#endif // FIXIT_VERSION_3
 
     //#if defined(MPEGMOVIE) // Denzil 6/26/98 Video settings
     //	int	d_movie_w = 118 * RESFACTOR;
@@ -520,16 +510,7 @@ int Main_Menu(unsigned long)
 
     int starty = d_dialog_y + (12 * RESFACTOR);
 
-    //#if defined(WIN32) && !defined(INTERNET_OFF) // Denzil 5/1/98 - No internet play
-    //#ifndef FIXIT_VERSION_3
     static int max_buttons = 7;
-    //#else
-    //	static int	max_buttons = 6;
-    //#endif
-
-    //#if defined(MPEGMOVIE) // Denzil 6/26/98 Video settings
-    //	max_buttons++;
-    //#endif
     /*
     **	Button enumerations:
     */
@@ -545,14 +526,14 @@ int Main_Menu(unsigned long)
         BUTTON_INTRO,
         BUTTON_EXIT,
     };
-#else                                        //	FIXIT_VERSION_3
+#else                //	FIXIT_VERSION_3
     enum
     {
         BUTTON_EXPAND = 100,
         BUTTON_START,
-#if defined(WIN32) && !defined(INTERNET_OFF) // Denzil 5/1/98 - No internet play
+#ifndef INTERNET_OFF // Denzil 5/1/98 - No internet play
         BUTTON_INTERNET,
-#endif                                       // WIN32
+#endif
         //#if defined(MPEGMOVIE) // Denzil 6/26/98 Video settings
         //		BUTTON_MOVIE,
         //#endif
@@ -561,7 +542,7 @@ int Main_Menu(unsigned long)
         BUTTON_INTRO,
         BUTTON_EXIT,
     };
-#endif                                       //	FIXIT_VERSION_3
+#endif //	FIXIT_VERSION_3
 
     /*
     **	Dialog variables:
@@ -618,16 +599,12 @@ int Main_Menu(unsigned long)
     TextButtonClass startbtn(BUTTON_START, TXT_START_NEW_GAME, TPF_BUTTON, d_start_x, starty, d_start_w, d_start_h);
     starty += ystep;
 #ifndef FIXIT_VERSION_3
-#if defined(WIN32) && !defined(INTERNET_OFF) // Denzil 5/1/98 - no internet play
+#ifndef INTERNET_OFF // Denzil 5/1/98 - no internet play
     TextButtonClass internetbutton(
         BUTTON_INTERNET, TXT_INTERNET, TPF_BUTTON, d_internet_x, starty, d_internet_w, d_internet_h);
     starty += ystep;
-#endif // WIN32
+#endif // INTERNET_OFF
 #endif
-
-    //#if defined(MPEGMOVIE) // Denzil 6/26/98 Video settings
-    //	TextButtonClass moviebutton(BUTTON_MOVIE, "Movie Settings", TPF_BUTTON, d_movie_x, starty, d_movie_w,
-    //d_movie_h); 	starty += ystep; #endif	//WIN32
 
     TextButtonClass loadbtn(BUTTON_LOAD, TXT_LOAD_MISSION, TPF_BUTTON, d_load_x, starty, d_load_w, d_load_h);
     starty += ystep;
@@ -665,10 +642,10 @@ int Main_Menu(unsigned long)
     if (expansions) {
         expandbtn.Add_Tail(*commands);
     }
-#if defined(WIN32) && !defined(INTERNET_OFF) // Denzil 5/1/98 - No internet play
+#ifndef INTERNET_OFF // Denzil 5/1/98 - No internet play
     internetbutton.Add_Tail(*commands);
-#endif                                       // WIN32
-#endif
+#endif               // INTERNET_OFF
+#endif               // FIXIT_VERSION_3
     //#if defined(MPEGMOVIE) // Denzil 6/26/98 Video settings
     //	moviebutton.Add_Tail(*commands);
     //#endif
@@ -730,16 +707,14 @@ int Main_Menu(unsigned long)
     bool process = true;
     while (process) {
 
-#ifdef WIN32
         /*
         ** If we have just received input focus again after running in the background then
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = true;
         }
-#endif
 
         /*
         **	If timeout expires, bail
@@ -783,16 +758,6 @@ int Main_Menu(unsigned long)
                              Version_Name());
 #endif
 #else
-#ifndef WIN32
-            Fancy_Text_Print("V%s",
-                             d_dialog_x + d_dialog_w - (18 * RESFACTOR),
-                             d_dialog_y + d_dialog_h - (8 * RESFACTOR),
-                             GadgetClass::Get_Color_Scheme(),
-                             TBLACK,
-                             TPF_EFNT | TPF_NOSHADOW | TPF_RIGHT,
-                             Version_Name());
-
-#else
             Fancy_Text_Print("V%s",
                              d_dialog_x + d_dialog_w - (18 * RESFACTOR),
                              d_dialog_y + d_dialog_h - (11 * RESFACTOR),
@@ -801,7 +766,6 @@ int Main_Menu(unsigned long)
                              TPF_EFNT | TPF_NOSHADOW | TPF_RIGHT,
                              Version_Name());
 
-#endif
 #endif
 
             /*
@@ -830,14 +794,12 @@ int Main_Menu(unsigned long)
         **	to the cryptographic random number generator.
         */
         if (input != 0) {
-#ifdef WIN32
+#ifdef _WIN32
             SYSTEMTIME t;
             GetSystemTime(&t);
             CryptRandom.Seed_Byte((char)t.wMilliseconds);
 #else
-            struct timeb t;
-            ftime(&t);
-            CryptRandom.Seed_Byte(t.millitm);
+            CryptRandom.Seed_Long(time(NULL));
 #endif
         }
 
@@ -863,13 +825,13 @@ int Main_Menu(unsigned long)
             break;
 
 #ifndef FIXIT_VERSION_3
-#if defined(WIN32) && !defined(INTERNET_OFF) // Denzil 5/1/98 - Internet play
+#ifndef INTERNET_OFF // Denzil 5/1/98 - Internet play
         case (BUTTON_INTERNET | KN_BUTTON):
             retval = (input & 0x7FFF) - BUTTON_EXPAND;
             process = false;
             break;
-#endif // WIN32
-#endif
+#endif // INTERNET_OFF
+#endif // FIXIT_VERSION_3
 
             //			#if defined(MPEGMOVIE)
             //			case (BUTTON_MOVIE | KN_BUTTON):

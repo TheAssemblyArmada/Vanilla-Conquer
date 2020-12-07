@@ -96,7 +96,7 @@ extern void __cdecl Int3(void);
  *   03/09/1995 JLB : Fixed                                                *
  *   09/28/1995 ST  : Simplified for win95                                                                      *
  *=========================================================================*/
-void* Alloc(unsigned long bytes_to_alloc, MemoryFlagType flags)
+void* Alloc(size_t bytes_to_alloc, MemoryFlagType flags)
 {
     void* mem_ptr;
 

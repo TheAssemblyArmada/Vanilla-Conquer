@@ -70,7 +70,6 @@
 
 // extern unsigned char *Palette;
 extern unsigned char MDisabled; // Is mouse disabled?
-extern WORD Hard_Error_Occured;
 
 /*
 **	This is the menu control structures.
@@ -129,28 +128,6 @@ typedef enum MenuIndexType
 #define DKGREY  GREY
 #define DKGRAY  GREY
 #define LTGRAY  LTGREY
-
-class IconsetClass;
-#ifndef WIN32
-typedef struct
-{
-    short Width;     // Width of icons (pixels).
-    short Height;    // Height of icons (pixels).
-    short Count;     // Number of (logical) icons in this set.
-    short Allocated; // Was this iconset allocated?
-    short MapWidth;  // Width of map (in icons).
-    short MapHeight; // Height of map (in icons).
-    long Size;       // Size of entire iconset memory block.
-    long Icons;      // Offset from buffer start to icon data.
-                     //	unsigned char * Icons;	// Offset from buffer start to icon data.
-    long Palettes;   // Offset from buffer start to palette data.
-    long Remaps;     // Offset from buffer start to remap index data.
-    long TransFlag;  // Offset for transparency flag table.
-    long ColorMap;   // Offset for color control value table.
-    long Map;        // Icon map offset (if present).
-    //	unsigned char * Map;				// Icon map offset (if present).
-} IControl_Type;
-#endif
 
 inline int Get_IconSet_MapWidth(void const* data)
 {

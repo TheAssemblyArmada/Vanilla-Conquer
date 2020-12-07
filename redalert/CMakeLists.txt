@@ -24,16 +24,12 @@ set(REDALERT_SRC
     cheklist.cpp
     colrlist.cpp
     combat.cpp
-    combuf.cpp
-    comqueue.cpp
     confdlg.cpp
     connect.cpp
     conquer.cpp
     const.cpp
     coord.cpp
     crate.cpp
-    crcpipe.cpp
-    crcstraw.cpp
     credits.cpp
     crew.cpp
     debug.cpp
@@ -93,9 +89,6 @@ set(REDALERT_SRC
     lzo1x_d.cpp
     lzopipe.cpp
     lzostraw.cpp
-    lzw.cpp
-    lzwpipe.cpp
-    lzwstraw.cpp
     map.cpp
     mapeddlg.cpp
     mapedit.cpp
@@ -125,7 +118,6 @@ set(REDALERT_SRC
     radar.cpp
     radio.cpp
     ramfile.cpp
-    rand.cpp
     rawolapi.cpp
     reinf.cpp
     rgb.cpp
@@ -137,16 +129,13 @@ set(REDALERT_SRC
     sdata.cpp
     seditdlg.cpp
     sendfile.cpp
-    seqconn.cpp
     session.cpp
-    shape.cpp
     shapebtn.cpp
     sidebar.cpp
     slider.cpp
     smudge.cpp
     sounddlg.cpp
     special.cpp
-    sprite.cpp
     stamp.asm
     startup.cpp
     statbtn.cpp
@@ -155,7 +144,6 @@ set(REDALERT_SRC
     tab.cpp
     taction.cpp
     target.cpp
-    tcpip.cpp
     tdata.cpp
     team.cpp
     teamtype.cpp
@@ -171,15 +159,12 @@ set(REDALERT_SRC
     trigtype.cpp
     txtlabel.cpp
     udata.cpp
-    udpaddr.cpp
     unit.cpp
-    utracker.cpp
     vdata.cpp
     version.cpp
     vessel.cpp
     visudlg.cpp
     vortex.cpp
-    w95trace.cpp
     warhead.cpp
     weapon.cpp
     winstub.cpp

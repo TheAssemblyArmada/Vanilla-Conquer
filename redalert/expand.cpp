@@ -222,20 +222,6 @@ const char* XlatNames[] = {
 
 #endif
 
-#ifndef WIN32 // VG
-
-#define OPTION_WIDTH 236
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-#error Can never again build without WIN32 defined.
-#define OPTION_HEIGHT 162
-#else
-#define OPTION_HEIGHT 162
-#endif
-#define OPTION_X ((320 - OPTION_WIDTH) / 2)
-#define OPTION_Y (200 - OPTION_HEIGHT) / 2
-
-#else
-
 #define OPTION_WIDTH 560
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
 #define OPTION_HEIGHT 332
@@ -244,7 +230,6 @@ const char* XlatNames[] = {
 #endif
 #define OPTION_X ((640 - OPTION_WIDTH) / 2)
 #define OPTION_Y (400 - OPTION_HEIGHT) / 2
-#endif
 
 struct EObjectClass
 {
@@ -345,11 +330,7 @@ void EListClass::Draw_Entry(int index, int x, int y, int width, int selected)
         }
     }
 
-#ifndef WIN32
-    Conquer_Clip_Text_Print(buffer, x, y, scheme, TBLACK, flags & ~(TPF_CENTER), width, Tabs);
-#else
     Conquer_Clip_Text_Print(buffer, x + 100, y, scheme, TBLACK, flags & ~(TPF_CENTER), width, Tabs);
-#endif
 }
 
 #ifdef FIXIT_VERSION_3
@@ -360,24 +341,9 @@ bool Expansion_Dialog(void)
 {
     GadgetClass* buttons = NULL;
 
-#ifndef WIN32
-    TextButtonClass ok(200, TXT_OK, TPF_BUTTON, OPTION_X + 40, OPTION_Y + OPTION_HEIGHT - 15);
-    TextButtonClass cancel(201, TXT_CANCEL, TPF_BUTTON, OPTION_X + OPTION_WIDTH - 85, OPTION_Y + OPTION_HEIGHT - 15);
-#else
     TextButtonClass ok(200, TXT_OK, TPF_BUTTON, OPTION_X + 40, OPTION_Y + OPTION_HEIGHT - 50);
     TextButtonClass cancel(201, TXT_CANCEL, TPF_BUTTON, OPTION_X + OPTION_WIDTH - 85, OPTION_Y + OPTION_HEIGHT - 50);
-#endif
 
-#ifndef WIN32
-    EListClass list(202,
-                    OPTION_X + 20,
-                    OPTION_Y + 20,
-                    OPTION_WIDTH - 40,
-                    OPTION_HEIGHT - 40,
-                    TPF_BUTTON,
-                    MFCD::Retrieve("BTN-UP.SHP"),
-                    MFCD::Retrieve("BTN-DN.SHP"));
-#else
     EListClass list(202,
                     OPTION_X + 35,
                     OPTION_Y + 30,
@@ -387,7 +353,6 @@ bool Expansion_Dialog(void)
                     MFCD::Retrieve("BTN-UP.SHP"),
                     MFCD::Retrieve("BTN-DN.SHP"));
 
-#endif
     buttons = &ok;
     cancel.Add(*buttons);
     list.Add(*buttons);
@@ -485,16 +450,14 @@ bool Expansion_Dialog(void)
 
     while (process) {
 
-#ifdef WIN32
         /*
         ** If we have just received input focus again after running in the background then
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = true;
         }
-#endif
 
         Call_Back();
 

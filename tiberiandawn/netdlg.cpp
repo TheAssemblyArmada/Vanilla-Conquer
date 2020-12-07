@@ -1014,7 +1014,7 @@ static int Net_Join_Dialog(void)
 ---------------------------- Init Mono Output ----------------------------
 */
 #if (SHOW_MONO)
-    Ipx.Configure_Debug(-1, sizeof(GlobalHeaderType), sizeof(NetCommandType), GlobalPacketNames, 11);
+    Ipx.Configure_Debug(-1, sizeof(GlobalHeaderType), sizeof(NetCommandType), GlobalPacketNames, 0, 12);
     Ipx.Mono_Debug_Print(-1, 1);
 #endif
     while (Get_Mouse_State() > 0)

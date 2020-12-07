@@ -17,8 +17,6 @@ set(TIBDAWN_SRC
     cheklist.cpp
     colrlist.cpp
     combat.cpp
-    combuf.cpp
-    comqueue.cpp
     confdlg.cpp
     connect.cpp
     conquer.cpp
@@ -90,9 +88,7 @@ set(TIBDAWN_SRC
     msglist.cpp
     netdlg.cpp
     noseqcon.cpp
-    nullconn.cpp
     nulldlg.cpp
-    nullmgr.cpp
     object.cpp
     odata.cpp
     options.cpp
@@ -102,7 +98,6 @@ set(TIBDAWN_SRC
     queue.cpp
     radar.cpp
     radio.cpp
-    rand.cpp
     reinf.cpp
     rules.cpp
     saveload.cpp
@@ -111,8 +106,6 @@ set(TIBDAWN_SRC
     score.cpp
     scroll.cpp
     sdata.cpp
-    seqconn.cpp
-    shape.cpp
     shapebtn.cpp
     sidebar.cpp
     slider.cpp
@@ -126,7 +119,6 @@ set(TIBDAWN_SRC
     tab.cpp
     tarcom.cpp
     target.cpp
-    tcpip.cpp
     tdata.cpp
     team.cpp
     teamtype.cpp
@@ -140,7 +132,6 @@ set(TIBDAWN_SRC
     txtlabel.cpp
     udata.cpp
     unit.cpp
-    utracker.cpp
     visudlg.cpp
     winstub.cpp
 )
@@ -170,8 +161,6 @@ endif()
 include(ProductVersion)
 
 if(BUILD_REMASTERTD)
-    include(BuildIcons)
-
     if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
         # Generate windows version info.
         generate_product_version(
@@ -201,6 +190,8 @@ if(BUILD_REMASTERTD)
 endif()
 
 if(BUILD_VANILLATD)
+    include(BuildIcons)
+
     if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
         # Create the custom command for generating the ico file for windows.
         make_icon(INPUT "${CMAKE_SOURCE_DIR}/resources/vanillatd_icon.svg" OUTPUT VANILLATD_ICON)

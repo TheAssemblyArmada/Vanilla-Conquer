@@ -47,72 +47,6 @@ void output(short, short)
 bool InDebugger = false;
 int ReadyToQuit = 0;
 
-#if (0)
-/***************************************************************************
- * Extract_Shape_Count -- returns # of shapes in the given shape block		*
- *                                                                         *
- * The # of shapes in a shape block is the first WORD in the block, so		*
- * this is the value returned.															*
- *																									*
- * INPUT:                                                                  *
- * buffer	pointer to shape block, created with MAKESHPS.EXE					*
- *                                                                         *
- * OUTPUT:                                                                 *
- * # shapes in the block																	*
- *                                                                         *
- * WARNINGS:                                                               *
- *	none																							*
- *                                                                         *
- * HISTORY:                                                                *
- *   06/09/1992 JLB : Created.                                             *
- *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
- *   05/25/1994 BR : Converted to 32-bit                                   *
- *=========================================================================*/
-int __cdecl Extract_Shape_Count(VOID const* buffer)
-{
-    ShapeBlock_Type* block = (ShapeBlock_Type*)buffer;
-
-    return (block->NumShapes);
-
-} /* end of Extract_Shape_Count */
-
-/***************************************************************************
- * Extract_Shape -- Gets pointer to shape in given shape block					*
- *                                                                         *
- * INPUT:                                                                  *
- * buffer	pointer to shape block, created with MAKESHPS.EXE					*
- * shape		index of shape to get														*
- *                                                                         *
- * OUTPUT:                                                                 *
- * pointer to shape in the shape block													*
- *                                                                         *
- * WARNINGS:                                                               *
- *	none																							*
- *                                                                         *
- * HISTORY:                                                                *
- *   06/09/1992 JLB : Created.                                             *
- *   08/19/1993 SKB : Split drawshp.asm into several modules.              *
- *   05/25/1994 BR : Converted to 32-bit                                   *
- *=========================================================================*/
-VOID* __cdecl Extract_Shape(VOID const* buffer, int shape)
-{
-    ShapeBlock_Type* block = (ShapeBlock_Type*)buffer;
-    long offset; // Offset of shape data, from start of block
-    char* bytebuf = (char*)buffer;
-
-    /*
-    ----------------------- Return if invalid argument -----------------------
-    */
-    if (!buffer || shape < 0 || shape >= block->NumShapes)
-        return (NULL);
-
-    offset = block->Offsets[shape];
-
-    return (bytebuf + 2 + offset);
-
-} /* end of Extract_Shape */
-#endif //(0)
-
 #ifdef _WIN32
 unsigned long CCFocusMessage = WM_USER + 50; // Private message for receiving application focus
 #endif
@@ -143,18 +77,24 @@ void Focus_Loss(void)
     }
     Theme.Stop();
     Stop_Primary_Sound_Buffer();
-    if (WWMouse)
+
+    if (WWMouse && Is_Video_Fullscreen()) {
         WWMouse->Clear_Cursor_Clip();
+    }
 }
 
 void Focus_Restore(void)
 {
     Map.Flag_To_Redraw(true);
     Start_Primary_Sound_Buffer(true);
-    if (WWMouse)
-        WWMouse->Set_Cursor_Clip();
-    VisiblePage.Clear();
-    HiddenPage.Clear();
+
+    if (Is_Video_Fullscreen()) {
+        if (WWMouse) {
+            WWMouse->Set_Cursor_Clip();
+        }
+        VisiblePage.Clear();
+        HiddenPage.Clear();
+    }
 }
 
 /***********************************************************************************************
@@ -218,7 +158,7 @@ void Check_For_Focus_Loss(void)
 }
 
 extern bool InMovie;
-#if !defined(REMASTER_BUILD) && defined(_WIN32)
+#if !defined(REMASTER_BUILD) && defined(_WIN32) && !defined(SDL2_BUILD)
 long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 {
 
@@ -357,7 +297,7 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
 #define CC_ICON 1
 int ShowCommand;
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
 void Create_Main_Window(HANDLE instance, int width, int height)
 
 {

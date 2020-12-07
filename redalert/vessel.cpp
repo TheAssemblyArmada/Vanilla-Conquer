@@ -1354,8 +1354,8 @@ void VesselClass::Enter_Idle_Mode(bool)
 
         } else {
 
-            if (Mission == MISSION_GUARD || Mission == MISSION_GUARD_AREA || MissionControl[Mission].IsParalyzed
-                || MissionControl[Mission].IsZombie) {
+            if (Mission == MISSION_NONE || Mission == MISSION_GUARD || Mission == MISSION_GUARD_AREA
+                || MissionControl[Mission].IsParalyzed || MissionControl[Mission].IsZombie) {
                 return;
             }
 

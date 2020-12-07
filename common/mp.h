@@ -35,38 +35,19 @@
 #ifndef MP_H
 #define MP_H
 
-// lint -e740 -e534 -e537 -e760
-
-// lint -d_LINT=1
-/*
-**	The "bool" integral type was defined by the C++ committee in
-**	November of '94. Until the compiler supports this, use the following
-**	definition.
-*/
-#ifndef __BORLANDC__
-#ifndef TRUE_FALSE_DEFINED
-#define TRUE_FALSE_DEFINED
-enum
-{
-    false = 0,
-    true = 1
-};
-typedef int bool;
-#endif
-#endif
-
 #include "straw.h"
 #include <stdlib.h>
+#include <stdint.h>
 
-extern unsigned short primeTable[3511];
+extern uint16_t primeTable[3511];
 
-#define digit               unsigned long
-#define signeddigit         signed long
+#define digit               uint32_t
+#define signeddigit         int32_t
 #define LOG_UNITSIZE        5
 #define UNITSIZE            32
 #define UPPER_MOST_BIT      0x80000000L
 #define SEMI_UPPER_MOST_BIT 0x8000
-#define SEMI_MASK           ((unsigned short)~0)
+#define SEMI_MASK           ((uint16_t)~0)
 #define MAX_BIT_PRECISION   2048
 #define MAX_UNIT_PRECISION  (MAX_BIT_PRECISION / UNITSIZE)
 #ifndef ARRAY_SIZE
@@ -90,22 +71,22 @@ int XMP_Compare(const digit* r1, const digit* r2, int precision);
 bool XMP_Add(digit* result, const digit* r1, const digit* r2, bool carry, int precision);
 bool XMP_Add_Int(digit* result, const digit* r1, digit r2, bool carry, int precision);
 bool XMP_Sub(digit* result, const digit* r1, const digit* r2, bool borrow, int precision);
-bool XMP_Sub_Int(digit* result, const digit* r1, unsigned short r2, bool borrow, int precision);
+bool XMP_Sub_Int(digit* result, const digit* r1, uint16_t r2, bool borrow, int precision);
 int XMP_Unsigned_Mult(digit* prod, const digit* multiplicand, const digit* multiplier, int precision);
 int XMP_Unsigned_Mult_Int(digit* prod, const digit* multiplicand, short multiplier, int precision);
 int XMP_Signed_Mult_Int(digit* prod, const digit* multiplicand, signed short multiplier, int precision);
 int XMP_Signed_Mult(digit* prod, const digit* multiplicand, const digit* multiplier, int precision);
-unsigned short XMP_Unsigned_Div_Int(digit* quotient, digit const* dividend, unsigned short divisor, int precision);
+uint16_t XMP_Unsigned_Div_Int(digit* quotient, digit const* dividend, uint16_t divisor, int precision);
 int XMP_Unsigned_Div(digit* remainder, digit* quotient, digit const* dividend, digit const* divisor, int precision);
 void XMP_Signed_Div(digit* remainder, digit* quotient, digit const* dividend, digit const* divisor, int precision);
 int XMP_Reciprocal(digit* quotient, const digit* divisor, int precision);
 void XMP_Decode_ASCII(char const* str, digit* mpn, int precision);
-void xmp_single_mul(unsigned short* prod, unsigned short* multiplicand, unsigned short multiplier, int precision);
+void xmp_single_mul(uint16_t* prod, uint16_t* multiplicand, uint16_t multiplier, int precision);
 void XMP_Double_Mul(digit* prod, const digit* multiplicand, const digit* multiplier, int precision);
 int xmp_stage_modulus(const digit* n_modulus, int precision);
 int XMP_Mod_Mult(digit* prod, const digit* multiplicand, const digit* multiplier, int precision);
 void XMP_Mod_Mult_Clear(int precision);
-unsigned short mp_quo_digit(unsigned short* dividend);
+uint16_t mp_quo_digit(uint16_t* dividend);
 int xmp_exponent_mod(digit* expout, const digit* expin, const digit* exponent_ptr, const digit* modulus, int precision);
 bool XMP_Is_Small_Prime(const digit* candidate, int precision);
 bool XMP_Small_Divisors_Test(const digit* candidate, int precision);
@@ -119,7 +100,7 @@ void XMP_Randomize(digit* result, Straw& rng, int nbits, int precision);
 void XMP_Randomize(digit* result, Straw& rng, digit const* min, digit const* max, int precision);
 bool XMP_Is_Prime(digit const* prime, int precision);
 bool XMP_Rabin_Miller_Test(Straw& rng, digit const* w, int rounds, int precision);
-int XMP_DER_Length_Encode(unsigned long length, unsigned char* output);
+int XMP_DER_Length_Encode(uint32_t length, unsigned char* output);
 int XMP_DER_Encode(digit const* from, unsigned char* output, int precision);
 void XMP_DER_Decode(digit* result, unsigned char const* input, int precision);
 

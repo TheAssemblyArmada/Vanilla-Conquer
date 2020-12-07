@@ -263,7 +263,13 @@ void Main_Game(int argc, char* argv[])
             **	Main_Loop(), allowing the game to run in the background.
             */
             if (SpecialDialog != SDLG_NONE) {
-                // Stop_Profiler();
+                /*
+                **  Always release mouse cursor when a dialog is open.
+                */
+                if (!Is_Video_Fullscreen()) {
+                    WWMouse->Clear_Cursor_Clip();
+                }
+
                 switch (SpecialDialog) {
                 case SDLG_SPECIAL:
                     Map.Help_Text(TXT_NONE);
@@ -293,6 +299,10 @@ void Main_Game(int argc, char* argv[])
 
                 default:
                     break;
+                }
+
+                if (!Is_Video_Fullscreen()) {
+                    WWMouse->Set_Cursor_Clip();
                 }
             }
         }
@@ -1201,16 +1211,6 @@ void Call_Back(void)
             }
         }
     }
-
-    /*
-    **	Modem and Null Modem maintenance
-    */
-    if (GameToPlay == GAME_NULL_MODEM || ((GameToPlay == GAME_MODEM) && ModemService)) {
-        //|| GameToPlay == GAME_INTERNET) {
-
-        // PG_TO_FIX
-        // NullModem.Service();
-    }
 #endif
 }
 
@@ -1702,6 +1702,7 @@ bool Map_Edit_Loop(void)
 
     Call_Back(); // maintains Theme.AI() for music
     Color_Cycle();
+    Frame_Limiter();
 
     return (!GameActive);
 }
@@ -1780,282 +1781,6 @@ void Go_Editor(bool flag)
 }
 
 #endif
-
-#if (0)
-#define VQ_THREAD_BUFFER_SIZE  1024 * 1024
-#define VQ_THREAD_BUFFER_CHUNK VQ_THREAD_BUFFER_SIZE / 4
-unsigned char* VQThreadBuffer = NULL;
-volatile bool ThreadReading = false;
-unsigned long VQThreadBlockHead;
-unsigned long VQThreadBlockTail;
-unsigned long VQBytesLeft;
-unsigned long VQBytesRead;
-
-void Init_VQ_Threading(CCFileClass* file)
-{
-    if (!VQThreadBuffer) {
-        VQThreadBuffer = new unsigned char[VQ_THREAD_BUFFER_SIZE];
-    }
-    Force_VM_Page_In(VQThreadBuffer, VQ_THREAD_BUFFER_SIZE);
-    VQThreadBlockHead = 0;
-    VQThreadBlockTail = 0;
-    VQBytesRead = 0;
-    VQBytesLeft = file->Size();
-}
-
-void Cleanup_VQ_Threading(void)
-{
-    while (ThreadReading) {
-    }
-    if (VQThreadBuffer) {
-        delete VQThreadBuffer;
-        VQThreadBuffer = NULL;
-    }
-}
-
-unsigned long __stdcall Thread_Read(void* file)
-{
-    int bytes_to_read;
-    int left_to_read;
-    int read_this_time;
-    unsigned long head;
-    int sleep_time;
-
-    CCFileClass* ccfile = (CCFileClass*)file;
-
-    bytes_to_read = MIN(VQBytesLeft, VQ_THREAD_BUFFER_CHUNK);
-
-    if (!bytes_to_read) {
-        ThreadReading = false;
-        return (0);
-    }
-
-    left_to_read = bytes_to_read;
-
-    while (left_to_read) {
-        read_this_time = MIN(8 * 1024, left_to_read);
-        // if (read_this_time & 3){
-        ccfile->Read(VQThreadBuffer + VQThreadBlockHead, read_this_time);
-        //}else{
-        //	ccfile->Read(VQThreadBuffer+VQThreadBlockHead, read_this_time/4);
-        //	ccfile->Read(VQThreadBuffer+VQThreadBlockHead+read_this_time/4, read_this_time/4);
-        //	ccfile->Read(VQThreadBuffer+VQThreadBlockHead+(read_this_time/4)*2, read_this_time/4);
-        //	ccfile->Read(VQThreadBuffer+VQThreadBlockHead+(read_this_time/4)*3, read_this_time/4);
-        //}
-        VQThreadBlockHead += read_this_time;
-        left_to_read -= read_this_time;
-
-        head = VQThreadBlockHead;
-        if (head < VQThreadBlockTail)
-            head += VQ_THREAD_BUFFER_SIZE;
-        sleep_time = head - VQThreadBlockTail;
-        sleep_time = sleep_time / (VQ_THREAD_BUFFER_CHUNK / 32);
-        sleep_time += 2;
-        if (sleep_time < 1)
-            sleep_time = 1;
-        Sleep(sleep_time);
-    }
-
-    VQThreadBlockHead &= VQ_THREAD_BUFFER_SIZE - 1;
-    VQBytesLeft -= bytes_to_read;
-    ThreadReading = false;
-    return (0);
-}
-
-void Read_VQ_Thread_Block(CCFileClass* file)
-{
-    HANDLE thread_handle;
-    DWORD thread_id;
-    if (!ThreadReading) {
-        //_beginthreadex (&Thread_Read, NULL, 16*1024, NULL);
-        ThreadReading = true;
-        thread_handle = CreateThread(NULL, 0, &Thread_Read, (void*)file, 0, &thread_id);
-        // SetThreadPriority (thread_handle, THREAD_PRIORITY_IDLE);
-
-        CloseHandle(thread_handle);
-    }
-}
-
-int VQ_Thread_Read(CCFileClass* file, void* buffer, long bytes)
-{
-    long bytes_to_read;
-
-    do {
-        if (VQThreadBlockHead > VQThreadBlockTail) {
-            bytes_to_read = MIN(bytes, VQThreadBlockHead - VQThreadBlockTail);
-
-        } else {
-            bytes_to_read = MIN(bytes, VQThreadBlockHead + VQ_THREAD_BUFFER_SIZE - VQThreadBlockTail);
-        }
-
-    } while (ThreadReading && bytes_to_read < bytes);
-
-    if (VQThreadBlockTail + bytes_to_read > VQ_THREAD_BUFFER_SIZE) {
-
-        int first_chunk = VQ_THREAD_BUFFER_SIZE - VQThreadBlockTail;
-        int second_chunk = bytes_to_read - first_chunk;
-
-        memcpy(buffer, VQThreadBuffer + VQThreadBlockTail, first_chunk);
-        memcpy((unsigned char*)buffer + first_chunk, VQThreadBuffer, second_chunk);
-    } else {
-        memcpy(buffer, VQThreadBuffer + VQThreadBlockTail, bytes_to_read);
-    }
-
-    VQThreadBlockTail += bytes_to_read;
-    VQThreadBlockTail &= VQ_THREAD_BUFFER_SIZE - 1;
-
-    unsigned long head = VQThreadBlockHead;
-    if (head < VQThreadBlockTail)
-        head += VQ_THREAD_BUFFER_SIZE;
-    if (head - VQThreadBlockTail < VQ_THREAD_BUFFER_CHUNK && !ThreadReading)
-        Read_VQ_Thread_Block(file);
-
-    VQBytesRead += bytes_to_read;
-    return (bytes_to_read);
-}
-
-int VQ_Thread_Seek(long bytes)
-{
-    VQThreadBlockTail += bytes;
-    VQBytesRead += bytes;
-    return (VQBytesRead);
-}
-
-/***********************************************************************************************
- * MixFileHandler -- Handles VQ file access.                                                   *
- *                                                                                             *
- *    This routine is called from the VQ player when it needs to access the source file. By    *
- *    using this routine it is possible to virtualize the file system.                         *
- *                                                                                             *
- * INPUT:   vqa   -- Pointer to the VQA handle for this animation.                             *
- *                                                                                             *
- *          action-- The requested action to perform.                                          *
- *                                                                                             *
- *          buffer-- Optional buffer pointer as needed by the type of action.                  *
- *                                                                                             *
- *          nbytes-- The number of bytes (if needed) for this operation.                       *
- *                                                                                             *
- * OUTPUT:  Returns a value consistent with the action requested.                              *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/04/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
-long MixFileHandler(VQAHandle* vqa, long action, void* buffer, long nbytes)
-{
-    CCFileClass* file;
-    long error;
-
-    file = (CCFileClass*)vqa->VQAio;
-
-    /*
-    **	Perform the action specified by the stream command.
-    */
-    switch (action) {
-
-    /*
-    ** VQACMD_READ means read NBytes from the stream and place it in the
-    ** memory pointed to by Buffer.
-    **
-    ** Any error code returned will be remapped by VQA library into
-    ** VQAERR_READ.
-    */
-    case VQACMD_READ:
-        error = VQ_Thread_Read(file, buffer, nbytes);
-        // error = (file->Read(buffer, (unsigned short)nbytes) != (unsigned short)nbytes);
-        if (error == nbytes)
-            error = 0;
-        break;
-
-    /*
-    **	VQACMD_WRITE is analogous to VQACMD_READ.
-    **
-    ** Writing is not allowed to the VQA file, VQA library will remap the
-    ** error into VQAERR_WRITE.
-    */
-    case VQACMD_WRITE:
-        error = 1;
-        break;
-
-    /*
-    **	VQACMD_SEEK asks that you perform a seek relative to the current
-    ** position. NBytes is a signed number, indicating seek direction
-    ** (positive for forward, negative for backward). Buffer has no meaning
-    ** here.
-    **
-    ** Any error code returned will be remapped by VQA library into
-    ** VQAERR_SEEK.
-    */
-    case VQACMD_SEEK:
-        // error = (file->Seek(nbytes, SEEK_CUR) == -1);
-        VQ_Thread_Seek(nbytes);
-        error = 0;
-        break;
-
-    /*
-    **	VQACMD_OPEN asks that you open your stream for access.
-    */
-    case VQACMD_OPEN:
-        file = new CCFileClass((char*)buffer);
-
-        if (file != NULL && file->Is_Available()) {
-            error = file->Open((char*)buffer, READ);
-
-            if (error != -1) {
-                vqa->VQAio = (unsigned long)file;
-                error = 0;
-                // file->Set_Buffer_Size(8*1024);
-            } else {
-                delete file;
-                file = 0;
-                error = 1;
-            }
-        } else {
-            error = 1;
-        }
-
-        if (error != -1) {
-            Init_VQ_Threading(file);
-            Read_VQ_Thread_Block(file);
-            CountDownTimerClass timer;
-            timer.Set(60);
-            while (ThreadReading || timer.Time()) {
-            }
-        }
-        break;
-
-    case VQACMD_CLOSE:
-        Cleanup_VQ_Threading();
-        file->Close();
-        delete file;
-        file = 0;
-        vqa->VQAio = 0;
-        error = 0;
-        break;
-
-    /*
-    **	VQACMD_INIT means to prepare your stream for reading. This is used for
-    ** certain streams that can't be read immediately upon opening, and need
-    ** further preparation. This operation is allowed to fail; the error code
-    ** will be returned directly to the client.
-    */
-    case VQACMD_INIT:
-
-    /*
-    **	IFFCMD_CLEANUP means to terminate the transaction with the associated
-    ** stream. This is used for streams that can't simply be closed. This
-    ** operation is not allowed to fail; any error returned will be ignored.
-    */
-    case VQACMD_CLEANUP:
-        error = 0;
-        break;
-    }
-
-    return (error);
-}
-#endif //(0)
-//#if (0)
 
 /***********************************************************************************************
  * MixFileHandler -- Handles VQ file access.                                                   *
@@ -2179,8 +1904,6 @@ long MixFileHandler(VQAHandle* vqa, long action, void* buffer, long nbytes)
     return (error);
 #endif
 }
-
-//#endif	//(0)
 
 void Rebuild_Interpolated_Palette(unsigned char* interpal)
 {
@@ -2807,7 +2530,7 @@ void CC_Draw_Shape(void const* shapefile,
 #if true
     int predoffset;
     char* shape_pointer;
-    unsigned long shape_size;
+    uintptr_t shape_size;
 
     if (shapefile && shapenum != -1) {
 
@@ -3097,7 +2820,8 @@ long VQ_Call_Back(unsigned char*, long)
     Check_VQ_Palette_Set();
 
     Interpolate_2X_Scale(&SysMemPage, &SeenBuff, NULL);
-    // Call_Back();
+    Frame_Limiter();
+
     if ((BreakoutAllowed || Debug_Flag) && key == KN_ESC) {
         Keyboard->Clear();
         Brokeout = true;
@@ -3314,7 +3038,7 @@ void Heap_Dump_Check(char* string)
 
     //	Debug_Heap_Dump = true;
 
-    Smart_Printf("%s\n", string);
+    //Smart_Printf("%s\n", string);
 
     Dump_Heap_Pointers();
 
@@ -3605,7 +3329,7 @@ void Dump_Heap_Pointers(void)
 
 void Error_In_Heap_Pointers(char* string)
 {
-    Smart_Printf("Error in Heap for %s\n", string);
+    //Smart_Printf("Error in Heap for %s\n", string);
 }
 #endif
 

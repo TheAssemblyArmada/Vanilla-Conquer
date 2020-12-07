@@ -64,7 +64,7 @@ public:
         COLUMN_TWO_Y = 7 + 70 + 13,
 
 // BGA: changes to all buttons
-#ifdef GERMAN
+#if (GERMAN | FRENCH)
         BUTTON_ONE_WIDTH = 20,        // Button width.
         BUTTON_TWO_WIDTH = 27,        // Button width.
         BUTTON_THREE_WIDTH = 26,      // Button width.
@@ -75,22 +75,7 @@ public:
         BUTTON_TWO_Y = SIDE_Y + 2,    // Right button Y coordinate.
         BUTTON_THREE_X = SIDE_X + 53, // Right button X coordinate.
         BUTTON_THREE_Y = SIDE_Y + 2,  // Right button Y coordinate.
-#endif
-
-#ifdef FRENCH
-        BUTTON_ONE_WIDTH = 20,        // Button width.
-        BUTTON_TWO_WIDTH = 27,        // Button width.
-        BUTTON_THREE_WIDTH = 26,      // Button width.
-        BUTTON_HEIGHT = 9,            // Button height.
-        BUTTON_ONE_X = SIDE_X + 2,    // Left button X coordinate.
-        BUTTON_ONE_Y = SIDE_Y + 2,    // Left button Y coordinate.
-        BUTTON_TWO_X = SIDE_X + 24,   // Right button X coordinate.
-        BUTTON_TWO_Y = SIDE_Y + 2,    // Right button Y coordinate.
-        BUTTON_THREE_X = SIDE_X + 53, // Right button X coordinate.
-        BUTTON_THREE_Y = SIDE_Y + 2,  // Right button Y coordinate.
-#endif
-
-#ifdef ENGLISH
+#else
         BUTTON_ONE_WIDTH = 32,             // Button width.
         BUTTON_TWO_WIDTH = 20,             // Button width.
         BUTTON_THREE_WIDTH = 20,           // Button width.
@@ -167,7 +152,7 @@ public:
 
         bool Add(RTTIType type,
                  int ID,
-                 bool via_capture); // Added via_capture for new sidebar functionality. ST - 9/24/2019 3:15PM  );
+                 bool via_capture); // Added via_capture for new sidebar functionality. ST - 9/24/2019 3:15PM
         bool Abandon_Production(int factory);
         bool Scroll(bool up);
         bool AI(KeyNumType& input, int x, int y);
@@ -203,17 +188,9 @@ public:
             OBJECT_WIDTH = 32,   // Pixel width of each buildable object.
             STRIP_WIDTH = 35,    // Width of strip (not counting border lines).
             MAX_VISIBLE = 4,     // Number of object slots visible at any one time.
-#ifdef WIN32
-            SCROLL_RATE = 12, // The pixel jump while scrolling (larger is faster).
-#else
-            SCROLL_RATE = 8, // The pixel jump while scrolling (larger is faster).
-#endif
-            UP_X_OFFSET = 2, // Scroll up arrow coordinates.
-#ifdef WIN32
+            SCROLL_RATE = 12,    // The pixel jump while scrolling (larger is faster).
+            UP_X_OFFSET = 2,     // Scroll up arrow coordinates.
             UP_Y_OFFSET = int(MAX_VISIBLE) * int(OBJECT_HEIGHT) + 1,
-#else
-            UP_Y_OFFSET = int(MAX_VISIBLE) * int(OBJECT_HEIGHT) + 2,
-#endif
             DOWN_X_OFFSET = 18,          // Scroll down arrow coordinates.
             DOWN_Y_OFFSET = UP_Y_OFFSET, // BGint(MAX_VISIBLE)*int(OBJECT_HEIGHT)+1,
             SBUTTON_WIDTH = 16,          // Width of the mini-scroll button.
@@ -349,7 +326,7 @@ public:
         **	for. If the current theater differs from this recorded value, then the
         **	remap tables are reloaded.
         */
-        //				static TheaterType LastTheater;
+        // static TheaterType LastTheater;
 
         static ShapeButtonClass UpButton[COLUMNS];
         static ShapeButtonClass DownButton[COLUMNS];
@@ -376,16 +353,13 @@ public:
     class SBGadgetClass : public GadgetClass
     {
     public:
-        //#ifdef WIN32
         SBGadgetClass(void)
             : GadgetClass((int)((int)SIDE_X + 8) * RESFACTOR,
                           (int)SIDE_Y * RESFACTOR,
                           (int)((int)SIDE_WIDTH - 1) * RESFACTOR - 1,
                           (int)((int)SIDE_HEIGHT - 1) * RESFACTOR,
                           LEFTUP){};
-        //#else
-        //				SBGadgetClass(void) : GadgetClass((int)SIDE_X+8, (int)SIDE_Y, (int)SIDE_WIDTH-1, (int)SIDE_HEIGHT-1,
-        //LEFTUP) {}; #endif
+
     protected:
         virtual int Action(unsigned flags, KeyNumType& key);
     };

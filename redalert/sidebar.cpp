@@ -264,7 +264,6 @@ void SidebarClass::One_Time(void)
  *=============================================================================================*/
 void SidebarClass::Init_Clear(void)
 {
-
     PowerClass::Init_Clear();
 
     IsToRedraw = true;
@@ -310,11 +309,7 @@ void SidebarClass::Init_IO(void)
 
         Upgrade.IsSticky = true;
         Upgrade.ID = BUTTON_UPGRADE;
-#ifdef WIN32
         Upgrade.X = 0x21f;
-#else
-        Upgrade.X = ((0x21f / 2) + 1) * RESFACTOR;
-#endif
         Upgrade.Y = (0x96 / 2) * RESFACTOR;
         Upgrade.IsPressed = false;
         Upgrade.IsToggleType = true;
@@ -1199,11 +1194,7 @@ void SidebarClass::StripClass::Init_IO(int id)
     UpButton[ID].Y = Y + (UP_Y_OFFSET * RESFACTOR);
 
 #if (FRENCH)
-#ifdef WIN32
     UpButton[ID].Set_Shape(MFCD::Retrieve("STRIPUP.SHP"));
-#else
-    UpButton[ID].Set_Shape(MFCD::Retrieve("STUP_FIX.SHP"));
-#endif
 #else  // FRENCH
     UpButton[ID].Set_Shape(MFCD::Retrieve("STRIPUP.SHP"));
 #endif // FRENCH
@@ -1792,6 +1783,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
             }
 
             remapper = 0;
+
             /*
             **	Now that the shape of the object at the current working slot has been found,
             **	draw it and any graphic overlays as necessary.
@@ -1840,7 +1832,6 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                                   WINDOW_SIDEBAR,
                                   SHAPE_CENTER);
                 } else {
-
                     CC_Draw_Shape(ClockShapes,
                                   stage + 1,
                                   x - (WindowList[WINDOW_SIDEBAR][WINDOWX]) + (LEFT_EDGE_OFFSET * RESFACTOR),
@@ -1921,7 +1912,7 @@ bool SidebarClass::StripClass::Recalc(void)
             **	Removes this entry from the list.
             */
             if (BuildableCount > 1 && index < BuildableCount - 1) {
-                memcpy(
+                memmove(
                     &Buildables[index], &Buildables[index + 1], sizeof(Buildables[0]) * ((BuildableCount - index) - 1));
             }
             TopIndex = 0;
@@ -1960,10 +1951,12 @@ bool SidebarClass::StripClass::Recalc(void)
  *   01/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
 SidebarClass::StripClass::SelectClass::SelectClass(void)
-    : ControlClass(0, 0, 0, (OBJECT_WIDTH - 1) * RESFACTOR, OBJECT_HEIGHT * RESFACTOR, LEFTPRESS | RIGHTPRESS | LEFTUP)
+    : ControlClass(0, 0, 0, 0, 0, LEFTPRESS | RIGHTPRESS | LEFTUP)
     , Strip(0)
     , Index(0)
 {
+    Width = (OBJECT_WIDTH - 1) * RESFACTOR;
+    Height = OBJECT_HEIGHT * RESFACTOR;
 }
 
 /***********************************************************************************************
@@ -2395,7 +2388,6 @@ bool SidebarClass::StripClass::Abandon_Production(int factory)
  *=============================================================================================*/
 void SidebarClass::Zoom_Mode_Control(void)
 {
-#ifdef WIN32
     /*
     ** If radar is active, cycle as follows:
     ** Zoomed => not zoomed
@@ -2423,32 +2415,4 @@ void SidebarClass::Zoom_Mode_Control(void)
             Player_Names(Is_Player_Names() == 0);
         }
     }
-#else
-    /*
-    ** If radar is active, cycle as follows:
-    ** not zoomed => player status (multiplayer only)
-    ** player status => radar spying readout
-    ** radar spying readout => not zoomed
-    */
-    if (IsRadarActive) {
-        if (Session.Type == GAME_NORMAL) {
-            if (!Spy_Next_House()) {
-                Zoom_Mode(Coord_Cell(TacticalCoord));
-            }
-        } else {
-            if (!Spying_On_House() && !Is_Player_Names()) {
-                Player_Names(1);
-            } else {
-                Player_Names(0);
-                if (!Spy_Next_House()) {
-                    Zoom_Mode(Coord_Cell(TacticalCoord));
-                }
-            }
-        }
-    } else {
-        if (Session.Type != GAME_NORMAL) {
-            Player_Names(Is_Player_Names() == 0);
-        }
-    }
-#endif
 }

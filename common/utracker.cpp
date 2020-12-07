@@ -41,18 +41,9 @@
  *                                                                         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
-#include "common/endianness.h"
-
-/*
-** Define host to network to host functions for DOS
-*/
-#ifndef WIN32
-
-#define hton32(val) 0
-#define ntoh32(val) 0
-
-#endif // WIN32
+#include "utracker.h"
+#include <string.h>
+#include "endianness.h"
 
 /***********************************************************************************************
  * UTC::UnitTrackerClass -- Class constructor                                                  *

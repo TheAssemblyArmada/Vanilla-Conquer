@@ -54,6 +54,7 @@ public:
     /*---------------------------------------------------------------------
     **	Member function prototypes.
     */
+    void Init_Clear();
     void Update(bool forced = false, bool redraw = false);
 
     void Graphic_Logic(bool forced = false);

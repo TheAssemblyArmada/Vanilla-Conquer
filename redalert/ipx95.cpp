@@ -43,47 +43,45 @@
 
 #include "function.h"
 
-#ifdef WIN32
-
 #include "ipx95.h"
 
 // Stub in old IPX here ST - 12/20/2018 1:53PM
 extern "C" {
-extern BOOL __stdcall IPX_Initialise(void)
+extern bool IPX_Initialise(void)
 {
     return 0;
 }
-extern BOOL __stdcall IPX_Get_Outstanding_Buffer95(unsigned char* buffer)
+extern bool IPX_Get_Outstanding_Buffer95(unsigned char* buffer)
 {
     return 0;
 }
-extern void __stdcall IPX_Shut_Down95(void)
+extern void IPX_Shut_Down95(void)
 {
 }
-extern int __stdcall IPX_Send_Packet95(unsigned char*, unsigned char*, int, unsigned char*, unsigned char*)
-{
-    return 0;
-}
-extern int __stdcall IPX_Broadcast_Packet95(unsigned char*, int)
+extern int IPX_Send_Packet95(unsigned char*, unsigned char*, int, unsigned char*, unsigned char*)
 {
     return 0;
 }
-extern BOOL __stdcall IPX_Start_Listening95(void)
+extern int IPX_Broadcast_Packet95(unsigned char*, int)
 {
     return 0;
 }
-extern int __stdcall IPX_Open_Socket95(int socket)
+extern bool IPX_Start_Listening95(void)
 {
     return 0;
 }
-extern void __stdcall IPX_Close_Socket95(int socket)
-{
-}
-extern int __stdcall IPX_Get_Connection_Number95(void)
+extern int IPX_Open_Socket95(int socket)
 {
     return 0;
 }
-extern int __stdcall IPX_Get_Local_Target95(unsigned char*, unsigned char*, unsigned short, unsigned char*)
+extern void IPX_Close_Socket95(int socket)
+{
+}
+extern int IPX_Get_Connection_Number95(void)
+{
+    return 0;
+}
+extern int IPX_Get_Local_Target95(unsigned char*, unsigned char*, unsigned short, unsigned char*)
 {
     return 0;
 }
@@ -247,5 +245,3 @@ int IPX_Get_Local_Target(unsigned char* dest_network,
     return 0; // ST 5/13/2019
     // return (IPX_Get_Local_Target95(dest_network, dest_node, dest_socket, bridge_address));
 }
-
-#endif // WIN32

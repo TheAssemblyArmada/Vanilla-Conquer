@@ -116,6 +116,7 @@ public:
     /*
     **	This union contains the specific data that the event requires.
     */
+#pragma pack(push, 1)
     union
     {
         struct
@@ -211,6 +212,7 @@ public:
         } ProcessTime;
 
     } Data;
+#pragma pack(pop)
 
     //-------------- Functions ---------------------
     EventClass(void)

@@ -46,14 +46,11 @@
 
 #include "function.h"
 #include "vortex.h"
-#ifdef WIN32
 #include "common/tcpip.h"
 
-//#include "WolDebug.h"
-
+#ifdef REMASTER_BUILD
 extern bool DLLSave(Pipe& file);
 extern bool DLLLoad(Straw& file);
-
 #endif
 
 //#define	SAVE_BLOCK_SIZE	512
@@ -419,7 +416,6 @@ bool Save_Game(const char* file_name, const char* descr)
     SHAPipe sha;
     BlowPipe bpipe(BlowPipe::ENCRYPT);
     LZOPipe pipe(LZOPipe::COMPRESS, SAVE_BLOCK_SIZE);
-    //	LZWPipe pipe(LZWPipe::COMPRESS, SAVE_BLOCK_SIZE);
     //	LCWPipe pipe(LCWPipe::COMPRESS, SAVE_BLOCK_SIZE);
     bpipe.Key(&FastKey, BlowfishEngine::MAX_KEY_LENGTH);
 

@@ -37,8 +37,6 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifdef WIN32
-
 #include "function.h"
 #include "common/tcpip.h"
 #include "common/packet.h"
@@ -149,7 +147,9 @@ enum
 };
 
 extern unsigned long PlanetWestwoodGameID;
+#ifdef _WIN32
 extern HINSTANCE ProgramInstance;
+#endif
 extern unsigned long PlanetWestwoodStartTime;
 
 extern "C" char CPUType;
@@ -562,6 +562,7 @@ void Send_Statistics_Packet(void)
         /*
         ** Red Alert version/build date
         */
+#ifdef _WIN32
         char version[128];
         sprintf(version, "V%s", VerNum.Version_Name());
         stats.Add_Field(FIELD_GAME_VERSION, (char*)version);
@@ -582,6 +583,7 @@ void Send_Statistics_Packet(void)
                 stats.Add_Field(FIELD_GAME_BUILD_DATE, (void*)&write_time, sizeof(write_time));
             }
         }
+#endif
 
         /*
         ** Covert installed? (Yes/No)
@@ -889,5 +891,3 @@ extern void Register_Game_End_Time(void)
     GameEndTime = GameTimer.Time();
     GameTimerInUse = false;
 }
-
-#endif // WIN32

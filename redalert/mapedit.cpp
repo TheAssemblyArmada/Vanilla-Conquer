@@ -56,6 +56,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/framelimit.h"
 
 #ifdef SCENARIO_EDITOR
 
@@ -142,12 +143,8 @@ void MapEditClass::One_Time(void)
     /*
     **	The map: a single large "button"
     */
-#ifdef WIN32
     MapArea =
         new ControlClass(MAP_AREA, 0, 8, 640 - 8, 400 - 8, GadgetClass::LEFTPRESS | GadgetClass::LEFTRELEASE, false);
-#else
-    MapArea = new ControlClass(MAP_AREA, 0, 8, 312, 192, GadgetClass::LEFTPRESS | GadgetClass::LEFTRELEASE, false);
-#endif
 
     /*
     **	House buttons
@@ -877,11 +874,7 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
     case ((int)KN_Y | (int)KN_ALT_BIT):
     case ((int)KN_Z | (int)KN_ALT_BIT):
         if (CurrentCell != 0) {
-#ifdef WIN32
             waypt_idx = (input & ~KN_ALT_BIT) - KN_A;
-#else
-            waypt_idx = KN_To_KA(input & 0x00ff) - KA_a;
-#endif
             Update_Waypoint(waypt_idx);
         }
         input = KN_NONE;
@@ -1676,6 +1669,8 @@ void MapEditClass::Main_Menu(void)
             Start_Scenario(Scen.ScenarioName);
             return;
         }
+
+        Frame_Limiter();
     }
 
     /*
@@ -1771,6 +1766,8 @@ void MapEditClass::AI_Menu(void)
             process = false;
             break;
         }
+
+        Frame_Limiter();
     }
 }
 
@@ -2076,6 +2073,8 @@ bool MapEditClass::Get_Waypoint_Name(char wayptname[])
         default:
             break;
         }
+
+        Frame_Limiter();
     }
 
     Map.Flag_To_Redraw(true);

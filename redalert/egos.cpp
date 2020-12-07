@@ -145,24 +145,6 @@ char PaletteLUT[256];
 */
 #define CHUNK_HEIGHT RESFACTOR * 50
 
-#ifndef WIN32
-extern void Vsync(void);
-#pragma aux Vsync modify[edx ebx eax] = "mov	edx,03DAh"                                                                \
-                                        "mov	ebx,[VertBlank]"                                                          \
-                                        "and	bl,001h"                                                                  \
-                                        "shl	bl,3"                                                                     \
-                                        "in_vbi:"                                                                      \
-                                        "in	al,dx"                                                                     \
-                                        "and	al,008h"                                                                  \
-                                        "xor	al,bl"                                                                    \
-                                        "je	in_vbi"                                                                    \
-                                        "out_vbi:"                                                                     \
-                                        "in	al,dx"                                                                     \
-                                        "and	al,008h"                                                                  \
-                                        "xor	al,bl"                                                                    \
-                                        "jne	out_vbi"
-#endif // WIN32
-
 /***********************************************************************************************
  * EC::EgoClass -- EgoClass constructor                                                        *
  *                                                                                             *
@@ -302,18 +284,7 @@ void EgoClass::Wipe(GraphicBufferClass* background)
  *=============================================================================================*/
 void Set_Pal(char* palette)
 {
-    //#ifndef WIN32
-    // Vsync();
-    // unsigned char *rgbptr = (unsigned char *) palette;
-    // outportb(0x03C8, 0);												//Start from color 0
-
-    // for (int index = 0; index < 256; index++) {
-    //	outrgb(rgbptr[index*3], rgbptr[index*3+1], rgbptr[index*3+2]);
-    //}
-    //#else	//WIN32
-
     Set_Palette((void*)palette);
-    //#endif
 }
 
 /***********************************************************************************************
@@ -450,13 +421,6 @@ void Show_Who_Was_Responsible(void)
     ** Deault speed of credits scolling. This is the frame delay between pixel scrolls.
     */
     static int speed = 3;
-
-    /*
-    ** In DOS we need to scroll slower so we have a bool that lets us do it every other time
-    */
-#ifndef WIN32
-    bool scroll_now = false;
-#endif // WIN32
 
     /*
     ** Read in the credits file to be displayed

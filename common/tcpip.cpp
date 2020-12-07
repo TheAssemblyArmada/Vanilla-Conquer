@@ -17,7 +17,7 @@
  **   C O N F I D E N T I A L --- W E S T W O O D    S T U D I O S        **
  ***************************************************************************
  *                                                                         *
- *                 Project Name : Command & Conquer                        *
+ *                 Project Name : Command & Conquer - Red Alert            *
  *                                                                         *
  *                    File Name : TCPIP.CPP                                *
  *                                                                         *
@@ -52,21 +52,28 @@
  * TMC::Copy_To_In_Buffer -- copy data from our winsock buffer             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
-#include "common/tcpip.h"
-#include "common/endianness.h"
+#include "tcpip.h"
+#include "misc.h"
+#include "wwkeyboard.h"
+extern WWKeyboardClass* Keyboard;
+
+#include "endianness.h"
+#include <algorithm>
+
+using std::min;
 
 #ifdef NETWORKING
-
-/* these are temporary to allow linking, this manager class is not used at the moment -hifi */
-char PlanetWestwoodIPAddress[IP_ADDRESS_MAX];
-unsigned short PlanetWestwoodPortNumber;
-bool PlanetWestwoodIsHost;
 
 /*
 ** Nasty globals
 */
-bool Server;               // Is this player acting as client or server
+#ifndef WOLAPI_INTEGRATION
+bool Server; // Is this player acting as client or server
+/* these are temporary to allow linking, this manager class is not used at the moment -hifi */
+char PlanetWestwoodIPAddress[IP_ADDRESS_MAX];
+unsigned short PlanetWestwoodPortNumber;
+bool PlanetWestwoodIsHost;
+#endif
 TcpipManagerClass Winsock; // The object for interfacing with Winsock
 
 /***********************************************************************************************
@@ -345,10 +352,10 @@ int TcpipManagerClass::Read(void* buffer, int buffer_len)
     ** Copy any outstanding incoming data to the buffer provided
     */
     if (ReceiveBuffers[RXBufferTail].InUse) {
-        memcpy(buffer, ReceiveBuffers[RXBufferTail].Buffer, MIN(ReceiveBuffers[RXBufferTail].DataLength, buffer_len));
+        memcpy(buffer, ReceiveBuffers[RXBufferTail].Buffer, min(ReceiveBuffers[RXBufferTail].DataLength, buffer_len));
         ReceiveBuffers[RXBufferTail].InUse = false;
 
-        bytes_copied = MIN(ReceiveBuffers[RXBufferTail++].DataLength, buffer_len);
+        bytes_copied = min(ReceiveBuffers[RXBufferTail++].DataLength, buffer_len);
 
         RXBufferTail &= WS_NUM_RX_BUFFERS - 1;
     }
@@ -380,9 +387,9 @@ void TcpipManagerClass::Write(void* buffer, int buffer_len)
     ** Copy the data to one of the classes internal buffers
     */
     if (!TransmitBuffers[TXBufferHead].InUse) {
-        memcpy(TransmitBuffers[TXBufferHead].Buffer, buffer, MIN(buffer_len, WS_INTERNET_BUFFER_LEN));
+        memcpy(TransmitBuffers[TXBufferHead].Buffer, buffer, min(buffer_len, WS_INTERNET_BUFFER_LEN));
         TransmitBuffers[TXBufferHead].InUse = true;
-        TransmitBuffers[TXBufferHead++].DataLength = MIN(buffer_len, WS_INTERNET_BUFFER_LEN);
+        TransmitBuffers[TXBufferHead++].DataLength = min(buffer_len, WS_INTERNET_BUFFER_LEN);
         TXBufferHead &= WS_NUM_TX_BUFFERS - 1;
     }
 
@@ -394,6 +401,10 @@ void TcpipManagerClass::Write(void* buffer, int buffer_len)
     } else {
         SendMessage(MainWindow, WM_ASYNCEVENT, 0, (LONG)FD_WRITE);
     }
+    /*
+    ** Make sure the message loop gets called because all the Winsock notifications
+    ** are done via messages.
+    */
     Keyboard->Check();
 }
 
@@ -761,9 +772,9 @@ void TcpipManagerClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
 void TcpipManagerClass::Copy_To_In_Buffer(int bytes)
 {
     if (!ReceiveBuffers[RXBufferHead].InUse) {
-        memcpy(ReceiveBuffers[RXBufferHead].Buffer, ReceiveBuffer, MIN(bytes, WS_INTERNET_BUFFER_LEN));
+        memcpy(ReceiveBuffers[RXBufferHead].Buffer, ReceiveBuffer, min(bytes, WS_INTERNET_BUFFER_LEN));
         ReceiveBuffers[RXBufferHead].InUse = true;
-        ReceiveBuffers[RXBufferHead++].DataLength = MIN(bytes, WS_INTERNET_BUFFER_LEN);
+        ReceiveBuffers[RXBufferHead++].DataLength = min(bytes, WS_INTERNET_BUFFER_LEN);
         RXBufferHead &= WS_NUM_RX_BUFFERS - 1;
     }
 }

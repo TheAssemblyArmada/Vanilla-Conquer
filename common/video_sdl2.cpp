@@ -40,7 +40,16 @@
 #include "gbuffer.h"
 #include "palette.h"
 #include "video.h"
-#include <cstdio>
+#include "wwkeyboard.h"
+#include "wwmouse.h"
+
+#include <SDL.h>
+
+extern WWKeyboardClass* Keyboard;
+
+SDL_Window* window;
+SDL_Renderer* renderer;
+static SDL_Palette* palette;
 
 class SurfaceMonitorClassDummy : public SurfaceMonitorClass
 {
@@ -80,6 +89,13 @@ SurfaceMonitorClass& AllSurfaces = AllSurfacesDummy; // List of all direct draw 
  *=============================================================================================*/
 bool Set_Video_Mode(int w, int h, int bits_per_pixel)
 {
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+    SDL_ShowCursor(SDL_DISABLE);
+
+    window = SDL_CreateWindow("Vanilla Conquer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, 0);
+    palette = SDL_AllocPalette(256);
+    renderer = SDL_CreateRenderer(window, -1, 0);
+
     return true;
 }
 
@@ -102,6 +118,14 @@ bool Is_Video_Fullscreen()
  *=============================================================================================*/
 void Reset_Video_Mode(void)
 {
+    SDL_DestroyRenderer(renderer);
+    renderer = nullptr;
+
+    SDL_FreePalette(palette);
+    palette = nullptr;
+
+    SDL_DestroyWindow(window);
+    window = nullptr;
 }
 
 /***********************************************************************************************
@@ -139,7 +163,7 @@ unsigned int Get_Free_Video_Memory(void)
  *=============================================================================================*/
 unsigned Get_Video_Hardware_Capabilities(void)
 {
-    return 0;
+    return VIDEO_BLITTER;
 }
 
 /***********************************************************************************************
@@ -171,8 +195,19 @@ void Wait_Vert_Blank(void)
  * HISTORY:                                                                                    *
  *    10/11/95 3:33PM ST : Created                                                             *
  *=============================================================================================*/
-void Set_DD_Palette(void* palette)
+void Set_DD_Palette(void* rpalette)
 {
+    SDL_Color colors[256];
+
+    unsigned char* rcolors = (unsigned char*)rpalette;
+    for (int i = 0; i < 256; i++) {
+        colors[i].r = (unsigned char)rcolors[i * 3] << 2;
+        colors[i].g = (unsigned char)rcolors[i * 3 + 1] << 2;
+        colors[i].b = (unsigned char)rcolors[i * 3 + 2] << 2;
+        colors[i].a = 0;
+    }
+
+    SDL_SetPaletteColors(palette, colors, 0, 256);
 }
 
 /***********************************************************************************************
@@ -218,24 +253,52 @@ SurfaceMonitorClass::SurfaceMonitorClass()
 ** VideoSurfaceDDraw
 */
 
-class VideoSurfaceDummy : public VideoSurface
+class VideoSurfaceSDL2;
+
+static VideoSurfaceSDL2* frontSurface = nullptr;
+
+class VideoSurfaceSDL2 : public VideoSurface
 {
 public:
-    VideoSurfaceDummy(int w, int h, GBC_Enum flags)
+    VideoSurfaceSDL2(int w, int h, GBC_Enum flags)
+        : flags(flags)
+        , windowSurface(nullptr)
+        , texture(nullptr)
     {
+        surface = SDL_CreateRGBSurface(0, w, h, 8, 0, 0, 0, 0);
+        SDL_SetSurfacePalette(surface, palette);
+
+        if (flags & GBC_VISIBLE) {
+            windowSurface = SDL_CreateRGBSurface(0, w, h, 32, 0, 0, 0, 0);
+            texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, w, h);
+            frontSurface = this;
+        }
     }
 
-    virtual ~VideoSurfaceDummy()
+    virtual ~VideoSurfaceSDL2()
     {
+        if (frontSurface == this) {
+            frontSurface = nullptr;
+        }
+
+        SDL_FreeSurface(surface);
+
+        if (texture) {
+            SDL_DestroyTexture(texture);
+        }
+
+        if (windowSurface) {
+            SDL_FreeSurface(windowSurface);
+        }
     }
 
     virtual void* GetData() const
     {
-        return nullptr;
+        return surface->pixels;
     }
     virtual long GetPitch() const
     {
-        return 0;
+        return surface->pitch;
     }
     virtual bool IsAllocated() const
     {
@@ -248,27 +311,63 @@ public:
 
     virtual bool IsReadyToBlit()
     {
-        return false;
+        return true;
     }
 
     virtual bool LockWait()
     {
-        return false;
+        return (SDL_LockSurface(surface) == 0);
     }
 
     virtual bool Unlock()
     {
-        return false;
+        SDL_UnlockSurface(surface);
+        return true;
     }
 
     virtual void Blt(const Rect& destRect, VideoSurface* src, const Rect& srcRect, bool mask)
     {
+        SDL_BlitSurface(((VideoSurfaceSDL2*)src)->surface, (SDL_Rect*)(&srcRect), surface, (SDL_Rect*)&destRect);
     }
 
     virtual void FillRect(const Rect& rect, unsigned char color)
     {
+        SDL_FillRect(surface, (SDL_Rect*)(&rect), color);
     }
+
+    void RenderSurface()
+    {
+        void* pixels;
+        int pitch;
+
+        SDL_BlitSurface(surface, NULL, windowSurface, NULL);
+        SDL_LockTexture(texture, NULL, &pixels, &pitch);
+        SDL_ConvertPixels(windowSurface->w,
+                          windowSurface->h,
+                          windowSurface->format->format,
+                          windowSurface->pixels,
+                          windowSurface->pitch,
+                          SDL_PIXELFORMAT_RGBA8888,
+                          pixels,
+                          pitch);
+        SDL_UnlockTexture(texture);
+        SDL_RenderCopy(renderer, texture, NULL, NULL);
+        SDL_RenderPresent(renderer);
+    }
+
+private:
+    SDL_Surface* surface;
+    SDL_Surface* windowSurface;
+    SDL_Texture* texture;
+    GBC_Enum flags;
 };
+
+void Video_Render_Frame()
+{
+    if (frontSurface) {
+        frontSurface->RenderSurface();
+    }
+}
 
 /*
 ** Video
@@ -290,5 +389,5 @@ Video& Video::Shared()
 
 VideoSurface* Video::CreateSurface(int w, int h, GBC_Enum flags)
 {
-    return new VideoSurfaceDummy(w, h, flags);
+    return new VideoSurfaceSDL2(w, h, flags);
 }

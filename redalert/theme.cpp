@@ -50,10 +50,6 @@
 #include "function.h"
 #include "theme.h"
 
-#ifndef WIN32
-extern bool StreamLowImpact;
-#endif // WIN32
-
 /*
 **	These are the actual filename list for the theme sample files.
 */

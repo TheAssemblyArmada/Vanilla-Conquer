@@ -777,8 +777,7 @@ bool Select_Game(bool fade)
         SEL_START_NEW_GAME, // start a new game
 #ifdef BONUS_MISSIONS
         SEL_BONUS_MISSIONS,
-#endif // BONUS_MISSIONS
-        SEL_INTERNET,
+#endif                        // BONUS_MISSIONS
         SEL_LOAD_MISSION,     // load a saved game
         SEL_MULTIPLAYER_GAME, // play modem/null-modem/network game
         SEL_INTRO,            // replay the intro
@@ -842,6 +841,13 @@ bool Select_Game(bool fade)
     **	Set default mouse shape
     */
     Map.Set_Default_Mouse(MOUSE_NORMAL, false);
+
+    /*
+    **  Allow moving mouse outside the game window when in menu.
+    */
+    if (!Is_Video_Fullscreen()) {
+        WWMouse->Clear_Cursor_Clip();
+    }
 
     /*
     **	If the last game we played was a multiplayer game, jump right to that
@@ -968,9 +974,6 @@ bool Select_Game(bool fade)
             switch (selection) {
 
 #ifdef NEWMENU
-
-            case SEL_INTERNET:
-                break;
 
             /*
             **	Pick an expansion scenario.
@@ -1510,6 +1513,9 @@ bool Select_Game(bool fade)
     Hide_Mouse();
     Hide_Mouse();
     WWMouse->Erase_Mouse(&HidPage, true);
+    if (!Is_Video_Fullscreen()) {
+        WWMouse->Set_Cursor_Clip();
+    }
 
     Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
     HiddenPage.Clear();

@@ -41,6 +41,8 @@
 */
 #ifdef NETWORKING
 #include <winsock.h>
+#else
+#define SOCKET short
 #endif
 
 /*
@@ -60,8 +62,13 @@
 /*
 ** Define events for Winsock callbacks
 */
+#ifdef _WIN32
 #define WM_IPXASYNCEVENT (WM_USER + 115) // IPX socket Async event
 #define WM_UDPASYNCEVENT (WM_USER + 116) // UDP socket Async event
+#else
+#define WM_IPXASYNCEVENT 0
+#define WM_UDPASYNCEVENT 0
+#endif
 
 /*
 ** Enum to identify the protocols supported by the Winsock interface.
@@ -117,10 +124,12 @@ public:
         return (false);
     };
 
+#ifdef _WIN32
     virtual long Message_Handler(HWND, UINT, UINT, LONG)
     {
         return (1);
     }
+#endif
 
     typedef enum ConnectStatusEnum
     {
@@ -173,7 +182,9 @@ protected:
     /*
     ** Async object required for callbacks to our message handler.
     */
+#ifdef _WIN32
     HANDLE ASync;
+#endif
 
     /*
     ** Temporary receive buffer to use when querying Winsock for incoming packets.

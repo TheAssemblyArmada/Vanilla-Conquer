@@ -35,12 +35,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include <conio.h>
-#include <io.h>
 
-#ifdef WIN32
 #include "ipx95.h"
-#endif // WIN32
 
 #ifdef MCIMPEG // Denzil 6/15/98
 #include "mcimovie.h"
@@ -56,9 +52,11 @@ bool Read_Private_Config_Struct(FileClass& file, NewConfigType* config);
 void Print_Error_End_Exit(char* string);
 void Print_Error_Exit(char* string);
 
+#ifdef _WIN32
 extern void Create_Main_Window(HANDLE instance, int command_show, int width, int height);
-extern BOOL RA95AlreadyRunning;
 HINSTANCE ProgramInstance;
+#endif
+extern bool RA95AlreadyRunning;
 void Check_Use_Compressed_Shapes(void);
 void Read_Setup_Options(RawFileClass* config_file);
 bool VideoBackBufferAllowed = true;
@@ -167,14 +165,11 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 #else
 int main(int argc, char* argv[])
 {
-#endif // WIN32
+#endif // _WIN32
 
-#ifdef WIN32
-
-#endif
 // printf("in program.\n");getch();
 // printf("ram free = %ld\n",Ram_Free(MEM_NORMAL));getch();
-#ifdef WIN32
+#ifdef _WIN32
     if (Ram_Free(MEM_NORMAL) < 7000000) {
 #else
 
@@ -183,15 +178,8 @@ int main(int argc, char* argv[])
         free(temp_mem);
     } else {
 
-        // if (Ram_Free(MEM_NORMAL) < 13000000) {
-//	if (Ram_Free(MEM_NORMAL) < 3500000) {
 #endif
         printf(TEXT_NO_RAM);
-
-#ifndef WIN32
-        printf(TEXT_USE_START_MENU);
-        getch();
-#endif
 
 #if (0)
 
@@ -213,7 +201,7 @@ int main(int argc, char* argv[])
         return (EXIT_FAILURE);
     }
 
-#ifdef WIN32
+#ifdef _WIN32
 
     if (strstr(command_line, "f:\\projects\\c&c0") != NULL || strstr(command_line, "F:\\PROJECTS\\C&C0") != NULL) {
         MessageBoxA(0, "Playing off of the network is not allowed.", "Red Alert", MB_OK | MB_ICONSTOP);
@@ -275,7 +263,7 @@ int main(int argc, char* argv[])
 
     } while (command_char != 0 && command_char != 13 && argc < 20);
 
-#endif // WIN32
+#endif // _WIN32
 
     /*
     **	Remember the current working directory and drive.
@@ -374,25 +362,19 @@ int main(int argc, char* argv[])
 #else
         RawFileClass cfile(CONFIG_FILE_NAME);
 #endif
-#ifndef WIN32
-        Install_Keyboard_Interrupt(Get_RM_Keyboard_Address(), Get_RM_Keyboard_Size());
-#endif // WIN32
 
         Keyboard = new WWKeyboardClass();
 
-#ifdef WIN32
         /*
         ** If there is loads of memory then use uncompressed shapes
         */
         Check_Use_Compressed_Shapes();
-#endif
 
         /*
         ** If there is not enough disk space free, don't allow the product to run.
         */
         if (Disk_Space_Available() < INIT_FREE_DISK_SPACE) {
 
-#ifdef WIN32
 #if (0) // PG
             char disk_space_message[512];
             sprintf(disk_space_message, TEXT_CRITICALLY_LOW); // PG , (INIT_FREE_DISK_SPACE) / (1024 * 1024));
@@ -401,80 +383,59 @@ int main(int argc, char* argv[])
                 return (EXIT_FAILURE);
             }
 #endif
-#else
-            printf(TEXT_INSUFFICIENT);
-            printf(TEXT_MUST_HAVE, INIT_FREE_DISK_SPACE / (1024 * 1024));
-            printf("\n");
-            if (Keyboard)
-                Keyboard->Get();
-            Remove_Keyboard_Interrupt();
-            Remove_Timer_System();
-            return (EXIT_FAILURE);
-#endif
         }
 
         if (cfile.Is_Available()) {
 
             Read_Private_Config_Struct(cfile, &NewConfig);
 
-#ifdef WIN32
-
             /*
             ** Set the options as requested by the ccsetup program
             */
             Read_Setup_Options(&cfile);
 
+#if defined(_WIN32) && !defined(SDL2_BUILD)
             Create_Main_Window(instance, command_show, ScreenWidth, ScreenHeight);
+#endif
             SoundOn = Audio_Init(16, false, 11025 * 2, 0);
-#else  // WIN32
-            if (!Debug_Quiet) {
-                Audio_Init(NewConfig.DigitCard,
-                           NewConfig.Port,
-                           NewConfig.IRQ,
-                           NewConfig.DMA,
-                           PLAYBACK_RATE_NORMAL,
-                           //						(NewConfig.Speed) ? PLAYBACK_RATE_SLOW : PLAYBACK_RATE_NORMAL,
-                           NewConfig.BitsPerSample,
-                           //						4,
-                           (Get_CPU() < 5) ? 3 : 5,
-                           //						(NewConfig.Speed) ? 3 : 5,
-                           NewConfig.Reverse);
-                SoundOn = true;
-            } else {
-                Audio_Init(0, -1, -1, -1, PLAYBACK_RATE_NORMAL, 8, 5, false);
-            }
-#endif // WIN32
 
-#ifdef WIN32
 #ifdef MPEGMOVIE // Denzil 6/10/98
             if (!InitDDraw())
                 return (EXIT_FAILURE);
 #else
-            BOOL video_success = FALSE;
+            bool video_success = false;
             /*
             ** Set 640x400 video mode. If its not available then try for 640x480
             */
 #ifdef REMASTER_BUILD
-            video_success = TRUE;
+            video_success = true;
+#else
+
+#ifdef SDL2_BUILD
+            video_success = static_cast<bool>(Set_Video_Mode(OutputWidth, OutputHeight, 8));
 #else
             if (ScreenHeight == 400) {
                 if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
-                    video_success = TRUE;
+                    video_success = true;
                 } else {
                     if (Set_Video_Mode(ScreenWidth, 480, 8)) {
-                        video_success = TRUE;
+                        video_success = true;
                         ScreenHeight = 480;
                     }
                 }
             } else {
                 if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
-                    video_success = TRUE;
+                    video_success = true;
                 }
             }
+#endif // SDL2_BUILD
+
 #endif
 
             if (!video_success) {
+#ifdef _WIN32
                 MessageBoxA(MainWindow, TEXT_VIDEO_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
+#endif
                 // if (Palette) delete Palette;
                 return (EXIT_FAILURE);
             }
@@ -501,7 +462,9 @@ int main(int argc, char* argv[])
                     */
                     WWDebugString(TEXT_DDRAW_ERROR);
                     WWDebugString("\n");
+#ifdef _WIN32
                     MessageBoxA(MainWindow, TEXT_DDRAW_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
+#endif
                     return (EXIT_FAILURE);
                 }
 
@@ -568,14 +531,12 @@ int main(int argc, char* argv[])
             // The editor needs to not start the mouse up. - 7/22/2019 JAS
             if (!RunningFromEditor) {
                 WWMouse = new WWMouseClass(&SeenBuff, 48, 48);
-                MouseInstalled = TRUE;
+                MouseInstalled = true;
             }
 
 #ifndef REMASTER_BUILD
             CDFileClass::Set_CD_Drive(CDList.Get_First_CD_Drive());
 #endif
-
-#endif // WIN32
 
             /*
             ** See if we should run the intro
@@ -634,7 +595,6 @@ int main(int argc, char* argv[])
             HiddenPage.Clear();
             Memory_Error_Exit = Print_Error_Exit;
 
-#ifdef WIN32
             /*
             ** Flag that this is a clean shutdown (not killed with Ctrl-Alt-Del)
             */
@@ -643,6 +603,7 @@ int main(int argc, char* argv[])
             /*
             ** Post a message to our message handler to tell it to clean up.
             */
+#if defined(_WIN32) && !defined(SDL2_BUILD)
             PostMessage(MainWindow, WM_DESTROY, 0, 0);
 
             /*
@@ -651,13 +612,9 @@ int main(int argc, char* argv[])
             do {
                 Keyboard->Check();
             } while (ReadyToQuit == 1);
+#endif
 
             return (EXIT_SUCCESS);
-
-#else  // WIN32
-            Remove_Mouse();
-            Sound_End();
-#endif // WIN32
         } else {
             if (!RunningFromEditor) {
                 puts(TEXT_SETUP_FIRST);
@@ -668,10 +625,6 @@ int main(int argc, char* argv[])
     /*
     **	Restore the current drive and directory.
     */
-#ifndef WIN32
-    _dos_setdrive(olddrive, &drivecount);
-    chdir(oldpath);
-#endif // WIN32
     return (EXIT_SUCCESS);
 }
 
@@ -686,26 +639,28 @@ bool InitDDraw(void)
     HidPage.Attach(&HiddenPage, 0, 0, 3072, 3072);
 
 #else
-    BOOL video_success = FALSE;
+    bool video_success = false;
 
     /* Set 640x400 video mode. If its not available then try for 640x480 */
     if (ScreenHeight == 400) {
         if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
-            video_success = TRUE;
+            video_success = true;
         } else {
             if (Set_Video_Mode(ScreenWidth, 480, 8)) {
-                video_success = TRUE;
+                video_success = true;
                 ScreenHeight = 480;
             }
         }
     } else {
         if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
-            video_success = TRUE;
+            video_success = true;
         }
     }
 
     if (!video_success) {
+#ifdef _WIN32
         MessageBoxA(MainWindow, TEXT_VIDEO_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
+#endif
         return false;
     }
 
@@ -720,7 +675,9 @@ bool InitDDraw(void)
             /* Aaaarrgghh! */
             WWDebugString(TEXT_DDRAW_ERROR);
             WWDebugString("\n");
+#ifdef _WIN32
             MessageBoxA(MainWindow, TEXT_DDRAW_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
+#endif
             return false;
         }
 
@@ -785,7 +742,7 @@ bool InitDDraw(void)
  *   03/20/1995 JLB : Created.                                                                 *
  *   08/07/2019  ST : Added why and fatal params                                               *
  *=============================================================================================*/
-void __cdecl Prog_End(const char* why, bool fatal)
+void Prog_End(const char* why, bool fatal)
 {
     GlyphX_Debug_Print("Prog_End()");
 
@@ -848,8 +805,6 @@ void Emergency_Exit(int code)
         return;
     }
 
-#ifdef WIN32
-
     /*
     ** Clear out the video buffers so we dont glitch when we lose focus
     */
@@ -867,7 +822,9 @@ void Emergency_Exit(int code)
     /*
     ** Post a message to our message handler to tell it to clean up.
     */
+#ifdef _WIN32
     PostMessage(MainWindow, WM_DESTROY, 0, 0);
+#endif
 
     /*
     ** Wait until the message handler has dealt with the message
@@ -876,18 +833,8 @@ void Emergency_Exit(int code)
         Keyboard->Check();
     } while (ReadyToQuit == 3);
 
-#else // WIN32
-    /*
-    ** Do the DOS end
-    */
-    Prog_End();
-
-#endif // WIN32
-
     exit(code);
 }
-
-#ifdef WIN32
 
 /***********************************************************************************************
  * Read_Setup_Options -- Read stuff in from the INI file that we need to know sooner           *
@@ -918,6 +865,8 @@ void Read_Setup_Options(RawFileClass* config_file)
         VideoBackBufferAllowed = ini.Get_Bool("Options", "VideoBackBuffer", true);
         AllowHardwareBlitFills = ini.Get_Bool("Options", "HardwareFills", true);
         ScreenHeight = ini.Get_Bool("Options", "Resolution", false) ? GBUFF_INIT_ALTHEIGHT : GBUFF_INIT_HEIGHT;
+        OutputWidth = ini.Get_Int("Options", "OutputWidth", ScreenWidth);
+        OutputHeight = ini.Get_Int("Options", "OutputHeight", ScreenHeight);
 
         /*
         ** See if an alternative socket number has been specified
@@ -990,5 +939,3 @@ void Get_OS_Version(void)
     }
 #endif //(0)
 }
-
-#endif // WIN32

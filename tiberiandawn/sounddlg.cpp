@@ -30,6 +30,7 @@
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
+ *   MusicListClass::Draw_Entry -- Draw the score line in a list box.                          *
  *   SoundControlsClass::Process -- Handles all the options graphic interface.                 *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
@@ -54,6 +55,7 @@ public:
 protected:
     virtual void Draw_Entry(int index, int x, int y, int width, int selected);
 };
+
 int SoundControlsClass::Init(void)
 {
     int factor = (SeenBuff.Get_Width() == 320) ? 1 : 2;
@@ -103,7 +105,7 @@ int SoundControlsClass::Init(void)
 }
 
 /***********************************************************************************************
- * OptionsClass::Process -- Handles all the options graphic interface.                         *
+ * SoundControlsClass::Process -- Handles all the options graphic interface.                   *
  *                                                                                             *
  *    This routine is the main control for the visual representation of the options            *
  *    screen. It handles the visual overlay and the player input.                              *
@@ -432,7 +434,7 @@ void SoundControlsClass::Process(void)
     **	If the score volume was turned all the way down, then actually
     **	stop the scores from being played.
     */
-    if (!Options.ScoreVolume) {
+    if (Options.ScoreVolume == 0) {
         Theme.Stop();
     }
 
@@ -451,6 +453,27 @@ void SoundControlsClass::Process(void)
     }
 }
 
+/***********************************************************************************************
+ * MusicListClass::Draw_Entry -- Draw the score line in a list box.                            *
+ *                                                                                             *
+ *    This routine will display the score line in a list box. It overrides the list box        *
+ *    handler for line drawing.                                                                *
+ *                                                                                             *
+ * INPUT:   index    -- The index within the list box that is being drawn.                     *
+ *                                                                                             *
+ *          x,y      -- The pixel coordinates of the upper left position of the line.          *
+ *                                                                                             *
+ *          width    -- The width of the line that drawing is allowed to use.                  *
+ *                                                                                             *
+ *          selected-- Is the current line selected?                                           *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   09/22/1995 JLB : Created.                                                                 *
+ *=============================================================================================*/
 void MusicListClass::Draw_Entry(int index, int x, int y, int width, int selected)
 {
     if (TextFlags & TPF_6PT_GRAD) {
@@ -465,16 +488,10 @@ void MusicListClass::Draw_Entry(int index, int x, int y, int width, int selected
             }
         }
 
-        Conquer_Clip_Text_Print((char*)Add_Long_To_Pointer(List[index], 1), x, y, CC_GREEN, TBLACK, flags, width, Tabs);
+        Conquer_Clip_Text_Print((char*)List[index] + 1, x, y, CC_GREEN, TBLACK, flags, width, Tabs);
 
     } else {
-        Conquer_Clip_Text_Print((char*)Add_Long_To_Pointer(List[index], 1),
-                                x,
-                                y,
-                                (selected ? BLUE : WHITE),
-                                TBLACK,
-                                TextFlags,
-                                width,
-                                Tabs);
+        Conquer_Clip_Text_Print(
+            (char*)List[index] + 1, x, y, (selected ? BLUE : WHITE), TBLACK, TextFlags, width, Tabs);
     }
 }

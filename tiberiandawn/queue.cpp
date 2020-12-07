@@ -3947,7 +3947,7 @@ static void Init_Queue_Mono(ConnManClass* net)
         if (NetMonoMode == 0) {
             if (Frame == 0 || NewMonoMode) {
                 net->Configure_Debug(
-                    0, sizeof(CommHeaderType), sizeof(EventClass::EventType), EventClass::EventNames, 0);
+                    0, sizeof(CommHeaderType), sizeof(EventClass::EventType), EventClass::EventNames, 0, 27);
                 net->Mono_Debug_Print(0, 1);
                 NewMonoMode = 0;
             } else {
