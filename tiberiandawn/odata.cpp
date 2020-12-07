@@ -827,6 +827,7 @@ ObjectClass* OverlayTypeClass::Create_One_Of(HouseClass*) const
  *=============================================================================================*/
 void OverlayTypeClass::Draw_It(int x, int y, int data) const
 {
+    IsTheaterShape = IsTheater;
     CC_Draw_Shape(Get_Image_Data(),
                   data,
                   Map.TacPixelX + x + (CELL_PIXEL_W >> 1),
@@ -835,6 +836,7 @@ void OverlayTypeClass::Draw_It(int x, int y, int data) const
                   SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_GHOST,
                   NULL,
                   Map.UnitShadow);
+    IsTheaterShape = false;
 }
 
 /***********************************************************************************************
