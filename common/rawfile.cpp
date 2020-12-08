@@ -364,6 +364,12 @@ void RawFileClass::Close(void)
         **	At this point the file must have been closed. Mark the file as empty and return.
         */
         Handle = nullptr;
+
+        /*
+        **	Clear any positioning information incase class is reused to open another file.
+        */
+        BiasStart = 0;
+        BiasLength = -1;
     }
 }
 
