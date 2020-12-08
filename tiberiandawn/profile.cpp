@@ -615,10 +615,11 @@ bool WWWritePrivateProfileString(char const* section, char const* entry, char co
         eol = strcspn(offset, "\n");
 
         /*
-        **	Erase the entry by strcpy'ing the entire INI file over this entry
+        **	Erase the entry by memmoving the entire INI file over this entry
         */
         if (eol) {
-            strcpy(offset, offset + eol + 1);
+            int len = strlen(offset + eol + 1);
+            memmove(offset, offset + eol + 1, len + 1); // include null in move
         }
     } else {
 
