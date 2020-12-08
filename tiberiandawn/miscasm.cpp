@@ -27,7 +27,9 @@
 
 extern "C" void Mem_Copy(void const* source, void* dest, unsigned long bytes_to_copy)
 {
-    memcpy(dest, source, bytes_to_copy);
+    if (dest != source) {
+        memcpy(dest, source, bytes_to_copy);
+    }
 }
 
 /*
