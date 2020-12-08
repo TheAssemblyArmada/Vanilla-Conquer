@@ -214,6 +214,9 @@ SidebarClass::SidebarClass(NoInitClass const& x)
  *=============================================================================================*/
 void SidebarClass::One_Time(void)
 {
+	// Needs to be done here as PowerClass::One_Time() references MAX_VISIBLE to calculate power bar height
+	StripClass::MAX_VISIBLE = (ScreenHeight - ((SIDE_Y + StripClass::SBUTTON_HEIGHT) * RESFACTOR)) / (StripClass::OBJECT_HEIGHT * RESFACTOR);
+
     PowerClass::One_Time();
 
     /*

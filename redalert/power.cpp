@@ -131,10 +131,10 @@ void PowerClass::Init_Clear(void)
 void PowerClass::One_Time(void)
 {
     RadarClass::One_Time();
-    PowerButton.X = POWER_X * RESFACTOR;
+    PowerButton.X = ScreenWidth - 160;
     PowerButton.Y = POWER_Y * RESFACTOR;
     PowerButton.Width = (POWER_WIDTH * RESFACTOR) - 1;
-    PowerButton.Height = POWER_HEIGHT * RESFACTOR;
+    PowerButton.Height = (((SidebarClass::StripClass::MAX_VISIBLE * int(SidebarClass::StripClass::OBJECT_HEIGHT)) + 1) * RESFACTOR) + 126;
     PowerShape = MFCD::Retrieve("POWER.SHP");
     PowerBarShape = MFCD::Retrieve("POWERBAR.SHP");
 }
@@ -177,7 +177,7 @@ void PowerClass::Draw_It(bool complete)
                 //LTGREY);
                 CC_Draw_Shape(PowerBarShape,
                               0,
-                              240 * RESFACTOR,
+							  ScreenWidth - 160,
                               88 * RESFACTOR,
                               WINDOW_MAIN,
                               flags | SHAPE_NORMAL | SHAPE_WIN_REL,
@@ -188,8 +188,9 @@ void PowerClass::Draw_It(bool complete)
                 */
                 CC_Draw_Shape(PowerBarShape,
                               1,
-                              240 * RESFACTOR,
-                              (88 * RESFACTOR) + (56 * RESFACTOR),
+							  ScreenWidth - 160,
+                              //(88 * RESFACTOR) + (56 * RESFACTOR),
+							  PowerButton.Height - 32,
                               WINDOW_MAIN,
                               flags | SHAPE_NORMAL | SHAPE_WIN_REL,
                               remap);
@@ -232,10 +233,10 @@ void PowerClass::Draw_It(bool complete)
                     */
                     power_height = (power_height * (76 * RESFACTOR + 1)) / (53 * RESFACTOR + 1);
                     drain_height = (drain_height * (76 * RESFACTOR + 1)) / (53 * RESFACTOR + 1);
-                    bottom = (175 * RESFACTOR) + 1;
+					bottom = (((SidebarClass::StripClass::MAX_VISIBLE * int(SidebarClass::StripClass::OBJECT_HEIGHT)) + 1) * RESFACTOR) + 157;
 
-                    LogicPage->Fill_Rect(245 * RESFACTOR, bottom - power_height, 245 * RESFACTOR + 1, bottom, color2);
-                    LogicPage->Fill_Rect(246 * RESFACTOR, bottom - power_height, 246 * RESFACTOR + 1, bottom, color1);
+                    LogicPage->Fill_Rect(ScreenWidth - 150, bottom - power_height, ScreenWidth - 149, bottom, color2);
+                    LogicPage->Fill_Rect(ScreenWidth - 148, bottom - power_height, ScreenWidth - 147, bottom, color1);
                 }
 
                 /*
@@ -243,8 +244,8 @@ void PowerClass::Draw_It(bool complete)
                 */
                 CC_Draw_Shape(PowerShape,
                               0,
-                              (POWER_X * RESFACTOR) + RESFACTOR,
-                              bottom - (drain_height + (2 * RESFACTOR)),
+                              ScreenWidth - 158,
+                              bottom - (drain_height + 4),
                               WINDOW_MAIN,
                               flags | SHAPE_NORMAL,
                               remap);
