@@ -92,7 +92,7 @@ void CreditClass::Graphic_Logic(bool forced)
         ** Adjust the credits display to be above the sidebar for 640x400
         */
         if (!Options.ToggleSidebar) {
-            xx += 80 * RESFACTOR;
+			xx += 80 * RESFACTOR;
         }
 
         /*

@@ -142,21 +142,21 @@ void TabClass::Draw_Credits_Tab(void)
     if (Options.ToggleSidebar) {
         CC_Draw_Shape(TabShape,
                       Map.MoneyFlashTimer > 1 ? 5 : 2,
-                      (ScreenHeight - (EVA_WIDTH * 2)),
+                      (ScreenWidth - (EVA_WIDTH * 2 * RESFACTOR)),
                       0,
                       WINDOW_MAIN,
                       SHAPE_NORMAL);
     } else {
         CC_Draw_Shape(
-            TabShape, Map.MoneyFlashTimer > 1 ? 8 : 6, (ScreenHeight - EVA_WIDTH), 0, WINDOW_MAIN, SHAPE_NORMAL);
+            TabShape, Map.MoneyFlashTimer > 1 ? 8 : 6, ScreenWidth - (EVA_WIDTH * RESFACTOR), 0, WINDOW_MAIN, SHAPE_NORMAL);
     }
 
     if (Scen.MissionTimer.Is_Active()) {
         bool light = ((int)Scen.MissionTimer < TICKS_PER_MINUTE * Rule.TimerWarning) || Map.FlasherTimer > 0;
         if (Options.ToggleSidebar) {
-            CC_Draw_Shape(TabShape, light ? 4 : 2, (ScreenHeight - (EVA_WIDTH * 3)), 0, WINDOW_MAIN, SHAPE_NORMAL);
+            CC_Draw_Shape(TabShape, light ? 4 : 2, ScreenWidth - (EVA_WIDTH * 3 * RESFACTOR), 0, WINDOW_MAIN, SHAPE_NORMAL);
         } else {
-            CC_Draw_Shape(TabShape, light ? 4 : 2, (ScreenHeight - (EVA_WIDTH * 2)), 0, WINDOW_MAIN, SHAPE_NORMAL);
+            CC_Draw_Shape(TabShape, light ? 4 : 2, ScreenWidth - (EVA_WIDTH * 2 * RESFACTOR), 0, WINDOW_MAIN, SHAPE_NORMAL);
         }
     }
 }
@@ -168,9 +168,9 @@ void TabClass::Hilite_Tab(int tab)
     int textx = (EVA_WIDTH / 2) * RESFACTOR;
 
     if (tab) {
-        xpos = (320 - EVA_WIDTH) * RESFACTOR;
+        xpos = (ScreenWidth - EVA_WIDTH);
         text = TXT_TAB_SIDEBAR;
-        textx = (320 - (EVA_WIDTH / 2)) * RESFACTOR;
+        textx = (ScreenWidth - (EVA_WIDTH / 2));
     }
 
     /*
@@ -179,7 +179,7 @@ void TabClass::Hilite_Tab(int tab)
     CC_Draw_Shape(TabShape, 1, xpos, 0, WINDOW_MAIN, SHAPE_NORMAL);
     MetalScheme.Color = 128 + 6;
     Fancy_Text_Print(TXT_TAB_BUTTON_CONTROLS,
-                     (EVA_WIDTH / 2) * RESFACTOR,
+                     textx,
                      0,
                      &MetalScheme,
                      TBLACK,
@@ -229,7 +229,7 @@ void TabClass::AI(KeyNumType& input, int x, int y)
                 if (x < EVA_WIDTH * RESFACTOR)
                     sel = 0;
                 if (Options.ToggleSidebar) {
-                    if (x > (320 - 80) * RESFACTOR)
+                    if (x > (ScreenWidth - 80))
                         sel = 1;
                 }
                 if (sel >= 0) {
