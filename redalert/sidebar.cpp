@@ -111,7 +111,11 @@ ShapeButtonClass SidebarClass::Upgrade;
 ShapeButtonClass SidebarClass::Zoom;
 ShapeButtonClass SidebarClass::StripClass::UpButton[COLUMNS];
 ShapeButtonClass SidebarClass::StripClass::DownButton[COLUMNS];
-SidebarClass::StripClass::SelectClass SidebarClass::StripClass::SelectButton[COLUMNS][MAX_VISIBLE];
+SidebarClass::StripClass::SelectClass SidebarClass::StripClass::SelectButton[COLUMNS][128];
+
+int SidebarClass::StripClass::MAX_VISIBLE; // Number of object slots visible at any one time.
+int SidebarClass::StripClass::UP_Y_OFFSET;
+int SidebarClass::StripClass::DOWN_Y_OFFSET; // BGint(MAX_VISIBLE)*int(OBJECT_HEIGHT)+1,
 
 /*
 ** Shape data pointers
@@ -147,6 +151,8 @@ SidebarClass::SidebarClass(void)
     **	code so that as the sidebar buildable buttons scroll, they get properly
     **	clipped at the top and bottom edges.
     */
+
+
     WindowList[WINDOW_SIDEBAR][WINDOWX] = (SIDE_X + 8);
     WindowList[WINDOW_SIDEBAR][WINDOWY] = SIDE_Y + 1 + TOP_HEIGHT;
     WindowList[WINDOW_SIDEBAR][WINDOWWIDTH] = SIDE_WIDTH;
@@ -159,11 +165,6 @@ SidebarClass::SidebarClass(void)
     */
     new (&Column[0]) StripClass(InitClass());
     new (&Column[1]) StripClass(InitClass());
-
-    Column[0].X = COLUMN_ONE_X * RESFACTOR;
-    Column[0].Y = COLUMN_ONE_Y * RESFACTOR;
-    Column[1].X = COLUMN_TWO_X * RESFACTOR;
-    Column[1].Y = COLUMN_TWO_Y * RESFACTOR;
 }
 
 /***********************************************************************************************
@@ -220,7 +221,11 @@ void SidebarClass::One_Time(void)
     **	code so that as the sidebar buildable buttons scroll, they get properly
     **	clipped at the top and bottom edges.
     */
-    WindowList[WINDOW_SIDEBAR][WINDOWX] = ((SIDE_X + 8)) * RESFACTOR;
+	StripClass::MAX_VISIBLE = (ScreenHeight - ((SIDE_Y + StripClass::SBUTTON_HEIGHT) * RESFACTOR)) / (StripClass::OBJECT_HEIGHT * RESFACTOR);
+	StripClass::UP_Y_OFFSET = StripClass::MAX_VISIBLE * int(StripClass::OBJECT_HEIGHT) + 1;
+	StripClass::DOWN_Y_OFFSET = StripClass::UP_Y_OFFSET;
+
+    WindowList[WINDOW_SIDEBAR][WINDOWX] = ScreenWidth - 144;
     WindowList[WINDOW_SIDEBAR][WINDOWY] = (SIDE_Y + 1 + TOP_HEIGHT) * RESFACTOR;
     WindowList[WINDOW_SIDEBAR][WINDOWWIDTH] = (SIDE_WIDTH)*RESFACTOR;
     WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = (StripClass::MAX_VISIBLE * StripClass::OBJECT_HEIGHT) * RESFACTOR;
@@ -235,10 +240,12 @@ void SidebarClass::One_Time(void)
     **	Set up the coordinates for the sidebar strips. These coordinates are for
     **	the upper left corner.
     */
-    //	Column[0].X = COLUMN_ONE_X * RESFACTOR;
-    //	Column[0].Y = COLUMN_ONE_Y * RESFACTOR;
-    //	Column[1].X = COLUMN_TWO_X * RESFACTOR;
-    //	Column[1].Y = COLUMN_TWO_Y * RESFACTOR;
+	Column[0].X = ScreenWidth - 144;
+	Column[0].Y = COLUMN_ONE_Y * RESFACTOR;
+	Column[1].X = ScreenWidth - 74;
+	Column[1].Y = COLUMN_TWO_Y * RESFACTOR;
+
+
     Column[0].One_Time(0);
     Column[1].One_Time(1);
 
@@ -300,7 +307,7 @@ void SidebarClass::Init_IO(void)
 
         Repair.IsSticky = true;
         Repair.ID = BUTTON_REPAIR;
-        Repair.X = (0x1f2 / 2) * RESFACTOR;
+        Repair.X = ScreenWidth - 142;
         Repair.Y = (0x96 / 2) * RESFACTOR;
         Repair.IsPressed = false;
         Repair.IsToggleType = true;
@@ -309,7 +316,7 @@ void SidebarClass::Init_IO(void)
 
         Upgrade.IsSticky = true;
         Upgrade.ID = BUTTON_UPGRADE;
-        Upgrade.X = 0x21f;
+        Upgrade.X = ScreenWidth - 97;
         Upgrade.Y = (0x96 / 2) * RESFACTOR;
         Upgrade.IsPressed = false;
         Upgrade.IsToggleType = true;
@@ -318,7 +325,7 @@ void SidebarClass::Init_IO(void)
 
         Zoom.IsSticky = true;
         Zoom.ID = BUTTON_ZOOM;
-        Zoom.X = (0x24c / 2) * RESFACTOR;
+        Zoom.X = ScreenWidth - 52;
         Zoom.Y = (0x96 / 2) * RESFACTOR;
         Zoom.IsPressed = false;
         Zoom.Set_Shape(MFCD::Retrieve("MAP.SHP"));
@@ -756,11 +763,11 @@ void SidebarClass::Draw_It(bool complete)
             /*
             ** The sidebar shape is too big in 640x400 so it needs to be drawn in three chunks.
             */
-            CC_Draw_Shape(SidebarShape, 0, SIDE_X * RESFACTOR, 8 * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
+            CC_Draw_Shape(SidebarShape, 0, ScreenWidth - (80 * RESFACTOR), 8 * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
             CC_Draw_Shape(
-                SidebarMiddleShape, shape, SIDE_X * RESFACTOR, (8 + 80) * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
+                SidebarMiddleShape, shape, ScreenWidth - (80 * RESFACTOR), (8 + 80) * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
             CC_Draw_Shape(
-                SidebarBottomShape, shape, SIDE_X * RESFACTOR, (8 + 80 + 50) * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
+                SidebarBottomShape, shape, ScreenWidth - (80 * RESFACTOR), (8 + 80 + 50) * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
 
             Repair.Draw_Me(true);
             Upgrade.Draw_Me(true);
