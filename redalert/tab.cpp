@@ -142,21 +142,21 @@ void TabClass::Draw_Credits_Tab(void)
     if (Options.ToggleSidebar) {
         CC_Draw_Shape(TabShape,
                       Map.MoneyFlashTimer > 1 ? 5 : 2,
-                      (320 - (EVA_WIDTH * 2)) * RESFACTOR,
+                      (ScreenHeight - (EVA_WIDTH * 2)),
                       0,
                       WINDOW_MAIN,
                       SHAPE_NORMAL);
     } else {
         CC_Draw_Shape(
-            TabShape, Map.MoneyFlashTimer > 1 ? 8 : 6, (320 - EVA_WIDTH) * RESFACTOR, 0, WINDOW_MAIN, SHAPE_NORMAL);
+            TabShape, Map.MoneyFlashTimer > 1 ? 8 : 6, (ScreenHeight - EVA_WIDTH), 0, WINDOW_MAIN, SHAPE_NORMAL);
     }
 
     if (Scen.MissionTimer.Is_Active()) {
         bool light = ((int)Scen.MissionTimer < TICKS_PER_MINUTE * Rule.TimerWarning) || Map.FlasherTimer > 0;
         if (Options.ToggleSidebar) {
-            CC_Draw_Shape(TabShape, light ? 4 : 2, (320 - (EVA_WIDTH * 3)) * RESFACTOR, 0, WINDOW_MAIN, SHAPE_NORMAL);
+            CC_Draw_Shape(TabShape, light ? 4 : 2, (ScreenHeight - (EVA_WIDTH * 3)), 0, WINDOW_MAIN, SHAPE_NORMAL);
         } else {
-            CC_Draw_Shape(TabShape, light ? 4 : 2, (320 - (EVA_WIDTH * 2)) * RESFACTOR, 0, WINDOW_MAIN, SHAPE_NORMAL);
+            CC_Draw_Shape(TabShape, light ? 4 : 2, (ScreenHeight - (EVA_WIDTH * 2)), 0, WINDOW_MAIN, SHAPE_NORMAL);
         }
     }
 }

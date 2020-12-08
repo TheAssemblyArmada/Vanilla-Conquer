@@ -139,6 +139,7 @@ extern int ScreenWidth;
 extern int ScreenHeight;
 extern int OutputWidth;
 extern int OutputHeight;
+extern bool Show640x480BlackBars;
 extern GraphicBufferClass ModeXBuff;
 
 /*
