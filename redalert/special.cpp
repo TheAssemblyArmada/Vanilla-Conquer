@@ -492,8 +492,8 @@ int Fetch_Difficulty(void)
 {
     int const w = 250 * RESFACTOR;
     int const h = 80 * RESFACTOR;
-    int const x = ((320 * RESFACTOR) / 2) - w / 2;
-    int const y = ((200 * RESFACTOR) / 2) - h / 2;
+    int const x = (((320 * RESFACTOR) / 2) - w / 2) + HIRES_ADJ_W;
+    int const y = (((200 * RESFACTOR) / 2) - h / 2) + HIRES_ADJ_H;
     int const bwidth = 30 * RESFACTOR;
 
     /*

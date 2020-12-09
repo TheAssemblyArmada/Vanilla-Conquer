@@ -74,9 +74,9 @@ GameType Select_MPlayer_Game(void)
     int d_dialog_y = (((255 * RESFACTOR) - d_dialog_h) / 2);
 #else
     int d_dialog_h = 78 * RESFACTOR;
-    int d_dialog_y = 90 * RESFACTOR;
+    int d_dialog_y = (90 * RESFACTOR) + HIRES_ADJ_H;
 #endif
-    int d_dialog_x = (((320 * RESFACTOR) - d_dialog_w) / 2);
+    int d_dialog_x = ((((320 * RESFACTOR) - d_dialog_w) / 2)) + HIRES_ADJ_W;
     int d_dialog_cx = d_dialog_x + (d_dialog_w / 2);
 
     int d_txt6_h = 7 * RESFACTOR;
