@@ -79,6 +79,12 @@ struct point
                                 {{32, 156}, {46, 171}, {-1, -1}},
                                 {{108, 97}, {-1, -1}, {-1, -1}}}};
 
+void Interpolate_2X_Scale_And_Center(GraphicBufferClass* source, GraphicViewPortClass* dest, char const* palette_file_name) {
+	HiddenPage.Clear();
+	Interpolate_2X_Scale(source, &HiddenPage, palette_file_name);
+	HiddenPage.Blit(*dest, HIRES_ADJ_W, HIRES_ADJ_H);
+}
+
 /***********************************************************************************************
  * Map_Selection -- Starts the whole process of selecting next map to go to                    *
  *                                                                                             *
@@ -154,7 +160,7 @@ char const* Map_Selection(void)
     for (int x = 0; x < 256; x++)
         memset(&PaletteInterpolationTable[x][0], x, 256);
     CopyType = 1;
-    Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, 0);
+	Interpolate_2X_Scale_And_Center(pseudoseenbuff, &SeenBuff, 0);
 
     int frame = 1;
     StreamLowImpact = true;
@@ -162,7 +168,7 @@ char const* Map_Selection(void)
     while (frame < Get_Animation_Frame_Count(anim)) {
         CopyType = 1;
         Animate_Frame(anim, *pseudoseenbuff, frame++);
-        Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, NULL);
+		Interpolate_2X_Scale_And_Center(pseudoseenbuff, &SeenBuff, NULL);
         CopyType = 0;
         Call_Back_Delay(2);
         switch (frame) {
@@ -196,7 +202,7 @@ char const* Map_Selection(void)
         if (AllSurfaces.SurfacesRestored) {
             AllSurfaces.SurfacesRestored = false;
             CopyType = 1;
-            Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, NULL);
+			Interpolate_2X_Scale_And_Center(pseudoseenbuff, &SeenBuff, NULL);
             CopyType = 0;
         }
         Cycle_Call_Back_Delay(1, mappalette);
@@ -240,8 +246,8 @@ char const* Map_Selection(void)
     //	SeenPage.Clear();
 
     Fancy_Text_Print(TXT_STAND_BY,
-                     160 * RESFACTOR,
-                     190 * RESFACTOR,
+                     (160 * RESFACTOR) + HIRES_ADJ_W,
+                     (190 * RESFACTOR) + HIRES_ADJ_H,
                      GadgetClass::Get_Color_Scheme(),
                      TBLACK,
                      TPF_CENTER | TPF_6PT_GRAD | TPF_DROPSHADOW);
@@ -274,12 +280,13 @@ char const* Map_Selection(void)
 #endif
 }
 
+
 int Mouse_Over_Spot(int house, int scenario)
 {
     int retval = -1;
     for (int selection = 0; selection < 3 && MapCoords[house][scenario][selection].x != -1; selection++) {
-        int mousex = Get_Mouse_X() / RESFACTOR;
-        int mousey = Get_Mouse_Y() / RESFACTOR;
+        int mousex = (Get_Mouse_X() - HIRES_ADJ_W) / RESFACTOR;
+        int mousey = (Get_Mouse_Y() - HIRES_ADJ_H ) / RESFACTOR;
         if (mousex >= MapCoords[house][scenario][selection].x && mousey >= MapCoords[house][scenario][selection].y
             && mousex <= MapCoords[house][scenario][selection].x + 11
             && mousey <= MapCoords[house][scenario][selection].y + 9) {

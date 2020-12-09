@@ -888,7 +888,7 @@ void Do_Win(void)
         Map.Render();
         Fancy_Text_Print(TXT_SCENARIO_WON,
                          x,
-                         90 * RESFACTOR,
+                         (90 * RESFACTOR) + HIRES_ADJ_H,
                          &ColorRemaps[PCOLOR_RED],
                          TBLACK,
                          TPF_CENTER | TPF_VCR | TPF_USE_GRAD_PAL | TPF_DROPSHADOW);

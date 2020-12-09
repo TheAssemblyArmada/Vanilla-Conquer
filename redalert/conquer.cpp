@@ -3469,9 +3469,11 @@ long VQ_Call_Back(unsigned char*, long)
     Check_VQ_Palette_Set();
 #ifdef MOVIE640
     if (IsVQ640) {
-        VQ640.Blit(SeenBuff);
+        VQ640.Blit(SeenBuff, HIRES_ADJ_W, HIRES_ADJ_H);
     } else {
-        Interpolate_2X_Scale(&SysMemPage, &SeenBuff, NULL);
+        Interpolate_2X_Scale(&SysMemPage, &HiddenPage, NULL);
+		//SeenBuff.Blit(HiddenPage);
+		HiddenPage.Blit(SeenBuff, HIRES_ADJ_W, HIRES_ADJ_H);
     }
 #else
     Interpolate_2X_Scale(&SysMemPage, &SeenBuff, NULL);

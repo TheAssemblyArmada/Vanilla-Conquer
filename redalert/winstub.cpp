@@ -740,6 +740,8 @@ void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned ch
 
     GraphicBufferClass* load_buffer;
 
+	HiddenPage.Clear();
+
     load_buffer = Read_PCX_File(name, (char*)palette, NULL, 0);
 
     if (load_buffer) {
