@@ -111,8 +111,8 @@ ScoreAnimClass* ScoreObjs[MAXSCOREOBJS];
 
 ScoreAnimClass::ScoreAnimClass(int x, int y, void const* data)
 {
-    XPos = x * RESFACTOR;
-    YPos = y * RESFACTOR;
+	XPos = (x * RESFACTOR) + HIRES_ADJ_W;
+	YPos = (y * RESFACTOR) + HIRES_ADJ_H;
     Timer = 0;
     DataPtr = data;
 }
@@ -330,18 +330,18 @@ void ScoreClass::Presentation(void)
 #ifndef REMASTER_BUILD
     static int const _casuax[2] = {144, 150};
     static int const _casuay[2] = {78, 78};
-    static int const _gditxy[2] = {90, 90};
+	static int const _gditxy[2] = {90, 90};
 
 #if defined(FRENCH) || defined(GERMAN)
     static int const _gditxx[2] = {130, 150};
     static int const _nodtxx[2] = {130, 150};
 #else
-    static int const _gditxx[2] = {135, 150};
-    static int const _nodtxx[2] = {135, 150};
+	static int const _gditxx[2] = {135, 150};
+	static int const _nodtxx[2] = {135, 150};
 #endif
     static int const _nodtxy[2] = {102, 102};
-    static int const _bldggy[2] = {138, 138};
-    static int const _bldgny[2] = {150, 150};
+	static int const _bldggy[2] = {138, 138};
+	static int const _bldgny[2] = {150, 150};
 
 #ifdef FIXIT_SCORE_CRASH
     /*
@@ -499,10 +499,10 @@ void ScoreClass::Presentation(void)
     for (i = 0; i <= 130; i++) {
         Set_Font_Palette(_greenpal);
         int lead = (leadership * i) / 100;
-        Count_Up_Print("%3d%%", lead, leadership, 244, 26);
+        Count_Up_Print("%3d%%", lead, leadership, 244 + HIRES_ADJ_W, 26 + HIRES_ADJ_H);
         if (i >= 30) {
             int econo = (economy * (i - 30)) / 100;
-            Count_Up_Print("%3d%%", econo, economy, 244, 38);
+            Count_Up_Print("%3d%%", econo, economy, 244 + HIRES_ADJ_W, 38 + HIRES_ADJ_H);
         }
         Print_Minutes(minutes);
         Call_Back_Delay(1);
@@ -511,17 +511,19 @@ void ScoreClass::Presentation(void)
             break;
         // BG		if (Keyboard->Check()) break;
     }
-    Count_Up_Print("%3d%%", leadership, leadership, 244, 26);
-    Count_Up_Print("%3d%%", economy, economy, 244, 38);
+    Count_Up_Print("%3d%%", leadership, leadership, 244 + HIRES_ADJ_W, 26 + HIRES_ADJ_H);
+    Count_Up_Print("%3d%%", economy, economy, 244 + HIRES_ADJ_W, 38 + HIRES_ADJ_H);
 
     char buffer[16];
     sprintf(buffer, "x %5d", uspoints);
     Alloc_Object(new ScorePrintClass(buffer, 274, 26, _greenpal));
     Alloc_Object(new ScorePrintClass(buffer, 274, 38, _greenpal));
     Call_Back_Delay(8);
-    SeenBuff.Draw_Line(274 * RESFACTOR, 48 * RESFACTOR, 313 * RESFACTOR, 48 * RESFACTOR, WHITE);
+    SeenBuff.Draw_Line((274 * RESFACTOR) + HIRES_ADJ_W, (48 * RESFACTOR) + HIRES_ADJ_H, 
+		(313 * RESFACTOR) + HIRES_ADJ_W, (48 * RESFACTOR) + HIRES_ADJ_H, WHITE);
     Call_Back_Delay(1);
-    SeenBuff.Draw_Line(274 * RESFACTOR, 48 * RESFACTOR, 313 * RESFACTOR, 48 * RESFACTOR, GREEN);
+    SeenBuff.Draw_Line((274 * RESFACTOR) + HIRES_ADJ_W, (48 * RESFACTOR) + HIRES_ADJ_W, 
+		(313 * RESFACTOR) + HIRES_ADJ_W, (48 * RESFACTOR) + HIRES_ADJ_H, GREEN);
 
     sprintf(buffer, "%5d", total);
     Alloc_Object(new ScorePrintClass(buffer, 286, 50, _greenpal));
@@ -553,7 +555,7 @@ void ScoreClass::Presentation(void)
     Call_Back_Delay(6);
 
     Set_Font_Palette(_redpal);
-    Do_GDI_Graph(yellowptr, redptr, GKilled + CKilled, NKilled, 89);
+    Do_GDI_Graph(yellowptr, redptr, GKilled + CKilled, NKilled, 89 + HIRES_ADJ_H);
 
     Set_Logic_Page(SeenBuff);
 
@@ -893,7 +895,7 @@ void ScoreClass::Do_Nod_Buildings_Graph(void)
 void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gkilled, int nkilled, int ypos)
 {
     int i, maxval;
-    int xpos = 174;
+    int xpos = 174 + HIRES_ADJ_W;
     int house = (PlayerPtr->Class->House == HOUSE_USSR || PlayerPtr->Class->House == HOUSE_UKRAINE); // 0 or 1
     if (house) {
         int temp = gkilled;
@@ -930,14 +932,14 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
     for (i = 1; i <= gdikilled; i++) {
         if (i != gdikilled) {
             Set_Logic_Page(*PseudoSeenBuff);
-            CC_Draw_Shape(yellowptr, i, xpos * RESFACTOR, ypos * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
+            CC_Draw_Shape(yellowptr, i, xpos, ypos, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
             Set_Logic_Page(SeenBuff);
-            CC_Draw_Shape(yellowptr, i, xpos * RESFACTOR, ypos * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
+            CC_Draw_Shape(yellowptr, i, xpos, ypos, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
         } else {
             HidPage.Blit(
-                SeenPage, 0, 0, xpos * RESFACTOR, ypos * RESFACTOR, (3 + gdikilled) * RESFACTOR, 8 * RESFACTOR);
+                SeenPage, 0, 0, xpos, ypos, (3 + gdikilled) * RESFACTOR, 8 * RESFACTOR);
             HidPage.Blit(
-                *PseudoSeenBuff, 0, 0, xpos * RESFACTOR, ypos * RESFACTOR, (3 + gdikilled) * RESFACTOR, 8 * RESFACTOR);
+                *PseudoSeenBuff, 0, 0, xpos, ypos, (3 + gdikilled) * RESFACTOR, 8 * RESFACTOR);
         }
 
         Count_Up_Print("%d", (i * gkilled) / maxval, gkilled, 297, ypos + 2);
@@ -946,9 +948,9 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
         Call_Back_Delay(2);
         // BG		}
     }
-    CC_Draw_Shape(yellowptr, gdikilled, xpos * RESFACTOR, ypos * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
+    CC_Draw_Shape(yellowptr, gdikilled, xpos, ypos, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
     Set_Logic_Page(*PseudoSeenBuff);
-    CC_Draw_Shape(yellowptr, gdikilled, xpos * RESFACTOR, ypos * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
+    CC_Draw_Shape(yellowptr, gdikilled, xpos, ypos, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
     Set_Logic_Page(SeenBuff);
     Count_Up_Print("%d", gkilled, gkilled, 297, ypos + 2);
     /*BG	if (!Keyboard->Check()) */ Call_Back_Delay(40);
@@ -957,17 +959,17 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
     for (i = 1; i <= nodkilled; i++) {
         if (i != nodkilled) {
             Set_Logic_Page(*PseudoSeenBuff);
-            CC_Draw_Shape(redptr, i, xpos * RESFACTOR, (ypos + 12) * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
+            CC_Draw_Shape(redptr, i, xpos, (ypos + 24), WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
             Set_Logic_Page(SeenBuff);
-            CC_Draw_Shape(redptr, i, xpos * RESFACTOR, (ypos + 12) * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
+            CC_Draw_Shape(redptr, i, xpos, (ypos + 24), WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
         } else {
             HidPage.Blit(
-                SeenPage, 0, 0, xpos * RESFACTOR, (ypos + 12) * RESFACTOR, (3 + nodkilled) * RESFACTOR, 8 * RESFACTOR);
+                SeenPage, 0, 0, xpos, (ypos + 24), (3 + nodkilled) * RESFACTOR, 8 * RESFACTOR);
             HidPage.Blit(*PseudoSeenBuff,
                          0,
                          0,
-                         xpos * RESFACTOR,
-                         (ypos + 12) * RESFACTOR,
+                         xpos,
+                         (ypos + 24),
                          (3 + nodkilled) * RESFACTOR,
                          8 * RESFACTOR);
         }
@@ -985,10 +987,10 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
     ** Make sure accurate count is printed at end
     */
     Set_Logic_Page(*PseudoSeenBuff);
-    CC_Draw_Shape(redptr, nodkilled, xpos * RESFACTOR, (ypos + 12) * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
+    CC_Draw_Shape(redptr, nodkilled, xpos, (ypos + 24), WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
     Set_Logic_Page(SeenBuff);
-    CC_Draw_Shape(redptr, nodkilled, xpos * RESFACTOR, (ypos + 12) * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
-    Count_Up_Print("%d", nkilled, nkilled, 297, ypos + 14);
+    CC_Draw_Shape(redptr, nodkilled, xpos, (ypos + 24), WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
+    Count_Up_Print("%d", nkilled, nkilled, 297 + HIRES_ADJ_W, ypos + 14);
     /*BG	if (!Keyboard->Check()) */ Call_Back_Delay(40);
 }
 
@@ -1084,17 +1086,17 @@ void ScoreClass::Do_Nod_Casualties_Graph(void)
 
 void ScoreClass::Show_Credits(int house, char const pal[])
 {
-    static int _credsx[2] = {276, 276};
-    static int _credsy[2] = {173, 58};
-    static int _credpx[2] = {228, 236};
+	int _credsx[2] = { 276, 276 };
+	int _credsy[2] = {173, 58 };
+    int _credpx[2] = {228, 236 };
 #ifdef GERMAN
-    static int _credpy[2] = {181, 74};
-    static int _credtx[2] = {162, 162};
-    static int _credty[2] = {173, 62};
+    int _credpy[2] = {181, 74 };
+    int _credtx[2] = {162, 162 };
+    int _credty[2] = {173, 62 };
 #else
-    static int _credpy[2] = {189 - 12, 74};
-    static int _credtx[2] = {182, 182};
-    static int _credty[2] = {179 - 12, 62};
+    int _credpy[2] = {(189 - 12) , 74  };
+    int _credtx[2] = {182, 182 };
+    int _credty[2] = {(179 - 12), 62 };
 #endif
 
     int credobj, i;
@@ -1165,8 +1167,8 @@ void ScoreClass::Print_Minutes(int minutes)
     } else {
         sprintf(str, Text_String(TXT_SCORE_TIMEFORMAT2), minutes);
     }
-    SeenPage.Print(str, 275 * RESFACTOR, 9 * RESFACTOR, TBLACK, TBLACK);
-    PseudoSeenBuff->Print(str, 275 * RESFACTOR, 9 * RESFACTOR, TBLACK, TBLACK);
+    SeenPage.Print(str, (275 * RESFACTOR) + HIRES_ADJ_W, (9 * RESFACTOR) + HIRES_ADJ_H, TBLACK, TBLACK);
+    PseudoSeenBuff->Print(str, (275 * RESFACTOR) + HIRES_ADJ_W, (9 * RESFACTOR) + HIRES_ADJ_H, TBLACK, TBLACK);
 }
 
 /***********************************************************************************************
