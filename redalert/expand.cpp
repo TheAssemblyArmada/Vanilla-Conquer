@@ -341,12 +341,12 @@ bool Expansion_Dialog(void)
 {
     GadgetClass* buttons = NULL;
 
-    TextButtonClass ok(200, TXT_OK, TPF_BUTTON, OPTION_X + 40, OPTION_Y + OPTION_HEIGHT - 50);
-    TextButtonClass cancel(201, TXT_CANCEL, TPF_BUTTON, OPTION_X + OPTION_WIDTH - 85, OPTION_Y + OPTION_HEIGHT - 50);
+    TextButtonClass ok(200, TXT_OK, TPF_BUTTON, (OPTION_X + 40) + HIRES_ADJ_W, (OPTION_Y + OPTION_HEIGHT - 50) + HIRES_ADJ_H);
+    TextButtonClass cancel(201, TXT_CANCEL, TPF_BUTTON, (OPTION_X + OPTION_WIDTH - 85) + HIRES_ADJ_W, (OPTION_Y + OPTION_HEIGHT - 50) + HIRES_ADJ_H);
 
     EListClass list(202,
-                    OPTION_X + 35,
-                    OPTION_Y + 30,
+                    (OPTION_X + 35) + HIRES_ADJ_W,
+                    (OPTION_Y + 30) + HIRES_ADJ_H,
                     OPTION_WIDTH - 70,
                     OPTION_HEIGHT - 85,
                     TPF_BUTTON,
@@ -472,12 +472,12 @@ bool Expansion_Dialog(void)
             Load_Title_Page();
             CCPalette.Set();
 
-            Dialog_Box(OPTION_X, OPTION_Y, OPTION_WIDTH, OPTION_HEIGHT);
+            Dialog_Box(OPTION_X + HIRES_ADJ_W, OPTION_Y + HIRES_ADJ_H, OPTION_WIDTH, OPTION_HEIGHT);
 #ifdef FIXIT_VERSION_3
             if (bCounterstrike) {
-                // PG Draw_Caption( TXT_WOL_CS_MISSIONS, OPTION_X, OPTION_Y, OPTION_WIDTH);
+				Draw_Caption( TXT_WOL_CS_MISSIONS, OPTION_X + HIRES_ADJ_W, OPTION_Y + HIRES_ADJ_H, OPTION_WIDTH);
             } else {
-                // PG Draw_Caption( TXT_WOL_AM_MISSIONS, OPTION_X, OPTION_Y, OPTION_WIDTH);
+				Draw_Caption( TXT_WOL_AM_MISSIONS, OPTION_X + HIRES_ADJ_W, OPTION_Y + HIRES_ADJ_H, OPTION_WIDTH);
             }
 #else
             Draw_Caption(TXT_NEW_MISSIONS, OPTION_X, OPTION_Y, OPTION_WIDTH);

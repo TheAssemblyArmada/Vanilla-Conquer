@@ -60,6 +60,9 @@
 #define GBUFF_INIT_ALTHEIGHT 480
 #endif
 
+#define HIRES_ADJ_W ((ScreenWidth - 640) / 2)
+#define HIRES_ADJ_H ((ScreenHeight - 400) /2)
+
 extern char _staging_buffer[32000];
 extern "C" {
 void _PRO(void);

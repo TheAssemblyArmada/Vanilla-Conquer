@@ -743,7 +743,7 @@ void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned ch
     load_buffer = Read_PCX_File(name, (char*)palette, NULL, 0);
 
     if (load_buffer) {
-        load_buffer->Blit(*video_page);
+		load_buffer->Blit(*video_page, HIRES_ADJ_W, HIRES_ADJ_H);
         delete load_buffer;
     }
 }

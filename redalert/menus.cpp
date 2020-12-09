@@ -471,13 +471,13 @@ int Main_Menu(unsigned long)
     int d_dialog_h = 80 * RESFACTOR;
 #endif // INTERNET_OFF
 #endif // FIXIT_VERSION_3
-    int d_dialog_x = 85 * RESFACTOR;
-    int d_dialog_y = 75 * RESFACTOR;
+    int d_dialog_x = (85 * RESFACTOR) + HIRES_ADJ_W;
+    int d_dialog_y = (75 * RESFACTOR) + HIRES_ADJ_H;
     int d_dialog_cx = d_dialog_x + (d_dialog_w / 2);
 
-    int d_start_w = 118 * RESFACTOR;
-    int d_start_h = 9 * RESFACTOR;
-    int d_start_x = 102 * RESFACTOR;
+    int d_start_w = (118 * RESFACTOR);
+    int d_start_h = (9 * RESFACTOR);
+    int d_start_x = (102 * RESFACTOR) + HIRES_ADJ_W;
 #ifndef FIXIT_VERSION_3 //	Removed button from main menu.
 #ifndef INTERNET_OFF    // Denzil 5/1/98 - no internet play
     int d_internet_w = 118 * RESFACTOR;
@@ -494,19 +494,19 @@ int Main_Menu(unsigned long)
 
     int d_load_w = 118 * RESFACTOR;
     int d_load_h = 9 * RESFACTOR;
-    int d_load_x = 102 * RESFACTOR;
+    int d_load_x = (102 * RESFACTOR) + +HIRES_ADJ_W;
 
     int d_multi_w = 118 * RESFACTOR;
     int d_multi_h = 9 * RESFACTOR;
-    int d_multi_x = 102 * RESFACTOR;
+    int d_multi_x = (102 * RESFACTOR) + HIRES_ADJ_W;
 
     int d_intro_w = 118 * RESFACTOR;
     int d_intro_h = 9 * RESFACTOR;
-    int d_intro_x = 102 * RESFACTOR;
+    int d_intro_x = (102 * RESFACTOR)+ HIRES_ADJ_W;
 
     int d_exit_w = 118 * RESFACTOR; // changed value to 118 V.Grippi
     int d_exit_h = 9 * RESFACTOR;
-    int d_exit_x = 102 * RESFACTOR; // Added V.Grippi
+    int d_exit_x = (102 * RESFACTOR) + HIRES_ADJ_W; // Added V.Grippi
 
     int starty = d_dialog_y + (12 * RESFACTOR);
 
@@ -940,10 +940,10 @@ int Main_Menu(unsigned long)
             if (Coordinates_In_Region(Keyboard->MouseQX,
                                       Keyboard->MouseQY,
 
-                                      9 * RESFACTOR,
-                                      10 * RESFACTOR,
-                                      79 * RESFACTOR,
-                                      24 * RESFACTOR)) {
+                                      (9 * RESFACTOR) + HIRES_ADJ_W,
+                                      (10 * RESFACTOR) + HIRES_ADJ_H,
+                                      (79 * RESFACTOR) + HIRES_ADJ_W,
+                                      (24 * RESFACTOR) + HIRES_ADJ_H)) {
                 Show_Who_Was_Responsible();
                 display = true;
                 Theme.Play_Song(THEME_INTRO);
@@ -956,7 +956,8 @@ int Main_Menu(unsigned long)
 #endif
                 if ((Keyboard->Down(KN_LSHIFT) || Keyboard->Down(KN_RSHIFT))
                     && Coordinates_In_Region(
-                        Keyboard->MouseQX, Keyboard->MouseQY, 260 * RESFACTOR, 0, 320 * RESFACTOR, 50 * RESFACTOR)) {
+                        Keyboard->MouseQX, Keyboard->MouseQY, (260 * RESFACTOR) + HIRES_ADJ_W, 0 + HIRES_ADJ_H,
+						(320 * RESFACTOR) + HIRES_ADJ_W, (50 * RESFACTOR) + HIRES_ADJ_H)) {
                     AntsEnabled = true;
                     process = false;
 #ifdef FIXIT_VERSION_3
