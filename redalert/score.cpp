@@ -670,7 +670,7 @@ void ScoreClass::Presentation(void)
 
     if (index < NUMFAMENAMES) {
         pal = hallfame[index].side ? _redpal : _bluepal;
-        Input_Name(hallfame[index].name, HALLFAME_X + (HIRES_ADJ_W / 2), HALLFAME_Y + (index * 8) + (HIRES_ADJ_H / 2), (const char*)pal);
+        Input_Name(hallfame[index].name, HALLFAME_X, HALLFAME_Y + (index * 8) + (HIRES_ADJ_H / 2), (const char*)pal, index);
 
         file.Open(WRITE);
         for (i = 0; i < NUMFAMENAMES; i++) {
@@ -1131,7 +1131,7 @@ void ScoreClass::Show_Credits(int house, char const pal[])
             i = 0;
 
         Set_Font_Palette(pal);
-        Count_Up_Print("%d", i, PlayerPtr->Available_Money(), _credpx[house] * 2, _credpy[house] * 2);
+       Count_Up_Print("%d", i, PlayerPtr->Available_Money(), (_credpx[house] * 2) + HIRES_ADJ_W, (_credpy[house] * 2) + HIRES_ADJ_H);
         Call_Back_Delay(2);
         /*BG		if (Keyboard->Check()) {
                     Count_Up_Print("%d", PlayerPtr->Available_Money(), PlayerPtr->Available_Money(), _credpx[house],
@@ -1217,11 +1217,12 @@ void ScoreClass::Count_Up_Print(char* str, int percent, int maxval, int xpos, in
  * HISTORY:                                                                                    *
  *   05/15/1995 BWG : Created.                                                                 *
  *=============================================================================================*/
-void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
+void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[], int index2)
 {
     int key = 0;
     int ascii = 0;
     int index = 0;
+	int xposindex6 = ((xpos + (index * 6)) * RESFACTOR) + HIRES_ADJ_W;
 
     void const* keystrok = MFCD::Retrieve("KEYSTROK.AUD");
 
@@ -1237,10 +1238,15 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
     */
     HidPage.Blit(HidPage, 0, (100 * RESFACTOR), 0, 0, 100 * RESFACTOR, 100 * RESFACTOR);
 
+	int ypos2 = ypos * RESFACTOR;
+
     do {
         Call_Back();
         Animate_Score_Objs();
         Animate_Cursor(index, ypos);
+
+		
+
         if (Keyboard->Check()) {
             key = Keyboard->To_ASCII(Keyboard->Get()) & 0xFF;
             Call_Back();
@@ -1263,26 +1269,25 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
                 if (index) {
                     str[--index] = 0;
 
-                    int xposindex6 = (xpos + (index * 6)) * RESFACTOR;
                     HidPage.Blit(SeenPage,
                                  xposindex6,
-                                 (ypos - 100) * RESFACTOR,
+                                 ypos2 - 100 * RESFACTOR,
                                  xposindex6,
-                                 ypos * RESFACTOR,
+                                 ypos2,
                                  6 * RESFACTOR,
                                  6 * RESFACTOR);
                     HidPage.Blit(*PseudoSeenBuff,
                                  xposindex6,
-                                 (ypos - 100) * RESFACTOR,
+								 ypos2 - 100 * RESFACTOR,
                                  xposindex6,
-                                 ypos * RESFACTOR,
+								 ypos2,
                                  6 * RESFACTOR,
                                  6 * RESFACTOR);
                     HidPage.Blit(HidPage,
                                  xposindex6,
-                                 (ypos - 100) * RESFACTOR,
+								 ypos2 - 100 * RESFACTOR,
                                  xposindex6,
-                                 ypos * RESFACTOR,
+								 ypos2,
                                  6 * RESFACTOR,
                                  6 * RESFACTOR);
                 }
@@ -1293,24 +1298,24 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
                     ascii -= ('a' - 'A');
                 if ((ascii >= '!' && ascii <= KA_TILDA) || ascii == ' ') {
                     HidPage.Blit(SeenPage,
-                                 (xpos + (index * 6)) * RESFACTOR,
-                                 (ypos - 100) * RESFACTOR,
-                                 (xpos + (index * 6)) * RESFACTOR,
-                                 ypos * RESFACTOR,
+								 xposindex6,
+                                 ypos - 100 * RESFACTOR,
+								 xposindex6,
+                                 ypos,
                                  6 * RESFACTOR,
                                  6 * RESFACTOR);
                     HidPage.Blit(*PseudoSeenBuff,
-                                 (xpos + (index * 6)) * RESFACTOR,
-                                 (ypos - 100) * RESFACTOR,
-                                 (xpos + (index * 6)) * RESFACTOR,
-                                 ypos * RESFACTOR,
+							     xposindex6,
+                                 ypos - 100 * RESFACTOR,
+								 xposindex6,
+                                 ypos,
                                  6 * RESFACTOR,
                                  6 * RESFACTOR);
                     HidPage.Blit(HidPage,
-                                 (xpos + (index * 6)) * RESFACTOR,
-                                 (ypos - 100) * RESFACTOR,
-                                 (xpos + (index * 6)) * RESFACTOR,
-                                 ypos * RESFACTOR,
+								 xposindex6,
+                                 ypos - 100 * RESFACTOR,
+								 xposindex6,
+                                 ypos,
                                  6 * RESFACTOR,
                                  6 * RESFACTOR);
                     str[index] = ascii;
@@ -1318,7 +1323,7 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
 
                     int objindex;
                     Play_Sample(keystrok, 255, Options.Normalize_Volume(150));
-                    objindex = Alloc_Object(new ScoreScaleClass(str + index, xpos + (index * 6), ypos, pal));
+                    objindex = Alloc_Object(new ScoreScaleClass(str + index, xpos + (index * 6), HALLFAME_Y + (index2 * 8), pal));
                     while (ScoreObjs[objindex])
                         Call_Back_Delay(1);
 
