@@ -499,10 +499,10 @@ void ScoreClass::Presentation(void)
     for (i = 0; i <= 130; i++) {
         Set_Font_Palette(_greenpal);
         int lead = (leadership * i) / 100;
-        Count_Up_Print("%3d%%", lead, leadership, 244 + HIRES_ADJ_W, 26 + HIRES_ADJ_H);
+        Count_Up_Print("%3d%%", lead, leadership, 488 + HIRES_ADJ_W, 52 + HIRES_ADJ_H);
         if (i >= 30) {
             int econo = (economy * (i - 30)) / 100;
-            Count_Up_Print("%3d%%", econo, economy, 244 + HIRES_ADJ_W, 38 + HIRES_ADJ_H);
+            Count_Up_Print("%3d%%", econo, economy, 488 + HIRES_ADJ_W, 76 + HIRES_ADJ_H);
         }
         Print_Minutes(minutes);
         Call_Back_Delay(1);
@@ -511,8 +511,8 @@ void ScoreClass::Presentation(void)
             break;
         // BG		if (Keyboard->Check()) break;
     }
-    Count_Up_Print("%3d%%", leadership, leadership, 244 + HIRES_ADJ_W, 26 + HIRES_ADJ_H);
-    Count_Up_Print("%3d%%", economy, economy, 244 + HIRES_ADJ_W, 38 + HIRES_ADJ_H);
+    Count_Up_Print("%3d%%", leadership, leadership, 488 + HIRES_ADJ_W, 52 + HIRES_ADJ_H);
+    Count_Up_Print("%3d%%", economy, economy, 488 + HIRES_ADJ_W, 76 + HIRES_ADJ_H);
 
     char buffer[16];
     sprintf(buffer, "x %5d", uspoints);
@@ -522,7 +522,7 @@ void ScoreClass::Presentation(void)
     SeenBuff.Draw_Line((274 * RESFACTOR) + HIRES_ADJ_W, (48 * RESFACTOR) + HIRES_ADJ_H, 
 		(313 * RESFACTOR) + HIRES_ADJ_W, (48 * RESFACTOR) + HIRES_ADJ_H, WHITE);
     Call_Back_Delay(1);
-    SeenBuff.Draw_Line((274 * RESFACTOR) + HIRES_ADJ_W, (48 * RESFACTOR) + HIRES_ADJ_W, 
+    SeenBuff.Draw_Line((274 * RESFACTOR) + HIRES_ADJ_W, (48 * RESFACTOR) + HIRES_ADJ_H, 
 		(313 * RESFACTOR) + HIRES_ADJ_W, (48 * RESFACTOR) + HIRES_ADJ_H, GREEN);
 
     sprintf(buffer, "%5d", total);
@@ -555,7 +555,7 @@ void ScoreClass::Presentation(void)
     Call_Back_Delay(6);
 
     Set_Font_Palette(_redpal);
-    Do_GDI_Graph(yellowptr, redptr, GKilled + CKilled, NKilled, 89 + HIRES_ADJ_H);
+    Do_GDI_Graph(yellowptr, redptr, GKilled + CKilled, NKilled, (89 * RESFACTOR) + HIRES_ADJ_H);
 
     Set_Logic_Page(SeenBuff);
 
@@ -573,7 +573,7 @@ void ScoreClass::Presentation(void)
         Alloc_Object(new ScorePrintClass(TXT_SOVIET, _gditxx[indx], _bldgny[indx], _redpal));
     }
     Call_Back_Delay(7);
-    Do_GDI_Graph(yellowptr, redptr, GBKilled + CBKilled, NBKilled, 137);
+    Do_GDI_Graph(yellowptr, redptr, GBKilled + CBKilled, NBKilled, (137 * RESFACTOR) + HIRES_ADJ_H);
 
     // Wait for text printing to complete
     while (StillUpdating) {
@@ -670,7 +670,7 @@ void ScoreClass::Presentation(void)
 
     if (index < NUMFAMENAMES) {
         pal = hallfame[index].side ? _redpal : _bluepal;
-        Input_Name(hallfame[index].name, HALLFAME_X, HALLFAME_Y + (index * 8), (const char*)pal);
+        Input_Name(hallfame[index].name, HALLFAME_X + (HIRES_ADJ_W / 2), HALLFAME_Y + (index * 8) + (HIRES_ADJ_H / 2), (const char*)pal);
 
         file.Open(WRITE);
         for (i = 0; i < NUMFAMENAMES; i++) {
@@ -895,7 +895,7 @@ void ScoreClass::Do_Nod_Buildings_Graph(void)
 void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gkilled, int nkilled, int ypos)
 {
     int i, maxval;
-    int xpos = 174 + HIRES_ADJ_W;
+    int xpos = (174 * RESFACTOR) + HIRES_ADJ_W;
     int house = (PlayerPtr->Class->House == HOUSE_USSR || PlayerPtr->Class->House == HOUSE_UKRAINE); // 0 or 1
     if (house) {
         int temp = gkilled;
@@ -924,7 +924,7 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
 
     // Draw the white-flash shape on the hidpage
     Set_Logic_Page(HidPage);
-    HidPage.Fill_Rect(0, 0, 124 * RESFACTOR, 9 * RESFACTOR, TBLACK);
+    HidPage.Fill_Rect(0, 0, (124 * RESFACTOR) + HIRES_ADJ_W , (9 * RESFACTOR)+ HIRES_ADJ_H, TBLACK);
     CC_Draw_Shape(redptr, 119, 0, 0, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
     Set_Logic_Page(SeenBuff);
     Set_Font_Palette(house ? _redpal : _bluepal);
@@ -942,7 +942,7 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
                 *PseudoSeenBuff, 0, 0, xpos, ypos, (3 + gdikilled) * RESFACTOR, 8 * RESFACTOR);
         }
 
-        Count_Up_Print("%d", (i * gkilled) / maxval, gkilled, 297, ypos + 2);
+        Count_Up_Print("%d", (i * gkilled) / maxval, gkilled, 594 + HIRES_ADJ_W, ypos + 4);
         // BG		if (!Keyboard->Check()) {
         Play_Sample(Beepy6, 255, Options.Normalize_Volume(150));
         Call_Back_Delay(2);
@@ -952,7 +952,7 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
     Set_Logic_Page(*PseudoSeenBuff);
     CC_Draw_Shape(yellowptr, gdikilled, xpos, ypos, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
     Set_Logic_Page(SeenBuff);
-    Count_Up_Print("%d", gkilled, gkilled, 297, ypos + 2);
+    Count_Up_Print("%d", gkilled, gkilled, 594 + HIRES_ADJ_W, ypos + 4);
     /*BG	if (!Keyboard->Check()) */ Call_Back_Delay(40);
 
     Set_Font_Palette(house ? _bluepal : _redpal);
@@ -974,7 +974,7 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
                          8 * RESFACTOR);
         }
 
-        Count_Up_Print("%d", (i * nkilled) / maxval, nkilled, 297, ypos + 14);
+        Count_Up_Print("%d", (i * nkilled) / maxval, nkilled, 594 + HIRES_ADJ_W, ypos + 28);
         // BG		if (!Keyboard->Check()) {
         Play_Sample(Beepy6, 255, Options.Normalize_Volume(150));
         Call_Back_Delay(2);
@@ -990,7 +990,7 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
     CC_Draw_Shape(redptr, nodkilled, xpos, (ypos + 24), WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
     Set_Logic_Page(SeenBuff);
     CC_Draw_Shape(redptr, nodkilled, xpos, (ypos + 24), WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
-    Count_Up_Print("%d", nkilled, nkilled, 297 + HIRES_ADJ_W, ypos + 14);
+    Count_Up_Print("%d", nkilled, nkilled, 594 + HIRES_ADJ_W, ypos + 28);
     /*BG	if (!Keyboard->Check()) */ Call_Back_Delay(40);
 }
 
@@ -1131,7 +1131,7 @@ void ScoreClass::Show_Credits(int house, char const pal[])
             i = 0;
 
         Set_Font_Palette(pal);
-        Count_Up_Print("%d", i, PlayerPtr->Available_Money(), _credpx[house], _credpy[house]);
+        Count_Up_Print("%d", i, PlayerPtr->Available_Money(), _credpx[house] * 2, _credpy[house] * 2);
         Call_Back_Delay(2);
         /*BG		if (Keyboard->Check()) {
                     Count_Up_Print("%d", PlayerPtr->Available_Money(), PlayerPtr->Available_Money(), _credpx[house],
@@ -1196,8 +1196,8 @@ void ScoreClass::Count_Up_Print(char* str, int percent, int maxval, int xpos, in
     char destbuf[64];
 
     sprintf(destbuf, str, percent <= maxval ? percent : maxval);
-    SeenPage.Print(destbuf, xpos * RESFACTOR, ypos * RESFACTOR, TBLACK, BLACK);
-    PseudoSeenBuff->Print(destbuf, xpos * RESFACTOR, ypos * RESFACTOR, TBLACK, BLACK);
+    SeenPage.Print(destbuf, xpos, ypos, TBLACK, BLACK);
+    PseudoSeenBuff->Print(destbuf, xpos, ypos, TBLACK, BLACK);
 }
 
 /***********************************************************************************************
@@ -1235,7 +1235,7 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
     ** we can use it to restore the letter's background instead of filling
     ** with black.
     */
-    HidPage.Blit(HidPage, 0, 100 * RESFACTOR, 0, 0, 100 * RESFACTOR, 100 * RESFACTOR);
+    HidPage.Blit(HidPage, 0, (100 * RESFACTOR), 0, 0, 100 * RESFACTOR, 100 * RESFACTOR);
 
     do {
         Call_Back();
@@ -1344,30 +1344,30 @@ void Animate_Cursor(int pos, int ypos)
     // If they moved the cursor, erase old one and force state=0, to make green draw right away
     if (pos != _lastpos) {
         HidPage.Blit(SeenPage,
-                     (HALLFAME_X + (_lastpos * 6)) * RESFACTOR,
+                     ((HALLFAME_X + (_lastpos * 6)) * RESFACTOR) + HIRES_ADJ_W,
                      ypos - 100 * RESFACTOR,
-                     (HALLFAME_X + (_lastpos * 6)) * RESFACTOR,
+                     ((HALLFAME_X + (_lastpos * 6)) * RESFACTOR) + HIRES_ADJ_W,
                      ypos,
                      6 * RESFACTOR,
                      1 * RESFACTOR);
         HidPage.Blit(*PseudoSeenBuff,
-                     (HALLFAME_X + (_lastpos * 6)) * RESFACTOR,
+                     ((HALLFAME_X + (_lastpos * 6)) * RESFACTOR) + HIRES_ADJ_W,
                      ypos - 100 * RESFACTOR,
-                     (HALLFAME_X + (_lastpos * 6)) * RESFACTOR,
+                     ((HALLFAME_X + (_lastpos * 6)) * RESFACTOR) + HIRES_ADJ_W,
                      ypos,
                      6 * RESFACTOR,
                      1 * RESFACTOR);
         _lastpos = pos;
         _state = 0;
     }
-    SeenBuff.Draw_Line((HALLFAME_X + (pos * 6)) * RESFACTOR,
+    SeenBuff.Draw_Line(((HALLFAME_X + (pos * 6)) * RESFACTOR) + HIRES_ADJ_W,
                        ypos,
-                       (HALLFAME_X + (pos * 6) + 5) * RESFACTOR,
+                       ((HALLFAME_X + (pos * 6) + 5) * RESFACTOR) + HIRES_ADJ_W,
                        ypos,
                        _state ? LTBLUE : TBLACK);
-    PseudoSeenBuff->Draw_Line((HALLFAME_X + (pos * 6)) * RESFACTOR,
+    PseudoSeenBuff->Draw_Line(((HALLFAME_X + (pos * 6)) * RESFACTOR) + HIRES_ADJ_W,
                               ypos,
-                              (HALLFAME_X + (pos * 6) + 5) * RESFACTOR,
+                              ((HALLFAME_X + (pos * 6) + 5) * RESFACTOR) + HIRES_ADJ_W,
                               ypos,
                               _state ? LTBLUE : TBLACK);
     /*
