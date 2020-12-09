@@ -378,8 +378,8 @@ bool Init_Game(int, char*[])
 
         Hide_Mouse();
         Fancy_Text_Print(TXT_STAND_BY,
-                         160 * RESFACTOR,
-                         120 * RESFACTOR,
+                         (160 * RESFACTOR) + HIRES_ADJ_W,
+                         (120 * RESFACTOR) + HIRES_ADJ_H,
                          &ColorRemaps[PCOLOR_DIALOG_BLUE],
                          TBLACK,
                          TPF_CENTER | TPF_TEXT | TPF_DROPSHADOW);
