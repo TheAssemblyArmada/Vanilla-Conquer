@@ -69,7 +69,6 @@ set(REDALERT_SRC
     iconset.cpp
     idata.cpp
     infantry.cpp
-    inicode.cpp
     init.cpp
     intro.cpp
     iomap.cpp
