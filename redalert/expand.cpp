@@ -35,6 +35,7 @@
 
 #include "function.h"
 #include "common/framelimit.h"
+#include "common/ini.h"
 
 #ifdef FIXIT_VERSION_3
 #include "wolstrng.h"
@@ -362,20 +363,12 @@ bool Expansion_Dialog(void)
     */
     CCFileClass file;
     char buffer[128], buffer2[128];
-    char* sbuffer = (char*)_ShapeBuffer;
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98 - Though disgusted.
-    for (int index = 20; index < (36 + 18); index++) {
-#else
-    for (int index = 20; index < 36; index++) {
-#endif
+    INIClass ini;
 
-#ifndef CS_DEBUG
+    for (int index = 20; index < (36 + 18); index++) {
         strcpy(buffer, ExpandNames[index - 20]);
         strcpy(buffer2, ExpandNames[index - 20]);
-#else
-        strcpy(buffer, TestNames2[index]);
-        strcpy(buffer2, TestNames2[index]);
-#endif
+
         if (buffer[0] == NULL)
             break;
 
@@ -384,33 +377,28 @@ bool Expansion_Dialog(void)
         Scen.Set_Scenario_Name(buffer);
         Scen.Scenario = index;
         file.Set_Name(buffer);
-#ifdef FIXIT_VERSION_3
+
         bool bOk;
-        if (index < 36)
+        if (index < 36) {
             bOk = bCounterstrike;
-        else
+        } else {
             bOk = !bCounterstrike;
+        }
 
         if (bOk && file.Is_Available()) {
-#else  //	FIXIT_VERSION_3
-        if (file.Is_Available()) {
-#endif //	FIXIT_VERSION_3
             EObjectClass* obj = new EObjectClass;
             switch (buffer[2]) {
 
             case 'G':
             case 'g':
-                file.Read(sbuffer, 2000);
-                sbuffer[2000] = '\r';
-                sbuffer[2000 + 1] = '\n';
-                sbuffer[2000 + 2] = '\0';
-                WWGetPrivateProfileString("Basic", "Name", "x", buffer, sizeof(buffer), sbuffer);
+                ini.Clear();
+                ini.Load(file);
+                ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
 #if defined(GERMAN) || defined(FRENCH)
                 strcpy(obj->Name, XlatNames[index - ARRAYOFFSET]);
 #else
                 strcpy(obj->Name, buffer);
 #endif
-                //			strcpy(obj->Name, buffer);
                 strcpy(obj->FullName, buffer2);
                 obj->House = HOUSE_GOOD;
                 obj->Scenario = index;
@@ -419,17 +407,14 @@ bool Expansion_Dialog(void)
 
             case 'U':
             case 'u':
-                file.Read(sbuffer, 2000);
-                sbuffer[2000] = '\r';
-                sbuffer[2000 + 1] = '\n';
-                sbuffer[2000 + 2] = '\0';
-                WWGetPrivateProfileString("Basic", "Name", "x", buffer, sizeof(buffer), sbuffer);
+                ini.Clear();
+                ini.Load(file);
+                ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
 #if defined(GERMAN) || defined(FRENCH)
                 strcpy(obj->Name, XlatNames[index - ARRAYOFFSET]);
 #else
                 strcpy(obj->Name, buffer);
 #endif
-                //		     	strcpy(obj->Name, buffer);
                 strcpy(obj->FullName, buffer2);
                 obj->House = HOUSE_BAD;
                 obj->Scenario = index;
@@ -475,9 +460,9 @@ bool Expansion_Dialog(void)
             Dialog_Box(OPTION_X, OPTION_Y, OPTION_WIDTH, OPTION_HEIGHT);
 #ifdef FIXIT_VERSION_3
             if (bCounterstrike) {
-                // PG Draw_Caption( TXT_WOL_CS_MISSIONS, OPTION_X, OPTION_Y, OPTION_WIDTH);
+                Draw_Caption(TXT_WOL_CS_MISSIONS, OPTION_X, OPTION_Y, OPTION_WIDTH);
             } else {
-                // PG Draw_Caption( TXT_WOL_AM_MISSIONS, OPTION_X, OPTION_Y, OPTION_WIDTH);
+                Draw_Caption(TXT_WOL_AM_MISSIONS, OPTION_X, OPTION_Y, OPTION_WIDTH);
             }
 #else
             Draw_Caption(TXT_NEW_MISSIONS, OPTION_X, OPTION_Y, OPTION_WIDTH);
