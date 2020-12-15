@@ -1922,6 +1922,11 @@ inline TextPrintType operator~(TextPrintType a)
     return static_cast<TextPrintType>(~static_cast<int>(a));
 }
 
+// Standard button text print flags.
+#define TPF_BUTTON  (TPF_CENTER | TPF_6PT_GRAD | TPF_NOSHADOW)
+#define TPF_EBUTTON (TPF_CENTER | TPF_EFNT | TPF_NOSHADOW)
+#define TPF_TEXT    (TPF_6PT_GRAD | TPF_NOSHADOW)
+
 /**********************************************************************
 **	These control the maximum number of objects in the game. Make sure that these
 **	maximums never exceed the maximum value for the "ID" element in the

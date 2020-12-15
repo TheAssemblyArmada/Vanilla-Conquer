@@ -216,6 +216,8 @@ extern HouseClass* PlayerPtr;
 extern unsigned char* BlackPalette;
 extern unsigned char* WhitePalette;
 extern unsigned char* GamePalette;
+extern DiffType ScenDifficulty;  // For human player.
+extern DiffType ScenCDifficulty; // For computer players.
 extern unsigned Scenario;
 extern ScenarioPlayerType ScenPlayer;
 extern ScenarioDirType ScenDir;
