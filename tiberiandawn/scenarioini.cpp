@@ -403,11 +403,7 @@ bool Read_Scenario_Ini(char* root, bool fresh)
             PlayerPtr->ActLike = Whom;
         }
 
-        if (Special.IsEasy) {
-            PlayerPtr->Assign_Handicap(DIFF_EASY);
-        } else if (Special.IsDifficult) {
-            PlayerPtr->Assign_Handicap(DIFF_HARD);
-        }
+        PlayerPtr->Assign_Handicap(ScenDifficulty);
     } else {
 
 #ifdef OBSOLETE
@@ -1415,6 +1411,8 @@ static void Assign_Houses(void)
         if (MPlayerID[i] == MPlayerLocalID) {
             PlayerPtr = housep;
         }
+
+        housep->Assign_Handicap(ScenDifficulty);
     }
 
     /*
@@ -1448,6 +1446,13 @@ static void Assign_Houses(void)
             */
             housep->IsHuman = false;
             housep->Init_Data(color, pref_house, MPlayerCredits);
+
+            DiffType difficulty = ScenCDifficulty;
+
+            if (Players.Count() > 1 && Rule.IsCompEasyBonus && difficulty > DIFF_EASY) {
+                difficulty = (DiffType)(difficulty - 1);
+            }
+            housep->Assign_Handicap(difficulty);
         }
     }
 
