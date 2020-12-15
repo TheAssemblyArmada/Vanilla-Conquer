@@ -561,6 +561,19 @@ bool Save_Misc_Values(FileClass& file)
     }
 
     /*
+    **	Save difficulty.
+    */
+    if (file.Write(&ScenDifficulty, sizeof(ScenDifficulty)) != sizeof(ScenDifficulty)) {
+        return (false);
+    }
+
+    /*
+    **	Save AI difficulty.
+    */
+    if (file.Write(&ScenCDifficulty, sizeof(ScenCDifficulty)) != sizeof(ScenCDifficulty)) {
+        return (false);
+    }
+    /*
     **	Save frame #.
     */
     if (file.Write(&Frame, sizeof(Frame)) != sizeof(Frame)) {
@@ -652,6 +665,20 @@ bool Load_Misc_Values(FileClass& file)
     **	Read this scenario number.
     */
     if (file.Read(&Scenario, sizeof(Scenario)) != sizeof(Scenario)) {
+        return (false);
+    }
+
+    /*
+    **	Read difficulty.
+    */
+    if (file.Read(&ScenDifficulty, sizeof(ScenDifficulty)) != sizeof(ScenDifficulty)) {
+        return (false);
+    }
+
+    /*
+    **	Read AI difficulty.
+    */
+    if (file.Read(&ScenCDifficulty, sizeof(ScenCDifficulty)) != sizeof(ScenCDifficulty)) {
         return (false);
     }
 
