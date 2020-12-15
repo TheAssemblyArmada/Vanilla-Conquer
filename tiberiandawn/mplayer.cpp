@@ -44,6 +44,7 @@
 #include "common/irandom.h"
 #include "common/tcpip.h"
 #include "common/ini.h"
+#include "common/framelimit.h"
 
 static void Garble_Message(char* buf);
 
@@ -69,11 +70,12 @@ void Show_Internet_Connection_Progress(void);
  *=============================================================================================*/
 GameType Select_MPlayer_Game(void)
 {
-    // PG_TO_FIX
+#ifdef REMASTER_BUILD // PG_TO_FIX
     return GAME_NORMAL;
-#if (0)
+#else
+    static const char TXT_SKIRMISH[] = "Skirmish";
     int factor = (SeenBuff.Get_Width() == 320) ? 1 : 2;
-    bool ipx_avail = FALSE;
+    bool ipx_avail = false;
     int number_of_buttons;
     /*........................................................................
     Dialog & button dimensions
@@ -116,7 +118,7 @@ GameType Select_MPlayer_Game(void)
     ........................................................................*/
     enum
     {
-        BUTTON_MODEMSERIAL = 100,
+        BUTTON_SKIRMISH = 100,
 #if (0)
         BUTTON_INTERNET,
 #endif //(0)
@@ -160,13 +162,13 @@ GameType Select_MPlayer_Game(void)
         ipx_avail = true;
     }
 
-    TextButtonClass modemserialbtn(BUTTON_MODEMSERIAL,
-                                   TXT_MODEM_SERIAL,
-                                   TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW,
-                                   d_modemserial_x,
-                                   d_modemserial_y,
-                                   d_modemserial_w,
-                                   d_modemserial_h);
+    TextButtonClass skirmishbtn(BUTTON_SKIRMISH,
+                                TXT_SKIRMISH,
+                                TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW,
+                                d_modemserial_x,
+                                d_modemserial_y,
+                                d_modemserial_w,
+                                d_modemserial_h);
 #if (0)
     TextButtonClass internetbtn(BUTTON_INTERNET,
                                 TXT_INTERNET,
@@ -200,7 +202,7 @@ GameType Select_MPlayer_Game(void)
     /*
     ............................ Create the list .............................
     */
-    commands = &modemserialbtn;
+    commands = &skirmishbtn;
 #if (0)
     internetbtn.Add_Tail(*commands);
 #endif //(0)
@@ -213,21 +215,22 @@ GameType Select_MPlayer_Game(void)
     ......................... Fill array of button ptrs ......................
     */
     curbutton = 0;
-    buttons[0] = &modemserialbtn;
+    buttons[0] = &skirmishbtn;
 #if (0)
     buttons[1] = &internetbtn;
 #endif //(0)
+
     if (ipx_avail) {
         buttons[1] = &ipxbtn;
         buttons[2] = &cancelbtn;
     } else {
+        --number_of_buttons;
         buttons[1] = &cancelbtn;
-        number_of_buttons--;
     }
 
     buttons[curbutton]->Turn_On();
 
-    Keyboard::Clear();
+    Keyboard->Clear();
 
     Fancy_Text_Print(TXT_NONE, 0, 0, CC_GREEN, TBLACK, TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
 
@@ -287,8 +290,8 @@ GameType Select_MPlayer_Game(void)
         ............................ Process input ............................
         */
         switch (input) {
-        case (BUTTON_MODEMSERIAL | KN_BUTTON):
-            selection = BUTTON_MODEMSERIAL;
+        case (BUTTON_SKIRMISH | KN_BUTTON):
+            selection = BUTTON_SKIRMISH;
             pressed = true;
             break;
 
@@ -331,9 +334,11 @@ GameType Select_MPlayer_Game(void)
             break;
 
         case KN_RETURN:
-            selection = curbutton + BUTTON_MODEMSERIAL;
-            if (!ipx_avail)
-                selection--;
+            selection = curbutton + BUTTON_SKIRMISH;
+            if (!ipx_avail && selection > BUTTON_SKIRMISH) {
+                ++selection;
+            }
+
             pressed = true;
             break;
 
@@ -347,26 +352,27 @@ GameType Select_MPlayer_Game(void)
             //
             buttons[curbutton]->Turn_Off();
             buttons[curbutton]->Flag_To_Redraw();
-            curbutton = selection - BUTTON_MODEMSERIAL;
+            curbutton = selection - BUTTON_SKIRMISH;
+            if (!ipx_avail && curbutton > 1) {
+                --curbutton;
+            }
             buttons[curbutton]->Turn_On();
             //			buttons[curbutton]->Flag_To_Redraw();
             buttons[curbutton]->IsPressed = true;
             buttons[curbutton]->Draw_Me(true);
 
             switch (selection) {
-            case (BUTTON_MODEMSERIAL):
-
-                //
-                // Pop up the modem/serial/com port dialog
-                //
-                retval = Select_Serial_Dialog();
-
-                if (retval != GAME_NORMAL) {
+            case (BUTTON_SKIRMISH):
+                GameToPlay = GAME_SKIRMISH;
+                if (Com_Scenario_Dialog()) {
+                    retval = GAME_SKIRMISH;
                     process = false;
                 } else {
                     buttons[curbutton]->IsPressed = false;
+                    GameToPlay = GAME_NORMAL;
                     display = REDRAW_ALL;
                 }
+
                 break;
 
 #if (0)
@@ -484,6 +490,8 @@ GameType Select_MPlayer_Game(void)
 
             pressed = false;
         }
+
+        Frame_Limiter();
     }
     return (retval);
 #endif

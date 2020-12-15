@@ -1074,6 +1074,17 @@ bool Select_Game(bool fade)
                     }
                     break;
 
+                case GAME_SKIRMISH:
+#ifndef REMASTER_BUILD
+                    if (!Com_Scenario_Dialog()) {
+                        GameToPlay = Select_MPlayer_Game();
+                        if (GameToPlay == GAME_NORMAL) { // user hit Cancel
+                            display = true;
+                            selection = SEL_NONE;
+                        }
+                    }
+#endif
+                    break;
                 case GAME_NULL_MODEM:
                 case GAME_MODEM:
 #if (0)
@@ -1131,6 +1142,13 @@ bool Select_Game(bool fade)
                     ScenDir = SCEN_DIR_EAST;
                     process = false;
                     Options.ScoreVolume = 0;
+                    break;
+
+                case GAME_SKIRMISH:
+                    Theme.Fade_Out();
+                    ScenPlayer = SCEN_PLAYER_MPLAYER;
+                    ScenDir = SCEN_DIR_EAST;
+                    process = false;
                     break;
 
                 /*
