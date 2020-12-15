@@ -981,6 +981,33 @@ bool Select_Game(bool fade)
             case SEL_NEW_SCENARIO:
                 CarryOverMoney = 0;
                 if (Expansion_Dialog()) {
+                    switch (Fetch_Difficulty()) {
+                    case 0:
+                        ScenCDifficulty = DIFF_HARD;
+                        ScenDifficulty = DIFF_EASY;
+                        break;
+
+                    case 1:
+                        ScenCDifficulty = DIFF_HARD;
+                        ScenDifficulty = DIFF_NORMAL;
+                        break;
+
+                    case 2:
+                        ScenCDifficulty = DIFF_NORMAL;
+                        ScenDifficulty = DIFF_NORMAL;
+                        break;
+
+                    case 3:
+                        ScenCDifficulty = DIFF_EASY;
+                        ScenDifficulty = DIFF_NORMAL;
+                        break;
+
+                    case 4:
+                        ScenCDifficulty = DIFF_EASY;
+                        ScenDifficulty = DIFF_HARD;
+                        break;
+                    }
+
                     Theme.Fade_Out();
                     //						Theme.Queue_Song(THEME_AOI);
                     GameToPlay = GAME_NORMAL;
@@ -1033,6 +1060,38 @@ bool Select_Game(bool fade)
             **	SEL_START_NEW_GAME: Play the game
             */
             case SEL_START_NEW_GAME:
+                if (Special.IsFromInstall) {
+                    ScenCDifficulty = DIFF_NORMAL;
+                    ScenDifficulty = DIFF_NORMAL;
+                } else {
+                    switch (Fetch_Difficulty()) {
+                    case 0:
+                        ScenCDifficulty = DIFF_HARD;
+                        ScenDifficulty = DIFF_EASY;
+                        break;
+
+                    case 1:
+                        ScenCDifficulty = DIFF_HARD;
+                        ScenDifficulty = DIFF_NORMAL;
+                        break;
+
+                    case 2:
+                        ScenCDifficulty = DIFF_NORMAL;
+                        ScenDifficulty = DIFF_NORMAL;
+                        break;
+
+                    case 3:
+                        ScenCDifficulty = DIFF_EASY;
+                        ScenDifficulty = DIFF_NORMAL;
+                        break;
+
+                    case 4:
+                        ScenCDifficulty = DIFF_EASY;
+                        ScenDifficulty = DIFF_HARD;
+                        break;
+                    }
+                }
+
                 CarryOverMoney = 0;
 
 #ifdef DEMO

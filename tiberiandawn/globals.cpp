@@ -298,6 +298,8 @@ WWKeyboardClass* Keyboard;
 ** These variables should all be set together.
 */
 HousesType Whom;                          // Initial command line house choice.
+DiffType ScenDifficulty = DIFF_NORMAL;    // For human player.
+DiffType ScenCDifficulty = DIFF_NORMAL;   // For computer players.
 unsigned Scenario;                        // Scenario #
 ScenarioPlayerType ScenPlayer;            // GDI, NOD, 2-Player, Multi-Player
 ScenarioDirType ScenDir;                  // East/West

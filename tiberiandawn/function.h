@@ -708,6 +708,7 @@ extern GraphicBufferClass* PseudoSeenBuff;
 **	SPECIAL.CPP
 */
 void Special_Dialog(void);
+int Fetch_Difficulty(void);
 
 /*
 **	SUPPORT.ASM

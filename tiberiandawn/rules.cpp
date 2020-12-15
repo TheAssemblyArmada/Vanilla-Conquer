@@ -118,6 +118,7 @@ RulesClass::RulesClass(void)
     , InfantryReserve(3000)
     , InfantryBaseMult(1)
     , IsComputerParanoid(true)
+    , IsFineDifficulty(false)
     , AllowSuperWeapons(true)
 {
 }
