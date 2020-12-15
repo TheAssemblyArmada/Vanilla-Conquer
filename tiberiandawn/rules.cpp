@@ -122,4 +122,44 @@ RulesClass::RulesClass(void)
     , IsFineDifficulty(false)
     , AllowSuperWeapons(true)
 {
+#ifndef REMASTER_BUILD
+    Diff[DIFF_EASY].FirepowerBias = 1.2;
+    Diff[DIFF_EASY].GroundspeedBias = 1.2;
+    Diff[DIFF_EASY].AirspeedBias = 1.2;
+    Diff[DIFF_EASY].ArmorBias = 0.3;
+    Diff[DIFF_EASY].ROFBias = 0.8;
+    Diff[DIFF_EASY].CostBias = 0.8;
+    Diff[DIFF_EASY].BuildSpeedBias = 0.6;
+    Diff[DIFF_EASY].RepairDelay = 0.001;
+    Diff[DIFF_EASY].BuildDelay = 0.001;
+    Diff[DIFF_EASY].IsBuildSlowdown = false;
+    Diff[DIFF_EASY].IsWallDestroyer = true;
+    Diff[DIFF_EASY].IsContentScan = true;
+
+    Diff[DIFF_NORMAL].FirepowerBias = 1.0;
+    Diff[DIFF_NORMAL].GroundspeedBias = 1.0;
+    Diff[DIFF_NORMAL].AirspeedBias = 1.0;
+    Diff[DIFF_NORMAL].ArmorBias = 1.0;
+    Diff[DIFF_NORMAL].ROFBias = 1.0;
+    Diff[DIFF_NORMAL].CostBias = 1.0;
+    Diff[DIFF_NORMAL].BuildSpeedBias = 1.0;
+    Diff[DIFF_NORMAL].RepairDelay = 0.02;
+    Diff[DIFF_NORMAL].BuildDelay = 0.03;
+    Diff[DIFF_NORMAL].IsBuildSlowdown = true;
+    Diff[DIFF_NORMAL].IsWallDestroyer = true;
+    Diff[DIFF_NORMAL].IsContentScan = true;
+
+    Diff[DIFF_HARD].FirepowerBias = 0.9;
+    Diff[DIFF_HARD].GroundspeedBias = 0.9;
+    Diff[DIFF_HARD].AirspeedBias = 0.9;
+    Diff[DIFF_HARD].ArmorBias = 1.05;
+    Diff[DIFF_HARD].ROFBias = 1.05;
+    Diff[DIFF_HARD].CostBias = 1.0;
+    Diff[DIFF_HARD].BuildSpeedBias = 1.0;
+    Diff[DIFF_HARD].RepairDelay = 0.05;
+    Diff[DIFF_HARD].BuildDelay = 0.1;
+    Diff[DIFF_HARD].IsBuildSlowdown = true;
+    Diff[DIFF_HARD].IsWallDestroyer = true;
+    Diff[DIFF_HARD].IsContentScan = true;
+#endif
 }
