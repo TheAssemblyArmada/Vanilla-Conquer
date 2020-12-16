@@ -153,7 +153,7 @@ void SmudgeClass::operator delete(void* ptr)
 SmudgeClass::SmudgeClass(SmudgeType type, COORDINATE pos, HousesType house)
     : Class(&SmudgeTypeClass::As_Reference(type))
 {
-    if (pos != -1) {
+    if (pos != UINT_MAX) {
         ToOwn = house;
         if (!Unlimbo(pos)) {
             Delete_This();
