@@ -61,7 +61,7 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
-    SmudgeClass(SmudgeType type, COORDINATE pos = 0xFFFFFFFFUL, HousesType house = HOUSE_NONE);
+    SmudgeClass(SmudgeType type, COORDINATE pos = UINT_MAX, HousesType house = HOUSE_NONE);
     SmudgeClass(NoInitClass const& x)
         : ObjectClass(x)
         , Class(x){};

@@ -492,7 +492,7 @@ typedef union
     } Sub;
 } LEPTON_COMPOSITE;
 
-typedef unsigned long COORDINATE;
+typedef unsigned COORDINATE;
 typedef union
 {
     COORDINATE Coord;

@@ -52,7 +52,7 @@ public:
     */
     static void* operator new(size_t size);
     static void operator delete(void* ptr);
-    SmudgeClass(SmudgeType type, COORDINATE pos = -1, HousesType house = HOUSE_NONE);
+    SmudgeClass(SmudgeType type, COORDINATE pos = UINT_MAX, HousesType house = HOUSE_NONE);
     SmudgeClass(void)
         : Class(0){};
     operator SmudgeType(void) const
