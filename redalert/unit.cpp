@@ -1118,6 +1118,13 @@ ResultType UnitClass::Take_Damage(int& damage, int distance, WarheadType warhead
             }
         }
 
+        /*
+        **	When the truck blows up, the entire side blows up if no bases capture the flag mode.
+        */
+        if (*this == UNIT_TRUCK && !Session.Options.Bases && Special.IsCaptureTheFlag) {
+            House->Flag_To_Die();
+        }
+
         if (*this == UNIT_MCV) {
             if (House) {
                 House->Check_Pertinent_Structures();
