@@ -1319,7 +1319,9 @@ static void Remove_AI_Players(void)
     }
 }
 
+#ifdef REMASTER_BUILD
 #define USE_GLYPHX_START_LOCATIONS 1
+#endif
 
 /***********************************************************************************************
  * Create_Units -- Creates infantry & units, for non-base multiplayer                          *
@@ -1430,14 +1432,14 @@ static void Create_Units(void)
     int tot_infantry;                                 // total # infantry to create
 
     CELL waypts[26];
-    //	CELL sorted_waypts[26];
+    CELL sorted_waypts[26];
     int num_waypts;
 
     HousesType h;     // house loop counter
     HouseClass* hptr; // ptr to house being processed
 
     CELL centroid; // centroid of this house's stuff
-                   //	int try_count;			// # times we've tried to select a centroid
+    int try_count; // # times we've tried to select a centroid
     CELL centerpt; // centroid for a category of objects, as a CELL
 
     int u_limit;      // last allowable index of units for this BuildLevel
@@ -1527,7 +1529,7 @@ static void Create_Units(void)
     Now sort the 'waypts' array
     ........................................................................*/
 #ifndef USE_GLYPHX_START_LOCATIONS
-    // Sort_Cells (waypts, num_waypts, sorted_waypts);
+    Sort_Cells(waypts, num_waypts, sorted_waypts);
 #endif
 
     /*------------------------------------------------------------------------
