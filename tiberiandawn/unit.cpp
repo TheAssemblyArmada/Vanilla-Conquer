@@ -947,9 +947,10 @@ ResultType UnitClass::Take_Damage(int& damage, int distance, WarheadType warhead
         }
 
         /*
-        **	When the mobile head quarters blows up, the entire side blows up.
+        **  When the mobile head quarters blows up, the entire side blows up.
+        **  Updated to only take effect for no bases capture the flag mode - OmniBlade.
         */
-        if (*this == UNIT_MHQ) {
+        if (*this == UNIT_MHQ && !MPlayerBases && Special.IsCaptureTheFlag) {
             House->Flag_To_Die();
         }
 
