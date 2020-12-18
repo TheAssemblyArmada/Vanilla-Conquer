@@ -746,7 +746,8 @@ static void Message_Input(KeyNumType& input)
     **	'to' portion.  At the other end, the buffer allocated to display the
     **	message must be MAX_MESSAGE_LENGTH plus the size of "From: xxx (house)".
     */
-    if (input >= KN_F1 && input < (KN_F1 + MPlayerMax) && Messages.Get_Edit_Buf() == NULL) {
+    if (GameToPlay != GAME_NORMAL && GameToPlay != GAME_SKIRMISH && input >= KN_F1 && input < (KN_F1 + MPlayerMax)
+        && Messages.Get_Edit_Buf() == NULL) {
         memset(txt, 0, 40);
 
         /*
@@ -840,7 +841,7 @@ static void Message_Input(KeyNumType& input)
     /*
     **	Send a message
     */
-    if (rc == 3) {
+    if (rc == 3 && GameToPlay != GAME_NORMAL && GameToPlay != GAME_SKIRMISH) {
 //
 // PG_TO_FIX
 #if (0)
@@ -1492,7 +1493,7 @@ bool Main_Loop()
     /*
     **	Setup the timer so that the Main_Loop function processes at the correct rate.
     */
-    if (GameToPlay != GAME_NORMAL && CommProtocol == COMM_PROTOCOL_MULTI_E_COMP) {
+    if (GameToPlay != GAME_NORMAL && GameToPlay != GAME_SKIRMISH && CommProtocol == COMM_PROTOCOL_MULTI_E_COMP) {
         framedelay = 60 / DesiredFrameRate;
         FrameTimer.Set(framedelay);
     } else {
