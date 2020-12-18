@@ -333,6 +333,7 @@ void Queue_AI(void)
 
         switch (GameToPlay) {
 
+        case GAME_SKIRMISH:
         case GAME_NORMAL:
             Queue_AI_Normal();
             break;
@@ -515,6 +516,9 @@ static void Queue_AI_Normal(void)
  *=========================================================================*/
 static void Queue_AI_Multiplayer(void)
 {
+    if (GameToPlay == GAME_SKIRMISH) {
+        return;
+    }
     //........................................................................
     // Enums:
     //........................................................................
@@ -2789,7 +2793,7 @@ static int Execute_DoList(int,
     //------------------------------------------------------------------------
     // For a single-player game, just execute all events in the queue.
     //------------------------------------------------------------------------
-    if (GameToPlay == GAME_NORMAL) {
+    if (GameToPlay == GAME_NORMAL || GameToPlay == GAME_SKIRMISH) {
         for (i = 0; i < DoList.Count; i++) {
             if ((unsigned)Frame >= DoList[i].Frame && !DoList[i].IsExecuted) {
                 DoList[i].Execute();         // execute it
@@ -2870,7 +2874,8 @@ static int Execute_DoList(int,
                 //...............................................................
                 //	Error if it's too late to execute this packet!
                 //...............................................................
-                if ((unsigned)Frame > DoList[j].Frame && DoList[j].Type != EventClass::FRAMEINFO) {
+                if ((unsigned)Frame > DoList[j].Frame && DoList[j].Type != EventClass::FRAMEINFO
+                    && GameToPlay != GAME_NORMAL && GameToPlay != GAME_SKIRMISH) {
 #ifndef DEMO
                     Dump_Packet_Too_Late_Stuff(&DoList[j]);
 #endif // DEMO
@@ -3160,7 +3165,7 @@ static void Queue_Playback(void)
     //	routine didn't write anything the first time through); do this after the
     //	CRC is computed, since we'll still need a CRC for Frame 0.
     //------------------------------------------------------------------------
-    if (Frame == 0 && GameToPlay != GAME_NORMAL) {
+    if (Frame == 0 && GameToPlay != GAME_NORMAL && GameToPlay != GAME_SKIRMISH) {
         return;
     }
 
@@ -3169,7 +3174,7 @@ static void Queue_Playback(void)
     //------------------------------------------------------------------------
     testframe = ((Frame + (FrameSendRate - 1)) / FrameSendRate) * FrameSendRate;
 
-    if (GameToPlay != GAME_NORMAL && CommProtocol == COMM_PROTOCOL_MULTI_E_COMP) {
+    if (GameToPlay != GAME_NORMAL && GameToPlay != GAME_SKIRMISH && CommProtocol == COMM_PROTOCOL_MULTI_E_COMP) {
         if (Frame != testframe) {
             return;
         }

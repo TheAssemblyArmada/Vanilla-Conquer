@@ -200,7 +200,7 @@ void GameControlsClass::Process(void)
         /*
         **	Invoke game callback.
         */
-        if (GameToPlay == GAME_NORMAL) {
+        if (GameToPlay == GAME_NORMAL || GameToPlay == GAME_SKIRMISH) {
             Call_Back();
         } else {
             if (Main_Loop()) {
