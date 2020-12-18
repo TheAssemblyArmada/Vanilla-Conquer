@@ -85,97 +85,98 @@ extern char const* EngMisStr[];
  *=============================================================================================*/
 int Com_Scenario_Dialog(bool skirmish)
 {
+    int factor = (SeenBuff.Get_Width() == 320) ? 1 : 2;
     /*........................................................................
     Dialog & button dimensions
     ........................................................................*/
-    int d_dialog_w = 320 * RESFACTOR;                      // dialog width
-    int d_dialog_h = 200 * RESFACTOR;                      // dialog height
-    int d_dialog_x = ((320 * RESFACTOR - d_dialog_w) / 2); // dialog x-coord
-    int d_dialog_y = ((200 * RESFACTOR - d_dialog_h) / 2); // dialog y-coord
-    int d_dialog_cx = d_dialog_x + (d_dialog_w / 2);       // center x-coord
+    int d_dialog_w = 320 * factor;                      // dialog width
+    int d_dialog_h = 200 * factor;                      // dialog height
+    int d_dialog_x = ((320 * factor - d_dialog_w) / 2); // dialog x-coord
+    int d_dialog_y = ((200 * factor - d_dialog_h) / 2); // dialog y-coord
+    int d_dialog_cx = d_dialog_x + (d_dialog_w / 2);    // center x-coord
 
-    int d_txt6_h = 6 * RESFACTOR + 1; // ht of 6-pt text
-    int d_margin1 = 5 * RESFACTOR;    // margin width/height
-    int d_margin2 = 7 * RESFACTOR;    // margin width/height
+    int d_txt6_h = 6 * factor + 1; // ht of 6-pt text
+    int d_margin1 = 5 * factor;    // margin width/height
+    int d_margin2 = 7 * factor;    // margin width/height
 
-    int d_name_w = 70 * RESFACTOR;
-    int d_name_h = 9 * RESFACTOR;
+    int d_name_w = 70 * factor;
+    int d_name_h = 9 * factor;
     int d_name_x = d_dialog_x + (d_dialog_w / 4) - (d_name_w / 2);
-    int d_name_y = d_dialog_y + d_margin2 + d_txt6_h + 1 * RESFACTOR;
+    int d_name_y = d_dialog_y + d_margin2 + d_txt6_h + 1 * factor;
 
-    int d_house_w = 60 * RESFACTOR;
-    int d_house_h = (8 * 5 * RESFACTOR);
+    int d_house_w = 60 * factor;
+    int d_house_h = (8 * 5 * factor);
     int d_house_x = d_dialog_cx - (d_house_w / 2);
     int d_house_y = d_name_y;
 
-    int d_color_w = 10 * RESFACTOR;
-    int d_color_h = 9 * RESFACTOR;
+    int d_color_w = 10 * factor;
+    int d_color_h = 9 * factor;
     int d_color_y = d_name_y;
     int d_color_x = d_dialog_x + ((d_dialog_w / 4) * 3) - (d_color_w * 3);
 
-    int d_playerlist_w = 118 * RESFACTOR;
-    int d_playerlist_h = (6 * 6 * RESFACTOR) + 3 * RESFACTOR; // 6 rows high
-    int d_playerlist_x = d_dialog_x + d_margin1 + d_margin1 + 5 * RESFACTOR;
-    int d_playerlist_y = d_color_y + d_color_h + d_margin2 + 2 * RESFACTOR /*KO + d_txt6_h*/;
+    int d_playerlist_w = 118 * factor;
+    int d_playerlist_h = (6 * 6 * factor) + 3 * factor; // 6 rows high
+    int d_playerlist_x = d_dialog_x + d_margin1 + d_margin1 + 5 * factor;
+    int d_playerlist_y = d_color_y + d_color_h + d_margin2 + 2 * factor /*KO + d_txt6_h*/;
 
-    int d_scenariolist_w = 162 * RESFACTOR;
-    int d_scenariolist_h = (6 * 6 * RESFACTOR) + 3 * RESFACTOR; // 6 rows high
+    int d_scenariolist_w = 162 * factor;
+    int d_scenariolist_h = (6 * 6 * factor) + 3 * factor; // 6 rows high
     d_scenariolist_h *= 2;
 
-    int d_scenariolist_x = d_dialog_x + d_dialog_w - d_margin1 - d_margin1 - d_scenariolist_w - 5 * RESFACTOR;
-    int d_scenariolist_y = d_color_y + d_color_h + d_margin2 + 2 * RESFACTOR;
+    int d_scenariolist_x = d_dialog_x + d_dialog_w - d_margin1 - d_margin1 - d_scenariolist_w - 5 * factor;
+    int d_scenariolist_y = d_color_y + d_color_h + d_margin2 + 2 * factor;
     d_scenariolist_x = d_dialog_x + (d_dialog_w - d_scenariolist_w) / 2;
 
-    int d_count_w = 25 * RESFACTOR;
+    int d_count_w = 25 * factor;
     int d_count_h = d_txt6_h;
-    int d_count_x = d_playerlist_x + (d_playerlist_w / 2) + 20 * RESFACTOR; // (fudged)
-    int d_count_y = d_playerlist_y + d_playerlist_h + (d_margin1 * 2) - 2 * RESFACTOR;
-    d_count_y = d_scenariolist_y + d_scenariolist_h + d_margin1 - 2 * RESFACTOR;
+    int d_count_x = d_playerlist_x + (d_playerlist_w / 2) + 20 * factor; // (fudged)
+    int d_count_y = d_playerlist_y + d_playerlist_h + (d_margin1 * 2) - 2 * factor;
+    d_count_y = d_scenariolist_y + d_scenariolist_h + d_margin1 - 2 * factor;
 
-    int d_level_w = 25 * RESFACTOR;
+    int d_level_w = 25 * factor;
     int d_level_h = d_txt6_h;
-    int d_level_x = d_playerlist_x + (d_playerlist_w / 2) + 20 * RESFACTOR; // (fudged)
+    int d_level_x = d_playerlist_x + (d_playerlist_w / 2) + 20 * factor; // (fudged)
     int d_level_y = d_count_y + d_count_h;
 
-    int d_credits_w = 25 * RESFACTOR;
+    int d_credits_w = 25 * factor;
     int d_credits_h = d_txt6_h;
-    int d_credits_x = d_playerlist_x + (d_playerlist_w / 2) + 20 * RESFACTOR; // (fudged)
+    int d_credits_x = d_playerlist_x + (d_playerlist_w / 2) + 20 * factor; // (fudged)
     int d_credits_y = d_level_y + d_level_h;
 
-    int d_aiplayers_w = 25 * RESFACTOR;
+    int d_aiplayers_w = 25 * factor;
     int d_aiplayers_h = d_txt6_h;
-    int d_aiplayers_x = d_playerlist_x + (d_playerlist_w / 2) + 20 * RESFACTOR; // (fudged)
+    int d_aiplayers_x = d_playerlist_x + (d_playerlist_w / 2) + 20 * factor; // (fudged)
     int d_aiplayers_y = d_credits_y + d_credits_h;
 
-    int d_options_w = 106 * RESFACTOR;
-    int d_options_h = (5 * 6 * RESFACTOR) + 4 * RESFACTOR;
-    int d_options_x = d_dialog_x + d_dialog_w - 149 * RESFACTOR;
-    int d_options_y = d_scenariolist_y + d_scenariolist_h + d_margin1 - 2 * RESFACTOR;
+    int d_options_w = 106 * factor;
+    int d_options_h = (5 * 6 * factor) + 4 * factor;
+    int d_options_x = d_dialog_x + d_dialog_w - 149 * factor;
+    int d_options_y = d_scenariolist_y + d_scenariolist_h + d_margin1 - 2 * factor;
 
-    int d_message_w = d_dialog_w - (d_margin1 * 2) - 20 * RESFACTOR;
-    int d_message_h = (8 * d_txt6_h) + 3 * RESFACTOR; // 4 rows high
-    int d_message_x = d_dialog_x + d_margin1 + 10 * RESFACTOR;
-    int d_message_y = d_options_y + d_options_h + 2 * RESFACTOR;
+    int d_message_w = d_dialog_w - (d_margin1 * 2) - 20 * factor;
+    int d_message_h = (8 * d_txt6_h) + 3 * factor; // 4 rows high
+    int d_message_x = d_dialog_x + d_margin1 + 10 * factor;
+    int d_message_y = d_options_y + d_options_h + 2 * factor;
 
-    int d_send_w = d_dialog_w - (d_margin1 * 2) - 20 * RESFACTOR;
-    int d_send_h = 9 * RESFACTOR;
-    int d_send_x = d_dialog_x + d_margin1 + 10 * RESFACTOR;
+    int d_send_w = d_dialog_w - (d_margin1 * 2) - 20 * factor;
+    int d_send_h = 9 * factor;
+    int d_send_x = d_dialog_x + d_margin1 + 10 * factor;
     int d_send_y = d_message_y + d_message_h;
 
-    int d_ok_w = 45 * RESFACTOR;
-    int d_ok_h = 9 * RESFACTOR;
+    int d_ok_w = 45 * factor;
+    int d_ok_h = 9 * factor;
     int d_ok_x = d_dialog_x + (d_dialog_w / 6) - (d_ok_w / 2);
-    int d_ok_y = d_dialog_y + d_dialog_h - d_ok_h - d_margin1 - RESFACTOR * 6;
+    int d_ok_y = d_dialog_y + d_dialog_h - d_ok_h - d_margin1 - factor * 6;
 
-    int d_cancel_w = 45 * RESFACTOR;
-    int d_cancel_h = 9 * RESFACTOR;
+    int d_cancel_w = 45 * factor;
+    int d_cancel_h = 9 * factor;
     int d_cancel_x = d_dialog_cx - (d_cancel_w / 2);
-    int d_cancel_y = d_dialog_y + d_dialog_h - d_cancel_h - d_margin1 - RESFACTOR * 6;
+    int d_cancel_y = d_dialog_y + d_dialog_h - d_cancel_h - d_margin1 - factor * 6;
 
-    int d_load_w = 45 * RESFACTOR;
-    int d_load_h = 9 * RESFACTOR;
+    int d_load_w = 45 * factor;
+    int d_load_h = 9 * factor;
     int d_load_x = d_dialog_x + ((d_dialog_w * 5) / 6) - (d_load_w / 2);
-    int d_load_y = d_dialog_y + d_dialog_h - d_load_h - d_margin1 - RESFACTOR * 6;
+    int d_load_y = d_dialog_y + d_dialog_h - d_load_h - d_margin1 - factor * 6;
 
     /*........................................................................
     Button Enumerations
@@ -218,7 +219,7 @@ int Com_Scenario_Dialog(bool skirmish)
     bool process = true;             // process while true
     KeyNumType input;
 
-    int playertabs[] = {77 * RESFACTOR};  // tabs for player list box
+    int playertabs[] = {77 * factor};     // tabs for player list box
     int optiontabs[] = {8};               // tabs for player list box
     char namebuf[MPLAYER_NAME_MAX] = {0}; // buffer for player's name
     bool transmit;                        // 1 = re-transmit new game options
@@ -305,22 +306,22 @@ int Com_Scenario_Dialog(bool skirmish)
     GaugeClass countgauge(BUTTON_COUNT, d_count_x, d_count_y, d_count_w, d_count_h);
 
     char staticcountbuff[35];
-    StaticButtonClass staticcount(0, "     ", TPF_TEXT, d_count_x + d_count_w + 3 * RESFACTOR, d_count_y);
+    StaticButtonClass staticcount(0, "     ", TPF_TEXT, d_count_x + d_count_w + 3 * factor, d_count_y);
 
     GaugeClass levelgauge(BUTTON_LEVEL, d_level_x, d_level_y, d_level_w, d_level_h);
 
     char staticlevelbuff[35];
-    StaticButtonClass staticlevel(0, "     ", TPF_TEXT, d_level_x + d_level_w + 3 * RESFACTOR, d_level_y);
+    StaticButtonClass staticlevel(0, "     ", TPF_TEXT, d_level_x + d_level_w + 3 * factor, d_level_y);
 
     GaugeClass creditsgauge(BUTTON_CREDITS, d_credits_x, d_credits_y, d_credits_w, d_credits_h);
 
     char staticcreditsbuff[35];
-    StaticButtonClass staticcredits(0, "         ", TPF_TEXT, d_credits_x + d_credits_w + 3 * RESFACTOR, d_credits_y);
+    StaticButtonClass staticcredits(0, "         ", TPF_TEXT, d_credits_x + d_credits_w + 3 * factor, d_credits_y);
 
     GaugeClass aiplayersgauge(BUTTON_AIPLAYERS, d_aiplayers_x, d_aiplayers_y, d_aiplayers_w, d_aiplayers_h);
 
     char staticaibuff[35];
-    StaticButtonClass staticai(0, "     ", TPF_TEXT, d_aiplayers_x + d_aiplayers_w + 3 * RESFACTOR, d_aiplayers_y);
+    StaticButtonClass staticai(0, "     ", TPF_TEXT, d_aiplayers_x + d_aiplayers_w + 3 * factor, d_aiplayers_y);
 
     CheckListClass optionlist(BUTTON_OPTIONS,
                               d_options_x,
@@ -338,7 +339,7 @@ int Com_Scenario_Dialog(bool skirmish)
                            d_name_x,
                            optionlist.Y + optionlist.Height + d_margin1 + d_margin1,
                            d_dialog_w - (d_name_x - d_dialog_x) * 2,
-                           8 * RESFACTOR,
+                           8 * factor,
                            true);
     if (Rule.IsFineDifficulty) {
         difficulty.Set_Maximum(5);
@@ -416,11 +417,13 @@ int Com_Scenario_Dialog(bool skirmish)
     optionlist.Add_Item(Text_String(TXT_ORE_SPREADS));
     optionlist.Add_Item(Text_String(TXT_CRATES));
     optionlist.Add_Item(Text_String(TXT_SHADOW_REGROWS));
+    optionlist.Add_Item(Text_String(TXT_CAPTURE_THE_FLAG));
 
     optionlist.Check_Item(0, Session.Options.Bases);
     optionlist.Check_Item(1, Session.Options.Tiberium);
     optionlist.Check_Item(2, Session.Options.Goodies);
     optionlist.Check_Item(3, Special.IsShadowGrow);
+    optionlist.Check_Item(4, Special.IsCaptureTheFlag);
 
     countgauge.Set_Maximum(SessionClass::CountMax[Session.Options.Bases]
                            - SessionClass::CountMin[Session.Options.Bases]);
@@ -576,16 +579,16 @@ int Com_Scenario_Dialog(bool skirmish)
                                  TBLACK,
                                  TPF_CENTER | TPF_TEXT);
 
-                Fancy_Text_Print(TXT_EASY, difficulty.X, difficulty.Y - 8 * RESFACTOR, scheme, TBLACK, TPF_TEXT);
+                Fancy_Text_Print(TXT_EASY, difficulty.X, difficulty.Y - 8 * factor, scheme, TBLACK, TPF_TEXT);
                 Fancy_Text_Print(TXT_HARD,
                                  difficulty.X + difficulty.Width,
-                                 difficulty.Y - 8 * RESFACTOR,
+                                 difficulty.Y - 8 * factor,
                                  scheme,
                                  TBLACK,
                                  TPF_RIGHT | TPF_TEXT);
                 Fancy_Text_Print(TXT_NORMAL,
                                  difficulty.X + difficulty.Width / 2,
-                                 difficulty.Y - 8 * RESFACTOR,
+                                 difficulty.Y - 8 * factor,
                                  scheme,
                                  TBLACK,
                                  TPF_CENTER | TPF_TEXT);
@@ -599,7 +602,7 @@ int Com_Scenario_Dialog(bool skirmish)
                 Fancy_Text_Print(TXT_LEVEL, d_level_x - 2, d_level_y, scheme, TBLACK, TPF_TEXT | TPF_RIGHT);
                 Fancy_Text_Print(TXT_CREDITS_COLON, d_credits_x - 2, d_credits_y, scheme, TBLACK, TPF_TEXT | TPF_RIGHT);
                 Fancy_Text_Print(TXT_AI_PLAYERS_COLON,
-                                 d_aiplayers_x - 2 * RESFACTOR,
+                                 d_aiplayers_x - 2 * factor,
                                  d_aiplayers_y,
                                  scheme,
                                  TBLACK,
@@ -852,6 +855,7 @@ int Com_Scenario_Dialog(bool skirmish)
 
             Session.Options.Goodies = optionlist.Is_Checked(2);
             Special.IsShadowGrow = optionlist.Is_Checked(3);
+            Special.IsCaptureTheFlag = optionlist.Is_Checked(4);
 
             transmit = true;
             if (display < REDRAW_PARMS)
