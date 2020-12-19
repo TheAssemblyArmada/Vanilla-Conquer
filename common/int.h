@@ -403,7 +403,7 @@ public:
     }
 
     // Friend helper functions.
-    friend Int<PRECISION> Generate_Prime(Straw& rng, int pbits, Int<PRECISION> const* dummy = 0);
+    friend Int<PRECISION> Generate_Prime(Straw& rng, int pbits);
     friend Int<PRECISION> Gcd(const Int<PRECISION>& a, const Int<PRECISION>& b);
     //		friend bool NextPrime(Int<PRECISION> & p, const Int<PRECISION> & max, bool blumInt=false);
     //		friend Int<PRECISION> a_exp_b_mod_pq(const Int<PRECISION> & a, const Int<PRECISION> & ep, const Int<PRECISION>
@@ -478,7 +478,7 @@ template <class T> T Gcd(const T& a, const T& n)
 
 //#pragma warning 604 9
 //#pragma warning 595 9
-template <class T> T Generate_Prime(Straw& rng, int pbits, T const* dummy)
+template <class T> T Generate_Prime(Straw& rng, int pbits)
 {
     T minQ = (T(1UL) << (unsigned short)(pbits - (unsigned short)2));
     T maxQ = ((T(1UL) << (unsigned short)(pbits - (unsigned short)1)) - (unsigned short)1);

@@ -147,14 +147,14 @@ private:
     */
     void* Data; // Pointer to raw data.
 
-    static List<MixFileClass> List;
+    static List<MixFileClass> MixList;
 };
 
 /*
 **	This is the pointer to the first mixfile in the list of mixfiles registered
 **	with the mixfile system.
 */
-template <class T> List<MixFileClass<T>> MixFileClass<T>::List;
+template <class T> List<MixFileClass<T>> MixFileClass<T>::MixList;
 
 /***********************************************************************************************
  * MixFileClass::Free -- Uncaches a cached mixfile.                                            *
@@ -220,7 +220,7 @@ template <class T> MixFileClass<T>::~MixFileClass(void)
     /*
     **	Unlink this mixfile object from the chain.
     */
-    Unlink();
+    this->Unlink();
 }
 
 /***********************************************************************************************
@@ -331,7 +331,7 @@ MixFileClass<T>::MixFileClass(char const* filename)
     /*
     **	Attach to list of mixfiles.
     */
-    List.Add_Tail(this);
+    MixList.Add_Tail(this);
 }
 
 /***********************************************************************************************
@@ -452,7 +452,7 @@ MixFileClass<T>::MixFileClass(char const* filename, PKey const* key)
     /*
     **	Attach to list of mixfiles.
     */
-    List.Add_Tail(this);
+    MixList.Add_Tail(this);
 }
 
 /***********************************************************************************************
@@ -499,7 +499,7 @@ template <class T> void const* MixFileClass<T>::Retrieve(char const* filename)
  *=============================================================================================*/
 template <class T> MixFileClass<T>* MixFileClass<T>::Finder(char const* filename)
 {
-    MixFileClass<T>* ptr = List.First();
+    MixFileClass<T>* ptr = MixList.First();
     while (ptr->Is_Valid()) {
 #ifdef _WIN32
         char path[_MAX_PATH];
@@ -745,7 +745,7 @@ bool MixFileClass<T>::Offset(char const* filename, void** realptr, MixFileClass*
     /*
     **	Sweep through all registered mixfiles, trying to find the file in question.
     */
-    ptr = List.First();
+    ptr = MixList.First();
     while (ptr->Is_Valid()) {
         SubBlock* block;
 
@@ -788,10 +788,10 @@ bool MixFileClass<T>::Offset(char const* filename, void** realptr, MixFileClass*
 // ST - 12/18/2019 11:36AM
 template <class T> void MixFileClass<T>::Free_All(void)
 {
-    MixFileClass<T>* ptr = List.First();
+    MixFileClass<T>* ptr = MixList.First();
     while (ptr->Is_Valid()) {
         delete ptr;
-        ptr = List.First();
+        ptr = MixList.First();
     }
 }
 
