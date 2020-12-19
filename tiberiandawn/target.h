@@ -71,6 +71,9 @@ inline unsigned Target_Value(TARGET a)
     return (((unsigned)a) & TARGET_MANTISSA_MASK);
 }
 
+// intentionally discarding higher bits that do not decode the target information
+#define Target_Ptr(ptr) ((TARGET)(intptr_t)ptr)
+
 inline bool Is_Target_Team(TARGET a)
 {
     return (Target_Kind(a) == KIND_TEAM);

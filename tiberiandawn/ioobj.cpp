@@ -225,7 +225,7 @@ void TeamTypeClass::Decode_Pointers(void)
     ------------------------- Decode the Class array -------------------------
     */
     for (int i = 0; i < ClassCount; i++) {
-        Class[i] = Target_To_TechnoType((TARGET)Class[i]);
+        Class[i] = Target_To_TechnoType(Target_Ptr(Class[i]));
         Check_Ptr((void*)Class[i], __FILE__, __LINE__);
     }
 }
@@ -329,7 +329,7 @@ void TeamClass::Decode_Pointers(void)
     /*
     ------------------- Decode Class & House for this team -------------------
     */
-    ((TeamTypeClass*&)Class) = As_TeamType((TARGET)Class);
+    ((TeamTypeClass*&)Class) = As_TeamType(Target_Ptr(Class));
     Check_Ptr((void*)Class, __FILE__, __LINE__);
     ((HouseClass*&)House) = HouseClass::As_Pointer(*((HousesType*)&House));
     Check_Ptr((void*)House, __FILE__, __LINE__);
@@ -338,17 +338,17 @@ void TeamClass::Decode_Pointers(void)
     -------------------------- Decode the 'Member' ---------------------------
     */
     if (Member) {
-        switch (Target_Kind((TARGET)Member)) {
+        switch (Target_Kind(Target_Ptr(Member))) {
         case KIND_INFANTRY:
-            Member = As_Infantry((TARGET)Member, false);
+            Member = As_Infantry(Target_Ptr(Member), false);
             break;
 
         case KIND_UNIT:
-            Member = As_Unit((TARGET)Member, false);
+            Member = As_Unit(Target_Ptr(Member), false);
             break;
 
         case KIND_AIRCRAFT:
-            Member = As_Aircraft((TARGET)Member, false);
+            Member = As_Aircraft(Target_Ptr(Member), false);
             break;
 
         default:
@@ -456,7 +456,7 @@ void TriggerClass::Code_Pointers(void)
 void TriggerClass::Decode_Pointers(void)
 {
     if (Team) {
-        Team = As_TeamType((TARGET)Team);
+        Team = As_TeamType(Target_Ptr(Team));
         Check_Ptr((void*)Team, __FILE__, __LINE__);
     }
 }
@@ -680,7 +680,7 @@ void AnimClass::Decode_Pointers(void)
     ---------------------------- Decode 'Object' -----------------------------
     */
     if (Object) {
-        Object = As_Object((TARGET)Object, false);
+        Object = As_Object(Target_Ptr(Object), false);
         Check_Ptr((void*)Object, __FILE__, __LINE__);
     }
 
@@ -688,7 +688,7 @@ void AnimClass::Decode_Pointers(void)
     ---------------------------- Decode 'VirtualAnim' ------------------------
     */
     if (VirtualAnim) {
-        VirtualAnim = As_Animation((TARGET)VirtualAnim, false);
+        VirtualAnim = As_Animation(Target_Ptr(VirtualAnim), false);
         Check_Ptr((void*)VirtualAnim, __FILE__, __LINE__);
     }
 
@@ -808,7 +808,7 @@ void BuildingClass::Decode_Pointers(void)
     Decode the Factory value, subtracting off the '1' we added when coding it
     ------------------------------------------------------------------------*/
     if (Factory) {
-        Factory = Factories.Raw_Ptr((int)Factory - 1);
+        Factory = Factories.Raw_Ptr((intptr_t)Factory - 1);
         Check_Ptr((void*)Factory, __FILE__, __LINE__);
     }
 
@@ -926,7 +926,7 @@ void BulletClass::Decode_Pointers(void)
     ---------------------------- Decode 'Payback' ----------------------------
     */
     if (Payback) {
-        Payback = As_Techno((TARGET)Payback, false);
+        Payback = As_Techno(Target_Ptr(Payback), false);
         Check_Ptr((void*)Payback, __FILE__, __LINE__);
     }
 
@@ -1537,7 +1537,7 @@ void UnitClass::Code_Pointers(void)
 void UnitClass::Decode_Pointers(void)
 {
     if (TiberiumUnloadRefinery) {
-        TiberiumUnloadRefinery = As_Building((TARGET)TiberiumUnloadRefinery, false);
+        TiberiumUnloadRefinery = As_Building(Target_Ptr(TiberiumUnloadRefinery), false);
         Check_Ptr((void*)TiberiumUnloadRefinery, __FILE__, __LINE__);
     }
 
@@ -1633,7 +1633,7 @@ void FactoryClass::Code_Pointers(void)
 void FactoryClass::Decode_Pointers(void)
 {
     if (Object) {
-        Object = As_Techno((TARGET)Object, false);
+        Object = As_Techno(Target_Ptr(Object), false);
         Check_Ptr((void*)Object, __FILE__, __LINE__);
     }
 
@@ -1776,7 +1776,7 @@ void LayerClass::Decode_Pointers(void)
     TARGET target;
 
     for (int i = 0; i < Count(); i++) {
-        target = (TARGET)(*this)[i];
+        target = Target_Ptr((*this)[i]);
         (*this)[i] = (ObjectClass*)As_Object(target, false);
         Check_Ptr((*this)[i], __FILE__, __LINE__);
     }
@@ -2255,12 +2255,12 @@ void FootClass::Code_Pointers(void)
 void FootClass::Decode_Pointers(void)
 {
     if (Team) {
-        Team = As_Team((TARGET)Team, false);
+        Team = As_Team(Target_Ptr(Team), false);
         Check_Ptr((void*)Team, __FILE__, __LINE__);
     }
 
     if (Member) {
-        Member = (FootClass*)As_Techno((TARGET)Member, false);
+        Member = (FootClass*)As_Techno(Target_Ptr(Member), false);
         Check_Ptr((void*)Member, __FILE__, __LINE__);
     }
 
@@ -2323,7 +2323,7 @@ void RadioClass::Decode_Pointers(void)
     ----------------------------- Decode 'Radio' -----------------------------
     */
     if (Radio) {
-        Radio = As_Techno((TARGET)Radio, false);
+        Radio = As_Techno(Target_Ptr(Radio), false);
         Check_Ptr((void*)Radio, __FILE__, __LINE__);
     }
 
@@ -2499,7 +2499,7 @@ void CargoClass::Decode_Pointers(void)
     --------------------------- Decode 'CargoHold' ---------------------------
     */
     if (CargoHold) {
-        CargoHold = (FootClass*)As_Techno((TARGET)CargoHold, false);
+        CargoHold = (FootClass*)As_Techno(Target_Ptr(CargoHold), false);
         Check_Ptr((void*)CargoHold, __FILE__, __LINE__);
     }
 }
@@ -2604,12 +2604,12 @@ void ObjectClass::Code_Pointers(void)
 void ObjectClass::Decode_Pointers(void)
 {
     if (Next) {
-        Next = As_Object((TARGET)Next, false);
+        Next = As_Object(Target_Ptr(Next), false);
         Check_Ptr((void*)Next, __FILE__, __LINE__);
     }
 
     if (Trigger) {
-        Trigger = As_Trigger((TARGET)Trigger, false);
+        Trigger = As_Trigger(Target_Ptr(Trigger), false);
         Check_Ptr((void*)Trigger, __FILE__, __LINE__);
     }
 }

@@ -160,7 +160,7 @@ public:
     virtual int Mission_Harvest(void);
     virtual int Mission_Hunt(void);
     virtual int Mission_Enter(void);
-    virtual int UnitClass::Mission_Move(void);
+    virtual int Mission_Move(void);
     virtual FireErrorType Can_Fire(TARGET, int which) const;
 
 /*
