@@ -25,7 +25,6 @@ set(TIBDAWN_SRC
     credits.cpp
     crew.cpp
     debug.cpp
-    descdlg.cpp
     dial8.cpp
     dialog.cpp
     display.cpp
