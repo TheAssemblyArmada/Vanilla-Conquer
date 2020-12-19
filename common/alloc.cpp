@@ -37,7 +37,6 @@
  *   Total_Ram_Free -- Total amount of free RAM.                           *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
 
