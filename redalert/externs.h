@@ -452,7 +452,6 @@ extern unsigned long PlanetWestwoodGameID;      // Game ID
 extern HWND WChatHWND; // Handle to Wchat window.
 #endif
 extern bool GameStatisticsPacketSent;
-extern bool ConnectionLost;
 extern void* PacketLater;
 extern bool SpawnedFromWChat;
 extern int ShowCommand;

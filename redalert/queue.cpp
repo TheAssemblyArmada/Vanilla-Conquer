@@ -2284,7 +2284,6 @@ static void Stop_Game(void)
         MonoClass::Disable();
     }
     if (Session.Type == GAME_INTERNET) {
-        ConnectionLost = true;
         Send_Statistics_Packet(); //	Stop_Game()
     }
 
