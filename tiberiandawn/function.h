@@ -756,8 +756,7 @@ int Terrain_Cost(CELL cell, FacingType facing);
 /*
 **	Inline miscellaneous functions.
 */
-#define XYP_COORD(x, y)                                                                                                \
-    (unsigned long)(((x)*ICON_LEPTON_W) / CELL_PIXEL_W + ((((y)*ICON_LEPTON_H) / CELL_PIXEL_H) << 16))
+#define XYP_COORD(x, y) (unsigned)(((x)*ICON_LEPTON_W) / CELL_PIXEL_W + ((((y)*ICON_LEPTON_H) / CELL_PIXEL_H) << 16))
 inline FacingType Dir_Facing(DirType facing)
 {
     return (FacingType)(((unsigned char)(facing + 0x10) & 0xFF) >> 5);
