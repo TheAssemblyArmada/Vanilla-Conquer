@@ -117,6 +117,9 @@ bool Remote_Connect(void)
 {
     return false;
 }
+void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned long timeval)
+{
+}
 
 #ifdef _WIN32
 #ifdef WINSOCK_IPX
