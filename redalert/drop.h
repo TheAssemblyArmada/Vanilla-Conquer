@@ -37,6 +37,7 @@
 
 #include "list.h"
 #include "edit.h"
+#include "common/keyframe.h"
 
 class DropListClass : public EditClass
 {

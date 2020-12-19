@@ -74,7 +74,6 @@ template class TFixedIHeapClass<OverlayTypeClass>;
 template class TFixedIHeapClass<SmudgeClass>;
 template class TFixedIHeapClass<SmudgeTypeClass>;
 template class TFixedIHeapClass<TeamClass>;
-template class TFixedIHeapClass<TeamClass>;
 template class TFixedIHeapClass<TeamTypeClass>;
 template class TFixedIHeapClass<TemplateClass>;
 template class TFixedIHeapClass<TemplateTypeClass>;
