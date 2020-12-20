@@ -84,8 +84,6 @@ set(REDALERT_SRC
     list.cpp
     loaddlg.cpp
     logic.cpp
-    lzo1x_c.cpp
-    lzo1x_d.cpp
     lzopipe.cpp
     lzostraw.cpp
     map.cpp
@@ -96,6 +94,7 @@ set(REDALERT_SRC
     mapedtm.cpp
     mapsel.cpp
     menus.cpp
+    minilzo.c
     miscasm.cpp
     mission.cpp
     monoc.cpp
