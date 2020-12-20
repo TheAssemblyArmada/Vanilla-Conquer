@@ -509,7 +509,6 @@ void Load_Recording_Values(void);
 */
 void* Small_Icon(void const* iconptr, int iconnum);
 void Set_Window(int window, int x, int y, int w, int h);
-void* Load_Alloc_Data(FileClass* file);
 long Load_Uncompress(FileClass& file, BuffType& uncomp_buff, BuffType& dest_buff, void* reserved_data);
 long Translucent_Table_Size(int count);
 void* Build_Translucent_Table(void const* palette, TLucentType const* control, int count, void* buffer);

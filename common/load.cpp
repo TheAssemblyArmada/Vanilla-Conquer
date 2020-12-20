@@ -144,6 +144,57 @@ void* Load_Alloc_Data(char const* name, MemoryFlagType flags)
     return (buffer);
 }
 
+/***********************************************************************************************
+ * Load_Alloc_Data -- Allocates a buffer and loads the file into it.                           *
+ *                                                                                             *
+ *    This is the C++ replacement for the Load_Alloc_Data function. It will allocate the       *
+ *    memory big enough to hold the file and then read the file into it.                       *
+ *                                                                                             *
+ * INPUT:   file  -- The file to read.                                                         *
+ *                                                                                             *
+ *          mem   -- The memory system to use for allocation.                                  *
+ *                                                                                             *
+ * OUTPUT:  Returns with a pointer to the allocated and filled memory block.                   *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/17/1994 JLB : Created.                                                                 *
+ *=============================================================================================*/
+void* Load_Alloc_Data(const FileClass& file)
+{
+    void* ptr = 0;
+    long size = const_cast<FileClass&>(file).Size();
+
+    ptr = new char[size];
+    if (ptr) {
+        const_cast<FileClass&>(file).Read(ptr, size);
+    }
+    return (ptr);
+}
+
+/***********************************************************************************************
+ * Load_Alloc_Data -- Allocates a buffer and loads the file into it.                           *
+ *                                                                                             *
+ *    This is the C++ replacement for the Load_Alloc_Data function. It will allocate the       *
+ *    memory big enough to hold the file and then read the file into it.                       *
+ *                                                                                             *
+ * INPUT:   file  -- The file to read.                                                         *
+ *                                                                                             *
+ *          mem   -- The memory system to use for allocation.                                  *
+ *                                                                                             *
+ * OUTPUT:  Returns with a pointer to the allocated and filled memory block.                   *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/17/1994 JLB : Created.                                                                 *
+ *=============================================================================================*/
+void* Load_Alloc_Data(const FileClass* file)
+{
+    return Load_Alloc_Data(*file);
+}
+
 /***************************************************************************
  * LOAD_UNCOMPRESS -- Load and uncompress the given file.                  *
  *                                                                         *
