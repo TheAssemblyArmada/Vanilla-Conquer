@@ -720,7 +720,7 @@ void Memory_Error_Handler(void)
     while (Get_Mouse_State()) {
         Show_Mouse();
     };
-    WWMessageBox().Process(TEXT_MEMORY_ERROR, TEXT_ABORT, false);
+    WWMessageBox().Process(TEXT_MEMORY_ERROR, TEXT_ABORT, NULL, NULL, false);
 
     ReadyToQuit = 1;
 

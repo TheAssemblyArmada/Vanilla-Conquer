@@ -292,7 +292,7 @@ int main(int argc, char** argv)
 
             SoundOn = Audio_Init(16, false, 11025 * 2, 0);
 
-            Palette = new (MEM_CLEAR) unsigned char[768];
+            Palette = new unsigned char[768]();
 
             bool video_success = false;
             CCDebugString("C&C95 - Setting video mode.\n");

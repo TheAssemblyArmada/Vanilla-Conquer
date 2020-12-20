@@ -1651,7 +1651,7 @@ int MapClass::Validate(void)
         */
         obj = (*this)[cell].Cell_Occupier();
         if (obj) {
-            if (((unsigned int)obj & 0xff000000) || ((unsigned int)obj->Next & 0xff000000) ||
+            if (((uintptr_t)obj & 0xff000000) || ((uintptr_t)obj->Next & 0xff000000) ||
                 //				((unsigned int)obj->Trigger & 0xff000000) ||
                 obj->IsInLimbo || ((unsigned int)Coord_Cell(obj->Coord) >= MAP_CELL_TOTAL)) {
 
@@ -1665,7 +1665,7 @@ int MapClass::Validate(void)
         for (i = 0; i < ARRAY_SIZE((*this)[cell].CellClass::Overlapper); i++) {
             obj = (*this)[cell].Overlapper[i];
             if (obj) {
-                if (((unsigned int)obj & 0xff000000) || ((unsigned int)obj->Next & 0xff000000) ||
+                if (((uintptr_t)obj & 0xff000000) || ((uintptr_t)obj->Next & 0xff000000) ||
                     //					((unsigned int)obj->Trigger & 0xff000000) ||
                     obj->IsInLimbo || ((unsigned int)Coord_Cell(obj->Coord) >= MAP_CELL_TOTAL)) {
 

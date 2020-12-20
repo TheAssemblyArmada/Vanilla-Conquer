@@ -66,8 +66,8 @@ public:
     /*---------------------------------------------------------------------
     **	Constructors, Destructors, and overloaded operators.
     */
-    static void* BulletClass::operator new(size_t size);
-    static void BulletClass::operator delete(void* ptr);
+    static void* operator new(size_t size);
+    static void operator delete(void* ptr);
     BulletClass(void);
     BulletClass(BulletType id);
     virtual ~BulletClass(void)

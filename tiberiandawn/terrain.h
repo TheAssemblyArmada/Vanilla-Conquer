@@ -54,8 +54,8 @@ public:
     /*
     **	Constructor for terrain object class.
     */
-    static void* TerrainClass::operator new(size_t size);
-    static void TerrainClass::operator delete(void* ptr);
+    static void* operator new(size_t size);
+    static void operator delete(void* ptr);
     TerrainClass(void);
     TerrainClass(TerrainType id, CELL cell);
     virtual ~TerrainClass(void);
