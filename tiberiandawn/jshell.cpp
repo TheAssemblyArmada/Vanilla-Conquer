@@ -33,7 +33,6 @@
  *   Build_Translucent_Table -- Creates a translucent control table.                           *
  *   Translucent_Table_Size -- Determines the size of a translucent table.                     *
  *   Conquer_Build_Translucent_Table -- Builds fading table for shadow colors only.            *
- *   Load_Alloc_Data -- Allocates a buffer and loads the file into it.                         *
  *   Load_Uncompress -- Loads and uncompresses data to a buffer.                               *
  *   Fatal -- General purpose fatal error handler.                                             *
  *   Set_Window -- Sets the window dimensions to that specified.                               *
@@ -266,64 +265,6 @@ long Load_Uncompress(FileClass& file, BuffType& uncomp_buff, BuffType& dest_buff
         file.Close();
     }
     return ((long)size);
-}
-
-/***********************************************************************************************
- * Load_Alloc_Data -- Allocates a buffer and loads the file into it.                           *
- *                                                                                             *
- *    This is the C++ replacement for the Load_Alloc_Data function. It will allocate the       *
- *    memory big enough to hold the file and then read the file into it.                       *
- *                                                                                             *
- * INPUT:   file  -- The file to read.                                                         *
- *                                                                                             *
- *          mem   -- The memory system to use for allocation.                                  *
- *                                                                                             *
- * OUTPUT:  Returns with a pointer to the allocated and filled memory block.                   *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/17/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-void* Load_Alloc_Data(FileClass& file)
-{
-    void* ptr = 0;
-    long size = file.Size();
-
-    ptr = new char[size];
-    if (ptr) {
-        file.Read(ptr, size);
-    }
-    return (ptr);
-}
-
-/***********************************************************************************************
- * Load_Alloc_Data -- Allocates a buffer and loads the file into it.                           *
- *                                                                                             *
- *    This is the C++ replacement for the Load_Alloc_Data function. It will allocate the       *
- *    memory big enough to hold the file and then read the file into it.                       *
- *                                                                                             *
- * INPUT:   file  -- The file to read.                                                         *
- *                                                                                             *
- *          mem   -- The memory system to use for allocation.                                  *
- *                                                                                             *
- * OUTPUT:  Returns with a pointer to the allocated and filled memory block.                   *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/17/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-void* Load_Alloc_Data(FileClass* file)
-{
-    void* ptr = 0;
-    long size = file->Size();
-
-    ptr = new char[size];
-    if (ptr) {
-        file->Read(ptr, size);
-    }
-    return (ptr);
 }
 
 /***********************************************************************************************

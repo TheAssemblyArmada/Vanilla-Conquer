@@ -37,6 +37,7 @@
 #include "gbuffer.h"
 #include "misc.h"    // This is needed fro Reverse_WORD and _LONG
 #include "memflag.h" // This is needed for MemoryFlagType.
+#include "ccfile.h"
 
 #define LZW_SUPPORTED FALSE
 
@@ -115,6 +116,8 @@ int Load_Picture(char const* filename,
 unsigned long Load_Data(char const* name, void* ptr, unsigned long size);
 unsigned long Write_Data(char const* name, void* ptr, unsigned long size);
 void* Load_Alloc_Data(char const* name, MemoryFlagType flags);
+void* Load_Alloc_Data(const FileClass& file);
+void* Load_Alloc_Data(const FileClass* file);
 unsigned long
 Load_Uncompress(char const* file, BufferClass& uncomp_buff, BufferClass& dest_buff, void* reserved_data = NULL);
 unsigned long Uncompress_Data(void const* src, void* dst);

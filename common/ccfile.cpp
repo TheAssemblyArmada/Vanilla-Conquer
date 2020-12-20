@@ -524,15 +524,6 @@ int Delete_File(char const* file_name)
     return (CCFileClass(file_name).Delete());
 }
 
-void* Load_Alloc_Data(FileClass& file);
-
-void* Load_Alloc_Data(char const* name, int)
-{
-    CCFileClass file(name);
-
-    return (Load_Alloc_Data(file));
-}
-
 unsigned long File_Size(int handle)
 {
     if (handle != WWERROR && Handles[handle].Is_Open()) {
