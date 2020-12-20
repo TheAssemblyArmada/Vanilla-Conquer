@@ -401,7 +401,7 @@ template <class T> void TTimerClass<T>::Stop(void)
 template <class T> void TTimerClass<T>::Start(void)
 {
     if (Started == 0xFFFFFFFFU) {
-        Started = Timer();
+        Started = this->Timer();
     }
 }
 
@@ -655,7 +655,7 @@ template <class T> void CDTimerClass<T>::Start(void)
     WasStarted = true;
 
     if (Started == 0xFFFFFFFFU) {
-        Started = Timer();
+        Started = this->Timer();
     }
 }
 

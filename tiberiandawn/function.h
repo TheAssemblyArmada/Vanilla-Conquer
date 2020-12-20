@@ -509,7 +509,8 @@ void Load_Recording_Values(void);
 */
 void* Small_Icon(void const* iconptr, int iconnum);
 void Set_Window(int window, int x, int y, int w, int h);
-void* Load_Alloc_Data(FileClass* file);
+void* Load_Alloc_Data(FileClass * const file);
+void* Load_Alloc_Data(FileClass const & file);
 long Load_Uncompress(FileClass& file, BuffType& uncomp_buff, BuffType& dest_buff, void* reserved_data);
 long Translucent_Table_Size(int count);
 void* Build_Translucent_Table(void const* palette, TLucentType const* control, int count, void* buffer);
@@ -758,7 +759,7 @@ int Terrain_Cost(CELL cell, FacingType facing);
 **	Inline miscellaneous functions.
 */
 #define XYP_COORD(x, y)                                                                                                \
-    (unsigned long)(((x)*ICON_LEPTON_W) / CELL_PIXEL_W + ((((y)*ICON_LEPTON_H) / CELL_PIXEL_H) << 16))
+    (unsigned)(((x)*ICON_LEPTON_W) / CELL_PIXEL_W + ((((y)*ICON_LEPTON_H) / CELL_PIXEL_H) << 16))
 inline FacingType Dir_Facing(DirType facing)
 {
     return (FacingType)(((unsigned char)(facing + 0x10) & 0xFF) >> 5);

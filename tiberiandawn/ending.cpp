@@ -131,7 +131,7 @@ void Nod_Ending(void)
     HidPage.Clear();
     PseudoSeenBuff->Clear();
 
-    void* localpal = Load_Alloc_Data(&CCFileClass("SATSEL.PAL"));
+    void* localpal = Load_Alloc_Data(CCFileClass("SATSEL.PAL"));
     Load_Uncompress(CCFileClass("SATSEL.CPS"), SysMemPage, SysMemPage);
 #ifdef NOT_FOR_WIN95
     memcpy(satpic, HidPage.Get_Buffer(), 64000);

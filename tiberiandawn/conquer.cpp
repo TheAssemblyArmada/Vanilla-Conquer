@@ -64,7 +64,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <malloc.h>
 #include "common/framelimit.h"
 #include "common/vqatask.h"
 #include "common/vqaloader.h"

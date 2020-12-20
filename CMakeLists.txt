@@ -82,9 +82,14 @@ else()
         set(CMAKE_C_FLAGS_DEBUG "-g3")
     endif()
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fpermissive -fcheck-new -fsigned-char -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fpermissive -fcheck-new -fsigned-char -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
-    set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fpermissive -fcheck-new -fsigned-char -fdata-sections -ffunction-sections  -DNOMINMAX")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fpermissive -fcheck-new -fsigned-char -fdata-sections -ffunction-sections  -DNOMINMAX")
+   
+    if (NOT APPLE)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--gc-sections")
+      set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--gc-sections")
+      set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
+    endif()
 endif()
 
 add_definitions(-DENGLISH -DTRUE_FALSE_DEFINED)

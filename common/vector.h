@@ -500,8 +500,8 @@ DynamicVectorClass<T>::DynamicVectorClass(unsigned size, T const* array)
 template <class T> int DynamicVectorClass<T>::Resize(unsigned newsize, T const* array)
 {
     if (VectorClass<T>::Resize(newsize, array)) {
-        if (Length() < (unsigned)ActiveCount)
-            ActiveCount = Length();
+        if (this->Length() < (unsigned)ActiveCount)
+            ActiveCount = this->Length();
         return (true);
     }
     return (false);
@@ -553,9 +553,9 @@ template <class T> int DynamicVectorClass<T>::ID(T const& object)
  *=============================================================================================*/
 template <class T> int DynamicVectorClass<T>::Add(T const& object)
 {
-    if (ActiveCount >= (int)Length()) {
+    if (ActiveCount >= (int)this->Length()) {
         if ((this->IsAllocated || !this->VectorMax) && GrowthStep > 0) {
-            if (!Resize(Length() + GrowthStep)) {
+            if (!Resize(this->Length() + GrowthStep)) {
 
                 /*
                 **	Failure to increase the size of the vector is an error condition.
@@ -597,9 +597,9 @@ template <class T> int DynamicVectorClass<T>::Add(T const& object)
  *=============================================================================================*/
 template <class T> int DynamicVectorClass<T>::Add_Head(T const& object)
 {
-    if (ActiveCount >= (int)Length()) {
+    if (ActiveCount >= (int)this->Length()) {
         if ((this->IsAllocated || !this->VectorMax) && GrowthStep > 0) {
-            if (!Resize(Length() + GrowthStep)) {
+            if (!Resize(this->Length() + GrowthStep)) {
 
                 /*
                 **	Failure to increase the size of the vector is an error condition.

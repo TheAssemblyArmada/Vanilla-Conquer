@@ -198,7 +198,7 @@ TDropListClass<T>::TDropListClass(int id,
     , IsDropped(false)
     , ListHeight(h)
     , DropButton(0, down, x + w, y)
-    , List(0, x, y + Get_Build_Frame_Height(down), w + Get_Build_Frame_Width(down), h, flags, up, down)
+    , List(0, x, y + this->Get_Build_Frame_Height(down), w + this->Get_Build_Frame_Width(down), h, flags, up, down)
 {
     List.Make_Peer(*this);
     DropButton.Make_Peer(*this);
@@ -341,7 +341,7 @@ TDropListClass<T>::TDropListClass(TDropListClass<T> const& list)
 template <class T> void TDropListClass<T>::Set_Position(int x, int y)
 {
     EditClass::Set_Position(x, y);
-    List.Set_Position(x, y + Get_Build_Frame_Height(DropButton.Get_Shape_Data()));
+    List.Set_Position(x, y + this->Get_Build_Frame_Height(DropButton.Get_Shape_Data()));
     DropButton.Set_Position(x + Width, y);
 }
 
