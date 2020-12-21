@@ -213,6 +213,10 @@ public:
     static HousesType From_Name(char const* name);
     static HouseTypeClass const& As_Reference(HousesType house);
     static void One_Time(void);
+    char const* Name() const
+    {
+        return IniName;
+    }
 
 private:
     static HouseTypeClass const* const Pointers[HOUSE_COUNT];
@@ -240,7 +244,7 @@ public:
     **	text file. Whenever the name of the object needs to be displayed,
     **	this is used to determine the text string.
     */
-    int Name;
+    int FullName;
 
     AbstractTypeClass(void){};
     AbstractTypeClass(int name, char const* ini);
@@ -248,6 +252,10 @@ public:
 
     virtual COORDINATE Coord_Fixup(COORDINATE coord) const;
     virtual int Full_Name(void) const;
+    char const* Name(void) const
+    {
+        return (IniName);
+    }
     void Set_Name(char const* buf) const
     {
         strncpy((char*)IniName, buf, sizeof(IniName));
