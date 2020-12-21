@@ -247,7 +247,9 @@ typedef enum DiffType : unsigned char
 #define VERSION_NUMBER 1
 #define RELEASE_NUMBER 01
 
-#define FAME_FILE_NAME "HALLFAME.DAT"
+#define FAME_FILE_NAME     "HALLFAME.DAT"
+#define NET_SAVE_FILE_NAME "SAVEGAME.NET"
+#define CONFIG_FILE_NAME   "CONQUER.INI"
 
 /**********************************************************************
 **	Map controls. The map is composed of square elements called 'cells'.
