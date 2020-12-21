@@ -37,6 +37,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/ini.h"
+#include "common/wwfile.h"
 
 /***************************************************************************
  * Read_Private_Config_Struct -- Fetches override integer value.           *
@@ -47,17 +49,20 @@
  * HISTORY:                                                                *
  *   08/05/1992 JLB : Created.                                             *
  *=========================================================================*/
-bool Read_Private_Config_Struct(char* profile, NewConfigType* config)
+bool Read_Private_Config_Struct(FileClass& file, NewConfigType* config)
 {
-    config->DigitCard = WWGetPrivateProfileHex("Sound", "Card", profile);
-    config->IRQ = WWGetPrivateProfileInt("Sound", "IRQ", 0, profile);
-    config->DMA = WWGetPrivateProfileInt("Sound", "DMA", 0, profile);
-    config->Port = WWGetPrivateProfileHex("Sound", "Port", profile);
-    config->BitsPerSample = WWGetPrivateProfileInt("Sound", "BitsPerSample", 0, profile);
-    config->Channels = WWGetPrivateProfileInt("Sound", "Channels", 0, profile);
-    config->Reverse = WWGetPrivateProfileInt("Sound", "Reverse", 0, profile);
-    config->Speed = WWGetPrivateProfileInt("Sound", "Speed", 0, profile);
-    WWGetPrivateProfileString("Language", "Language", NULL, config->Language, 3, profile);
+    INIClass ini;
+    ini.Load(file);
+
+    config->DigitCard = ini.Get_Hex("Sound", "Card", 0);
+    config->IRQ = ini.Get_Int("Sound", "IRQ", 0);
+    config->DMA = ini.Get_Int("Sound", "DMA", 0);
+    config->Port = ini.Get_Hex("Sound", "Port", 0);
+    config->BitsPerSample = ini.Get_Int("Sound", "BitsPerSample", 0);
+    config->Channels = ini.Get_Int("Sound", "Channels", 0);
+    config->Reverse = ini.Get_Int("Sound", "Reverse", 0);
+    config->Speed = ini.Get_Int("Sound", "Speed", 0);
+    ini.Get_String("Language", "Language", NULL, config->Language, sizeof(config->Language));
 
     return ((config->DigitCard == 0) && (config->IRQ == 0) && (config->DMA == 0));
 }
