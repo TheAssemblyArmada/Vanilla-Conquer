@@ -76,8 +76,8 @@ public:
     /**********************************************************************
     ** The standard suite of load/save support routines
     */
-    void Read_INI(char* buffer);
-    void Write_INI(char* buffer);
+    void Read_INI(CCINIClass& ini);
+    void Write_INI(CCINIClass& ini);
     static char* INI_Name(void)
     {
         return "Base";

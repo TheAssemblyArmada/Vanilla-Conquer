@@ -105,6 +105,7 @@
 #include "sidebarglyphx.h"
 #include "defines.h"
 #include "common/irandom.h"
+#include "ccini.h"
 
 /***********************************************************************************************
  * HouseClass::Validate -- validates house pointer															  *
@@ -1888,7 +1889,7 @@ void HouseClass::Silo_Redraw_Check(long oldtib, long oldcap)
  *   05/24/1994 JLB : Created.                                                                 *
  *   05/18/1995 JLB : Creates all houses.                                                      *
  *=============================================================================================*/
-void HouseClass::Read_INI(char* buffer)
+void HouseClass::Read_INI(CCINIClass& ini)
 {
     HouseClass* p;     // Pointer to current player data.
     char const* hname; //	Pointer to house name.
@@ -1896,15 +1897,15 @@ void HouseClass::Read_INI(char* buffer)
 
     for (HousesType index = HOUSE_FIRST; index < HOUSE_COUNT; index++) {
         hname = HouseTypeClass::As_Reference(index).IniName;
-        int maxunit = WWGetPrivateProfileInt(hname, "MaxUnit", EACH_UNIT_MAX, buffer);
+        int maxunit = ini.Get_Int(hname, "MaxUnit", EACH_UNIT_MAX);
 
         maxunit = MAX(maxunit, 150);
 
-        int maxbuilding = WWGetPrivateProfileInt(hname, "MaxBuilding", EACH_BUILDING_MAX, buffer);
+        int maxbuilding = ini.Get_Int(hname, "MaxBuilding", EACH_BUILDING_MAX);
 
         maxbuilding = MAX(maxbuilding, 150);
 
-        int credits = WWGetPrivateProfileInt(hname, "Credits", 0, buffer);
+        int credits = ini.Get_Int(hname, "Credits", 0);
 
         p = new HouseClass(index);
 
@@ -1912,14 +1913,10 @@ void HouseClass::Read_INI(char* buffer)
         p->MaxUnit = maxunit;
         p->Credits = (long)credits * 100;
         p->InitialCredits = p->Credits;
-        WWGetPrivateProfileString(hname, "Edge", "", buf, sizeof(buf) - 1, buffer);
-        p->Edge = Source_From_Name(buf);
-        if (p->Edge == SOURCE_NONE) {
-            p->Edge = SOURCE_NORTH;
-        }
+        p->Edge = ini.Get_SourceType(hname, "Edge", SOURCE_NORTH);
 
         if (GameToPlay == GAME_NORMAL) {
-            WWGetPrivateProfileString(hname, "Allies", "", buf, sizeof(buf) - 1, buffer);
+            ini.Get_String(hname, "Allies", "", buf, sizeof(buf) - 1);
             if (strlen(buf)) {
                 char* tok = strtok(buf, ", \t");
                 while (tok) {
@@ -1958,28 +1955,29 @@ void HouseClass::Read_INI(char* buffer)
  * HISTORY:                                                                                    *
  *   05/28/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void HouseClass::Write_INI(char* buffer)
+void HouseClass::Write_INI(CCINIClass& ini)
 {
     for (HousesType i = HOUSE_FIRST; i < HOUSE_COUNT; i++) {
         HouseClass* p = As_Pointer(i);
 
         if (p) {
-            WWWritePrivateProfileInt(p->Class->IniName, "Credits", (int)(p->Credits / 100), buffer);
-            WWWritePrivateProfileString(p->Class->IniName, "Edge", Name_From_Source(p->Edge), buffer);
-            WWWritePrivateProfileInt(p->Class->IniName, "MaxUnit", p->MaxUnit, buffer);
-            WWWritePrivateProfileInt(p->Class->IniName, "MaxBuilding", p->MaxBuilding, buffer);
+            ini.Put_Int(p->Class->IniName, "Credits", (int)(p->Credits / 100));
+            ini.Put_SourceType(p->Class->IniName, "Edge", p->Edge);
+            ini.Put_Int(p->Class->IniName, "MaxUnit", p->MaxUnit);
+            ini.Put_Int(p->Class->IniName, "MaxBuilding", p->MaxBuilding);
 
             bool first = true;
             char sbuffer[100] = "";
             for (HousesType house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
                 if (p->Is_Ally(house)) {
-                    if (!first)
+                    if (!first) {
                         strcat(sbuffer, ",");
+                    }
                     strcat(sbuffer, As_Pointer(house)->Class->IniName);
                     first = false;
                 }
             }
-            WWWritePrivateProfileString(p->Class->IniName, "Allies", sbuffer, buffer);
+            ini.Put_String(p->Class->IniName, "Allies", sbuffer);
         }
     }
 }

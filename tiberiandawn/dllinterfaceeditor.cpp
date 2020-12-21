@@ -24,6 +24,7 @@
 #include "defines.h" // VOC_COUNT, VOX_COUNT
 #include "sidebarglyphx.h"
 #include "template.h"
+#include "ccini.h"
 
 extern "C" __declspec(dllexport) int __cdecl CNC_Editor_Startup();
 extern "C" __declspec(dllexport) int __cdecl CNC_Editor_Cleanup();
@@ -258,15 +259,14 @@ extern "C" __declspec(dllexport) int __cdecl CNC_Editor_Load_Map(char* cncdata_d
     char fname[_MAX_FNAME + _MAX_EXT];
     sprintf(fname, "%s.INI", ScenarioName);
     CCFileClass file(fname);
-    if (!file.Is_Available()) {
+    CCINIClass ini;
+    int result = ini.Load(file, true);
+    if (result == 0) {
         return (EDITOR_COMMMAND_FAILURE);
-    } else {
-        memset(EditorMapINIBuffer, 0, SHAPE_BUFFER_SIZE);
-        file.Read(EditorMapINIBuffer, SHAPE_BUFFER_SIZE - 1);
     }
 
     Map.One_Time_Editor();
-    Map.Read_INI(EditorMapINIBuffer);
+    Map.Read_INI(ini);
     if (Map.Read_Binary(ScenarioName, &ScenarioCRC)) {
         EditorMapInitialized = true;
         return EDITOR_COMMMAND_SUCCESS;

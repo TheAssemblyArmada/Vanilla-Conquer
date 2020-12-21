@@ -74,8 +74,8 @@ public:
     /*
     **	File I/O.
     */
-    static void Read_INI(char*);
-    static void Write_INI(char*);
+    static void Read_INI(CCINIClass& ini);
+    static void Write_INI(CCINIClass& ini);
     static char* INI_Name(void)
     {
         return "SMUDGE";

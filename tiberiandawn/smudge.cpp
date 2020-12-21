@@ -43,6 +43,7 @@
 
 #include "function.h"
 #include "smudge.h"
+#include "ccini.h"
 
 /*
 ** This contains the value of the Virtual Function Table Pointer
@@ -280,18 +281,16 @@ bool SmudgeClass::Mark(MarkType mark)
  *   09/01/1994 JLB : Created.                                                                 *
  *   07/24/1995 JLB : Sets the smudge data value as well.                                      *
  *=============================================================================================*/
-void SmudgeClass::Read_INI(char* buffer)
+void SmudgeClass::Read_INI(CCINIClass& ini)
 {
     char buf[128]; // Working string staging buffer.
 
-    int len = strlen(buffer) + 2;
-    char* tbuffer = buffer + len;
-
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
-    while (*tbuffer != '\0') {
+    int len = ini.Entry_Count(INI_Name());
+    for (int index = 0; index < len; index++) {
+        char const* entry = ini.Get_Entry(INI_Name(), index);
         SmudgeType smudge; // Smudge type.
 
-        WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
+        ini.Get_String(INI_Name(), entry, NULL, buf, sizeof(buf));
         smudge = SmudgeTypeClass::From_Name(strtok(buf, ","));
         if (smudge != SMUDGE_NONE) {
             char* ptr = strtok(NULL, ",");
@@ -307,7 +306,6 @@ void SmudgeClass::Read_INI(char* buffer)
                 }
             }
         }
-        tbuffer += strlen(tbuffer) + 1;
     }
 }
 
@@ -326,21 +324,13 @@ void SmudgeClass::Read_INI(char* buffer)
  *   09/01/1994 JLB : Created.                                                                 *
  *   07/24/1995 JLB : Records the smudge data as well.                                         *
  *=============================================================================================*/
-void SmudgeClass::Write_INI(char* buffer)
+void SmudgeClass::Write_INI(CCINIClass& ini)
 {
-    char uname[10];
-    char buf[127];
-    char* tbuffer; // Accumulation buffer of unit IDs.
 
     /*
     **	First, clear out all existing template data from the ini file.
     */
-    tbuffer = buffer + strlen(buffer) + 2;
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - strlen(buffer), buffer);
-    while (*tbuffer != '\0') {
-        WWWritePrivateProfileString(INI_Name(), tbuffer, NULL, buffer);
-        tbuffer += strlen(tbuffer) + 1;
-    }
+    ini.Clear(INI_Name());
 
     /*
     **	Find all templates and write them to the file.
@@ -352,9 +342,12 @@ void SmudgeClass::Write_INI(char* buffer)
         if (ptr->Smudge != SMUDGE_NONE) {
             SmudgeTypeClass const* stype = &SmudgeTypeClass::As_Reference(ptr->Smudge);
             if (!stype->IsBib) {
+                char uname[10];
+                char buf[127];
+
                 sprintf(uname, "%03d", index);
                 sprintf(buf, "%s,%d,%d", stype->IniName, index, ptr->SmudgeData);
-                WWWritePrivateProfileString(INI_Name(), uname, buf, buffer);
+                ini.Put_String(INI_Name(), uname, buf);
             }
         }
     }

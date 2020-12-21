@@ -47,6 +47,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "ccini.h"
 
 /*
 ********************************** Globals **********************************
@@ -184,54 +185,30 @@ void TeamTypeClass::Init(void)
  *   12/07/1994 BR : Created.                                              *
  *   02/01/1995 BR : No del team if no classes (editor needs empty teams!) *
  *=========================================================================*/
-void TeamTypeClass::Read_INI(char* buffer)
+void TeamTypeClass::Read_INI(CCINIClass& ini)
 {
     TeamTypeClass* team; // Working team pointer.
-    char* tbuffer;       // Accumulation buffer of team names.
-    int len;             // Length of data in buffer.
-    char buf[500];       // INI entry buffer
 
-    /*------------------------------------------------------------------------
-    Set 'tbuffer' to point just past the INI buffer
-    ------------------------------------------------------------------------*/
-    len = strlen(buffer) + 2;
-    tbuffer = buffer + len;
-
-    /*------------------------------------------------------------------------
-    Read all TeamType entry names into 'tbuffer'
-    ------------------------------------------------------------------------*/
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
+    int len = ini.Entry_Count(INI_Name());
+    char buf[500]; // INI entry buffer
 
     /*
-    ----------------------- Loop for all team entries ------------------------
+    **	Loop for all team entries, create and fill in.
     */
-    while (*tbuffer != '\0') {
-        /*
-        ....................... Create a new team type ........................
-        */
+    for (int index = 0; index < len; index++) {
         team = new TeamTypeClass();
-
-        /*
-        ......................... Get the team entry ..........................
-        */
-        WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
-
-        /*
-        .......................... Fill the team in ...........................
-        */
-        team->Fill_In(tbuffer, buf);
-
-        /*
-        ...................... Go to the next INI entry .......................
-        */
-        tbuffer += strlen(tbuffer) + 1;
+        if (team != NULL) {
+            char const* entry = ini.Get_Entry(INI_Name(), index);
+            ini.Get_String(INI_Name(), entry, NULL, buf, sizeof(buf));
+            team->Fill_In((char*)entry, buf);
+        }
     }
 
     /*
     ** If no teams were read in, try reading the old INI format.
     */
     if (TeamTypes.Count() == 0) {
-        Read_Old_INI(buffer);
+        Read_Old_INI(ini);
     }
 }
 
@@ -424,7 +401,7 @@ void TeamTypeClass::Fill_In(char* name, char* entry)
  * HISTORY:                                                                *
  *   12/07/1994 BR : Created.                                              *
  *=========================================================================*/
-void TeamTypeClass::Write_INI(char* buffer, bool refresh)
+void TeamTypeClass::Write_INI(CCINIClass& ini, bool refresh)
 {
     int index;
     int i;
@@ -435,13 +412,13 @@ void TeamTypeClass::Write_INI(char* buffer, bool refresh)
     /*------------------------------------------------------------------------
     First, clear out all existing teamtypes in the old-style format.
     ------------------------------------------------------------------------*/
-    WWWritePrivateProfileString("Teams", NULL, NULL, buffer);
+    ini.Clear("Teams");
 
     /*------------------------------------------------------------------------
     Clear out all existing teamtype data from the INI file.
     ------------------------------------------------------------------------*/
     if (refresh) {
-        WWWritePrivateProfileString(INI_Name(), NULL, NULL, buffer);
+        ini.Clear(INI_Name());
     }
 
     /*------------------------------------------------------------------------
@@ -509,7 +486,7 @@ void TeamTypeClass::Write_INI(char* buffer, bool refresh)
             strcat(buf, ",0");
         }
 
-        WWWritePrivateProfileString(INI_Name(), team->IniName, buf, buffer);
+        ini.Put_String(INI_Name(), team->IniName, buf);
     }
 }
 
@@ -533,156 +510,138 @@ void TeamTypeClass::Write_INI(char* buffer, bool refresh)
  *   12/07/1994 BR : Created.                                              *
  *   02/01/1995 BR : No del team if no classes (editor needs empty teams!) *
  *=========================================================================*/
-void TeamTypeClass::Read_Old_INI(char* buffer)
+void TeamTypeClass::Read_Old_INI(CCINIClass& ini)
 {
     TeamTypeClass* team; // Working team pointer.
-    char* tbuffer;       // Accumulation buffer of team names.
-    int len;             // Length of data in buffer.
-    char buf[256];       // INI entry buffer
-    char* p1;            // parsing pointer
-    char* p2;            // parsing pointer
+
+    int len = ini.Entry_Count(INI_Name());
+    char buf[500]; // INI entry buffer
+
+    char* p1; // parsing pointer
+    char* p2; // parsing pointer
     int index;
     TechnoTypeClass const* otype; // ptr to type of object
     InfantryType i_id;            // infantry ID
     UnitType u_id;                // unit ID
     AircraftType a_id;            // infantry ID
 
-    /*------------------------------------------------------------------------
-    Set 'tbuffer' to point just past the INI buffer
-    ------------------------------------------------------------------------*/
-    len = strlen(buffer) + 2;
-    tbuffer = buffer + len;
-
-    /*------------------------------------------------------------------------
-    Read all TeamType entry names into 'tbuffer'
-    ------------------------------------------------------------------------*/
-    WWGetPrivateProfileString("Teams", NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
-
     /*
-    ----------------------- Loop for all team entries ------------------------
+    **	Loop for all team entries, create and fill in.
     */
-    while (*tbuffer != '\0') {
-        /*
-        ........................ Create a new trigger .........................
-        */
+    for (int index = 0; index < len; index++) {
         team = new TeamTypeClass();
-
-        /*
-        ............................ Set its name .............................
-        */
-        team->Set_Name(tbuffer);
-
-        /*
-        ......................... Get the team entry ..........................
-        */
-        WWGetPrivateProfileString("Teams", tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
-
-        /*
-        .......................... 1st token: House ...........................
-        */
-        team->House = HouseTypeClass::From_Name(strtok(buf, ","));
-
-        /*
-        ........................ 2nd token: RoundAbout ........................
-        */
-        team->IsRoundAbout = atoi(strtok(NULL, ","));
-
-        /*
-        ......................... 3rd token: Learning .........................
-        */
-        team->IsLearning = atoi(strtok(NULL, ","));
-
-        /*
-        ......................... 4th token: Suicide ..........................
-        */
-        team->IsSuicide = atoi(strtok(NULL, ","));
-
-        /*
-        ........................... 5th token: Spy ............................
-        */
-        team->IsAutocreate = atoi(strtok(NULL, ","));
-
-        /*
-        ........................ 6th token: Mercenary .........................
-        */
-        team->IsMercenary = atoi(strtok(NULL, ","));
-
-        /*
-        ..................... 7th token: RecruitPriority ......................
-        */
-        team->RecruitPriority = atoi(strtok(NULL, ","));
-
-        /*
-        ........................ 8th token: MaxAllowed ........................
-        */
-        team->MaxAllowed = atoi(strtok(NULL, ","));
-
-        /*
-        ......................... 9th token: InitNum ..........................
-        */
-        team->InitNum = atoi(strtok(NULL, ","));
-
-        /*
-        ....................... 10th token: Mission name ......................
-        */
-        strtok(NULL, ","); // just throw it away
-
-        /*
-        ............ Loop through entries, setting class ptr & num ............
-        */
-        index = 0;
-        p1 = strtok(NULL, ",:");
-        p2 = strtok(NULL, ",:");
-        while (p1 && p2) {
-            otype = NULL;
+        if (team != NULL) {
+            char const* entry = ini.Get_Entry(INI_Name(), index);
+            ini.Get_String(INI_Name(), entry, NULL, buf, sizeof(buf));
+            team->Set_Name(entry);
 
             /*
-            ................. See if this is an infantry name ..................
+            ......................... Get the team entry ..........................
             */
-            i_id = InfantryTypeClass::From_Name(p1);
-            if (i_id != INFANTRY_NONE) {
-                otype = &InfantryTypeClass::As_Reference(i_id);
-            }
+            ini.Get_String("Teams", entry, NULL, buf, sizeof(buf) - 1);
 
             /*
-            .................... See if this is a unit name ....................
+            .......................... 1st token: House ...........................
             */
-            u_id = UnitTypeClass::From_Name(p1);
-            if (u_id != UNIT_NONE) {
-                otype = &UnitTypeClass::As_Reference(u_id);
-            }
+            team->House = HouseTypeClass::From_Name(strtok(buf, ","));
 
             /*
-            ................. See if this is an aircraft name ..................
+            ........................ 2nd token: RoundAbout ........................
             */
-            a_id = AircraftTypeClass::From_Name(p1);
-            if (a_id != AIRCRAFT_NONE) {
-                otype = &AircraftTypeClass::As_Reference(a_id);
-            }
+            team->IsRoundAbout = atoi(strtok(NULL, ","));
 
             /*
-            ............. If the name was resolved, add this class .............
+            ......................... 3rd token: Learning .........................
             */
-            if (otype) {
-                team->Class[index] = otype;
-                team->DesiredNum[index] = atoi(p2);
-                index++;
-                team->ClassCount = index;
-            }
+            team->IsLearning = atoi(strtok(NULL, ","));
 
             /*
-            ................. Go to the next entry on the line .................
+            ......................... 4th token: Suicide ..........................
             */
+            team->IsSuicide = atoi(strtok(NULL, ","));
+
+            /*
+            ........................... 5th token: Spy ............................
+            */
+            team->IsAutocreate = atoi(strtok(NULL, ","));
+
+            /*
+            ........................ 6th token: Mercenary .........................
+            */
+            team->IsMercenary = atoi(strtok(NULL, ","));
+
+            /*
+            ..................... 7th token: RecruitPriority ......................
+            */
+            team->RecruitPriority = atoi(strtok(NULL, ","));
+
+            /*
+            ........................ 8th token: MaxAllowed ........................
+            */
+            team->MaxAllowed = atoi(strtok(NULL, ","));
+
+            /*
+            ......................... 9th token: InitNum ..........................
+            */
+            team->InitNum = atoi(strtok(NULL, ","));
+
+            /*
+            ....................... 10th token: Mission name ......................
+            */
+            strtok(NULL, ","); // just throw it away
+
+            /*
+            ............ Loop through entries, setting class ptr & num ............
+            */
+            index = 0;
             p1 = strtok(NULL, ",:");
             p2 = strtok(NULL, ",:");
+            while (p1 && p2) {
+                otype = NULL;
+
+                /*
+                ................. See if this is an infantry name ..................
+                */
+                i_id = InfantryTypeClass::From_Name(p1);
+                if (i_id != INFANTRY_NONE) {
+                    otype = &InfantryTypeClass::As_Reference(i_id);
+                }
+
+                /*
+                .................... See if this is a unit name ....................
+                */
+                u_id = UnitTypeClass::From_Name(p1);
+                if (u_id != UNIT_NONE) {
+                    otype = &UnitTypeClass::As_Reference(u_id);
+                }
+
+                /*
+                ................. See if this is an aircraft name ..................
+                */
+                a_id = AircraftTypeClass::From_Name(p1);
+                if (a_id != AIRCRAFT_NONE) {
+                    otype = &AircraftTypeClass::As_Reference(a_id);
+                }
+
+                /*
+                ............. If the name was resolved, add this class .............
+                */
+                if (otype) {
+                    team->Class[index] = otype;
+                    team->DesiredNum[index] = atoi(p2);
+                    index++;
+                    team->ClassCount = index;
+                }
+
+                /*
+                ................. Go to the next entry on the line .................
+                */
+                p1 = strtok(NULL, ",:");
+                p2 = strtok(NULL, ",:");
+            }
+
+            team->Fear = 0;
         }
-
-        team->Fear = 0;
-
-        /*
-        ...................... Go to the next INI entry .......................
-        */
-        tbuffer += strlen(tbuffer) + 1;
     }
 }
 

@@ -42,6 +42,7 @@
 #include "common/miscasm.h"
 
 class TriggerClass;
+class CCINIClass;
 #ifdef USE_RA_AI
 class FootClass;    // ST - 7/17/2019 11:54AM
 class FactoryClass; // ST - 7/17/2019 11:54AM
@@ -503,10 +504,10 @@ public:
     /*
     **	File I/O.
     */
-    static void Read_INI(char* buffer);
-    static void Write_INI(char* buffer);
-    static void Read_Flag_INI(char* buffer);
-    static void Write_Flag_INI(char* buffer);
+    static void Read_INI(CCINIClass& ini);
+    static void Write_INI(CCINIClass& ini);
+    static void Read_Flag_INI(CCINIClass& ini);
+    static void Write_Flag_INI(CCINIClass& ini);
     bool Load(FileClass& file);
     bool Save(FileClass& file);
     void Code_Pointers(void);

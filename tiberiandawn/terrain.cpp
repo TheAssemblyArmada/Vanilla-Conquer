@@ -59,6 +59,7 @@
 #include "function.h"
 #include "terrain.h"
 #include "common/irandom.h"
+#include "ccini.h"
 
 #define BARNACLE_STAGE       22
 #define FIRST_SPORE_STAGE    30
@@ -802,31 +803,20 @@ unsigned char* TerrainClass::Radar_Icon(CELL cell)
  * HISTORY:                                                                                    *
  *   05/24/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TerrainClass::Read_INI(char* buffer)
+void TerrainClass::Read_INI(CCINIClass& ini)
 {
-    char* tbuffer; // Accumulation buffer of unit IDs.
-    int len;       // Size of data in buffer.
-    char buf[128];
     TerrainClass* tptr;
 
-    len = strlen(buffer) + 2;
-    tbuffer = buffer + len;
+    int len = ini.Entry_Count(INI_Name());
 
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
-    while (*tbuffer != '\0') {
-        TerrainType terrain; // Terrain type.
-        CELL cell;
+    for (int index = 0; index < len; index++) {
+        char const* entry = ini.Get_Entry(INI_Name(), index);
+        TerrainType terrain = ini.Get_TerrainType(INI_Name(), entry, TERRAIN_NONE);
+        CELL cell = atoi(entry);
 
-        cell = atoi(tbuffer);
-        WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
-        terrain = TerrainTypeClass::From_Name(strtok(buf, ","));
         if (terrain != TERRAIN_NONE) {
             tptr = new TerrainClass(terrain, cell);
-            tptr->Trigger = TriggerClass::As_Pointer(strtok(NULL, ","));
-            if (tptr->Trigger)
-                tptr->Trigger->AttachCount++;
         }
-        tbuffer += strlen(tbuffer) + 1;
     }
 }
 
@@ -848,35 +838,24 @@ void TerrainClass::Read_INI(char* buffer)
  * HISTORY:                                                                                    *
  *   05/28/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TerrainClass::Write_INI(char* buffer)
+void TerrainClass::Write_INI(CCINIClass& ini)
 {
-    int index;
-    char uname[10];
-    char buf[127];
-    char* tbuffer; // Accumulation buffer of unit IDs.
-
     /*
     **	First, clear out all existing terrain data from the ini file.
     */
-    tbuffer = buffer + strlen(buffer) + 2;
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - strlen(buffer), buffer);
-    while (*tbuffer != '\0') {
-        WWWritePrivateProfileString(INI_Name(), tbuffer, NULL, buffer);
-        tbuffer += strlen(tbuffer) + 1;
-    }
+    ini.Clear(INI_Name());
 
     /*
     **	Write the terrain data out.
     */
-    for (index = 0; index < Terrains.Count(); index++) {
+    for (int index = 0; index < Terrains.Count(); index++) {
         TerrainClass* terrain;
 
         terrain = Terrains.Ptr(index);
-        if (!terrain->IsInLimbo && terrain->IsActive) {
-
+        if (terrain != NULL && !terrain->IsInLimbo && terrain->IsActive) {
+            char uname[10];
             sprintf(uname, "%d", Coord_Cell(terrain->Coord));
-            sprintf(buf, "%s,%s", terrain->Class->IniName, terrain->Trigger ? terrain->Trigger->Get_Name() : "None");
-            WWWritePrivateProfileString(INI_Name(), uname, buf, buffer);
+            ini.Put_TerrainType(INI_Name(), uname, *terrain);
         }
     }
 }

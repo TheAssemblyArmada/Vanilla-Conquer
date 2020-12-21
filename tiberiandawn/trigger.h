@@ -35,6 +35,8 @@
 #ifndef TRIGGER_H
 #define TRIGGER_H
 
+class CCINIClass;
+
 typedef enum EventType : signed char
 {
     EVENT_NONE = -1,
@@ -136,9 +138,9 @@ public:
     /*
     **	File I/O routines
     */
-    static void Read_INI(char* buffer);
+    static void Read_INI(CCINIClass& ini);
     void Fill_In(char* name, char* entry);
-    static void Write_INI(char* buffer, bool refresh);
+    static void Write_INI(CCINIClass& ini, bool refresh);
     static char* INI_Name(void)
     {
         return "Triggers";
