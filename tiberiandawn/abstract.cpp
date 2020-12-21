@@ -94,7 +94,7 @@ int AbstractClass::Distance(TARGET target) const
  *=============================================================================================*/
 AbstractTypeClass::AbstractTypeClass(int name, char const* ini)
 {
-    Name = name;
+    FullName = name;
     strncpy((char*)IniName, ini, sizeof(IniName));
     ((char&)IniName[sizeof(IniName) - 1]) = '\0';
 }
@@ -109,7 +109,7 @@ COORDINATE AbstractTypeClass::Coord_Fixup(COORDINATE coord) const
 }
 int AbstractTypeClass::Full_Name(void) const
 {
-    return Name;
+    return FullName;
 };
 unsigned short AbstractTypeClass::Get_Ownable(void) const
 {
