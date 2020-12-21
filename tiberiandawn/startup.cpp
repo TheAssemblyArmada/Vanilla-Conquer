@@ -35,8 +35,9 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/ini.h"
 
-bool Read_Private_Config_Struct(char* profile, NewConfigType* config);
+bool Read_Private_Config_Struct(FileClass& file, NewConfigType* config);
 void Print_Error_End_Exit(char* string);
 void Print_Error_Exit(char* string);
 #ifdef _WIN32
@@ -273,13 +274,11 @@ int main(int argc, char** argv)
 #endif
         if (cfile.Is_Available()) {
 
-#ifndef NOMEMCHECK
-            char* cdata = (char*)Load_Alloc_Data(&cfile);
-            Read_Private_Config_Struct(cdata, &NewConfig);
-            delete[] cdata;
-#else
-            Read_Private_Config_Struct((char*)Load_Alloc_Data(&cfile), &NewConfig);
-#endif
+            Read_Private_Config_Struct(cfile, &NewConfig);
+
+            /*
+            ** Set the options as requested by the ccsetup program
+            */
             Read_Setup_Options(&cfile);
 
             CCDebugString("C&C95 - Creating main window.\n");
@@ -439,39 +438,34 @@ int main(int argc, char** argv)
             /*
             ** See if we should run the intro
             */
-            CCDebugString("C&C95 - Reading CONQUER.INI.\n");
-            char* buffer = (char*)Alloc(64000, MEM_NORMAL); //(char *)HidPage.Get_Buffer();
-            cfile.Read(buffer, cfile.Size());
-            buffer[cfile.Size()] = '\0';
+            INIClass ini;
+            ini.Load(cfile);
 
             /*
             **	Check for forced intro movie run disabling. If the conquer
             **	configuration file says "no", then don't run the intro.
             */
-            char tempbuff[5];
-            WWGetPrivateProfileString("Intro", "PlayIntro", "Yes", tempbuff, 4, buffer);
-            if ((stricmp(tempbuff, "No") == 0)) {
-                Special.IsFromInstall = false;
-            } else {
-                Special.IsFromInstall = true;
+            if (!Special.IsFromInstall) {
+                Special.IsFromInstall = ini.Get_Bool("Intro", "PlayIntro", true);
             }
-            SlowPalette = WWGetPrivateProfileInt("Options", "SlowPalette", 1, buffer);
-
-#ifdef DEMO
-            /*
-            **	Check for override directory path for CD searches.
-            */
-            WWGetPrivateProfileString("CD", "Path", ".", OverridePath, sizeof(OverridePath), buffer);
-#endif
+            SlowPalette = ini.Get_Bool("Options", "SlowPalette", false);
 
             /*
             ** Regardless of whether we should run it or not, here we're
             ** gonna change it to say "no" in the future.
             */
-            WWWritePrivateProfileString("Intro", "PlayIntro", "No", buffer);
-            cfile.Write(buffer, strlen(buffer));
+            if (Special.IsFromInstall) {
+                BreakoutAllowed = true;
+                ini.Put_Bool("Intro", "PlayIntro", false);
+                ini.Save(cfile);
+            }
 
-            Free(buffer);
+#ifdef DEMO
+            /*
+            **	Check for override directory path for CD searches.
+            */
+            ini.Get_String("CD", "Path", ".", OverridePath, sizeof(OverridePath));
+#endif
 
             /*
             **	If the intro is being run for the first time, then don't
@@ -629,25 +623,25 @@ void Print_Error_Exit(char* string)
  *=============================================================================================*/
 void Read_Setup_Options(RawFileClass* config_file)
 {
-    char* buffer = new char[config_file->Size() + 1];
-
     if (config_file->Is_Available()) {
 
-        int bytesread = config_file->Read(buffer, config_file->Size());
-        buffer[bytesread] = '\0';
+        INIClass ini;
 
-        VideoBackBufferAllowed = WWGetPrivateProfileInt("Options", "VideoBackBuffer", 1, buffer);
-        AllowHardwareBlitFills = WWGetPrivateProfileInt("Options", "HardwareFills", 1, buffer);
-        ScreenHeight =
-            WWGetPrivateProfileInt("Options", "Resolution", 0, buffer) ? GBUFF_INIT_ALTHEIGHT : GBUFF_INIT_HEIGHT;
-        OutputWidth = WWGetPrivateProfileInt("Options", "OutputWidth", ScreenWidth, buffer);
-        OutputHeight = WWGetPrivateProfileInt("Options", "OutputHeight", ScreenHeight, buffer);
-        IsV107 = WWGetPrivateProfileInt("Options", "Compatibility", 0, buffer);
+        ini.Load(*config_file);
+
+        /*
+        ** Read in the boolean options
+        */
+        VideoBackBufferAllowed = ini.Get_Bool("Options", "VideoBackBuffer", true);
+        AllowHardwareBlitFills = ini.Get_Bool("Options", "HardwareFills", true);
+        ScreenHeight = ini.Get_Bool("Options", "Resolution", false) ? GBUFF_INIT_ALTHEIGHT : GBUFF_INIT_HEIGHT;
+        OutputWidth = ini.Get_Int("Options", "OutputWidth", ScreenWidth);
+        OutputHeight = ini.Get_Int("Options", "OutputHeight", ScreenHeight);
 
         /*
         ** See if an alternative socket number has been specified
         */
-        int socket = WWGetPrivateProfileInt("Options", "Socket", 0, buffer);
+        int socket = ini.Get_Int("Options", "Socket", 0);
         if (socket > 0) {
             socket += 0x4000;
             if (socket >= 0x4000 && socket < 0x8000) {
@@ -660,9 +654,10 @@ void Read_Setup_Options(RawFileClass* config_file)
         */
         char netbuf[512];
         memset(netbuf, 0, sizeof(netbuf));
-        char* netptr = WWGetPrivateProfileString("Options", "DestNet", NULL, netbuf, sizeof(netbuf), buffer);
+        char* netptr = netbuf;
+        bool found = ini.Get_String("Options", "DestNet", NULL, netbuf, sizeof(netbuf));
 
-        if (netptr && strlen(netbuf)) {
+        if (found && netptr != NULL && strlen(netbuf)) {
             NetNumType net;
             NetNodeType node;
 
@@ -672,7 +667,7 @@ void Read_Setup_Options(RawFileClass* config_file)
             int i = 0;
             char* p = strtok(netbuf, ".");
             int x;
-            while (p) {
+            while (p != NULL) {
                 sscanf(p, "%x", &x); // convert from hex string to int
                 if (i < 4) {
                     net[i] = (char)x; // fill NetNum
@@ -694,6 +689,4 @@ void Read_Setup_Options(RawFileClass* config_file)
             }
         }
     }
-
-    delete[] buffer;
 }
