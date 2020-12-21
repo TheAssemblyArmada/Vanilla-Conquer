@@ -11,6 +11,7 @@ set(TIBDAWN_SRC
     building.cpp
     bullet.cpp
     cargo.cpp
+    ccini.cpp
     cdata.cpp
     cell.cpp
     checkbox.cpp
