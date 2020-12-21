@@ -58,6 +58,7 @@
 
 #include "function.h"
 #include "common/framelimit.h"
+#include "ccini.h"
 
 #ifdef SCENARIO_EDITOR
 
@@ -314,14 +315,14 @@ void MapEditClass::Init_IO(void)
  * HISTORY:                                                                *
  *   11/16/1994 BR : Created.                                              *
  *=========================================================================*/
-void MapEditClass::Read_INI(char* buffer)
+void MapEditClass::Read_INI(CCINIClass& ini)
 {
     /*
     ------------------------ Invoke parent's Read_INI ------------------------
     */
-    MouseClass::Read_INI(buffer);
+    MouseClass::Read_INI(ini);
 
-    BasePercent = WWGetPrivateProfileInt("Basic", "Percent", 0, buffer);
+    BasePercent = ini.Get_Int("Basic", "Percent", 0);
     BaseGauge->Set_Value(BasePercent);
 }
 
@@ -340,19 +341,19 @@ void MapEditClass::Read_INI(char* buffer)
  * HISTORY:                                                                *
  *   11/16/1994 BR : Created.                                              *
  *=========================================================================*/
-void MapEditClass::Write_INI(char* buffer)
+void MapEditClass::Write_INI(CCINIClass& ini)
 {
     /*
     ----------------------- Invoke parent's Write_INI ------------------------
     */
-    MouseClass::Write_INI(buffer);
+    MouseClass::Write_INI(ini);
 
     /*
     ** Save the base's percent-built value; this must be saved into the BASIC
     ** section of the INI, since the Base section will be entirely erased
     ** by the Base's Write_INI routine.
     */
-    WWWritePrivateProfileInt("Basic", "Percent", BasePercent, buffer);
+    ini.Put_Int("Basic", "Percent", BasePercent);
 }
 
 /***************************************************************************

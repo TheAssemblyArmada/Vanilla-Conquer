@@ -94,6 +94,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "ccini.h"
 
 /*
 ** This contains the value of the Virtual Function Table Pointer
@@ -3771,22 +3772,19 @@ bool UnitClass::Can_Player_Move(void) const
  * HISTORY:                                                                                    *
  *   05/24/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void UnitClass::Read_INI(char* buffer)
+void UnitClass::Read_INI(CCINIClass& ini)
 {
     UnitClass* unit;    // Working unit pointer.
-    char* tbuffer;      // Accumulation buffer of unit IDs.
     HousesType inhouse; // Unit house.
     UnitType classid;   // Unit class.
-    int len;            // Length of data in buffer.
     char buf[128];
 
-    len = strlen(buffer) + 2;
-    tbuffer = buffer + len;
+    int len = ini.Entry_Count(INI_Name());
 
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
-    while (*tbuffer != '\0') {
+    for (int index = 0; index < len; index++) {
+        char const* entry = ini.Get_Entry(INI_Name(), index);
 
-        WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
+        ini.Get_String(INI_Name(), entry, NULL, buf, sizeof(buf));
         inhouse = HouseTypeClass::From_Name(strtok(buf, ","));
         if (inhouse != HOUSE_NONE) {
             classid = UnitTypeClass::From_Name(strtok(NULL, ","));
@@ -3844,7 +3842,6 @@ void UnitClass::Read_INI(char* buffer)
                 }
             }
         }
-        tbuffer += strlen(tbuffer) + 1;
     }
 }
 
@@ -3866,33 +3863,23 @@ void UnitClass::Read_INI(char* buffer)
  * HISTORY:                                                                                    *
  *   05/28/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void UnitClass::Write_INI(char* buffer)
+void UnitClass::Write_INI(CCINIClass& ini)
 {
-    int index;
-    char uname[10];
-    char buf[128];
-    char* tbuffer; // Accumulation buffer of unit IDs.
-
     /*
     **	First, clear out all existing unit data from the ini file.
     */
-    tbuffer = buffer + strlen(buffer) + 2;
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - strlen(buffer), buffer);
-    while (*tbuffer != '\0') {
-        WWWritePrivateProfileString(INI_Name(), tbuffer, NULL, buffer);
-        tbuffer += strlen(tbuffer) + 1;
-    }
+    ini.Clear(INI_Name());
 
     /*
     **	Write the unit data out.
     */
-    for (index = 0; index < Units.Count(); index++) {
-        UnitClass* unit;
+    for (int index = 0; index < Units.Count(); index++) {
+        UnitClass* unit = Units.Ptr(index);
+        if (unit != NULL && !unit->IsInLimbo && unit->IsActive) {
+            char uname[10];
+            char buf[128];
 
-        unit = Units.Ptr(index);
-        if (!unit->IsInLimbo && unit->IsActive) {
-
-            sprintf(uname, "%03d", index);
+            sprintf(uname, "%d", index);
             sprintf(buf,
                     "%s,%s,%d,%u,%d,%s,%s",
                     unit->House->Class->IniName,
@@ -3902,7 +3889,7 @@ void UnitClass::Write_INI(char* buffer)
                     unit->PrimaryFacing.Current(),
                     MissionClass::Mission_Name(unit->Mission),
                     unit->Trigger ? unit->Trigger->Get_Name() : "None");
-            WWWritePrivateProfileString(INI_Name(), uname, buf, buffer);
+            ini.Put_String(INI_Name(), uname, buf);
         }
     }
 }

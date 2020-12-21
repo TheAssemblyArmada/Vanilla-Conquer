@@ -61,8 +61,6 @@ public:
 
     long Get_Buildings(char const* section, char const* entry, long defvalue) const;
     UnitType Get_UnitType(char const* section, char const* entry, UnitType defvalue) const;
-    AnimType Get_AnimType(char const* section, char const* entry, AnimType defvalue) const;
-    ArmorType Get_ArmorType(char const* section, char const* entry, ArmorType defvalue) const;
     BulletType Get_BulletType(char const* section, char const* entry, BulletType defvalue) const;
     HousesType Get_HousesType(char const* section, char const* entry, HousesType defvalue) const;
     MPHType Get_MPHType(char const* section, char const* entry, MPHType defvalue) const;
@@ -71,28 +69,18 @@ public:
     TerrainType Get_TerrainType(char const* section, char const* entry, TerrainType defvalue) const;
     TheaterType Get_TheaterType(char const* section, char const* entry, TheaterType defvalue) const;
     ThemeType Get_ThemeType(char const* section, char const* entry, ThemeType defvalue) const;
-    VocType Get_VocType(char const* section, char const* entry, VocType defvalue) const;
-    WarheadType Get_WarheadType(char const* section, char const* entry, WarheadType defvalue) const;
-    WeaponType Get_WeaponType(char const* section, char const* entry, WeaponType defvalue) const;
-    long Get_Owners(char const* section, char const* entry, long defvalue) const;
     TriggerClass* Get_Trigger(char const* section, char const* entry) const;
 
     bool Put_Buildings(char const* section, char const* entry, long value);
-    bool Put_AnimType(char const* section, char const* entry, AnimType value);
     bool Put_UnitType(char const* section, char const* entry, UnitType value);
-    bool Put_ArmorType(char const* section, char const* entry, ArmorType value);
     bool Put_BulletType(char const* section, char const* entry, BulletType value);
     bool Put_HousesType(char const* section, char const* entry, HousesType value);
     bool Put_MPHType(char const* section, char const* entry, MPHType value);
     bool Put_OverlayType(char const* section, char const* entry, OverlayType value);
-    bool Put_Owners(char const* section, char const* entry, long value);
     bool Put_SourceType(char const* section, char const* entry, SourceType value);
     bool Put_TerrainType(char const* section, char const* entry, TerrainType value);
     bool Put_TheaterType(char const* section, char const* entry, TheaterType value);
     bool Put_ThemeType(char const* section, char const* entry, ThemeType value);
-    bool Put_VocType(char const* section, char const* entry, VocType value);
-    bool Put_WarheadType(char const* section, char const* entry, WarheadType value);
-    bool Put_WeaponType(char const* section, char const* entry, WeaponType value);
     bool Put_Trigger(char const* section, char const* entry, TriggerClass* value);
 
     int Get_Unique_ID(void) const;

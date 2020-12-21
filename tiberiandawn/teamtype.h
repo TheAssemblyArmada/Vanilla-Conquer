@@ -65,6 +65,7 @@ typedef enum TeamMissionType : signed char
 ** Forward declarations.
 */
 class TechnoTypeClass;
+class CCINIClass;
 
 /*
 **	This structure contains one team mission value & its argument.
@@ -101,10 +102,10 @@ public:
     /*
     **	File I/O routines
     */
-    static void Read_INI(char* buffer);
+    static void Read_INI(CCINIClass& ini);
     void Fill_In(char* name, char* entry);
-    static void Write_INI(char* buffer, bool refresh);
-    static void Read_Old_INI(char* buffer);
+    static void Write_INI(CCINIClass& ini, bool refresh);
+    static void Read_Old_INI(CCINIClass& ini);
     static char* INI_Name(void)
     {
         return "TeamTypes";

@@ -180,8 +180,8 @@ public:
     virtual void Draw_It(bool forced = true);
     virtual bool Scroll_Map(DirType facing, int& distance, bool really = true);
     //		virtual void Flag_To_Redraw(bool complete);
-    virtual void Read_INI(char* buffer);
-    virtual void Write_INI(char* buffer);
+    virtual void Read_INI(CCINIClass& ini);
+    virtual void Write_INI(CCINIClass& ini);
     virtual void Detach(ObjectClass* object);
     void Clear_List(void);
     bool Add_To_List(ObjectTypeClass const* object);
