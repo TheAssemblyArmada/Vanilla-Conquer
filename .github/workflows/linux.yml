@@ -7,7 +7,7 @@ on:
     types: published
 
 jobs:
-  build:
+  gcc:
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
@@ -17,11 +17,47 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y g++ libsdl2-dev libsdl2-2.0-0 libopenal-dev
+        sudo apt-get install -y g++ libsdl2-dev libopenal-dev
+
+    - name: Configure Vanilla Conquer
+      run: |
+        cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -B build
 
     - name: Build Vanilla Conquer
       run: |
-        cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DBUILD_VANILLATD=ON -DBUILD_VANILLARA=ON -DDSOUND=OFF -DDDRAW=OFF -DNETWORKING=OFF -DSDL2=ON -B build
+        cmake --build build -- -j 4
+
+    - name: Run unit tests
+      run: |
+        cd build
+        ctest
+
+  clang:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang++-10 clang-format-10 libsdl2-dev libopenal-dev
+
+    - name: Configure Vanilla Conquer
+      env:
+          CC: clang
+          CXX: clang++
+      run: |
+        cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -B build
+
+    - name: Ensure code format
+      run: |
+        cmake --build build --target format
+        git diff --exit-code
+
+    - name: Build Vanilla Conquer
+      run: |
         cmake --build build -- -j 4
 
     - name: Run unit tests
