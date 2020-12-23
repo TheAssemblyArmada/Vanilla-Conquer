@@ -194,6 +194,7 @@ extern ScoreClass Score;
 extern MonoClass MonoArray[DMONO_COUNT];
 extern MFCD* TheaterData;
 extern MFCD* MoviesMix;
+extern MFCD* Movies2Mix;
 extern MFCD* GeneralMix;
 extern MFCD* ScoreMix;
 extern MFCD* MainMix;
