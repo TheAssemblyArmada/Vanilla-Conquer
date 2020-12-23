@@ -300,6 +300,10 @@ bool Init_Game(int, char*[])
 
 #ifndef REMASTER_BUILD
     CCDebugString("C&C95 - About to search for CD drives\n");
+
+    // This gets done earlier in RA as the expansion mix files are initialised before the CD-ROM.
+    Force_CD_Available(-1);
+
     /*
     **	Always try to look at the CD-ROM for data files.
     */

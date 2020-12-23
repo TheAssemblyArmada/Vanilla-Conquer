@@ -64,6 +64,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
 #include "common/framelimit.h"
 #include "common/vqatask.h"
 #include "common/vqaloader.h"
@@ -3427,6 +3428,118 @@ int Get_CD_Index(int cd_drive, int timeout)
 #endif
 }
 
+typedef enum
+{
+    CD_LOCAL = -2,
+    CD_ANY = -1,
+    CD_GDI = 0,
+    CD_NOD,
+    CD_COVERTOPS,
+    CD_DATADIR,
+    CD_COUNT
+} CD_VOLUME;
+
+static void Reinit_Secondary_Mixfiles()
+{
+    if (GeneralMix != nullptr) {
+        delete MoviesMix;
+        delete GeneralMix;
+        delete ScoreMix;
+
+        MoviesMix = new MFCD("MOVIES.MIX");
+        GeneralMix = new MFCD("GENERAL.MIX");
+        ScoreMix = new MFCD("SCORES.MIX");
+    }
+}
+
+/**
+ * Checks for local folders containing data from the various discs.
+ */
+static int LastCD = -1;
+
+static bool Change_Local_Dir(int cd)
+{
+    static bool _initialised = false;
+    static unsigned _detected = 0;
+    static const char* _vol_labels[CD_COUNT] = {"gdi", "nod", "covertops", "."};
+    char vol_buff[16];
+
+    // Detect which if any of the discs have had their data copied to an appropriate local folder.
+    if (!_initialised) {
+        for (int i = 0; i < CD_COUNT; ++i) {
+            struct stat st;
+
+            if (stat(_vol_labels[i], &st) == 0 && (st.st_mode & S_IFDIR) == S_IFDIR) {
+                CDFileClass::Refresh_Search_Drives();
+                snprintf(vol_buff, sizeof(vol_buff), "%s/", _vol_labels[i]);
+                CDFileClass::Add_Search_Drive(vol_buff);
+                CCFileClass fc("GENERAL.MIX");
+
+                // Populate _detected as a bitfield for which discs we found a local copy of.
+                if (fc.Is_Available()) {
+                    _detected |= 1 << i;
+                }
+            }
+        }
+
+        _initialised = true;
+    }
+
+    // No local folders with cd data dectected so we can't load any.
+    if (_detected == 0) {
+        return false;
+    }
+
+    // This condition just does a CD check to make sure we have at least one disc available.
+    // If we reached this point we must have detected at least one stored locally.
+    if (cd == CD_ANY) {
+        // If the last CD isn't set to CD_ANY, we already did detection and set a CD path so just return true.
+        if (LastCD != CD_ANY) {
+            return true;
+        }
+
+        // Set current disc to most recent expansion, not counting if we found CD files in the data dir.
+        for (int i = CD_COUNT - 2; i >= 0; --i) {
+            if (_detected & (1 << i)) {
+                cd = i;
+                break;
+            }
+        }
+    }
+
+    // Prevent unneeded changes.
+    if (LastCD == cd) {
+        return true;
+    }
+
+    // If we only detected CD files locally, act like that handles all discs.
+    if (_detected == (1 << CD_DATADIR)) {
+        cd = CD_DATADIR;
+    }
+
+    // If the data from the CD we want was detected, then double check it and set it as though we used the -CD command line.
+    if (_detected & (1 << cd)) {
+        struct stat st;
+
+        // Verify that the file is still available and hasn't been deleted out from under us.
+        if (stat(_vol_labels[cd], &st) == 0 && (st.st_mode & S_IFDIR) == S_IFDIR) {
+            CDFileClass::Refresh_Search_Drives();
+            snprintf(vol_buff, sizeof(vol_buff), "%s/", _vol_labels[cd]);
+            CDFileClass::Add_Search_Drive(vol_buff);
+
+            // The file should be available if we reached this point.
+            assert(CCFileClass("GENERAL.MIX").Is_Available());
+
+            LastCD = cd;
+            Reinit_Secondary_Mixfiles();
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
 /***********************************************************************************************
  * Force_CD_Available -- Ensures that specified CD is available.                               *
  *                                                                                             *
@@ -3511,7 +3624,6 @@ bool Force_CD_Available(int cd)
 #else
 
 #ifndef DEMO
-    static int _last = -1;
     int open_failed;
     int file;
 #endif
@@ -3539,8 +3651,16 @@ bool Force_CD_Available(int cd)
     ** If the required CD is set to -2 then it means that the file is present
     ** on the local hard drive and we shouldn't have to worry about it.
     */
-    if (cd == -2)
+    if (cd == CD_LOCAL) {
         return (true);
+    }
+
+    /*
+    ** Search for the data in local folder first.
+    */
+    if (Change_Local_Dir(cd)) {
+        return (true);
+    }
 
     /*
     ** Find out if the CD in the current drive is the one we are looking for
@@ -3548,7 +3668,7 @@ bool Force_CD_Available(int cd)
     current_drive = CCFileClass::Get_CD_Drive();
     cd_index = Get_CD_Index(current_drive, 1 * 60);
     if (cd_index >= 0) {
-        if (cd == cd_index || cd == -1) {
+        if (cd == cd_index || cd == CD_ANY) {
             /*
             ** The required CD is still in the CD drive we used last time
             */
@@ -3609,7 +3729,7 @@ bool Force_CD_Available(int cd)
                     /*
                     ** We found a C&C cd - lets see if it was the one we were looking for
                     */
-                    if (cd == cd_index || cd == -1) {
+                    if (cd == cd_index || cd == CD_ANY) {
                         /*
                         ** Woohoo! The disk was in a different cd drive. Refresh the search path list
                         * and return.
@@ -3634,10 +3754,10 @@ bool Force_CD_Available(int cd)
             /*
             **	Prompt to insert the CD into the drive.
             */
-            if (cd == -1) {
+            if (cd == CD_ANY) {
                 sprintf(buffer, Text_String(TXT_CD_DIALOG_1), cd + 1, _volid[cd]);
             } else {
-                if (cd == 2) {
+                if (cd == CD_COVERTOPS) {
                     sprintf(buffer, Text_String(TXT_CD_DIALOG_3));
                 } else {
                     sprintf(buffer, Text_String(TXT_CD_DIALOG_2), cd + 1, _volid[cd]);
@@ -3694,21 +3814,12 @@ bool Force_CD_Available(int cd)
     **	If it broke out of the query for CD-ROM loop, then this means that the
     **	CD-ROM has been inserted.
     */
-    if (cd > -1 && _last != cd) {
-        _last = cd;
+    if (cd > -1 && LastCD != cd) {
+        LastCD = cd;
 
         Theme.Stop();
 
-        if (MoviesMix)
-            delete MoviesMix;
-        if (GeneralMix)
-            delete GeneralMix;
-        if (ScoreMix)
-            delete ScoreMix;
-
-        MoviesMix = new MFCD("MOVIES.MIX");
-        GeneralMix = new MFCD("GENERAL.MIX");
-        ScoreMix = new MFCD("SCORES.MIX");
+        Reinit_Secondary_Mixfiles();
         ThemeClass::Scan();
     }
 #endif
