@@ -43,6 +43,7 @@
 #include "function.h"
 #include "common/irandom.h"
 #include "common/tcpip.h"
+#include "common/ini.h"
 
 static void Garble_Message(char* buf);
 
@@ -974,7 +975,7 @@ void Write_MultiPlayer_Settings(void)
  *=============================================================================================*/
 void Read_Scenario_Descriptions(void)
 {
-    char* buffer; // INI staging buffer pointer.
+    INIClass ini;
     CCFileClass file;
     int i;
     char fname[20];
@@ -1008,8 +1009,7 @@ void Read_Scenario_Descriptions(void)
         Fetch working pointer to the INI staging buffer. Make sure that the
         buffer is cleared out before proceeding.
         .....................................................................*/
-        buffer = (char*)_ShapeBuffer;
-        memset(buffer, '\0', _ShapeBufferSize);
+        ini.Clear();
 
         /*.....................................................................
         Create filename and read the file.
@@ -1017,13 +1017,12 @@ void Read_Scenario_Descriptions(void)
         Set_Scenario_Name(ScenarioName, MPlayerFilenum[i], SCEN_PLAYER_MPLAYER, SCEN_DIR_EAST, SCEN_VAR_A);
         sprintf(fname, "%s.INI", ScenarioName);
         file.Set_Name(fname);
-        file.Read(buffer, _ShapeBufferSize - 1);
-        file.Close();
+        ini.Load(file);
 
         /*.....................................................................
         Extract description & add it to the list.
         .....................................................................*/
-        WWGetPrivateProfileString("Basic", "Name", "Nulls-Ville", MPlayerDescriptions[i], 40, buffer);
+        ini.Get_String("Basic", "Name", "Nulls-Ville", MPlayerDescriptions[i], 40);
         MPlayerScenarios.Add(MPlayerDescriptions[i]);
     }
 }
