@@ -47,6 +47,7 @@
 
 #include "function.h"
 #include "common/framelimit.h"
+#include "common/ini.h"
 
 #ifdef SCENARIO_EDITOR
 
@@ -3549,15 +3550,13 @@ int MapEditClass::Import_Triggers(void)
     bool process;       // loop while true
     KeyNumType input;   // user input
     bool cancel = false;
-    static int tabs[] = {70, 220, 370, 420}; // list box tab stops
-    DynamicVectorClass<char*> trignames;     // list of INI trigger names
-    char* inibuf;                            // working INI buffer
-    CCFileClass file;                        // file for reading the INI file
-    char buf[128];                           // for reading an INI entry
-    char* tbuffer;                           // Accumulation buffer of trigger IDs.
-    int len;                                 // Length of data in buffer.
-    TriggerClass* trigger;                   // Working trigger pointer.
-    char* item;                              // for adding to list box
+    static int tabs[] = {70, 220, 370, 420};   // list box tab stops
+    DynamicVectorClass<const char*> trignames; // list of INI trigger names
+    CCFileClass file;                          // file for reading the INI file
+    char buf[128];                             // for reading an INI entry
+    int len;                                   // Length of data in buffer.
+    TriggerClass* trigger;                     // Working trigger pointer.
+    char* item;                                // for adding to list box
     char* eventptr;
     char* actionptr;
     char* houseptr;
@@ -3595,24 +3594,17 @@ int MapEditClass::Import_Triggers(void)
     /*........................................................................
     Read the file into the staging buffer
     ........................................................................*/
-    inibuf = new char[30000];
-    memset(inibuf, '\0', 30000);
+    INIClass ini;
     file.Set_Name("MASTER.INI");
     if (!file.Is_Available()) {
         file.Close();
-        delete[] inibuf;
         return (-1);
     } else {
-        file.Read(inibuf, 30000 - 1);
+        ini.Load(file);
     }
     file.Close();
 
-    /*........................................................................
-    Read all entry names in the Triggers section into a temp buffer
-    ........................................................................*/
-    len = strlen(inibuf) + 2;
-    tbuffer = inibuf + len;
-    WWGetPrivateProfileString(TriggerClass::INI_Name(), NULL, NULL, tbuffer, 30000 - len, inibuf);
+    len = ini.Entry_Count(TriggerClass::INI_Name());
 
     /*........................................................................
     For each entry in the INI section:
@@ -3621,8 +3613,13 @@ int MapEditClass::Import_Triggers(void)
     - Add that string to the list box
     - Add a ptr to the INI entry name to our 'trignames' list
     ........................................................................*/
-    while (*tbuffer != '\0') {
-        WWGetPrivateProfileString(TriggerClass::INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, inibuf);
+    for (int index = 0; index < len; index++) {
+        char const* entry = ini.Get_Entry(TriggerClass::INI_Name(), index);
+
+        /*
+        **	Get the trigger entry.
+        */
+        ini.Get_String(TriggerClass::INI_Name(), entry, NULL, buf, sizeof(buf));
         item = new char[60];
 
         /*
@@ -3636,7 +3633,7 @@ int MapEditClass::Import_Triggers(void)
         /*
         ** Generate the descriptive string
         */
-        sprintf(item, " %s\t%s\t%s\t", tbuffer, eventptr, actionptr);
+        sprintf(item, " %s\t%s\t%s\t", entry, eventptr, actionptr);
 
         /*
         ** Add house name if needed
@@ -3660,9 +3657,7 @@ int MapEditClass::Import_Triggers(void)
         /*
         ** Add the name to our internal name list
         */
-        trignames.Add(tbuffer);
-
-        tbuffer += strlen(tbuffer) + 1;
+        trignames.Add(entry);
     }
 
     /*
@@ -3766,26 +3761,27 @@ int MapEditClass::Import_Triggers(void)
     that trigger for this scenario.
     ........................................................................*/
     if (!cancel) {
-        tbuffer = inibuf + len;
-        i = 0;
-        while (*tbuffer != '\0') {
+        for (int index = 0; index < len; index++) {
 
             /*
             ** If this item is checked on the list, create a new trigger
             ** and fill it in.
             */
-            if (triggerlist.Is_Checked(i)) {
-                WWGetPrivateProfileString(TriggerClass::INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, inibuf);
+            if (triggerlist.Is_Checked(index)) {
+                char const* entry = ini.Get_Entry(TriggerClass::INI_Name(), index);
+
+                /*
+                **	Get the trigger entry.
+                */
+                ini.Get_String(TriggerClass::INI_Name(), entry, NULL, buf, sizeof(buf));
 
                 trigger = new TriggerClass();
-                trigger->Fill_In(tbuffer, buf);
+                trigger->Fill_In(entry, buf);
 
-                if (trigger->House != HOUSE_NONE)
+                if (trigger->House != HOUSE_NONE) {
                     HouseTriggers[trigger->House].Add(trigger);
+                }
             }
-
-            tbuffer += strlen(tbuffer) + 1;
-            i++;
         }
     }
 
@@ -3798,7 +3794,6 @@ int MapEditClass::Import_Triggers(void)
         triggerlist.Remove_Item(item);
         delete[] item;
     }
-    delete[] inibuf;
 
     if (cancel) {
         return (-1);
@@ -3898,15 +3893,13 @@ int MapEditClass::Import_Teams(void)
     bool process;       // loop while true
     KeyNumType input;   // user input
     bool cancel = false;
-    static int tabs[] = {120, 180};      // list box tab stops
-    DynamicVectorClass<char*> teamnames; // list of INI team names
-    char* inibuf;                        // working INI buffer
-    CCFileClass file;                    // file for reading the INI file
-    char buf[128];                       // for reading an INI entry
-    char* tbuffer;                       // Accumulation buffer of team IDs.
-    int len;                             // Length of data in buffer.
-    TeamTypeClass* team;                 // Working team pointer.
-    char* item;                          // for adding to list box
+    static int tabs[] = {120, 180};            // list box tab stops
+    DynamicVectorClass<const char*> teamnames; // list of INI team names
+    CCFileClass file;                          // file for reading the INI file
+    char buf[128];                             // for reading an INI entry
+    int len;                                   // Length of data in buffer.
+    TeamTypeClass* team;                       // Working team pointer.
+    char* item;                                // for adding to list box
     char* houseptr;
     char* classptr;
     int numclasses;
@@ -3944,24 +3937,21 @@ int MapEditClass::Import_Teams(void)
     /*........................................................................
     Read the file into the staging buffer
     ........................................................................*/
-    inibuf = new char[30000];
-    memset(inibuf, '\0', 30000);
+    INIClass ini;
     file.Set_Name("MASTER.INI");
     if (!file.Is_Available()) {
         file.Close();
-        delete[] inibuf;
         return (-1);
     } else {
-        file.Read(inibuf, 30000 - 1);
+        ini.Load(file);
     }
 
     file.Close();
+
     /*........................................................................
     Read all entry names in the TeamTypes section into a temp buffer
     ........................................................................*/
-    len = strlen(inibuf) + 2;
-    tbuffer = inibuf + len;
-    WWGetPrivateProfileString(TeamTypeClass::INI_Name(), NULL, NULL, tbuffer, 30000 - len, inibuf);
+    len = ini.Entry_Count(TeamTypeClass::INI_Name());
 
     /*........................................................................
     For each entry in the INI section:
@@ -3970,8 +3960,9 @@ int MapEditClass::Import_Teams(void)
     - Add that string to the list box
     - Add a ptr to the INI entry name to our 'teamnames' list
     ........................................................................*/
-    while (*tbuffer != '\0') {
-        WWGetPrivateProfileString(TeamTypeClass::INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, inibuf);
+    for (int index = 0; index < len; index++) {
+        char const* entry = ini.Get_Entry(TeamTypeClass::INI_Name(), index);
+        ini.Get_String(TeamTypeClass::INI_Name(), entry, NULL, buf, sizeof(buf));
         item = new char[60];
 
         /*
@@ -3986,7 +3977,7 @@ int MapEditClass::Import_Teams(void)
         /*
         ** Generate the descriptive string
         */
-        sprintf(item, " %s\t", tbuffer);
+        sprintf(item, " %s\t", entry);
         HousesType house = HouseTypeClass::From_Name(houseptr);
         if (house != HOUSE_NONE) {
             strcat(item, HouseTypeClass::As_Reference(house).Suffix);
@@ -4012,9 +4003,7 @@ int MapEditClass::Import_Teams(void)
         /*
         ** Add the name to our internal name list
         */
-        teamnames.Add(tbuffer);
-
-        tbuffer += strlen(tbuffer) + 1;
+        teamnames.Add(entry);
     }
 
     /*
@@ -4118,22 +4107,18 @@ int MapEditClass::Import_Teams(void)
     that team for this scenario.
     ........................................................................*/
     if (!cancel) {
-        tbuffer = inibuf + len;
-        i = 0;
-        while (*tbuffer != '\0') {
+        for (int index = 0; index < len; index++) {
             /*
             ** If this item is checked on the list, create a new team
             ** and fill it in.
             */
-            if (teamlist.Is_Checked(i)) {
-                WWGetPrivateProfileString(TeamTypeClass::INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, inibuf);
+            if (teamlist.Is_Checked(index)) {
+                char const* entry = ini.Get_Entry(TeamTypeClass::INI_Name(), index);
+                ini.Get_String(TeamTypeClass::INI_Name(), entry, NULL, buf, sizeof(buf));
 
                 team = new TeamTypeClass();
-                team->Fill_In(tbuffer, buf);
+                team->Fill_In(entry, buf);
             }
-
-            tbuffer += strlen(tbuffer) + 1;
-            i++;
         }
     }
 
@@ -4146,7 +4131,6 @@ int MapEditClass::Import_Teams(void)
         teamlist.Remove_Item(item);
         delete[] item;
     }
-    delete[] inibuf;
 
     if (cancel) {
         return (-1);
