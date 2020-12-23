@@ -228,7 +228,7 @@ void TeamTypeClass::Read_INI(CCINIClass& ini)
  * HISTORY:                                                                                    *
  *   11/28/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-void TeamTypeClass::Fill_In(char* name, char* entry)
+void TeamTypeClass::Fill_In(const char* name, const char* entry)
 {
     Validate();
     int num_classes;
@@ -240,6 +240,9 @@ void TeamTypeClass::Fill_In(char* name, char* entry)
     UnitType u_id;                // unit ID
     AircraftType a_id;            // aircraft ID
     TeamMissionStruct mission;
+    char buf[128];
+
+    strcpy(buf, entry);
 
     /*
     ------------------------------ Set its name ------------------------------
@@ -249,7 +252,7 @@ void TeamTypeClass::Fill_In(char* name, char* entry)
     /*
     ---------------------------- 1st token: House ----------------------------
     */
-    House = HouseTypeClass::From_Name(strtok(entry, ","));
+    House = HouseTypeClass::From_Name(strtok(buf, ","));
 
     /*
     -------------------------- 2nd token: RoundAbout -------------------------

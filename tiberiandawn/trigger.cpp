@@ -1080,10 +1080,13 @@ void TriggerClass::Read_INI(CCINIClass& ini)
  * HISTORY:                                                                                    *
  *   11/28/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-void TriggerClass::Fill_In(char* name, char* entry)
+void TriggerClass::Fill_In(const char* name, const char* entry)
 {
     Validate();
     char* p;
+    char buf[128];
+
+    strcpy(buf, entry);
 
     /*
     **	Set its name.
@@ -1093,7 +1096,7 @@ void TriggerClass::Fill_In(char* name, char* entry)
     /*
     **	1st token: Event.
     */
-    Event = Event_From_Name(strtok(entry, ","));
+    Event = Event_From_Name(strtok(buf, ","));
 
     /*
     **	2nd token: Action.
