@@ -78,6 +78,7 @@ TcpipManagerClass Winsock;
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
 #include "vortex.h"
 #include "common/framelimit.h"
 #include "common/vqatask.h"
@@ -4031,7 +4032,9 @@ typedef enum
     CD_COUNTERSTRIKE,
     CD_AFTERMATH,
     CD_CS_OR_AM,
-    CD_DVD
+    CD_DVD,
+    CD_DATADIR = 4,
+    CD_COUNT = 5
 } CD_VOLUME;
 
 #ifdef FIXIT_VERSION_3
@@ -4040,9 +4043,135 @@ typedef enum
 #error DVD must be defined!
 #endif
 
+static void Reinit_Secondary_Mixfiles()
+{
+    // Only reinitialised if the main mix file has been initialised once already.
+    if (MainMix != nullptr) {
+        delete MoviesMix;
+        delete Movies2Mix;
+        delete GeneralMix;
+        delete ScoreMix;
+        delete MainMix;
+
+        MainMix = new MFCD("MAIN.MIX", &FastKey);
+        assert(MainMix != NULL);
+        //		ConquerMix = new MFCD("CONQUER.MIX", &FastKey);
+        if (CCFileClass("MOVIES1.MIX").Is_Available()) {
+            MoviesMix = new MFCD("MOVIES1.MIX", &FastKey);
+        } else {
+            MoviesMix = nullptr;
+        }
+        if (CCFileClass("MOVIES2.MIX").Is_Available()) {
+            Movies2Mix = new MFCD("MOVIES2.MIX", &FastKey);
+        } else {
+            Movies2Mix = nullptr;
+        }
+        GeneralMix = new MFCD("GENERAL.MIX", &FastKey);
+        ScoreMix = new MFCD("SCORES.MIX", &FastKey);
+    }
+}
+
+/**
+ * Checks for local folders containing data from the various discs.
+ */
+static int LastCD = -1;
+
+static bool Change_Local_Dir(int cd)
+{
+    static bool _initialised = false;
+    static unsigned _detected = 0;
+    static const char* _vol_labels[CD_COUNT] = {"allied", "soviet", "counterstrike", "aftermath", "."};
+    char vol_buff[16];
+
+    // Detect which if any of the discs have had their data copied to an appropriate local folder.
+    if (!_initialised) {
+        for (int i = 0; i < CD_COUNT; ++i) {
+            struct stat st;
+
+            if (stat(_vol_labels[i], &st) == 0 && (st.st_mode & S_IFDIR) == S_IFDIR) {
+                CDFileClass::Refresh_Search_Drives();
+                snprintf(vol_buff, sizeof(vol_buff), "%s/", _vol_labels[i]);
+                CDFileClass::Add_Search_Drive(vol_buff);
+                CCFileClass fc("MAIN.MIX");
+
+                // Populate _detected as a bitfield for which discs we found a local copy of.
+                if (fc.Is_Available()) {
+                    _detected |= 1 << i;
+                }
+            }
+        }
+
+        _initialised = true;
+    }
+
+    // No local folders with cd data dectected so we can't load any.
+    if (_detected == 0) {
+        return false;
+    }
+
+    // This condition just does a CD check to make sure we have at least one disc available.
+    // If we reached this point we must have detected at least one stored locally.
+    if (cd == CD_ANY) {
+        // If the last CD isn't set to CD_ANY, we already did detection and set a CD path so just return true.
+        if (LastCD != CD_ANY) {
+            return true;
+        }
+
+        // Set current disc to most recent expansion.
+        for (int i = CD_COUNT - 2; i >= 0; --i) {
+            if (_detected & (1 << i)) {
+                cd = i;
+                break;
+            }
+        }
+    }
+
+    // This condition handles a request for either expansion disk, if we have one initialised already we are good to go.
+    // Otherwise initialise to most recent expansion, aftermath.
+    if (cd == CD_CS_OR_AM) {
+        if (LastCD == CD_AFTERMATH || LastCD == CD_COUNTERSTRIKE) {
+            return true;
+        } else {
+            cd = CD_AFTERMATH;
+        }
+    }
+
+    // Prevent unneeded changes.
+    if (LastCD == cd) {
+        return true;
+    }
+
+    // If we only detected CD files locally, act like that handles all discs.
+    if (_detected == (1 << CD_DATADIR)) {
+        cd = CD_DATADIR;
+    }
+
+    // If the data from the CD we want was detected, then double check it and set it as though we used the -CD command line.
+    if (_detected & (1 << cd)) {
+        struct stat st;
+
+        // Verify that the file is still available and hasn't been deleted out from under us.
+        if (stat(_vol_labels[cd], &st) == 0 && (st.st_mode & S_IFDIR) == S_IFDIR) {
+            CDFileClass::Refresh_Search_Drives();
+            snprintf(vol_buff, sizeof(vol_buff), "%s/", _vol_labels[cd]);
+            CDFileClass::Add_Search_Drive(vol_buff);
+
+            // The file should be available if we reached this point.
+            assert(CCFileClass("MAIN.MIX").Is_Available());
+
+            CurrentCD = cd;
+            LastCD = cd;
+            Reinit_Secondary_Mixfiles();
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool Force_CD_Available(int cd_desired) //	ajw
 {
-    static int _last = -1;
     static void* font;
 #ifdef FRENCH
     static char* _cd_name[] = {
@@ -4082,8 +4211,16 @@ bool Force_CD_Available(int cd_desired) //	ajw
     ** If the required CD is set to -2 then it means that the file is present
     ** on the local hard drive and we shouldn't have to worry about it.
     */
-    if (cd_desired == CD_LOCAL || CDFileClass::Is_Local())
+    if (cd_desired == CD_LOCAL || CDFileClass::Is_Local()) {
         return (true);
+    }
+
+    /*
+    ** Search for the data in local folder first.
+    */
+    if (Change_Local_Dir(cd_desired)) {
+        return (true);
+    }
 
     /*
     ** Find out if the CD in the current drive is the one we are looking for
@@ -4296,31 +4433,11 @@ bool Force_CD_Available(int cd_desired) //	ajw
     //	Since the DVD is the only disk that can possibly be required when Using_DVD(), I never have to reload the mix
     //	files here, because no other disk could ever have been asked for. And if not Using_DVD(), cd_desired will never
     //	be equal to 5. So this is safe.
-    if (cd_desired > -1 && _last != cd_desired && cd_desired != 5) {
-        _last = cd_desired;
+    if (cd_desired > -1 && LastCD != cd_desired && cd_desired != 5) {
+        LastCD = cd_desired;
 
         Theme.Stop();
-
-        //		if (ConquerMix) delete ConquerMix;
-        if (MoviesMix)
-            delete MoviesMix;
-        if (GeneralMix)
-            delete GeneralMix;
-        if (ScoreMix)
-            delete ScoreMix;
-        if (MainMix)
-            delete MainMix;
-
-        MainMix = new MFCD("MAIN.MIX", &FastKey);
-        assert(MainMix != NULL);
-        //		ConquerMix = new MFCD("CONQUER.MIX", &FastKey);
-        if (CCFileClass("MOVIES1.MIX").Is_Available())
-            MoviesMix = new MFCD("MOVIES1.MIX", &FastKey);
-        else
-            MoviesMix = new MFCD("MOVIES2.MIX", &FastKey);
-        assert(MoviesMix != NULL);
-        GeneralMix = new MFCD("GENERAL.MIX", &FastKey);
-        ScoreMix = new MFCD("SCORES.MIX", &FastKey);
+        Reinit_Secondary_Mixfiles();
         ThemeClass::Scan();
     }
 

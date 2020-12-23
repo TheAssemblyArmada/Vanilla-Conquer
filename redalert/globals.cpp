@@ -382,6 +382,7 @@ DMonoType MonoPage = DMONO_STRESS; // The current page.
 */
 MFCD* TheaterData = 0;
 MFCD* MoviesMix = 0;
+MFCD* Movies2Mix = 0;
 MFCD* GeneralMix = 0;
 MFCD* ScoreMix = 0;
 MFCD* MainMix = 0;
