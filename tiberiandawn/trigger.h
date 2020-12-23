@@ -144,9 +144,9 @@ public:
     **	File I/O routines
     */
     static void Read_INI(CCINIClass& ini);
-    void Fill_In(char* name, char* entry);
+    void Fill_In(const char* name, const char* entry);
     static void Write_INI(CCINIClass& ini, bool refresh);
-    static char* INI_Name(void)
+    static const char* INI_Name(void)
     {
         return "Triggers";
     };
