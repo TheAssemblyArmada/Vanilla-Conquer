@@ -34,6 +34,7 @@
 
 #include "function.h"
 #include "common/framelimit.h"
+#include "common/ini.h"
 
 #ifdef NEWMENU
 
@@ -121,8 +122,9 @@ bool Expansion_Dialog(void)
     /*
     **	Add in all the expansion scenarios.
     */
-    char* sbuffer = (char*)_ShapeBuffer;
     int index;
+    INIClass ini;
+
     for (index = 20; index < 60; index++) {
         char buffer[128];
         CCFileClass file;
@@ -131,12 +133,10 @@ bool Expansion_Dialog(void)
         strcat(buffer, ".INI");
         file.Set_Name(buffer);
         if (file.Is_Available()) {
-            file.Read(sbuffer, 1000);
-            sbuffer[1000] = '\r';
-            sbuffer[1000 + 1] = '\n';
-            sbuffer[1000 + 2] = '\0';
+            ini.Clear();
+            ini.Load(file);
+            ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
 
-            WWGetPrivateProfileString("Basic", "Name", "x", buffer, sizeof(buffer), sbuffer);
             char* data = new char[strlen(buffer) + 1 + sizeof(int) + 25];
             *((int*)&data[0]) = index;
             strcpy(&data[sizeof(int)], "GDI: ");
@@ -153,12 +153,10 @@ bool Expansion_Dialog(void)
         strcat(buffer, ".INI");
         file.Set_Name(buffer);
         if (file.Is_Available()) {
-            file.Read(sbuffer, 1000);
-            sbuffer[1000] = '\r';
-            sbuffer[1000 + 1] = '\n';
-            sbuffer[1000 + 2] = '\0';
 
-            WWGetPrivateProfileString("Basic", "Name", "x", buffer, sizeof(buffer), sbuffer);
+            ini.Clear();
+            ini.Load(file);
+            ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
             char* data = new char[strlen(buffer) + 1 + sizeof(int) + 25];
             *((int*)&data[0]) = index;
             strcpy(&data[sizeof(int)], "NOD: ");
