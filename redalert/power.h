@@ -83,7 +83,7 @@ protected:
     {
         POWER_X = 10 * ICON_PIXEL_W,
         POWER_Y = (7 + 70 + 13),
-        POWER_HEIGHT = (200 - (7 + 70 + 13)),
+        
         POWER_WIDTH = 8,
         POWER_LINE_SPACE = 5,
         POWER_LINE_WIDTH = 3,
@@ -102,6 +102,7 @@ private:
     */
     CDTimerClass<FrameTimerClass> FlashTimer;
 
+	int PowerBarHeight;
     int RecordedDrain;
     int RecordedPower;
     int DesiredDrainHeight;
@@ -118,6 +119,7 @@ private:
     */
     static void const* PowerShape;
     static void const* PowerBarShape;
+	static void const* PowerTileShape;
 };
 
 #endif

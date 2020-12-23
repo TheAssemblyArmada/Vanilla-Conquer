@@ -79,6 +79,8 @@
 void* SidebarClass::SidebarShape = NULL;
 void* SidebarClass::SidebarMiddleShape = NULL;
 void* SidebarClass::SidebarBottomShape = NULL;
+void* SidebarClass::Strip2Shape = NULL;
+void* SidebarClass::Side4Shape = NULL;
 
 /***************************************************************************
 **	This holds the translucent table for use with the construction clock
@@ -227,6 +229,8 @@ void SidebarClass::One_Time(void)
 	StripClass::MAX_VISIBLE = (ScreenHeight - ((SIDE_Y + StripClass::SBUTTON_HEIGHT) * RESFACTOR)) / (StripClass::OBJECT_HEIGHT * RESFACTOR);
 	StripClass::UP_Y_OFFSET = StripClass::MAX_VISIBLE * int(StripClass::OBJECT_HEIGHT) + 1;
 	StripClass::DOWN_Y_OFFSET = StripClass::UP_Y_OFFSET;
+
+	//Background.X = ScreenWidth - 144;
 
     WindowList[WINDOW_SIDEBAR][WINDOWX] = ScreenWidth - 144;
     WindowList[WINDOW_SIDEBAR][WINDOWY] = (SIDE_Y + 1 + TOP_HEIGHT) * RESFACTOR;
@@ -428,6 +432,14 @@ void SidebarClass::Reload_Sidebar(void)
     SidebarBottomShape = (void*)MFCD::Retrieve(sb_name);
 
 #endif
+	if (houseloaded == 2 || houseloaded == 4 || houseloaded == 9) {
+		Strip2Shape = (void*)MFCD::Retrieve("STRIP2US.SHP");
+		Side4Shape = (void*)MFCD::Retrieve("SIDE4US.SHP");
+	}
+	else {
+		Strip2Shape = (void*)MFCD::Retrieve("STRIP2NA.SHP");
+		Side4Shape = (void*)MFCD::Retrieve("SIDE4NA.SHP");
+	}
 
     Column[0].Reload_LogoShapes();
     Column[1].Reload_LogoShapes();
@@ -1866,7 +1878,20 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                     }
                 }
             }
-        }
+		}
+
+		int TilingStripHeight = 372;
+		while (TilingStripHeight < (ScreenHeight - 75)) {
+
+			CC_Draw_Shape(Strip2Shape,
+				0,
+				(X - (WindowList[WINDOW_SIDEBAR][WINDOWX]))
+				+ ((LEFT_EDGE_OFFSET + 15) * RESFACTOR),
+				TilingStripHeight,
+				WINDOW_SIDEBAR,
+				SHAPE_CENTER);
+			TilingStripHeight += 48;
+		}
 
         LastSlid = Slid;
     }
@@ -2267,8 +2292,8 @@ int SidebarClass::StripClass::SelectClass::Action(unsigned flags, KeyNumType& ke
  *=============================================================================================*/
 int SidebarClass::SBGadgetClass::Action(unsigned, KeyNumType&)
 {
-    Map.Help_Text(TXT_NONE);
-    Map.Override_Mouse_Shape(MOUSE_NORMAL, false);
+	Map.Help_Text(TXT_NONE);
+	Map.Override_Mouse_Shape(MOUSE_NORMAL, false);
     return (true);
 }
 
