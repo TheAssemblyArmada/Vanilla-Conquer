@@ -102,6 +102,8 @@ OptionsClass::OptionsClass(void)
     , IsScoreShuffle(false)
     , IsPaletteScroll(true)
     , ToggleSidebar(true)
+    , CounterstrikeEnabled(true)
+    , AftermathEnabled(true)
     ,
 
     KeyForceMove1(KN_LALT)
@@ -578,6 +580,9 @@ void OptionsClass::Load_Settings(void)
     SlowPalette = ini.Get_Bool(OPTIONS, "SlowPalette", SlowPalette);
     IsPaletteScroll = ini.Get_Bool(OPTIONS, "PaletteScroll", IsPaletteScroll);
     ToggleSidebar = ini.Get_Bool(OPTIONS, "AllowSidebarToggle", ToggleSidebar);
+
+    CounterstrikeEnabled = ini.Get_Bool("Expansions", "CounterstrikeEnabled", CounterstrikeEnabled);
+    AftermathEnabled = ini.Get_Bool("Expansions", "AftermathEnabled", AftermathEnabled);
 
     KeyForceMove1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceMove1", KeyForceMove1);
     KeyForceMove2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceMove2", KeyForceMove2);
