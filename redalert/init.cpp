@@ -1065,6 +1065,7 @@ bool Select_Game(bool fade)
                 } else {
                     Hide_Mouse();
                     VisiblePage.Clear();
+					HiddenPage.Clear();
                     Show_Mouse();
                     Play_Movie(VQ_INTRO_MOVIE, THEME_NONE, true); // no transition picture to briefing
                     Keyboard->Clear();

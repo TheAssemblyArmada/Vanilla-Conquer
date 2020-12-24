@@ -217,7 +217,14 @@ SidebarClass::SidebarClass(NoInitClass const& x)
 void SidebarClass::One_Time(void)
 {
 	// Needs to be done here as PowerClass::One_Time() references MAX_VISIBLE to calculate power bar height
-	StripClass::MAX_VISIBLE = (ScreenHeight - ((COLUMN_ONE_Y + StripClass::SBUTTON_HEIGHT) * RESFACTOR)) / (StripClass::OBJECT_HEIGHT * RESFACTOR);
+	// Do a quick check if we can load one of the extended sidebar graphics, if not then we set max visible cameo items to 4
+	Strip2Shape = (void*)MFCD::Retrieve("STRIP2US.SHP");
+	if (Strip2Shape) {
+		StripClass::MAX_VISIBLE = (ScreenHeight - ((COLUMN_ONE_Y + StripClass::SBUTTON_HEIGHT) * RESFACTOR)) / (StripClass::OBJECT_HEIGHT * RESFACTOR);
+	}
+	else {
+		StripClass::MAX_VISIBLE = 4;
+	}
 
     PowerClass::One_Time();
 
