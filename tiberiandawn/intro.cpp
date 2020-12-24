@@ -237,6 +237,7 @@ void Choose_Side(void)
         }
     }
 
+    Stop_Sample(statichandle);
     Hide_Mouse();
     Close_Animation(anim);
 
