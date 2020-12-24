@@ -158,7 +158,7 @@ SidebarClass::SidebarClass(void)
     WindowList[WINDOW_SIDEBAR][WINDOWX] = (SIDE_X + 8);
     WindowList[WINDOW_SIDEBAR][WINDOWY] = SIDE_Y + 1 + TOP_HEIGHT;
     WindowList[WINDOW_SIDEBAR][WINDOWWIDTH] = SIDE_WIDTH;
-    WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = StripClass::MAX_VISIBLE * StripClass::OBJECT_HEIGHT;
+    WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = ScreenHeight;
     //	WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = StripClass::MAX_VISIBLE * StripClass::OBJECT_HEIGHT-1;
 
     /*
@@ -230,7 +230,8 @@ void SidebarClass::One_Time(void)
 	StripClass::UP_Y_OFFSET = StripClass::MAX_VISIBLE * int(StripClass::OBJECT_HEIGHT) + 1;
 	StripClass::DOWN_Y_OFFSET = StripClass::UP_Y_OFFSET;
 
-	//Background.X = ScreenWidth - 144;
+	Background.X = ScreenWidth - 144;
+	//Background.Y = ScreenHeight - 246;
 
     WindowList[WINDOW_SIDEBAR][WINDOWX] = ScreenWidth - 144;
     WindowList[WINDOW_SIDEBAR][WINDOWY] = (SIDE_Y + 1 + TOP_HEIGHT) * RESFACTOR;
@@ -241,7 +242,7 @@ void SidebarClass::One_Time(void)
     /*
     ** Top of the window seems to be wrong for the new sidebar. ST - 5/2/96 2:49AM
     */
-    WindowList[WINDOW_SIDEBAR][WINDOWY] -= 1 * RESFACTOR;
+   // WindowList[WINDOW_SIDEBAR][WINDOWY] -= 1 * RESFACTOR;
 
     /*
     **	Set up the coordinates for the sidebar strips. These coordinates are for
@@ -774,7 +775,7 @@ void SidebarClass::Draw_It(bool complete)
             **	Draw the outline box around the sidebar buttons.
             */
             int shape = complete ? 0 : 1;
-
+			int bottomshapeY = (((SidebarClass::StripClass::MAX_VISIBLE * int(SidebarClass::StripClass::OBJECT_HEIGHT))) * RESFACTOR) + 84;
             /*
             ** The sidebar shape is too big in 640x400 so it needs to be drawn in three chunks.
             */
@@ -782,7 +783,19 @@ void SidebarClass::Draw_It(bool complete)
             CC_Draw_Shape(
                 SidebarMiddleShape, shape, ScreenWidth - (80 * RESFACTOR), (8 + 80) * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
             CC_Draw_Shape(
-                SidebarBottomShape, shape, ScreenWidth - (80 * RESFACTOR), (8 + 80 + 50) * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
+                SidebarBottomShape, shape, ScreenWidth - (80 * RESFACTOR), bottomshapeY, WINDOW_MAIN, SHAPE_WIN_REL);
+
+			for (int i = 0; i < SidebarClass::StripClass::MAX_VISIBLE; i++) {
+				int y = Column[0].Y + (i * SidebarClass::StripClass::OBJECT_HEIGHT * RESFACTOR);
+
+				if (i > 3) {
+					CC_Draw_Shape(Side4Shape,
+						shape,
+						ScreenWidth - (80 * RESFACTOR),
+						y,
+						WINDOW_MAIN, SHAPE_WIN_REL);
+				}
+			}
 
             Repair.Draw_Me(true);
             Upgrade.Draw_Me(true);
@@ -1681,6 +1694,27 @@ void SidebarClass::StripClass::Draw_It(bool complete)
             CC_Draw_Shape(LogoShapes, ID, X + (2 * RESFACTOR), Y, WINDOW_MAIN, SHAPE_WIN_REL | SHAPE_NORMAL, 0);
         }
 
+		for (int i = 0; i < MAX_VISIBLE + (IsScrolling ? 1 : 0); i++) {
+			int y = Y + (i * OBJECT_HEIGHT * RESFACTOR);
+
+			/*
+			**	If the strip is scrolling, then the offset is adjusted accordingly.
+			*/
+			if (IsScrolling) {
+				y -= (OBJECT_HEIGHT - Slid) * RESFACTOR;
+				//				y -= OBJECT_HEIGHT - Slid;
+			}
+
+			if (i > 3) {
+				CC_Draw_Shape(Strip2Shape,
+					ID,
+					X - (WindowList[WINDOW_SIDEBAR][WINDOWX]) + (LEFT_EDGE_OFFSET * RESFACTOR),
+					y - WindowList[WINDOW_SIDEBAR][WINDOWY],
+					WINDOW_SIDEBAR,
+					SHAPE_NORMAL | SHAPE_WIN_REL | SHAPE_NORMAL,
+					0);
+			}
+		}
         /*
         **	Redraw the scroll buttons.
         */
@@ -1702,15 +1736,16 @@ void SidebarClass::StripClass::Draw_It(bool complete)
             FactoryClass* factory = 0;
             int index = i + TopIndex;
             int x = X;
-            int y = Y + (i * OBJECT_HEIGHT * RESFACTOR);
+			int y = Y + (i * OBJECT_HEIGHT * RESFACTOR);
 
-            /*
-            **	If the strip is scrolling, then the offset is adjusted accordingly.
-            */
-            if (IsScrolling) {
-                y -= (OBJECT_HEIGHT - Slid) * RESFACTOR;
-                //				y -= OBJECT_HEIGHT - Slid;
-            }
+			/*
+			**	If the strip is scrolling, then the offset is adjusted accordingly.
+			*/
+			if (IsScrolling) {
+				y -= (OBJECT_HEIGHT - Slid) * RESFACTOR;
+				//				y -= OBJECT_HEIGHT - Slid;
+			}
+
 
             /*
             **	Fetch the shape number for the object type located at this current working
@@ -1879,20 +1914,6 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                 }
             }
 		}
-
-		int TilingStripHeight = 372;
-		while (TilingStripHeight < (ScreenHeight - 75)) {
-
-			CC_Draw_Shape(Strip2Shape,
-				0,
-				(X - (WindowList[WINDOW_SIDEBAR][WINDOWX]))
-				+ ((LEFT_EDGE_OFFSET + 15) * RESFACTOR),
-				TilingStripHeight,
-				WINDOW_SIDEBAR,
-				SHAPE_CENTER);
-			TilingStripHeight += 48;
-		}
-
         LastSlid = Slid;
     }
 }

@@ -135,7 +135,7 @@ void PowerClass::One_Time(void)
     PowerButton.X = ScreenWidth - 160;
     PowerButton.Y = POWER_Y * RESFACTOR;
     PowerButton.Width = (POWER_WIDTH * RESFACTOR) - 1;
-    PowerButton.Height = (((SidebarClass::StripClass::MAX_VISIBLE * int(SidebarClass::StripClass::OBJECT_HEIGHT))) * RESFACTOR) + 126;
+    PowerButton.Height = (((SidebarClass::StripClass::MAX_VISIBLE * int(SidebarClass::StripClass::OBJECT_HEIGHT))) * RESFACTOR) + 128;
 	PowerBarHeight = (ScreenHeight / 2) - 90;
     PowerShape = MFCD::Retrieve("POWER.SHP");
     PowerBarShape = MFCD::Retrieve("POWERBAR.SHP");
@@ -178,7 +178,7 @@ void PowerClass::Draw_It(bool complete)
 
 				//				LogicPage->Fill_Rect(POWER_X, POWER_Y, POWER_X+POWER_WIDTH-1, POWER_Y+POWER_HEIGHT-1,
 				//LTGREY);
-				CC_Draw_Shape(PowerBarShape,
+					CC_Draw_Shape(PowerBarShape,
 					0,
 					ScreenWidth - 160,
 					88 * RESFACTOR,
@@ -260,13 +260,15 @@ void PowerClass::Draw_It(bool complete)
                 /*
                 **	Draw the power drain threshold marker.
                 */
-                CC_Draw_Shape(PowerShape,
-                              0,
-                              ScreenWidth - 158,
-                              bottom - (drain_height + 4),
-                              WINDOW_MAIN,
-                              flags | SHAPE_NORMAL,
-                              remap);
+				if (PlayerPtr->Drain > 0) {
+					CC_Draw_Shape(PowerShape,
+						0,
+						ScreenWidth - 158,
+						bottom - (drain_height + 4),
+						WINDOW_MAIN,
+						flags | SHAPE_NORMAL,
+						remap);
+				}
             }
             LogicPage->Unlock();
         }
