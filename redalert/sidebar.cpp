@@ -779,11 +779,11 @@ void SidebarClass::Draw_It(bool complete)
             /*
             ** The sidebar shape is too big in 640x400 so it needs to be drawn in three chunks.
             */
-            CC_Draw_Shape(SidebarShape, 0, ScreenWidth - (80 * RESFACTOR), 8 * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
+			CC_Draw_Shape(SidebarShape, shape, ScreenWidth - (80 * RESFACTOR), 8 * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
             CC_Draw_Shape(
                 SidebarMiddleShape, shape, ScreenWidth - (80 * RESFACTOR), (8 + 80) * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
             CC_Draw_Shape(
-                SidebarBottomShape, shape, ScreenWidth - (80 * RESFACTOR), bottomshapeY, WINDOW_MAIN, SHAPE_WIN_REL);
+                SidebarBottomShape, shape, ScreenWidth - (80 * RESFACTOR), bottomshapeY, WINDOW_MAIN, SHAPE_WIN_REL); 
 
 			for (int i = 0; i < SidebarClass::StripClass::MAX_VISIBLE; i++) {
 				int y = Column[0].Y + (i * SidebarClass::StripClass::OBJECT_HEIGHT * RESFACTOR);
