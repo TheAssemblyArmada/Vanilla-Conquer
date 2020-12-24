@@ -5108,31 +5108,23 @@ const char* Game_Registry_Key()
  *=============================================================================================*/
 bool Is_Counterstrike_Installed(void)
 {
-    return true; // Remasters always have Counterstrike. ST - 10/18/2019 11:06AM
+#ifdef REMASTER_BUILD
+    return true; // Remasters always have Aftermath. ST - 10/18/2019 11:06AM
 
-#if (0)
+#else
     //	ajw 9/29/98
     static bool bAlreadyChecked = false;
     static bool bInstalled = false;
 
     if (!bAlreadyChecked) {
-        HKEY hKey;
-        if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, Game_Registry_Key(), 0, KEY_READ, &hKey) != ERROR_SUCCESS)
-            return false;
-        DWORD dwValue;
-        DWORD dwBufSize = sizeof(DWORD);
-        if (RegQueryValueEx(hKey, "CStrikeInstalled", 0, NULL, (LPBYTE)&dwValue, &dwBufSize) != ERROR_SUCCESS)
-            bInstalled = false;
-        else
-            bInstalled = (bool)dwValue; //	(Presumably true, if it's there...)
-
-        RegCloseKey(hKey);
-        bAlreadyChecked = true;
+        if (!bAlreadyChecked) {
+            CCFileClass file("EXPAND.MIX");
+            bInstalled = file.Is_Available();
+            bAlreadyChecked = true;
+        }
     }
-    return bInstalled;
 
-//	RawFileClass file("EXPAND.MIX");
-//	return(file.Is_Available());
+    return bInstalled && Options.CounterstrikeEnabled;
 #endif
 }
 
@@ -5141,31 +5133,20 @@ bool Is_Counterstrike_Installed(void)
  *=============================================================================================*/
 bool Is_Aftermath_Installed(void)
 {
+#ifdef REMASTER_BUILD
     return true; // Remasters always have Aftermath. ST - 10/18/2019 11:06AM
 
-#if (0)
-    //	ajw 9/29/98
+#else
     static bool bAlreadyChecked = false;
     static bool bInstalled = false;
 
     if (!bAlreadyChecked) {
-        HKEY hKey;
-        if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, Game_Registry_Key(), 0, KEY_READ, &hKey) != ERROR_SUCCESS)
-            return false;
-        DWORD dwValue;
-        DWORD dwBufSize = sizeof(DWORD);
-        if (RegQueryValueEx(hKey, "AftermathInstalled", 0, NULL, (LPBYTE)&dwValue, &dwBufSize) != ERROR_SUCCESS)
-            bInstalled = false;
-        else
-            bInstalled = (bool)dwValue; //	(Presumably true, if it's there...)
-
-        RegCloseKey(hKey);
+        CCFileClass file("EXPAND2.MIX");
+        bInstalled = file.Is_Available();
         bAlreadyChecked = true;
     }
-    return bInstalled;
 
-//	RawFileClass file("EXPAND2.MIX");
-//	return(file.Is_Available());
+    return bInstalled && Options.AftermathEnabled;
 #endif
 }
 #endif
