@@ -44,10 +44,6 @@
 #ifndef REMASTER_BUILD
 #include "function.h"
 
-#ifdef FIXIT_VERSION_3
-#include "rawolapi.h" //	For version number.
-#endif
-
 /****************************** Globals ************************************/
 //---------------------------------------------------------------------------
 // This is a table of version numbers # the communications protocol used for

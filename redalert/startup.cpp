@@ -42,10 +42,6 @@
 #include "mcimovie.h"
 #endif
 
-#ifdef WOLAPI_INTEGRATION
-//#include "WolDebug.h"
-#endif
-
 extern char RedAlertINI[_MAX_PATH];
 
 bool Read_Private_Config_Struct(FileClass& file, NewConfigType* config);
@@ -303,40 +299,6 @@ int main(int argc, char* argv[])
     }
 
     SetCurrentDirectoryA(path);
-#endif
-
-#ifdef WOLAPI_INTEGRATION
-    //	Look for special wolapi install program, used after the patch to version 3, to install "Shared Internet
-    //Components".
-    WIN32_FIND_DATA wfd;
-    HANDLE hWOLSetupFile = FindFirstFile("wolsetup.exe", &wfd);
-    bool bWOLSetupFile = (hWOLSetupFile != INVALID_HANDLE_VALUE);
-    //	if( bWOLSetupFile )
-    //		debugprint( "Found wolsetup.exe\n" );
-    FindClose(hWOLSetupFile);
-    //	Look for special registry entry that tells us when the setup exe has done its thing.
-    HKEY hKey;
-    RegOpenKeyEx(HKEY_LOCAL_MACHINE, Game_Registry_Key(), 0, KEY_READ, &hKey);
-    DWORD dwValue;
-    DWORD dwBufSize = sizeof(DWORD);
-    if (RegQueryValueEx(hKey, "WolapiInstallComplete", 0, NULL, (LPBYTE)&dwValue, &dwBufSize) == ERROR_SUCCESS) {
-        //		debugprint( "Found WolapiInstallComplete in registry\n" );
-        //	Setup has finished. Delete the setup exe and remove reg key.
-        if (bWOLSetupFile) {
-            if (DeleteFile("wolsetup.exe"))
-                RegDeleteValue(hKey, "WolapiInstallComplete");
-        } else
-            RegDeleteValue(hKey, "WolapiInstallComplete");
-    }
-    RegCloseKey(hKey);
-
-    //	I've been having problems getting the patch to delete "conquer.eng", which is present in the game
-    //	directory for 1.08, but which must NOT be present for this version (Aftermath mix files provide the
-    //	string overrides that the 1.08 separate conquer.eng did before Aftermath).
-    //	Delete conquer.eng if it's found.
-    if (FindFirstFileA("conquer.eng", &wfd) != INVALID_HANDLE_VALUE)
-        DeleteFileA("conquer.eng");
-
 #endif
 
     if (Parse_Command_Line(argc, argv)) {

@@ -65,11 +65,6 @@ extern bool Is_Mission_Aftermath(char* file_name);
 
 #define RESPONSE_TIMEOUT 60 * 60
 
-#ifdef WOLAPI_INTEGRATION
-#include "WolapiOb.h"
-extern WolapiObject* pWolapi;
-#endif
-
 /***********************************************************************************************
  * Get_Scenario_File_From_Host -- Initiates download of scenario file from game host           *
  *                                                                                             *
@@ -154,12 +149,6 @@ bool Get_Scenario_File_From_Host(char* return_name, int gametype)
                 }
             }
 
-#ifdef WOLAPI_INTEGRATION
-            if (Session.Type == GAME_INTERNET && pWolapi && (::timeGetTime() > pWolapi->dwTimeNextWolapiPump)) {
-                pWolapi->pChat->PumpMessages();
-                pWolapi->dwTimeNextWolapiPump = ::timeGetTime() + WOLAPIPUMPWAIT;
-            }
-#endif
         } while (response_timer);
     }
 
@@ -343,13 +332,6 @@ bool Receive_Remote_File(char* file_name, unsigned int file_length, int gametype
             AllSurfaces.SurfacesRestored = FALSE;
             display = REDRAW_ALL;
         }
-
-#ifdef WOLAPI_INTEGRATION
-        if (Session.Type == GAME_INTERNET && pWolapi && (::timeGetTime() > pWolapi->dwTimeNextWolapiPump)) {
-            pWolapi->pChat->PumpMessages();
-            pWolapi->dwTimeNextWolapiPump = ::timeGetTime() + WOLAPIPUMPWAIT;
-        }
-#endif
 
         if (display) {
 
@@ -709,13 +691,6 @@ bool Send_Remote_File(char* file_name, int gametype)
             AllSurfaces.SurfacesRestored = FALSE;
             display = REDRAW_ALL;
         }
-
-#ifdef WOLAPI_INTEGRATION
-        if (Session.Type == GAME_INTERNET && pWolapi && (::timeGetTime() > pWolapi->dwTimeNextWolapiPump)) {
-            pWolapi->pChat->PumpMessages();
-            pWolapi->dwTimeNextWolapiPump = ::timeGetTime() + WOLAPIPUMPWAIT;
-        }
-#endif
 
         if (display) {
 

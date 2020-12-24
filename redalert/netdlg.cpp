@@ -153,11 +153,6 @@ bool bSpecialAftermathScenario(const char* szScenarioDescription);
 #ifdef FIXIT_VERSION_3
 bool Force_Scenario_Available(const char* szName);
 #endif
-#ifdef WOLAPI_INTEGRATION
-#include "WolStrng.h"
-#include "WolapiOb.h"
-extern WolapiObject* pWolapi;
-#endif
 
 //---------------------------------------------------------------------------
 //	The possible states of the join-game dialog

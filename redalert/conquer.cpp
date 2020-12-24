@@ -85,14 +85,6 @@ TcpipManagerClass Winsock;
 #include "common/vqatask.h"
 #include "common/vqaloader.h"
 
-#ifdef WOLAPI_INTEGRATION
-//#include "WolDebug.h"
-#include "WolStrng.h"
-#include "WolapiOb.h"
-extern WolapiObject* pWolapi;
-#define PAGE_RESPOND_KEY KN_RETURN // KN_COMMA
-#endif
-
 #ifdef MPEGMOVIE
 #ifdef MCIMPEG
 #include "mcimovie.h"
@@ -1101,14 +1093,8 @@ static void Message_Input(KeyNumType& input)
     **	'to' portion.  At the other end, the buffer allocated to display the
     **	message must be MAX_MESSAGE_LENGTH plus the size of "From: xxx (house)".
     */
-#ifdef WOLAPI_INTEGRATION
-    if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH
-        && ((input >= KN_F1 && input < (KN_F1 + Session.MaxPlayers)) || input == PAGE_RESPOND_KEY)
-        && !Session.Messages.Is_Edit()) {
-#else
     if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH && input >= KN_F1
         && input < (KN_F1 + Session.MaxPlayers) && !Session.Messages.Is_Edit()) {
-#endif
         memset(txt, 0, 40);
 
         /*
@@ -1141,11 +1127,7 @@ static void Message_Input(KeyNumType& input)
 
                 Map.Flag_To_Redraw(false);
 
-#ifdef WOLAPI_INTEGRATION
-            } else if ((input - KN_F1) < Ipx.Num_Connections() && !Session.ObiWan && input != PAGE_RESPOND_KEY) {
-#else
             } else if ((input - KN_F1) < Ipx.Num_Connections() && !Session.ObiWan) {
-#endif
                 id = Ipx.Connection_ID(input - KN_F1);
                 Session.MessageAddress = (*(Ipx.Connection_Address(id)));
                 sprintf(txt, Text_String(TXT_TO), Ipx.Connection_Name(id));
@@ -1155,40 +1137,6 @@ static void Message_Input(KeyNumType& input)
 
                 Map.Flag_To_Redraw(false);
             }
-#ifdef WOLAPI_INTEGRATION
-            else if (Session.Type == GAME_INTERNET && pWolapi && !pWolapi->bConnectionDown
-                     && input == PAGE_RESPOND_KEY) {
-                if (*pWolapi->szExternalPager) {
-                    //	Respond to a page from external ww online user that paged me.
-                    //	Set MessageAddress to all zeroes, as a flag to ourselves later on.
-                    NetNumType blip;
-                    NetNodeType blop;
-                    memset(blip, 0, 4);
-                    memset(blop, 0, 6);
-                    Session.MessageAddress = IPXAddressClass(blip, blop);
-
-                    //	Tell pWolapi not to reset szExternalPager for the time being.
-                    pWolapi->bFreezeExternalPager = true;
-
-                    sprintf(txt, Text_String(TXT_TO), pWolapi->szExternalPager);
-
-                    Session.Messages.Add_Edit(
-                        Session.ColorIdx, TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW, txt, 0, 232 * RESFACTOR);
-
-                    Map.Flag_To_Redraw(false);
-
-                    Keyboard->Clear();
-                } else {
-                    Session.Messages.Add_Message(NULL,
-                                                 0,
-                                                 TXT_WOL_NOTPAGED,
-                                                 PCOLOR_GOLD,
-                                                 TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW,
-                                                 Rule.MessageDelay * TICKS_PER_MINUTE);
-                    Sound_Effect(VOC_SYS_ERROR);
-                }
-            }
-#endif
         }
     }
 
@@ -1214,12 +1162,6 @@ static void Message_Input(KeyNumType& input)
     if (rc == 2 && Session.Type != GAME_NORMAL) {
         if (copy_input == KN_ESC) {
             Map.Flag_To_Redraw(true);
-#ifdef WOLAPI_INTEGRATION
-            if (pWolapi)
-                //	Just in case user was responding to a page from outside the game, and we had frozen the
-                //"szExternalPager".
-                pWolapi->bFreezeExternalPager = false;
-#endif
         } else {
             Map.Flag_To_Redraw(false);
         }
@@ -1474,42 +1416,6 @@ void Call_Back(void)
     if (Session.Type == GAME_NULL_MODEM || ((Session.Type == GAME_MODEM) && Session.ModemService)) {
         // NullModem.Service();		ST - 5/7/2019
     }
-
-#ifdef WOLAPI_INTEGRATION
-    //	Wolapi maintenance.
-    if (pWolapi) {
-        if (pWolapi->bInGame) {
-            if (!pWolapi->bConnectionDown && ::timeGetTime() > pWolapi->dwTimeNextWolapiPump) {
-                pWolapi->pChat->PumpMessages();
-                pWolapi->pNetUtil->PumpMessages();
-                pWolapi->dwTimeNextWolapiPump = ::timeGetTime() + WOLAPIPUMPWAIT + 700; //	Slower pump during games.
-                if (pWolapi->bConnectionDown) {
-                    //	Connection to server lost.
-                    Session.Messages.Add_Message(NULL,
-                                                 0,
-                                                 TXT_WOL_WOLAPIGONE,
-                                                 PCOLOR_GOLD,
-                                                 TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW,
-                                                 Rule.MessageDelay * TICKS_PER_MINUTE);
-                    Sound_Effect(WOLSOUND_LOGOUT);
-                    //	ajw (Wolapi object is now left around, so we can try to send game results.)
-                    //					//	Kill wolapi.
-                    //					pWolapi->UnsetupCOMStuff();
-                    //					delete pWolapi;
-                    //					pWolapi = NULL;
-                }
-            }
-        } else {
-            //	When showing a modal dialog during chat, this pumping is turned on. It's turned off immediately
-            //following.
-            if (pWolapi->bPump_In_Call_Back && (::timeGetTime() > pWolapi->dwTimeNextWolapiPump)) {
-                pWolapi->pChat->PumpMessages();
-                pWolapi->pNetUtil->PumpMessages();
-                pWolapi->dwTimeNextWolapiPump = ::timeGetTime() + WOLAPIPUMPWAIT;
-            }
-        }
-    }
-#endif
 }
 
 void IPX_Call_Back(void)

@@ -115,12 +115,6 @@ void Init_Random(void);
 bool Load_Recording_Values(CCFileClass& file);
 bool Save_Recording_Values(CCFileClass& file);
 
-#ifdef WOLAPI_INTEGRATION
-extern int WOL_Main();
-#include "WolapiOb.h"
-extern WolapiObject* pWolapi;
-#endif
-
 #ifdef FIXIT_VERSION_3
 bool Expansion_Dialog(bool bCounterstrike);
 #endif
@@ -647,11 +641,6 @@ bool Select_Game(bool fade)
             */
             if (Special.IsFromInstall)
                 selection = SEL_START_NEW_GAME;
-
-#ifdef WOLAPI_INTEGRATION
-            if (pWolapi)
-                selection = SEL_MULTIPLAYER_GAME; //	We are returning from a game.
-#endif
 
             if (selection == SEL_NONE) {
 #ifdef FIXIT_ANTS
@@ -1244,23 +1233,6 @@ bool Select_Game(bool fade)
     Map.Flag_To_Redraw();
     Call_Back();
     Map.Render();
-
-#ifdef WOLAPI_INTEGRATION
-
-    // ajw debugging only
-    //						debugprint( "Debugging Session...\n" );
-    //						debugprint( "Session.Players count is %i.\n", Session.Players.Count() );
-    for (i = 0; i < Session.Players.Count(); i++) {
-        NetNumType net;
-        NetNodeType node;
-        Session.Players[i]->Address.Get_Address(net, node);
-        //							debugprint( "Player %i, %s, color %i, ip %i.%i.%i.%i.%i.%i\n", i,
-        //Session.Players[i]->Name, 								Session.Players[i]->Player.Color, node[0], node[1], node[2], node[3], node[4],
-        //node[5] );
-    }
-    //						debugprint( "PlanetWestwoodPortNumber is %i\n", PlanetWestwoodPortNumber );
-
-#endif
 
     return (true);
 }
