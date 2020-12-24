@@ -217,7 +217,7 @@ SidebarClass::SidebarClass(NoInitClass const& x)
 void SidebarClass::One_Time(void)
 {
 	// Needs to be done here as PowerClass::One_Time() references MAX_VISIBLE to calculate power bar height
-	StripClass::MAX_VISIBLE = (ScreenHeight - ((SIDE_Y + StripClass::SBUTTON_HEIGHT) * RESFACTOR)) / (StripClass::OBJECT_HEIGHT * RESFACTOR);
+	StripClass::MAX_VISIBLE = (ScreenHeight - ((COLUMN_ONE_Y + StripClass::SBUTTON_HEIGHT) * RESFACTOR)) / (StripClass::OBJECT_HEIGHT * RESFACTOR);
 
     PowerClass::One_Time();
 
@@ -226,7 +226,6 @@ void SidebarClass::One_Time(void)
     **	code so that as the sidebar buildable buttons scroll, they get properly
     **	clipped at the top and bottom edges.
     */
-	StripClass::MAX_VISIBLE = (ScreenHeight - ((SIDE_Y + StripClass::SBUTTON_HEIGHT) * RESFACTOR)) / (StripClass::OBJECT_HEIGHT * RESFACTOR);
 	StripClass::UP_Y_OFFSET = StripClass::MAX_VISIBLE * int(StripClass::OBJECT_HEIGHT) + 1;
 	StripClass::DOWN_Y_OFFSET = StripClass::UP_Y_OFFSET;
 
