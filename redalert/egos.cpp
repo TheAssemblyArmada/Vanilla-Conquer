@@ -41,6 +41,7 @@ class EgoClass;
 
 #include "function.h"
 #include "common/mssleep.h"
+#include "common/framelimit.h"
 
 /*
 ** List of Ego Class instances
@@ -797,6 +798,7 @@ void Show_Who_Was_Responsible(void)
         ** Stop calling Theme.AI after a while so a different song doesnt start playing
         */
         Call_Back();
+        Frame_Limiter();
         //		if (frame <1000 ){
         //			Theme.AI();
         //		}else{
@@ -880,6 +882,7 @@ void Show_Who_Was_Responsible(void)
             Slide_Show(slide_number, picture_frame);
 
             Call_Back();
+            Frame_Limiter();
             //			Sound_Callback();		//Theme.AI();
 
             /*
