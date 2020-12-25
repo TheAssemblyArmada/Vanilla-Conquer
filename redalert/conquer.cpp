@@ -60,6 +60,7 @@
  *   Unselect_All -- Causes all selected objects to become unselected.                         *
  *   VQ_Call_Back -- Maintenance callback used for VQ movies.                                  *
  *   Game_Registry_Key -- Returns pointer to string containing the registry subkey for the game.
+ *   Is_Demo -- Function to determine if we are running with demo files.
  *   Is_Counterstrike_Installed -- Function to determine the availability of the CS expansion.
  *   Is_Aftermath_Installed -- Function to determine the availability of the AM expansion.
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -5203,6 +5204,30 @@ const char* Game_Registry_Key()
 #endif
 #endif
     return szKey;
+}
+
+/***********************************************************************************************
+ * Is_Demo -- Function to determine if we are running with demo files                          *
+ *                                                                                             *
+ * INPUT:    Nothing                                                                           *
+ *                                                                                             *
+ * OUTPUT:   true if we seem to have demo files                                                *
+ *                                                                                             *
+ * WARNINGS: None                                                                              *
+ *                                                                                             *
+ *=============================================================================================*/
+bool Is_Demo(void)
+{
+    static bool bAlreadyChecked = false;
+    static bool bDemo = false;
+
+    if (!bAlreadyChecked) {
+        CCFileClass file("DEMOPIC.PCX");
+        bDemo = file.Is_Available();
+        bAlreadyChecked = true;
+    }
+
+    return bDemo;
 }
 
 /***********************************************************************************************

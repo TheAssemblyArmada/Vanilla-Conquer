@@ -814,6 +814,9 @@ char const* Version_Name(void)
 
 #endif //	FIXIT_VERSION_3
 
+    if (Is_Demo()) {
+        strcat(buffer, "D");
+    }
     if (Is_Counterstrike_Installed()) {
         strcat(buffer, "CS");
     }

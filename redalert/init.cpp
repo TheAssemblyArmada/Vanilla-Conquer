@@ -823,7 +823,11 @@ bool Select_Game(bool fade)
                     default:
 #endif
                         case 0:
-                            Scen.Set_Scenario_Name("SCG01EA.INI");
+                            if (Is_Demo()) {
+                                Scen.Set_Scenario_Name("SCG02EA.INI");
+                            } else {
+                                Scen.Set_Scenario_Name("SCG01EA.INI");
+                            }
                             break;
                         }
 #ifdef FIXIT_ANTS
