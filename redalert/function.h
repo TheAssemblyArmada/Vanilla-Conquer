@@ -385,6 +385,7 @@ int Owner_From_Name(char const* text);
 CrateType Crate_From_Name(char const* name);
 Rect const Shape_Dimensions(void const* shapedata, int shapenum);
 void IPX_Call_Back(void);
+bool Is_Demo(void);
 bool Is_Counterstrike_Installed(void);
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
 bool Is_Aftermath_Installed(void);

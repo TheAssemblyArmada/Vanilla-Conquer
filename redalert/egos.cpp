@@ -424,6 +424,13 @@ void Show_Who_Was_Responsible(void)
     static int speed = 3;
 
     /*
+    ** Demo did not have this feature and is missing background images.
+    */
+    if (Is_Demo()) {
+        return;
+    }
+
+    /*
     ** Read in the credits file to be displayed
     **
     ** Lines of text in CREDITS.TXT are treated as follows....
