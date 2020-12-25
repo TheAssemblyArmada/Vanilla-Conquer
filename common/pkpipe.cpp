@@ -38,6 +38,7 @@
  *   PKPipe::Put_To -- Chains one pipe to another.                                             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include "pk.h"
 #include "pkpipe.h"
 #include <cstring>
 

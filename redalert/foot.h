@@ -36,12 +36,11 @@
 #define FOOT_H
 
 #include "target.h"
-#include "type.h"
 #include "techno.h"
 #include "ftimer.h"
 
-class UnitClass;
-class BuildingClass;
+class HouseClass;
+class ObjectClass;
 
 /****************************************************************************
 **	Movable objects are handled by this class definition. Moveable objects

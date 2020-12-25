@@ -36,7 +36,10 @@
 #define SLIDER_H
 
 #include "gauge.h"
-#include "shapebtn.h"
+#include "wwkeyboard.h"
+
+class ControlClass;
+class ShapeButtonClass;
 
 /***************************************************************************
  * SliderClass -- Like a Windows ListBox structure									*

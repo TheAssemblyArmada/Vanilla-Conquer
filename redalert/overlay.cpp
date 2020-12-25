@@ -40,6 +40,9 @@
 
 #include "function.h"
 #include "overlay.h"
+#include "lcwpipe.h"
+#include "lcwstraw.h"
+#include "xpipe.h"
 
 HousesType OverlayClass::ToOwn = HOUSE_NONE;
 

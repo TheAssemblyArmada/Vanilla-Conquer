@@ -35,9 +35,15 @@
 #ifndef SIDEBAR_H
 #define SIDEBAR_H
 
-#include "function.h"
 #include "power.h"
-#include "factory.h"
+#include "defines.h"
+#include "gadget.h"
+#include "control.h"
+#include "shapebtn.h"
+#include "stage.h"
+
+class Pipe;
+class Straw;
 
 class InitClass
 {

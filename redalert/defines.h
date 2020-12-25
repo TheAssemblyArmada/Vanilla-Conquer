@@ -54,12 +54,6 @@
 //#define	PLAYTEST_VERSION
 #define RELEASE_VERSION
 
-/**********************************************************************
-** ColinM
-** Set this to enable dongle protection
-*/
-//#define DONGLE
-
 // Enable 640x400 VQ movie capability in WIN32 mode
 #define MOVIE640
 

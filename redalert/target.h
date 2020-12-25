@@ -1,3 +1,4 @@
+
 //
 // Copyright 2020 Electronic Arts Inc.
 //
@@ -118,7 +119,6 @@ class TerrainClass;
 class ObjectClass;
 class InfantryClass;
 class BulletClass;
-class TriggerClass;
 class TeamClass;
 class TeamTypeClass;
 class AnimClass;
@@ -126,6 +126,7 @@ class AircraftClass;
 class VesselClass;
 class CellClass;
 class TriggerTypeClass;
+class AbstractTypeClass;
 
 /*
 ** Must not have a constructor since Watcom cannot handle a class that has a constructor if

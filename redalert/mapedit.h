@@ -45,8 +45,9 @@
 #ifndef MAPEDIT_H
 #define MAPEDIT_H
 
-#include "function.h"
+#include "mouse.h"
 
+class Dial8Class;
 /*
 **	This is the maximum # of ObjectTypeClasses the editor has to deal with.
 */

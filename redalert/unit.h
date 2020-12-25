@@ -36,10 +36,12 @@
 #define UNIT_H
 
 #include "drive.h"
-#include "radio.h"
-#include "cargo.h"
-#include "mission.h"
-#include "target.h"
+#include "ftimer.h"
+
+class BuildingClass;
+class BulletClass;
+class HouseClass;
+class ObjectTypeClass;
 
 /****************************************************************************
 **	For each instance of a unit (vehicle) in the game, there is one of

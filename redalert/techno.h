@@ -39,11 +39,17 @@
 #include "stage.h"
 #include "cargo.h"
 #include "flasher.h"
-#include "house.h"
-#include "target.h"
-#include "bullet.h"
 #include "door.h"
 #include "crew.h"
+#include "ftimer.h"
+#include "facing.h"
+
+class BuildingClass;
+class BulletClass;
+class FrameTimerClass;
+class HouseClass;
+class ObjectClass;
+class TechnoTypeClass;
 
 /****************************************************************************
 **	This is the common data between building and units.

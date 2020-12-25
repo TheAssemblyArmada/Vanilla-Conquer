@@ -89,6 +89,11 @@ typedef enum : unsigned short
                          //  (void * color_table)
 } ShapeFlags_Type;
 
+/*
+**	The shape flags are likely to be "or"ed together and other such bitwise
+**	manipulations. These instatiated operator templates allow this.
+*/
+
 inline ShapeFlags_Type operator|(ShapeFlags_Type a, ShapeFlags_Type b)
 {
     return static_cast<ShapeFlags_Type>(static_cast<int>(a) | static_cast<int>(b));

@@ -37,7 +37,6 @@
 
 #include "ini.h"
 #include "fixed.h"
-#include "pk.h"
 
 class TriggerTypeClass;
 

@@ -37,7 +37,10 @@
 
 #include "radio.h"
 #include "fly.h"
-#include "target.h"
+class BulletClass;
+class ObjectClass;
+class ObjectTypeClass;
+class TechnoClass;
 
 /*
 **	This aircraft class is used for all flying sentient objects. This includes fixed wing

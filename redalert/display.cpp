@@ -87,6 +87,7 @@
 
 #include "function.h"
 #include "vortex.h"
+#include "xpipe.h"
 #include "common/fading.h"
 
 /*
@@ -5007,7 +5008,7 @@ static ActionType _priority_actions[] =
 
 static int get_action_priority(ActionType action)
 {
-    for (int i = 0; i < ARRAY_LENGTH(_priority_actions); ++i) {
+    for (int i = 0; i < ARRAY_SIZE(_priority_actions); ++i) {
         if (_priority_actions[i] == action) {
             return i;
         }

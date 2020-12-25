@@ -32,6 +32,7 @@
 #include <set>
 
 #include "function.h"
+#include "carry.h"
 #include "externs.h"
 #include "dllinterface.h"
 #include "gadget.h"

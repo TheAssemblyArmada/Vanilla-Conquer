@@ -36,7 +36,7 @@
 #define OVERLAY_H
 
 #include "object.h"
-#include "type.h"
+class ObjectTypeClass;
 
 /******************************************************************************
 **	This class controls the overlay object. Overlay objects function congruously

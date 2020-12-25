@@ -45,7 +45,14 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "factory.h"
+#include "xpipe.h"
+#include "blowpipe.h"
+#include "shapipe.h"
+#include "lcwpipe.h"
+#include "lcwstraw.h"
 #include "vortex.h"
+#include "carry.h"
 #include "common/tcpip.h"
 
 #ifdef REMASTER_BUILD

@@ -36,6 +36,8 @@
 #define HEAP_H
 
 #include "vector.h"
+#include "pipe.h"
+#include "straw.h"
 
 /**************************************************************************
 **	This is a block memory management handler. It is used when memory is to

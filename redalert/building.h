@@ -35,13 +35,13 @@
 #ifndef BUILDING_H
 #define BUILDING_H
 
-#include "radio.h"
-#include "cargo.h"
-#include "mission.h"
-#include "bullet.h"
-#include "target.h"
-#include "factory.h"
 #include "techno.h"
+#include "ftimer.h"
+
+class FrameTimerClass;
+class HouseClass;
+class ObjectClass;
+class ObjectTypeClass;
 
 #define MAX_DOOR_STAGE        18 // # of frames of door opening on weapons factory
 #define DOOR_OPEN_STAGE       9  // frame on which the door is entirely open
