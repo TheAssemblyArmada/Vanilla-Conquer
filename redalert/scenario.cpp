@@ -1166,6 +1166,7 @@ void Do_Lose(void)
     Speak(VOX_FAIL);
     while (CountDownTimer || Is_Speaking()) {
         Call_Back();
+        Frame_Limiter();
     }
 
     /*
