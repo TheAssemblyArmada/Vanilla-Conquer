@@ -38,6 +38,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "dial8.h"
 
 /***************************************************************************
  * Dial8Class::Dial8Class -- constructor for the facing dial               *

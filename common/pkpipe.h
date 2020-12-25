@@ -36,9 +36,10 @@
 #define PKPIPE_H
 
 #include "pipe.h"
-#include "pk.h"
 #include "rndstraw.h"
 #include "blowpipe.h"
+
+class PKey;
 
 /*
 **	This pipe will encrypt/decrypt the data stream. The data is encrypted by generating a

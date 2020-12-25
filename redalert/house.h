@@ -37,11 +37,16 @@
 
 #include "type.h"
 #include "region.h"
-#include "vector.h"
 #include "credits.h"
 
-class TriggerClass;
 class FootClass;
+class BuildingClass;
+class MonoClass;
+class ObjectClass;
+class TeamTypeClass;
+class TechnoClass;
+class UnitClass;
+struct NoInitClass;
 class FactoryClass;
 
 #define HOUSE_NAME_MAX 12

@@ -60,6 +60,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "lcwpipe.h"
+#include "lcwstraw.h"
 
 #define MCW MAP_CELL_W
 int const MapClass::RadiusOffset[] = {

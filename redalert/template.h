@@ -36,7 +36,7 @@
 #define TEMPLATE_H
 
 #include "object.h"
-#include "type.h"
+class ObjectTypeClass;
 
 /******************************************************************************
 **	This class controls the template object. Template objects function congruously

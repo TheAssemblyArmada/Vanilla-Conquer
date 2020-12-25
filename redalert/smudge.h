@@ -36,7 +36,7 @@
 #define SMUDGE_H
 
 #include "object.h"
-#include "type.h"
+class ObjectTypeClass;
 
 /******************************************************************************
 **	This is the transitory form for smudges. They exist as independent objects

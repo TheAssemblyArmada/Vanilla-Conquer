@@ -40,6 +40,7 @@
 class EgoClass;
 
 #include "function.h"
+#include "egos.h"
 #include "common/mssleep.h"
 #include "common/framelimit.h"
 

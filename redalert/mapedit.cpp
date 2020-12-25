@@ -56,6 +56,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "dial8.h"
 #include "common/framelimit.h"
 
 #ifdef SCENARIO_EDITOR

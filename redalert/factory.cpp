@@ -50,6 +50,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "factory.h"
 
 /***********************************************************************************************
  * FactoryClass::FactoryClass -- Default constructor for factory objects.                      *

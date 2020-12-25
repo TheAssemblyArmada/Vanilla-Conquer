@@ -46,6 +46,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "mission.h"
 
 /***********************************************************************************************
  * MissionClass::MissionClass -- Default constructor for the mission object type.              *

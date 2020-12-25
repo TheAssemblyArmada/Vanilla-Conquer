@@ -60,6 +60,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "factory.h"
+#include "carry.h"
 #include "common/tcpip.h"
 #include "common/framelimit.h"
 

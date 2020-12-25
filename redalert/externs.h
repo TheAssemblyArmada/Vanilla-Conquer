@@ -39,16 +39,16 @@
 
 #ifdef SCENARIO_EDITOR
 #include "mapedit.h"
+#else
+#include "mouse.h"
 #endif
-#include "techno.h"
-#include "type.h"
-#include "building.h"
-#include "unit.h"
-#include "credits.h"
 #include "goptions.h"
-#include "options.h"
-#include "infantry.h"
+#include "vortex.h"
 #include "common/vqaconfig.h"
+#include "logic.h"
+#include "base.h"
+#include "scenario.h"
+class CarryoverClass;
 
 #ifdef REMASTER_BUILD
 #define GBUFF_INIT_WIDTH     3072
@@ -473,6 +473,11 @@ extern MCIMovie* MciMovie;
 #endif
 
 #include "mpgset.h"
+#include "remapcontrol.h" // for RemapControlType
+#include "windef.h"       // for HWND
+#include <minwindef.h>    // for HANDLE
+class HouseClass;
+class WWKeyboardClass;
 extern MPGSettings* MpgSettings;
 #endif
 

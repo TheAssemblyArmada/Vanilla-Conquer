@@ -35,6 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "carry.h"
 
 /***********************************************************************************************
  * CarryoverClass::CarryoverClass -- Constructor for carry over objects.                       *

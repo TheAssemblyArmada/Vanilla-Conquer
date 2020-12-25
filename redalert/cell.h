@@ -35,9 +35,17 @@
 #ifndef CELL_H
 #define CELL_H
 
-#include "building.h"
 #include "unit.h"
-#include "template.h"
+class AnimClass;
+class BuildingClass;
+class FootClass;
+class HouseClass;
+class InfantryClass;
+class ObjectClass;
+class TechnoClass;
+class TerrainClass;
+class VesselClass;
+struct NoInitClass;
 
 /****************************************************************************
 **	Each cell on the map is controlled by the following structure.

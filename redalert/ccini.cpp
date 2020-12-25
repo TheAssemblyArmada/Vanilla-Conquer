@@ -78,6 +78,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "shapipe.h"
+#include "xpipe.h"
 
 /***********************************************************************************************
  * CCINIClass::Load -- Load the INI database from the file specified.                          *

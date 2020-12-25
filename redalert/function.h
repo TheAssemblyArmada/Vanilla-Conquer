@@ -57,24 +57,8 @@
 #include "jshell.h"
 #include "buff.h"
 #include "face.h"
-#include "random.h"
-#include "crc.h"
 #include "compat.h"
 #include "fixed.h"
-#include "base64.h"
-#include "pipe.h"
-#include "xpipe.h"
-#include "ramfile.h"
-#include "lcw.h"
-#include "lcwpipe.h"
-#include "shapipe.h"
-#include "b64pipe.h"
-#include "straw.h"
-#include "xstraw.h"
-#include "b64straw.h"
-#include "lcwstraw.h"
-#include "shastraw.h"
-#include "rndstraw.h"
 
 // Should be part of WWLIB.H. This is used in JSHELL.CPP.
 typedef struct
@@ -128,21 +112,11 @@ CELL Coord_Cell(COORDINATE coord);
 #include "crate.h"
 #include "rules.h"
 #include "ini.h"
-#include "int.h"
-#include "pk.h"
-#include "pkpipe.h"
-#include "pkstraw.h"
-#include "sha.h"
-#include "blowfish.h"
-#include "blowpipe.h"
-#include "blwstraw.h"
 #include "language.h"
 #include "hsv.h"
 #include "rgb.h"
 #include "common/palette.h"
 #include "palettec.h" //ST 5/13/2019
-#include "version.h"
-#include "facing.h"
 #include "ftimer.h"
 #include "theme.h"
 #include "link.h"
@@ -162,7 +136,6 @@ CELL Coord_Cell(COORDINATE coord);
 #include "edit.h"
 #include "gauge.h"
 #include "msgbox.h"
-#include "dial8.h"
 #include "txtlabel.h"
 #include "loaddlg.h"
 #include "super.h"
@@ -171,12 +144,7 @@ CELL Coord_Cell(COORDINATE coord);
 #include "map.h"
 #include "display.h"
 #include "radar.h"
-#include "power.h"
 #include "sidebar.h"
-#include "tab.h"
-#include "help.h"
-#include "mouse.h"
-#include "help.h"
 #include "target.h"
 #include "theme.h"
 #include "team.h" // Team objects.
@@ -187,11 +155,8 @@ CELL Coord_Cell(COORDINATE coord);
 #include "taction.h"
 #include "tevent.h"
 #include "trigger.h" // Trigger event objects.
-#include "mapedit.h" // map editor class
 #include "abstract.h"
 #include "object.h"
-#include "mission.h"
-#include "door.h"
 #include "bullet.h"   // Bullet objects.
 #include "terrain.h"  // Terrain objects.
 #include "anim.h"     // Animation objects.
@@ -202,25 +167,14 @@ CELL Coord_Cell(COORDINATE coord);
 #include "unit.h"     // Ground unit objects.
 #include "vessel.h"   // Sea unit objects.
 #include "infantry.h" // Infantry objects.
-#include "credits.h"  // Credit counter class.
 #include "score.h"    // Scoring system class.
 #include "factory.h"  // Production manager class.
-#include "intro.h"
-#include "ending.h"
-#include "logic.h"
 #include "queue.h"
 #include "event.h"
-#include "base.h" // defines the AI's pre-built base
-#include "carry.h"
-#include "scenario.h"
-#include "msglist.h" // Multiplayer chat message system
 #include "session.h" // Multiplayer session class
 //#include "phone.h"			// Phone list manager
 #include "ipxmgr.h" // IPX connection manager
 //#include	"nullmgr.h"			// Modem connection manager
-#include "readline.h"
-#include "vortex.h"
-#include "egos.h"
 
 // Denzil 5/18/98 - Mpeg movie playback
 #ifdef MPEGMOVIE

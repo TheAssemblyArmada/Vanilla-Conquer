@@ -36,13 +36,13 @@
 #define OBJECT_H
 
 #include "abstract.h"
+#include "smartptr.h"
 
-class ObjectClass;
+class RadioClass;
 class TechnoClass;
 class ObjectTypeClass;
 class HouseClass;
 class BuildingClass;
-class RadioClass;
 class TriggerClass;
 
 /**********************************************************************
