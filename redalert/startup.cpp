@@ -78,11 +78,9 @@ const char* Game_Registry_Key();
 // Added. ST - 5/14/2019
 bool ProgEndCalled = false;
 
-extern "C" {
 extern char* BigShapeBufferStart;
 extern char* TheaterShapeBufferStart;
 extern unsigned int IsTheaterShape;
-}
 
 extern void Free_Heaps(void);
 extern void DLL_Shutdown(void);

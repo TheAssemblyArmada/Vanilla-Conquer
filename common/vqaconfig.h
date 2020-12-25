@@ -88,13 +88,7 @@ typedef struct _VQAConfig
     void* EVAFont;
 } VQAConfig;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 void VQA_INIConfig(VQAConfig* config);
 void VQA_DefaultConfig(VQAConfig* dest);
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -144,12 +144,10 @@ typedef struct
 -------------------------------- prioinit.c ---------------------------------
 */
 
-extern "C" {
 extern void* MaskPage;
 extern void* BackGroundPage;
 extern long _ShapeBufferSize;
 extern char* _ShapeBuffer;
-}
 
 void Init_Priority_System(GraphicBufferClass* mask, GraphicBufferClass* back);
 
@@ -157,9 +155,7 @@ void Init_Priority_System(GraphicBufferClass* mask, GraphicBufferClass* back);
 -------------------------------- drawshp.asm --------------------------------
 */
 
-extern "C" {
 int Draw_Shape(GraphicViewPortClass* gvp, void const* shape, long x, long y, long flags, ...);
-}
 
 /*
 ---------------------------------- shape.c ----------------------------------
@@ -170,19 +166,16 @@ void* Extract_Shape(void const* buffer, int shape);
 int Restore_Shape_Height(void* shape);
 int Set_Shape_Height(void const* shape, int newheight);
 
-extern "C" {
 int Get_Shape_Width(void const* shape);
 int Get_Shape_Height(void const* shape);
 int Get_Shape_Original_Height(void const* shape);
 int Get_Shape_Uncomp_Size(void const* shape);
-}
 
 /*
 ------------------------------- setshape.asm --------------------------------
 */
-extern "C" {
 void Set_Shape_Buffer(void const* buffer, int size);
-}
+
 /*
 ------------------------------- shapeinf.asm --------------------------------
 */

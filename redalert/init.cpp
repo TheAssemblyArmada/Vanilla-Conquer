@@ -105,9 +105,7 @@ static void Init_Keys(void);
 
 extern int UnitBuildPenalty;
 
-extern "C" {
-extern long RandNumb;
-}
+extern unsigned long RandNumb;
 
 // extern int SimRandIndex;
 void Init_Random(void);
@@ -2983,11 +2981,9 @@ bool Load_Recording_Values(CCFileClass& file)
     return (true);
 }
 
-extern "C" {
 void __PRO(void)
 {
     //	printf("_pro\n");
-}
 }
 
 /***********************************************************************************************

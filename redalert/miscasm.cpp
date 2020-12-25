@@ -25,7 +25,7 @@
 
 #include "function.h"
 
-extern "C" void Mem_Copy(void const* source, void* dest, unsigned long bytes_to_copy)
+void Mem_Copy(void const* source, void* dest, unsigned long bytes_to_copy)
 {
     if (dest != source) {
         memcpy(dest, source, bytes_to_copy);
@@ -51,7 +51,7 @@ void Shake_Screen(int shakes)
     shakes;
 }
 
-extern "C" void Set_Palette_Range(void* palette)
+void Set_Palette_Range(void* palette)
 {
     if (palette == NULL) {
         return;

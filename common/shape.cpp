@@ -23,8 +23,8 @@
 **
 */
 
-extern "C" unsigned char* _ShapeBuffer = 0;
-extern "C" long _ShapeBufferSize = 0;
+char* _ShapeBuffer = 0;
+long _ShapeBufferSize = 0;
 
 /*
 ;***************************************************************************
@@ -45,8 +45,8 @@ extern "C" long _ShapeBufferSize = 0;
 ;*   10/26/1994 PWG : Created.                                             *
 ;*=========================================================================*
 */
-extern "C" void Set_Shape_Buffer(void const* buffer, int size)
+void Set_Shape_Buffer(void const* buffer, int size)
 {
-    _ShapeBuffer = (unsigned char*)buffer;
+    _ShapeBuffer = (char*)buffer;
     _ShapeBufferSize = size;
 }

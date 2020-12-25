@@ -41,10 +41,6 @@ typedef enum
 
 extern bool VQAMovieDone;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 VQAHandle* VQA_Alloc();
 void VQA_Free(void* block);
 void VQA_Init(VQAHandle* vqa, StreamHandlerFuncPtr streamhandler);
@@ -59,9 +55,5 @@ void VQA_GetStats(VQAHandle* vqa, VQAStatistics* stats);
 VQAErrorType VQA_GetBlockWH_ColorMode(VQAHandle* vqa, unsigned* blockwidth, unsigned* blockheight, int* colormode);
 VQAErrorType VQA_GetXYPos(VQAHandle* vqa, uint16_t* xpos, uint16_t* ypos);
 VQAErrorType VQA_UserUpdate(VQAHandle* vqa);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

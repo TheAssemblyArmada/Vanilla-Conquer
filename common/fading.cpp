@@ -20,8 +20,8 @@ void* Build_Fading_Table(void const* palette, void* dest, int color, int frac)
         return 0;
     }
 
-    const unsigned char* pal = palette;
-    unsigned char* dst = dest;
+    const unsigned char* pal = (const unsigned char*)palette;
+    unsigned char* dst = (unsigned char*)dest;
 
     if ((unsigned)frac >= 256) {
         frac = 255;
@@ -95,8 +95,8 @@ void* Conquer_Build_Fading_Table(const void* palette, void* dest, int color, int
         return 0;
     }
 
-    const unsigned char* pal = palette;
-    unsigned char* dst = dest;
+    const unsigned char* pal = (const unsigned char*)palette;
+    unsigned char* dst = (unsigned char*)dest;
 
     if ((unsigned)frac >= 256) {
         frac = 255;

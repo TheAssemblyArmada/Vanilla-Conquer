@@ -50,10 +50,8 @@ extern GraphicViewPortClass SeenBuff;
 
 bool InterpolationPaletteChanged = false;
 
-extern "C" {
-unsigned char PaletteInterpolationTable[SIZE_OF_PALETTE][SIZE_OF_PALETTE];
-unsigned char* InterpolationPalette;
-}
+unsigned char PaletteInterpolationTable[SIZE_OF_PALETTE][SIZE_OF_PALETTE] = {0};
+unsigned char* InterpolationPalette = nullptr;
 
 /***********************************************************************************************
  * Read_Interpolatioin_Palette -- reads an interpolation palette table from disk               *

@@ -59,7 +59,6 @@ typedef int (*IPXGetLocalTarget95)(unsigned char*, unsigned char*, unsigned shor
 /*
 ** Function pointers
 */
-// extern "C"{
 extern IPXInitialiseType IPX_Initialise;
 extern IPXGetOutstandingBuffer95Type IPX_Get_Outstanding_Buffer95;
 extern IPXShutDown95Type IPX_Shut_Down95;
@@ -70,7 +69,6 @@ extern IPXOpenSocket95Type IPX_Open_Socket95;
 extern IPXCloseSocket95Type IPX_Close_Socket95;
 extern IPXGetConnectionNumber95Type IPX_Get_Connection_Number95;
 extern IPXGetLocalTarget95 IPX_Get_Local_Target95;
-//}
 #endif
 
 /*
@@ -80,7 +78,6 @@ bool Load_IPX_Dll(void);
 void Unload_IPX_Dll(void);
 
 #if (1)
-extern "C" {
 extern bool IPX_Initialise(void);
 extern bool IPX_Get_Outstanding_Buffer95(unsigned char* buffer);
 extern void IPX_Shut_Down95(void);
@@ -91,7 +88,6 @@ extern int IPX_Open_Socket95(int socket);
 extern void IPX_Close_Socket95(int socket);
 extern int IPX_Get_Connection_Number95(void);
 extern int IPX_Get_Local_Target95(unsigned char*, unsigned char*, unsigned short, unsigned char*);
-}
 #endif //(1)
 
 extern bool WindowsNT;

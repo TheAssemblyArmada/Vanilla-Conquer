@@ -10,7 +10,7 @@
 bool GameInFocus;
 int ScreenWidth;
 int WindowList[9][9];
-extern "C" char* _ShapeBuffer = 0;
+char* _ShapeBuffer = 0;
 
 int Open_File(char const*, int)
 {

@@ -1210,8 +1210,14 @@ static void Setup_Shape_Header(int width,
     }
 }
 
-extern "C" void
-Buffer_Frame_To_Page(int x, int y, int width, int height, void* shape, GraphicViewPortClass& viewport, int flags, ...)
+void Buffer_Frame_To_Page(int x,
+                          int y,
+                          int width,
+                          int height,
+                          void* shape,
+                          GraphicViewPortClass& viewport,
+                          int flags,
+                          ...)
 {
     bool use_old_drawer = true; // false; New draw system not supported in TD.
     int fade_count = 0;

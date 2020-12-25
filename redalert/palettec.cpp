@@ -61,7 +61,7 @@ void Set_Palette(void* palette);
 #include <string.h>
 
 // PaletteClass const PaletteClass::CurrentPalette;
-extern "C" unsigned char CurrentPalette[];
+extern unsigned char CurrentPalette[768];
 
 PaletteClass const& PaletteClass::CurrentPalette = *(PaletteClass*)&::CurrentPalette[0];
 

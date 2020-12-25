@@ -33,7 +33,7 @@
 #include <time.h>
 #include "irandom.h"
 
-extern "C" unsigned RandNumb = 0x12349876;
+unsigned long RandNumb = 0x12349876;
 
 static bool bsr(unsigned int* index, unsigned mask)
 {

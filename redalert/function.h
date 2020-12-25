@@ -594,9 +594,7 @@ void* Make_Fading_Table(PaletteClass const& palette, void* dest, int color, int 
 /*
 **	KEYFBUFF.ASM
 */
-extern "C" {
-long Buffer_Frame_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortClass& view, int flags, ...);
-}
+void Buffer_Frame_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortClass& view, int flags, ...);
 
 /*
 **	KEYFRAME.CPP

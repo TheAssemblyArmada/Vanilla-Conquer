@@ -12,16 +12,8 @@
 #ifndef COMMON_IRANDOM_H
 #define COMMON_IRANDOM_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 int IRandom(int minval, int maxval);
 unsigned char Random();
 int Get_Random_Mask(int maxval);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

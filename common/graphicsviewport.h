@@ -188,31 +188,31 @@ public:
     /*===================================================================*/
     /* define functions to get at the private data members               */
     /*===================================================================*/
-    intptr_t Get_Offset()
+    intptr_t Get_Offset() const
     {
         return Offset;
     }
-    int Get_Height()
+    int Get_Height() const
     {
         return Height;
     }
-    int Get_Width()
+    int Get_Width() const
     {
         return Width;
     }
-    int Get_XAdd()
+    int Get_XAdd() const
     {
         return XAdd;
     }
-    int Get_XPos()
+    int Get_XPos() const
     {
         return XPos;
     }
-    int Get_YPos()
+    int Get_YPos() const
     {
         return YPos;
     }
-    int Get_Pitch()
+    int Get_Pitch() const
     {
         return Pitch;
     }

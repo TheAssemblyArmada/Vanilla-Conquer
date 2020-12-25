@@ -54,9 +54,7 @@
 /*
 ********************************** Globals **********************************
 */
-extern "C" {
-extern unsigned char CurrentPalette[]; /* in pal.asm */
-}
+extern unsigned char CurrentPalette[768]; /* in pal.asm */
 
 /*
 ******************************** Prototypes *********************************

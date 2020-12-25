@@ -35,15 +35,7 @@
 #ifndef LCW_H
 #define LCW_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 int LCW_Uncompress(void const* source, void* dest, unsigned length);
 int LCW_Comp(void const* source, void* dest, unsigned length);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

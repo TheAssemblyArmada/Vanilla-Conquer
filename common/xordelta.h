@@ -12,16 +12,8 @@
 #ifndef XORDELTA_H
 #define XORDELTA_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void Apply_XOR_Delta(void* dst, const void* src);
 void Apply_XOR_Delta_To_Page_Or_Viewport(void* offset, const void* delta, int width, int pitch, int copy);
 int Generate_XOR_Delta(void* dst, const void* src, const void* base, int size);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif // XORDELTA_H

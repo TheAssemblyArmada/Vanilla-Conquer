@@ -1,13 +1,13 @@
 # Embed some git version information in the binary.
-set(GIT_PRE_CONFIGURE_FILE "gitinfo.c.in")
-set(GIT_POST_CONFIGURE_FILE "${CMAKE_CURRENT_BINARY_DIR}/gitinfo.c")
+set(GIT_PRE_CONFIGURE_FILE "gitinfo.cpp.in")
+set(GIT_POST_CONFIGURE_FILE "${CMAKE_CURRENT_BINARY_DIR}/gitinfo.cpp")
 include(GitWatcher)
 
 set(COMMON_SRC
     ${GIT_POST_CONFIGURE_FILE}
     _diptabl.cpp
     alloc.cpp
-    auduncmp.c
+    auduncmp.cpp
     b64pipe.cpp
     b64straw.cpp
     base64.cpp
@@ -20,7 +20,7 @@ set(COMMON_SRC
     buffglbl.cpp
     ccfile.cpp
     cdfile.cpp
-    cliprect.c
+    cliprect.cpp
     combuf.cpp
     control.cpp
     crc.cpp
@@ -31,7 +31,7 @@ set(COMMON_SRC
     drawline.cpp
     drawmisc.cpp
     face.cpp
-    fading.c
+    fading.cpp
     field.cpp
     file.cpp
     fixed.cpp
@@ -51,8 +51,8 @@ set(COMMON_SRC
     linear.cpp
     link.cpp
     load.cpp
-    memrev.c
-    misc.c
+    memrev.cpp
+    misc.cpp
     mixfile.cpp
     mp.cpp
     newdel.cpp
@@ -72,7 +72,7 @@ set(COMMON_SRC
     shape.cpp
     shapipe.cpp
     shastraw.cpp
-    soscodec.c
+    soscodec.cpp
     stamp.cpp
     straw.cpp
     timer.cpp
@@ -81,12 +81,12 @@ set(COMMON_SRC
     toggle.cpp
     utracker.cpp
     vector.cpp
-    winasm.c
+    winasm.cpp
     windows.cpp
     winhide.cpp
     writepcx.cpp
     wsa.cpp
-    xordelta.c
+    xordelta.cpp
     xpipe.cpp
     xstraw.cpp
 )
@@ -114,7 +114,7 @@ set(COMMONV_SRC
     interpal.cpp
     tcpip.cpp
     tcpip_null.cpp
-    unvqbuff.c
+    unvqbuff.cpp
     vqaconfig.cpp
     vqadrawer.cpp
     vqaloader.cpp

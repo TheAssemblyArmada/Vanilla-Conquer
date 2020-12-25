@@ -277,7 +277,6 @@ void DigiCallback(unsigned int driverhandle, unsigned int callsource, unsigned i
 void HMI_TimerCallback(void);
 void* Audio_Add_Long_To_Pointer(void const* ptr, long size);
 void DPMI_Unlock(void const* ptr, long const size);
-extern "C" {
 void Audio_Mem_Set(void const* ptr, unsigned char value, long size);
 //	void	Mem_Copy(void *source, void *dest, unsigned long bytes_to_copy);
 long Decompress_Frame(void* source, void* dest, long size);
@@ -286,4 +285,3 @@ int Decompress_Frame_Unlock(void);
 int sosCODEC_Lock(void);
 int sosCODEC_Unlock(void);
 void __GETDS(void);
-}

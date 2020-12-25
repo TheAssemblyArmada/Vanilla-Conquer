@@ -12,14 +12,6 @@
 #ifndef COMMON_DRAWLINE_H
 #define COMMON_DRAWLINE_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void Buffer_Draw_Line(void* this_object, int sx, int sy, int dx, int dy, unsigned char color);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

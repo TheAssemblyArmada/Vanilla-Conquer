@@ -417,9 +417,7 @@ void CCDebugString(const char* string);
 extern void* PacketLater;
 void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned char* palette);
 
-extern "C" {
 extern unsigned int IsTheaterShape;
-}
 
 extern void Reset_Theater_Shapes(void);
 extern TheaterType LastTheater;

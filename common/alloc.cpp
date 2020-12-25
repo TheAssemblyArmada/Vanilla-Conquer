@@ -42,7 +42,7 @@
 
 #include "wwmem.h"
 
-extern "C" unsigned long Largest_Mem_Block(void);
+unsigned long Largest_Mem_Block(void);
 
 /*=========================================================================*/
 /* The following PRIVATE functions are in this file:                       */
@@ -57,14 +57,6 @@ static unsigned long Memory_Calls = 0L;
 
 void (*Memory_Error)(void) = NULL;
 extern void (*Memory_Error_Exit)(char* string) = NULL;
-
-//#define MEM_CHECK
-
-#ifdef MEM_CHECK
-extern "C" {
-extern void __cdecl Int3(void);
-}
-#endif // MEM_CHECK
 
 /***************************************************************************
  * Alloc -- Allocates system RAM.                                          *

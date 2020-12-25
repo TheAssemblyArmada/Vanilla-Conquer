@@ -12,10 +12,6 @@
 #ifndef COMMON_LINEAR_H
 #define COMMON_LINEAR_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 int Linear_Blit_To_Linear(void* thisptr,
                           void* dest,
                           int x_pixel,
@@ -37,9 +33,5 @@ bool Linear_Scale_To_Linear(void* thisptr,
                             int dst_height,
                             bool trans,
                             char* remap);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

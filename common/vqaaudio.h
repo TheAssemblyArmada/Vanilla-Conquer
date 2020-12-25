@@ -97,10 +97,6 @@ typedef struct
 #endif
 } VQAAudio;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 int VQA_StartTimerInt(VQAHandle* handle, int a2);
 void VQA_StopTimerInt(VQAHandle* handle);
 
@@ -117,9 +113,5 @@ int VQA_CopyAudio(VQAHandle* handle);
 void VQA_SetTimer(VQAHandle* handle, int time, int method);
 unsigned VQA_GetTime(VQAHandle* handle);
 int VQA_TimerMethod();
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif // VQAAUDIO_H

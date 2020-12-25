@@ -94,9 +94,7 @@ static void Do_Record_Playback(void);
 extern void Register_Game_Start_Time(void);
 extern void Register_Game_End_Time(void);
 extern void Send_Statistics_Packet(void);
-extern "C" {
 extern char* __nheapbeg;
-}
 bool InMainLoop = false;
 
 #ifndef ARRAY_SIZE

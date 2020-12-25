@@ -18,10 +18,6 @@
 class GraphicBufferClass;
 class GraphicViewPortClass;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define SIZE_OF_PALETTE 256
 extern unsigned char* InterpolationPalette;
 extern bool InterpolationPaletteChanged;
@@ -35,9 +31,5 @@ void Increase_Palette_Luminance(unsigned char* InterpolationPalette,
                                 int GreenPercentage,
                                 int BluePercentage,
                                 int cap);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

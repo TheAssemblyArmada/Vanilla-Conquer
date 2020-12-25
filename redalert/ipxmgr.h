@@ -139,10 +139,8 @@ value to support more.
 These routines report the location & length of the real-mode routine, as
 it's stored in protected-mode memory.
 ---------------------------------------------------------------------------*/
-extern "C" {
 void* Get_RM_IPX_Address(void);
 long Get_RM_IPX_Size(void);
-}
 
 /*
 ***************************** Class Declaration *****************************

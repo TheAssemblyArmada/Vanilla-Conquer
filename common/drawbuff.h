@@ -22,7 +22,6 @@ class GraphicBufferClass;
 /* Define functions which have not under-gone name mangling						*/
 /*=========================================================================*/
 
-extern "C" {
 /*======================================================================*/
 /* Externs for all of the common functions between the video buffer		*/
 /*		class and the graphic buffer class.											*/
@@ -68,7 +67,6 @@ void Buffer_Draw_Stamp_Clip(void const* thisptr,
                             int,
                             int,
                             int);
-}
 
 extern GraphicViewPortClass* LogicPage;
 extern bool AllowHardwareBlitFills;

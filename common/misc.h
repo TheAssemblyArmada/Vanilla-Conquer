@@ -108,10 +108,6 @@ unsigned char Version(void);
 
 /*========================= Assembly Routines ==============================*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*=========================================================================*/
 /* The following prototype is for the file: SHAKESCR.ASM                   */
 /*=========================================================================*/
@@ -136,9 +132,5 @@ extern short Operating_System(void);
 /*=========================================================================*/
 
 extern short OperationgSystem;
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif // MISC_H

@@ -103,7 +103,7 @@ int _Bound(int original, int min, int max)
     if (original < min) {
         return min;
     }
-    
+
     if (original > max) {
         return max;
     }
