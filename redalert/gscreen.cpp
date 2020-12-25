@@ -434,9 +434,7 @@ void GScreenClass::Render(void)
  *   02/14/1994 JLB : Created.                                                                 *
  *   05/01/1994 JLB : Converted to member function.                                            *
  *=============================================================================================*/
-extern "C" {
 void ModeX_Blit(GraphicBufferClass* source);
-}
 
 void GScreenClass::Blit_Display(void)
 {

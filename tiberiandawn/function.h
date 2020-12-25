@@ -403,14 +403,6 @@ short const* Coord_Spillage_List(COORDINATE coord, int maxsize);
 // void Move_Point(unsigned short &x, unsigned short &y, DirType dir, unsigned short distance);
 
 /*
-**	COORDA.CPP
-*/
-// extern "C" {
-// unsigned Cardinal_To_Fixed(unsigned base, unsigned cardinal);
-// unsigned Fixed_To_Cardinal(unsigned base, unsigned fixed);
-//}
-
-/*
 **	DEBUG.CPP
 */
 void Log_Event(char const* text, ...);
@@ -517,13 +509,14 @@ void* Conquer_Build_Translucent_Table(void const* palette, TLucentType const* co
 /*
 **	KEYFBUFF.ASM
 */
-#ifdef __cplusplus
-extern "C" {
-#endif
-long Buffer_Frame_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortClass& view, int flags, ...);
-#ifdef __cplusplus
-}
-#endif
+void Buffer_Frame_To_Page(int x,
+                          int y,
+                          int width,
+                          int height,
+                          void* shape,
+                          GraphicViewPortClass& viewport,
+                          int flags,
+                          ...);
 
 /*
 **	KEYFRAME.CPP
@@ -712,17 +705,11 @@ int Fetch_Difficulty(void);
 /*
 **	SUPPORT.ASM
 */
-#ifdef __cplusplus
-extern "C" {
-#endif
 void Remove_From_List(void** list, int* index, void* ptr);
 void* Conquer_Build_Fading_Table(void const* palette, void* dest, int color, int frac);
 void Fat_Put_Pixel(int x, int y, int color, int size, GraphicViewPortClass&);
 void strtrim(char* buffer);
 long Get_EAX(void);
-#ifdef __cplusplus
-}
-#endif
 
 /*
 **	TARCOM.CPP
@@ -956,17 +943,15 @@ extern int ScreenWidth;
 extern int ScreenHeight;
 extern int OutputWidth;
 extern int OutputHeight;
-extern "C" void ModeX_Blit(GraphicBufferClass* source);
+extern void ModeX_Blit(GraphicBufferClass* source);
 extern void Colour_Debug(int call_number);
 
 extern unsigned char* InterpolatedPalettes[100];
 extern bool PalettesRead;
 extern unsigned PaletteCounter;
 
-extern "C" {
 extern unsigned char PaletteInterpolationTable[SIZE_OF_PALETTE][SIZE_OF_PALETTE];
 extern unsigned char* InterpolationPalette;
-}
 
 extern void Free_Interpolated_Palettes(void);
 extern int Load_Interpolated_Palettes(char const* filename, bool add = false);

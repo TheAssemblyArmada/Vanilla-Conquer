@@ -41,9 +41,6 @@
 #include "credits.h"
 #include "common/miscasm.h"
 
-// extern "C" {
-// unsigned Cardinal_To_Fixed(unsigned base, unsigned cardinal);
-//}
 class TriggerClass;
 #ifdef USE_RA_AI
 class FootClass;    // ST - 7/17/2019 11:54AM

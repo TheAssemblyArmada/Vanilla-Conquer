@@ -70,20 +70,18 @@ struct IconControlType
 };
 #pragma pack(pop)
 
-extern "C" {
 int IconEntry;
 void* IconData;
-IconControlType* LastIconset;
-uint8_t* StampPtr;
-uint8_t* TransFlagPtr;
-uint8_t* MapPtr;
+const IconControlType* LastIconset;
+const uint8_t* StampPtr;
+const uint8_t* TransFlagPtr;
+const uint8_t* MapPtr;
 int IconWidth;
 int IconHeight;
 int IconSize;
 int IconCount;
-}
 
-extern "C" void Init_Stamps(IconControlType* iconset)
+void Init_Stamps(const IconControlType* iconset)
 {
     if (iconset && LastIconset != iconset) {
         IconCount = le16toh(iconset->Count);
@@ -94,18 +92,18 @@ extern "C" void Init_Stamps(IconControlType* iconset)
 
         // TD and RA tileset headers are slightly different, so check a constant that only exists in one type.
         if (le32toh(iconset->TD.Icons) == TD_TILESET_CHECK) {
-            MapPtr = reinterpret_cast<uint8_t*>(iconset) + le32toh(iconset->TD.Map);
-            StampPtr = reinterpret_cast<uint8_t*>(iconset) + le32toh(iconset->TD.Icons);
-            TransFlagPtr = reinterpret_cast<uint8_t*>(iconset) + le32toh(iconset->TD.TransFlag);
+            MapPtr = reinterpret_cast<const uint8_t*>(iconset) + le32toh(iconset->TD.Map);
+            StampPtr = reinterpret_cast<const uint8_t*>(iconset) + le32toh(iconset->TD.Icons);
+            TransFlagPtr = reinterpret_cast<const uint8_t*>(iconset) + le32toh(iconset->TD.TransFlag);
         } else {
-            MapPtr = reinterpret_cast<uint8_t*>(iconset) + le32toh(iconset->RA.Map);
-            StampPtr = reinterpret_cast<uint8_t*>(iconset) + le32toh(iconset->RA.Icons);
-            TransFlagPtr = reinterpret_cast<uint8_t*>(iconset) + le32toh(iconset->RA.TransFlag);
+            MapPtr = reinterpret_cast<const uint8_t*>(iconset) + le32toh(iconset->RA.Map);
+            StampPtr = reinterpret_cast<const uint8_t*>(iconset) + le32toh(iconset->RA.Icons);
+            TransFlagPtr = reinterpret_cast<const uint8_t*>(iconset) + le32toh(iconset->RA.TransFlag);
         }
     }
 }
 
-extern "C" void Buffer_Draw_Stamp(void* thisptr, void* icondata, int icon, int x, int y, const void* remapper)
+void Buffer_Draw_Stamp(void* thisptr, void* icondata, int icon, int x, int y, const void* remapper)
 {
     GraphicViewPortClass& viewport = *static_cast<GraphicViewPortClass*>(thisptr);
     IconControlType* tileset = static_cast<IconControlType*>(icondata);
@@ -125,7 +123,7 @@ extern "C" void Buffer_Draw_Stamp(void* thisptr, void* icondata, int icon, int x
         int32_t fullpitch = viewport.Get_Pitch() + viewport.Get_XAdd() + viewport.Get_Width();
         uint8_t* dst = x + y * fullpitch + reinterpret_cast<uint8_t*>(viewport.Get_Offset());
         int32_t blitpitch = fullpitch - IconWidth;
-        uint8_t* src = &StampPtr[IconSize * icon_index];
+        const uint8_t* src = &StampPtr[IconSize * icon_index];
 
         if (remapper) {
             const uint8_t* remap = static_cast<const uint8_t*>(remapper);
@@ -167,19 +165,19 @@ extern "C" void Buffer_Draw_Stamp(void* thisptr, void* icondata, int icon, int x
     }
 }
 
-extern "C" void Buffer_Draw_Stamp_Clip(void* thisptr,
-                                       void* icondata,
-                                       int icon,
-                                       int x,
-                                       int y,
-                                       const void* remapper,
-                                       int left,
-                                       int top,
-                                       int right,
-                                       int bottom)
+void Buffer_Draw_Stamp_Clip(void const* thisptr,
+                            void const* icondata,
+                            int icon,
+                            int x,
+                            int y,
+                            const void* remapper,
+                            int left,
+                            int top,
+                            int right,
+                            int bottom)
 {
-    GraphicViewPortClass& viewport = *static_cast<GraphicViewPortClass*>(thisptr);
-    IconControlType* tileset = static_cast<IconControlType*>(icondata);
+    const GraphicViewPortClass& viewport = *static_cast<const GraphicViewPortClass*>(thisptr);
+    const IconControlType* tileset = static_cast<const IconControlType*>(icondata);
 
     if (!tileset) {
         return;
@@ -194,7 +192,7 @@ extern "C" void Buffer_Draw_Stamp_Clip(void* thisptr,
     if (icon_index < IconCount) {
         int blit_height = IconHeight;
         int blit_width = IconWidth;
-        uint8_t* src = &StampPtr[IconSize * icon_index];
+        const uint8_t* src = &StampPtr[IconSize * icon_index];
         int width = left + right;
         int xstart = left + x;
         int height = top + bottom;

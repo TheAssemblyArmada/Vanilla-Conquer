@@ -131,19 +131,12 @@ bool Write_LBM_File(int lbmhandle, BufferClass& buff, int bitplanes, unsigned ch
 
 /*========================= Assembly Functions ============================*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*=========================================================================*/
 /* The following prototypes are for the file: PACK2PLN.ASM						*/
 /*=========================================================================*/
 
 extern void Pack_2_Plane(void* buffer, void* pageptr, int planebit);
 
-#ifdef __cplusplus
-}
-#endif
 /*=========================================================================*/
 
 #endif // IFF_H

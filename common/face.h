@@ -12,15 +12,7 @@
 #ifndef COMMON_FACE_H
 #define COMMON_FACE_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 int Desired_Facing256(long srcx, long srcy, long dstx, long dsty);
 int Desired_Facing8(long x1, long y1, long x2, long y2);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

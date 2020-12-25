@@ -45,10 +45,6 @@ class TriggerClass;
 class BuildingClass;
 class RadioClass;
 
-// extern "C" {
-// unsigned Cardinal_To_Fixed(unsigned base, unsigned cardinal);
-//}
-
 /**********************************************************************
 **	Every game object (that can exist on the map) is ultimately derived from this object
 **	class. It holds the common information between all objects. This is primarily the

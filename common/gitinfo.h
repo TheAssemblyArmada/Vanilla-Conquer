@@ -14,12 +14,6 @@
 
 #include <time.h>
 
-#ifdef __cplusplus
-extern "C" {
-#else
-#include <stdbool.h>
-#endif
-
 extern const char GitSHA1[];
 extern const char GitShortSHA1[];
 extern const char GitCommitDate[];
@@ -27,9 +21,5 @@ extern const char GitCommitAuthorName[];
 extern time_t GitCommitTimeStamp;
 extern bool GitUncommittedChanges;
 extern bool GitHaveInfo;
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
 
 #endif

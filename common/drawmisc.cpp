@@ -7,8 +7,8 @@
 HWND MainWindow; // Handle to programs main window
 #endif
 
-extern "C" unsigned char CurrentPalette[768] = {255};
-extern "C" unsigned char PaletteTable[1024] = {0};
+unsigned char CurrentPalette[768] = {255};
+unsigned char PaletteTable[1024] = {0};
 
 bool SystemToVideoBlits = false;  // Does hardware support system mem to video mem blits?
 bool VideoToSystemBlits = false;  // Does hardware support video mem to system mem blits?

@@ -64,23 +64,17 @@ void* Load_Font(char const* name);
 /*=========================================================================*/
 /* The following prototypes are for the file: TEXTPRNT.ASM                 */
 /*=========================================================================*/
-#ifdef __cplusplus
-extern "C" {
-#endif
 long Buffer_Print(void* thisptr, const char* str, int x, int y, int fcolor, int bcolor);
 void* Get_Font_Palette_Ptr();
-#ifdef __cplusplus
-}
-#endif
 /*=========================================================================*/
 
 //////////////////////////////////////// External varables ///////////////////////////////////////
-extern "C" int FontXSpacing;
-extern "C" int FontYSpacing;
+extern int FontXSpacing;
+extern int FontYSpacing;
 extern char FontWidth;
 extern char FontHeight;
 extern char* FontWidthBlockPtr;
 
-extern "C" void const* FontPtr;
+extern void const* FontPtr;
 
 #endif // FONT_H

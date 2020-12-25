@@ -14,10 +14,6 @@
 
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void UnVQ_4x2(uint8_t* codebook,
               uint8_t* pointers,
               uint8_t* buffer,
@@ -36,9 +32,5 @@ void UnVQ_Nop(uint8_t* codebook,
               unsigned blocks_per_row,
               unsigned num_rows,
               unsigned buff_width);
-
-#ifdef __cplusplus
-} // __cplusplus
-#endif
 
 #endif

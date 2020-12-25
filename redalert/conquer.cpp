@@ -129,9 +129,7 @@ static void Message_Input(KeyNumType& input);
 void Color_Cycle(void);
 bool Map_Edit_Loop(void);
 
-extern "C" {
 bool UseOldShapeDraw = false;
-}
 
 #ifdef CHEAT_KEYS
 void Dump_Heap_Pointers(void);
@@ -141,9 +139,7 @@ static void Do_Record_Playback(void);
 
 void Toggle_Formation(void);
 
-extern "C" {
 extern char* __nheapbeg;
-}
 
 //
 // Special module globals for recording and playback

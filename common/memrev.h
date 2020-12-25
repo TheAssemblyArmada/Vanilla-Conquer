@@ -17,14 +17,6 @@
 
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void memrev(char* buffer, size_t length);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -13,13 +13,11 @@ typedef enum
     KF_MASK = 0xF0
 } KeyFrameType;
 
-extern "C" {
 extern unsigned int IsTheaterShape;
 extern unsigned int UseBigShapeBuffer;
 extern char* BigShapeBufferStart;
 extern char* TheaterShapeBufferStart;
 extern bool UseOldShapeDraw;
-}
 
 uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buffptr);
 unsigned short Get_Build_Frame_Count(void const* dataptr);

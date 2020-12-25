@@ -51,9 +51,7 @@
 *****************************************/
 static void Play_Intro(bool for_real = false);
 
-extern "C" {
-extern long RandNumb;
-}
+extern unsigned long RandNumb;
 
 extern int SimRandIndex;
 

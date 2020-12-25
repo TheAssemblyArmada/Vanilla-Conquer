@@ -12,15 +12,7 @@
 #ifndef COMMON_FADING_H
 #define COMMON_FADING_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void* Build_Fading_Table(void const* palette, void* dest, int color, int frac);
 void* Conquer_Build_Fading_Table(void const* palette, void* dest, int color, int frac);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

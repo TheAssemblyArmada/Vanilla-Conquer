@@ -15,17 +15,10 @@
 
 /* $Header:   F:\projects\c&c0\vcs\code\wwalloc.h_v   4.9   07 May 1996 17:14:00   JOE_BOSTIC  $ */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*
 **	This should be located in the wwlib32.h file, but is located here for
 **	test purposes.
 */
-#ifdef __FLAT__
-#define PRIVATE static
-#endif
 
 typedef enum MemoryFlagType
 {
@@ -56,7 +49,3 @@ long cdecl Heap_Size(MemoryFlagType flag);
 
 extern unsigned long cdecl MinRam; // Record of least memory at worst case.
 extern unsigned long cdecl MaxRam; // Record of total allocated at worst case.
-
-#ifdef __cplusplus
-}
-#endif

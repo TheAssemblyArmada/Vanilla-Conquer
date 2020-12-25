@@ -44,7 +44,6 @@
 #include "ipx95.h"
 
 // Stub in old IPX here ST - 12/20/2018 1:53PM
-extern "C" {
 extern bool IPX_Initialise(void)
 {
     return 0;
@@ -83,7 +82,6 @@ extern int IPX_Get_Local_Target95(unsigned char*, unsigned char*, unsigned short
 {
     return 0;
 }
-}
 
 int IPX_Open_Socket(unsigned short socket)
 {
@@ -108,11 +106,6 @@ int IPX_Broadcast_Packet(unsigned char* buf, int buflen)
     // return(IPX_Broadcast_Packet95(buf, buflen));		//ST - 12/20/2018 11:34AM
     return 0;
 }
-
-// extern "C"{
-//	extern void __cdecl Int3(void);
-//}
-// ST - 12/20/2018 11:34AM
 
 int IPX_Get_Local_Target(unsigned char* dest_network,
                          unsigned char* dest_node,

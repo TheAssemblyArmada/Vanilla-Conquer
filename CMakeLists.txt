@@ -10,10 +10,9 @@ option(FORCE_32BIT "Build 32-bit binaries on a 64-bit host" OFF)
 
 if(FORCE_32BIT AND NOT MSVC)
     list(APPEND CMAKE_CXX_FLAGS_INIT "-m32")
-    list(APPEND CMAKE_C_FLAGS_INIT "-m32")
 endif()
 
-project(VanillaConquer)
+project(VanillaConquer CXX)
 
 # as long as there is no feature parity between win32 and the rest, set defaults based on platform
 if(WIN32)
@@ -53,22 +52,17 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_C_STANDARD 99)
-set(CMAKE_C_STANDARD_REQUIRED ON)
 
 if(NOT MSVC)
     if(WIN32)
         set(CMAKE_CXX_FLAGS_DEBUG "-gstabs3")
-        set(CMAKE_C_FLAGS_DEBUG "-gstabs3")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
         set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
     else()
         set(CMAKE_CXX_FLAGS_DEBUG "-g3")
-        set(CMAKE_C_FLAGS_DEBUG "-g3")
     endif()
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fcheck-new -fsigned-char -fdata-sections -ffunction-sections -DNOMINMAX")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fcheck-new -fsigned-char -fdata-sections -ffunction-sections -DNOMINMAX")
 endif()
 
 add_definitions(-DENGLISH -DTRUE_FALSE_DEFINED)

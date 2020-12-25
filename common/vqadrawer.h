@@ -58,19 +58,11 @@ typedef struct
     int WaitsOnLoader;
 } VQADrawer;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 uint8_t* VQA_GetPalette(VQAHandle* handle);
 int VQA_GetPaletteSize(VQAHandle* handle);
 void VQA_SetDrawBuffer(VQAHandle* handle, uint8_t* buffer, unsigned width, unsigned height, int xpos, int ypos);
 void VQA_ConfigureDrawer(VQAHandle* handle);
 int VQA_SelectFrame(VQAHandle* handle);
 void VQA_PrepareFrame(VQAData* data);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
