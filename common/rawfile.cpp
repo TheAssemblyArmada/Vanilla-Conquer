@@ -37,6 +37,7 @@
  *   RawFileClass::Error -- Handles displaying a file error message.                           *
  *   RawFileClass::Get_Date_Time -- Gets the date and time the file was last modified.         *
  *   RawFileClass::Is_Available -- Checks to see if the specified file is available to open.   *
+ *   RawFileClass::Is_Directory -- Checks to see if the specified file is a directory.         *
  *   RawFileClass::Open -- Assigns name and opens file in one operation.                       *
  *   RawFileClass::Open -- Opens the file object with the rights specified.                    *
  *   RawFileClass::RawFileClass -- Simple constructor for a file object.                       *
@@ -60,6 +61,8 @@
 #include <unistd.h>
 #define _unlink unlink
 #endif
+
+#include <sys/stat.h>
 
 /***********************************************************************************************
  * RawFileClass::Error -- Handles displaying a file error message.                             *
@@ -329,6 +332,24 @@ int RawFileClass::Is_Available(int forced)
     Handle = nullptr;
 
     return (true);
+}
+
+/***********************************************************************************************
+ * RawFileClass::Is_Directory -- Checks to see if the specified file is a directory.           *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  bool; Is the file a directory?                                                     *
+ *                                                                                             *
+ *=============================================================================================*/
+bool RawFileClass::Is_Directory()
+{
+    if (Filename == NULL) {
+        return false;
+    }
+
+    struct stat st;
+    return stat(Filename, &st) == 0 && (st.st_mode & S_IFDIR) == S_IFDIR;
 }
 
 /***********************************************************************************************

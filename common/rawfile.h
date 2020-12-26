@@ -82,6 +82,7 @@ public:
     virtual int Create(void);
     virtual int Delete(void);
     virtual int Is_Available(int forced = false);
+    virtual bool Is_Directory(void);
     virtual int Is_Open(void) const;
     virtual int Open(char const* filename, int rights = READ);
     virtual int Open(int rights = READ);

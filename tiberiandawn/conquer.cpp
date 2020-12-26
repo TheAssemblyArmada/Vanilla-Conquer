@@ -64,7 +64,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/stat.h>
 #include "common/framelimit.h"
 #include "common/vqatask.h"
 #include "common/vqaloader.h"
@@ -3465,9 +3464,9 @@ static bool Change_Local_Dir(int cd)
     // Detect which if any of the discs have had their data copied to an appropriate local folder.
     if (!_initialised) {
         for (int i = 0; i < CD_COUNT; ++i) {
-            struct stat st;
+            RawFileClass vol(_vol_labels[i]);
 
-            if (stat(_vol_labels[i], &st) == 0 && (st.st_mode & S_IFDIR) == S_IFDIR) {
+            if (vol.Is_Directory()) {
                 CDFileClass::Refresh_Search_Drives();
                 snprintf(vol_buff, sizeof(vol_buff), "%s/", _vol_labels[i]);
                 CDFileClass::Add_Search_Drive(vol_buff);
@@ -3517,10 +3516,10 @@ static bool Change_Local_Dir(int cd)
 
     // If the data from the CD we want was detected, then double check it and set it as though we used the -CD command line.
     if (_detected & (1 << cd)) {
-        struct stat st;
+        RawFileClass vol(_vol_labels[cd]);
 
         // Verify that the file is still available and hasn't been deleted out from under us.
-        if (stat(_vol_labels[cd], &st) == 0 && (st.st_mode & S_IFDIR) == S_IFDIR) {
+        if (vol.Is_Directory()) {
             CDFileClass::Refresh_Search_Drives();
             snprintf(vol_buff, sizeof(vol_buff), "%s/", _vol_labels[cd]);
             CDFileClass::Add_Search_Drive(vol_buff);
