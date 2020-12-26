@@ -88,6 +88,7 @@ set(_state_variable_names
     GIT_COMMIT_BODY
     GIT_COMMIT_TSTAMP
     GIT_HEAD_SHORT_SHA1
+    GIT_REV_LIST_COUNT
     # >>>
     # 1. Add the name of the additional git variable you're interested in monitoring
     #    to this list.
@@ -191,13 +192,17 @@ function(GetGitState _working_dir)
     if(exit_code EQUAL 0)
         set(ENV{GIT_HEAD_SHORT_SHA1} ${output})
     endif()
+
+    RunGitCommand(rev-list --count ${object})
+    if(exit_code EQUAL 0)
+        set(ENV{GIT_REV_LIST_COUNT} ${output})
+    endif()
     
     # >>>
     # 2. Additional git properties can be added here via the
     #    "execute_process()" command. Be sure to set them in
     #    the environment using the same variable name you added
     #    to the "_state_variable_names" list.
-
 endfunction()
 
 

@@ -18,3 +18,4 @@ const char GitCommitAuthorName[] = "@GIT_AUTHOR_NAME@";
 time_t GitCommitTimeStamp = @GIT_COMMIT_TSTAMP@;
 bool GitUncommittedChanges = @GIT_IS_DIRTY@;
 bool GitHaveInfo = @GIT_RETRIEVED_STATE@;
+int GitRevision = @GIT_REV_LIST_COUNT@;

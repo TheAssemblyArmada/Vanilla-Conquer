@@ -21,5 +21,6 @@ extern const char GitCommitAuthorName[];
 extern time_t GitCommitTimeStamp;
 extern bool GitUncommittedChanges;
 extern bool GitHaveInfo;
+extern int GitRevision;
 
 #endif
