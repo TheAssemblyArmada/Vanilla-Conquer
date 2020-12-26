@@ -739,12 +739,16 @@ bool Is_Mission_126x126(char* file_name) //	This is no longer used. ajw
  *=========================================================================*/
 void SessionClass::Read_Scenario_Descriptions(void)
 {
+    Find_File_Data* ffd;
+    bool found;
 
-    //	Clear the scenario description lists
+    /*
+    ** Clear the scenario description lists
+    */
     Scenarios.Clear();
 
     /*
-    **	Fetch the main multiplayer scenario packet data.
+    ** Fetch the main multiplayer scenario packet data.
     */
     CCFileClass file("MISSIONS.PKT");
     if (file.Is_Available()) {
@@ -756,134 +760,66 @@ void SessionClass::Read_Scenario_Descriptions(void)
             char const* fname = ini.Get_Entry("Missions", index);
             char buffer[128];
             ini.Get_String("Missions", fname, "", buffer, sizeof(buffer));
-#ifdef FIXIT_VERSION_3
             Scenarios.Add(new MultiMission(fname, buffer, NULL, true, Is_Mission_Counterstrike((char*)fname)));
-#else             //	FIXIT_VERSION_3
-#ifdef FIXIT_CSII //	checked - ajw
-            bool official = Is_Mission_126x126((char*)fname);
-            if (!official) {
-                official = !Is_Mission_Aftermath((char*)fname);
-            }
-
-            Scenarios.Add(new MultiMission(fname, buffer, NULL, official, Is_Mission_Counterstrike((char*)fname)));
-#else
-            Scenarios.Add(new MultiMission(fname, buffer, NULL, true, Is_Mission_Counterstrike((char*)fname)));
-#endif
-#endif //	FIXIT_VERSION_3
         }
-/*		//	ajw Copy file for viewing.
-		CCFileClass fileCopy( "msns_pkt.txt" );
-		file.Seek( 0, SEEK_SET );
-		long lSize = file.Size();
-		char* pData = new char[ lSize + 1 ];
-		file.Read( pData, lSize );
-		fileCopy.Write( pData, lSize );
-		fileCopy.Close();
-*/	}
-
-/*
-    **	Fetch any scenario packet lists and apply them first.
-    */
-#ifdef _WIN32
-    WIN32_FIND_DATA block;
-    HANDLE handle = FindFirstFile("*.PKT", &block);
-    while (handle != INVALID_HANDLE_VALUE) {
-        if ((block.dwFileAttributes
-             & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_SYSTEM | FILE_ATTRIBUTE_TEMPORARY))
-            == 0) {
-            char const* name = &block.cAlternateFileName[0];
-            if (*name == '\0')
-                name = &block.cFileName[0];
-            // Mono_Printf("Found file '%s'.\n", block.cAlternateFileName);
-            // Mono_Printf("Found file '%s'.\n", block.cFileName);
-            // debugprint("Found file '%s'.\n", block.cAlternateFileName);
-            // debugprint("Found file '%s'.\n", block.cFileName);
-            // debugprint( "Found alternate PKT file.\n" );
-            CCFileClass file(name);
-            INIClass ini;
-            ini.Load(file);
-
-            int count = ini.Entry_Count("Missions");
-            for (int index = 0; index < count; index++) {
-                char const* fname = ini.Get_Entry("Missions", index);
-                char buffer[128];
-                ini.Get_String("Missions", fname, "", buffer, sizeof(buffer));
-
-#ifdef FIXIT_VERSION_3
-                Scenarios.Add(new MultiMission(fname, buffer, NULL, true, Is_Mission_Counterstrike((char*)fname)));
-#else             //	FIXIT_VERSION_3
-#ifdef FIXIT_CSII //	checked - ajw
-                bool official = Is_Mission_126x126((char*)fname);
-                if (!official) {
-                    official = !Is_Mission_Aftermath((char*)fname);
-                }
-                Scenarios.Add(new MultiMission(fname, buffer, NULL, official, Is_Mission_Counterstrike((char*)fname)));
-#else
-                Scenarios.Add(new MultiMission(fname, buffer, NULL, true, Is_Mission_Counterstrike((char*)fname)));
-#endif
-#endif //	FIXIT_VERSION_3
-            }
-        }
-
-        if (FindNextFile(handle, &block) == 0)
-            break;
     }
-#endif // _WIN32
 
-#ifdef FIXIT_CSII //	checked - ajw
-                  /*
-                  **	Fetch the Counterstrike multiplayer scenario packet data.
-                  ** Load the scenarios regardless of whether counterstrike's installed,
-                  ** and at the point of hosting a network game, enable the counterstrike
-                  ** maps only if they have CS installed.  If they don't, then the maps
-                  ** are available as a guest, but not as a host, which fixes a multitude
-                  ** of problems without obviously giving the maps away to non-CS owners.
-                  */
-#ifdef FIXIT_VERSION_3
+    /*
+    ** Fetch any scenario packet lists and apply them first.
+    */
+    ffd = nullptr;
+    found = Find_First("*.MPR", 0, &ffd);
+    while (found) {
+        CCFileClass file(ffd->GetName());
+        INIClass ini;
+        ini.Load(file);
+
+        int count = ini.Entry_Count("Missions");
+        for (int index = 0; index < count; index++) {
+            char const* fname = ini.Get_Entry("Missions", index);
+            char buffer[128];
+            ini.Get_String("Missions", fname, "", buffer, sizeof(buffer));
+            Scenarios.Add(new MultiMission(fname, buffer, NULL, true, Is_Mission_Counterstrike((char*)fname)));
+        }
+
+        found = Find_Next(ffd);
+    }
+    if (ffd) {
+        Find_Close(ffd);
+    }
+
+    /*
+    ** Fetch the Counterstrike multiplayer scenario packet data.
+    ** Load the scenarios regardless of whether counterstrike's installed,
+    ** and at the point of hosting a network game, enable the counterstrike
+    ** maps only if they have CS installed.  If they don't, then the maps
+    ** are available as a guest, but not as a host, which fixes a multitude
+    ** of problems without obviously giving the maps away to non-CS owners.
+    */
     if (Is_Counterstrike_Installed()) {
-#endif
         CCFileClass file2("CSTRIKE.PKT");
         if (file2.Is_Available()) {
             INIClass ini;
             ini.Load(file2);
             int count = ini.Entry_Count("Missions");
-            // debugprint( "Found %i missions in cstrike.pkt\n", count );
             for (int index = 0; index < count; index++) {
                 char const* fname = ini.Get_Entry("Missions", index);
                 char buffer[128];
                 ini.Get_String("Missions", fname, "", buffer, sizeof(buffer));
-#ifdef FIXIT_VERSION_3
                 Scenarios.Add(new MultiMission(fname, buffer, NULL, true, Is_Mission_Counterstrike((char*)fname)));
-#else
-            bool official = Is_Mission_126x126((char*)fname);
-            if (!official) {
-                official = !Is_Mission_Aftermath((char*)fname);
             }
-            Scenarios.Add(new MultiMission(fname, buffer, NULL, official, Is_Mission_Counterstrike((char*)fname)));
-#endif
-            }
-/*			//	ajw Copy file for viewing.
-			CCFileClass fileCopy( "cs_pkt.txt" );
-			file2.Seek( 0, SEEK_SET );
-			long lSize = file2.Size();
-			char* pData = new char[ lSize + 1 ];
-			file2.Read( pData, lSize );
-			fileCopy.Write( pData, lSize );
-			fileCopy.Close();
-*/		}
-#ifdef FIXIT_VERSION_3
+        }
     }
-#endif
-#endif
 
-#ifdef FIXIT_VERSION_3 //	Aftermath scenarios are now in their own pkt file.
+    /*
+    ** Aftermath scenarios are now in their own pkt file.
+    */
     if (Is_Aftermath_Installed()) {
         CCFileClass file2("AFTMATH.PKT");
         if (file2.Is_Available()) {
             INIClass ini;
             ini.Load(file2);
             int count = ini.Entry_Count("Missions");
-            // debugprint( "Found %i missions in aftmath.pkt\n", count );
             for (int index = 0; index < count; index++) {
                 char const* fname = ini.Get_Entry("Missions", index);
                 char buffer[128];
@@ -892,40 +828,33 @@ void SessionClass::Read_Scenario_Descriptions(void)
             }
         }
     }
-#endif
 
-/*
+    /*
     ** Scan the current directory for any loose .MPR files and build the appropriate entries
-    **  into the scenario list list
+    ** into the scenario list list
     */
-#ifdef _WIN32
-    char const* file_name;
-    char name_buffer[128];
-    char digest_buffer[32];
+    ffd = nullptr;
+    found = Find_First("*.MPR", 0, &ffd);
+    while (found) {
+        char name_buffer[128];
+        char digest_buffer[32];
 
-    handle = FindFirstFile("*.MPR", &block);
-    while (handle != INVALID_HANDLE_VALUE) {
-        if ((block.dwFileAttributes
-             & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_SYSTEM | FILE_ATTRIBUTE_TEMPORARY))
-            == 0) {
-            file_name = &block.cAlternateFileName[0];
-            if (*file_name == '\0')
-                file_name = &block.cFileName[0];
-            // debugprint( "Found MPR '%s'\n", file_name );
-            CCFileClass file(file_name);
-            INIClass ini;
-            ini.Load(file);
+        CCFileClass file(ffd->GetName());
+        INIClass ini;
+        ini.Load(file);
 
-            ini.Get_String("Basic", "Name", "No Name", name_buffer, sizeof(name_buffer));
-            ini.Get_String("Digest", "1", "No Digest", digest_buffer, sizeof(digest_buffer));
-            Scenarios.Add(new MultiMission(
-                file_name, name_buffer, digest_buffer, ini.Get_Bool("Basic", "Official", false), false));
-        }
+        ini.Get_String("Basic", "Name", "No Name", name_buffer, sizeof(name_buffer));
+        ini.Get_String("Digest", "1", "No Digest", digest_buffer, sizeof(digest_buffer));
+        Scenarios.Add(new MultiMission(
+            ffd->GetName(), name_buffer, digest_buffer, ini.Get_Bool("Basic", "Official", false), false));
 
-        if (FindNextFile(handle, &block) == 0)
-            break;
+        found = Find_Next(ffd);
     }
-#endif
+    if (ffd) {
+        Find_Close(ffd);
+    }
+
+    delete ffd;
 }
 
 /***************************************************************************
