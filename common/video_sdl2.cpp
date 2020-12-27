@@ -93,8 +93,16 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     SDL_ShowCursor(SDL_DISABLE);
 
     window = SDL_CreateWindow("Vanilla Conquer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, 0);
+    if (window == nullptr) {
+        return false;
+    }
+
     palette = SDL_AllocPalette(256);
-    renderer = SDL_CreateRenderer(window, -1, 0);
+
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+    if (renderer == nullptr) {
+        return false;
+    }
 
     return true;
 }
@@ -269,8 +277,8 @@ public:
         SDL_SetSurfacePalette(surface, palette);
 
         if (flags & GBC_VISIBLE) {
-            windowSurface = SDL_CreateRGBSurface(0, w, h, 32, 0, 0, 0, 0);
-            texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, w, h);
+            windowSurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, SDL_PIXELFORMAT_ARGB8888);
+            texture = SDL_CreateTexture(renderer, windowSurface->format->format, SDL_TEXTUREACCESS_STREAMING, w, h);
             frontSurface = this;
         }
     }
@@ -341,16 +349,7 @@ public:
         int pitch;
 
         SDL_BlitSurface(surface, NULL, windowSurface, NULL);
-        SDL_LockTexture(texture, NULL, &pixels, &pitch);
-        SDL_ConvertPixels(windowSurface->w,
-                          windowSurface->h,
-                          windowSurface->format->format,
-                          windowSurface->pixels,
-                          windowSurface->pitch,
-                          SDL_PIXELFORMAT_RGBA8888,
-                          pixels,
-                          pitch);
-        SDL_UnlockTexture(texture);
+        SDL_UpdateTexture(texture, NULL, windowSurface->pixels, windowSurface->pitch);
         SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
     }
