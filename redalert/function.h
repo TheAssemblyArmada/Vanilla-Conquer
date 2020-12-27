@@ -216,7 +216,7 @@ CELL Coord_Cell(COORDINATE coord);
 #include "palettec.h" //ST 5/13/2019
 #include "version.h"
 #include "facing.h"
-#include "ftimer.h"
+#include "common/timer.h"
 #include "theme.h"
 #include "link.h"
 #include "gadget.h"

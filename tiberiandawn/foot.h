@@ -38,7 +38,7 @@
 #include "target.h"
 #include "type.h"
 #include "techno.h"
-#include "ftimer.h"
+#include "common/timer.h"
 
 class UnitClass;
 class BuildingClass;

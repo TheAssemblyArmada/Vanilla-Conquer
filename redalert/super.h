@@ -35,7 +35,7 @@
 #ifndef SUPER_H
 #define SUPER_H
 
-#include "ftimer.h"
+#include "common/timer.h"
 
 class SuperClass
 {

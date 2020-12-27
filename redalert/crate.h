@@ -35,7 +35,7 @@
 #ifndef CRATE_H
 #define CRATE_H
 
-#include "ftimer.h"
+#include "common/timer.h"
 #include "jshell.h"
 
 /*

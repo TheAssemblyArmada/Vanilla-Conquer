@@ -169,7 +169,7 @@ inline CELL Coord_YCell(COORDINATE coord)
 #include "rules.h"
 #include "utracker.h"
 #include "facing.h"
-#include "ftimer.h"
+#include "common/timer.h"
 #include "theme.h"
 #include "link.h"
 #include "gadget.h"
