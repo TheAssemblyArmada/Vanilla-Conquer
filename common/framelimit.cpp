@@ -22,13 +22,13 @@ void Frame_Limiter()
     auto now = std::chrono::steady_clock::now();
     auto diff = now - _last;
     _last = now;
-    auto remaining = _ms_per_tick - std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
 
 #ifdef SDL2_BUILD
     WWMouse->Process_Mouse();
     Video_Render_Frame();
 #endif
 
+    auto remaining = _ms_per_tick - std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
     if (remaining > 0) {
         ms_sleep(unsigned(remaining));
     }
