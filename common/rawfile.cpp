@@ -87,8 +87,12 @@
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void RawFileClass::Error(int, int, char const*)
+void RawFileClass::Error(int error, int canretry, char const* filename)
 {
+#ifndef _WIN32
+    perror(filename);
+#endif
+    exit(1);
 }
 
 /***********************************************************************************************
