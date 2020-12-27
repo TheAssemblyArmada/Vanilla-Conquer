@@ -391,7 +391,7 @@ int MapEditClass::Select_Team(char const* caption)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = REDRAW_ALL;
         }
 
@@ -1127,7 +1127,7 @@ int MapEditClass::Edit_Team(void)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = REDRAW_ALL;
         }
 
@@ -1844,7 +1844,7 @@ int MapEditClass::Team_Members(HousesType house)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = REDRAW_ALL;
         }
 
