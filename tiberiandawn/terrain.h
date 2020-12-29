@@ -55,8 +55,16 @@ public:
     **	Constructor for terrain object class.
     */
     static void* operator new(size_t size);
+    static void* operator new(size_t, void* ptr)
+    {
+        return (ptr);
+    };
     static void operator delete(void* ptr);
     TerrainClass(void);
+    TerrainClass(NoInitClass const& x)
+        : ObjectClass(x)
+        , StageClass(x)
+        , Class(this->Class){};
     TerrainClass(TerrainType id, CELL cell);
     virtual ~TerrainClass(void);
     virtual RTTIType What_Am_I(void) const
@@ -146,8 +154,6 @@ public:
     {
         return "TERRAIN";
     };
-    bool Load(FileClass& file);
-    bool Save(FileClass& file);
     virtual void Code_Pointers(void);
     virtual void Decode_Pointers(void);
 
@@ -189,11 +195,6 @@ private:
     *save/load
     */
     unsigned char SaveLoadPadding[8];
-
-    /*
-    ** This contains the value of the Virtual Function Table Pointer
-    */
-    static void* VTable;
 };
 
 #endif

@@ -73,6 +73,7 @@
 #include "common/tcpip.h"
 #endif // WINSOCK_IPX
 #else
+#include <unistd.h>
 #include "fakesock.h"
 TcpipManagerClass Winsock;
 #endif

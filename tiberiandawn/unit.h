@@ -58,9 +58,16 @@ public:
     **	Constructors, Destructors, and overloaded operators.
     */
     static void* operator new(size_t size);
+    static void* operator new(size_t, void* ptr)
+    {
+        return (ptr);
+    };
     static void operator delete(void* ptr);
     UnitClass(void){};
     UnitClass(UnitType classid, HousesType house);
+    UnitClass(NoInitClass const& x)
+        : TarComClass(x)
+        , HarvestTimer(x){};
     operator UnitType(void) const
     {
         return Class->Type;
@@ -189,8 +196,6 @@ public:
     {
         return "UNITS";
     };
-    bool Load(FileClass& file);
-    bool Save(FileClass& file);
     virtual void Code_Pointers(void);
     virtual void Decode_Pointers(void);
 
@@ -215,11 +220,6 @@ private:
     *save/load
     */
     unsigned char SaveLoadPadding[28];
-
-    /*
-    ** This contains the value of the Virtual Function Table Pointer
-    */
-    static void* VTable;
 };
 
 #endif

@@ -186,6 +186,11 @@ public:
     **	Constructors, Destructors, and overloaded operators.
     */
     FootClass(void);
+    FootClass(NoInitClass const& x)
+        : TechnoClass(x)
+        , PathDelay(x)
+        , Speed(this->Speed)
+        , BaseAttackTimer(x){};
     virtual ~FootClass(void);
     FootClass(HousesType house);
 

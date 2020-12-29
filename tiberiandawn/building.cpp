@@ -132,11 +132,6 @@ COORDINATE const BuildingClass::CenterOffset[BSIZE_COUNT] = {
     0x02800280L,
 };
 
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
-void* BuildingClass::VTable;
-
 /***********************************************************************************************
  * BuildingClass::Validate -- validates building pointer													  *
  *                                                                                             *
@@ -2141,10 +2136,6 @@ void BuildingClass::Init(void)
     BuildingClass* ptr;
 
     Buildings.Free_All();
-
-    ptr = new BuildingClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 /***********************************************************************************************

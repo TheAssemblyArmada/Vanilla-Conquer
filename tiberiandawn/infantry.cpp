@@ -87,11 +87,6 @@ int const InfantryClass::HumanShape[32] = {0, 0, 7, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5
 int Infantry_Kick_Damage[] = {10, 15};
 int Infantry_Punch_Damage[] = {4, 7};
 
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
-void* InfantryClass::VTable;
-
 /***************************************************************************
 ** This is the array of constant data associated with infantry maneuvers. It
 **	specifies the frame rate as well as if the animation can be aborted.
@@ -856,10 +851,6 @@ void InfantryClass::Init(void)
     InfantryClass* ptr;
 
     Infantry.Free_All();
-
-    ptr = new InfantryClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 /***********************************************************************************************

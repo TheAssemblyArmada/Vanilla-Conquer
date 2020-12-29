@@ -477,10 +477,8 @@ void MapClass::Alloc_Cells(void)
     **	Assume that whatever the contents of the VectorClass are is garbage
     **	(it may have been loaded from a save-game file), so zero it out first.
     */
-    Vector = 0;
-    VectorMax = 0;
-    IsAllocated = 0;
-    Resize(Size);
+    new (&Array) VectorClass<CellClass>;
+    Array.Resize(Size);
 }
 
 /***********************************************************************************************
@@ -504,7 +502,7 @@ void MapClass::Alloc_Cells(void)
  *=============================================================================================*/
 void MapClass::Free_Cells(void)
 {
-    Clear();
+    Array.Clear();
 }
 
 /***********************************************************************************************
@@ -529,14 +527,9 @@ void MapClass::Free_Cells(void)
 void MapClass::Init_Cells(void)
 {
     TotalValue = 0;
-#ifdef NEVER
-    Free_Cells();
-    Alloc_Cells();
-#else
     for (int index = 0; index < MAP_CELL_TOTAL; index++) {
-        Map[index] = CellClass();
+        new (&Array[index]) CellClass;
     }
-#endif
 }
 
 /***********************************************************************************************

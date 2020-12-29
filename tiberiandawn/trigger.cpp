@@ -102,6 +102,13 @@ static const char* ActionText[TriggerClass::ACTION_COUNT + 1] = {"None",
                                                                  "Cap=Win/Des=Lose",
                                                                  "Allow Win"};
 
+void TriggerClass::Load()
+{
+    if (House != HOUSE_NONE) {
+        HouseTriggers[House].Add(this);
+    }
+}
+
 /***********************************************************************************************
  * TriggerClass::Validate -- validates trigger pointer													  *
  *                                                                                             *

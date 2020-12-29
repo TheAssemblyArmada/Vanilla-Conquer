@@ -45,11 +45,6 @@
 #include "smudge.h"
 #include "ccini.h"
 
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
-void* SmudgeClass::VTable;
-
 HousesType SmudgeClass::ToOwn = HOUSE_NONE;
 
 /***********************************************************************************************
@@ -180,13 +175,7 @@ SmudgeClass::SmudgeClass(SmudgeType type, COORDINATE pos, HousesType house)
  *=============================================================================================*/
 void SmudgeClass::Init(void)
 {
-    SmudgeClass* ptr;
-
     Smudges.Free_All();
-
-    ptr = new SmudgeClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 /***********************************************************************************************

@@ -217,8 +217,6 @@ public:
     /*
     **	File I/O.
     */
-    bool Load(Straw& file);
-    bool Save(Pipe& file) const;
     void Code_Pointers(void);
     void Decode_Pointers(void);
 

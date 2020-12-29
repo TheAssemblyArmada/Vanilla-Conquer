@@ -45,6 +45,7 @@ class FacingClass
 {
 public:
     FacingClass(void);
+    FacingClass(NoInitClass const&){};
     FacingClass(DirType dir)
     {
         CurrentFacing = DesiredFacing = dir;

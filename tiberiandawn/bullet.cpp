@@ -49,11 +49,6 @@
 
 #define GRAVITY 3
 
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
-void* BulletClass::VTable;
-
 /***********************************************************************************************
  * BulletClass::Validate -- validates bullet pointer														  *
  *                                                                                             *
@@ -579,13 +574,7 @@ void BulletClass::Draw_It(int x, int y, WindowNumberType window)
  *=============================================================================================*/
 void BulletClass::Init(void)
 {
-    BulletClass* ptr;
-
     Bullets.Free_All();
-
-    ptr = new BulletClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 /***********************************************************************************************

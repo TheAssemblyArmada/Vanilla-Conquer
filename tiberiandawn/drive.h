@@ -97,6 +97,9 @@ public:
     **	Constructors, Destructors, and overloaded operators.
     */
     DriveClass(void);
+    DriveClass(NoInitClass const& x)
+        : FootClass(x)
+        , Class(this->Class){};
     DriveClass(UnitType classid, HousesType house);
     virtual ~DriveClass(void){};
     operator UnitType(void) const

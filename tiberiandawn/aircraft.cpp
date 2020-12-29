@@ -90,11 +90,6 @@
 #include "function.h"
 #include "ccini.h"
 
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
-void* AircraftClass::VTable;
-
 /***********************************************************************************************
  * AircraftClass::Validate -- validates aircraft pointer													  *
  *                                                                                             *
@@ -1027,13 +1022,7 @@ short const* AircraftClass::Overlap_List(void) const
  *=============================================================================================*/
 void AircraftClass::Init(void)
 {
-    AircraftClass* ptr;
-
     Aircraft.Free_All();
-
-    ptr = new AircraftClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 /***********************************************************************************************

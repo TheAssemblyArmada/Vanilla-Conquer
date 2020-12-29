@@ -39,6 +39,10 @@
 #include "power.h"
 #include "factory.h"
 
+class InitClass
+{
+};
+
 class SidebarClass : public PowerClass
 {
 public:
@@ -107,6 +111,10 @@ public:
     };
 
     SidebarClass(void);
+    SidebarClass(NoInitClass const& x)
+        : PowerClass(x)
+    {
+    }
 
     /*
     ** Initialization
@@ -162,7 +170,13 @@ public:
         int LeftEdgeOffset;
         int ButtonSpacingOffset;
 
-        StripClass(void);
+        StripClass(void)
+        {
+        }
+        StripClass(InitClass const&);
+        StripClass(NoInitClass const&)
+        {
+        }
         bool Add(RTTIType type,
                  int ID,
                  bool via_capture); // Added via_capture for new sidebar functionality. ST - 9/24/2019 3:15PM

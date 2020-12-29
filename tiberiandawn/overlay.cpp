@@ -47,7 +47,6 @@
 /*
 ** This contains the value of the Virtual Function Table Pointer
 */
-void* OverlayClass::VTable;
 
 HousesType OverlayClass::ToOwn = HOUSE_NONE;
 
@@ -108,10 +107,6 @@ void OverlayClass::Init(void)
     OverlayClass* ptr;
 
     Overlays.Free_All();
-
-    ptr = new OverlayClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 /***********************************************************************************************

@@ -92,6 +92,8 @@ public:
     **	Constructor/Destructor
     */
     TeamTypeClass(void);
+    TeamTypeClass(NoInitClass const& x)
+        : AbstractTypeClass(x){};
     virtual ~TeamTypeClass(void){};
 
     /*
@@ -140,6 +142,10 @@ public:
     **	Overloaded operators
     */
     void* operator new(size_t);
+    static void* operator new(size_t, void* ptr)
+    {
+        return (ptr);
+    };
     void operator delete(void* ptr);
 
     /*
@@ -237,7 +243,7 @@ public:
     /*
     **	Number of different classes in the team
     */
-    unsigned char ClassCount;
+    unsigned int ClassCount;
 
     /*
     **	Array of object types comprising the team
@@ -257,11 +263,6 @@ public:
 
 private:
     static char const* TMissions[TMISSION_COUNT];
-
-    /*
-    ** This contains the value of the Virtual Function Table Pointer
-    */
-    static void* VTable;
 };
 
 #endif

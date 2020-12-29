@@ -38,10 +38,11 @@
 #include "function.h"
 #include "cell.h"
 
-class GScreenClass : public VectorClass<CellClass>
+class GScreenClass
 {
 public:
     GScreenClass(void);
+    GScreenClass(NoInitClass const& x){};
 
     /*
     ** Initialization

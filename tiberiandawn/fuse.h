@@ -44,6 +44,7 @@ class FuseClass
 {
 public:
     FuseClass(void);
+    FuseClass(NoInitClass const&){};
     void Arm_Fuse(COORDINATE location, COORDINATE target, int time = 0xFF, int arming = 0);
     bool Fuse_Checkup(COORDINATE newlocation);
     void Fuse_Write(FileClass& file);

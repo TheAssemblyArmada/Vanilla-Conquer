@@ -55,11 +55,6 @@
 
 #include "function.h"
 
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
-void* AnimClass::VTable;
-
 /***********************************************************************************************
  * AnimClass::Validate -- validates anim pointer															  *
  *                                                                                             *
@@ -545,13 +540,7 @@ short const* AnimClass::Occupy_List(void) const
  *=============================================================================================*/
 void AnimClass::Init(void)
 {
-    AnimClass* ptr;
-
     Anims.Free_All();
-
-    ptr = new AnimClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 /***********************************************************************************************
