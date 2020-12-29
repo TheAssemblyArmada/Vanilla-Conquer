@@ -50,6 +50,10 @@ public:
     //-----------------------------------------------------------------------------
     void* operator new(size_t);
     void operator delete(void*);
+    static void* operator new(size_t, void* ptr)
+    {
+        return (ptr);
+    };
     operator AircraftType(void) const
     {
         return Class->Type;
@@ -57,6 +61,13 @@ public:
     AircraftClass(void)
         : Class(0){};
     AircraftClass(AircraftType classid, HousesType house);
+    AircraftClass(NoInitClass const& x)
+        : FootClass(x)
+        , FlyClass(x)
+        , Class(this->Class)
+        , SecondaryFacing(x)
+        , SightTimer(x){};
+
     virtual ~AircraftClass(void);
     virtual RTTIType What_Am_I(void) const
     {
@@ -179,8 +190,6 @@ public:
     {
         return "AIRCRAFT";
     };
-    bool Load(FileClass& file);
-    bool Save(FileClass& file);
     virtual void Code_Pointers(void);
     virtual void Decode_Pointers(void);
 
@@ -266,11 +275,6 @@ private:
     *save/load
     */
     unsigned char SaveLoadPadding[28];
-
-    /*
-    ** This contains the value of the Virtual Function Table Pointer
-    */
-    static void* VTable;
 };
 
 #endif

@@ -50,8 +50,15 @@ public:
     **	Constructors and destructors.
     */
     static void* operator new(size_t size);
+    static void* operator new(size_t, void* ptr)
+    {
+        return (ptr);
+    };
     static void operator delete(void* ptr);
     TemplateClass(void);
+    TemplateClass(NoInitClass const& x)
+        : ObjectClass(x)
+        , Class(this->Class){};
     TemplateClass(TemplateType type, CELL pos = -1);
     virtual ~TemplateClass(void)
     {
@@ -107,8 +114,6 @@ public:
     {
         return "TEMPLATE";
     };
-    bool Load(FileClass& file);
-    bool Save(FileClass& file);
     virtual void Code_Pointers(void);
     virtual void Decode_Pointers(void);
 
@@ -128,11 +133,6 @@ private:
     *save/load
     */
     unsigned char SaveLoadPadding[8];
-
-    /*
-    ** This contains the value of the Virtual Function Table Pointer
-    */
-    static void* VTable;
 };
 
 #endif

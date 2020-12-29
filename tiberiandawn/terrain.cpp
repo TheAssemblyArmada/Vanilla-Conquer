@@ -65,11 +65,6 @@
 #define FIRST_SPORE_STAGE    30
 #define FIRST_SPORABLE_LEVEL 7
 
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
-void* TerrainClass::VTable;
-
 /***********************************************************************************************
  * TerrainClass::Validate -- validates terrain pointer													  *
  *                                                                                             *
@@ -410,13 +405,7 @@ void TerrainClass::Draw_It(int x, int y, WindowNumberType window)
  *=============================================================================================*/
 void TerrainClass::Init(void)
 {
-    TerrainClass* ptr;
-
     Terrains.Free_All();
-
-    ptr = new TerrainClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 /***********************************************************************************************

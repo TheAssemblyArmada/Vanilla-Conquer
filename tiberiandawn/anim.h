@@ -46,6 +46,10 @@ class AnimClass : public ObjectClass, private StageClass
 {
 public:
     static void* operator new(size_t size);
+    static void* operator new(size_t, void* ptr)
+    {
+        return (ptr);
+    };
     static void operator delete(void* ptr);
     AnimClass(void)
         : Class(0)
@@ -54,6 +58,11 @@ public:
         Object = 0;
     }; // Default constructor does nothing.
     AnimClass(AnimType animnum, COORDINATE coord, unsigned char timedelay = 0, char loop = 1, bool alt = false);
+    AnimClass(NoInitClass const& x)
+        : ObjectClass(x)
+        , StageClass(x)
+        , Class(this->Class){};
+
     virtual ~AnimClass(void);
     operator AnimType(void) const
     {
@@ -122,8 +131,6 @@ public:
     /*
     **	File I/O.
     */
-    bool Load(FileClass& file);
-    bool Save(FileClass& file);
     virtual void Code_Pointers(void);
     virtual void Decode_Pointers(void);
 
@@ -217,11 +224,6 @@ private:
     **	fractions reach 256, then one damage point is applied to the attached object.
     */
     unsigned char Accum;
-
-    /*
-    ** This contains the value of the Virtual Function Table Pointer
-    */
-    static void* VTable;
 
     /*
     **	This points to the virtual animation.

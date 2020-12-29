@@ -131,6 +131,8 @@ public:
     **	Constructor & destructors.
     */
     ObjectClass(void);
+    ObjectClass(NoInitClass const& x)
+        : AbstractClass(x){};
     virtual ~ObjectClass(void){};
     virtual RTTIType What_Am_I(void) const;
     int operator<(ObjectClass const& object) const

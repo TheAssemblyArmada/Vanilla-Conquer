@@ -103,26 +103,25 @@ bool CellClass::Should_Save(void) const
  *=============================================================================================*/
 bool CellClass::Load(FileClass& file)
 {
-    int rc;
     TriggerClass* trig;
 
     /*
     -------------------------- Load the object data --------------------------
     */
-    rc = Read_Object(this, sizeof(CellClass), file, false);
+    if (file.Read(this, sizeof(*this)) != sizeof(*this)) {
+        return false;
+    }
 
     /*
     ------------------------ Load the trigger pointer ------------------------
     */
-    if (rc) {
-        if (IsTrigger) {
-            if (file.Read(&trig, sizeof(trig)) != sizeof(trig))
-                return (false);
-            CellTriggers[Cell_Number()] = trig;
-        }
+    if (IsTrigger) {
+        if (file.Read(&trig, sizeof(trig)) != sizeof(trig))
+            return (false);
+        CellTriggers[Cell_Number()] = trig;
     }
 
-    return (rc);
+    return true;
 }
 
 /***********************************************************************************************
@@ -139,26 +138,18 @@ bool CellClass::Load(FileClass& file)
  *=============================================================================================*/
 bool CellClass::Save(FileClass& file)
 {
-    int rc;
-    TriggerClass* trig;
-
-    /*
-    -------------------------- Save the object data --------------------------
-    */
-    rc = Write_Object(this, sizeof(CellClass), file);
-
-    /*
-    ------------------------ Save the trigger pointer ------------------------
-    */
-    if (rc) {
-        if (IsTrigger) {
-            trig = CellTriggers[Cell_Number()];
-            if (file.Write(&trig, sizeof(trig)) != sizeof(trig))
-                return (false);
-        }
+    if (file.Write(this, sizeof(*this)) != sizeof(*this)) {
+        return false;
     }
 
-    return (rc);
+    if (IsTrigger) {
+        TriggerClass* trig;
+        trig = CellTriggers[Cell_Number()];
+        if (file.Write(&trig, sizeof(trig)) != sizeof(trig))
+            return (false);
+    }
+
+    return true;
 }
 
 /***********************************************************************************************
@@ -372,9 +363,10 @@ bool MouseClass::Load(FileClass& file)
     ** Read the entire map object in.  Only read in sizeof(MouseClass), so if we're
     ** in editor mode, none of the map editor object is read in.
     */
-    if (!Read_Object(this, sizeof(MouseClass), file, true)) {
+    if (file.Read(this, sizeof(*this)) != sizeof(*this)) {
         return (false);
     }
+    new (this) MouseClass(NoInitClass());
 
     /*
     ** Reallocate the cell array
@@ -430,7 +422,7 @@ bool MouseClass::Save(FileClass& file)
     if (file.Write(&Theater, sizeof(Theater)) != sizeof(Theater))
         return (false);
 
-    if (!Write_Object(this, sizeof(MouseClass), file))
+    if (file.Write(this, sizeof(*this)) != sizeof(*this))
         return (false);
 
     /*

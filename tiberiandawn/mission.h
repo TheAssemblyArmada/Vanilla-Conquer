@@ -65,6 +65,10 @@ public:
     **	Constructors, Destructors, and overloaded operators.
     */
     MissionClass(void);
+    MissionClass(NoInitClass const& x)
+        : ObjectClass(x)
+    {
+    }
     virtual ~MissionClass(void){};
 
 /*---------------------------------------------------------------------

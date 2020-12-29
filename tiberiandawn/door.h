@@ -68,6 +68,7 @@ private:
 
 public:
     DoorClass(void);
+    DoorClass(NoInitClass const&){};
 
     bool Time_To_Redraw(void)
     {

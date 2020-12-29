@@ -53,6 +53,13 @@ public:
     int CHarvested;
     unsigned long ElapsedTime;
 
+    ScoreClass(void)
+    {
+    }
+    ScoreClass(NoInitClass const&)
+    {
+    }
+
     void Init(void)
     {
         memset(this, 0, sizeof(ScoreClass));

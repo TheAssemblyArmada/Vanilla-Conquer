@@ -121,6 +121,10 @@ public:
 
     //-------------------------------------------------------------------------
     DisplayClass(void);
+    DisplayClass(NoInitClass const& x)
+        : MapClass(x)
+    {
+    }
 
     virtual void Read_INI(CCINIClass& ini);
     void Write_INI(CCINIClass& ini);

@@ -671,12 +671,14 @@ bool SidebarGlyphxClass::Load(FileClass& file)
 {
     ::new (this) SidebarGlyphxClass();
 
-    bool ok = Read_Object(this, sizeof(*this), file, false);
+    if (file.Read(this, sizeof(*this)) != sizeof(*this)) {
+        return false;
+    }
 
     Column[0].Set_Parent_Sidebar(this);
     Column[1].Set_Parent_Sidebar(this);
 
-    return ok;
+    return true;
 }
 
 /***********************************************************************************************
@@ -693,7 +695,7 @@ bool SidebarGlyphxClass::Load(FileClass& file)
  *=============================================================================================*/
 bool SidebarGlyphxClass::Save(FileClass& file)
 {
-    return (Write_Object(this, sizeof(*this), file));
+    return (file.Write(this, sizeof(*this)) == sizeof(*this));
 }
 
 extern SidebarGlyphxClass* Get_Current_Context_Sidebar(HouseClass* player_ptr);

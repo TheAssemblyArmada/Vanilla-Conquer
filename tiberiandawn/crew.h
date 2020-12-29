@@ -55,6 +55,9 @@ public:
     {
         Kills = 0;
     };
+    CrewClass(NoInitClass const&)
+    {
+    }
 
     int Made_A_Kill(void)
     {

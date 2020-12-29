@@ -49,11 +49,6 @@
 #include "tile.h"
 #include "ccini.h"
 
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
-void* TemplateClass::VTable;
-
 /***********************************************************************************************
  * TemplateClass::Validate -- validates template pointer													  *
  *                                                                                             *
@@ -215,13 +210,7 @@ TARGET TemplateClass::As_Target(void) const
  *=============================================================================================*/
 void TemplateClass::Init(void)
 {
-    TemplateClass* ptr;
-
     Templates.Free_All();
-
-    ptr = new TemplateClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 /***********************************************************************************************

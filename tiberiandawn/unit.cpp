@@ -96,11 +96,6 @@
 #include "function.h"
 #include "ccini.h"
 
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
-void* UnitClass::VTable;
-
 /***********************************************************************************************
  * UnitClass::Validate -- validates unit pointer.															  *
  *                                                                                             *
@@ -3360,13 +3355,7 @@ MoveType UnitClass::Can_Enter_Cell(CELL cell, FacingType) const
  *=============================================================================================*/
 void UnitClass::Init(void)
 {
-    UnitClass* ptr;
-
     Units.Free_All();
-
-    ptr = new UnitClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 /***********************************************************************************************

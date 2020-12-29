@@ -640,19 +640,13 @@ bool Save_Misc_Values(FileClass& file);
 bool Get_Savefile_Info(int id, char* buf, unsigned* scenp, HousesType* housep);
 bool Load_Game(int id);
 bool Load_Game(const char* file_name);
-// bool Read_Object (void *ptr, int base_size, int class_size, FileClass & file, void * vtable);  // Original
-// Read_Object prototype. ST - 9/17/2019 12:50PM
-bool Read_Object(void* ptr, int class_size, FileClass& file, bool has_vtable);
 bool Save_Game(int id, char* descr);
 bool Save_Game(const char* file_name, const char* descr);
-bool Write_Object(void* ptr, int class_size, FileClass& file);
 TARGET TechnoType_To_Target(TechnoTypeClass const* ptr);
 TechnoTypeClass const* Target_To_TechnoType(TARGET target);
-void* Get_VTable(void* ptr, int base_size);
 void Code_All_Pointers(void);
 void Decode_All_Pointers(void);
 void Dump(void);
-void Set_VTable(void* ptr, int base_size, void* vtable);
 
 /*
 ** SCENARIO.CPP
