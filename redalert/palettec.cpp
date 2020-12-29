@@ -369,7 +369,9 @@ void PaletteClass::Set(int time, void (*callback)(void)) const
     Set_Palette((void*)&Palette[0]);
 
     /*
-    ** Ensure the screen is updated.
+    ** Ensure the screen is updated if we had a timer fade.
     */
-    Frame_Limiter();
+    if (timer) {
+        Frame_Limiter();
+    }
 }
