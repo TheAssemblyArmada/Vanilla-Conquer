@@ -87,11 +87,12 @@ bool Find_File_Data_Posix::FindFirst(const char* fname)
         strncat(FullName, fname, (fdir - fname));
         strcat(FullName, "/");
         FileFilter = fdir + 1;
+        Directory = opendir(FullName);
     } else {
         FileFilter = fname;
+        Directory = opendir(".");
     }
 
-    Directory = opendir(FullName);
     if (Directory == nullptr) {
         return false;
     }
