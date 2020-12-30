@@ -1576,7 +1576,7 @@ void HouseClass::AI(void)
     **
     */
 #ifdef USE_RA_AI
-    if (GameToPlay == GAME_GLYPHX_MULTIPLAYER && IsHuman == false) {
+    if (GameToPlay != GAME_NORMAL && IsHuman == false) {
 
         /*
         ** Perform any expert system AI processing.
