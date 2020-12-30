@@ -26,6 +26,7 @@ private:
     struct dirent* DirEntry;
     const char* FileFilter;
     char FullName[PATH_MAX];
+    char DirName[PATH_MAX];
 
     bool FindNextWithFilter();
 };
@@ -69,6 +70,7 @@ bool Find_File_Data_Posix::FindNextWithFilter()
             return false;
         }
         if (fnmatch(FileFilter, DirEntry->d_name, FNM_PATHNAME | FNM_CASEFOLD) == 0) {
+            strcpy(FullName, DirName);
             strcat(FullName, DirEntry->d_name);
             break;
         }
@@ -80,18 +82,19 @@ bool Find_File_Data_Posix::FindFirst(const char* fname)
 {
     Close();
     FullName[0] = '\0';
+    DirName[0] = '\0';
 
     // split directory and file from the path
     char* fdir = strrchr((char*)fname, '/');
     if (fdir != nullptr) {
-        strncat(FullName, fname, (fdir - fname));
-        strcat(FullName, "/");
+        strncat(DirName, fname, (fdir - fname + 1));
         FileFilter = fdir + 1;
+        Directory = opendir(DirName);
     } else {
         FileFilter = fname;
+        Directory = opendir(".");
     }
 
-    Directory = opendir(FullName);
     if (Directory == nullptr) {
         return false;
     }
