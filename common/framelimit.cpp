@@ -1,5 +1,6 @@
 #include "framelimit.h"
 #include "wwmouse.h"
+#include "settings.h"
 #include <chrono>
 
 #ifdef _WIN32
@@ -16,20 +17,20 @@ void Video_Render_Frame();
 
 void Frame_Limiter()
 {
-    // Crude limiter to limit refresh loops to occuring 120 times a second.
-    constexpr int64_t _ms_per_tick = 1000 / 120;
-    static auto _last = std::chrono::steady_clock::now();
-    auto now = std::chrono::steady_clock::now();
-    auto diff = now - _last;
-    _last = now;
-
+    static auto frame_start = std::chrono::steady_clock::now();
 #ifdef SDL2_BUILD
     WWMouse->Process_Mouse();
     Video_Render_Frame();
 #endif
 
-    auto remaining = _ms_per_tick - std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
-    if (remaining > 0) {
-        ms_sleep(unsigned(remaining));
+    if (Settings.Video.FrameLimit > 0) {
+        auto frame_end = std::chrono::steady_clock::now();
+        int64_t _ms_per_tick = 1000 / Settings.Video.FrameLimit;
+        auto remaining =
+            _ms_per_tick - std::chrono::duration_cast<std::chrono::milliseconds>(frame_end - frame_start).count();
+        if (remaining > 0) {
+            ms_sleep(unsigned(remaining));
+        }
+        frame_start = frame_end;
     }
 }

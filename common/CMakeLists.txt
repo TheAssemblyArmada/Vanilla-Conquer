@@ -68,6 +68,7 @@ set(COMMON_SRC
     readline.cpp
     rect.cpp
     rndstraw.cpp
+    settings.cpp
     sha.cpp
     shape.cpp
     shapipe.cpp

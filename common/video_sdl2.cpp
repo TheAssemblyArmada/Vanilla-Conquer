@@ -42,6 +42,7 @@
 #include "video.h"
 #include "wwkeyboard.h"
 #include "wwmouse.h"
+#include "settings.h"
 
 #include <SDL.h>
 
@@ -50,6 +51,7 @@ extern WWKeyboardClass* Keyboard;
 SDL_Window* window;
 SDL_Renderer* renderer;
 static SDL_Palette* palette;
+static Uint32 pixel_format;
 
 class SurfaceMonitorClassDummy : public SurfaceMonitorClass
 {
@@ -92,8 +94,38 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     SDL_ShowCursor(SDL_DISABLE);
 
-    window = SDL_CreateWindow("Vanilla Conquer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, 0);
+    int win_w = w;
+    int win_h = h;
+    int win_flags = 0;
+
+    if (!Settings.Video.Windowed) {
+        /*
+        ** Native fullscreen if no proper width and height set.
+        */
+        if (Settings.Video.Width < w || Settings.Video.Height < h) {
+            win_w = 0;
+            win_h = 0;
+            win_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+        } else {
+            win_w = Settings.Video.Width;
+            win_h = Settings.Video.Height;
+            win_flags |= SDL_WINDOW_FULLSCREEN;
+        }
+    } else if (Settings.Video.WindowWidth > w && Settings.Video.WindowHeight > h) {
+        win_w = Settings.Video.WindowWidth;
+        win_h = Settings.Video.WindowHeight;
+    }
+
+    window =
+        SDL_CreateWindow("Vanilla Conquer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, win_w, win_h, win_flags);
     if (window == nullptr) {
+        return false;
+    }
+
+    pixel_format = SDL_GetWindowPixelFormat(window);
+    if (pixel_format == SDL_PIXELFORMAT_UNKNOWN || SDL_BITSPERPIXEL(pixel_format) < 16) {
+        SDL_DestroyWindow(window);
+        window = nullptr;
         return false;
     }
 
@@ -109,7 +141,10 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
 
 bool Is_Video_Fullscreen()
 {
-    return false;
+    /*
+    ** Until we can toggle, just return the setting.
+    */
+    return !Settings.Video.Windowed;
 }
 
 /***********************************************************************************************
@@ -277,7 +312,7 @@ public:
         SDL_SetSurfacePalette(surface, palette);
 
         if (flags & GBC_VISIBLE) {
-            windowSurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, SDL_PIXELFORMAT_ARGB8888);
+            windowSurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(pixel_format), pixel_format);
             texture = SDL_CreateTexture(renderer, windowSurface->format->format, SDL_TEXTUREACCESS_STREAMING, w, h);
             frontSurface = this;
         }

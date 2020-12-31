@@ -941,8 +941,6 @@ extern bool GameInFocus;
 
 extern int ScreenWidth;
 extern int ScreenHeight;
-extern int OutputWidth;
-extern int OutputHeight;
 extern void ModeX_Blit(GraphicBufferClass* source);
 extern void Colour_Debug(int call_number);
 

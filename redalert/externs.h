@@ -135,8 +135,6 @@ extern GraphicViewPortClass SeenBuff;
 extern GraphicBufferClass SysMemPage;
 extern int ScreenWidth;
 extern int ScreenHeight;
-extern int OutputWidth;
-extern int OutputHeight;
 extern GraphicBufferClass ModeXBuff;
 
 /*
