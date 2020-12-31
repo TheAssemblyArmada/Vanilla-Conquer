@@ -36,6 +36,7 @@
 #define INI_H
 
 #include <stdlib.h>
+#include <string.h>
 #include "listnode.h"
 #include "pk.h"
 #include "fixed.h"

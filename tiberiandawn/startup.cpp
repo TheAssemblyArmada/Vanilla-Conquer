@@ -36,6 +36,7 @@
 
 #include "function.h"
 #include "common/ini.h"
+#include "settings.h"
 
 bool Read_Private_Config_Struct(FileClass& file, NewConfigType* config);
 void Print_Error_End_Exit(char* string);
@@ -301,10 +302,6 @@ int main(int argc, char** argv)
 #ifdef REMASTER_BUILD
             video_success = true;
 #else
-
-#ifdef SDL2_BUILD
-            video_success = static_cast<bool>(Set_Video_Mode(OutputWidth, OutputHeight, 8));
-#else
             if (ScreenHeight == 400) {
                 if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
                     video_success = true;
@@ -319,8 +316,6 @@ int main(int argc, char** argv)
                     video_success = true;
                 }
             }
-#endif // SDL2_BUILD
-
 #endif
 
             if (!video_success) {
@@ -484,6 +479,12 @@ int main(int argc, char** argv)
                 return (EXIT_SUCCESS);
             }
 
+            /*
+            ** Save settings if they were changed during gameplay.
+            */
+            Settings.Save(ini);
+            ini.Save(cfile);
+
             VisiblePage.Clear();
             HiddenPage.Clear();
 
@@ -492,7 +493,9 @@ int main(int argc, char** argv)
             CCDebugString("C&C95 - About to exit.\n");
             ReadyToQuit = 1;
 
-#if defined(_WIN32) && !defined(SDL2_BUILD)
+#if defined(SDL2_BUILD)
+            Reset_Video_Mode();
+#elif defined(_WIN32)
             PostMessageA(MainWindow, WM_DESTROY, 0, 0);
             do {
                 Keyboard->Check();
@@ -630,13 +633,16 @@ void Read_Setup_Options(RawFileClass* config_file)
         ini.Load(*config_file);
 
         /*
+        ** Read in global settings
+        */
+        Settings.Load(ini);
+
+        /*
         ** Read in the boolean options
         */
         VideoBackBufferAllowed = ini.Get_Bool("Options", "VideoBackBuffer", true);
         AllowHardwareBlitFills = ini.Get_Bool("Options", "HardwareFills", true);
         ScreenHeight = ini.Get_Bool("Options", "Resolution", false) ? GBUFF_INIT_ALTHEIGHT : GBUFF_INIT_HEIGHT;
-        OutputWidth = ini.Get_Int("Options", "OutputWidth", ScreenWidth);
-        OutputHeight = ini.Get_Int("Options", "OutputHeight", ScreenHeight);
 
         /*
         ** See if an alternative socket number has been specified
