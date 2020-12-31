@@ -32,6 +32,7 @@
 
 #include "wwmouse.h"
 #include "lcw.h"
+#include "settings.h"
 #include <string.h>
 #ifdef SDL2_BUILD
 #include <SDL.h>
@@ -217,8 +218,7 @@ void WWMouseClass::Clear_Cursor_Clip(void)
 
 void WWMouseClass::Process_Mouse(void)
 {
-    // ST - 1/3/2019 10:50AM
-#if !defined(REMASTER_BUILD)
+#if !defined(REMASTER_BUILD) && !defined(SDL2_BUILD)
     int x, y;
 
     //
@@ -342,7 +342,7 @@ void* WWMouseClass::Set_Cursor(int xhotspot, int yhotspot, void* cursor)
 void WWMouseClass::Low_Hide_Mouse()
 {
 // ST - 1/3/2019 10:50AM
-#ifndef REMASTER_BUILD
+#if !defined(REMASTER_BUILD) && !defined(SDL2_BUILD)
     if (!State) {
         if (MouseBuffX != -1 || MouseBuffY != -1) {
             if (Screen->Lock()) {
@@ -376,7 +376,7 @@ void WWMouseClass::Low_Show_Mouse(int x, int y)
     State--;
 
 // ST - 1/3/2019 10:50AM
-#ifndef REMASTER_BUILD
+#if !defined(REMASTER_BUILD) && !defined(SDL2_BUILD)
 
     //
     //	If the mouse is completely visible then draw it at its current
@@ -504,7 +504,7 @@ void WWMouseClass::Conditional_Show_Mouse(void)
 
 void WWMouseClass::Draw_Mouse(GraphicViewPortClass* scr)
 {
-#if defined(REMASTER_BUILD)
+#if defined(REMASTER_BUILD) || defined(SDL2_BUILD)
     scr;
     return;
 // ST - 1/3/2019 10:50AM
@@ -565,7 +565,7 @@ void WWMouseClass::Draw_Mouse(GraphicViewPortClass* scr)
 
 void WWMouseClass::Erase_Mouse(GraphicViewPortClass* scr, int forced)
 {
-#if defined(REMASTER_BUILD)
+#if defined(REMASTER_BUILD) || defined(SDL2_BUILD)
     // ST - 1/3/2019 10:50AM
     scr;
     forced;
@@ -913,6 +913,10 @@ void* WWMouseClass::Set_Mouse_Cursor(int hotspotx, int hotspoty, Cursor* cursor)
 
     result = PrevCursor;
     PrevCursor = cursor;
+
+#ifdef SDL2_BUILD
+    Set_Video_Cursor(MouseCursor, CursorWidth, CursorHeight, MouseXHot, MouseYHot);
+#endif
 
     return result;
 }

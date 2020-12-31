@@ -19,7 +19,6 @@ void Frame_Limiter()
 {
     static auto frame_start = std::chrono::steady_clock::now();
 #ifdef SDL2_BUILD
-    WWMouse->Process_Mouse();
     Video_Render_Frame();
 #endif
 

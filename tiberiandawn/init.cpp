@@ -230,7 +230,7 @@ bool Init_Game(int, char*[])
     ** Since there is no mouse shape currently available we need'
     ** to set one of our own.
     */
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SDL2_BUILD)
     ShowCursor(FALSE);
 #endif
     if (MouseInstalled) {
