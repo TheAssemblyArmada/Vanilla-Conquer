@@ -19,6 +19,7 @@ public:
         int Width;
         int Height;
         int FrameLimit;
+        bool HardwareCursor;
     } Video;
 };
 

@@ -60,6 +60,11 @@ unsigned Get_Free_Video_Memory();
 void Wait_Blit();
 
 /*
+** Set desired cursor image in game palette.
+*/
+void Set_Video_Cursor(void* cursor, int w, int h, int hotx, int hoty);
+
+/*
  *  Flags returned by Get_Video_Hardware_Capabilities
  */
 /* Hardware blits supported? */

@@ -53,6 +53,20 @@ SDL_Renderer* renderer;
 static SDL_Palette* palette;
 static Uint32 pixel_format;
 
+static struct
+{
+    float ScaleX{1.0f};
+    float ScaleY{1.0f};
+    void* Raw;
+    int W;
+    int H;
+    int HotX;
+    int HotY;
+    SDL_Cursor* Pending;
+    SDL_Cursor* Current;
+    SDL_Surface* Surface;
+} hwcursor;
+
 class SurfaceMonitorClassDummy : public SurfaceMonitorClass
 {
 
@@ -136,6 +150,10 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
         return false;
     }
 
+    SDL_GetRendererOutputSize(renderer, &win_w, &win_h);
+    hwcursor.ScaleX = win_w / (float)w;
+    hwcursor.ScaleY = win_h / (float)h;
+
     return true;
 }
 
@@ -161,6 +179,21 @@ bool Is_Video_Fullscreen()
  *=============================================================================================*/
 void Reset_Video_Mode(void)
 {
+    if (hwcursor.Pending) {
+        SDL_FreeCursor(hwcursor.Pending);
+        hwcursor.Pending = nullptr;
+    }
+
+    if (hwcursor.Current) {
+        SDL_FreeCursor(hwcursor.Current);
+        hwcursor.Current = nullptr;
+    }
+
+    if (hwcursor.Surface) {
+        SDL_FreeSurface(hwcursor.Surface);
+        hwcursor.Surface = nullptr;
+    }
+
     SDL_DestroyRenderer(renderer);
     renderer = nullptr;
 
@@ -169,6 +202,83 @@ void Reset_Video_Mode(void)
 
     SDL_DestroyWindow(window);
     window = nullptr;
+}
+
+static void Update_HWCursor()
+{
+    float scale_x = 1.0f;
+    float scale_y = 1.0f;
+    int scaled_w = hwcursor.W;
+    int scaled_h = hwcursor.H;
+
+    /*
+    ** Pre-scale cursor *only* if we are not emulating a hw cursor.
+    */
+    if (Settings.Video.HardwareCursor) {
+        scale_x = hwcursor.ScaleX;
+        scale_y = hwcursor.ScaleY;
+        scaled_w *= scale_x;
+        scaled_h *= scale_y;
+    }
+
+    /*
+    ** Allocate or reallocate surface if it has the wrong size.
+    */
+    if (hwcursor.Surface == nullptr || hwcursor.Surface->w != scaled_w || hwcursor.Surface->h != scaled_h) {
+        if (hwcursor.Surface) {
+            SDL_FreeSurface(hwcursor.Surface);
+        }
+
+        /*
+        ** Real HW cursor needs to be scaled up. Emulated can use original cursor data.
+        */
+        if (Settings.Video.HardwareCursor) {
+            hwcursor.Surface = SDL_CreateRGBSurfaceWithFormat(0, scaled_w, scaled_h, 8, SDL_PIXELFORMAT_INDEX8);
+        } else {
+            hwcursor.Surface =
+                SDL_CreateRGBSurfaceFrom(hwcursor.Raw, hwcursor.W, hwcursor.H, 8, hwcursor.W, 0, 0, 0, 0);
+        }
+
+        SDL_SetSurfacePalette(hwcursor.Surface, palette);
+        SDL_SetColorKey(hwcursor.Surface, SDL_TRUE, 0);
+    }
+
+    /*
+    ** Prepare HW cursor by scaling up and creating the SDL version.
+    */
+    if (Settings.Video.HardwareCursor) {
+        uint8_t* src = (uint8_t*)hwcursor.Raw;
+        uint8_t* dst = (uint8_t*)hwcursor.Surface->pixels;
+        int src_pitch = hwcursor.W;
+        int dst_pitch = hwcursor.Surface->pitch;
+
+        for (int y = 0; y < scaled_h; y++) {
+            for (int x = 0; x < scaled_w; x++) {
+                dst[dst_pitch * y + x] = src[src_pitch * (int)(y / scale_y) + (int)(x / scale_x)];
+            }
+        }
+
+        if (hwcursor.Pending) {
+            SDL_FreeCursor(hwcursor.Pending);
+        }
+
+        /*
+        ** Queue new cursor to be set during frame flip.
+        */
+        hwcursor.Pending =
+            SDL_CreateColorCursor(hwcursor.Surface, hwcursor.HotX * hwcursor.ScaleX, hwcursor.HotY * hwcursor.ScaleY);
+    }
+}
+
+void Set_Video_Cursor(void* cursor, int w, int h, int hotx, int hoty)
+{
+    hwcursor.Raw = cursor;
+    hwcursor.W = w;
+    hwcursor.H = h;
+    hwcursor.HotX = hotx;
+    hwcursor.HotY = hoty;
+
+    Update_HWCursor();
 }
 
 /***********************************************************************************************
@@ -251,6 +361,11 @@ void Set_DD_Palette(void* rpalette)
     }
 
     SDL_SetPaletteColors(palette, colors, 0, 256);
+
+    /*
+    ** Cursor needs to be updated when palette changes.
+    */
+    Update_HWCursor();
 }
 
 /***********************************************************************************************
@@ -384,6 +499,43 @@ public:
         int pitch;
 
         SDL_BlitSurface(surface, NULL, windowSurface, NULL);
+
+        if (Settings.Video.HardwareCursor) {
+            /*
+            ** Swap cursor before a frame is drawn. This reduces flickering when it's done only once per frame.
+            */
+            if (hwcursor.Pending) {
+                SDL_SetCursor(hwcursor.Pending);
+
+                if (hwcursor.Current) {
+                    SDL_FreeCursor(hwcursor.Current);
+                }
+
+                hwcursor.Current = hwcursor.Pending;
+                hwcursor.Pending = nullptr;
+            }
+
+            /*
+            ** Update hardware cursor visibility.
+            */
+            SDL_ShowCursor(!Get_Mouse_State());
+        } else if (!Get_Mouse_State() && hwcursor.Surface != nullptr) {
+            /*
+            ** Draw software emulated cursor.
+            */
+            int x, y;
+            SDL_Rect dst;
+
+            SDL_GetMouseState(&x, &y);
+
+            dst.x = (x / hwcursor.ScaleX) - (hwcursor.HotX);
+            dst.y = (y / hwcursor.ScaleY) - (hwcursor.HotY);
+            dst.w = hwcursor.Surface->w;
+            dst.w = hwcursor.Surface->h;
+
+            SDL_BlitSurface(hwcursor.Surface, nullptr, windowSurface, &dst);
+        }
+
         SDL_UpdateTexture(texture, NULL, windowSurface->pixels, windowSurface->pitch);
         SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
