@@ -42,84 +42,11 @@
 
 //#pragma warn -hid
 
-#ifdef NEVER
-Map(screen) class heirarchy.
-
-    MapeditClass(most derived class)-- scenario editor
-        ³ MouseClass-- handles mouse animation and display control
-        ³ ScrollClass-- map scroll handler
-        ³ HelpClass-- pop
-    - up help text handler
-        ³ TabClass-- file folder tab screen mode control dispatcher
-        ³ SidebarClass-- displays and controls construction list sidebar
-        ³ PowerClass-- display power production
-          / consumption bargraph
-        ³ RadarClass-- displays and controls radar map
-        ³ DisplayClass-- general tactical map display handler
-        ³ MapClass-- general tactical map data handler
-        ³ GScreenClass(pure virtual base class)-- generic screen control
-
-          AbstractClass
-                                  ³
-                                  ³
-                                  ³
-                                  ³ ObjectClass
-                                  ³
-       ÚÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄ¿
-          AnimClass  ³ TemplateClass    ³        ÃÄ FuseClass     ³ TerrainClass
-              ³                   ³        ÃÄ FlyClass      ³
-              ³                   ³ BulletClass            ³ OverlayClass MissionClass SmudgeClass
-                                  ³ RadioClass
-                                  ³
-                                  ÃÄ CrewClass
-                                  ÃÄ FlasherClass
-                                  ÃÄ StageClass
-                                  ÃÄ CargoClass TechnoClass
-                                  ³
-                       ÚÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿ FootClass BuildingClass
-                       ³
-         ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÁÂÄÄÄÄÄÄÄÄÄÄÄÄÄ¿ DriveClass InfantryClass         ÃÄ FlyClass
-         ³ AircraftClass
-       ÚÄÁÄÄÄÄÄÄÄÄÄ¿
-       ³           ³
-       ³ VesselClass
-       ³ UnitClass
-
-          AbstractTypeClass
-                                    ³ ObjectTypeClass
-                                    ³
-             ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-             ³                      ³            ³                 ³ TechnoTypeClass              ³            ³                 ³
-             ³ BulletTypeClass    ³                 ³
-             ³ TemplateTypeClass         ³
-    ÚÄÄÄÄÄÄÄÄÁÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄ¿ TerrainTypeClass
-    ³              ³           ³              ³        ³ UnitTypeClass      ³ BuildingTypeClass      ³ VesselTypeClass
-                   ³                          ³ AircraftTypeClass InfantryTypeClass
-#endif
-
 #ifdef _WIN32
 #define MONOC_H
 #endif
 
 #define _MAX_NAME _MAX_FNAME
-
-/**********************************************************************
-**	This class is solely used as a parameter to a constructor that does
-**	absolutely no initialization to the object being constructed. By using
-**	this method, it is possible to load and save data directly from a
-**	class that has virtual functions. The construction process automatically
-**	takes care of initializing the virtual function table pointer and the
-**	rest of the constructor doesn't initialize any data members. After loading
-**	into a class object, simply perform an in-place new operation.
-*/
-#ifndef NOINITCLASS
-#define NOINITCLASS
-          struct NoInitClass
-{
-public:
-    void operator()(void) const {};
-};
-#endif
 
 #define WWMEM_H
 

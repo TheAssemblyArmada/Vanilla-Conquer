@@ -39,15 +39,6 @@
  *   PaletteClass::operator == -- Equality operator for palette objects.                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef NOINITCLASS
-#define NOINITCLASS
-struct NoInitClass
-{
-public:
-    void operator()(void) const {};
-};
-#endif
-
 void Set_Palette(void* palette);
 
 #include "function.h"
