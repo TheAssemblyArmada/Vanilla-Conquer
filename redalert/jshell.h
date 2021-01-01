@@ -134,24 +134,6 @@ inline ShapeFlags_Type operator~(ShapeFlags_Type);
 
 #include "common/miscasm.h"
 
-/*
-**	Timer objects that fetch the appropriate timer value according to
-**	the type of timer they are.
-*/
-extern long Frame;
-class FrameTimerClass
-{
-public:
-    long operator()(void) const
-    {
-        return (Frame);
-    };
-    operator long(void) const
-    {
-        return (Frame);
-    };
-};
-
 template <class T> void Bubble_Sort(T* array, int count)
 {
     if (array != NULL && count > 1) {
