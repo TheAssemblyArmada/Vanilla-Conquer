@@ -664,4 +664,72 @@ template <class T> inline bool CDTimerClass<T>::Is_Active(void) const
     return (Started != 0xFFFFFFFFU);
 }
 
+/*
+**	This timer class is based around an external tick system. As such, it is inherently
+**	in sync with any connected system (through network or modem) that also keeps the external
+**	tick system in sync. The game frame number is a good sync value.
+*/
+class TCountDownTimerClass
+{
+public:
+    // Constructor.  Timers set before low level init has been done will not
+    // be able to be 'Started' or 'on' until timer system is in place.
+    TCountDownTimerClass(long set = 0)
+    {
+        Set(set);
+    };
+
+    TCountDownTimerClass(NoInitClass const&){};
+
+    // No destructor.
+    ~TCountDownTimerClass(void)
+    {
+    }
+
+    operator long(void) const
+    {
+        return Time();
+    };
+
+    // Public functions
+    void Set(long set)
+    {
+        Started = Frame;
+        DelayTime = set;
+    }; // Set count down value.
+
+    void Clear(void)
+    {
+        Started = -1;
+        DelayTime = 0;
+    };
+    long Get_Start(void) const
+    {
+        return (Started);
+    };
+    long Get_Delay(void) const
+    {
+        return (DelayTime);
+    };
+    bool Active(void) const
+    {
+        return (Started != -1);
+    };
+    int Expired(void) const
+    {
+        return (Time() == 0);
+    };
+    long Time(void) const
+    {
+        long remain = DelayTime - (Frame - Started);
+        if (remain < 0)
+            remain = 0;
+        return (remain);
+    }; // Fetch current count down value.
+
+protected:
+    long Started;   // Initial frame time start.
+    long DelayTime; // Ticks remaining before countdown timer expires.
+};
+
 #endif

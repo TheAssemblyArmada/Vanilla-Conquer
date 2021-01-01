@@ -132,6 +132,25 @@ public:
     operator long() const;
 };
 
+/*
+**	Timer objects that fetch the appropriate timer value according to
+**	the type of timer they are.
+*/
+extern long Frame;
+class FrameTimerClass
+{
+public:
+    long operator()(void) const
+    {
+        return (Frame);
+    }
+
+    operator long(void) const
+    {
+        return (Frame);
+    }
+};
+
 class WinTimerClass
 {
 public:
