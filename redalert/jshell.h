@@ -37,6 +37,8 @@
 
 #include <assert.h>
 
+struct NoInitClass;
+
 /*
 **	These templates allow enumeration types to have simple bitwise
 **	arithmatic performed. The operators must be instatiated for the

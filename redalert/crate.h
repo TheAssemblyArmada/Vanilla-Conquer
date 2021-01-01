@@ -37,6 +37,7 @@
 
 #include "ftimer.h"
 #include "jshell.h"
+#include "noinit.h"
 
 /*
 **	The "bool" integral type was defined by the C++ comittee in
