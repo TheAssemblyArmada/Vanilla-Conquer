@@ -585,13 +585,14 @@ void RadarClass::Draw_It(bool forced)
                 Set_Logic_Page(oldpage);
             }
 
-        } else {
+        } else if (Map.IsSidebarActive && (forced) && !Debug_Map) {
 
             /*
             **	If the radar is not active, then only draw the cover plate if forced to do so.
             */
             int val = (DoesRadarExist) ? MAX_RADAR_FRAMES : 0;
             CC_Draw_Shape(RadarAnim, val, RadX, RadY + (1 * RESFACTOR), WINDOW_MAIN, SHAPE_NORMAL);
+
             FullRedraw = false;
             IsToRedraw = false;
 
