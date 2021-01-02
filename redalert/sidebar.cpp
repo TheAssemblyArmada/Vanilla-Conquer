@@ -240,7 +240,7 @@ void SidebarClass::One_Time(void)
 	//Background.Y = ScreenHeight - 246;
 
     WindowList[WINDOW_SIDEBAR][WINDOWX] = ScreenWidth - 144;
-    WindowList[WINDOW_SIDEBAR][WINDOWY] = (SIDE_Y + 1 + TOP_HEIGHT) * RESFACTOR;
+    WindowList[WINDOW_SIDEBAR][WINDOWY] = (SIDE_Y + TOP_HEIGHT) * RESFACTOR;
     WindowList[WINDOW_SIDEBAR][WINDOWWIDTH] = (SIDE_WIDTH)*RESFACTOR;
     WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = (StripClass::MAX_VISIBLE * StripClass::OBJECT_HEIGHT) * RESFACTOR;
     //	WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = (StripClass::MAX_VISIBLE * StripClass::OBJECT_HEIGHT-1) * RESFACTOR;
@@ -1697,7 +1697,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
         ** New sidebar needs to be drawn not filled
         */
         if (BuildableCount < MAX_VISIBLE) {
-            CC_Draw_Shape(LogoShapes, ID, X + (2 * RESFACTOR), Y, WINDOW_MAIN, SHAPE_WIN_REL | SHAPE_NORMAL, 0);
+            CC_Draw_Shape(LogoShapes, ID, X + (2 * RESFACTOR), Y - WindowList[WINDOW_SIDEBAR][WINDOWY], WINDOW_SIDEBAR, SHAPE_WIN_REL | SHAPE_NORMAL, 0);
         }
 
 		for (int i = 0; i < MAX_VISIBLE + (IsScrolling ? 1 : 0); i++) {
