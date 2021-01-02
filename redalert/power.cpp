@@ -135,9 +135,9 @@ void PowerClass::One_Time(void)
     PowerButton.X = ScreenWidth - 160;
     PowerButton.Y = POWER_Y * RESFACTOR;
     PowerButton.Width = (POWER_WIDTH * RESFACTOR) - 1;
-    PowerButton.Height = (((SidebarClass::StripClass::MAX_VISIBLE * int(SidebarClass::StripClass::OBJECT_HEIGHT))) * RESFACTOR) + 128;
+    PowerButton.Height = (((SidebarClass::StripClass::MaxVisibleCameoIcons * int(SidebarClass::StripClass::OBJECT_HEIGHT))) * RESFACTOR) + 128;
 
-	if (SidebarClass::StripClass::MAX_VISIBLE > 4) {
+	if (SidebarClass::StripClass::MaxVisibleCameoIcons > 4) {
 		PowerBarHeight = (ScreenHeight / 2) - 90;
 	}
 	else {
@@ -208,7 +208,7 @@ void PowerClass::Draw_It(bool complete)
 				**	of power demands.
 				*/
 
-				int drawmaxheight = (((SidebarClass::StripClass::MAX_VISIBLE * int(SidebarClass::StripClass::OBJECT_HEIGHT))) * RESFACTOR) + 96;
+				int drawmaxheight = (((SidebarClass::StripClass::MaxVisibleCameoIcons * int(SidebarClass::StripClass::OBJECT_HEIGHT))) * RESFACTOR) + 96;
 				int currentheight = 288;
 				while (currentheight <= drawmaxheight)
 				{
@@ -234,7 +234,7 @@ void PowerClass::Draw_It(bool complete)
                 /*
                 **	Draw the power output graphic on top of the power bar framework.
                 */
-				int bottom = (((SidebarClass::StripClass::MAX_VISIBLE * int(SidebarClass::StripClass::OBJECT_HEIGHT)) + 1) * RESFACTOR) + 157;
+				int bottom = (((SidebarClass::StripClass::MaxVisibleCameoIcons * int(SidebarClass::StripClass::OBJECT_HEIGHT)) + 1) * RESFACTOR) + 157;
                 if (power_height) {
                     int color1 = 3;
                     int color2 = 4;
@@ -256,7 +256,7 @@ void PowerClass::Draw_It(bool complete)
                     ** ST - 5/2/96 11:23AM
                     */
                     power_height = (power_height * (76 * RESFACTOR + 1)) / (53 * RESFACTOR + 1);
-					bottom = (((SidebarClass::StripClass::MAX_VISIBLE * int(SidebarClass::StripClass::OBJECT_HEIGHT)) + 1) * RESFACTOR) + 157;
+					bottom = (((SidebarClass::StripClass::MaxVisibleCameoIcons * int(SidebarClass::StripClass::OBJECT_HEIGHT)) + 1) * RESFACTOR) + 157;
 
                     LogicPage->Fill_Rect(ScreenWidth - 150, bottom - power_height, ScreenWidth - 149, bottom, color2);
                     LogicPage->Fill_Rect(ScreenWidth - 148, bottom - power_height, ScreenWidth - 147, bottom, color1);

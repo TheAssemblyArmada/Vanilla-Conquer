@@ -115,9 +115,9 @@ ShapeButtonClass SidebarClass::StripClass::UpButton[COLUMNS];
 ShapeButtonClass SidebarClass::StripClass::DownButton[COLUMNS];
 SidebarClass::StripClass::SelectClass SidebarClass::StripClass::SelectButton[COLUMNS][128];
 
-int SidebarClass::StripClass::MAX_VISIBLE; // Number of object slots visible at any one time.
-int SidebarClass::StripClass::UP_Y_OFFSET;
-int SidebarClass::StripClass::DOWN_Y_OFFSET; // BGint(MAX_VISIBLE)*int(OBJECT_HEIGHT)+1,
+int SidebarClass::StripClass::MaxVisibleCameoIcons; // Number of object slots visible at any one time.
+int SidebarClass::StripClass::UpButtonYOffset;
+int SidebarClass::StripClass::DownButtonYOffset; // BGint(MAX_VISIBLE)*int(OBJECT_HEIGHT)+1,
 
 /*
 ** Shape data pointers
@@ -220,10 +220,10 @@ void SidebarClass::One_Time(void)
 	// Do a quick check if we can load one of the extended sidebar graphics, if not then we set max visible cameo items to 4
 	Strip2Shape = (void*)MFCD::Retrieve("STRIP2US.SHP");
 	if (Strip2Shape) {
-		StripClass::MAX_VISIBLE = (ScreenHeight - ((COLUMN_ONE_Y + StripClass::SBUTTON_HEIGHT) * RESFACTOR)) / (StripClass::OBJECT_HEIGHT * RESFACTOR);
+		StripClass::MaxVisibleCameoIcons = (ScreenHeight - ((COLUMN_ONE_Y + StripClass::SBUTTON_HEIGHT) * RESFACTOR)) / (StripClass::OBJECT_HEIGHT * RESFACTOR);
 	}
 	else {
-		StripClass::MAX_VISIBLE = 4;
+		StripClass::MaxVisibleCameoIcons = 4;
 	}
 
     PowerClass::One_Time();
@@ -233,8 +233,8 @@ void SidebarClass::One_Time(void)
     **	code so that as the sidebar buildable buttons scroll, they get properly
     **	clipped at the top and bottom edges.
     */
-	StripClass::UP_Y_OFFSET = StripClass::MAX_VISIBLE * int(StripClass::OBJECT_HEIGHT) + 1;
-	StripClass::DOWN_Y_OFFSET = StripClass::UP_Y_OFFSET;
+	StripClass::UpButtonYOffset = StripClass::MaxVisibleCameoIcons * int(StripClass::OBJECT_HEIGHT) + 1;
+	StripClass::DownButtonYOffset = StripClass::UpButtonYOffset;
 
 	Background.X = ScreenWidth - 144;
 	//Background.Y = ScreenHeight - 246;
@@ -242,7 +242,7 @@ void SidebarClass::One_Time(void)
     WindowList[WINDOW_SIDEBAR][WINDOWX] = ScreenWidth - 144;
     WindowList[WINDOW_SIDEBAR][WINDOWY] = (SIDE_Y + TOP_HEIGHT) * RESFACTOR;
     WindowList[WINDOW_SIDEBAR][WINDOWWIDTH] = (SIDE_WIDTH)*RESFACTOR;
-    WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = (StripClass::MAX_VISIBLE * StripClass::OBJECT_HEIGHT) * RESFACTOR;
+    WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = (StripClass::MaxVisibleCameoIcons * StripClass::OBJECT_HEIGHT) * RESFACTOR;
     //	WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = (StripClass::MAX_VISIBLE * StripClass::OBJECT_HEIGHT-1) * RESFACTOR;
 
     /*
@@ -781,7 +781,7 @@ void SidebarClass::Draw_It(bool complete)
             **	Draw the outline box around the sidebar buttons.
             */
             int shape = complete ? 0 : 1;
-			int bottomshapeY = (((SidebarClass::StripClass::MAX_VISIBLE * int(SidebarClass::StripClass::OBJECT_HEIGHT))) * RESFACTOR) + 84;
+			int bottomshapeY = (((SidebarClass::StripClass::MaxVisibleCameoIcons * int(SidebarClass::StripClass::OBJECT_HEIGHT))) * RESFACTOR) + 84;
             /*
             ** The sidebar shape is too big in 640x400 so it needs to be drawn in three chunks.
             */
@@ -791,10 +791,10 @@ void SidebarClass::Draw_It(bool complete)
             CC_Draw_Shape(
                 SidebarBottomShape, shape, ScreenWidth - (80 * RESFACTOR), bottomshapeY, WINDOW_MAIN, SHAPE_WIN_REL); 
 
-			for (int i = 0; i < SidebarClass::StripClass::MAX_VISIBLE; i++) {
+			for (int i = 0; i < SidebarClass::StripClass::MaxVisibleCameoIcons; i++) {
 				int y = Column[0].Y + (i * SidebarClass::StripClass::OBJECT_HEIGHT * RESFACTOR);
 
-				if (SidebarClass::StripClass::MAX_VISIBLE >= 4 && i > 1) {
+				if (SidebarClass::StripClass::MaxVisibleCameoIcons >= 4 && i > 1) {
 					CC_Draw_Shape(Side4Shape,
 						shape,
 						ScreenWidth - (80 * RESFACTOR),
@@ -1233,7 +1233,7 @@ void SidebarClass::StripClass::Init_IO(int id)
     UpButton[ID].IsSticky = true;
     UpButton[ID].ID = BUTTON_UP + id;
     UpButton[ID].X = X + (UP_X_OFFSET * RESFACTOR);
-    UpButton[ID].Y = Y + (UP_Y_OFFSET * RESFACTOR);
+    UpButton[ID].Y = Y + (UpButtonYOffset * RESFACTOR);
 
 #if (FRENCH)
     UpButton[ID].Set_Shape(MFCD::Retrieve("STRIPUP.SHP"));
@@ -1244,7 +1244,7 @@ void SidebarClass::StripClass::Init_IO(int id)
     DownButton[ID].IsSticky = true;
     DownButton[ID].ID = BUTTON_DOWN + id;
     DownButton[ID].X = X + (DOWN_X_OFFSET * RESFACTOR);
-    DownButton[ID].Y = Y + (DOWN_Y_OFFSET * RESFACTOR);
+    DownButton[ID].Y = Y + (DownButtonYOffset * RESFACTOR);
 
     /*
     ** Buttons are in a slightly different position in the new sidebar
@@ -1254,7 +1254,7 @@ void SidebarClass::StripClass::Init_IO(int id)
 
     DownButton[ID].Set_Shape(MFCD::Retrieve("STRIPDN.SHP"));
 
-    for (int index = 0; index < MAX_VISIBLE; index++) {
+    for (int index = 0; index < MaxVisibleCameoIcons; index++) {
         SelectClass& g = SelectButton[ID][index];
         g.ID = BUTTON_SELECT;
         g.X = X;
@@ -1361,7 +1361,7 @@ void SidebarClass::StripClass::Activate(void)
     DownButton[ID].Zap();
     Map.Add_A_Button(DownButton[ID]);
 
-    for (int index = 0; index < MAX_VISIBLE; index++) {
+    for (int index = 0; index < MaxVisibleCameoIcons; index++) {
         SelectButton[ID][index].Zap();
         Map.Add_A_Button(SelectButton[ID][index]);
     }
@@ -1386,7 +1386,7 @@ void SidebarClass::StripClass::Deactivate(void)
 {
     Map.Remove_A_Button(UpButton[ID]);
     Map.Remove_A_Button(DownButton[ID]);
-    for (int index = 0; index < MAX_VISIBLE; index++) {
+    for (int index = 0; index < MaxVisibleCameoIcons; index++) {
         Map.Remove_A_Button(SelectButton[ID][index]);
     }
 }
@@ -1455,7 +1455,7 @@ bool SidebarClass::StripClass::Scroll(bool up)
             return (false);
         Scroller--;
     } else {
-        if (TopIndex + MAX_VISIBLE >= BuildableCount)
+        if (TopIndex + MaxVisibleCameoIcons >= BuildableCount)
             return (false);
         Scroller++;
     }
@@ -1531,7 +1531,7 @@ bool SidebarClass::StripClass::AI(KeyNumType& input, int, int)
     **	logic handler. This might result in up or down scrolling.
     */
     if (!IsScrolling && Scroller) {
-        if (BuildableCount <= MAX_VISIBLE) {
+        if (BuildableCount <= MaxVisibleCameoIcons) {
             Scroller = 0;
         } else {
 
@@ -1552,7 +1552,7 @@ bool SidebarClass::StripClass::AI(KeyNumType& input, int, int)
                 }
 
             } else {
-                if (TopIndex + MAX_VISIBLE >= BuildableCount) {
+                if (TopIndex + MaxVisibleCameoIcons >= BuildableCount) {
                     Scroller = 0;
                 } else {
                     Scroller--;
@@ -1696,11 +1696,11 @@ void SidebarClass::StripClass::Draw_It(bool complete)
         /*
         ** New sidebar needs to be drawn not filled
         */
-        if (BuildableCount < MAX_VISIBLE) {
+        if (BuildableCount < MaxVisibleCameoIcons) {
             CC_Draw_Shape(LogoShapes, ID, X + (2 * RESFACTOR), Y - WindowList[WINDOW_SIDEBAR][WINDOWY], WINDOW_SIDEBAR, SHAPE_WIN_REL | SHAPE_NORMAL, 0);
         }
 
-		for (int i = 0; i < MAX_VISIBLE + (IsScrolling ? 1 : 0); i++) {
+		for (int i = 0; i < MaxVisibleCameoIcons + (IsScrolling ? 1 : 0); i++) {
 			int y = Y + (i * OBJECT_HEIGHT * RESFACTOR);
 
 			/*
@@ -1711,7 +1711,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
 				//				y -= OBJECT_HEIGHT - Slid;
 			}
 
-			if (MAX_VISIBLE >= 4 && i > 1) {
+			if (MaxVisibleCameoIcons >= 4 && i > 1) {
 				CC_Draw_Shape(Strip2Shape,
 					ID,
 					X - (WindowList[WINDOW_SIDEBAR][WINDOWX]) + (LEFT_EDGE_OFFSET * RESFACTOR),
@@ -1731,7 +1731,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
         **	Loop through all the buildable objects that are visible in the strip and render
         **	them. Their Y offset may be adjusted if the strip is in the process of scrolling.
         */
-        for (int i = 0; i < MAX_VISIBLE + (IsScrolling ? 1 : 0); i++) {
+        for (int i = 0; i < MaxVisibleCameoIcons + (IsScrolling ? 1 : 0); i++) {
             bool production;
             bool completed;
             int stage;

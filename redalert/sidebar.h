@@ -189,9 +189,9 @@ public:
             TEXT_COLOR = 255             // Color to use for the "Ready" text.
         };
 
-		static int MAX_VISIBLE; // Number of object slots visible at any one time.
-		static int UP_Y_OFFSET;
-		static int DOWN_Y_OFFSET; // BGint(MAX_VISIBLE)*int(OBJECT_HEIGHT)+1,
+		static int MaxVisibleCameoIcons; // Number of object slots visible at any one time.
+		static int UpButtonYOffset;
+		static int DownButtonYOffset; // BGint(MAX_VISIBLE)*int(OBJECT_HEIGHT)+1,
 
         /*
         **	This is the coordinate of the upper left corner that this side strip
