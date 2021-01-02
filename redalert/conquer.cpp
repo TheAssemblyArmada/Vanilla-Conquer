@@ -5017,13 +5017,13 @@ void Shake_The_Screen(int shakes, HousesType house)
         } while (newyoff == oldyoff);
         switch (newyoff) {
         case -1:
-            HidPage.Blit(SeenPage, 0, 2, 0, 0, 640, 398);
+            HidPage.Blit(SeenPage, 0, 2, 0, 0, ScreenWidth, ScreenHeight-2);
             break;
         case 0:
             HidPage.Blit(SeenPage);
             break;
         case 1:
-            HidPage.Blit(SeenPage, 0, 0, 0, 2, 640, 398);
+            HidPage.Blit(SeenPage, 0, 0, 0, 2, ScreenWidth, ScreenHeight - 2);
             break;
         }
         Frame_Limiter();
