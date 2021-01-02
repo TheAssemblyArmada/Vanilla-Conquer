@@ -1222,7 +1222,6 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[], in
     int key = 0;
     int ascii = 0;
     int index = 0;
-	int xposindex6 = ((xpos + (index * 6)) * RESFACTOR) + HIRES_ADJ_W;
 
     void const* keystrok = MFCD::Retrieve("KEYSTROK.AUD");
 
@@ -1231,14 +1230,14 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[], in
     */
     SeenPage.Blit(HidPage);
 
+	int ypos2 = ypos * RESFACTOR;
+
     /*
     ** Put a copy of the high score area on a spare area of the hidpage, so
     ** we can use it to restore the letter's background instead of filling
     ** with black.
     */
-    HidPage.Blit(HidPage, 0, (100 * RESFACTOR), 0, 0, 100 * RESFACTOR, 100 * RESFACTOR);
-
-	int ypos2 = ypos * RESFACTOR;
+    HidPage.Blit(HidPage, HIRES_ADJ_W, ScreenHeight - 100 * RESFACTOR, HIRES_ADJ_W, HIRES_ADJ_H, 100 * RESFACTOR, 100 * RESFACTOR);
 
     do {
         Call_Back();
@@ -1269,27 +1268,11 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[], in
                 if (index) {
                     str[--index] = 0;
 
-                    HidPage.Blit(SeenPage,
-                                 xposindex6,
-                                 ypos2 - 100 * RESFACTOR,
-                                 xposindex6,
-                                 ypos2,
-                                 6 * RESFACTOR,
-                                 6 * RESFACTOR);
-                    HidPage.Blit(*PseudoSeenBuff,
-                                 xposindex6,
-								 ypos2 - 100 * RESFACTOR,
-                                 xposindex6,
-								 ypos2,
-                                 6 * RESFACTOR,
-                                 6 * RESFACTOR);
-                    HidPage.Blit(HidPage,
-                                 xposindex6,
-								 ypos2 - 100 * RESFACTOR,
-                                 xposindex6,
-								 ypos2,
-                                 6 * RESFACTOR,
-                                 6 * RESFACTOR);
+					int xposindex6 = ((xpos + (index * 6)) * RESFACTOR);
+
+					HidPage.Blit(SeenPage, HIRES_ADJ_W + xposindex6, (ypos - 100)*RESFACTOR, xposindex6 + HIRES_ADJ_W, ypos*RESFACTOR, 6 * RESFACTOR, 6 * RESFACTOR);
+					HidPage.Blit(*PseudoSeenBuff, HIRES_ADJ_W + xposindex6, (ypos - 100)*RESFACTOR, xposindex6 + HIRES_ADJ_W, ypos*RESFACTOR, 6 * RESFACTOR, 6 * RESFACTOR);
+					HidPage.Blit(HidPage, HIRES_ADJ_W + xposindex6, (ypos - 100)*RESFACTOR, xposindex6 + HIRES_ADJ_W, ypos*RESFACTOR, 6 * RESFACTOR, 6 * RESFACTOR);
                 }
 
             } else if (key != KA_RETURN) { // else if (key != KN_RETURN && key!=KN_KEYPAD_RETURN) {
@@ -1297,6 +1280,8 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[], in
                 if (ascii >= 'a' && ascii <= 'z')
                     ascii -= ('a' - 'A');
                 if ((ascii >= '!' && ascii <= KA_TILDA) || ascii == ' ') {
+					int xposindex6 = ((xpos + (index * 6)) * RESFACTOR);
+
                     HidPage.Blit(SeenPage,
 								 xposindex6,
                                  ypos - 100 * RESFACTOR,
