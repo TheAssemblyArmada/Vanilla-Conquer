@@ -1480,8 +1480,8 @@ bool SidebarClass::StripClass::Scroll(bool up)
 void SidebarClass::StripClass::Flag_To_Redraw(void)
 {
     IsToRedraw = true;
-    // Map.SidebarClass::IsToRedraw = true;
-    Map.Flag_To_Redraw(false);
+    Map.SidebarClass::IsToRedraw = true;
+    Map.Flag_To_Redraw(true);
 }
 
 /***********************************************************************************************
@@ -1994,6 +1994,10 @@ bool SidebarClass::StripClass::Recalc(void)
         Map.SidebarClass::Activate(0);
     }
 #endif
+	if (redraw) {
+		Flag_To_Redraw();
+	}
+
     return (redraw);
 }
 
