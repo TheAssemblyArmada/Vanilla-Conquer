@@ -136,7 +136,14 @@ void PowerClass::One_Time(void)
     PowerButton.Y = POWER_Y * RESFACTOR;
     PowerButton.Width = (POWER_WIDTH * RESFACTOR) - 1;
     PowerButton.Height = (((SidebarClass::StripClass::MAX_VISIBLE * int(SidebarClass::StripClass::OBJECT_HEIGHT))) * RESFACTOR) + 128;
-	PowerBarHeight = (ScreenHeight / 2) - 90;
+
+	if (SidebarClass::StripClass::MAX_VISIBLE > 4) {
+		PowerBarHeight = (ScreenHeight / 2) - 90;
+	}
+
+	else {
+		PowerBarHeight = (200 - (7 + 70 + 13));
+	}
     PowerShape = MFCD::Retrieve("POWER.SHP");
     PowerBarShape = MFCD::Retrieve("POWERBAR.SHP");
 	PowerTileShape = MFCD::Retrieve("POWEREXT.SHP");
