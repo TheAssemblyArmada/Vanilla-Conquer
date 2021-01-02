@@ -140,7 +140,6 @@ void PowerClass::One_Time(void)
 	if (SidebarClass::StripClass::MAX_VISIBLE > 4) {
 		PowerBarHeight = (ScreenHeight / 2) - 90;
 	}
-
 	else {
 		PowerBarHeight = (200 - (7 + 70 + 13));
 	}
@@ -223,7 +222,6 @@ void PowerClass::Draw_It(bool complete)
 					currentheight += int(SidebarClass::StripClass::OBJECT_HEIGHT) * RESFACTOR;
 			}
 
-                int bottom = (POWER_Y + PowerBarHeight) * RESFACTOR;
                 int power_height = (PowerHeight == DesiredPowerHeight)
                                        ? PowerHeight + (_modtable[PowerBounce] * PowerDir)
                                        : PowerHeight;
@@ -236,6 +234,7 @@ void PowerClass::Draw_It(bool complete)
                 /*
                 **	Draw the power output graphic on top of the power bar framework.
                 */
+				int bottom = (((SidebarClass::StripClass::MAX_VISIBLE * int(SidebarClass::StripClass::OBJECT_HEIGHT)) + 1) * RESFACTOR) + 157;
                 if (power_height) {
                     int color1 = 3;
                     int color2 = 4;
@@ -257,7 +256,6 @@ void PowerClass::Draw_It(bool complete)
                     ** ST - 5/2/96 11:23AM
                     */
                     power_height = (power_height * (76 * RESFACTOR + 1)) / (53 * RESFACTOR + 1);
-                    drain_height = (drain_height * (76 * RESFACTOR + 1)) / (53 * RESFACTOR + 1);
 					bottom = (((SidebarClass::StripClass::MAX_VISIBLE * int(SidebarClass::StripClass::OBJECT_HEIGHT)) + 1) * RESFACTOR) + 157;
 
                     LogicPage->Fill_Rect(ScreenWidth - 150, bottom - power_height, ScreenWidth - 149, bottom, color2);
@@ -267,6 +265,7 @@ void PowerClass::Draw_It(bool complete)
                 /*
                 **	Draw the power drain threshold marker.
                 */
+				drain_height = (drain_height * (76 * RESFACTOR + 1)) / (53 * RESFACTOR + 1);
 				if (PlayerPtr->Drain > 0) {
 					CC_Draw_Shape(PowerShape,
 						0,

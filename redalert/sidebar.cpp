@@ -794,7 +794,7 @@ void SidebarClass::Draw_It(bool complete)
 			for (int i = 0; i < SidebarClass::StripClass::MAX_VISIBLE; i++) {
 				int y = Column[0].Y + (i * SidebarClass::StripClass::OBJECT_HEIGHT * RESFACTOR);
 
-				if (i > 3) {
+				if (SidebarClass::StripClass::MAX_VISIBLE >= 4 && i > 1) {
 					CC_Draw_Shape(Side4Shape,
 						shape,
 						ScreenWidth - (80 * RESFACTOR),
@@ -1711,7 +1711,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
 				//				y -= OBJECT_HEIGHT - Slid;
 			}
 
-			if (i > 3) {
+			if (MAX_VISIBLE >= 4 && i > 1) {
 				CC_Draw_Shape(Strip2Shape,
 					ID,
 					X - (WindowList[WINDOW_SIDEBAR][WINDOWX]) + (LEFT_EDGE_OFFSET * RESFACTOR),
