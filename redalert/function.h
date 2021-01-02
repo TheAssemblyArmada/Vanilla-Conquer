@@ -922,7 +922,7 @@ ArmorType Armor_From_Name(char const* name);
 /*
 ** Winstub.cpp
 */
-void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned char* palette);
+void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned char* palette, bool center = true);
 
 /*
 ** Egos.CPP

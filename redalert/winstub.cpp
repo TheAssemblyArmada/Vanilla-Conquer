@@ -735,7 +735,7 @@ void Memory_Error_Handler(void)
 }
 
 GraphicBufferClass* Read_PCX_File(char* name, char* Palette, void* Buff, long Size);
-void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned char* palette)
+void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned char* palette, bool center)
 {
 
     GraphicBufferClass* load_buffer;
@@ -745,7 +745,12 @@ void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned ch
     load_buffer = Read_PCX_File(name, (char*)palette, NULL, 0);
 
     if (load_buffer) {
-		load_buffer->Blit(*video_page, HIRES_ADJ_W, HIRES_ADJ_H);
+		if (center) {
+			load_buffer->Blit(*video_page, HIRES_ADJ_W, HIRES_ADJ_H);
+		}
+		else {
+			load_buffer->Blit(*video_page);
+		}
         delete load_buffer;
     }
 }

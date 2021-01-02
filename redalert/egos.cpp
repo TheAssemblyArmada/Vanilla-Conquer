@@ -263,8 +263,15 @@ void EgoClass::Wipe(GraphicBufferClass* background)
         }
     }
 
-	if (YPos < LogicPage->Get_Height() && YPos > 0) {
-		background->Blit(*LogicPage, x - 1, YPos, x - 1, YPos, width + 2, 7 * RESFACTOR + 1, false);
+
+	if (YPos < LogicPage->Get_Height()) {
+		if (YPos  > 0 && YPos < (LogicPage->Get_Height() - HIRES_ADJ_H  - 7 * RESFACTOR - 1 ) )
+		background->Blit(*LogicPage, (x - 1), YPos, (x - 1), 
+			YPos, width + 2, 7 * RESFACTOR + 1, false);
+		// blit in black pixel if we're not copying center of background
+		else {
+			LogicPage->Put_Pixel((x - 1), YPos, TBLACK);
+		}
 	}
 }
 
@@ -317,11 +324,11 @@ void Slide_Show(int slide, int frame)
         */
         SlideBuffers[slide]->Blit(*BackgroundPage,
                                   0,
-                                  (frame - 1) * CHUNK_HEIGHT,
-                                  0,
-                                  (frame - 1) * CHUNK_HEIGHT,
-                                  SeenBuff.Get_Width(),
-                                  CHUNK_HEIGHT,
+                                  ((frame - 1) * CHUNK_HEIGHT),
+								  HIRES_ADJ_W,
+			                      ((frame - 1) * CHUNK_HEIGHT) + HIRES_ADJ_H,
+                                  640,
+                                  CHUNK_HEIGHT + HIRES_ADJ_H,
                                   false);
         return;
     }
@@ -331,12 +338,12 @@ void Slide_Show(int slide, int frame)
         ** Blit in a quarter of the new frame to the hid page.
         */
         BackgroundPage->Blit(HidPage,
-                             0,
-                             (frame - 5) * CHUNK_HEIGHT,
-                             0,
-                             (frame - 5) * CHUNK_HEIGHT,
-                             SeenBuff.Get_Width(),
-                             CHUNK_HEIGHT,
+							 0,
+                             ((frame - 5) * CHUNK_HEIGHT),
+							 0,
+							 ((frame - 5) * CHUNK_HEIGHT),
+							ScreenWidth,
+                             CHUNK_HEIGHT + HIRES_ADJ_H,
                              false);
         return;
     }
@@ -688,8 +695,8 @@ void Show_Who_Was_Responsible(void)
     */
     for (int index = 0; index < NUM_SLIDES; index++) {
         SlideBuffers[index] = new GraphicBufferClass;
-        SlideBuffers[index]->Init(SeenBuff.Get_Width(), SeenBuff.Get_Height(), NULL, 0, (GBC_Enum)0);
-        Load_Title_Screen(&SlideNames[index][0], SlideBuffers[index], (unsigned char*)&SlidePals[index][0]);
+        SlideBuffers[index]->Init(640, 480, NULL, 0, (GBC_Enum)0);
+        Load_Title_Screen(&SlideNames[index][0], SlideBuffers[index], (unsigned char*)&SlidePals[index][0], false);
     }
 
     /*
@@ -697,7 +704,7 @@ void Show_Who_Was_Responsible(void)
     ** we can start scrolling before the first slideshow picture is blitted.
     */
     BackgroundPage = new GraphicBufferClass;
-    BackgroundPage->Init(SeenBuff.Get_Width(), SeenBuff.Get_Height(), NULL, 0, (GBC_Enum)(GBC_VIDEOMEM));
+    BackgroundPage->Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VIDEOMEM));
 
     SeenBuff.Blit(*BackgroundPage);
 
