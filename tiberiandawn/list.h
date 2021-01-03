@@ -64,7 +64,7 @@ public:
     virtual int Add_Item(int text);
     virtual int Add_Scroll_Bar(void);
     virtual void Bump(int up);
-    virtual int Count(void)
+    virtual int Count(void) const
     {
         return List.Count();
     };
