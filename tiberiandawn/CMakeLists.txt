@@ -30,6 +30,7 @@ set(TIBDAWN_SRC
     display.cpp
     door.cpp
     drive.cpp
+    drop.cpp
     edit.cpp
     ending.cpp
     event.cpp
