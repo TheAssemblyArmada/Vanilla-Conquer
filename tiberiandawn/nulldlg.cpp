@@ -33,6 +33,7 @@
  *   Com_Scenario_Dialog -- Skirmish game scenario selection dialog        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include "function.h"
+#include "drop.h"
 #include "framelimit.h"
 #include <time.h>
 
@@ -98,27 +99,23 @@ int Com_Scenario_Dialog(void)
 
     int d_name_w = 70 * factor;
     int d_name_h = 9 * factor;
-    int d_name_x = d_dialog_x + 108 * factor;
-    int d_name_y = d_dialog_y + d_margin1 + d_txt6_h + d_txt6_h + d_margin1;
+    int d_name_x = d_dialog_x + (d_dialog_w / 4) - (d_name_w / 2);
+    int d_name_y = d_dialog_y + d_margin2 + d_txt6_h + 1 * factor;
 
-    int d_credits_w = ((CREDITSBUF_MAX - 1) * 6 * factor) + 3 * factor;
-    int d_credits_h = 9 * factor;
-    int d_credits_x = d_name_x;
-    int d_credits_y = d_name_y + d_name_h + d_margin2;
-
-    int d_gdi_w = 30 * factor;
-    int d_gdi_h = 9 * factor;
-    int d_gdi_x = d_dialog_cx + (d_dialog_w / 4);
-    int d_gdi_y = d_dialog_y + d_margin1 + d_txt6_h + d_txt6_h + d_margin1;
-
-    int d_nod_w = 30 * factor;
-    int d_nod_h = 9 * factor;
-    int d_nod_x = d_gdi_x + d_gdi_w + (d_margin1 / 2);
-    int d_nod_y = d_gdi_y;
+    int d_house_w = 60 * factor;
+    int d_house_h = (3 * 5 * factor);
+    int d_house_x = d_dialog_cx - (d_house_w / 2);
+    int d_house_y = d_name_y;
 
     int d_color_w = 10 * factor;
     int d_color_h = 9 * factor;
-    int d_color_y = d_gdi_y + d_gdi_h + d_margin2;
+    int d_color_y = d_name_y;
+    int d_color_x = d_dialog_x + ((d_dialog_w / 4) * 3) - (d_color_w * 3);
+
+    int d_playerlist_w = 118 * factor;
+    int d_playerlist_h = (6 * 6 * factor) + 3 * factor; // 6 rows high
+    int d_playerlist_x = d_dialog_x + d_margin1 + d_margin1 + 5 * factor;
+    int d_playerlist_y = d_color_y + d_color_h + d_margin2 + 2 * factor /*KO + d_txt6_h*/;
 
     int d_opponent_x = d_name_x;
     int d_opponent_y = d_color_y + d_color_h + d_margin2;
@@ -127,78 +124,42 @@ int Com_Scenario_Dialog(void)
     int d_scenariolist_h = 27 * factor;
     int d_scenariolist_x = d_dialog_cx - (d_scenariolist_w / 2);
     int d_scenariolist_y = d_opponent_y + d_txt6_h + 3 * factor + d_txt6_h;
+    d_scenariolist_h *= 2;
 
-    // d_count_x is calculated below after other enums
     int d_count_w = 25 * factor;
     int d_count_h = 7 * factor;
     int d_count_y = d_scenariolist_y + d_scenariolist_h + d_margin2;
+    int d_count_x = d_playerlist_x + (d_playerlist_w / 2) + 20 * factor; // fudged
 
-    // d_level_x is calculated below after other enums
     int d_level_w = 25 * factor;
     int d_level_h = 7 * factor;
-    int d_level_y = d_count_y;
+    int d_level_y = d_count_y + d_count_h;
+    int d_level_x = d_playerlist_x + (d_playerlist_w / 2) + 20 * factor; // fudged
 
-#if (GERMAN | FRENCH)
-    int d_bases_w = 120 * factor; // BGA:100;
-#else
-    int d_bases_w = 110 * factor;
-#endif
-    int d_bases_h = 9 * factor;
-    int d_bases_x = d_dialog_cx - d_bases_w - d_margin2;
-    int d_bases_y = d_count_y + d_count_h + d_margin2;
+    int d_credits_w = 25 * factor;
+    int d_credits_h = 7 * factor;
+    int d_credits_x = d_playerlist_x + (d_playerlist_w / 2) + 20 * factor; // fudged;
+    int d_credits_y = d_level_y + d_level_h;
 
-#if (GERMAN | FRENCH)
-    int d_goodies_w = 120 * factor;
-#else
-    int d_goodies_w = 110 * factor;
-#endif
-    int d_goodies_h = 9 * factor;
-    int d_goodies_x = d_dialog_cx + d_margin2;
-    int d_goodies_y = d_bases_y;
+    int d_aiplayers_w = 25 * factor;
+    int d_aiplayers_h = 7 * factor;
+    int d_aiplayers_x = d_playerlist_x + (d_playerlist_w / 2) + 20 * factor; // fudged;
+    int d_aiplayers_y = d_credits_y + d_credits_h;
 
-    int d_count_x = d_dialog_cx - d_count_w - ((2 * 6 * factor) + 3 * factor)
-                    - ((d_bases_w - ((13 * 6 * factor) + 3 * factor + d_count_w)) / 2) - d_margin2;
-
-    int d_level_x = d_dialog_cx + (11 * 6 * factor) + ((d_goodies_w - ((13 * 6 * factor) + 3 * factor + d_level_w)) / 2)
-                    + d_margin2;
-
-#if (GERMAN | FRENCH)
-    int d_tiberium_w = 120 * factor;
-#else
-    int d_tiberium_w = 110 * factor;
-#endif
-    int d_tiberium_h = 9 * factor;
-    int d_tiberium_x = d_dialog_cx - d_bases_w - d_margin2;
-    int d_tiberium_y = d_bases_y + d_bases_h + d_margin2;
-
-#if (GERMAN | FRENCH)
-    int d_ghosts_w = 120 * factor;
-#else
-    int d_ghosts_w = 110 * factor;
-#endif
-    int d_ghosts_h = 9 * factor;
-    int d_ghosts_x = d_dialog_cx + d_margin2;
-    int d_ghosts_y = d_tiberium_y;
+    int d_options_w = 100 * factor;
+    int d_options_h = (5 * 6 * factor) + 4 * factor;
+    int d_options_x = d_dialog_x + d_dialog_w - 143 * factor;
+    int d_options_y = d_scenariolist_y + d_scenariolist_h + d_margin1 - 2 * factor;
 
     int d_ok_w = 45 * factor;
     int d_ok_h = 9 * factor;
-    int d_ok_x = d_tiberium_x + (d_tiberium_w / 2) - (d_ok_w / 2);
-    int d_ok_y = d_tiberium_y + d_tiberium_h + d_margin1;
+    int d_ok_x = d_dialog_x + (d_dialog_w / 6) - (d_ok_w / 2);
+    int d_ok_y = d_dialog_y + d_dialog_h - d_ok_h - d_margin1 - factor * 6;
 
     int d_cancel_w = 45 * factor;
     int d_cancel_h = 9 * factor;
-    int d_cancel_x = d_ghosts_x + (d_ghosts_w / 2) - (d_cancel_w / 2);
-    int d_cancel_y = d_tiberium_y + d_tiberium_h + d_margin1;
-
-    int d_message_w = d_dialog_w - (d_margin1 * 2);
-    int d_message_h = 34 * factor;
-    int d_message_x = d_dialog_x + d_margin1;
-    int d_message_y = d_cancel_y + d_cancel_h + d_margin1;
-
-    int d_send_w = 80 * factor;
-    int d_send_h = 9 * factor;
-    int d_send_x = d_dialog_cx - (d_send_w / 2);
-    int d_send_y = d_message_y + d_message_h + d_margin2;
+    int d_cancel_x = d_dialog_x + d_dialog_w - (d_dialog_w / 6) - (d_cancel_w / 2) /*d_dialog_cx - (d_cancel_w / 2)*/;
+    int d_cancel_y = d_dialog_y + d_dialog_h - d_cancel_h - d_margin1 - factor * 6;
 
     /*........................................................................
     Button Enumerations
@@ -206,19 +167,17 @@ int Com_Scenario_Dialog(void)
     enum
     {
         BUTTON_NAME = 100,
-        BUTTON_GDI,
-        BUTTON_NOD,
+        BUTTON_HOUSE,
         BUTTON_CREDITS,
+        BUTTON_AIPLAYERS,
+        BUTTON_OPTIONS,
         BUTTON_SCENARIOLIST,
         BUTTON_COUNT,
         BUTTON_LEVEL,
-        BUTTON_BASES,
-        BUTTON_TIBERIUM,
-        BUTTON_GOODIES,
-        BUTTON_GHOSTS,
         BUTTON_OK,
+        BUTTON_LOAD,
         BUTTON_CANCEL,
-        BUTTON_SEND,
+        BUTTON_DIFFICULTY,
     };
 
     /*........................................................................
@@ -241,18 +200,17 @@ int Com_Scenario_Dialog(void)
     bool process = true;             // process while true
     KeyNumType input;
 
+    int optiontabs[] = {8};               // tabs for player list box
     char namebuf[MPLAYER_NAME_MAX] = {0}; // buffer for player's name
-    char credbuf[CREDITSBUF_MAX];         // for credit edit box
-    int old_cred;                         // old value in credits buffer
     int transmit;                         // 1 = re-transmit new game options
-    int cbox_x[] = {d_gdi_x,
-                    d_gdi_x + d_color_w,
-                    d_gdi_x + (d_color_w * 2),
-                    d_gdi_x + (d_color_w * 3),
-                    d_gdi_x + (d_color_w * 4),
-                    d_gdi_x + (d_color_w * 5)};
+    int cbox_x[] = {d_color_x,
+                    d_color_x + d_color_w,
+                    d_color_x + (d_color_w * 2),
+                    d_color_x + (d_color_w * 3),
+                    d_color_x + (d_color_w * 4),
+                    d_color_x + (d_color_w * 5)};
     int parms_received = 0; // 1 = game options received
-    int changed = 0;        // 1 = user has changed an option
+    bool changed = false;
 
     int rc;
     int recsignedoff = false;
@@ -297,31 +255,18 @@ int Com_Scenario_Dialog(void)
                        d_name_h,
                        EditClass::ALPHANUMERIC);
 
-    TextButtonClass gdibtn(BUTTON_GDI,
-                           TXT_G_D_I,
-                           TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW,
-                           d_gdi_x,
-                           d_gdi_y,
-                           d_gdi_w,
-                           d_gdi_h);
-
-    TextButtonClass nodbtn(BUTTON_NOD,
-                           TXT_N_O_D,
-                           TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW,
-                           d_nod_x,
-                           d_nod_y,
-                           d_nod_w,
-                           d_nod_h);
-
-    EditClass credit_edt(BUTTON_CREDITS,
-                         credbuf,
-                         CREDITSBUF_MAX,
-                         TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW,
-                         d_credits_x,
-                         d_credits_y,
-                         d_credits_w,
-                         d_credits_h,
-                         EditClass::ALPHANUMERIC);
+    char housetext[25] = "";
+    Fancy_Text_Print("", 0, 0, 0, 0, TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
+    DropListClass housebtn(BUTTON_HOUSE,
+                           housetext,
+                           sizeof(housetext),
+                           TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW,
+                           d_house_x,
+                           d_house_y,
+                           d_house_w,
+                           d_house_h,
+                           up_button,
+                           down_button);
 
     ListClass scenariolist(BUTTON_SCENARIOLIST,
                            d_scenariolist_x,
@@ -336,37 +281,18 @@ int Com_Scenario_Dialog(void)
 
     GaugeClass levelgauge(BUTTON_LEVEL, d_level_x, d_level_y, d_level_w, d_level_h);
 
-    TextButtonClass basesbtn(BUTTON_BASES,
-                             TXT_BASES_OFF,
-                             TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW,
-                             d_bases_x,
-                             d_bases_y,
-                             d_bases_w,
-                             d_bases_h);
+    GaugeClass creditsgauge(BUTTON_CREDITS, d_credits_x, d_credits_y, d_credits_w, d_credits_h);
 
-    TextButtonClass tiberiumbtn(BUTTON_TIBERIUM,
-                                TXT_TIBERIUM_OFF,
-                                TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW,
-                                d_tiberium_x,
-                                d_tiberium_y,
-                                d_tiberium_w,
-                                d_tiberium_h);
+    GaugeClass aiplayersgauge(BUTTON_AIPLAYERS, d_aiplayers_x, d_aiplayers_y, d_aiplayers_w, d_aiplayers_h);
 
-    TextButtonClass goodiesbtn(BUTTON_GOODIES,
-                               TXT_CRATES_OFF,
-                               TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW,
-                               d_goodies_x,
-                               d_goodies_y,
-                               d_goodies_w,
-                               d_goodies_h);
-
-    TextButtonClass ghostsbtn(BUTTON_GHOSTS,
-                              TXT_AI_PLAYERS_OFF,
-                              TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW,
-                              d_ghosts_x,
-                              d_ghosts_y,
-                              d_ghosts_w,
-                              d_ghosts_h);
+    CheckListClass optionlist(BUTTON_OPTIONS,
+                              d_options_x,
+                              d_options_y,
+                              d_options_w,
+                              d_options_h,
+                              TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW,
+                              up_button,
+                              down_button);
 
     TextButtonClass okbtn(
         BUTTON_OK, TXT_OK, TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW, d_ok_x, d_ok_y, d_ok_w, d_ok_h);
@@ -374,30 +300,39 @@ int Com_Scenario_Dialog(void)
     TextButtonClass cancelbtn(BUTTON_CANCEL,
                               TXT_CANCEL,
                               TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW,
-                              //#if (GERMAN | FRENCH)
-                              //        d_cancel_x, d_cancel_y);
-                              //#else
                               d_cancel_x,
                               d_cancel_y,
                               d_cancel_w,
                               d_cancel_h);
 
+    SliderClass difficulty(BUTTON_DIFFICULTY,
+                           d_name_x,
+                           optionlist.Y + optionlist.Height + d_margin1 + d_margin1,
+                           d_dialog_w - (d_name_x - d_dialog_x) * 2,
+                           8 * factor,
+                           true);
+    if (Rule.IsFineDifficulty) {
+        difficulty.Set_Maximum(5);
+        difficulty.Set_Value(2);
+    } else {
+        difficulty.Set_Maximum(3);
+        difficulty.Set_Value(1);
+    }
+
     /*
     ------------------------- Build the button list --------------------------
     */
     commands = &name_edt;
-    gdibtn.Add_Tail(*commands);
-    nodbtn.Add_Tail(*commands);
-    credit_edt.Add_Tail(*commands);
+    difficulty.Add_Tail(*commands);
     scenariolist.Add_Tail(*commands);
     countgauge.Add_Tail(*commands);
     levelgauge.Add_Tail(*commands);
-    basesbtn.Add_Tail(*commands);
-    tiberiumbtn.Add_Tail(*commands);
-    goodiesbtn.Add_Tail(*commands);
-    ghostsbtn.Add_Tail(*commands);
+    creditsgauge.Add_Tail(*commands);
+    aiplayersgauge.Add_Tail(*commands);
+    optionlist.Add_Tail(*commands);
     okbtn.Add_Tail(*commands);
     cancelbtn.Add_Tail(*commands);
+    housebtn.Add_Tail(*commands);
 
     /*
     ----------------------------- Various Inits ------------------------------
@@ -410,11 +345,10 @@ int Com_Scenario_Dialog(void)
     name_edt.Set_Text(namebuf, MPLAYER_NAME_MAX);
     name_edt.Set_Color(MPlayerTColors[MPlayerColorIdx]);
 
-    if (MPlayerHouse == HOUSE_GOOD) {
-        gdibtn.Turn_On();
-    } else {
-        nodbtn.Turn_On();
-    }
+    housebtn.Add_Item(Text_String(TXT_G_D_I));
+    housebtn.Add_Item(Text_String(TXT_N_O_D));
+    housebtn.Set_Selected_Index(MPlayerHouse - HOUSE_GOOD);
+    housebtn.Set_Read_Only(true);
 
     /*........................................................................
     Init scenario values, only the first time through
@@ -433,37 +367,39 @@ int Com_Scenario_Dialog(void)
     /*........................................................................
     Init button states
     ........................................................................*/
-    if (MPlayerBases) {
-        basesbtn.Turn_On();
-        basesbtn.Set_Text(TXT_BASES_ON);
-    }
-    if (MPlayerTiberium) {
-        tiberiumbtn.Turn_On();
-        tiberiumbtn.Set_Text(TXT_TIBERIUM_ON);
-    }
-    if (MPlayerGoodies) {
-        goodiesbtn.Turn_On();
-        goodiesbtn.Set_Text(TXT_CRATES_ON);
-    }
-    if (MPlayerGhosts) {
-        ghostsbtn.Turn_On();
-        ghostsbtn.Set_Text(TXT_AI_PLAYERS_ON);
-    }
-    if (Special.IsCaptureTheFlag) {
-        MPlayerGhosts = 0;
-        ghostsbtn.Turn_On();
-        ghostsbtn.Set_Text(TXT_CAPTURE_THE_FLAG);
-    }
+    optionlist.Set_Tabs(optiontabs);
+    optionlist.Set_Read_Only(0);
 
-    sprintf(credbuf, "%d", MPlayerCredits);
-    credit_edt.Set_Text(credbuf, CREDITSBUF_MAX);
-    old_cred = MPlayerCredits;
+    optionlist.Add_Item(Text_String(TXT_BASES_ON));
+    optionlist.Add_Item("Tiberium Regrows");
+    optionlist.Add_Item(Text_String(TXT_CRATES_ON));
+    //optionlist.Add_Item(Text_String(TXT_SHADOW_REGROWS));
+    optionlist.Add_Item(Text_String(TXT_CAPTURE_THE_FLAG));
+
+    optionlist.Check_Item(0, MPlayerBases);
+    optionlist.Check_Item(1, MPlayerTiberium);
+    optionlist.Check_Item(2, MPlayerGoodies);
+    //optionlist.Check_Item(3, Special.IsShadowGrow);
+    optionlist.Check_Item(3, Special.IsCaptureTheFlag);
 
     levelgauge.Set_Maximum(MPLAYER_BUILD_LEVEL_MAX - 1);
     levelgauge.Set_Value(BuildLevel - 1);
 
     countgauge.Set_Maximum(MPlayerCountMax[MPlayerBases] - MPlayerCountMin[MPlayerBases]);
     countgauge.Set_Value(MPlayerUnitCount - MPlayerCountMin[MPlayerBases]);
+
+    creditsgauge.Set_Maximum(10000 /* TODO: Rule.MPMaxMoney*/);
+    creditsgauge.Set_Value(MPlayerCredits);
+
+    int maxp = 4 /*Rule.MaxPlayers - 2*/;
+    aiplayersgauge.Set_Maximum(maxp);
+
+    if (MPlayerGhosts > 5) {
+        MPlayerGhosts = 5;
+    }
+    MPlayerGhosts = max(MPlayerGhosts, 1);
+
+    aiplayersgauge.Set_Value(MPlayerGhosts - 1);
 
     /*........................................................................
     Init other scenario parameters
@@ -538,36 +474,50 @@ int Com_Scenario_Dialog(void)
                     Draw_Caption(TXT_HOST_SERIAL_GAME, d_dialog_x, d_dialog_y, d_dialog_w);
                 }
 #else
-                Draw_Caption(TXT_HOST_SERIAL_GAME, d_dialog_x, d_dialog_y, d_dialog_w);
+                Draw_Caption(TXT_NONE, d_dialog_x, d_dialog_y, d_dialog_w);
 #endif // FORCE_WINSOCK
 
                 Fancy_Text_Print(TXT_YOUR_NAME,
-                                 d_name_x - 5 * factor,
-                                 d_name_y + 1 * factor,
+                                 d_name_x + (d_name_w / 2),
+                                 d_name_y - d_txt6_h,
                                  CC_GREEN,
                                  TBLACK,
                                  TPF_RIGHT | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
 
                 Fancy_Text_Print(TXT_SIDE_COLON,
-                                 d_gdi_x - 5 * factor,
-                                 d_gdi_y + 1 * factor,
-                                 CC_GREEN,
-                                 TBLACK,
-                                 TPF_RIGHT | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
-
-                Fancy_Text_Print(TXT_START_CREDITS_COLON,
-                                 d_credits_x - 5 * factor,
-                                 d_credits_y + 1 * factor,
+                                 d_house_x + (d_house_w / 2),
+                                 d_house_y - d_txt6_h,
                                  CC_GREEN,
                                  TBLACK,
                                  TPF_RIGHT | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
 
                 Fancy_Text_Print(TXT_COLOR_COLON,
-                                 cbox_x[0] - 5 * factor,
-                                 d_color_y + 1 * factor,
+                                 d_dialog_x + ((d_dialog_w / 4) * 3),
+                                 d_color_y - d_txt6_h,
                                  CC_GREEN,
                                  TBLACK,
                                  TPF_RIGHT | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
+
+                Fancy_Text_Print("Easy",
+                                 difficulty.X,
+                                 difficulty.Y - 8 * factor,
+                                 CC_GREEN,
+                                 TBLACK,
+                                 TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
+
+                Fancy_Text_Print("Hard",
+                                 difficulty.X + difficulty.Width,
+                                 difficulty.Y - 8 * factor,
+                                 CC_GREEN,
+                                 TBLACK,
+                                 TPF_RIGHT | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
+
+                Fancy_Text_Print("Normal",
+                                 difficulty.X + difficulty.Width / 2,
+                                 difficulty.Y - 8 * factor,
+                                 CC_GREEN,
+                                 TBLACK,
+                                 TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
 
                 Fancy_Text_Print(TXT_SCENARIOS,
                                  d_scenariolist_x + (d_scenariolist_w / 2),
@@ -589,6 +539,20 @@ int Com_Scenario_Dialog(void)
                                  CC_GREEN,
                                  TBLACK,
                                  TPF_NOSHADOW | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_RIGHT);
+
+                Fancy_Text_Print(TXT_START_CREDITS_COLON,
+                                 d_credits_x - 3 * factor,
+                                 d_credits_y,
+                                 CC_GREEN,
+                                 TBLACK,
+                                 TPF_RIGHT | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
+
+                Fancy_Text_Print(TXT_AI_PLAYERS_COLON,
+                                 d_aiplayers_x - 3 * factor,
+                                 d_aiplayers_y,
+                                 CC_GREEN,
+                                 TBLACK,
+                                 TPF_RIGHT | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
             }
 
             /*..................................................................
@@ -634,6 +598,21 @@ int Com_Scenario_Dialog(void)
                                  CC_GREEN,
                                  BLACK,
                                  TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
+                sprintf(txt, "%d ", MPlayerCredits);
+                Fancy_Text_Print(txt,
+                                 d_credits_x + d_credits_w + 3 * factor,
+                                 d_credits_y,
+                                 CC_GREEN,
+                                 BLACK,
+                                 TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
+
+                sprintf(txt, "%d ", MPlayerGhosts);
+                Fancy_Text_Print(txt,
+                                 d_aiplayers_x + d_aiplayers_w + 3 * factor,
+                                 d_aiplayers_y,
+                                 CC_GREEN,
+                                 BLACK,
+                                 TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
             }
 
             /*
@@ -650,7 +629,22 @@ int Com_Scenario_Dialog(void)
         /*
         ........................... Get user input ............................
         */
+        bool droplist_is_dropped = housebtn.IsDropped;
         input = commands->Input();
+
+        /*
+        ** Redraw everything if the droplist collapsed
+        */
+        if (droplist_is_dropped && !housebtn.IsDropped) {
+            display = REDRAW_BACKGROUND;
+        }
+
+        if (input & KN_BUTTON) {
+            if (housebtn.IsDropped) {
+                housebtn.Collapse();
+                display = REDRAW_BACKGROUND;
+            }
+        }
 
         /*
         ---------------------------- Process input ----------------------------
@@ -669,7 +663,6 @@ int Com_Scenario_Dialog(void)
 
                     name_edt.Set_Color(MPlayerTColors[MPlayerColorIdx]);
                     name_edt.Flag_To_Redraw();
-                    MPlayerCredits = atoi(credbuf);
                     strcpy(MPlayerName, namebuf);
                     transmit = 1;
                     changed = 1;
@@ -682,9 +675,6 @@ int Com_Scenario_Dialog(void)
         ------------------------------------------------------------------*/
         case (BUTTON_NAME | KN_BUTTON):
             if (!ready_to_go) {
-                credit_edt.Clear_Focus();
-                credit_edt.Flag_To_Redraw();
-                MPlayerCredits = atoi(credbuf);
                 strcpy(MPlayerName, namebuf);
                 transmit = 1;
                 changed = 1;
@@ -694,39 +684,11 @@ int Com_Scenario_Dialog(void)
         /*------------------------------------------------------------------
         House Buttons: set the player's desired House
         ------------------------------------------------------------------*/
-        case (BUTTON_GDI | KN_BUTTON):
-            if (!ready_to_go) {
-                MPlayerHouse = HOUSE_GOOD;
-                gdibtn.Turn_On();
-                nodbtn.Turn_Off();
-                MPlayerCredits = atoi(credbuf);
-                strcpy(MPlayerName, namebuf);
-                transmit = 1;
-            }
-            break;
-
-        case (BUTTON_NOD | KN_BUTTON):
-            if (!ready_to_go) {
-                MPlayerHouse = HOUSE_BAD;
-                gdibtn.Turn_Off();
-                nodbtn.Turn_On();
-                MPlayerCredits = atoi(credbuf);
-                strcpy(MPlayerName, namebuf);
-                transmit = 1;
-            }
-            break;
-
-        /*------------------------------------------------------------------
-        User edits the credits value; retransmit new game options
-        ------------------------------------------------------------------*/
-        case (BUTTON_CREDITS | KN_BUTTON):
-            if (!ready_to_go) {
-                name_edt.Clear_Focus();
-                name_edt.Flag_To_Redraw();
-                MPlayerCredits = atoi(credbuf);
-                strcpy(MPlayerName, namebuf);
-                transmit = 1;
-            }
+        case (BUTTON_HOUSE | KN_BUTTON):
+            MPlayerHouse = HousesType(housebtn.Current_Index() + HOUSE_GOOD);
+            strcpy(MPlayerName, namebuf);
+            display = REDRAW_BACKGROUND;
+            transmit = true;
             break;
 
         /*------------------------------------------------------------------
@@ -735,7 +697,6 @@ int Com_Scenario_Dialog(void)
         case (BUTTON_SCENARIOLIST | KN_BUTTON):
             if (scenariolist.Current_Index() != ScenarioIdx && !ready_to_go) {
                 ScenarioIdx = scenariolist.Current_Index();
-                MPlayerCredits = atoi(credbuf);
                 strcpy(MPlayerName, namebuf);
                 transmit = 1;
             }
@@ -747,8 +708,13 @@ int Com_Scenario_Dialog(void)
         case (BUTTON_COUNT | KN_BUTTON):
             if (!ready_to_go) {
                 MPlayerUnitCount = countgauge.Get_Value() + MPlayerCountMin[MPlayerBases];
-                if (display < REDRAW_MESSAGE)
+                if (display < REDRAW_MESSAGE) {
                     display = REDRAW_MESSAGE;
+                }
+                if (housebtn.IsDropped) {
+                    housebtn.Collapse();
+                    display = REDRAW_BACKGROUND;
+                }
                 transmit = 1;
             }
             break;
@@ -761,111 +727,99 @@ int Com_Scenario_Dialog(void)
                 BuildLevel = levelgauge.Get_Value() + 1;
                 if (BuildLevel > MPLAYER_BUILD_LEVEL_MAX) // if it's pegged, max it out
                     BuildLevel = MPLAYER_BUILD_LEVEL_MAX;
-                if (display < REDRAW_MESSAGE)
+                if (display < REDRAW_MESSAGE) {
                     display = REDRAW_MESSAGE;
+                }
+                if (housebtn.IsDropped) {
+                    housebtn.Collapse();
+                    display = REDRAW_BACKGROUND;
+                }
                 transmit = 1;
             }
             break;
 
         /*------------------------------------------------------------------
-        Toggle bases
+        User edits the credits value; retransmit new game options
         ------------------------------------------------------------------*/
-        case (BUTTON_BASES | KN_BUTTON):
+        case (BUTTON_CREDITS | KN_BUTTON):
             if (!ready_to_go) {
+                MPlayerCredits = creditsgauge.Get_Value();
+
+                if (display < REDRAW_MESSAGE) {
+                    display = REDRAW_MESSAGE;
+                }
+                if (housebtn.IsDropped) {
+                    housebtn.Collapse();
+                    display = REDRAW_BACKGROUND;
+                }
+                transmit = 1;
+            }
+            break;
+
+        /*------------------------------------------------------------------
+        User adjusts # of AI players
+        ------------------------------------------------------------------*/
+        case (BUTTON_AIPLAYERS | KN_BUTTON):
+            if (!ready_to_go) {
+                MPlayerGhosts = aiplayersgauge.Get_Value();
+                int humans = 1; // One humans.
+                MPlayerGhosts += 1;
+                if (MPlayerGhosts + humans >= 6 /*Rule.MaxPlayers*/) { // if it's pegged, max it out
+                    MPlayerGhosts = 6 /*Rule.MaxPlayers*/ - humans;
+                    aiplayersgauge.Set_Value(MPlayerGhosts - 1);
+                }
+                transmit = true;
+                if (display < REDRAW_MESSAGE)
+                    display = REDRAW_MESSAGE;
+
+                if (housebtn.IsDropped) {
+                    housebtn.Collapse();
+                    display = REDRAW_BACKGROUND;
+                }
+
+                break;
+            }
+            break;
+
+        /*------------------------------------------------------------------
+        Toggle-able options:
+        If 'Bases' gets toggled, we have to change the range of the
+        UnitCount slider.
+        Also, if Tiberium gets toggled, we have to set the flags
+        in SpecialClass.
+        ------------------------------------------------------------------*/
+        case (BUTTON_OPTIONS | KN_BUTTON):
+            if (MPlayerBases != optionlist.Is_Checked(0)) {
+                MPlayerBases = optionlist.Is_Checked(0);
                 if (MPlayerBases) {
-                    MPlayerBases = 0;
-                    basesbtn.Turn_Off();
-                    basesbtn.Set_Text(TXT_BASES_OFF);
-                    MPlayerUnitCount = Fixed_To_Cardinal(MPlayerCountMax[0] - MPlayerCountMin[0],
-                                                         Cardinal_To_Fixed(MPlayerCountMax[1] - MPlayerCountMin[1],
-                                                                           MPlayerUnitCount - MPlayerCountMin[1]))
-                                       + MPlayerCountMin[0];
-                } else {
-                    MPlayerBases = 1;
-                    basesbtn.Turn_On();
-                    basesbtn.Set_Text(TXT_BASES_ON);
                     MPlayerUnitCount = Fixed_To_Cardinal(MPlayerCountMax[1] - MPlayerCountMin[1],
                                                          Cardinal_To_Fixed(MPlayerCountMax[0] - MPlayerCountMin[0],
                                                                            MPlayerUnitCount - MPlayerCountMin[0]))
                                        + MPlayerCountMin[1];
+                } else {
+                    MPlayerUnitCount = Fixed_To_Cardinal(MPlayerCountMax[0] - MPlayerCountMin[0],
+                                                         Cardinal_To_Fixed(MPlayerCountMax[1] - MPlayerCountMin[1],
+                                                                           MPlayerUnitCount - MPlayerCountMin[1]))
+                                       + MPlayerCountMin[0];
                 }
-                MPlayerCredits = atoi(credbuf);
                 countgauge.Set_Maximum(MPlayerCountMax[MPlayerBases] - MPlayerCountMin[MPlayerBases]);
                 countgauge.Set_Value(MPlayerUnitCount - MPlayerCountMin[MPlayerBases]);
-                strcpy(MPlayerName, namebuf);
-                transmit = 1;
-                display = REDRAW_ALL;
             }
-            break;
+            MPlayerTiberium = optionlist.Is_Checked(1);
+            Special.IsTGrowth = MPlayerTiberium;
+            // Rule.IsTGrowth = MPlayerTiberium;
+            Special.IsTSpread = MPlayerTiberium;
+            // Rule.IsTSpread = MPlayerTiberium;
 
-        /*------------------------------------------------------------------
-        Toggle tiberium
-        ------------------------------------------------------------------*/
-        case (BUTTON_TIBERIUM | KN_BUTTON):
-            if (!ready_to_go) {
-                if (MPlayerTiberium) {
-                    MPlayerTiberium = 0;
-                    Special.IsTGrowth = 0;
-                    Special.IsTSpread = 0;
-                    tiberiumbtn.Turn_Off();
-                    tiberiumbtn.Set_Text(TXT_TIBERIUM_OFF);
-                } else {
-                    MPlayerTiberium = 1;
-                    Special.IsTGrowth = 1;
-                    Special.IsTSpread = 1;
-                    tiberiumbtn.Turn_On();
-                    tiberiumbtn.Set_Text(TXT_TIBERIUM_ON);
-                }
-                MPlayerCredits = atoi(credbuf);
-                strcpy(MPlayerName, namebuf);
-                transmit = 1;
-            }
-            break;
+            MPlayerGoodies = optionlist.Is_Checked(2);
+            Special.IsCaptureTheFlag = optionlist.Is_Checked(3);
 
-        /*------------------------------------------------------------------
-        Toggle goodies
-        ------------------------------------------------------------------*/
-        case (BUTTON_GOODIES | KN_BUTTON):
-            if (!ready_to_go) {
-                if (MPlayerGoodies) {
-                    MPlayerGoodies = 0;
-                    goodiesbtn.Turn_Off();
-                    goodiesbtn.Set_Text(TXT_CRATES_OFF);
-                } else {
-                    MPlayerGoodies = 1;
-                    goodiesbtn.Turn_On();
-                    goodiesbtn.Set_Text(TXT_CRATES_ON);
-                }
-                MPlayerCredits = atoi(credbuf);
-                strcpy(MPlayerName, namebuf);
-                transmit = 1;
-            }
-            break;
-
-        /*------------------------------------------------------------------
-        Toggle ghosts
-        ------------------------------------------------------------------*/
-        case (BUTTON_GHOSTS | KN_BUTTON):
-            if (!ready_to_go) {
-                if (!MPlayerGhosts && !Special.IsCaptureTheFlag) { // ghosts OFF => ghosts ON
-                    MPlayerGhosts = 1;
-                    Special.IsCaptureTheFlag = 0;
-                    ghostsbtn.Turn_On();
-                    ghostsbtn.Set_Text(TXT_AI_PLAYERS_ON);
-                } else if (MPlayerGhosts) { // ghosts ON => capture-flag
-                    MPlayerGhosts = 0;
-                    Special.IsCaptureTheFlag = 1;
-                    ghostsbtn.Turn_On();
-                    ghostsbtn.Set_Text(TXT_CAPTURE_THE_FLAG);
-                } else if (Special.IsCaptureTheFlag) { // capture-flag => AI OFF
-                    MPlayerGhosts = 0;
-                    Special.IsCaptureTheFlag = 0;
-                    ghostsbtn.Turn_Off();
-                    ghostsbtn.Set_Text(TXT_AI_PLAYERS_OFF);
-                }
-                MPlayerCredits = atoi(credbuf);
-                strcpy(MPlayerName, namebuf);
-                transmit = 1;
+            transmit = true;
+            if (display < REDRAW_MESSAGE)
+                display = REDRAW_MESSAGE;
+            if (housebtn.IsDropped) {
+                housebtn.Collapse();
+                display = REDRAW_BACKGROUND;
             }
             break;
 
@@ -949,7 +903,33 @@ int Com_Scenario_Dialog(void)
         .....................................................................*/
         Scenario = MPlayerFilenum[ScenarioIdx];
 
-        // TODO Add difficulty slider to menu.
+        int diff = difficulty.Get_Value() * (Rule.IsFineDifficulty ? 1 : 2);
+        switch (diff) {
+        case 0:
+            ScenCDifficulty = DIFF_HARD;
+            ScenDifficulty = DIFF_EASY;
+            break;
+
+        case 1:
+            ScenCDifficulty = DIFF_HARD;
+            ScenDifficulty = DIFF_NORMAL;
+            break;
+
+        case 2:
+            ScenCDifficulty = DIFF_NORMAL;
+            ScenDifficulty = DIFF_NORMAL;
+            break;
+
+        case 3:
+            ScenCDifficulty = DIFF_EASY;
+            ScenDifficulty = DIFF_NORMAL;
+            break;
+
+        case 4:
+            ScenCDifficulty = DIFF_EASY;
+            ScenDifficulty = DIFF_HARD;
+            break;
+        }
     }
 
     /*------------------------------------------------------------------------
