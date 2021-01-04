@@ -69,13 +69,14 @@ public:
         return List.Count();
     };
     virtual int Current_Index(void);
-    virtual char const* Current_Item(void);
+    virtual char const* Current_Item(void) const;
     virtual int Draw_Me(int forced);
     virtual char const* Get_Item(int index) const;
     virtual int Step_Selected_Index(int forward);
 
     virtual void Peer_To_Peer(unsigned flags, KeyNumType& key, ControlClass& whom);
     virtual void Remove_Item(char const* text);
+    virtual void Remove_Item(int);
     virtual int Remove_Scroll_Bar(void);
     virtual void Set_Selected_Index(int index);
     virtual void Set_Tabs(int const* tabs);

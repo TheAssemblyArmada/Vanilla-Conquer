@@ -13,7 +13,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\cheklist.h_v   2.19   16 Oct 1995 16:46:20   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/CHEKLIST.H 1     3/03/97 10:24a Joe_bostic $ */
 /***************************************************************************
  **   C O N F I D E N T I A L --- W E S T W O O D    S T U D I O S        **
  ***************************************************************************
@@ -41,42 +41,71 @@
 
 #include "list.h"
 
+class CheckObject
+{
+public:
+    CheckObject(char const* text = 0, bool checked = false)
+        : Text(text)
+        , IsChecked(checked){};
+
+    char const* Text;
+    bool IsChecked;
+};
+
 class CheckListClass : public ListClass
 {
 public:
-    /*---------------------------------------------------------------------
-    Constructor/Destructor
-    ---------------------------------------------------------------------*/
+    /*
+    **	Constructor/Destructor
+    */
     CheckListClass(int id, int x, int y, int w, int h, TextPrintType flags, void const* up, void const* down);
-    ~CheckListClass(void){};
+    ~CheckListClass(void);
 
-    /*---------------------------------------------------------------------
-    Checkmark utility functions
-    ---------------------------------------------------------------------*/
-    void Check_Item(int index, int checked); // sets checked state of item
-    int Is_Checked(int index) const;         // gets checked state of item
-
-    /*---------------------------------------------------------------------
-    This defines the ASCII value of the checkmark character & non-checkmark
-    character.
-    ---------------------------------------------------------------------*/
-    enum CheckListClassEnum
+    virtual int Add_Item(int text)
     {
-        CHECK_CHAR = '\3',
-        UNCHECK_CHAR = ' ',
+        return ListClass::Add_Item(text);
+    }
+    virtual int Add_Item(char const* text);
+    virtual char const* Current_Item(void) const;
+    virtual char const* Get_Item(int index) const;
+    virtual void Remove_Item(char const* text);
+    virtual void Remove_Item(int text)
+    {
+        ListClass::Remove_Item(text);
+    }
+    virtual void Set_Selected_Index(char const* text);
+    virtual void Set_Selected_Index(int index)
+    {
+        ListClass::Set_Selected_Index(index);
     };
+
+    /*
+    **	Checkmark utility functions
+    */
+    void Check_Item(int index, bool checked); // sets checked state of item
+    bool Is_Checked(int index) const;         // gets checked state of item
 
     void Set_Read_Only(int rdonly)
     {
-        IsReadOnly = rdonly ? true : false;
+        IsReadOnly = rdonly;
     }
+
+    /*
+    **	This defines the ASCII value of the checkmark character & non-checkmark
+    **	character.
+    */
+    typedef enum CheckListClassEnum
+    {
+        CHECK_CHAR = '\3',
+        UNCHECK_CHAR = ' '
+    } CheckListClassEnum;
 
 protected:
     virtual int Action(unsigned flags, KeyNumType& key);
+    virtual void Draw_Entry(int index, int x, int y, int width, int selected);
 
 private:
     bool IsReadOnly;
 };
 
 #endif
-/************************** end of cheklist.h ******************************/

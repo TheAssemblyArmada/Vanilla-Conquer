@@ -13,28 +13,34 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\cheklist.cpv   2.18   16 Oct 1995 16:48:36   JOE_BOSTIC  $ */
-/***************************************************************************
- **   C O N F I D E N T I A L --- W E S T W O O D    S T U D I O S        **
- ***************************************************************************
- *                                                                         *
- *                 Project Name : Command & Conquer                        *
- *                                                                         *
- *                    File Name : CHEKLIST.CPP                             *
- *                                                                         *
- *                   Programmer : Bill Randolph                            *
- *                                                                         *
- *                   Start Date : February 16, 1995                        *
- *                                                                         *
- *                  Last Update : February 16, 1995   [BR]                 *
- *                                                                         *
- *-------------------------------------------------------------------------*
- * Functions:                                                              *
- *   CheckListClass::Action -- action function for this class              *
- *   CheckListClass::CheckListClass -- constructor                         *
- *   CheckListClass::Check_Item -- [un]checks an items                     *
- *   CheckListClass::~CheckListClass -- destructor                         *
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+/* $Header: /CounterStrike/CHEKLIST.CPP 1     3/03/97 10:24a Joe_bostic $ */
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                    File Name : CHEKLIST.CPP                                                 *
+ *                                                                                             *
+ *                   Programmer : Joe L. Bostic                                                *
+ *                                                                                             *
+ *                   Start Date : 07/05/96                                                     *
+ *                                                                                             *
+ *                  Last Update : July 6, 1996 [JLB]                                           *
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
+ *   CheckListClass::Action -- action function for this class                                  *
+ *   CheckListClass::Add_Item -- Adds specifies text to check list box.                        *
+ *   CheckListClass::CheckListClass -- constructor                                             *
+ *   CheckListClass::Check_Item -- [un]checks an items                                         *
+ *   CheckListClass::Draw_Entry -- draws a list box entry                                      *
+ *   CheckListClass::Get_Item -- Fetches a pointer to the text associated with the index.      *
+ *   CheckListClass::Remove_Item -- Remove the item that matches the text pointer specified.   *
+ *   CheckListClass::Set_Selected_Index -- Set the selected index to match the text pointer spe*
+ *   CheckListClass::~CheckListClass -- Destructor for check list object.                      *
+ *   CheckListClass::~CheckListClass -- destructor                                             *
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
 
@@ -69,8 +75,139 @@ CheckListClass::CheckListClass(int id,
                                void const* up,
                                void const* down)
     : ListClass(id, x, y, w, h, flags, up, down)
+    , IsReadOnly(false)
 {
-    IsReadOnly = false;
+}
+
+/***********************************************************************************************
+ * CheckListClass::~CheckListClass -- Destructor for check list object.                        *
+ *                                                                                             *
+ *    This destructor will delete all entries attached to it.                                  *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/06/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+CheckListClass::~CheckListClass(void)
+{
+    while (CheckListClass::Count()) {
+        CheckObject* obj = (CheckObject*)ListClass::Get_Item(0);
+
+        ListClass::Remove_Item(0);
+        delete obj;
+    }
+}
+
+/***********************************************************************************************
+ * CheckListClass::Add_Item -- Adds specifies text to check list box.                          *
+ *                                                                                             *
+ *    This routine will add the specified text string to the check list.                       *
+ *                                                                                             *
+ * INPUT:   text  -- Pointer to the text string to add to the list box.                        *
+ *                                                                                             *
+ * OUTPUT:  Returns the index number where the text object was added.                          *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   02/14/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+int CheckListClass::Add_Item(char const* text)
+{
+    CheckObject* obj = new CheckObject(text, false);
+    return (ListClass::Add_Item((char const*)obj));
+}
+
+char const* CheckListClass::Current_Item(void) const
+{
+    CheckObject* obj = (CheckObject*)ListClass::Current_Item();
+    if (obj) {
+        return (obj->Text);
+    }
+    return (0);
+}
+
+/***********************************************************************************************
+ * CheckListClass::Get_Item -- Fetches a pointer to the text associated with the index.        *
+ *                                                                                             *
+ *    This routine will find the text associated with the entry specified and return a pointer *
+ *    to that text.                                                                            *
+ *                                                                                             *
+ * INPUT:   index -- The entry (index) to fetch a pointer to.                                  *
+ *                                                                                             *
+ * OUTPUT:  Returns with the text pointer associated with the index specified.                 *
+ *                                                                                             *
+ * WARNINGS:   If the index is out of range, then NULL is returned.                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/06/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+char const* CheckListClass::Get_Item(int index) const
+{
+    CheckObject* obj = (CheckObject*)ListClass::Get_Item(index);
+    if (obj) {
+        return (obj->Text);
+    }
+    return (0);
+}
+
+/***********************************************************************************************
+ * CheckListClass::Remove_Item -- Remove the item that matches the text pointer specified.     *
+ *                                                                                             *
+ *    This routine will find the entry that matches the text pointer specified and then        *
+ *    delete that entry.                                                                       *
+ *                                                                                             *
+ * INPUT:   text  -- The text pointer to use to find the exact match in the list.              *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/06/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+void CheckListClass::Remove_Item(char const* text)
+{
+    for (int index = 0; index < Count(); index++) {
+        CheckObject* obj = (CheckObject*)ListClass::Get_Item(index);
+        if (obj && stricmp(obj->Text, text) == 0) {
+            ListClass::Remove_Item(index);
+            delete obj;
+            break;
+        }
+    }
+}
+
+/***********************************************************************************************
+ * CheckListClass::Set_Selected_Index -- Set the selected index to match the text pointer spec *
+ *                                                                                             *
+ *    This routine will find the entry that exactly matches the text pointer specified. If     *
+ *    found, then that entry will be set as the currently selected index.                      *
+ *                                                                                             *
+ * INPUT:   text  -- Pointer to the text string to find the match for.                         *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   If an exact match to the specified text string could not be found, then the     *
+ *             currently selected index is not changed.                                        *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/06/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+void CheckListClass::Set_Selected_Index(char const* text)
+{
+    for (int index = 0; index < Count(); index++) {
+        CheckObject* obj = (CheckObject*)ListClass::Get_Item(index);
+        if (obj && stricmp(obj->Text, text) == 0) {
+            Set_Selected_Index(index);
+            break;
+        }
+    }
 }
 
 /***************************************************************************
@@ -88,11 +225,14 @@ CheckListClass::CheckListClass(int id,
  *                                                                         *
  * HISTORY:                                                                *
  *   02/16/1995 BR : Created.                                              *
+ *   02/14/1996 JLB : Revamped.                                            *
  *=========================================================================*/
-void CheckListClass::Check_Item(int index, int checked)
+void CheckListClass::Check_Item(int index, bool checked)
 {
-    if (List[index]) {
-        ((char&)List[index][0]) = checked ? CHECK_CHAR : UNCHECK_CHAR;
+    CheckObject* obj = (CheckObject*)ListClass::Get_Item(index);
+    if (obj && obj->IsChecked != checked) {
+        obj->IsChecked = checked;
+        Flag_To_Redraw();
     }
 }
 
@@ -110,11 +250,13 @@ void CheckListClass::Check_Item(int index, int checked)
  *                                                                         *
  * HISTORY:                                                                *
  *   02/16/1995 BR : Created.                                              *
+ *   02/14/1996 JLB : Revamped.                                            *
  *=========================================================================*/
-int CheckListClass::Is_Checked(int index) const
+bool CheckListClass::Is_Checked(int index) const
 {
-    if (List[index]) {
-        return (List[index][0] == CHECK_CHAR);
+    CheckObject* obj = (CheckObject*)ListClass::Get_Item(index);
+    if (obj) {
+        return (obj->IsChecked);
     }
     return (false);
 }
@@ -156,12 +298,59 @@ int CheckListClass::Action(unsigned flags, KeyNumType& key)
     **	current item.
     */
     if (flags & LEFTPRESS) {
-        if (Is_Checked(SelectedIndex)) {
-            Check_Item(SelectedIndex, 0);
-        } else {
-            Check_Item(SelectedIndex, 1);
-        }
+        Check_Item(SelectedIndex, !Is_Checked(SelectedIndex));
     }
 
     return (rc);
+}
+
+/***************************************************************************
+ * CheckListClass::Draw_Entry -- draws a list box entry                    *
+ *                                                                         *
+ * INPUT:                                                                  *
+ *		index			index into List of item to draw                      		*
+ *		x,y			x,y coords to draw at                                  	*
+ *		width			maximum width allowed for text                       		*
+ *		selected		true = this item is selected                         		*
+ *                                                                         *
+ * OUTPUT:                                                                 *
+ *		none.																						*
+ *                                                                         *
+ * WARNINGS:                                                               *
+ *		none.																						*
+ *                                                                         *
+ * HISTORY:                                                                *
+ *   12/14/1995 BRR : Created.                                             *
+ *=========================================================================*/
+void CheckListClass::Draw_Entry(int index, int x, int y, int width, int selected)
+{
+    if (index >= Count())
+        return;
+
+    CheckObject* obj = (CheckObject*)ListClass::Get_Item(index);
+
+    if (obj) {
+        char buffer[100] = "";
+
+        if (obj->IsChecked) {
+            buffer[0] = CHECK_CHAR;
+        } else {
+            buffer[0] = UNCHECK_CHAR;
+        }
+        buffer[1] = ' ';
+        sprintf(&buffer[2], obj->Text);
+
+        TextPrintType flags = TextFlags;
+
+        if (selected) {
+            flags = flags | TPF_BRIGHT_COLOR;
+            LogicPage->Fill_Rect(x, y, x + width - 1, y + LineHeight - 1, CC_GREEN_SHADOW);
+        } else {
+            if (!(flags & TPF_USE_GRAD_PAL)) {
+                flags = flags | TPF_MEDIUM_COLOR;
+            }
+        }
+
+        Conquer_Clip_Text_Print(buffer, x, y, CC_GREEN, TBLACK, flags, width, Tabs);
+    }
 }
