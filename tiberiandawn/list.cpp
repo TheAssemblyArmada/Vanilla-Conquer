@@ -178,22 +178,10 @@ int ListClass::Add_Item(int text)
     return (List.Count() - 1);
 }
 
-/***********************************************************************************************
- * ListClass::Remove_Item -- Remove specified text from list box.                              *
- *                                                                                             *
- *    This routine will remove the specified text string from the list box.                    *
- *                                                                                             *
- * INPUT:      text  -- Pointer to the string to remove.                                       *
- * OUTPUT:     none                                                                            *
- * WARNINGS:   The text pointer passed into this routine MUST be the same text pointer that    *
- *             was used to add the string to the list.                                         *
- * HISTORY:                                                                                    *
- *   01/15/1995 JLB : Created.                                                                 *
- *=============================================================================================*/
-void ListClass::Remove_Item(char const* text)
+void ListClass::Remove_Item(int index)
 {
-    if (text) {
-        List.Delete(text);
+    if (index < List.Count()) {
+        List.Delete(index);
 
         /*
         **	If the list is now small enough to display completely within the list box region,
@@ -215,8 +203,9 @@ void ListClass::Remove_Item(char const* text)
         */
         if (SelectedIndex >= List.Count()) {
             SelectedIndex--;
-            if (SelectedIndex < 0)
+            if (SelectedIndex < 0) {
                 SelectedIndex = 0;
+            }
         }
 
         /*
@@ -229,6 +218,28 @@ void ListClass::Remove_Item(char const* text)
             if (IsScrollActive)
                 ScrollGadget.Step(1);
         }
+    }
+}
+
+/***********************************************************************************************
+ * ListClass::Remove_Item -- Remove specified text from list box.                              *
+ *                                                                                             *
+ *    This routine will remove the specified text string from the list box.                    *
+ *                                                                                             *
+ * INPUT:      text  -- Pointer to the string to remove.                                       *
+ *                                                                                             *
+ * OUTPUT:     none                                                                            *
+ *                                                                                             *
+ * WARNINGS:   The text pointer passed into this routine MUST be the same text pointer that    *
+ *             was used to add the string to the list.                                         *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   01/15/1995 JLB : Created.                                                                 *
+ *=============================================================================================*/
+void ListClass::Remove_Item(char const* text)
+{
+    if (text) {
+        Remove_Item(List.ID(text));
     }
 }
 
@@ -427,7 +438,7 @@ char const* ListClass::Get_Item(int index) const
  * HISTORY:                                                                                    *
  *   01/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-char const* ListClass::Current_Item(void)
+char const* ListClass::Current_Item(void) const
 {
     if (SelectedIndex >= List.Count()) {
         return nullptr;
