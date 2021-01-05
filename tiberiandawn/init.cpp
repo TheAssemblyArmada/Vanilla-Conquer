@@ -299,13 +299,16 @@ bool Init_Game(int, char*[])
 #ifndef REMASTER_BUILD
     CCDebugString("C&C95 - About to search for CD drives\n");
 
-    // This gets done earlier in RA as the expansion mix files are initialised before the CD-ROM.
-    Force_CD_Available(-1);
-
     /*
     **	Always try to look at the CD-ROM for data files.
     */
     if (!CCFileClass::Is_There_Search_Drives()) {
+        /*
+        **	This call is needed because of a side effect of this function. It will examine the
+        **	CD-ROMs attached to this computer and set the appropriate status values. Without this
+        **	call, the "?:\\" could not be filled in correctly.
+        */
+        Force_CD_Available(-1);
 
         /*
         ** If there are no search drives specified then we must be playing
