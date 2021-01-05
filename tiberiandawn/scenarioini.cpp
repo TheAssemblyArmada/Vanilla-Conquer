@@ -1170,7 +1170,7 @@ static void Assign_Houses(void)
     bool house_used[MAX_PLAYERS]; // true = this house is in use
     bool color_used[16]; // true = this color is in use. We have more than 6 color options now, so bumped this to 16. ST
                          // - 6/19/2019 5:18PM
-    int i, j;
+    int i;
     PlayerColorType color;
     HousesType house2;
     HouseClass* housep2;
@@ -1189,12 +1189,10 @@ static void Assign_Houses(void)
     **	For each player, randomly pick a house
     */
     for (i = 0; i < MPlayerCount; i++) {
-        j = Random_Pick(0, MPlayerMax - 1);
-
         /*
         **	If this house was already selected, decrement 'i' & keep looping.
         */
-        if (house_used[j]) {
+        if (house_used[i]) {
             i--;
             continue;
         }
@@ -1203,7 +1201,7 @@ static void Assign_Houses(void)
         **	Set the house, preferred house (GDI/NOD), color, and actual house;
         **	get a pointer to the house instance
         */
-        house = (HousesType)(j + (int)HOUSE_MULTI1);
+        house = (HousesType)(i + (int)HOUSE_MULTI1);
         pref_house = MPlayerID_To_HousesType(MPlayerID[i]);
         color = MPlayerID_To_ColorIndex(MPlayerID[i]);
         housep = HouseClass::As_Pointer(house);
@@ -1212,7 +1210,7 @@ static void Assign_Houses(void)
         /*
         **	Mark this house & color as used
         */
-        house_used[j] = true;
+        house_used[i] = true;
         color_used[color] = true;
 
         /*
@@ -1236,7 +1234,7 @@ static void Assign_Houses(void)
     /*
     **	For all houses not assigned to a player, set them up for computer use
     */
-    for (i = 0; i < MPlayerMax; i++) {
+    for (i = MPlayerCount; i < MPlayerCount + MPlayerGhosts; i++) {
         if (house_used[i] == false) {
 
             /*
@@ -1274,19 +1272,16 @@ static void Assign_Houses(void)
         }
     }
 
-    /*
-    **	Now make all computer-owned houses allies of each other.
-    */
-    for (house = HOUSE_MULTI1; house < (HOUSE_MULTI1 + MPlayerMax); house++) {
-        housep = HouseClass::As_Pointer(house);
-        if (housep->IsHuman)
-            continue;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
 
-        for (house2 = HOUSE_MULTI1; house2 < (HOUSE_MULTI1 + MPlayerMax); house2++) {
-            housep2 = HouseClass::As_Pointer(house2);
-            if (housep2->IsHuman)
-                continue;
-            housep->Make_Ally(house2);
+        if (house_used[i]) {
+            continue;
+        }
+
+        house = (HousesType)(i + (int)HOUSE_MULTI1);
+        housep = HouseClass::As_Pointer(house);
+        if (housep) {
+            housep->Clobber_All();
         }
     }
 }
