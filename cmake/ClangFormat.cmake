@@ -12,6 +12,8 @@ if(CLANG_FORMAT_FOUND)
         common/*.h
         tiberiandawn/*.cpp
         tiberiandawn/*.h
+        solesurvivor/*.cpp
+        solesurvivor/*.h
         redalert/*.cpp
         redalert/*.h
         tests/*.cpp
