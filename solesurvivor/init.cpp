@@ -1524,11 +1524,15 @@ static void Play_Intro(bool for_real)
         "NODFINAL", "NODFLEES", "NODLOSE",  "NODSWEEP", "NUKE",     "OBEL",     "PARATROP", "PINTLE",   "PLANECRA",
         "PODIUM",   "REFINT",   "RETRO",    "SABOTAGE", "SAMDIE",   "SAMSITE",  "SEIGE",    "SETHPRE",  "SPYCRASH",
         "STEALTH",  "SUNDIAL",  "TANKGO",   "TANKKILL", "TBRINFO1", "TBRINFO2", "TBRINFO3", "TIBERFX",  "TRTKIL_D",
-        "TURTKILL", "VISOR",    NULL};
+        "TURTKILL", "VISOR",    NULL,
+    };
 
+    GameType current = GameToPlay;
     Keyboard->Clear();
-    if (for_real || Is_Demo()) {
+    GameToPlay = GAME_NORMAL;
+    if (for_real) {
         Hide_Mouse();
+        Play_Movie("WESTLOGO", THEME_NONE, false);
         Play_Movie("LOGO", THEME_NONE, false);
         Show_Mouse();
     } else {
@@ -1547,6 +1551,8 @@ static void Play_Intro(bool for_real)
             _counter = -1;
         }
     }
+
+    GameToPlay = current;
 #endif
 }
 
