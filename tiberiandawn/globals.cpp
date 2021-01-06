@@ -92,7 +92,7 @@ SelectedObjectsType CurrentObject;
 **	This holds the custom version text that is fetched from the version
 **	text file. This version is displayed on the options dialog.
 */
-char VersionText[16];
+char VersionText[64];
 
 /***************************************************************************
 **	This is the VQ animation controller structure. It is filled in by reading

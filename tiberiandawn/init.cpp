@@ -42,6 +42,7 @@
 
 #include "function.h"
 #include "loaddlg.h"
+#include "common/gitinfo.h"
 #include "common/tcpip.h"
 #include "common/vqaconfig.h"
 #include <time.h>
@@ -853,40 +854,15 @@ bool Select_Game(bool fade)
                 }
 
                 Set_Logic_Page(SeenBuff);
-#ifdef VIRGIN_CHEAT_KEYS
-                Fancy_Text_Print("V.%d%s",
-                                 SeenBuff.Get_Width() - 1,
-                                 SeenBuff.Get_Height() - 10,
-                                 DKGREY,
-                                 TBLACK,
-                                 TPF_6POINT | TPF_FULLSHADOW | TPF_RIGHT,
-                                 Version_Number(),
-                                 VersionText,
-                                 FOREIGN_VERSION_NUMBER);
-//				Fancy_Text_Print("V.%d%s%02d", 319, 190, DKGREY, TBLACK, TPF_6POINT|TPF_FULLSHADOW|TPF_RIGHT,
-//Version_Number(), VersionText, FOREIGN_VERSION_NUMBER);
-#else
 
-#ifdef DEMO
-                Version_Number();
-                Fancy_Text_Print("DEMO V%s",
+                Fancy_Text_Print("%s",
                                  SeenBuff.Get_Width() - 1,
                                  SeenBuff.Get_Height() - 10,
-                                 DKGREY,
+                                 GREEN,
                                  TBLACK,
                                  TPF_6POINT | TPF_FULLSHADOW | TPF_RIGHT,
                                  VersionText);
-#else
-                Fancy_Text_Print("V.%d%s",
-                                 SeenBuff.Get_Width() - 1,
-                                 SeenBuff.Get_Height() - 10,
-                                 DKGREY,
-                                 TBLACK,
-                                 TPF_6POINT | TPF_FULLSHADOW | TPF_RIGHT,
-                                 Version_Number(),
-                                 VersionText);
-#endif
-#endif
+
                 display = false;
                 Show_Mouse();
             } else {
@@ -2402,127 +2378,9 @@ void Parse_INI_File(void)
  *=============================================================================================*/
 int Version_Number(void)
 {
-#ifdef OBSOLETE
-    static bool initialized = false;
-    static int version;
-    static char* date = __DATE__;
-    static char* time = __TIME__;
-    static char const* months = "JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
-
-    if (!initialized) {
-        char* ptr;
-        char* tok;
-
-        /*
-        **	Fetch the month and place in the first two digit positions.
-        */
-        strupr(date);
-        tok = strtok(date, " ");
-        ptr = strstr(months, tok);
-        if (ptr) {
-            version = (((ptr - months) / 3) + 1) * 10000;
-        }
-
-        /*
-        **	Fetch the date and place that in the next two digit positions.
-        */
-        tok = strtok(NULL, " ");
-        if (tok) {
-            version += atoi(tok) * 100;
-        }
-
-        /*
-        **	Fetch the time and place that in the last two digit positions.
-        */
-        tok = strtok(time, ": ");
-        if (tok) {
-            version += atoi(tok);
-        }
-
-        /*
-        **	Fetch the virgin text file (if present).
-        */
-        RawFileClass file("VERSION.TXT");
-        if (file.Is_Available()) {
-            file.Read(VersionText, sizeof(VersionText));
-            VersionText[sizeof(VersionText) - 1] = '\0';
-            while (VersionText[sizeof(VersionText) - 1] == '\r') {
-                VersionText[sizeof(VersionText) - 1] = '\0';
-            }
-        } else {
-            VersionText[0] = '\0';
-        }
-
-        initialized = true;
-    }
-    return (version);
-#endif
-
-#ifdef WIN32
-
-#if (FRENCH)
-    sprintf(VersionText, ".02"); // Win95 french version number
-#endif                           // FRENCH
-
-#if (GERMAN)
-    sprintf(VersionText, ".01"); // Win95 german version number
-#endif                           // GERMAN
-
-#if (JAPANESE)
-    sprintf(VersionText, ".01"); // Win95 german version number
-#endif                           // GERMAN
-
-#if !(FRENCH | GERMAN | JAPANESE)
-    sprintf(VersionText, ".07"); // Win95 USA version number
-#endif                           // FRENCH | GERMAN
-
-    RawFileClass file("VERSION.TXT");
-    char version[16];
-    memset(version, 0, sizeof(version));
-    if (file.Is_Available()) {
-        file.Read(version, sizeof(version));
-    }
-    strncat(VersionText, version, sizeof(VersionText) - strlen(VersionText) - 1);
-
-#if (FRENCH)
-    return (1); // Win95 french version number
-#endif          // FRENCH
-
-#if (GERMAN)
-    return (1); // Win95 german version number
-#endif          // GERMAN
-
-#if (JAPANESE)
-    return (1); // Win95 german version number
-#endif          // GERMAN
-
-#if !(FRENCH | GERMAN | JAPANESE)
-    return (1); // Win95 USA version number
-#endif          // FRENCH | GERMAN
-
-#else
-
-#ifdef PATCH
-
-#ifdef DEMO
-    sprintf(VersionText, " 1.0a"); // Demo version.
-#else
-    strcpy(VersionText, ".34 ");
-#endif
+    snprintf(
+        VersionText, sizeof(VersionText), "R:%d %s%s", GitRevision, (GitUncommittedChanges ? "~" : ""), GitShortSHA1);
     return (1);
-
-#else
-
-#ifdef DEMO
-    sprintf(VersionText, " 1.0a"); // Demo version.
-#else
-    //	sprintf(VersionText, ".%02dp", 13);			// Patch version.
-    sprintf(VersionText, ".%02d", 14); // Master version.
-#endif
-    return (1);
-#endif
-
-#endif // WIN32
 }
 
 /***********************************************************************************************
