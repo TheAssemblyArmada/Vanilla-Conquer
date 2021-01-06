@@ -775,7 +775,7 @@ void Computer_Message(void)
                 Messages.Add_Message(txt, color, TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW, 600, 0, 0);
             }
         } else {
-            sprintf(txt, "%s %s", Text_String(TXT_FROM_COMPUTER), Text_String(TXT_COMP_MSG1 + IRandom(0, 12)));
+            sprintf(txt, "%s %s", Text_String(TXT_FROM_COMPUTER), "No messages available.");
             Messages.Add_Message(txt, color, TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW, 600, 0, 0);
         }
 

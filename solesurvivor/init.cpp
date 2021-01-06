@@ -786,7 +786,7 @@ bool Select_Game(bool fade)
         **	Menu selection processing loop
         */
         ScenarioInit++;
-        Theme.Queue_Song(THEME_MAP1);
+        Theme.Queue_Song(THEME_WIN1);
         ScenarioInit--;
 
         /*
@@ -1031,7 +1031,6 @@ bool Select_Game(bool fade)
             case SEL_LOAD_MISSION:
                 if (LoadOptionsClass(LoadOptionsClass::LOAD).Process()) {
                     // Theme.Fade_Out();
-                    Theme.Queue_Song(THEME_AOI);
                     process = false;
                     gameloaded = true;
                 } else {
@@ -1258,7 +1257,7 @@ bool Select_Game(bool fade)
                 Show_Mouse();
 
                 ScenarioInit++;
-                Theme.Play_Song(THEME_MAP1);
+                Theme.Play_Song(THEME_WIN1);
                 ScenarioInit--;
                 display = true;
                 fade = true;

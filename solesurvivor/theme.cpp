@@ -54,44 +54,16 @@
 **	These are the actual filename list for the theme sample files.
 */
 ThemeClass::ThemeControl ThemeClass::_themes[THEME_COUNT] = {
-    {"AIRSTRIK", TXT_THEME_AIRSTRIKE, 0, 200, false, false, false, true},
-    {"80MX226M", TXT_THEME_80MX, 0, 248, false, false, false, true},
-    {"CHRG226M", TXT_THEME_CHRG, 0, 256, true, false, false, true},
-    {"CREP226M", TXT_THEME_CREP, 0, 222, true, false, false, true},
-    {"DRIL226M", TXT_THEME_DRIL, 0, 272, true, false, false, true},
-    {"DRON226M", TXT_THEME_DRON, 0, 275, true, false, false, true},
-    {"FIST226M", TXT_THEME_FIST, 0, 212, true, false, false, true},
-    {"RECN226M", TXT_THEME_RECON, 0, 261, true, false, false, true},
-    {"VOIC226M", TXT_THEME_VOICE, 0, 306, true, false, false, true},
-    {"HEAVYG", TXT_THEME_HEAVYG, 0, 180, true, false, false, true},
-    {"J1", TXT_THEME_J1, 4, 187, true, false, false, true},
-    //	{"J1",			TXT_THEME_J1,			4,		187,	false,	false,false,true},
-    {"JDI_V2", TXT_THEME_JDI_V2, 5, 183, true, false, false, true},
-    {"RADIO", TXT_THEME_RADIO, 6, 183, true, false, false, true},
-    {"RAIN", TXT_THEME_RAIN, 7, 156, true, false, false, true},
-    {"AOI", TXT_THEME_AOI, 0, 168, true, true, false, true},
-    {"CCTHANG", TXT_THEME_CCTHANG, 12, 193, true, false, false, true},
-    {"DIE", TXT_THEME_DIE, 11, 162, false, false, false, true},
-    {"FWP", TXT_THEME_FWP, 10, 53, true, false, false, true},
-    {"IND", TXT_THEME_IND, 1, 175, true, false, false, true},
-    {"IND2", TXT_THEME_IND2, 1, 38, true, false, false, true},
-    {"JUSTDOIT", TXT_THEME_JUSTDOIT, 9, 142, true, false, false, true},
-    {"LINEFIRE", TXT_THEME_LINEFIRE, 8, 125, true, false, false, true},
-    {"MARCH", TXT_THEME_MARCH, 7, 157, true, false, false, true},
-    {"TARGET", TXT_THEME_TARGET, 0, 173, true, false, false, true},
-    {"NOMERCY", TXT_THEME_NOMERCY, 2, 204, true, false, false, true},
-    {"OTP", TXT_THEME_OTP, 3, 182, true, false, false, true},
-    {"PRP", TXT_THEME_PRP, 4, 211, true, false, false, true},
-    {"ROUT", TXT_THEME_ROUT, 12, 121, false, true, false, true},
-    {"HEART", TXT_THEME_HEART, 5, 206, false, true, false, true},
-    {"STOPTHEM", TXT_THEME_STOPTHEM, 0, 190, true, false, false, true},
-    {"TROUBLE", TXT_THEME_TROUBLE, 6, 191, true, true, false, true},
-    {"WARFARE", TXT_THEME_WARFARE, 0, 182, true, false, false, true},
-    {"BEFEARED", TXT_THEME_BEFEARED, 13, 164, false, true, false, true},
-    {"I_AM", TXT_THEME_IAM, 6, 161, false, false, false, true},
-    {"WIN1", TXT_THEME_WIN1, 0, 41, false, true, true, true},
-    {"MAP1", TXT_THEME_WIN1, 0, 61, false, false, true, true},
-    {"VALKYRIE", TXT_THEME_VALK, 0, 306, false, false, true, true},
+    {"WORKREMX", TXT_THEME_WORKREMX, 0, 205, 1, 0, 0, 1},
+    {"CRSHNVOX", TXT_THEME_CRUSH, 0, 209, 1, 0, 0, 1},
+    {"DEPTHCHG", TXT_THEME_DEPTHCHG, 0, 249, 1, 0, 0, 1},
+    {"DRILL", TXT_THEME_DRILL, 0, 264, 1, 0, 0, 1},
+    {"HELLNVOX", TXT_THEME_HELLNVOX, 0, 209, 1, 0, 0, 1},
+    {"IRONFIST", TXT_THEME_IRONFIST, 0, 210, 1, 0, 0, 1},
+    {"MERCY98", TXT_THEME_MERCY98, 0, 210, 1, 0, 0, 1},
+    {"MUDREMX", TXT_THEME_MUDREMX, 0, 285, 1, 0, 0, 1},
+    {"CREEPING", TXT_THEME_CREEPING, 0, 217, 1, 0, 0, 1},
+    {"MAP1", TXT_THEME_WIN1, 0, 26, 0, 0, 1, 1},
 };
 
 /***********************************************************************************************
@@ -456,23 +428,10 @@ int ThemeClass::Still_Playing(void)
  *=============================================================================================*/
 bool ThemeClass::Is_Allowed(ThemeType index) const
 {
-    if (Is_Demo()) {
-        char buffer[128];
-
-        sprintf(buffer, "%s.AUD", Base_Name(index));
-        CCFileClass file(buffer);
-        if (_themes[index].Scenario == 99 || !file.Is_Available()) {
-            _themes[index].Scenario = 99;
-            return (false);
-        }
-    }
-
-    return (_themes[index].Available
-            && (_themes[index].Normal ||
-                //		(index == THEME_MAP1 && ScenarioInit) ||
-                ((Special.IsVariation && _themes[index].Variation && index != THEME_WIN1)
-                 && (!Is_Demo() || (GameToPlay != GAME_NORMAL || _themes[index].Scenario <= (int)Scenario))
-                 && (index != THEME_J1 || Special.IsJurassic))));
+    return _themes[index].Available
+           && (_themes[index].Normal
+               || ((Special.IsVariation && _themes[index].Variation && index != THEME_WIN1)
+                   && (GameToPlay != GAME_NORMAL || _themes[index].Scenario <= (int)Scenario)));
 }
 
 /***********************************************************************************************

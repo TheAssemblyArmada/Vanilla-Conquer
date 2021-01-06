@@ -3344,9 +3344,7 @@ typedef enum
 {
     CD_LOCAL = -2,
     CD_ANY = -1,
-    CD_GDI = 0,
-    CD_NOD,
-    CD_COVERTOPS,
+    CD_SOLE = 0,
     CD_DATADIR,
     CD_COUNT
 } CD_VOLUME;
@@ -3386,7 +3384,7 @@ static bool Change_Local_Dir(int cd)
 {
     static bool _initialised = false;
     static unsigned _detected = 0;
-    static const char* _vol_labels[CD_COUNT] = {"gdi", "nod", "covertops", "."};
+    static const char* _vol_labels[CD_COUNT] = {"sole", "."};
     char vol_buff[16];
 
     // Detect which if any of the discs have had their data copied to an appropriate local folder.

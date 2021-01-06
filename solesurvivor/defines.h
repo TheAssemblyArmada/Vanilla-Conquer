@@ -355,47 +355,20 @@ typedef enum ThemeType : signed char
 {
     THEME_PICK_ANOTHER = -2,
     THEME_NONE = -1,
-    THEME_AIRSTRIKE,
-    THEME_80MX,
-    THEME_CHRG,
-    THEME_CREP,
-    THEME_DRIL,
-    THEME_DRON,
-    THEME_FIST,
-    THEME_RECON,
-    THEME_VOICE,
-    THEME_HEAVYG,
-    THEME_J1,
-    THEME_JDI_V2,
-    THEME_RADIO,
-    THEME_RAIN,
-    THEME_AOI,      // Act On Instinct
-    THEME_CCTHANG,  //	C&C Thang
-    THEME_DIE,      //	Die!!
-    THEME_FWP,      //	Fight, Win, Prevail
-    THEME_IND,      //	Industrial
-    THEME_IND2,     //	Industrial2
-    THEME_JUSTDOIT, //	Just Do It!
-    THEME_LINEFIRE, //	In The Line Of Fire
-    THEME_MARCH,    //	March To Your Doom
-    THEME_MECHMAN,  // Mechanical Man
-    THEME_NOMERCY,  //	No Mercy
-    THEME_OTP,      //	On The Prowl
-    THEME_PRP,      //	Prepare For Battle
-    THEME_ROUT,     //	Reaching Out
-    THEME_HEART,    //
-    THEME_STOPTHEM, //	Stop Them
-    THEME_TROUBLE,  //	Looks Like Trouble
-    THEME_WARFARE,  //	Warfare
-    THEME_BFEARED,  //	Enemies To Be Feared
-    THEME_IAM,      // I Am
-    THEME_WIN1,     //	Great Shot!
-    THEME_MAP1,     // Map subliminal techno "theme".
-    THEME_VALKYRIE, // Ride of the valkyries.
+    THEME_WORKREMX, // Workmen Remix
+    THEME_CRUSH,    // Crush
+    THEME_DEPTHCHG, // Depth Charge
+    THEME_DRILL,    // Drill
+    THEME_HELLNVOX, // HellMarch
+    THEME_IRONFIST, // Iron Fist
+    THEME_MERCY98,  // No Mercy '98
+    THEME_MUDREMX,  // MUD Remix
+    THEME_CREEPING, // Creeping Upon
+    THEME_WIN1,     // Great Shot!
 
     THEME_COUNT,
-    THEME_LAST = THEME_BFEARED,
-    THEME_FIRST = 0
+    THEME_LAST = THEME_CREEPING,
+    THEME_FIRST = 0,
 } ThemeType;
 
 // inline ThemeType operator++(ThemeType &, int);

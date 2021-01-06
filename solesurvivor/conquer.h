@@ -688,287 +688,287 @@
 #define TXT_ERROR_CORRECTION                        672 // Error Correction
 #define TXT_HARDWARE_FLOW_CONTROL                   673 // Hardware Flow Control
 #define TXT_ADVANCED                                674 // Advanced
-#define TXT_SS_INTRO 675 // Intro
-#define TXT_READING_IMAGE_DATA 676 // READING IMAGE DATA
-#define TXT_ANALYSING 677 // ANALYZING
-#define TXT_ENHANCEING_IMAGE_DATA 678 // ENHANCING IMAGE DATA
-#define TXT_ISOLATING_OPERATIONAL_THEATER 679 // ISOLATING OPERATIONAL THEATER
-#define TXT_ESTABLISHING_TRADITIONAL_BOUNDARIES 680 // ESTABLISHING TRADITIONAL BOUNDARIES
-#define TXT_FOR_VISUAL_REFERENCE 681 // FOR VISUAL REFERENCE
-#define TXT_ENHANCING_IMAGE 682 // ENHANCING IMAGE
-#define TXT_HAS_UNCLOAKED_ALL 683 // %s has uncloaked all units.
-#define TXT_HAS_RESHROUDED 684 // %s has reshrouded the map.
-#define TXT_GOT_ARMAGEDDON 685 // %s got the Armageddon crate.
-#define TXT_MADE_MINCEMEAT 686 // You made mincemeat out of %s.
-#define TXT_REGRETS_MEETING_YOU 687 // %s regrets meeting you.
-#define TXT_CASUALLY_SLAUGHTER 688 // You casually slaughter %s.
-#define TXT_FALLS_TO_MIGHT 689 // %s falls to your superior might!
-#define TXT_MURDEROUS_INSTINCTS 690 // Your murderous instincts get the better of %s.
-#define TXT_DIES_CRUEL_DEATH 691 // %s dies a cruel death at your hand!
-#define TXT_GRIM_REAPER 692 // You send the Grim Reaper to visit %s.
-#define TXT_EXTREME_PREJUDICE 693 // %s comprehends your extreme prejudice.
-#define TXT_CURSE_YOUR_NAME 694 // The friends of %s curse your name.
-#define TXT_BOOK_OF_KILLS 695 // You enscribe %s into your Book of Kills.
-#define TXT_FEEL_THE_WRATH 696 // You feel the wrath of %s!
-#define TXT_OVER_YOUR_GRAVE 697 // %s cackles over your grave!
-#define TXT_YOUR_MURDERER_WAS 698 // Your murderer today was %s.
-#define TXT_DATE_WITH_DEATH 699 // %s arranges your Date with Death.
-#define TXT_BUTCHERED_BY 700 // You were butchered by %s.
-#define TXT_NEW_RESPECT_FOR 701 // You learn a new respect for %s.
-#define TXT_YOU_GO_DOWN 702 // You go down, and the name of %s is bitter on your tongue!
-#define TXT_MERCILESS_DEATH 703 // %s delivers you a merciless death.
-#define TXT_BUTCHER_ANOTHER 704 // %s nonchalently staggers off to butcher another.
-#define TXT_DYING_BREATH 705 // You curse %s with your dying breath.
-#define TXT_IS_A_TRAITOR 706 // %s is a traitor.
-#define TXT_CONNECTION_TO_SERVER_LOST 707 // Connection to server lost!
-#define TXT_SERVER_COLON 708 // Server: %s
-#define TXT_INVALID_STATE_RECEIVED 709 // Invalid game state received!
-#define TXT_TOO_MANY_BYTES 710 // Too many bytes received!
-#define TXT_INVALID_STATE_DONE 711 // Invalid game-state-done!
-#define TXT_ENTER_HOST_ADDRESS 712 // Enter Host Address
-#define TXT_SS_CONNECTING 713 // Connecting...
-#define TXT_UNABLE_TO_CONNECT 714 // Unable to connect!
-#define TXT_CONNECTION_REFUSED 715 // Connection Refused!
-#define TXT_SCENARIO_NOT_FOUND 716 // Scenario not found!
-#define TXT_SPECTATOR 717 // Spectator
-#define TXT_TEAM1 718 // Team 1
-#define TXT_TEAM2 719 // Team 2
-#define TXT_TEAM3 720 // Team 3
-#define TXT_TEAM4 721 // Team 4
-#define TXT_ADMINISTRATOR 722 // Administrator
-#define TXT_CHOOSE_IDENTITY 723 // Choose Your Identity
-#define TXT_WAITING_FOR_OPTIONS 724 // Waiting for options...
-#define TXT_DEFAULTS 725 // Defaults
-#define TXT_PROBABILITY_ADJUSTMENT 726 // Probability Adjustment
-#define TXT_STRENGTH 727 // Strength
-#define TXT_WEAPON 728 // Weapon
-#define TXT_SS_SPEED 729 // Speed
-#define TXT_RELOAD 730 // Reload
-#define TXT_RANGE 731 // Range
-#define TXT_HEAL 732 // Heal
-#define TXT_BOMB 733 // Bomb
-#define TXT_STEALTH 734 // Stealth
-#define TXT_TELEPORT 735 // Teleport
-#define TXT_UNCLOAK 736 // Uncloak
-#define TXT_RESHROUD 737 // Reshroud
-#define TXT_UNSHROUD 738 // Unshroud
-#define TXT_RADAR 739 // Radar
-#define TXT_ARMAGEDDON 740 // Armageddon
-#define TXT_CELLS_PER_CRATE 741 // Cells per Crate
-#define TXT_ION_FACTOR 742 // Ion Factor
-#define TXT_WAITING_ON 743 // Waiting on %s
-#define TXT_TIME_ALLOWED_D 744 // Time Allowed: %d
-#define TXT_TEST 745 // Test
-#define TXT_VOICE_THEMES 746 // Voice Themes
-#define TXT_IS_VICTORIOUS 747 // %s is victorious!
-#define TXT_SPOILS_OF_WAR 748 // To %s go the spoils of war.
-#define TXT_IS_THE_WINNER 749 // %s is the winner!
-#define TXT_REIGNS_SUPREME 750 // %s reigns supreme!
-#define TXT_HAS_CONQUERED_ALL 751 // %s has conquered all.
-#define TXT_GAME_OVER 752 // Game Over
-#define TXT_WAS_NO_WINNER 753 // There was no winner.
-#define TXT_ITS_A_TIE 754 // It's a tie!
-#define TXT_BLUe_TEAM 755 // The Blue Team
-#define TXT_ORANGE_TEAM 756 // The Orange Team
-#define TXT_GREEN_TEAM 757 // The Green Team
-#define TXT_GREY_TEAM 758 // The Grey Team
-#define TXT_WORKMEN_REMIX 759 // Workmen Remix
-#define TXT_CRUSH 760 // Crush
-#define TXT_DEPTH_CHARGE 761 // Depth Charge
-#define TXT_DRILL 762 // Drill
-#define TXT_HELLMARCH 763 // HellMarch
-#define TXT_IRON_FIST 764 // Iron Fist
-#define TXT_NO_MERCY_98 765 // No Mercy '98
-#define TXT_MUD_REMIX 766 // MUD Remix
-#define TXT_CREEPING_UPON 767 // Creeping Upon
-#define TXT_TRACKING_MODE_OFF 768 // Tracking mode OFF
-#define TXT_TRACKING_MODE_ON 769 // Tracking mode ON
-#define TXT_TEAM_MESSAGE 770 // Team Message:
-#define TXT_CAPTURED_FLAG 771 // %s (%s) captured %s's flag!
-#define TXT_SCORES_GOAL 772 // %s scores a goal for %s!
-#define TXT_HUNTER 773 // Hunter
-#define TXT_DONT_FLOOD_MESSAGE_AREA 774 // Please do not flood the message area.
-#define TXT_SERVER_CONNECTION_LOST 775 // Connection to Server lost.``
-#define TXT_MEANS_INTERNET_CONN 776 // This probably means that the Internet connection between your`
-#define TXT_IS_POOR 777 // computer and the Server for this Sole Survivor channel, is poor.``
-#define TXT_TRY_DIFFERENT_CHANNEL 778 // Please try a different Sole Survivor channel.
-#define TXT_HAVE_BECOME_SPECTATOR 779 // You have become a Spectator.
-#define TXT_COMMAND_HQ_COLON 780 // Command HQ: %s
-#define TXT_S_TO_S_COLON_S 781 // %s (to %s): %s
-#define TXT_FORMAT_FOR_PRIVATE_MESSAGE_IS 782 // Format for private messages is #name message
-#define TXT_NO_PLAYER_NAMED 783 // There is no player named "%s"
-#define TXT_VERBOSE_ON 784 // Verbose mode ON
-#define TXT_VERBOSE_OFF 785 // Verbose mode OFF
-#define TXT_HAS_JOINED_GAME 786 // %s has joined the game.
-#define TXT_HAS_LEFT_GAME 787 // %s has left the game.
-#define TXT_D_PLAYERS_COLON 788 // %d Players:
-#define TXT_D_PLAYERS 789 // %d Players
-#define TXT_TIME_LEFT_MINS 790 // Time Left: %d minutes
-#define TXT_TIME_LEFT_SECS 791 // Time Left: %d seconds
-#define TXT_LIVES_LEFT 792 // Lives Left: %d
-#define TXT_SCORE_LIMIT 793 // Score Limit: %d
-#define TXT_ION_DANGER 794 // Ion Danger:
-#define TXT_DANGER_NONE 795 // None
-#define TXT_DANGER_LOW                                 796 // Low
-#define TXT_DANGER_MED 797 // Medium
-#define TXT_DANGER_HIGH 798 // High
-#define TXT_DEMOLISHED_DEFENSIVE_STRUCT 799 // You demolished a Defensive Structure!
-#define TXT_SMASHED_DEFENSIVE_STRUCT 800 // You smashed a Defensive Structure!
-#define TXT_TALENT_FOR_DESTRUCTION 801 // Your talent for destruction shows itself.
-#define TXT_DOWN_GOES_DEFENSIVE_STRUCT 802 // Down goes a Defensive Structure.
-#define TXT_DEFENSIVE_STRUCT_BOWS                           803 // A Defensive Structure bows to your might!
-#define TXT_STRANGE_JOY_DEFENSIVE_STRUCT               804 // You feel a strange joy, as a Defensive Structure crumbles.
-#define TXT_DEFENSIVE_STRUCT_COOKED                                805 // A Defensive Structure cooked your goose.
-#define TXT_KILLED_BY_DEFENSIVE_STRUCT                       806 // You were killed by a Defensive Structure!
-#define TXT_DEFENSIVE_STRUCT_GOT_BETTER                                       807 // A Defensive Structure gets the better of you.
-#define TXT_DEFENSIVE_STRUCT_BBQ                                       808 // A Defensive Structure barbequed your brains.
-#define TXT_INTIMATE_WITH_DEFENSIVE_STRUCT                                    809 // You got intimate with a Defensive Structure.
-#define TXT_NEW_RESPECT_DEFENSIVE_STRUCT                                      810 // You learn a new respect for Defensive Structures.
-#define TXT_AI_OPPONENTS_COLON 811 // AI Opponents:
-#define TXT_MIN_ZERO 812 // Min. 0
-#define TXT_MAX_10 813 // Max. 10
-#define TXT_MAX_DOT 814 // Max.
-#define TXT_CONGRATS_YOU_MADE_POINTS 815 // Congratulations... you made %d points!
-#define TXT_MADE_NO_POINTS 816 // You made NO points!
-#define TXT_KILLED_X_TIMES 817 // You were killed %d times
-#define TXT_NEVER_KILLED 818 // You were NEVER killed!
-#define TXT_KEY_SUMMARY 819 // Key Summary    (Press F1 to remove this display)
-#define TXT_DROP_ANY_FLAG 820 // Drop any flag you are carrying.
-#define TXT_CENTER_ON_FLAG 821 // Center view on your Flag.
-#define TXT_INTO_GUARD_MODE 822 // Go into Guard mode.
-#define TXT_H_OR_HOME 823 // H or Home
-#define TXT_CENTER_ON_UNIT 824 // Center view on your unit.
-#define TXT_CLEAN_UP_PLAYER_LIST 825 // Clean up player List.
-#define TXT_TOGGLE_NAMES 826 // Toggle display of player Names.
-#define TXT_TOGGLE_TRACKING 827 // Toggle Tracking mode.
-#define TXT_SHIFT_S 828 // Shift-s
-#define TXT_TAKE_SCREENSHOT 829 // Take a Screenshot
-#define TXT_ENTER 830 // Enter
-#define TXT_NORMAL_MESSAGING 831 // Normal messaging prompt.
-#define TXT_SHIFT_ENTER 832 // Shift-Enter
-#define TXT_TEAM_MESSAGING 833 // Team messaging prompt.
-#define TXT_ENTER_NAME_MESSAGE 834 // <Enter>#name message
-#define TXT_SEND_PRIVATE_MESSAGE 835 // To send a private message.
-#define TXT_UP_ARROW 836 // <Up-arrow>
-#define TXT_REPEAT_PRV_MSG_DEST 837 // To repeat a private message destination.
-#define TXT_ESCAPE 838 // Escape
-#define TXT_OPTIONS_MENU_DOT 839 // Options menu.
-#define TXT_TAB 840 // Tab
-#define TXT_TOGGLE_SIDEBAR 841 // Toggle sidebar on or off.
-#define TXT_1_THROUGH_0 842 // 1 through 0
-#define TXT_PREPARE_SEND_MSG_MACRO 843 // Prepare to send a team message macro.
-#define TXT_TOGGLE_HELP 844 // Toggle this Help display.
-#define TXT_TOGGLE_PARAM_DISPLAY 845 // Toggle display of game parameters.
-#define TXT_TOGGLE_COMMAND_DISPLAY 846 // Toggle display of available commands.
-#define TXT_CTRL_F7_TO_F10 847 // Control-F7 to Control-F10
-#define TXT_REMEMBER_VIEW 848 // Remember view.
-#define TXT_F7_TO_F10 849 // F7 to F10
-#define TXT_SHOW_REMEMBERED_VIEW 850 // Show remembered view.
-#define TXT_GAME_PARAMS_F2 851 // Game Parameters    (Press F2 to remove this display)
-#define TXT_YOU_ARE_IN_X_CHANNEL 852 // You are playing in the %s channel.
-#define TXT_THERE_ARE_CRATES 853 // There ARE crates.
-#define TXT_THERE_ARE_NO_CRATES 854 // There are NO crates.
-#define TXT_IS_LADDER_GAME 855 // This IS a ladder game.
-#define TXT_ISNT_LADDER_GAME 856 // This is NOT a ladder game.
-#define TXT_IS_TIME_LIMIT 857 // There is a Time limit of %d minutes.
-#define TXT_NO_TIME_LIMIT 858 // There is NO Time limit.
-#define TXT_IS_SCORE_LIMIT 859 // There is a Score limit of %d points.
-#define TXT_NO_SCORE_LIMIT 860 // There is NO Score limit.
-#define TXT_IS_LIFE_LIMIT 861 // There is a Life limit of %d lives.
-#define TXT_NO_LIFE_LIMIT 862 // There is NO Life limit.
-#define TXT_PLAYING_CTF 863 // You are playing Capture the Flag.
-#define TXT_BASE_HAS_DEF_STRUCTS 864 // Each base has %d defensive structures.
-#define TXT_TEAMS_RESET_ON_CTF 865 // Teams ARE reset when a flag is captured.
-#define TXT_TEAMS_DONT_RESET_ON_CTF 866 // Teams are NOT reset when a flag is captured.
-#define TXT_PLAYING_1F_FOOTBALL 867 // You are playing 1-flag Football.
-#define TXT_PLAYING_2F_FOOTBALL 868 // You are playing 2-flag Football.
-#define TXT_TEAMCRATES_ON 869 // TeamCrates are ON.
-#define TXT_TEAMCRATES_OFF 870 // TeamCrates are OFF.
-#define TXT_TEAM_SEL_AUTO 871 // Team selection is automatic. Players join the smallest team.
-#define TXT_THERE_ARE_X_TEAMS 872 // There are %d teams.
-#define TXT_MAX_OF_X_PER_TEAM 873 // There are a maximum of %d players per team.
-#define TXT_DONT_HAVE_TO_HAVE_TEAM 874 // You do NOT have to belong to a team.
-#define TXT_MUST_HAVE_TEAM 875 // You MUST belong to a team.
-#define TXT_MAY_CHOOSE_TEAM 876 // You MAY choose which team you play for.
-#define TXT_CANNOT_CHOOSE_TEAM 877 // You can NOT choose which team you play for.
-#define TXT_RESHROUD_OFF 878 // Map reshroud is DISABLED.
-#define TXT_RESHROUD_ON 879 // Map reshroud is ENABLED.
-#define TXT_FLAG_SITTING_ALLOWED 880 // Flag sitting IS permitted.
-#define TXT_FLAG_SETTING_NOT_ALLOWED 881 // Flag sitting is NOT permitted.
-#define TXT_FLAG_LOOSE_POWERUP 882 // When you pick up a flag, you DO lose certain powerups.
-#define TXT_FLAG_NOT_LOOSE_POWERUP 883 // When you pick up a flag, you do NOT lose any powerups.
-#define TXT_RADAR_IS_FREE 884 // Radar IS provided free to everybody.
-#define TXT_RADAR_NOT_FREE 885 // Radar is NOT provided free to everybody.
-#define TXT_HEALTH_SHOWN_FOR_YOU 886 // Health bars are shown only for YOU.
-#define TXT_HEALTH_SHOWN_FOR_TEAM 887 // Health bars are shown for YOU and your TEAMMATES.
-#define TXT_HEALTH_SHOWN_EVERYBODY 888 // Health bars are shown for EVERYBODY.
-#define TXT_HUNTERS_MATCH_PLAYERS 889 // Hunters ARE matched to the number of players.
-#define TXT_HUNTERS_NOT_MATCH_PLAYERS 890 // Hunters are NOT matched to the number of players.
-#define TXT_HUNTERS_FROM_NUMBERS 891 // Hunters are introduced according to these numbers: (u)%d/%d, (b)%d/%d
-#define TXT_CANNOT_INIT_CLIENT 892 // Unable to initialize client!
-#define TXT_CANNOT_FIND_WOL 893 // Unable to locate Westwood OnLine.``For online play, Sole Survivor requires Westwood OnLine`to be properly installed.
-#define TXT_CANNOT_SET_VIDEO 894 // Error - Unable to set the video mode
-#define TXT_CANNOT_ALLOC_VIDEO_BUFF 895 // Error - Unable to allocate primary video buffer - aborting.
-#define TXT_OUT_OF_MEM 896 // Error - out of memory.
-#define TXT_STAND_BY 897 // Please Stand By...
-#define TXT_SCREENSHOT_TAKEN 898 // Screenshot taken! (%s in your Sole Survivor directory)
-#define TXT_ADVANCED_COMMANDS_F3 899 // Advanced Commands      (Press F3 to remove this display)
-#define TXT_VIEW_LADDER 900 // View SS ladder with default browser.
-#define TXT_DISPLAY_NEWS 901 // Display SS news file.
-#define TXT_TOGGLE_VERBOSE_MSG 902 // Toggles the display of verbose messages.
-#define TXT_COMMAND_HQ_WELCOME 903 // Command HQ: Welcome, %s!
-#define TXT_COMMAND_HQ_WELCOME_TO 904 // Command HQ: Welcome to %s, %s!
-#define TXT_HELP_INFO_F1 905 // Help information is available by pressing F1.
-#define TXT_MAP_ERROR 906 // Map Error!
-#define TXT_SS_STOP 907 // Stop
-#define TXT_SS_CONTINUE 908 // Continue
-#define TXT_NO_MOUSE_DETECTED 909 // Sole Survivor is unable to detect your mouse driver.
-#define TXT_CORRUPT_MIX 910 // Corrupt .MIX file "%s". Tried to read %ld, but got %ld.
-#define TXT_UNABLE_TO_LOAD 911 // Unable to load "%s".
-#define TXT_FILE_ERROR 912 // File Error
-#define TXT_PRESS_TO_RETRY 913 //  Press any key to retry.
-#define TXT_ESC_TO_EXIT 914 //  Press <ESC> to exit program.
-#define TXT_ANY_TO_EXIT 915 //  Press any key to exit program.
-#define TXT_NEED_RAM 916 // Insufficient RAM available.`
-#define TXT_TIMER_ERROR 917 // Error - Timer system failed to start due to system instability.`
-#define TXT_RESTART_WINDOWS 918 // You need to restart Windows.
-#define TXT_LOW_DISK_SPACE 919 // Warning - you are critically low on free disk space.`
-#define TXT_WANT_TO_PLAY_SS_ANYWAY 920 // Do you want to play Sole Survivor anyway?
-#define TXT_SS_RUN_SETUP 921 // Run SETUP program first.`
-#define TXT_SS_NONE 922 // None
-#define TXT_LETS_MAKE_KILL 923 // Let's Make a Kill
-#define TXT_1_900_KILL_YOU 924 // 1-900-KILL-YOU
-#define TXT_TRACK 925 // Track
-#define TXT_PRACTICE 926 // Practice Offline
-#define TXT_PLAY_ONLINE 927 // Play Online
-#define TXT_HELP 928 // Help
-#define TXT_SNEAK_PEEK 929 // Sneak Peek
-#define TXT_THE_LADDER 930 // The Ladder
-#define TXT_NEWS 931 // News
-#define TXT_SQUAD_HQ 932 // Squad HQ
-#define TXT_CRATE_RATIO 933 // Crates Ratio is  %d Wooden : %d Steel : %d Green : %d Orange.
-#define TXT_ARMAGEDDON_POSS 934 // Armageddon IS possible.
-#define TXT_ARMAGEDDON_IMPOSS 935 // Armageddon is NOT possible.
-#define TXT_ORANGE_LASTS 936 // The Orange crate effect lasts %d seconds.
-#define TXT_DONT_LOOSE_INVUL_ORANGE 937 // You do NOT lose invulnerability when you pick up an orange crate.
-#define TXT_DO_LOOSE_INVUL_ORANGE 938 // You DO lose invulnerability when you pick up an orange crate.
-#define TXT_COMMHQ_SQUAD_GAME_STARTING 939 // Command HQ: A Squad Game is starting!
-#define TXT_NOT_CORRECT_PASSWD 940 // Nope.. that is NOT the correct password!
-#define TXT_CORRECT_PASSWD 941 // Correct!
-#define TXT_YOU_HAVE_X_SECONDS_FOR_PASS 942 // You have %d.%02d seconds to enter the password.
-#define TXT_MSG_LOGGING_ON 943 // Message logging to LOG.TXT is ON.
-#define TXT_MSG_LOGGING_OFF 944 // Message logging to LOG.TXT is OFF.
-#define TXT_MSG_LOGGING_ON_REMINDER 945 // Reminder: Message logging to LOG.TXT is presently ON.
-#define TXT_TOGGLE_LOGGING_NOW_ON 946 // Toggle message logging to LOG.TXT (now ON)
-#define TXT_TOGGLE_LOGGING_OFF 947 // Toggle message logging to LOG.TXT (now OFF)
-#define TXT_NO_ION 948 // There is NO Ion Cannon.
-#define TXT_ION_NOT_FATAL 949 // Ion Cannon is NOT fatal.
-#define TXT_ION_FATAL 950 // Ion Cannon IS fatal.
-#define TXT_CTRL_LEFT 951 // Control-leftclick
-#define TXT_USE_C4 952 // Use C4 explosive (commando only).
-#define TXT_ALT_LEFT 953 // Alt-leftclick
-#define TXT_BUMP_TEAMMATE 954 // Bump a teammate from their position.
-#define TXT_BLUE 955 // Blue
-#define TXT_ORANGE 956 // Orange
-#define TXT_GREEN 957 // Green
-#define TXT_GREY 958 // Grey
+#define TXT_SS_INTRO                                675 // Intro
+#define TXT_READING_IMAGE_DATA                      676 // READING IMAGE DATA
+#define TXT_ANALYZING                               677 // ANALYZING
+#define TXT_ENHANCING_IMAGE_DATA                    678 // ENHANCING IMAGE DATA
+#define TXT_ISOLATING_OPERATIONAL_THEATER           679 // ISOLATING OPERATIONAL THEATER
+#define TXT_ESTABLISHING_TRADITIONAL_BOUNDARIES     680 // ESTABLISHING TRADITIONAL BOUNDARIES
+#define TXT_FOR_VISUAL_REFERENCE                    681 // FOR VISUAL REFERENCE
+#define TXT_ENHANCING_IMAGE                         682 // ENHANCING IMAGE
+#define TXT_HAS_UNCLOAKED_ALL                       683 // %s has uncloaked all units.
+#define TXT_HAS_RESHROUDED                          684 // %s has reshrouded the map.
+#define TXT_GOT_ARMAGEDDON                          685 // %s got the Armageddon crate.
+#define TXT_MADE_MINCEMEAT                          686 // You made mincemeat out of %s.
+#define TXT_REGRETS_MEETING_YOU                     687 // %s regrets meeting you.
+#define TXT_CASUALLY_SLAUGHTER                      688 // You casually slaughter %s.
+#define TXT_FALLS_TO_MIGHT                          689 // %s falls to your superior might!
+#define TXT_MURDEROUS_INSTINCTS                     690 // Your murderous instincts get the better of %s.
+#define TXT_DIES_CRUEL_DEATH                        691 // %s dies a cruel death at your hand!
+#define TXT_GRIM_REAPER                             692 // You send the Grim Reaper to visit %s.
+#define TXT_EXTREME_PREJUDICE                       693 // %s comprehends your extreme prejudice.
+#define TXT_CURSE_YOUR_NAME                         694 // The friends of %s curse your name.
+#define TXT_BOOK_OF_KILLS                           695 // You enscribe %s into your Book of Kills.
+#define TXT_FEEL_THE_WRATH                          696 // You feel the wrath of %s!
+#define TXT_OVER_YOUR_GRAVE                         697 // %s cackles over your grave!
+#define TXT_YOUR_MURDERER_WAS                       698 // Your murderer today was %s.
+#define TXT_DATE_WITH_DEATH                         699 // %s arranges your Date with Death.
+#define TXT_BUTCHERED_BY                            700 // You were butchered by %s.
+#define TXT_NEW_RESPECT_FOR                         701 // You learn a new respect for %s.
+#define TXT_YOU_GO_DOWN                             702 // You go down, and the name of %s is bitter on your tongue!
+#define TXT_MERCILESS_DEATH                         703 // %s delivers you a merciless death.
+#define TXT_BUTCHER_ANOTHER                         704 // %s nonchalently staggers off to butcher another.
+#define TXT_DYING_BREATH                            705 // You curse %s with your dying breath.
+#define TXT_IS_A_TRAITOR                            706 // %s is a traitor.
+#define TXT_CONNECTION_TO_SERVER_LOST               707 // Connection to server lost!
+#define TXT_SERVER_COLON                            708 // Server: %s
+#define TXT_INVALID_STATE_RECEIVED                  709 // Invalid game state received!
+#define TXT_TOO_MANY_BYTES                          710 // Too many bytes received!
+#define TXT_INVALID_STATE_DONE                      711 // Invalid game-state-done!
+#define TXT_ENTER_HOST_ADDRESS                      712 // Enter Host Address
+#define TXT_SS_CONNECTING                           713 // Connecting...
+#define TXT_UNABLE_TO_CONNECT                       714 // Unable to connect!
+#define TXT_CONNECTION_REFUSED                      715 // Connection Refused!
+#define TXT_SCENARIO_NOT_FOUND                      716 // Scenario not found!
+#define TXT_SPECTATOR                               717 // Spectator
+#define TXT_TEAM1                                   718 // Team 1
+#define TXT_TEAM2                                   719 // Team 2
+#define TXT_TEAM3                                   720 // Team 3
+#define TXT_TEAM4                                   721 // Team 4
+#define TXT_ADMINISTRATOR                           722 // Administrator
+#define TXT_CHOOSE_IDENTITY                         723 // Choose Your Identity
+#define TXT_WAITING_FOR_OPTIONS                     724 // Waiting for options...
+#define TXT_DEFAULTS                                725 // Defaults
+#define TXT_PROBABILITY_ADJUSTMENT                  726 // Probability Adjustment
+#define TXT_STRENGTH                                727 // Strength
+#define TXT_WEAPON                                  728 // Weapon
+#define TXT_SS_SPEED                                729 // Speed
+#define TXT_RELOAD                                  730 // Reload
+#define TXT_RANGE                                   731 // Range
+#define TXT_HEAL                                    732 // Heal
+#define TXT_BOMB                                    733 // Bomb
+#define TXT_STEALTH                                 734 // Stealth
+#define TXT_TELEPORT                                735 // Teleport
+#define TXT_UNCLOAK                                 736 // Uncloak
+#define TXT_RESHROUD                                737 // Reshroud
+#define TXT_UNSHROUD                                738 // Unshroud
+#define TXT_RADAR                                   739 // Radar
+#define TXT_ARMAGEDDON                              740 // Armageddon
+#define TXT_CELLS_PER_CRATE                         741 // Cells per Crate
+#define TXT_ION_FACTOR                              742 // Ion Factor
+#define TXT_WAITING_ON                              743 // Waiting on %s
+#define TXT_TIME_ALLOWED_D                          744 // Time Allowed: %d
+#define TXT_TEST                                    745 // Test
+#define TXT_VOICE_THEMES                            746 // Voice Themes
+#define TXT_IS_VICTORIOUS                           747 // %s is victorious!
+#define TXT_SPOILS_OF_WAR                           748 // To %s go the spoils of war.
+#define TXT_IS_THE_WINNER                           749 // %s is the winner!
+#define TXT_REIGNS_SUPREME                          750 // %s reigns supreme!
+#define TXT_HAS_CONQUERED_ALL                       751 // %s has conquered all.
+#define TXT_GAME_OVER                               752 // Game Over
+#define TXT_WAS_NO_WINNER                           753 // There was no winner.
+#define TXT_ITS_A_TIE                               754 // It's a tie!
+#define TXT_BLUE_TEAM                               755 // The Blue Team
+#define TXT_ORANGE_TEAM                             756 // The Orange Team
+#define TXT_GREEN_TEAM                              757 // The Green Team
+#define TXT_GREY_TEAM                               758 // The Grey Team
+#define TXT_THEME_WORKREMX                          759 // Workmen Remix
+#define TXT_THEME_CRUSH                             760 // Crush
+#define TXT_THEME_DEPTHCHG                          761 // Depth Charge
+#define TXT_THEME_DRILL                             762 // Drill
+#define TXT_THEME_HELLNVOX                          763 // HellMarch
+#define TXT_THEME_IRONFIST                          764 // Iron Fist
+#define TXT_THEME_MERCY98                           765 // No Mercy '98
+#define TXT_THEME_MUDREMX                           766 // MUD Remix
+#define TXT_THEME_CREEPING                          767 // Creeping Upon
+#define TXT_TRACKING_MODE_OFF                       768 // Tracking mode OFF
+#define TXT_TRACKING_MODE_ON                        769 // Tracking mode ON
+#define TXT_TEAM_MESSAGE                            770 // Team Message:
+#define TXT_CAPTURED_FLAG                           771 // %s (%s) captured %s's flag!
+#define TXT_SCORES_GOAL                             772 // %s scores a goal for %s!
+#define TXT_HUNTER                                  773 // Hunter
+#define TXT_DONT_FLOOD_MESSAGE_AREA                 774 // Please do not flood the message area.
+#define TXT_SERVER_CONNECTION_LOST                  775 // Connection to Server lost.``
+#define TXT_MEANS_INTERNET_CONN                     776 // This probably means that the Internet connection between your`
+#define TXT_IS_POOR                                 777 // computer and the Server for this Sole Survivor channel, is poor.``
+#define TXT_TRY_DIFFERENT_CHANNEL                   778 // Please try a different Sole Survivor channel.
+#define TXT_HAVE_BECOME_SPECTATOR                   779 // You have become a Spectator.
+#define TXT_COMMAND_HQ_COLON                        780 // Command HQ: %s
+#define TXT_S_TO_S_COLON_S                          781 // %s (to %s): %s
+#define TXT_FORMAT_FOR_PRIVATE_MESSAGE_IS           782 // Format for private messages is #name message
+#define TXT_NO_PLAYER_NAMED                         783 // There is no player named "%s"
+#define TXT_VERBOSE_ON                              784 // Verbose mode ON
+#define TXT_VERBOSE_OFF                             785 // Verbose mode OFF
+#define TXT_HAS_JOINED_GAME                         786 // %s has joined the game.
+#define TXT_HAS_LEFT_GAME                           787 // %s has left the game.
+#define TXT_D_PLAYERS_COLON                         788 // %d Players:
+#define TXT_D_PLAYERS                               789 // %d Players
+#define TXT_TIME_LEFT_MINS                          790 // Time Left: %d minutes
+#define TXT_TIME_LEFT_SECS                          791 // Time Left: %d seconds
+#define TXT_LIVES_LEFT                              792 // Lives Left: %d
+#define TXT_SCORE_LIMIT                             793 // Score Limit: %d
+#define TXT_ION_DANGER                              794 // Ion Danger:
+#define TXT_DANGER_NONE                             795 // None
+#define TXT_DANGER_LOW                              796 // Low
+#define TXT_DANGER_MED                              797 // Medium
+#define TXT_DANGER_HIGH                             798 // High
+#define TXT_DEMOLISHED_DEFENSIVE_STRUCT             799 // You demolished a Defensive Structure!
+#define TXT_SMASHED_DEFENSIVE_STRUCT                800 // You smashed a Defensive Structure!
+#define TXT_TALENT_FOR_DESTRUCTION                  801 // Your talent for destruction shows itself.
+#define TXT_DOWN_GOES_DEFENSIVE_STRUCT              802 // Down goes a Defensive Structure.
+#define TXT_DEFENSIVE_STRUCT_BOWS                   803 // A Defensive Structure bows to your might!
+#define TXT_STRANGE_JOY_DEFENSIVE_STRUCT            804 // You feel a strange joy, as a Defensive Structure crumbles.
+#define TXT_DEFENSIVE_STRUCT_COOKED                 805 // A Defensive Structure cooked your goose.
+#define TXT_KILLED_BY_DEFENSIVE_STRUCT              806 // You were killed by a Defensive Structure!
+#define TXT_DEFENSIVE_STRUCT_GOT_BETTER             807 // A Defensive Structure gets the better of you.
+#define TXT_DEFENSIVE_STRUCT_BBQ                    808 // A Defensive Structure barbequed your brains.
+#define TXT_INTIMATE_WITH_DEFENSIVE_STRUCT          809 // You got intimate with a Defensive Structure.
+#define TXT_NEW_RESPECT_DEFENSIVE_STRUCT            810 // You learn a new respect for Defensive Structures.
+#define TXT_AI_OPPONENTS_COLON                      811 // AI Opponents:
+#define TXT_MIN_ZERO                                812 // Min. 0
+#define TXT_MAX_10                                  813 // Max. 10
+#define TXT_MAX_DOT                                 814 // Max.
+#define TXT_CONGRATS_YOU_MADE_POINTS                815 // Congratulations... you made %d points!
+#define TXT_MADE_NO_POINTS                          816 // You made NO points!
+#define TXT_KILLED_X_TIMES                          817 // You were killed %d times
+#define TXT_NEVER_KILLED                            818 // You were NEVER killed!
+#define TXT_KEY_SUMMARY                             819 // Key Summary    (Press F1 to remove this display)
+#define TXT_DROP_ANY_FLAG                           820 // Drop any flag you are carrying.
+#define TXT_CENTER_ON_FLAG                          821 // Center view on your Flag.
+#define TXT_INTO_GUARD_MODE                         822 // Go into Guard mode.
+#define TXT_H_OR_HOME                               823 // H or Home
+#define TXT_CENTER_ON_UNIT                          824 // Center view on your unit.
+#define TXT_CLEAN_UP_PLAYER_LIST                    825 // Clean up player List.
+#define TXT_TOGGLE_NAMES                            826 // Toggle display of player Names.
+#define TXT_TOGGLE_TRACKING                         827 // Toggle Tracking mode.
+#define TXT_SHIFT_S                                 828 // Shift-s
+#define TXT_TAKE_SCREENSHOT                         829 // Take a Screenshot
+#define TXT_ENTER                                   830 // Enter
+#define TXT_NORMAL_MESSAGING                        831 // Normal messaging prompt.
+#define TXT_SHIFT_ENTER                             832 // Shift-Enter
+#define TXT_TEAM_MESSAGING                          833 // Team messaging prompt.
+#define TXT_ENTER_NAME_MESSAGE                      834 // <Enter>#name message
+#define TXT_SEND_PRIVATE_MESSAGE                    835 // To send a private message.
+#define TXT_UP_ARROW                                836 // <Up-arrow>
+#define TXT_REPEAT_PRV_MSG_DEST                     837 // To repeat a private message destination.
+#define TXT_ESCAPE                                  838 // Escape
+#define TXT_OPTIONS_MENU_DOT                        839 // Options menu.
+#define TXT_TAB                                     840 // Tab
+#define TXT_TOGGLE_SIDEBAR                          841 // Toggle sidebar on or off.
+#define TXT_1_THROUGH_0                             842 // 1 through 0
+#define TXT_PREPARE_SEND_MSG_MACRO                  843 // Prepare to send a team message macro.
+#define TXT_TOGGLE_HELP                             844 // Toggle this Help display.
+#define TXT_TOGGLE_PARAM_DISPLAY                    845 // Toggle display of game parameters.
+#define TXT_TOGGLE_COMMAND_DISPLAY                  846 // Toggle display of available commands.
+#define TXT_CTRL_F7_TO_F10                          847 // Control-F7 to Control-F10
+#define TXT_REMEMBER_VIEW                           848 // Remember view.
+#define TXT_F7_TO_F10                               849 // F7 to F10
+#define TXT_SHOW_REMEMBERED_VIEW                    850 // Show remembered view.
+#define TXT_GAME_PARAMS_F2                          851 // Game Parameters    (Press F2 to remove this display)
+#define TXT_YOU_ARE_IN_X_CHANNEL                    852 // You are playing in the %s channel.
+#define TXT_THERE_ARE_CRATES                        853 // There ARE crates.
+#define TXT_THERE_ARE_NO_CRATES                     854 // There are NO crates.
+#define TXT_IS_LADDER_GAME                          855 // This IS a ladder game.
+#define TXT_ISNT_LADDER_GAME                        856 // This is NOT a ladder game.
+#define TXT_IS_TIME_LIMIT                           857 // There is a Time limit of %d minutes.
+#define TXT_NO_TIME_LIMIT                           858 // There is NO Time limit.
+#define TXT_IS_SCORE_LIMIT                          859 // There is a Score limit of %d points.
+#define TXT_NO_SCORE_LIMIT                          860 // There is NO Score limit.
+#define TXT_IS_LIFE_LIMIT                           861 // There is a Life limit of %d lives.
+#define TXT_NO_LIFE_LIMIT                           862 // There is NO Life limit.
+#define TXT_PLAYING_CTF                             863 // You are playing Capture the Flag.
+#define TXT_BASE_HAS_DEF_STRUCTS                    864 // Each base has %d defensive structures.
+#define TXT_TEAMS_RESET_ON_CTF                      865 // Teams ARE reset when a flag is captured.
+#define TXT_TEAMS_DONT_RESET_ON_CTF                 866 // Teams are NOT reset when a flag is captured.
+#define TXT_PLAYING_1F_FOOTBALL                     867 // You are playing 1-flag Football.
+#define TXT_PLAYING_2F_FOOTBALL                     868 // You are playing 2-flag Football.
+#define TXT_TEAMCRATES_ON                           869 // TeamCrates are ON.
+#define TXT_TEAMCRATES_OFF                          870 // TeamCrates are OFF.
+#define TXT_TEAM_SEL_AUTO                           871 // Team selection is automatic. Players join the smallest team.
+#define TXT_THERE_ARE_X_TEAMS                       872 // There are %d teams.
+#define TXT_MAX_OF_X_PER_TEAM                       873 // There are a maximum of %d players per team.
+#define TXT_DONT_HAVE_TO_HAVE_TEAM                  874 // You do NOT have to belong to a team.
+#define TXT_MUST_HAVE_TEAM                          875 // You MUST belong to a team.
+#define TXT_MAY_CHOOSE_TEAM                         876 // You MAY choose which team you play for.
+#define TXT_CANNOT_CHOOSE_TEAM                      877 // You can NOT choose which team you play for.
+#define TXT_RESHROUD_OFF                            878 // Map reshroud is DISABLED.
+#define TXT_RESHROUD_ON                             879 // Map reshroud is ENABLED.
+#define TXT_FLAG_SITTING_ALLOWED                    880 // Flag sitting IS permitted.
+#define TXT_FLAG_SETTING_NOT_ALLOWED                881 // Flag sitting is NOT permitted.
+#define TXT_FLAG_LOOSE_POWERUP                      882 // When you pick up a flag, you DO lose certain powerups.
+#define TXT_FLAG_NOT_LOOSE_POWERUP                  883 // When you pick up a flag, you do NOT lose any powerups.
+#define TXT_RADAR_IS_FREE                           884 // Radar IS provided free to everybody.
+#define TXT_RADAR_NOT_FREE                          885 // Radar is NOT provided free to everybody.
+#define TXT_HEALTH_SHOWN_FOR_YOU                    886 // Health bars are shown only for YOU.
+#define TXT_HEALTH_SHOWN_FOR_TEAM                   887 // Health bars are shown for YOU and your TEAMMATES.
+#define TXT_HEALTH_SHOWN_EVERYBODY                  888 // Health bars are shown for EVERYBODY.
+#define TXT_HUNTERS_MATCH_PLAYERS                   889 // Hunters ARE matched to the number of players.
+#define TXT_HUNTERS_NOT_MATCH_PLAYERS               890 // Hunters are NOT matched to the number of players.
+#define TXT_HUNTERS_FROM_NUMBERS                    891 // Hunters are introduced according to these numbers: (u)%d/%d, (b)%d/%d
+#define TXT_CANNOT_INIT_CLIENT                      892 // Unable to initialize client!
+#define TXT_CANNOT_FIND_WOL                         893 // Unable to locate Westwood OnLine.
+#define TXT_CANNOT_SET_VIDEO                        894 // Error - Unable to set the video mode
+#define TXT_CANNOT_ALLOC_VIDEO_BUFF                 895 // Error - Unable to allocate primary video buffer - aborting.
+#define TXT_OUT_OF_MEM                              896 // Error - out of memory.
+#define TXT_STAND_BY                                897 // Please Stand By...
+#define TXT_SCREENSHOT_TAKEN                        898 // Screenshot taken! (%s in your Sole Survivor directory)
+#define TXT_ADVANCED_COMMANDS_F3                    899 // Advanced Commands      (Press F3 to remove this display)
+#define TXT_VIEW_LADDER                             900 // View SS ladder with default browser.
+#define TXT_DISPLAY_NEWS                            901 // Display SS news file.
+#define TXT_TOGGLE_VERBOSE_MSG                      902 // Toggles the display of verbose messages.
+#define TXT_COMMAND_HQ_WELCOME                      903 // Command HQ: Welcome, %s!
+#define TXT_COMMAND_HQ_WELCOME_TO                   904 // Command HQ: Welcome to %s, %s!
+#define TXT_HELP_INFO_F1                            905 // Help information is available by pressing F1.
+#define TXT_MAP_ERROR                               906 // Map Error!
+#define TXT_SS_STOP                                 907 // Stop
+#define TXT_SS_CONTINUE                             908 // Continue
+#define TXT_NO_MOUSE_DETECTED                       909 // Sole Survivor is unable to detect your mouse driver.
+#define TXT_CORRUPT_MIX                             910 // Corrupt .MIX file "%s". Tried to read %ld, but got %ld.
+#define TXT_UNABLE_TO_LOAD                          911 // Unable to load "%s".
+#define TXT_FILE_ERROR                              912 // File Error
+#define TXT_PRESS_TO_RETRY                          913 //  Press any key to retry.
+#define TXT_ESC_TO_EXIT                             914 //  Press <ESC> to exit program.
+#define TXT_ANY_TO_EXIT                             915 //  Press any key to exit program.
+#define TXT_NEED_RAM                                916 // Insufficient RAM available.`
+#define TXT_TIMER_ERROR                             917 // Error - Timer system failed to start due to system instability.`
+#define TXT_RESTART_WINDOWS                         918 // You need to restart Windows.
+#define TXT_LOW_DISK_SPACE                          919 // Warning - you are critically low on free disk space.`
+#define TXT_WANT_TO_PLAY_SS_ANYWAY                  920 // Do you want to play Sole Survivor anyway?
+#define TXT_SS_RUN_SETUP                            921 // Run SETUP program first.`
+#define TXT_SS_NONE                                 922 // None
+#define TXT_LETS_MAKE_KILL                          923 // Let's Make a Kill
+#define TXT_1_900_KILL_YOU                          924 // 1-900-KILL-YOU
+#define TXT_TRACK                                   925 // Track
+#define TXT_PRACTICE                                926 // Practice Offline
+#define TXT_PLAY_ONLINE                             927 // Play Online
+#define TXT_HELP                                    928 // Help
+#define TXT_SNEAK_PEEK                              929 // Sneak Peek
+#define TXT_THE_LADDER                              930 // The Ladder
+#define TXT_NEWS                                    931 // News
+#define TXT_SQUAD_HQ                                932 // Squad HQ
+#define TXT_CRATE_RATIO                             933 // Crates Ratio is  %d Wooden : %d Steel : %d Green : %d Orange.
+#define TXT_ARMAGEDDON_POSS                         934 // Armageddon IS possible.
+#define TXT_ARMAGEDDON_IMPOSS                       935 // Armageddon is NOT possible.
+#define TXT_ORANGE_LASTS                            936 // The Orange crate effect lasts %d seconds.
+#define TXT_DONT_LOOSE_INVUL_ORANGE                 937 // You do NOT lose invulnerability when you pick up an orange crate.
+#define TXT_DO_LOOSE_INVUL_ORANGE                   938 // You DO lose invulnerability when you pick up an orange crate.
+#define TXT_COMMHQ_SQUAD_GAME_STARTING              939 // Command HQ: A Squad Game is starting!
+#define TXT_NOT_CORRECT_PASSWD                      940 // Nope.. that is NOT the correct password!
+#define TXT_CORRECT_PASSWD                          941 // Correct!
+#define TXT_YOU_HAVE_X_SECONDS_FOR_PASS             942 // You have %d.%02d seconds to enter the password.
+#define TXT_MSG_LOGGING_ON                          943 // Message logging to LOG.TXT is ON.
+#define TXT_MSG_LOGGING_OFF                         944 // Message logging to LOG.TXT is OFF.
+#define TXT_MSG_LOGGING_ON_REMINDER                 945 // Reminder: Message logging to LOG.TXT is presently ON.
+#define TXT_TOGGLE_LOGGING_NOW_ON                   946 // Toggle message logging to LOG.TXT (now ON)
+#define TXT_TOGGLE_LOGGING_OFF                      947 // Toggle message logging to LOG.TXT (now OFF)
+#define TXT_NO_ION                                  948 // There is NO Ion Cannon.
+#define TXT_ION_NOT_FATAL                           949 // Ion Cannon is NOT fatal.
+#define TXT_ION_FATAL                               950 // Ion Cannon IS fatal.
+#define TXT_CTRL_LEFT                               951 // Control-leftclick
+#define TXT_USE_C4                                  952 // Use C4 explosive (commando only).
+#define TXT_ALT_LEFT                                953 // Alt-leftclick
+#define TXT_BUMP_TEAMMATE                           954 // Bump a teammate from their position.
+#define TXT_BLUE                                    955 // Blue
+#define TXT_ORANGE                                  956 // Orange
+#define TXT_GREEN                                   957 // Green
+#define TXT_GREY                                    958 // Grey

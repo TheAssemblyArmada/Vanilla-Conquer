@@ -75,75 +75,9 @@ bool Start_Scenario(char* root, bool briefing)
     }
     CCDebugString("C&C95 - Scenario read OK.\n");
 
-    if (Is_Demo()) {
-        if (briefing) {
-            Play_Movie(BriefMovie);
-            Play_Movie(ActionMovie, TransitTheme);
-        }
-        Theme.Queue_Song(THEME_AOI);
-    } else {
-        /*
-        ** Install some hacks around the movie playing to account for the choose-
-        ** sides introduction.  We don't want an intro movie on scenario 1, and
-        ** we don't want a briefing movie on GDI scenario 1.
-        */
-        if (Scenario < 20 && (!Special.IsJurassic || !AreThingiesEnabled)) {
-            if (Scenario != 1 || Whom == HOUSE_GOOD) {
-                Play_Movie(IntroMovie);
-            }
-#ifndef REMASTER_BUILD
-            if (Scenario > 1 || Whom == HOUSE_BAD) {
-                if (briefing) {
-                    PreserveVQAScreen = (Scenario == 1);
-                    Play_Movie(BriefMovie);
-                }
-            }
-#else
-            if (briefing) {
-                PreserveVQAScreen = (Scenario == 1);
-                Play_Movie(BriefMovie);
-            }
-#endif
-            Play_Movie(ActionMovie, TransitTheme);
-            if (TransitTheme == THEME_NONE) {
-                Theme.Queue_Song(THEME_AOI);
-            }
-        } else {
-            Play_Movie(BriefMovie);
-            Play_Movie(ActionMovie, TransitTheme);
-
-#ifdef NEWMENU
-
-            char buffer[25];
-            sprintf(buffer, "%s.VQA", BriefMovie);
-            CCFileClass file(buffer);
-
-            if (GameToPlay == GAME_NORMAL && !file.Is_Available()) {
-                VisiblePage.Clear();
-                Set_Palette(GamePalette);
-                //			Show_Mouse();
-                /*
-                ** Show the mission briefing. Pretend we are inside the main loop so the palette
-                ** will be correct on the textured buttons.
-                */
-                bool oldinmain = InMainLoop;
-                InMainLoop = true;
-
-                // TO_FIX - Covert ops missions want to pop up a dialog box. ST - 9/6/2019 1:48PM
-#ifndef REMASTER_BUILD
-                Restate_Mission(ScenarioName, TXT_OK, TXT_NONE);
-#endif
-
-                InMainLoop = oldinmain;
-                //			Hide_Mouse();
-                if (TransitTheme == THEME_NONE) {
-                    Theme.Queue_Song(THEME_AOI);
-                }
-            }
-
-#endif
-        }
-    }
+    Theme.Play_Song(THEME_NONE);
+    Theme.Queue_Song(THEME_PICK_ANOTHER);
+    Theme.AI();
 
     /*
     ** Set the options values, since the palette has been initialized by Read_Scenario
