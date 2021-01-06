@@ -39,6 +39,7 @@ set(COMMON_SRC
     gadget.cpp
     getshape.cpp
     graphicsviewport.cpp
+    hsv.cpp
     iff.cpp
     ini.cpp
     int.cpp
@@ -58,6 +59,7 @@ set(COMMON_SRC
     newdel.cpp
     packet.cpp
     palette.cpp
+    palettec.cpp
     pipe.cpp
     pk.cpp
     pkpipe.cpp
@@ -67,6 +69,7 @@ set(COMMON_SRC
     rawfile.cpp
     readline.cpp
     rect.cpp
+    rgb.cpp
     rndstraw.cpp
     settings.cpp
     sha.cpp

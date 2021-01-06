@@ -63,7 +63,6 @@ set(REDALERT_SRC
     heap.cpp
     help.cpp
     house.cpp
-    hsv.cpp
     iconlist.cpp
     iconset.cpp
     idata.cpp
@@ -104,7 +103,6 @@ set(REDALERT_SRC
     odata.cpp
     options.cpp
     overlay.cpp
-    palettec.cpp
     power.cpp
     profile.cpp
     queue.cpp
@@ -113,7 +111,6 @@ set(REDALERT_SRC
     ramfile.cpp
     rawolapi.cpp
     reinf.cpp
-    rgb.cpp
     rules.cpp
     saveload.cpp
     scenario.cpp

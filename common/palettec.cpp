@@ -41,13 +41,11 @@
 
 void Set_Palette(void* palette);
 
-#include "function.h"
-#include "common/palette.h"
+#include "palette.h"
 #include "palettec.h"
 #include "ftimer.h"
-#include "common/wwlib32.h"
-#include "common/timer.h"
-#include "common/framelimit.h"
+#include "timer.h"
+#include "framelimit.h"
 
 #include <string.h>
 
