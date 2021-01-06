@@ -64,7 +64,6 @@ public:
     int Get_Mouse_X(void);
     int Get_Mouse_Y(void);
     void Get_Mouse_XY(int& x, int& y);
-    void Get_Mouse_Scale_XY(float& x, float& y);
     //
     // The following two routines can be used to render the mouse onto a graphicbuffer
     // other than the hidpage.
@@ -77,8 +76,6 @@ public:
 
     void Block_Mouse(GraphicBufferClass* buffer);
     void Unblock_Mouse(GraphicBufferClass* buffer);
-    void Set_Cursor_Clip(void);
-    void Clear_Cursor_Clip(void);
 
 private:
     enum
@@ -118,16 +115,12 @@ private:
     int EraseBuffY;    // Y position of the hidden page background
     int EraseBuffHotX; // X position of the hidden page background
     int EraseBuffHotY; // Y position of the hidden page background
-
-    int EraseFlags; // Records whether mutex has been released
+    int EraseFlags;    // Records whether mutex has been released
 
 #ifdef _WIN32
     CRITICAL_SECTION MouseCriticalSection; // Control for mouse re-enterancy
     unsigned TimerHandle;
 #endif
-
-    float MouseXScale;
-    float MouseYScale;
 };
 
 void Hide_Mouse(void);
@@ -138,6 +131,5 @@ int Get_Mouse_State(void);
 void* Set_Mouse_Cursor(int hotx, int hoty, void* cursor);
 int Get_Mouse_X(void);
 int Get_Mouse_Y(void);
-void Get_Mouse_Scale_XY(float& x, float& y);
 
 #endif

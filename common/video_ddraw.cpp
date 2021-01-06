@@ -715,11 +715,18 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
         }
     }
 
-    return true;
-}
+    /*
+    ** In legacy DirectDraw mode we clip the cursor for the duration of the session.
+    */
+    RECT region;
 
-bool Is_Video_Fullscreen()
-{
+    region.left = 0;
+    region.top = 0;
+    region.right = w;
+    region.bottom = h;
+
+    ClipCursor(&region);
+
     return true;
 }
 
@@ -751,6 +758,11 @@ void Reset_Video_Mode(void)
 
         DirectDrawObject = NULL;
     }
+
+    /*
+    ** Release cursor on exit.
+    */
+    ClipCursor(NULL);
 }
 
 /***********************************************************************************************
@@ -961,6 +973,14 @@ void Wait_Blit(void)
     do {
         return_code = PaletteSurface->GetBltStatus(DDGBS_ISBLTDONE);
     } while (return_code != DD_OK && return_code != DDERR_SURFACELOST);
+}
+
+void Set_Video_Cursor_Clip(bool clipped)
+{
+    /*
+    ** In DD mode we ignore the request and always clip.
+    */
+    clipped;
 }
 
 /***********************************************************************************************

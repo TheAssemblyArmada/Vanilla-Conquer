@@ -181,6 +181,7 @@ void Main_Game(int argc, char* argv[])
         }
 
         InMainLoop = true;
+        Set_Video_Cursor_Clip(true);
 
 #ifdef SCENARIO_EDITOR
         /*
@@ -198,7 +199,8 @@ void Main_Game(int argc, char* argv[])
                 }
 
                 if (SpecialDialog != SDLG_NONE) {
-                    // Stop_Profiler();
+                    Set_Video_Cursor_Clip(false);
+
                     switch (SpecialDialog) {
                     case SDLG_SPECIAL:
                         Map.Help_Text(TXT_NONE);
@@ -229,6 +231,8 @@ void Main_Game(int argc, char* argv[])
                     default:
                         break;
                     }
+
+                    Set_Video_Cursor_Clip(true);
                 }
             } else {
 
@@ -260,12 +264,7 @@ void Main_Game(int argc, char* argv[])
             **	Main_Loop(), allowing the game to run in the background.
             */
             if (SpecialDialog != SDLG_NONE) {
-                /*
-                **  Always release mouse cursor when a dialog is open.
-                */
-                if (!Is_Video_Fullscreen()) {
-                    WWMouse->Clear_Cursor_Clip();
-                }
+                Set_Video_Cursor_Clip(false);
 
                 switch (SpecialDialog) {
                 case SDLG_SPECIAL:
@@ -298,13 +297,11 @@ void Main_Game(int argc, char* argv[])
                     break;
                 }
 
-                if (!Is_Video_Fullscreen()) {
-                    WWMouse->Set_Cursor_Clip();
-                }
+                Set_Video_Cursor_Clip(true);
             }
         }
 #endif
-        // Stop_Profiler();
+        Set_Video_Cursor_Clip(false);
         InMainLoop = false;
 
         if (!GameStatisticsPacketSent && PacketLater) {

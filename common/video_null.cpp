@@ -194,6 +194,10 @@ void Wait_Blit(void)
 {
 }
 
+void Set_Video_Cursor_Clip(bool clipped)
+{
+}
+
 /***********************************************************************************************
  * SMC::SurfaceMonitorClass -- constructor for surface monitor class                           *
  *                                                                                             *
