@@ -270,9 +270,6 @@ int main(int argc, char** argv)
         }
 #endif
 
-#ifndef REMASTER_BUILD
-        CDFileClass::Set_CD_Drive(CDList.Get_First_CD_Drive());
-#endif
         if (cfile.Is_Available()) {
 
             Read_Private_Config_Struct(cfile, &NewConfig);

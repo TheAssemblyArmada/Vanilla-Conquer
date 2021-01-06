@@ -249,8 +249,6 @@ extern int SuperRecord;
 extern int PlaybackGame;
 extern int AllowAttract;
 
-extern GetCDClass CDList;
-
 /*
 ** Modem globals
 */

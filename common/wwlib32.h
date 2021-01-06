@@ -49,7 +49,6 @@
 #include "common/audio.h"
 #include "common/dipthong.h"
 #include "common/palette.h"
-#include "common/playcd.h"
 #include "common/shape.h"
 #include "common/timer.h"
 #include "common/ww_win.h"

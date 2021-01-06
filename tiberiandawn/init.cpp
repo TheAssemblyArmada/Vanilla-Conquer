@@ -50,6 +50,7 @@
 **	Function prototypes for this module **
 *****************************************/
 static void Play_Intro(bool for_real = false);
+void Init_CDROM_Access(void);
 
 extern unsigned long RandNumb;
 
@@ -295,80 +296,12 @@ bool Init_Game(int, char*[])
         CCFileClass::Set_Search_Drives(OverridePath);
     }
 #endif
-
-#ifndef REMASTER_BUILD
-    CCDebugString("C&C95 - About to search for CD drives\n");
-
     /*
-    **	Always try to look at the CD-ROM for data files.
+    **	Initialize access to the CD-ROM and ensure that the CD is inserted. This can, and
+    **	most likely will, result in a visible prompt.
     */
-    if (!CCFileClass::Is_There_Search_Drives()) {
-        /*
-        **	This call is needed because of a side effect of this function. It will examine the
-        **	CD-ROMs attached to this computer and set the appropriate status values. Without this
-        **	call, the "?:\\" could not be filled in correctly.
-        */
-        Force_CD_Available(-1);
-
-        /*
-        ** If there are no search drives specified then we must be playing
-        ** off cd, so read files from there.
-        */
-        int error;
-
-        do {
-            if (!CDList.Get_Number_Of_Drives()) {
-                Set_Palette(GamePalette);
-                Show_Mouse();
-                WWMessageBox().Process(TXT_CD_ERROR1, TXT_OK);
-                Prog_End();
-                exit(EXIT_FAILURE);
-            }
-            CCFileClass::Set_CD_Drive(CDList.Get_First_CD_Drive());
-
-            error = CCFileClass::Set_Search_Drives("?:\\");
-            switch (error) {
-            case 1:
-                Set_Palette(GamePalette);
-                Show_Mouse();
-                WWMessageBox().Process(TXT_CD_ERROR1, TXT_OK);
-                Prog_End();
-                exit(EXIT_FAILURE);
-
-            case 2:
-                Set_Palette(GamePalette);
-                Show_Mouse();
-                if (WWMessageBox().Process(TXT_CD_DIALOG_1, TXT_OK, TXT_CANCEL) == 1) {
-                    Prog_End();
-                    exit(EXIT_FAILURE);
-                }
-                Hide_Mouse();
-                break;
-
-            default:
-                Show_Mouse();
-                if (!Force_CD_Available(RequiredCD)) {
-                    Prog_End();
-                    exit(EXIT_FAILURE);
-                }
-                Hide_Mouse();
-                break;
-            }
-        } while (error);
-
-#ifdef DEMO
-        RequiredCD = -2;
-#else
-        RequiredCD = -1;
-#endif
-    } else {
-
-        /*
-        ** If there are search drives specified then all files are to be
-        ** considered local.
-        */
-        RequiredCD = -2;
-    }
+#ifndef REMASTER_BUILD
+    Init_CDROM_Access();
 #endif
 
 #ifndef DEMO
@@ -2590,6 +2523,49 @@ int Version_Number(void)
 #endif
 
 #endif // WIN32
+}
+
+/***********************************************************************************************
+ * Init_CDROM_Access -- Initialize the CD-ROM access handler.                                  *
+ *                                                                                             *
+ *    This routine is called to setup the CD-ROM access or emulation handler. It will ensure   *
+ *    that the appropriate CD-ROM is present (dependant on the RequiredCD global).             *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   The fonts, palettes, and other bootstrap systems must have been initialized     *
+ *             prior to calling this routine since this routine will quite likely display      *
+ *             a dialog box requesting the appropriate CD be inserted.                         *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/03/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+void Init_CDROM_Access(void)
+{
+    VisiblePage.Clear();
+    HidPage.Clear();
+
+    /*
+    **	Always try to look at the CD-ROM for data files.
+    */
+    if (!CCFileClass::Is_There_Search_Drives()) {
+        /*
+        **	This call is needed because of a side effect of this function. It will examine the
+        **	CD-ROMs attached to this computer and set the appropriate status values. Without this
+        **	call, the "?:\\" could not be filled in correctly.
+        */
+        Force_CD_Available(-1);
+        RequiredCD = -1;
+    } else {
+
+        /*
+        ** If there are search drives specified then all files are to be
+        ** considered local.
+        */
+        RequiredCD = -2;
+    }
 }
 
 /***************************************************************************

@@ -639,10 +639,7 @@ bool Load_Game(const char* file_name)
                 cd = 2;
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
                 if (Expansion_AM_Present()) {
-                    int current_drive = CCFileClass::Get_CD_Drive();
-                    int index = Get_CD_Index(current_drive, 1 * 60);
-                    if (index == 3)
-                        cd = 3;
+                    cd = 3;
                 }
 #endif
             }
@@ -669,8 +666,7 @@ bool Load_Game(const char* file_name)
             ** The scenario is available so set RequiredCD to whatever is currently
             ** in the drive.
             */
-            int current_drive = CCFileClass::Get_CD_Drive();
-            RequiredCD = Get_CD_Index(current_drive, 1 * 60);
+            RequiredCD = -1;
         }
     }
 
@@ -989,12 +985,9 @@ bool Load_Game(const char* file_name)
             /*
             ** Find out if the CD in the current drive is the Aftermath disc.
             */
-            if (Get_CD_Index(CCFileClass::Get_CD_Drive(), 1 * 60) != 3) {
-                GamePalette.Set(FADE_PALETTE_FAST, Call_Back);
-                if (!Force_CD_Available(3)) { // force Aftermath CD in drive.
-                    Prog_End("Load_Game Force_CD_Available(3) failed", true);
-                    Emergency_Exit(EXIT_FAILURE);
-                }
+            if (!Force_CD_Available(3)) { // force Aftermath CD in drive.
+                Prog_End("Load_Game Force_CD_Available(3) failed", true);
+                Emergency_Exit(EXIT_FAILURE);
             }
             CCINIClass mpini;
             CCFileClass mplayerIniFile("MPLAYER.INI");

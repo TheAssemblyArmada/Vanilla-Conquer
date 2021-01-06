@@ -210,38 +210,12 @@ int CDFileClass::Set_Search_Drives(char* pathlist)
             switch (path[strlen(path) - 1]) {
             case ':':
             case '\\':
+            case '/':
                 break;
 
             default:
-                strcat(path, "\\");
+                strcat(path, "/");
                 break;
-            }
-
-            /*
-            **	If there is a drive letter specified, and this drive letter is '?', then it should
-            **	be substituted with the CD-ROM drive letter. In the case of no CD-ROM attached, then
-            **	merely ignore this path entry.
-            ** Adds an extra entry for each CD drive in the system that has a C&C disc inserted.
-            ** 																						ST - 5/21/96 4:40PM
-            */
-            if (strncmp(path, "?:", 2) == 0) {
-                if (CurrentCDDrive) {
-                    found = true;
-
-                    /*
-                    ** If the drive has a C&C CD in it then add it to the path
-                    */
-                    if (Get_CD_Index(CurrentCDDrive, 2 * 60) >= 0) {
-                        path[0] = (char)(CurrentCDDrive + 'A');
-                        Add_Search_Drive(path);
-                    }
-                }
-
-                /*
-                **	Find the next path string and resubmit.
-                */
-                ptr = strtok(NULL, ";");
-                continue;
             }
 
             found = true;

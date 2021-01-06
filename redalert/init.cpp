@@ -2349,54 +2349,12 @@ static void Init_CDROM_Access(void)
     **	Always try to look at the CD-ROM for data files.
     */
     if (!CCFileClass::Is_There_Search_Drives()) {
-
         /*
         **	This call is needed because of a side effect of this function. It will examine the
         **	CD-ROMs attached to this computer and set the appropriate status values. Without this
         **	call, the "?:\\" could not be filled in correctly.
         */
         Force_CD_Available(-1);
-
-        /*
-        ** If there are no search drives specified then we must be playing
-        ** off cd, so read files from there.
-        */
-        int error;
-
-        do {
-            error = CCFileClass::Set_Search_Drives("?:\\");
-            switch (error) {
-            case 1:
-                VisiblePage.Clear();
-                GamePalette.Set();
-                Show_Mouse();
-                WWMessageBox().Process(TXT_CD_ERROR1, TXT_OK);
-                Prog_End("Init_CDROM_Access - CD_ERROR1", true);
-                Emergency_Exit(EXIT_FAILURE);
-
-            case 2:
-                VisiblePage.Clear();
-                GamePalette.Set();
-                Show_Mouse();
-                if (WWMessageBox().Process(TXT_CD_DIALOG_1, TXT_OK, TXT_CANCEL) == 1) {
-                    Prog_End("Init_CDROM_Access - CD_ERROR2", true);
-                    Emergency_Exit(EXIT_FAILURE);
-                }
-                Hide_Mouse();
-                break;
-
-            default:
-                VisiblePage.Clear();
-                Show_Mouse();
-                if (!Force_CD_Available(RequiredCD)) {
-                    Prog_End("Init_CDROM_Access - Force_CD_Available failed", true);
-                    Emergency_Exit(EXIT_FAILURE);
-                }
-                Hide_Mouse();
-                break;
-            }
-        } while (error);
-
         RequiredCD = -1;
     } else {
 

@@ -694,7 +694,6 @@ TTimerClass<SystemTimerClass> TickCount = 0;
 bool InDebugger = false;
 int ReadyToQuit = 0;
 
-GetCDClass CDList;
 int UnitBuildPenalty = 100;
 
 #ifdef MPEGMOVIE // Denzil 6/15/98

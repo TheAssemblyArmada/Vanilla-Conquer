@@ -503,13 +503,10 @@ bool Read_Scenario(char* name)
             /*
             ** Find out if the CD in the current drive is the Aftermath disc.
             */
-            if (Get_CD_Index(CCFileClass::Get_CD_Drive(), 1 * 60) != 3) {
-                GamePalette.Set(FADE_PALETTE_FAST, Call_Back);
-                RequiredCD = 3;
-                if (!Force_CD_Available(RequiredCD)) { // force Aftermath CD in drive.
-                    if (!RunningAsDLL) {               // PG
-                        Emergency_Exit(EXIT_FAILURE);
-                    }
+            RequiredCD = 3;
+            if (!Force_CD_Available(RequiredCD)) { // force Aftermath CD in drive.
+                if (!RunningAsDLL) {               // PG
+                    Emergency_Exit(EXIT_FAILURE);
                 }
             }
             CCINIClass ini;
@@ -2057,27 +2054,19 @@ bool Read_Scenario_INI(char* fname, bool)
             ** all CDs.
             */
             if (Session.Type != GAME_NORMAL) {
-#ifdef FIXIT_CSII                //	checked - ajw 9/28/98
                 RequiredCD = -1; // default that any CD will do.
                                  // If it's a counterstrike mission, require the counterstrike CD, unless the
                                  // Aftermath CD is already in the drive, in which case, leave it there.
                                  // Note, this works because this section only tests for multiplayer scenarios.
                 if (Is_Mission_Counterstrike(Scen.ScenarioName)) {
                     RequiredCD = 2;
-                    if (Is_Aftermath_Installed() || Get_CD_Index(CCFileClass::Get_CD_Drive(), 1 * 60) == 3) {
+                    if (Is_Aftermath_Installed()) {
                         RequiredCD = 3;
                     }
                 }
                 if (Is_Mission_Aftermath(Scen.ScenarioName)) {
                     RequiredCD = 3;
                 }
-#else
-                if (Scen.Scenario > 24) {
-                    RequiredCD = 2;
-                } else {
-                    RequiredCD = -1;
-                }
-#endif
             } else {
 
                 /*
@@ -2111,19 +2100,7 @@ bool Read_Scenario_INI(char* fname, bool)
                 }
             }
         }
-#ifdef FIXIT_CSII
-        // checked - ajw 9/28/98
-        // If we're asking for a CD swap, check to see if we need to set the palette
-        // to avoid a black screen.  If this is a normal RA game, and the CD being
-        // requested is an RA CD, then don't set the palette, leave the map screen up.
 
-        if (Get_CD_Index(CCFileClass::Get_CD_Drive(), 1 * 60) != RequiredCD) {
-            if ((RequiredCD == 0 || RequiredCD == 1) && Session.Type == GAME_NORMAL) {
-                SeenPage.Clear();
-            }
-            GamePalette.Set(FADE_PALETTE_FAST, Call_Back);
-        }
-#endif
         if (!Force_CD_Available(RequiredCD)) {
             Prog_End("Read_Scenario_INI Force_CD_Available failed", true);
             if (!RunningAsDLL) { // PG
