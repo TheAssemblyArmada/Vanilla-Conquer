@@ -489,10 +489,6 @@ int main(int argc, char* argv[])
                 MouseInstalled = true;
             }
 
-#ifndef REMASTER_BUILD
-            CDFileClass::Set_CD_Drive(CDList.Get_First_CD_Drive());
-#endif
-
             /*
             ** See if we should run the intro
             */

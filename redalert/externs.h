@@ -143,7 +143,6 @@ extern GraphicBufferClass ModeXBuff;
 extern MissionControlClass MissionControl[MISSION_COUNT];
 extern char const* TutorialText[225];
 extern Buffer* TheaterBuffer;
-extern GetCDClass CDList;
 extern CCINIClass RuleINI;
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
 extern CCINIClass AftermathINI;
