@@ -751,25 +751,14 @@ int Main_Menu(unsigned long)
             //			Dialog_Box(d_dialog_x, d_dialog_y, d_dialog_w, d_dialog_h);
             //			Draw_Caption (TXT_NONE, d_dialog_x, d_dialog_y, d_dialog_w);
             commands->Draw_All();
-#ifdef FIXIT_VERSION_3
 #ifndef REMASTER_BUILD
-            Fancy_Text_Print("V%s",
-                             d_dialog_x + d_dialog_w - (18 * RESFACTOR),
-                             d_dialog_y + d_dialog_h - (5 * RESFACTOR),
+            Fancy_Text_Print("%s",
+                             d_dialog_x + d_dialog_w - (1 * RESFACTOR),
+                             d_dialog_y + d_dialog_h + (4 * RESFACTOR),
                              GadgetClass::Get_Color_Scheme(),
                              TBLACK,
-                             TPF_EFNT | TPF_NOSHADOW | TPF_RIGHT,
+                             TPF_6POINT | TPF_NOSHADOW | TPF_RIGHT,
                              Version_Name());
-#endif
-#else
-            Fancy_Text_Print("V%s",
-                             d_dialog_x + d_dialog_w - (18 * RESFACTOR),
-                             d_dialog_y + d_dialog_h - (11 * RESFACTOR),
-                             GadgetClass::Get_Color_Scheme(),
-                             TBLACK,
-                             TPF_EFNT | TPF_NOSHADOW | TPF_RIGHT,
-                             Version_Name());
-
 #endif
 
             /*
