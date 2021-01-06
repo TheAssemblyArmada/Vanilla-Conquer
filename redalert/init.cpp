@@ -563,13 +563,6 @@ bool Select_Game(bool fade)
     Map.Set_Default_Mouse(MOUSE_NORMAL, false);
 
     /*
-    **  Allow moving mouse outside the game window when in menu.
-    */
-    if (!Is_Video_Fullscreen()) {
-        WWMouse->Clear_Cursor_Clip();
-    }
-
-    /*
     **	If the last game we played was a multiplayer game, jump right to that
     **	menu by pre-setting 'selection'.
     */
@@ -1218,10 +1211,6 @@ bool Select_Game(bool fade)
     HiddenPage.Clear();
     VisiblePage.Clear();
     Show_Mouse();
-
-    if (!Is_Video_Fullscreen()) {
-        WWMouse->Set_Cursor_Clip();
-    }
 
     Set_Logic_Page(SeenBuff);
     /*

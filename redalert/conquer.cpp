@@ -224,6 +224,8 @@ void Main_Game(int argc, char* argv[])
             Show_Mouse();
         }
 
+        Set_Video_Cursor_Clip(true);
+
 #ifdef SCENARIO_EDITOR
         /*
         **	Scenario-editor version of main-loop processing
@@ -244,12 +246,7 @@ void Main_Game(int argc, char* argv[])
                 }
 
                 if (SpecialDialog != SDLG_NONE) {
-                    /*
-                    **  Always release mouse cursor when a dialog is open.
-                    */
-                    if (!Is_Video_Fullscreen()) {
-                        WWMouse->Clear_Cursor_Clip();
-                    }
+                    Set_Video_Cursor_Clip(false);
 
                     switch (SpecialDialog) {
                     case SDLG_SPECIAL:
@@ -282,9 +279,7 @@ void Main_Game(int argc, char* argv[])
                         break;
                     }
 
-                    if (!Is_Video_Fullscreen()) {
-                        WWMouse->Set_Cursor_Clip();
-                    }
+                    Set_Video_Cursor_Clip(true);
                 }
             } else {
 
@@ -320,12 +315,7 @@ void Main_Game(int argc, char* argv[])
             **	Main_Loop(), allowing the game to run in the background.
             */
             if (SpecialDialog != SDLG_NONE) {
-                /*
-                **  Always release mouse cursor when a dialog is open.
-                */
-                if (!Is_Video_Fullscreen()) {
-                    WWMouse->Clear_Cursor_Clip();
-                }
+                Set_Video_Cursor_Clip(false);
 
                 switch (SpecialDialog) {
                 case SDLG_SPECIAL:
@@ -380,12 +370,12 @@ void Main_Game(int argc, char* argv[])
                     break;
                 }
 
-                if (!Is_Video_Fullscreen()) {
-                    WWMouse->Set_Cursor_Clip();
-                }
+                Set_Video_Cursor_Clip(true);
             }
         }
 #endif
+
+        Set_Video_Cursor_Clip(false);
 
         /*
         **	Scenario is done; fade palette to black

@@ -77,10 +77,6 @@ void Focus_Loss(void)
     }
     Theme.Stop();
     Stop_Primary_Sound_Buffer();
-
-    if (WWMouse && Is_Video_Fullscreen()) {
-        WWMouse->Clear_Cursor_Clip();
-    }
 }
 
 void Focus_Restore(void)
@@ -88,13 +84,10 @@ void Focus_Restore(void)
     Map.Flag_To_Redraw(true);
     Start_Primary_Sound_Buffer(true);
 
-    if (Is_Video_Fullscreen()) {
-        if (WWMouse) {
-            WWMouse->Set_Cursor_Clip();
-        }
-        VisiblePage.Clear();
-        HiddenPage.Clear();
-    }
+#ifndef SDL2_BUILD
+    VisiblePage.Clear();
+    HiddenPage.Clear();
+#endif
 }
 
 /***********************************************************************************************

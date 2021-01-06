@@ -46,15 +46,16 @@
 
 #include <SDL.h>
 
-extern WWKeyboardClass* Keyboard;
-
-SDL_Window* window;
-SDL_Renderer* renderer;
+static SDL_Window* window;
+static SDL_Renderer* renderer;
 static SDL_Palette* palette;
 static Uint32 pixel_format;
 
 static struct
 {
+    int GameW;
+    int GameH;
+    bool Clip;
     float ScaleX{1.0f};
     float ScaleY{1.0f};
     void* Raw;
@@ -66,6 +67,22 @@ static struct
     SDL_Cursor* Current;
     SDL_Surface* Surface;
 } hwcursor;
+
+static void Update_HWCursor_Settings()
+{
+    /*
+    ** Update mouse scaling settings.
+    */
+    int win_w, win_h;
+    SDL_GetRendererOutputSize(renderer, &win_w, &win_h);
+    hwcursor.ScaleX = win_w / (float)hwcursor.GameW;
+    hwcursor.ScaleY = win_h / (float)hwcursor.GameH;
+
+    /*
+    ** Ensure cursor clip is in the desired state.
+    */
+    Set_Video_Cursor_Clip(hwcursor.Clip);
+}
 
 class SurfaceMonitorClassDummy : public SurfaceMonitorClass
 {
@@ -117,8 +134,8 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
         ** Native fullscreen if no proper width and height set.
         */
         if (Settings.Video.Width < w || Settings.Video.Height < h) {
-            win_w = 0;
-            win_h = 0;
+            win_w = Settings.Video.Width = 0;
+            win_h = Settings.Video.Height = 0;
             win_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
         } else {
             win_w = Settings.Video.Width;
@@ -128,6 +145,9 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     } else if (Settings.Video.WindowWidth > w && Settings.Video.WindowHeight > h) {
         win_w = Settings.Video.WindowWidth;
         win_h = Settings.Video.WindowHeight;
+    } else {
+        Settings.Video.WindowWidth = win_w;
+        Settings.Video.WindowHeight = win_h;
     }
 
     window =
@@ -150,19 +170,52 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
         return false;
     }
 
-    SDL_GetRendererOutputSize(renderer, &win_w, &win_h);
-    hwcursor.ScaleX = win_w / (float)w;
-    hwcursor.ScaleY = win_h / (float)h;
+    /*
+    ** Set mouse scaling options.
+    */
+    hwcursor.GameW = w;
+    hwcursor.GameH = h;
+    Update_HWCursor_Settings();
 
     return true;
 }
 
-bool Is_Video_Fullscreen()
+void Toggle_Video_Fullscreen()
 {
-    /*
-    ** Until we can toggle, just return the setting.
-    */
-    return !Settings.Video.Windowed;
+    Settings.Video.Windowed = !Settings.Video.Windowed;
+
+    if (!Settings.Video.Windowed) {
+        if (Settings.Video.Width == 0 || Settings.Video.Height == 0) {
+            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        } else {
+            SDL_SetWindowSize(window, Settings.Video.Width, Settings.Video.Height);
+            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+        }
+    } else {
+        SDL_SetWindowFullscreen(window, 0);
+        SDL_SetWindowSize(window, Settings.Video.WindowWidth, Settings.Video.WindowHeight);
+    }
+
+    Update_HWCursor_Settings();
+}
+
+void Get_Video_Scale(float& x, float& y)
+{
+    x = hwcursor.ScaleX;
+    y = hwcursor.ScaleY;
+}
+
+void Set_Video_Cursor_Clip(bool clipped)
+{
+    hwcursor.Clip = clipped;
+
+    if (window) {
+        if (Settings.Video.Windowed) {
+            SDL_SetWindowGrab(window, hwcursor.Clip ? SDL_TRUE : SDL_FALSE);
+        } else {
+            SDL_SetWindowGrab(window, SDL_TRUE);
+        }
+    }
 }
 
 /***********************************************************************************************
@@ -410,9 +463,7 @@ SurfaceMonitorClass::SurfaceMonitorClass()
 /*
 ** VideoSurfaceDDraw
 */
-
 class VideoSurfaceSDL2;
-
 static VideoSurfaceSDL2* frontSurface = nullptr;
 
 class VideoSurfaceSDL2 : public VideoSurface

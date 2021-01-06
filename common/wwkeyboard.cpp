@@ -52,7 +52,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "wwkeyboard.h"
-#include "wwmouse.h"
+#include "video.h"
 #include "miscasm.h"
 #include <string.h>
 #ifdef SDL2_BUILD
@@ -543,7 +543,11 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
             Put_Key_Message(event.key.keysym.scancode, false);
             break;
         case SDL_KEYUP:
-            Put_Key_Message(event.key.keysym.scancode, true);
+            if (event.key.keysym.scancode == SDL_SCANCODE_RETURN && Down(VK_MENU)) {
+                Toggle_Video_Fullscreen();
+            } else {
+                Put_Key_Message(event.key.keysym.scancode, true);
+            }
             break;
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP: {
@@ -560,10 +564,10 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
                 key = VK_MBUTTON;
                 break;
             }
-            Get_Mouse_Scale_XY(scale_x, scale_y);
+            Get_Video_Scale(scale_x, scale_y);
             Put_Mouse_Message(key,
-                              event.button.x * scale_x,
-                              event.button.y * scale_y,
+                              event.button.x / scale_x,
+                              event.button.y / scale_y,
                               event.type == SDL_MOUSEBUTTONDOWN ? false : true);
         } break;
         case SDL_WINDOWEVENT:
