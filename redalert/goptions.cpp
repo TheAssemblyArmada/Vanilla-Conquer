@@ -316,13 +316,13 @@ void GameOptionsClass::Process(void)
             **	Display the version number at the bottom of the dialog box.
             */
 #ifndef REMASTER_BUILD
-            Fancy_Text_Print("%s\rV%s",
-                             (OptionX + OptionWidth) - (25 * RESFACTOR),
+            Fancy_Text_Print("%s\r%s",
+                             (OptionX + OptionWidth) - (18 * RESFACTOR),
                              OptionY + OptionHeight
-                                 - ((Session.Type == GAME_NORMAL) ? (32 * RESFACTOR) : (24 * RESFACTOR)),
+                                 - ((Session.Type == GAME_NORMAL) ? (30 * RESFACTOR) : (19 * RESFACTOR)),
                              GadgetClass::Get_Color_Scheme(),
                              TBLACK,
-                             TPF_EFNT | TPF_NOSHADOW | TPF_RIGHT,
+                             TPF_6POINT | TPF_NOSHADOW | TPF_RIGHT,
                              Scen.ScenarioName,
                              Version_Name());
 #endif

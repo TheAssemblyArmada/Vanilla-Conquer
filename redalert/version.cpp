@@ -44,6 +44,8 @@
 #ifndef REMASTER_BUILD
 #include "function.h"
 
+#include "common/gitinfo.h"
+
 /****************************** Globals ************************************/
 //---------------------------------------------------------------------------
 // This is a table of version numbers # the communications protocol used for
@@ -406,30 +408,7 @@ unsigned short VersionClass::Minor_Version(void)
  *=========================================================================*/
 char* VersionClass::Version_Name(void)
 {
-    //------------------------------------------------------------------------
-    // For developmental versions, just use the major & minor version #'s
-    //------------------------------------------------------------------------
-#ifdef DEV_VERSION
-    sprintf(VersionName, "%x.%x", VerNum.Major_Version(), VerNum.Minor_Version());
-
-    //------------------------------------------------------------------------
-    // For final versions, trim 0's off the minor version
-    //------------------------------------------------------------------------
-#else
-    unsigned short adjusted_minor;
-    int i;
-
-    adjusted_minor = Minor_Version();
-    for (i = 0; i < 4; i++) {
-        if ((adjusted_minor & 0x000f) != 0) {
-            break;
-        }
-        adjusted_minor >>= 4;
-    }
-
-    sprintf(VersionName, "%x.%x", VerNum.Major_Version(), adjusted_minor);
-#endif
-
+    snprintf(VersionName, sizeof(VersionName), "R:%d %s%s", GitRevision, (GitUncommittedChanges ? "~" : ""), GitShortSHA1);
     return (VersionName);
 
 } /* end of Version_Name */
@@ -714,101 +693,22 @@ unsigned long VersionClass::Max_Version(void)
 
 char const* Version_Name(void)
 {
-#ifdef NEVER
-    static char buffer[32];
-
-    /*
-    **	Fetch the day and month components from the current
-    **	build date.
-    */
-    static char* date = __DATE__; // format: Mmm dd yyyy
-    strupr(date);
-    char const* tok = strtok(date, " ");
-    static char const* months = "JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC";
-    char const* ptr = strstr(months, tok);
-    int monthnum = 0;
-    if (ptr != NULL) {
-        monthnum = (((ptr - months) / 3) + 1);
-    }
-
-    tok = strtok(NULL, " ");
-    int daynum = 0;
-    if (tok != NULL) {
-        daynum = atoi(tok);
-    }
-
-    /*
-    **	Fetch the time components from the current build time.
-    */
-    static char* time = __TIME__; // format: hh:mm:ss
-    tok = strtok(time, ": ");
-    int hournum = 0;
-    if (tok != NULL) {
-        hournum = atoi(tok);
-    }
-
-    tok = strtok(NULL, ": ");
-    int minnum = 0;
-    if (tok != NULL) {
-        minnum = atoi(tok);
-    }
-
-    sprintf(buffer, "%02d%02d%02d", monthnum, daynum, (hournum * 4) + (minnum / 15));
-    return (buffer);
-#else
-
     static char buffer[128];
 
     memset(buffer, '\0', sizeof(buffer));
-
-#ifdef FIXIT_VERSION_3
-    strcpy(buffer, "3.03");
-
-#ifdef ENGLISH
-    strcat(buffer, "E");
-#else
-#ifdef GERMAN
-    strcat(buffer, "G");
-#else
-#ifdef FRENCH
-    strcat(buffer, "F");
-#endif
-#endif
-#endif
-
-#else //	FIXIT_VERSION_3
-
-#ifdef FIXIT_PATCH_108
-    // strcpy(buffer, "1.08PE");
-    strcpy(buffer, "1.08P");
-
-#ifdef FIXIT_CSII
-    strcpy(buffer, "2.00");
-#ifdef DEV_VERSION
     strcpy(buffer, VerNum.Version_Name());
-#endif
-#ifdef DEV_VER_NAME
-    strcpy(buffer, __DATE__); // format: Mmm dd yyyy
-#endif
-#endif
 
 #ifdef ENGLISH
-    strcat(buffer, "E");
+    strcat(buffer, " E");
 #else
 #ifdef GERMAN
-    strcat(buffer, "G");
+    strcat(buffer, " G");
 #else
 #ifdef FRENCH
-    strcat(buffer, "F");
+    strcat(buffer, " F");
 #endif
 #endif
 #endif
-
-#else
-    strcpy(buffer, "1.07E");
-#endif
-
-#endif //	FIXIT_VERSION_3
 
     if (Is_Demo()) {
         strcat(buffer, "D");
@@ -826,6 +726,5 @@ char const* Version_Name(void)
         file.Read(&buffer[strlen(buffer)], 25);
     }
     return (buffer);
-#endif
 }
 #endif

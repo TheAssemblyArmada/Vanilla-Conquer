@@ -564,7 +564,7 @@ void Send_Statistics_Packet(void)
         */
 #ifdef _WIN32
         char version[128];
-        sprintf(version, "V%s", VerNum.Version_Name());
+        sprintf(version, "%s", VerNum.Version_Name());
         stats.Add_Field(FIELD_GAME_VERSION, (char*)version);
 
         char path_to_exe[280];
