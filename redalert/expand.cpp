@@ -340,173 +340,176 @@ bool Expansion_Dialog(bool bCounterstrike) //	If not bCounterstrike, then this w
 bool Expansion_Dialog(void)
 #endif
 {
-    GadgetClass* buttons = NULL;
+	GadgetClass* buttons = NULL;
 
-    TextButtonClass ok(200, TXT_OK, TPF_BUTTON, (OPTION_X + 40) + HIRES_ADJ_W, (OPTION_Y + OPTION_HEIGHT - 50) + HIRES_ADJ_H);
-    TextButtonClass cancel(201, TXT_CANCEL, TPF_BUTTON, (OPTION_X + OPTION_WIDTH - 85) + HIRES_ADJ_W, (OPTION_Y + OPTION_HEIGHT - 50) + HIRES_ADJ_H);
+	TextButtonClass ok(200, TXT_OK, TPF_BUTTON, (OPTION_X + 40) + HIRES_ADJ_W, (OPTION_Y + OPTION_HEIGHT - 50) + HIRES_ADJ_H);
+	TextButtonClass cancel(201, TXT_CANCEL, TPF_BUTTON, (OPTION_X + OPTION_WIDTH - 85) + HIRES_ADJ_W, (OPTION_Y + OPTION_HEIGHT - 50) + HIRES_ADJ_H);
 
-    EListClass list(202,
-                    (OPTION_X + 35) + HIRES_ADJ_W,
-                    (OPTION_Y + 30) + HIRES_ADJ_H,
-                    OPTION_WIDTH - 70,
-                    OPTION_HEIGHT - 85,
-                    TPF_BUTTON,
-                    MFCD::Retrieve("BTN-UP.SHP"),
-                    MFCD::Retrieve("BTN-DN.SHP"));
+	EListClass list(202,
+		(OPTION_X + 35) + HIRES_ADJ_W,
+		(OPTION_Y + 30) + HIRES_ADJ_H,
+		OPTION_WIDTH - 70,
+		OPTION_HEIGHT - 85,
+		TPF_BUTTON,
+		MFCD::Retrieve("BTN-UP.SHP"),
+		MFCD::Retrieve("BTN-DN.SHP"));
 
-    buttons = &ok;
-    cancel.Add(*buttons);
-    list.Add(*buttons);
+	buttons = &ok;
+	cancel.Add(*buttons);
+	list.Add(*buttons);
 
-    /*
-    **	Add in all the expansion scenarios.
-    */
-    CCFileClass file;
-    char buffer[128], buffer2[128];
-    INIClass ini;
+	/*
+	**	Add in all the expansion scenarios.
+	*/
+	CCFileClass file;
+	char buffer[128], buffer2[128];
+	INIClass ini;
 
-    for (int index = 20; index < (36 + 18); index++) {
-        strcpy(buffer, ExpandNames[index - 20]);
-        strcpy(buffer2, ExpandNames[index - 20]);
+	for (int index = 20; index < (36 + 18); index++) {
+		strcpy(buffer, ExpandNames[index - 20]);
+		strcpy(buffer2, ExpandNames[index - 20]);
 
-        if (buffer[0] == NULL)
-            break;
+		if (buffer[0] == NULL)
+			break;
 
-        strcat(buffer, ".INI");
-        strcat(buffer2, ".INI");
-        Scen.Set_Scenario_Name(buffer);
-        Scen.Scenario = index;
-        file.Set_Name(buffer);
+		strcat(buffer, ".INI");
+		strcat(buffer2, ".INI");
+		Scen.Set_Scenario_Name(buffer);
+		Scen.Scenario = index;
+		file.Set_Name(buffer);
 
-        bool bOk;
-        if (index < 36) {
-            bOk = bCounterstrike;
-        } else {
-            bOk = !bCounterstrike;
-        }
+		bool bOk;
+		if (index < 36) {
+			bOk = bCounterstrike;
+		}
+		else {
+			bOk = !bCounterstrike;
+		}
 
-        if (bOk && file.Is_Available()) {
-            EObjectClass* obj = new EObjectClass;
-            switch (buffer[2]) {
+		if (bOk && file.Is_Available()) {
+			EObjectClass* obj = new EObjectClass;
+			switch (buffer[2]) {
 
-            case 'G':
-            case 'g':
-                ini.Clear();
-                ini.Load(file);
-                ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
+			case 'G':
+			case 'g':
+				ini.Clear();
+				ini.Load(file);
+				ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
 #if defined(GERMAN) || defined(FRENCH)
-                strcpy(obj->Name, XlatNames[index - ARRAYOFFSET]);
+				strcpy(obj->Name, XlatNames[index - ARRAYOFFSET]);
 #else
-                strcpy(obj->Name, buffer);
+				strcpy(obj->Name, buffer);
 #endif
-                strcpy(obj->FullName, buffer2);
-                obj->House = HOUSE_GOOD;
-                obj->Scenario = index;
-                list.Add_Object(obj);
-                break;
+				strcpy(obj->FullName, buffer2);
+				obj->House = HOUSE_GOOD;
+				obj->Scenario = index;
+				list.Add_Object(obj);
+				break;
 
-            case 'U':
-            case 'u':
-                ini.Clear();
-                ini.Load(file);
-                ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
+			case 'U':
+			case 'u':
+				ini.Clear();
+				ini.Load(file);
+				ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
 #if defined(GERMAN) || defined(FRENCH)
-                strcpy(obj->Name, XlatNames[index - ARRAYOFFSET]);
+				strcpy(obj->Name, XlatNames[index - ARRAYOFFSET]);
 #else
-                strcpy(obj->Name, buffer);
+				strcpy(obj->Name, buffer);
 #endif
-                strcpy(obj->FullName, buffer2);
-                obj->House = HOUSE_BAD;
-                obj->Scenario = index;
-                list.Add_Object(obj);
-                break;
+				strcpy(obj->FullName, buffer2);
+				obj->House = HOUSE_BAD;
+				obj->Scenario = index;
+				list.Add_Object(obj);
+				break;
 
-            default:
-                break;
-            }
-        }
-    }
+			default:
+				break;
+			}
+		}
+	}
 
-    Set_Logic_Page(SeenBuff);
-    bool recalc = true;
-    bool display = true;
-    bool process = true;
-    bool okval = true;
+	Set_Logic_Page(SeenBuff);
+	bool recalc = true;
+	bool display = true;
+	bool process = true;
+	bool okval = true;
 
-    while (process) {
+	while (process) {
 
-        /*
-        ** If we have just received input focus again after running in the background then
-        ** we need to redraw.
-        */
-        if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = false;
-            display = true;
-        }
+		/*
+		** If we have just received input focus again after running in the background then
+		** we need to redraw.
+		*/
+		if (AllSurfaces.SurfacesRestored) {
+			AllSurfaces.SurfacesRestored = false;
+			display = true;
+		}
 
-        Call_Back();
+		Call_Back();
 
-        if (display) {
-            display = false;
+		if (display) {
+			display = false;
 
-            Hide_Mouse();
+			Hide_Mouse();
 
-            /*
-            **	Load the background picture.
-            */
-            Load_Title_Page();
-            CCPalette.Set();
+			/*
+			**	Load the background picture.
+			*/
+			Load_Title_Page();
+			CCPalette.Set();
 
-            Dialog_Box(OPTION_X + HIRES_ADJ_W, OPTION_Y + HIRES_ADJ_H, OPTION_WIDTH, OPTION_HEIGHT);
+			Dialog_Box(OPTION_X + HIRES_ADJ_W, OPTION_Y + HIRES_ADJ_H, OPTION_WIDTH, OPTION_HEIGHT);
 #ifdef FIXIT_VERSION_3
-            if (bCounterstrike) {
-				Draw_Caption( TXT_WOL_CS_MISSIONS, OPTION_X + HIRES_ADJ_W, OPTION_Y + HIRES_ADJ_H, OPTION_WIDTH);
-            } else {
-				Draw_Caption( TXT_WOL_AM_MISSIONS, OPTION_X + HIRES_ADJ_W, OPTION_Y + HIRES_ADJ_H, OPTION_WIDTH);
+			if (bCounterstrike) {
+				Draw_Caption(TXT_WOL_CS_MISSIONS, OPTION_X + HIRES_ADJ_W, OPTION_Y + HIRES_ADJ_H, OPTION_WIDTH);
+			}
+			else {
+				Draw_Caption(TXT_WOL_AM_MISSIONS, OPTION_X + HIRES_ADJ_W, OPTION_Y + HIRES_ADJ_H, OPTION_WIDTH);
 #else
-            Draw_Caption(TXT_NEW_MISSIONS, OPTION_X, OPTION_Y, OPTION_WIDTH);
+			Draw_Caption(TXT_NEW_MISSIONS, OPTION_X, OPTION_Y, OPTION_WIDTH);
 #endif
-            buttons->Draw_All();
-            Show_Mouse();
-        }
+			buttons->Draw_All();
+			Show_Mouse();
+			}
 
-        KeyNumType input = buttons->Input();
-        switch (input) {
-        case 200 | KN_BUTTON:
-            Whom = list.Current_Object()->House;
-            Scen.Scenario = list.Current_Object()->Scenario;
-            strcpy(Scen.ScenarioName, list.Current_Object()->FullName);
-            process = false;
-            okval = true;
-            break;
+		KeyNumType input = buttons->Input();
+		switch (input) {
+		case 200 | KN_BUTTON:
+			Whom = list.Current_Object()->House;
+			Scen.Scenario = list.Current_Object()->Scenario;
+			strcpy(Scen.ScenarioName, list.Current_Object()->FullName);
+			process = false;
+			okval = true;
+			break;
 
-        case KN_ESC:
-        case 201 | KN_BUTTON:
-            process = false;
-            okval = false;
-            break;
+		case KN_ESC:
+		case 201 | KN_BUTTON:
+			process = false;
+			okval = false;
+			break;
 
-        case (KN_RETURN):
-            Whom = list.Current_Object()->House;
-            Scen.Scenario = list.Current_Object()->Scenario;
-            strcpy(Scen.ScenarioName, list.Current_Object()->FullName);
-            process = false;
-            okval = true;
-            break;
+		case (KN_RETURN):
+			Whom = list.Current_Object()->House;
+			Scen.Scenario = list.Current_Object()->Scenario;
+			strcpy(Scen.ScenarioName, list.Current_Object()->FullName);
+			process = false;
+			okval = true;
+			break;
 
-        default:
-            break;
-        }
+		default:
+			break;
+		}
 
-        Frame_Limiter();
-    }
+		Frame_Limiter();
+		}
 
-    /*
-    **	Free up the allocations for the text lines in the list box.
-    */
-    for (int index = 0; index < list.Count(); index++) {
-        delete list.Get_Object(index);
-    }
+	/*
+	**	Free up the allocations for the text lines in the list box.
+	*/
+	for (int index = 0; index < list.Count(); index++) {
+		delete list.Get_Object(index);
+	}
 
-    return (okval);
+	return (okval);
+	}
 }

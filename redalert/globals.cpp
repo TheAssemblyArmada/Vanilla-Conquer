@@ -181,7 +181,7 @@ int ScreenHeight = GBUFF_INIT_HEIGHT;
 int OutputWidth = GBUFF_INIT_WIDTH;
 int OutputHeight = GBUFF_INIT_HEIGHT;
 bool Show640x480BlackBars = false;
->>>>>>> AssemblyArmada/vanilla
+
 GraphicBufferClass ModeXBuff;
 bool InMovie = false; // Are we currently playing a VQ movie?
 #ifdef _WIN32
