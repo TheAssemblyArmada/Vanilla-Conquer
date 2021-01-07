@@ -1,4 +1,4 @@
-name: win32
+name: windows
 
 on:
   pull_request:
@@ -7,76 +7,112 @@ on:
     types: published
 
 jobs:
-  build:
+  remaster_msvc:
     runs-on: windows-2019
-    strategy:
-      matrix:
-        buildtype: [Debug, Release]
-        features: [ON, OFF]
     steps:
     - uses: actions/checkout@v2
       with:
         submodules: 'true'
+        
+    - uses: ilammy/msvc-dev-cmd@v1.4.1
+      with:
+        arch: x86
+        
+    - name: Set Git Info
+      id: gitinfo
+      run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+        
+    - name: Install Dependencies
+      run: |
+        Invoke-WebRequest -Uri https://github.com/ninja-build/ninja/releases/download/v1.10.1/ninja-win.zip -OutFile $Env:TEMP\ninja-win.zip
+        Expand-Archive $Env:TEMP\ninja-win.zip -DestinationPath $Env:TEMP\ninja
+        echo "$Env:TEMP\ninja" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        ninja --version
+        
+    - name: Configure Vanilla Conquer
+      run: |
+        cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_VANILLATD=OFF -DBUILD_VANILLARA=OFF -B build
+        
+    - name: Build Vanilla Conquer
+      run: |
+        cmake --build build --config RelWithDebInfo
+
+    - name: Create archives
+      shell: bash
+      run: |
+        mkdir artifact
+        7z a artifact/vanilla-conquer-remasterdll-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/RedAlert.dll ./build/TiberianDawn.dll
+        7z a artifact/vanilla-conquer-remasterdll-msvc-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/RedAlert.pdb ./build/TiberianDawn.pdb
+  
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: vanilla-conquer-remaster-msvc
+        path: artifact
+
+  vanilla_win_msvc:
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        platform: [x86, amd64]
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+        
+    - uses: ilammy/msvc-dev-cmd@v1.4.1
+      with:
+        arch: ${{ matrix.platform }}
+        
+    - name: Set Git Info
+      id: gitinfo
+      run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      
+    - name: Set variables
+      id: vars
+      run: |
+        If ("${{ matrix.platform }}" -eq "x86") {
+          echo "::set-output name=oal_path::Win32"
+          echo "::set-output name=sdl_path::x86"
+          echo "::set-output name=arc_path::i686"
+        } else {
+          echo "::set-output name=oal_path::Win64"
+          echo "::set-output name=sdl_path::x64"
+          echo "::set-output name=arc_path::x86_64"
+        }
 
     - name: Install Dependencies
       run: |
-        choco install imagemagick.app
+        choco install imagemagick.app --no-progress --version 7.0.10.56
+        choco install openalsdk --no-progress
+        Invoke-WebRequest -Uri https://www.libsdl.org/release/SDL2-devel-2.0.12-VC.zip -OutFile $Env:TEMP\SDL2-devel.zip
+        Invoke-WebRequest -Uri https://github.com/ninja-build/ninja/releases/download/v1.10.1/ninja-win.zip -OutFile $Env:TEMP\ninja-win.zip
+        Invoke-WebRequest -SkipCertificateCheck -Uri https://www.openal-soft.org/openal-binaries/openal-soft-1.21.0-bin.zip -OutFile $Env:TEMP\openal-soft-1.21.0-bin.zip
+        Expand-Archive $Env:TEMP\SDL2-devel.zip -DestinationPath $Env:TEMP
+        Expand-Archive $Env:TEMP\ninja-win.zip -DestinationPath $Env:TEMP\ninja
+        Expand-Archive $Env:TEMP\openal-soft-1.21.0-bin.zip -DestinationPath $Env:TEMP
+        echo "$Env:TEMP\ninja" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "C:\Program Files\ImageMagick-7.0.10-Q16-HDRI" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        ninja --version
+        Rename-Item $Env:TEMP\openal-soft-1.21.0-bin\bin\${{ steps.vars.outputs.oal_path }}\soft_oal.dll OpenAL32.dll
+        
+    - name: Configure Vanilla Conquer
+      run: |
+        cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DSDL2=ON "-DSDL2_ROOT_DIR=$($Env:TEMP)\SDL2-2.0.12" -DOPENAL=ON "-DOPENAL_ROOT=C:\Program Files (x86)\OpenAL 1.1 SDK" -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DNETWORKING=OFF "-DImageMagick_convert_EXECUTABLE=C:\Program Files\ImageMagick-7.0.10-Q16-HDRI\magick.exe" -DImageMagick_convert_FOUND=TRUE -B build
 
     - name: Build Vanilla Conquer
       run: |
-        cmake -A Win32 -DBUILD_TESTS=ON -DDSOUND=${{ matrix.features }} -DDDRAW=${{ matrix.features }} -DUSE_ASM=${{ matrix.features }} -DNETWORKING=${{ matrix.features }} -DMAP_EDITORRA=${{ matrix.features }} -DMAP_EDITORTD=${{ matrix.features }} -B build
-        cmake --build build --parallel --config ${{ matrix.buildtype }}
-
-    - name: Run unit tests
-      run: |
-        cd build
-        ctest -C ${{ matrix.buildType }}
+        cmake --build build --config RelWithDebInfo
 
     - name: Create archives
       shell: bash
       run: |
         mkdir artifact
-        export ZIPNAME=vanillaconquer_win32_${{ matrix.buildtype }}
-        if [ ${{ matrix.features }} != "ON" ]; then export FEATURES=_full; fi
-        7z a artifact/$ZIPNAME$FEATURES.zip ./build/${{ matrix.buildtype }}/vanillara.exe ./build/${{ matrix.buildtype }}/vanillatd.exe ./build/${{ matrix.buildtype }}/RedAlert.dll ./build/${{ matrix.buildtype }}/TiberianDawn.dll
-  
-    - name: Upload artifact
-      uses: actions/upload-artifact@v1
-      with:
-        name: vanilla_conquer
-        path: artifact
-
-  sdl2:
-    runs-on: windows-2019
-    strategy:
-      matrix:
-        buildtype: [Debug, Release]
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: 'true'
-
-    - name: Install Dependencies
-      run: |
-        choco install imagemagick.app
-        choco install openalsdk
-        Invoke-WebRequest -Uri https://www.libsdl.org/release/SDL2-devel-2.0.12-VC.zip -OutFile $Env:TEMP\SDL2-devel.zip
-        Expand-Archive $Env:TEMP\SDL2-devel.zip -DestinationPath $Env:TEMP
-
-    - name: Build VanillaTD and remaster dlls
-      run: |
-        cmake -A Win32 -DSDL2=ON "-DSDL2_ROOT_DIR=$($Env:TEMP)\SDL2-2.0.12" -DOPENAL=ON "-DOPENAL_ROOT=C:\Program Files (x86)\OpenAL 1.1 SDK" -DUSE_ASM=OFF -B build
-        cmake --build build --target VanillaTD --target TiberianDawn --target RedAlert --parallel --config ${{ matrix.buildtype }}
-
-    - name: Create archives
-      shell: bash
-      run: |
-        mkdir artifact
-        export ZIPNAME=vanillaconquer_win32_sdl2_${{ matrix.buildtype }}
-        7z a artifact/$ZIPNAME.zip ./build/${{ matrix.buildtype }}/vanillatd.exe ./build/${{ matrix.buildtype }}/RedAlert.dll ./build/${{ matrix.buildtype }}/TiberianDawn.dll
+        7z a artifact/vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd.exe ./build/vanillara.exe $TEMP/SDL2-2.0.12/lib/${{ steps.vars.outputs.sdl_path }}/SDL2.dll $TEMP/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll
+        7z a artifact/vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.pdb ./build/vanillara.pdb
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
-        name: vanilla_conquer
+        name: vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}
         path: artifact

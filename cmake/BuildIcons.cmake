@@ -20,7 +20,7 @@ function(make_icon)
     
     find_package(ImageMagick COMPONENTS convert)
     
-    if(NOT ImageMagick_FOUND)
+    if(NOT ImageMagick_convert_FOUND)
         message(WARNING "ImageMagick was not found, icons will not be generated.")
     else()
         get_filename_component(ARG_INPUT_FN "${ARG_INPUT}" NAME_WLE)
