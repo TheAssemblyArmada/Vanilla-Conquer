@@ -459,14 +459,14 @@ int main(int argc, char* argv[])
 #endif
             }
 
-            ScreenHeight = GBUFF_INIT_HEIGHT;
+            // ScreenHeight = GBUFF_INIT_HEIGHT;
 
-            if (VisiblePage.Get_Height() == 480) {
+            if (Show640x480BlackBars == true) {
                 SeenBuff.Attach(&VisiblePage, 0, 40, GBUFF_INIT_WIDTH, GBUFF_INIT_ALTHEIGHT);
                 HidPage.Attach(&HiddenPage, 0, 40, GBUFF_INIT_WIDTH, GBUFF_INIT_ALTHEIGHT);
             } else {
-                SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-                HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+                SeenBuff.Attach(&VisiblePage, 0, 0, ScreenWidth, ScreenHeight);
+                HidPage.Attach(&HiddenPage, 0, 0, ScreenWidth, ScreenHeight);
             }
 #endif // MPEGMOVIE - Denzil 6/10/98
 
@@ -678,12 +678,12 @@ bool InitDDraw(void)
 
     ScreenHeight = 400;
 
-    if (VisiblePage.Get_Height() == 480) {
+    if (Show640x480BlackBars == true) {
         SeenBuff.Attach(&VisiblePage, 0, 40, GBUFF_INIT_WIDTH, GBUFF_INIT_ALTHEIGHT);
         HidPage.Attach(&HiddenPage, 0, 40, GBUFF_INIT_WIDTH, GBUFF_INIT_ALTHEIGHT);
     } else {
-        SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-        HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+        SeenBuff.Attach(&VisiblePage, 0, 0, ScreenWidth, ScreenHeight);
+        HidPage.Attach(&HiddenPage, 0, 0, ScreenWidth, ScreenHeight);
     }
 #endif
     return true;
@@ -833,7 +833,15 @@ void Read_Setup_Options(RawFileClass* config_file)
         */
         VideoBackBufferAllowed = ini.Get_Bool("Options", "VideoBackBuffer", true);
         AllowHardwareBlitFills = ini.Get_Bool("Options", "HardwareFills", true);
-        ScreenHeight = ini.Get_Bool("Options", "Resolution", false) ? GBUFF_INIT_ALTHEIGHT : GBUFF_INIT_HEIGHT;
+
+		Show640x480BlackBars = ini.Get_Bool("Options", "Show640x480BlackBars", false);
+
+		ScreenWidth = ini.Get_Int("Options", "Width", 640);
+		ScreenHeight = ini.Get_Int("Options", "Height", ScreenHeight);
+
+        OutputWidth = ini.Get_Int("Options", "OutputWidth", ScreenWidth);
+		OutputHeight = ini.Get_Int("Options", "OutputHeight", ScreenHeight);
+		
 
         /*
         ** See if an alternative socket number has been specified

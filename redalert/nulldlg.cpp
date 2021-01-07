@@ -84,8 +84,8 @@ int Com_Scenario_Dialog(bool skirmish)
     ........................................................................*/
     int d_dialog_w = 320 * RESFACTOR;                      // dialog width
     int d_dialog_h = 200 * RESFACTOR;                      // dialog height
-    int d_dialog_x = ((320 * RESFACTOR - d_dialog_w) / 2); // dialog x-coord
-    int d_dialog_y = ((200 * RESFACTOR - d_dialog_h) / 2); // dialog y-coord
+    int d_dialog_x = (((320 * RESFACTOR - d_dialog_w) / 2)) + HIRES_ADJ_W; // dialog x-coord
+    int d_dialog_y = (((200 * RESFACTOR - d_dialog_h) / 2)) + HIRES_ADJ_H; // dialog y-coord
     int d_dialog_cx = d_dialog_x + (d_dialog_w / 2);       // center x-coord
 
     int d_txt6_h = 6 * RESFACTOR + 1; // ht of 6-pt text

@@ -539,12 +539,27 @@ short const* DisplayClass::Text_Overlap_List(char const* text, int x, int y) con
  *   12/06/1994 JLB : Created.                                                                 *
  *   06/27/1995 JLB : Adjusts tactical map position if necessary.                              *
  *=============================================================================================*/
+
 void DisplayClass::Set_View_Dimensions(int x, int y, int width, int height)
+{
+	int widthAdj = width;
+	if (width != -1) {
+		widthAdj = width * ICON_PIXEL_W;
+	}
+	int heightAdj = height;
+	if (height != -1) {
+		heightAdj = height * ICON_PIXEL_H;
+	}
+
+	Set_View_Dimensions_By_Pixels(x, y, widthAdj, heightAdj);
+}
+
+void DisplayClass::Set_View_Dimensions_By_Pixels(int x, int y, int width, int height)
 {
     if (width == -1) {
         TacLeptonWidth = Pixel_To_Lepton(SeenBuff.Get_Width() - x);
     } else {
-        TacLeptonWidth = width * CELL_LEPTON_W;
+		TacLeptonWidth = Pixel_To_Lepton(width);
     }
 
     // ST - 3/1/2019 12:05PM
@@ -555,7 +570,7 @@ void DisplayClass::Set_View_Dimensions(int x, int y, int width, int height)
         TacLeptonHeight = Pixel_To_Lepton(SeenBuff.Get_Height() - y);
         // height = (SeenBuff.Get_Height()-y) / CELL_PIXEL_H;
     } else {
-        TacLeptonHeight = height * CELL_LEPTON_H;
+		TacLeptonHeight = Pixel_To_Lepton(height);
     }
     // TacLeptonHeight = height * CELL_LEPTON_H;
 

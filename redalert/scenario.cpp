@@ -309,9 +309,11 @@ bool ScenarioClass::Set_Global_To(int global, bool value)
  *=============================================================================================*/
 bool Start_Scenario(char* name, bool briefing)
 {
-    if (Session.Type != GAME_NORMAL) {
-        briefing = false;
-    }
+	if (Session.Type != GAME_NORMAL) {
+		briefing = false;
+	}
+
+
 
     // BG	Theme.Queue_Song(THEME_QUIET);
     Theme.Stop();
@@ -725,6 +727,8 @@ void Post_Load_Game(int load_multi)
     }
     Scen.BridgeCount = Map.Intact_Bridge_Count();
     Map.Zone_Reset(MZONEF_ALL);
+	Map.Hires_Positioning_Adjustments();
+	Map.Radar_Hires_Positioning_Adjustments();
 }
 
 /***********************************************************************************************
@@ -888,7 +892,7 @@ void Do_Win(void)
         Map.Render();
         Fancy_Text_Print(TXT_SCENARIO_WON,
                          x,
-                         90 * RESFACTOR,
+                         (90 * RESFACTOR) + HIRES_ADJ_H,
                          &ColorRemaps[PCOLOR_RED],
                          TBLACK,
                          TPF_CENTER | TPF_VCR | TPF_USE_GRAD_PAL | TPF_DROPSHADOW);
@@ -2634,9 +2638,10 @@ bool Read_Scenario_INI(char* fname, bool)
             Scen.Views[i] = XY_Cell(start_x, start_y);
         }
         Scen.Waypoint[98] = XY_Cell(start_x, start_y);
-        COORDINATE pos = Cell_Coord(XY_Cell(start_x, start_y));
+
+		COORDINATE pos = Cell_Coord(XY_Cell(start_x, start_y));
         Map.Set_Tactical_Position(pos);
-        Map.Center_Map(pos);
+		Map.Center_Map(pos);
 #endif
     }
 
@@ -3006,270 +3011,279 @@ static void Reserve_Unit()
 
 static void Create_Units(bool official)
 {
-    static struct
-    {
-        int MinLevel;
-        UnitType AllyType[2];
-        UnitType SovietType[2];
-    } utable[] = {{4, {UNIT_MTANK2, UNIT_LTANK}, {UNIT_MTANK, UNIT_NONE}},
-                  {5, {UNIT_APC, UNIT_NONE}, {UNIT_V2_LAUNCHER, UNIT_NONE}},
-                  {8, {UNIT_ARTY, UNIT_JEEP}, {UNIT_MTANK, UNIT_NONE}},
-                  {10, {UNIT_MTANK2, UNIT_MTANK2}, {UNIT_HTANK, UNIT_NONE}}};
-    static int num_units[ARRAY_SIZE(utable)]; // # of each type of unit to create
-    int tot_units;                            // total # units to create
+	static struct
+	{
+		int MinLevel;
+		UnitType AllyType[2];
+		UnitType SovietType[2];
+	} utable[] = { {4, {UNIT_MTANK2, UNIT_LTANK}, {UNIT_MTANK, UNIT_NONE}},
+				  {5, {UNIT_APC, UNIT_NONE}, {UNIT_V2_LAUNCHER, UNIT_NONE}},
+				  {8, {UNIT_ARTY, UNIT_JEEP}, {UNIT_MTANK, UNIT_NONE}},
+				  {10, {UNIT_MTANK2, UNIT_MTANK2}, {UNIT_HTANK, UNIT_NONE}} };
+	static int num_units[ARRAY_SIZE(utable)]; // # of each type of unit to create
+	int tot_units;                            // total # units to create
 
-    static struct
-    {
-        int MinLevel;
-        int AllyCount;
-        InfantryType AllyType;
-        int SovietCount;
-        InfantryType SovietType;
-    } itable[] = {
-        {0, 1, INFANTRY_E1, 1, INFANTRY_E1}, {2, 1, INFANTRY_E3, 1, INFANTRY_E2}, {4, 1, INFANTRY_E3, 1, INFANTRY_E4},
+	static struct
+	{
+		int MinLevel;
+		int AllyCount;
+		InfantryType AllyType;
+		int SovietCount;
+		InfantryType SovietType;
+	} itable[] = {
+		{0, 1, INFANTRY_E1, 1, INFANTRY_E1}, {2, 1, INFANTRY_E3, 1, INFANTRY_E2}, {4, 1, INFANTRY_E3, 1, INFANTRY_E4},
 
-        // removed because of bug B478 (inappropriate infantry given in a bases off scenario).
-        //		{5,	1,INFANTRY_RENOVATOR,	1,INFANTRY_RENOVATOR},
-        //		{6,	1,INFANTRY_SPY,			1,INFANTRY_DOG},
-        //		{10,	1,INFANTRY_THIEF,			1,INFANTRY_DOG},
-        //		{12,	1,INFANTRY_MEDIC,			2,INFANTRY_DOG}
-    };
-    static int num_infantry[ARRAY_SIZE(itable)]; // # of each type of infantry to create
-    int tot_infantry;                            // total # infantry to create
+		// removed because of bug B478 (inappropriate infantry given in a bases off scenario).
+		//		{5,	1,INFANTRY_RENOVATOR,	1,INFANTRY_RENOVATOR},
+		//		{6,	1,INFANTRY_SPY,			1,INFANTRY_DOG},
+		//		{10,	1,INFANTRY_THIEF,			1,INFANTRY_DOG},
+		//		{12,	1,INFANTRY_MEDIC,			2,INFANTRY_DOG}
+	};
+	static int num_infantry[ARRAY_SIZE(itable)]; // # of each type of infantry to create
+	int tot_infantry;                            // total # infantry to create
 
-    CELL centroid; // centroid of this house's stuff
-    CELL centerpt; // centroid for a category of objects, as a CELL
+	CELL centroid; // centroid of this house's stuff
+	CELL centerpt; // centroid for a category of objects, as a CELL
 
-    int u_limit = 0;  // last allowable index of units for this BuildLevel
-    int i_limit = 0;  // last allowable index of infantry for this BuildLevel
-    TechnoClass* obj; // newly-created object
-    int i, j, k;      // loop counters
-    int scaleval;     // value to scale # units or infantry
+	int u_limit = 0;  // last allowable index of units for this BuildLevel
+	int i_limit = 0;  // last allowable index of infantry for this BuildLevel
+	TechnoClass* obj; // newly-created object
+	int i, j, k;      // loop counters
+	int scaleval;     // value to scale # units or infantry
 
-    ReserveInfantryIndex = ReserveUnitIndex = 0;
+	ReserveInfantryIndex = ReserveUnitIndex = 0;
 
-    /*
-    **	For the current BuildLevel, find the max allowable index into the tables
-    */
-    for (i = 0; i < ARRAY_SIZE(utable); i++) {
-        if (PlayerPtr->Control.TechLevel >= utable[i].MinLevel) {
-            u_limit = i + 1;
-        }
-    }
-    for (i = 0; i < ARRAY_SIZE(itable); i++) {
-        if (PlayerPtr->Control.TechLevel >= itable[i].MinLevel) {
-            i_limit = i + 1;
-        }
-    }
+	/*
+	**	For the current BuildLevel, find the max allowable index into the tables
+	*/
+	for (i = 0; i < ARRAY_SIZE(utable); i++) {
+		if (PlayerPtr->Control.TechLevel >= utable[i].MinLevel) {
+			u_limit = i + 1;
+		}
+	}
+	for (i = 0; i < ARRAY_SIZE(itable); i++) {
+		if (PlayerPtr->Control.TechLevel >= itable[i].MinLevel) {
+			i_limit = i + 1;
+		}
+	}
 
-    /*
-    **	Compute how many of each buildable category to create
-    */
-    /*
-    **	Compute allowed # units
-    */
-    tot_units = (Session.Options.UnitCount * 2) / 3;
-    if (u_limit == 0)
-        tot_units = 0;
+	/*
+	**	Compute how many of each buildable category to create
+	*/
+	/*
+	**	Compute allowed # units
+	*/
+	tot_units = (Session.Options.UnitCount * 2) / 3;
+	if (u_limit == 0)
+		tot_units = 0;
 
-    /*
-    **	Init # of each category to 0
-    */
-    for (i = 0; i < u_limit; i++) {
-        num_units[i] = 0;
-    }
+	/*
+	**	Init # of each category to 0
+	*/
+	for (i = 0; i < u_limit; i++) {
+		num_units[i] = 0;
+	}
 
-    /*
-    **	Increment # of each category, until we've used up all units
-    */
-    j = 0;
-    for (i = 0; i < tot_units; i++) {
-        num_units[j]++;
-        j++;
-        if (j >= u_limit) {
-            j = 0;
-        }
-    }
+	/*
+	**	Increment # of each category, until we've used up all units
+	*/
+	j = 0;
+	for (i = 0; i < tot_units; i++) {
+		num_units[j]++;
+		j++;
+		if (j >= u_limit) {
+			j = 0;
+		}
+	}
 
-    /*
-    **	Compute allowed # infantry
-    */
-    tot_infantry = Session.Options.UnitCount - tot_units;
+	/*
+	**	Compute allowed # infantry
+	*/
+	tot_infantry = Session.Options.UnitCount - tot_units;
 
-    /*
-    **	Init # of each category to 0
-    */
-    for (i = 0; i < i_limit; i++) {
-        num_infantry[i] = 0;
-    }
+	/*
+	**	Init # of each category to 0
+	*/
+	for (i = 0; i < i_limit; i++) {
+		num_infantry[i] = 0;
+	}
 
-    /*
-    **	Increment # of each category, until we've used up all infantry
-    */
-    j = 0;
-    for (i = 0; i < tot_infantry; i++) {
-        num_infantry[j]++;
-        j++;
-        if (j >= i_limit) {
-            j = 0;
-        }
-    }
+	/*
+	**	Increment # of each category, until we've used up all infantry
+	*/
+	j = 0;
+	for (i = 0; i < tot_infantry; i++) {
+		num_infantry[j]++;
+		j++;
+		if (j >= i_limit) {
+			j = 0;
+		}
+	}
 
-    /*
-    **	Build a list of the valid waypoints. This normally shouldn't be
-    **	necessary because the scenario level designer should have assigned
-    **	valid locations to the first N waypoints, but just in case, this
-    **	loop verifies that.
-    */
+	/*
+	**	Build a list of the valid waypoints. This normally shouldn't be
+	**	necessary because the scenario level designer should have assigned
+	**	valid locations to the first N waypoints, but just in case, this
+	**	loop verifies that.
+	*/
 
-    const unsigned int MAX_STORED_WAYPOINTS = 26;
+	const unsigned int MAX_STORED_WAYPOINTS = 26;
 
-    bool taken[MAX_STORED_WAYPOINTS];
-    CELL waypts[MAX_STORED_WAYPOINTS];
-    assert(Rule.MaxPlayers < ARRAY_SIZE(waypts));
-    int num_waypts = 0;
+	bool taken[MAX_STORED_WAYPOINTS];
+	CELL waypts[MAX_STORED_WAYPOINTS];
+	assert(Rule.MaxPlayers < ARRAY_SIZE(waypts));
+	int num_waypts = 0;
 
-    /*
-    **	Calculate the number of waypoints (as a minimum) that will be lifted from the
-    **	mission file. Bias this number so that only the first 4 waypoints are used
-    **	if there are 4 or fewer players. Unofficial maps will pick from all the
-    **	available waypoints.
-    */
+	/*
+	**	Calculate the number of waypoints (as a minimum) that will be lifted from the
+	**	mission file. Bias this number so that only the first 4 waypoints are used
+	**	if there are 4 or fewer players. Unofficial maps will pick from all the
+	**	available waypoints.
+	*/
 #ifndef USE_GLYPHX_START_LOCATIONS
-    int look_for = max(4, Session.Players.Count() + Session.Options.AIPlayers);
-    if (!official) {
-        look_for = 8;
-    }
+	int look_for = max(4, Session.Players.Count() + Session.Options.AIPlayers);
+	if (!official) {
+		look_for = 8;
+	}
 #else
-    /*
-    ** We allow the users to choose from all available start positions, even on official maps. ST - 1/15/2020 9:19AM
-    */
-    int look_for = Session.Players.Count();
+	/*
+	** We allow the users to choose from all available start positions, even on official maps. ST - 1/15/2020 9:19AM
+	*/
+	int look_for = Session.Players.Count();
 #endif
 
-    for (int waycount = 0; waycount < 26; waycount++) {
-        //	for (int waycount = 0; waycount < max(4, Session.Players.Count()+Session.Options.AIPlayers); waycount++) {
-        if (Scen.Waypoint[waycount] != -1) {
-            waypts[num_waypts] = Scen.Waypoint[waycount];
-            taken[num_waypts] = false;
-            num_waypts++;
+	for (int waycount = 0; waycount < 26; waycount++) {
+		//	for (int waycount = 0; waycount < max(4, Session.Players.Count()+Session.Options.AIPlayers); waycount++) {
+		if (Scen.Waypoint[waycount] != -1) {
+			waypts[num_waypts] = Scen.Waypoint[waycount];
+			taken[num_waypts] = false;
+			num_waypts++;
 
-            if (num_waypts >= MAX_STORED_WAYPOINTS) {
-                break;
-            }
-        }
-    }
+			if (num_waypts >= MAX_STORED_WAYPOINTS) {
+				break;
+			}
+		}
+	}
 
-    /*
-    **	If there are insufficient waypoints to account for all players, then randomly assign
-    **	starting points until there is enough.
-    */
-    int deficiency = look_for - num_waypts;
-    //	int deficiency = (Session.Players.Count() + Session.Options.AIPlayers) - num_waypts;
-    if (deficiency > 0) {
-        for (int index = 0; index < deficiency; index++) {
-            CELL trycell = XY_Cell(Map.MapCellX + Random_Pick(0, Map.MapCellWidth - 1),
-                                   Map.MapCellY + Random_Pick(0, Map.MapCellHeight - 1));
+	/*
+	**	If there are insufficient waypoints to account for all players, then randomly assign
+	**	starting points until there is enough.
+	*/
+	int deficiency = look_for - num_waypts;
+	//	int deficiency = (Session.Players.Count() + Session.Options.AIPlayers) - num_waypts;
+	if (deficiency > 0) {
+		for (int index = 0; index < deficiency; index++) {
+			CELL trycell = XY_Cell(Map.MapCellX + Random_Pick(0, Map.MapCellWidth - 1),
+				Map.MapCellY + Random_Pick(0, Map.MapCellHeight - 1));
 
-            trycell = Map.Nearby_Location(trycell, SPEED_TRACK);
-            waypts[num_waypts] = trycell;
-            taken[num_waypts] = false;
-            num_waypts++;
-        }
-    }
+			trycell = Map.Nearby_Location(trycell, SPEED_TRACK);
+			waypts[num_waypts] = trycell;
+			taken[num_waypts] = false;
+			num_waypts++;
+		}
+	}
 
-    /*
-    **	Loop through all houses.  Computer-controlled houses, with Session.Options.Bases
-    **	ON, are treated as though bases are OFF (since we have no base-building
-    **	AI logic.)
-    */
-    int numtaken = 0;
-    for (HousesType house = HOUSE_MULTI1; house < (HOUSE_MULTI1 + Session.MaxPlayers); house++) {
+	/*
+	**	Loop through all houses.  Computer-controlled houses, with Session.Options.Bases
+	**	ON, are treated as though bases are OFF (since we have no base-building
+	**	AI logic.)
+	*/
+	int numtaken = 0;
+	for (HousesType house = HOUSE_MULTI1; house < (HOUSE_MULTI1 + Session.MaxPlayers); house++) {
 
-        /*
-        **	Get a pointer to this house; if there is none, go to the next house
-        */
-        HouseClass* hptr = HouseClass::As_Pointer(house);
-        if (hptr == NULL) {
-            continue;
-        }
+		/*
+		**	Get a pointer to this house; if there is none, go to the next house
+		*/
+		HouseClass* hptr = HouseClass::As_Pointer(house);
+		if (hptr == NULL) {
+			continue;
+		}
 
-        /*
-        **	Pick the starting location for this house. The first house just picks
-        **	one of the valid locations at random. The other houses pick the furthest
-        **	wapoint from the existing houses.
-        */
+		/*
+		**	Pick the starting location for this house. The first house just picks
+		**	one of the valid locations at random. The other houses pick the furthest
+		**	wapoint from the existing houses.
+		*/
+
+		if (hptr->StartLocationOverride != -1) {
+			centroid = waypts[hptr->StartLocationOverride];
+		}
+		else {
 #ifdef REMASTER_BUILD
-        if (!UseGlyphXStartLocations) {
+			if (!UseGlyphXStartLocations) {
 #endif
-            if (numtaken == 0) {
-                int pick = Random_Pick(0, num_waypts - 1);
-                centroid = waypts[pick];
-                hptr->StartLocationOverride = pick;
-                taken[pick] = true;
-                numtaken++;
-            } else {
+				if (numtaken == 0) {
+					int pick = Random_Pick(0, num_waypts - 1);
+					centroid = waypts[pick];
+					hptr->StartLocationOverride = pick;
+					taken[pick] = true;
+					numtaken++;
+				}
+				else {
 
-                /*
-                **	Set all waypoints to have a score of zero in preparation for giving
-                **	a distance score to all waypoints.
-                */
-                int score[26];
-                memset(score, '\0', sizeof(score));
+					/*
+					**	Set all waypoints to have a score of zero in preparation for giving
+					**	a distance score to all waypoints.
+					*/
+					int score[26];
+					memset(score, '\0', sizeof(score));
 
-                /*
-                **	Scan through all waypoints and give a score as a value of the sum
-                **	of the distances from this waypoint to all taken waypoints.
-                */
-                for (int index = 0; index < num_waypts; index++) {
+					/*
+					**	Scan through all waypoints and give a score as a value of the sum
+					**	of the distances from this waypoint to all taken waypoints.
+					*/
+					for (int index = 0; index < num_waypts; index++) {
 
-                    /*
-                    **	If this waypoint has not already been taken, then accumulate the
-                    **	sum of the distance between this waypoint and all other taken
-                    **	waypoints.
-                    */
-                    if (!taken[index]) {
-                        for (int trypoint = 0; trypoint < num_waypts; trypoint++) {
+						/*
+						**	If this waypoint has not already been taken, then accumulate the
+						**	sum of the distance between this waypoint and all other taken
+						**	waypoints.
+						*/
+						if (!taken[index]) {
+							for (int trypoint = 0; trypoint < num_waypts; trypoint++) {
 
-                            if (taken[trypoint]) {
-                                score[index] += Distance(Cell_Coord(waypts[index]), Cell_Coord(waypts[trypoint]));
-                            }
-                        }
-                    }
-                }
+								if (taken[trypoint]) {
+									score[index] += Distance(Cell_Coord(waypts[index]), Cell_Coord(waypts[trypoint]));
+								}
+							}
+						}
+					}
 
-                /*
-                **	Now find the waypoint with the largest score. This waypoint is the one
-                **	that is furthest from all other taken waypoints.
-                */
-                int best = 0;
-                int bestvalue = 0;
-                for (int searchindex = 0; searchindex < num_waypts; searchindex++) {
-                    if (score[searchindex] > bestvalue || bestvalue == 0) {
-                        bestvalue = score[searchindex];
-                        best = searchindex;
-                    }
-                }
+					/*
+					**	Now find the waypoint with the largest score. This waypoint is the one
+					**	that is furthest from all other taken waypoints.
+					*/
+					int best = 0;
+					int bestvalue = 0;
+					for (int searchindex = 0; searchindex < num_waypts; searchindex++) {
+						if (score[searchindex] > bestvalue || bestvalue == 0) {
+							bestvalue = score[searchindex];
+							best = searchindex;
+						}
+					}
 
-                /*
-                **	Assign this best position to the house.
-                */
-                centroid = waypts[best];
-                hptr->StartLocationOverride = best;
-                taken[best] = true;
-                numtaken++;
-            }
+					/*
+					**	Assign this best position to the house.
+					*/
+					centroid = waypts[best];
+					hptr->StartLocationOverride = best;
+					taken[best] = true;
+					numtaken++;
+				}
 #ifdef REMASTER_BUILD
-        } else {
+			}
+			else {
 
-            /*
-            ** New code that respects the start locations passed in from GlyphX.
-            **
-            ** ST - 1/8/2020 3:39PM
-            */
-            centroid = waypts[hptr->StartLocationOverride];
-        }
+				/*
+				** New code that respects the start locations passed in from GlyphX.
+				**
+				** ST - 1/8/2020 3:39PM
+				*/
+				centroid = waypts[hptr->StartLocationOverride];
+			}
+		
 #endif
+		}
         /*
         **	Assign the center of this house to the waypoint location.
         */

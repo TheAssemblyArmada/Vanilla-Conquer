@@ -1199,8 +1199,14 @@ typedef enum PlayerColorType : char
     PCOLOR_RED,
     PCOLOR_GREEN,
     PCOLOR_ORANGE,
+// Fix grey dead player names + kills in radar sceen for standalone
+#ifdef REMASTER_BUILD
+	PCOLOR_BLUE,
+	PCOLOR_GREY, // This is actually the red scheme used in the dialogs
+#else
+	PCOLOR_GREY,
     PCOLOR_BLUE, // This is actually the red scheme used in the dialogs
-    PCOLOR_GREY,
+#endif
     PCOLOR_BROWN,
     PCOLOR_TYPE,
     PCOLOR_REALLY_BLUE,
