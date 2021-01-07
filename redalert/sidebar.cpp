@@ -1097,6 +1097,7 @@ bool SidebarClass::Activate(int control)
         **	will be rendered correctly.
         */
         Flag_To_Redraw(true);
+		HiddenPage.Clear();
     }
 
     return (old);
