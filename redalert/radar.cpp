@@ -144,28 +144,33 @@ RadarClass::RadarClass(void)
  *=============================================================================================*/
 void RadarClass::One_Time(void)
 {
-    RadWidth = 80 * RESFACTOR;
-    RadHeight = 70 * RESFACTOR;
-    RadX = SeenBuff.Get_Width() - RadWidth;
-    RadY = 7 * RESFACTOR;
-    RadPWidth = 64 * RESFACTOR;
-    RadPHeight = 64 * RESFACTOR;
-    RadOffX = 6;
-    RadOffY = 7;
-    RadIWidth = 128 + 18; //************
-    RadIHeight = 128 + 2; //************
+	Radar_Hires_Positioning_Adjustments();
+	DisplayClass::One_Time();
+}
 
-    DisplayClass::One_Time();
+void RadarClass::Radar_Hires_Positioning_Adjustments(void) {
+	RadWidth = 80 * RESFACTOR;
+	RadHeight = 70 * RESFACTOR;
+	RadX = SeenBuff.Get_Width() - RadWidth;
+	RadY = 7 * RESFACTOR;
+	RadPWidth = 64 * RESFACTOR;
+	RadPHeight = 64 * RESFACTOR;
+	RadOffX = 6;
+	RadOffY = 7;
+	RadIWidth = 128 + 18; //************
+	RadIHeight = 128 + 2; //************
+
+
 #ifdef OBSOLETE
-    RadarButton.X = RadX + RadOffX;
-    RadarButton.Y = RadY + RadOffY;
-    RadarButton.Width = RadIWidth;
-    RadarButton.Height = RadIHeight;
+	RadarButton.X = RadX + RadOffX;
+	RadarButton.Y = RadY + RadOffY;
+	RadarButton.Width = RadIWidth;
+	RadarButton.Height = RadIHeight;
 #else
-    RadarButton.X = RadX;
-    RadarButton.Y = RadY;
-    RadarButton.Width = RadWidth;
-    RadarButton.Height = RadHeight;
+	RadarButton.X = RadX;
+	RadarButton.Y = RadY;
+	RadarButton.Width = RadWidth;
+	RadarButton.Height = RadHeight;
 #endif
 }
 
@@ -589,13 +594,14 @@ void RadarClass::Draw_It(bool forced)
                 Set_Logic_Page(oldpage);
             }
 
-        } else {
+        } else if (Map.IsSidebarActive && (forced) && !Debug_Map) {
 
             /*
             **	If the radar is not active, then only draw the cover plate if forced to do so.
             */
             int val = (DoesRadarExist) ? MAX_RADAR_FRAMES : 0;
             CC_Draw_Shape(RadarAnim, val, RadX, RadY + (1 * RESFACTOR), WINDOW_MAIN, SHAPE_NORMAL);
+
             FullRedraw = false;
             IsToRedraw = false;
 

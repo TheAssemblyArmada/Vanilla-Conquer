@@ -79,6 +79,8 @@
 void* SidebarClass::SidebarShape = NULL;
 void* SidebarClass::SidebarMiddleShape = NULL;
 void* SidebarClass::SidebarBottomShape = NULL;
+void* SidebarClass::Strip2Shape = NULL;
+void* SidebarClass::Side4Shape = NULL;
 
 /***************************************************************************
 **	This holds the translucent table for use with the construction clock
@@ -111,7 +113,12 @@ ShapeButtonClass SidebarClass::Upgrade;
 ShapeButtonClass SidebarClass::Zoom;
 ShapeButtonClass SidebarClass::StripClass::UpButton[COLUMNS];
 ShapeButtonClass SidebarClass::StripClass::DownButton[COLUMNS];
-SidebarClass::StripClass::SelectClass SidebarClass::StripClass::SelectButton[COLUMNS][MAX_VISIBLE];
+//SidebarClass::StripClass::SelectClass SidebarClass::StripClass::SelectButton[COLUMNS][128];
+DynamicVectorClass<SidebarClass::StripClass::SelectClass*> SidebarClass::StripClass::SelectButton;
+
+int SidebarClass::StripClass::MaxVisibleCameoIcons; // Number of object slots visible at any one time.
+int SidebarClass::StripClass::UpButtonYOffset;
+int SidebarClass::StripClass::DownButtonYOffset; // BGint(MAX_VISIBLE)*int(OBJECT_HEIGHT)+1,
 
 /*
 ** Shape data pointers
@@ -142,16 +149,6 @@ SidebarClass::SidebarClass(void)
     , IsUpgradeActive(false)
     , IsDemolishActive(false)
 {
-    /*
-    **	This sets up the clipping window. This window is used by the shape drawing
-    **	code so that as the sidebar buildable buttons scroll, they get properly
-    **	clipped at the top and bottom edges.
-    */
-    WindowList[WINDOW_SIDEBAR][WINDOWX] = (SIDE_X + 8);
-    WindowList[WINDOW_SIDEBAR][WINDOWY] = SIDE_Y + 1 + TOP_HEIGHT;
-    WindowList[WINDOW_SIDEBAR][WINDOWWIDTH] = SIDE_WIDTH;
-    WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = StripClass::MAX_VISIBLE * StripClass::OBJECT_HEIGHT;
-    //	WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = StripClass::MAX_VISIBLE * StripClass::OBJECT_HEIGHT-1;
 
     /*
     **	Set up the coordinates for the sidebar strips. These coordinates are for
@@ -159,11 +156,6 @@ SidebarClass::SidebarClass(void)
     */
     new (&Column[0]) StripClass(InitClass());
     new (&Column[1]) StripClass(InitClass());
-
-    Column[0].X = COLUMN_ONE_X * RESFACTOR;
-    Column[0].Y = COLUMN_ONE_Y * RESFACTOR;
-    Column[1].X = COLUMN_TWO_X * RESFACTOR;
-    Column[1].Y = COLUMN_TWO_Y * RESFACTOR;
 }
 
 /***********************************************************************************************
@@ -213,32 +205,10 @@ SidebarClass::SidebarClass(NoInitClass const& x)
  *=============================================================================================*/
 void SidebarClass::One_Time(void)
 {
-    PowerClass::One_Time();
+	Hires_Positioning_Adjustments();
+	PowerClass::One_Time();
 
-    /*
-    **	This sets up the clipping window. This window is used by the shape drawing
-    **	code so that as the sidebar buildable buttons scroll, they get properly
-    **	clipped at the top and bottom edges.
-    */
-    WindowList[WINDOW_SIDEBAR][WINDOWX] = ((SIDE_X + 8)) * RESFACTOR;
-    WindowList[WINDOW_SIDEBAR][WINDOWY] = (SIDE_Y + 1 + TOP_HEIGHT) * RESFACTOR;
-    WindowList[WINDOW_SIDEBAR][WINDOWWIDTH] = (SIDE_WIDTH)*RESFACTOR;
-    WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = (StripClass::MAX_VISIBLE * StripClass::OBJECT_HEIGHT) * RESFACTOR;
-    //	WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = (StripClass::MAX_VISIBLE * StripClass::OBJECT_HEIGHT-1) * RESFACTOR;
 
-    /*
-    ** Top of the window seems to be wrong for the new sidebar. ST - 5/2/96 2:49AM
-    */
-    WindowList[WINDOW_SIDEBAR][WINDOWY] -= 1 * RESFACTOR;
-
-    /*
-    **	Set up the coordinates for the sidebar strips. These coordinates are for
-    **	the upper left corner.
-    */
-    //	Column[0].X = COLUMN_ONE_X * RESFACTOR;
-    //	Column[0].Y = COLUMN_ONE_Y * RESFACTOR;
-    //	Column[1].X = COLUMN_TWO_X * RESFACTOR;
-    //	Column[1].Y = COLUMN_TWO_Y * RESFACTOR;
     Column[0].One_Time(0);
     Column[1].One_Time(1);
 
@@ -248,6 +218,69 @@ void SidebarClass::One_Time(void)
     if (SidebarShape == NULL) {
         SidebarShape = (void*)MFCD::Retrieve("SIDEBAR.SHP");
     }
+}
+
+void SidebarClass::Hires_Positioning_Adjustments(void) {
+	// Needs to be done here as PowerClass::One_Time() references MAX_VISIBLE to calculate power bar height
+// Do a quick check if we can load one of the extended sidebar graphics, if not then we set max visible cameo items to 4
+	Strip2Shape = (void*)MFCD::Retrieve("STRIP2US.SHP");
+	if (Strip2Shape) {
+		StripClass::MaxVisibleCameoIcons = (ScreenHeight - ((COLUMN_ONE_Y + StripClass::SBUTTON_HEIGHT) * RESFACTOR)) / (StripClass::OBJECT_HEIGHT * RESFACTOR);
+	}
+	else {
+		StripClass::MaxVisibleCameoIcons = 4;
+	}
+
+	StripClass::UpButtonYOffset = StripClass::MaxVisibleCameoIcons * int(StripClass::OBJECT_HEIGHT) + 1;
+	StripClass::DownButtonYOffset = StripClass::UpButtonYOffset;
+
+	Background.X = ScreenWidth - 144;
+
+	/*
+**	This sets up the clipping window. This window is used by the shape drawing
+**	code so that as the sidebar buildable buttons scroll, they get properly
+**	clipped at the top and bottom edges.
+*/
+	WindowList[WINDOW_SIDEBAR][WINDOWX] = ScreenWidth - 144;
+	WindowList[WINDOW_SIDEBAR][WINDOWY] = (SIDE_Y + TOP_HEIGHT) * RESFACTOR;
+	WindowList[WINDOW_SIDEBAR][WINDOWWIDTH] = (SIDE_WIDTH)*RESFACTOR;
+	WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = (StripClass::MaxVisibleCameoIcons * StripClass::OBJECT_HEIGHT) * RESFACTOR;
+
+	/*
+	**	Set up the coordinates for the sidebar strips. These coordinates are for
+	**	the upper left corner.
+	*/
+	Column[0].X = ScreenWidth - 144;
+	Column[0].Y = COLUMN_ONE_Y * RESFACTOR;
+	Column[1].X = ScreenWidth - 74;
+	Column[1].Y = COLUMN_TWO_Y * RESFACTOR;
+
+
+	// If sidebar was activate then turn off sidebar so selectbuttons from saved games are removed from the sidebar
+	bool ReactivateSidebar = IsSidebarActive;
+
+	if (ReactivateSidebar) {
+		Activate(0);
+	}
+
+	// Reset SelectButtons, first free up memory then reallocate
+	for (int i = 0; i < SidebarClass::StripClass::SelectButton.Count(); i++) {
+		delete SidebarClass::StripClass::SelectButton[i];
+	}
+
+	SidebarClass::StripClass::SelectButton.Clear();
+	SidebarClass::StripClass::SelectButton.Resize(sizeof(SidebarClass::StripClass::SelectClass) * StripClass::MaxVisibleCameoIcons * COLUMNS);
+	for (int i = 0; i < StripClass::MaxVisibleCameoIcons * COLUMNS; i++) {
+		SidebarClass::StripClass::SelectButton.Add(new SidebarClass::StripClass::SelectClass());
+	}
+
+	Column[0].Hires_Positiong_Adjustments(0);
+	Column[1].Hires_Positiong_Adjustments(1);
+
+	// Now reactivate sidebar to if sidebar was active to link the new selectbuttons to the sidebar
+	if (ReactivateSidebar) {
+		Activate(1);
+	}
 }
 
 /***********************************************************************************************
@@ -300,7 +333,7 @@ void SidebarClass::Init_IO(void)
 
         Repair.IsSticky = true;
         Repair.ID = BUTTON_REPAIR;
-        Repair.X = (0x1f2 / 2) * RESFACTOR;
+        Repair.X = ScreenWidth - 142;
         Repair.Y = (0x96 / 2) * RESFACTOR;
         Repair.IsPressed = false;
         Repair.IsToggleType = true;
@@ -309,7 +342,7 @@ void SidebarClass::Init_IO(void)
 
         Upgrade.IsSticky = true;
         Upgrade.ID = BUTTON_UPGRADE;
-        Upgrade.X = 0x21f;
+        Upgrade.X = ScreenWidth - 97;
         Upgrade.Y = (0x96 / 2) * RESFACTOR;
         Upgrade.IsPressed = false;
         Upgrade.IsToggleType = true;
@@ -318,7 +351,7 @@ void SidebarClass::Init_IO(void)
 
         Zoom.IsSticky = true;
         Zoom.ID = BUTTON_ZOOM;
-        Zoom.X = (0x24c / 2) * RESFACTOR;
+        Zoom.X = ScreenWidth - 52;
         Zoom.Y = (0x96 / 2) * RESFACTOR;
         Zoom.IsPressed = false;
         Zoom.Set_Shape(MFCD::Retrieve("MAP.SHP"));
@@ -380,6 +413,8 @@ void SidebarClass::Init_Theater(TheaterType theater)
  *=============================================================================================*/
 void SidebarClass::Reload_Sidebar(void)
 {
+//	this->One_Time();
+
     static char sidebarnames[10][12] = {
         "SIDE?NA.SHP", // NATO
         "SIDE?NA.SHP",
@@ -418,6 +453,14 @@ void SidebarClass::Reload_Sidebar(void)
     SidebarBottomShape = (void*)MFCD::Retrieve(sb_name);
 
 #endif
+	if (houseloaded == 2 || houseloaded == 4 || houseloaded == 9) {
+		Strip2Shape = (void*)MFCD::Retrieve("STRIP2US.SHP");
+		Side4Shape = (void*)MFCD::Retrieve("SIDE4US.SHP");
+	}
+	else {
+		Strip2Shape = (void*)MFCD::Retrieve("STRIP2NA.SHP");
+		Side4Shape = (void*)MFCD::Retrieve("SIDE4NA.SHP");
+	}
 
     Column[0].Reload_LogoShapes();
     Column[1].Reload_LogoShapes();
@@ -752,15 +795,27 @@ void SidebarClass::Draw_It(bool complete)
             **	Draw the outline box around the sidebar buttons.
             */
             int shape = complete ? 0 : 1;
-
+			int bottomshapeY = (((SidebarClass::StripClass::MaxVisibleCameoIcons * int(SidebarClass::StripClass::OBJECT_HEIGHT))) * RESFACTOR) + 84;
             /*
             ** The sidebar shape is too big in 640x400 so it needs to be drawn in three chunks.
             */
-            CC_Draw_Shape(SidebarShape, 0, SIDE_X * RESFACTOR, 8 * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
+			CC_Draw_Shape(SidebarShape, shape, ScreenWidth - (80 * RESFACTOR), 8 * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
             CC_Draw_Shape(
-                SidebarMiddleShape, shape, SIDE_X * RESFACTOR, (8 + 80) * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
+                SidebarMiddleShape, shape, ScreenWidth - (80 * RESFACTOR), (8 + 80) * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
             CC_Draw_Shape(
-                SidebarBottomShape, shape, SIDE_X * RESFACTOR, (8 + 80 + 50) * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL);
+                SidebarBottomShape, shape, ScreenWidth - (80 * RESFACTOR), bottomshapeY, WINDOW_MAIN, SHAPE_WIN_REL); 
+
+			for (int i = 0; i < SidebarClass::StripClass::MaxVisibleCameoIcons; i++) {
+				int y = Column[0].Y + (i * SidebarClass::StripClass::OBJECT_HEIGHT * RESFACTOR);
+
+				if (SidebarClass::StripClass::MaxVisibleCameoIcons >= 4 && i > 1) {
+					CC_Draw_Shape(Side4Shape,
+						shape,
+						ScreenWidth - (80 * RESFACTOR),
+						y,
+						WINDOW_MAIN, SHAPE_WIN_REL);
+				}
+			}
 
             Repair.Draw_Me(true);
             Upgrade.Draw_Me(true);
@@ -1006,7 +1061,8 @@ bool SidebarClass::Activate(int control)
         **	activate it on the left side of the screen.
         */
         if (IsSidebarActive /*&& X*/) {
-            Set_View_Dimensions(0, 8 * RESFACTOR, ((320 - SIDE_WIDTH) / ICON_PIXEL_W) * RESFACTOR);
+            //Set_View_Dimensions(0, 8 * RESFACTOR, ((320 - SIDE_WIDTH) / ICON_PIXEL_W) * RESFACTOR);
+			Set_View_Dimensions_By_Pixels(0, 8 * RESFACTOR, ScreenWidth - (SIDE_WIDTH * RESFACTOR));
             IsToRedraw = true;
             Help_Text(TXT_NONE);
             Repair.Zap();
@@ -1041,6 +1097,7 @@ bool SidebarClass::Activate(int control)
         **	will be rendered correctly.
         */
         Flag_To_Redraw(true);
+		HiddenPage.Clear();
     }
 
     return (old);
@@ -1187,11 +1244,8 @@ void SidebarClass::StripClass::Init_Clear(void)
 void SidebarClass::StripClass::Init_IO(int id)
 {
     ID = id;
+	DownButton[ID].Set_Shape(MFCD::Retrieve("STRIPDN.SHP"));
 
-    UpButton[ID].IsSticky = true;
-    UpButton[ID].ID = BUTTON_UP + id;
-    UpButton[ID].X = X + (UP_X_OFFSET * RESFACTOR);
-    UpButton[ID].Y = Y + (UP_Y_OFFSET * RESFACTOR);
 
 #if (FRENCH)
     UpButton[ID].Set_Shape(MFCD::Retrieve("STRIPUP.SHP"));
@@ -1199,28 +1253,37 @@ void SidebarClass::StripClass::Init_IO(int id)
     UpButton[ID].Set_Shape(MFCD::Retrieve("STRIPUP.SHP"));
 #endif // FRENCH
 
-    DownButton[ID].IsSticky = true;
-    DownButton[ID].ID = BUTTON_DOWN + id;
-    DownButton[ID].X = X + (DOWN_X_OFFSET * RESFACTOR);
-    DownButton[ID].Y = Y + (DOWN_Y_OFFSET * RESFACTOR);
+	Hires_Positiong_Adjustments(ID);
+}
 
-    /*
-    ** Buttons are in a slightly different position in the new sidebar
-    */
-    UpButton[ID].Y--;
-    DownButton[ID].Y--;
+void SidebarClass::StripClass::Hires_Positiong_Adjustments(int id) {
+	ID = id;
 
-    DownButton[ID].Set_Shape(MFCD::Retrieve("STRIPDN.SHP"));
+	UpButton[ID].IsSticky = true;
+	UpButton[ID].ID = BUTTON_UP + id;
+	UpButton[ID].X = X + (UP_X_OFFSET * RESFACTOR);
+	UpButton[ID].Y = Y + (UpButtonYOffset * RESFACTOR);
 
-    for (int index = 0; index < MAX_VISIBLE; index++) {
-        SelectClass& g = SelectButton[ID][index];
-        g.ID = BUTTON_SELECT;
-        g.X = X;
-        g.Y = Y + ((OBJECT_HEIGHT * index) * RESFACTOR);
-        g.Width = OBJECT_WIDTH * RESFACTOR;
-        g.Height = OBJECT_HEIGHT * RESFACTOR;
-        g.Set_Owner(*this, index);
-    }
+	DownButton[ID].IsSticky = true;
+	DownButton[ID].ID = BUTTON_DOWN + id;
+	DownButton[ID].X = X + (DOWN_X_OFFSET * RESFACTOR);
+	DownButton[ID].Y = Y + (DownButtonYOffset * RESFACTOR);
+
+	/*
+	** Buttons are in a slightly different position in the new sidebar
+	*/
+	UpButton[ID].Y--;
+	DownButton[ID].Y--;
+
+	for (int index = 0; index < MaxVisibleCameoIcons; index++) {
+		SelectClass& g = *SelectButton[(ID * MaxVisibleCameoIcons) + index];
+		g.ID = BUTTON_SELECT;
+		g.X = X;
+		g.Y = Y + ((OBJECT_HEIGHT * index) * RESFACTOR);
+		g.Width = OBJECT_WIDTH * RESFACTOR;
+		g.Height = OBJECT_HEIGHT * RESFACTOR;
+		g.Set_Owner(*this, index);
+	}
 }
 
 /***********************************************************************************************
@@ -1319,9 +1382,9 @@ void SidebarClass::StripClass::Activate(void)
     DownButton[ID].Zap();
     Map.Add_A_Button(DownButton[ID]);
 
-    for (int index = 0; index < MAX_VISIBLE; index++) {
-        SelectButton[ID][index].Zap();
-        Map.Add_A_Button(SelectButton[ID][index]);
+	for (int index = 0; index < MaxVisibleCameoIcons; index++) {
+		SelectButton[(ID * MaxVisibleCameoIcons) + index]->Zap();
+        Map.Add_A_Button(*SelectButton[(ID * MaxVisibleCameoIcons) + index]);
     }
 }
 
@@ -1344,8 +1407,9 @@ void SidebarClass::StripClass::Deactivate(void)
 {
     Map.Remove_A_Button(UpButton[ID]);
     Map.Remove_A_Button(DownButton[ID]);
-    for (int index = 0; index < MAX_VISIBLE; index++) {
-        Map.Remove_A_Button(SelectButton[ID][index]);
+
+	for (int index = 0; index < MaxVisibleCameoIcons; index++) {
+        Map.Remove_A_Button(*SelectButton[(ID * MaxVisibleCameoIcons) + index]);
     }
 }
 
@@ -1413,7 +1477,7 @@ bool SidebarClass::StripClass::Scroll(bool up)
             return (false);
         Scroller--;
     } else {
-        if (TopIndex + MAX_VISIBLE >= BuildableCount)
+        if (TopIndex + MaxVisibleCameoIcons >= BuildableCount)
             return (false);
         Scroller++;
     }
@@ -1438,8 +1502,8 @@ bool SidebarClass::StripClass::Scroll(bool up)
 void SidebarClass::StripClass::Flag_To_Redraw(void)
 {
     IsToRedraw = true;
-    // Map.SidebarClass::IsToRedraw = true;
-    Map.Flag_To_Redraw(false);
+    Map.SidebarClass::IsToRedraw = true;
+    Map.Flag_To_Redraw(true);
 }
 
 /***********************************************************************************************
@@ -1489,7 +1553,7 @@ bool SidebarClass::StripClass::AI(KeyNumType& input, int, int)
     **	logic handler. This might result in up or down scrolling.
     */
     if (!IsScrolling && Scroller) {
-        if (BuildableCount <= MAX_VISIBLE) {
+        if (BuildableCount <= MaxVisibleCameoIcons) {
             Scroller = 0;
         } else {
 
@@ -1510,7 +1574,7 @@ bool SidebarClass::StripClass::AI(KeyNumType& input, int, int)
                 }
 
             } else {
-                if (TopIndex + MAX_VISIBLE >= BuildableCount) {
+                if (TopIndex + MaxVisibleCameoIcons >= BuildableCount) {
                     Scroller = 0;
                 } else {
                     Scroller--;
@@ -1654,10 +1718,32 @@ void SidebarClass::StripClass::Draw_It(bool complete)
         /*
         ** New sidebar needs to be drawn not filled
         */
-        if (BuildableCount < MAX_VISIBLE) {
-            CC_Draw_Shape(LogoShapes, ID, X + (2 * RESFACTOR), Y, WINDOW_MAIN, SHAPE_WIN_REL | SHAPE_NORMAL, 0);
-        }
+        //if (BuildableCount < MaxVisibleCameoIcons) {
+            CC_Draw_Shape(LogoShapes, ID, X - (WindowList[WINDOW_SIDEBAR][WINDOWX]) + (LEFT_EDGE_OFFSET * RESFACTOR), 
+				Y - WindowList[WINDOW_SIDEBAR][WINDOWY], WINDOW_SIDEBAR, SHAPE_WIN_REL | SHAPE_NORMAL, 0);
+        //}
 
+		for (int i = 0; i < MaxVisibleCameoIcons + (IsScrolling ? 1 : 0); i++) {
+			int y = Y + (i * OBJECT_HEIGHT * RESFACTOR);
+
+			/*
+			**	If the strip is scrolling, then the offset is adjusted accordingly.
+			*/
+			if (IsScrolling) {
+				y -= (OBJECT_HEIGHT - Slid) * RESFACTOR;
+				//				y -= OBJECT_HEIGHT - Slid;
+			}
+
+			if (MaxVisibleCameoIcons >= 4 && i > 1) {
+				CC_Draw_Shape(Strip2Shape,
+					ID,
+					X - (WindowList[WINDOW_SIDEBAR][WINDOWX]) + (LEFT_EDGE_OFFSET * RESFACTOR),
+					y - WindowList[WINDOW_SIDEBAR][WINDOWY],
+					WINDOW_SIDEBAR,
+					SHAPE_NORMAL | SHAPE_WIN_REL,
+					0);
+			}
+		}
         /*
         **	Redraw the scroll buttons.
         */
@@ -1668,7 +1754,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
         **	Loop through all the buildable objects that are visible in the strip and render
         **	them. Their Y offset may be adjusted if the strip is in the process of scrolling.
         */
-        for (int i = 0; i < MAX_VISIBLE + (IsScrolling ? 1 : 0); i++) {
+        for (int i = 0; i < MaxVisibleCameoIcons + (IsScrolling ? 1 : 0); i++) {
             bool production;
             bool completed;
             int stage;
@@ -1679,15 +1765,16 @@ void SidebarClass::StripClass::Draw_It(bool complete)
             FactoryClass* factory = 0;
             int index = i + TopIndex;
             int x = X;
-            int y = Y + (i * OBJECT_HEIGHT * RESFACTOR);
+			int y = Y + (i * OBJECT_HEIGHT * RESFACTOR);
 
-            /*
-            **	If the strip is scrolling, then the offset is adjusted accordingly.
-            */
-            if (IsScrolling) {
-                y -= (OBJECT_HEIGHT - Slid) * RESFACTOR;
-                //				y -= OBJECT_HEIGHT - Slid;
-            }
+			/*
+			**	If the strip is scrolling, then the offset is adjusted accordingly.
+			*/
+			if (IsScrolling) {
+				y -= (OBJECT_HEIGHT - Slid) * RESFACTOR;
+				//				y -= OBJECT_HEIGHT - Slid;
+			}
+
 
             /*
             **	Fetch the shape number for the object type located at this current working
@@ -1855,8 +1942,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                     }
                 }
             }
-        }
-
+		}
         LastSlid = Slid;
     }
 }
@@ -1931,6 +2017,10 @@ bool SidebarClass::StripClass::Recalc(void)
         Map.SidebarClass::Activate(0);
     }
 #endif
+	if (redraw) {
+		Flag_To_Redraw();
+	}
+
     return (redraw);
 }
 
@@ -2256,8 +2346,8 @@ int SidebarClass::StripClass::SelectClass::Action(unsigned flags, KeyNumType& ke
  *=============================================================================================*/
 int SidebarClass::SBGadgetClass::Action(unsigned, KeyNumType&)
 {
-    Map.Help_Text(TXT_NONE);
-    Map.Override_Mouse_Shape(MOUSE_NORMAL, false);
+	Map.Help_Text(TXT_NONE);
+	Map.Override_Mouse_Shape(MOUSE_NORMAL, false);
     return (true);
 }
 

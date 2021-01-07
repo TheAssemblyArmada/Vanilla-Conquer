@@ -80,7 +80,7 @@ private:
     void Do_GDI_Graph(void const* yellowptr, void const* redptr, int gdikilled, int nodkilled, int ypos);
     void Do_Nod_Casualties_Graph(void);
     void Do_Nod_Buildings_Graph(void);
-    void Input_Name(char str[], int xpos, int ypos, char const pal[]);
+    void Input_Name(char str[], int xpos, int ypos, char const pal[], int index2);
 };
 
 class ScoreAnimClass

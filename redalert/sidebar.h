@@ -57,10 +57,8 @@ public:
         SIDE_Y = 7 + 70,               // The Y position of sidebar upper left corner.
         SIDE_WIDTH = SIDEBAR_WID,      // Width of the entire sidebar (in pixels).
         SIDE_HEIGHT = 200 - (7 + 70),  // Height of the entire sidebar (in pixels).
-        TOP_HEIGHT = 13,               // Height of top section (with repair/sell buttons).
-        COLUMN_ONE_X = (320 - 80) + 8, // Sidestrip upper left coordinates...
+        TOP_HEIGHT = 13,               // Height of top section (with repair/sell buttons).        
         COLUMN_ONE_Y = int(SIDE_Y) + int(TOP_HEIGHT),
-        COLUMN_TWO_X = (320 - 80) + 8 + ((80 - 16) / 2) + 3,
         COLUMN_TWO_Y = 7 + 70 + 13,
 
 // BGA: changes to all buttons
@@ -69,31 +67,24 @@ public:
         BUTTON_TWO_WIDTH = 27,        // Button width.
         BUTTON_THREE_WIDTH = 26,      // Button width.
         BUTTON_HEIGHT = 9,            // Button height.
-        BUTTON_ONE_X = SIDE_X + 2,    // Left button X coordinate.
-        BUTTON_ONE_Y = SIDE_Y + 2,    // Left button Y coordinate.
-        BUTTON_TWO_X = SIDE_X + 24,   // Right button X coordinate.
-        BUTTON_TWO_Y = SIDE_Y + 2,    // Right button Y coordinate.
-        BUTTON_THREE_X = SIDE_X + 53, // Right button X coordinate.
-        BUTTON_THREE_Y = SIDE_Y + 2,  // Right button Y coordinate.
 #else
         BUTTON_ONE_WIDTH = 32,             // Button width.
         BUTTON_TWO_WIDTH = 20,             // Button width.
         BUTTON_THREE_WIDTH = 20,           // Button width.
         BUTTON_HEIGHT = 9,                 // Button height.
-        BUTTON_ONE_X = (int)SIDE_X + 2,    // Left button X coordinate.
-        BUTTON_ONE_Y = (int)SIDE_Y + 2,    // Left button Y coordinate.
-        BUTTON_TWO_X = (int)SIDE_X + 36,   // Right button X coordinate.
-        BUTTON_TWO_Y = (int)SIDE_Y + 2,    // Right button Y coordinate.
-        BUTTON_THREE_X = (int)SIDE_X + 58, // Right button X coordinate.
-        BUTTON_THREE_Y = (int)SIDE_Y + 2,  // Right button Y coordinate.
 #endif
 
         COLUMNS = 2 // Number of side strips on sidebar.
     };
 
+	//static int COLUMN_ONE_X = (320 - 80) + 8; // Sidestrip upper left coordinates...
+	//static int COLUMN_TWO_X = (320 - 80) + 8 + ((80 - 16) / 2) + 3;
+
     static void* SidebarShape;
     static void* SidebarMiddleShape; // Only used in Win95 version
     static void* SidebarBottomShape; // Only used in Win95 version
+	static void* Strip2Shape;
+	static void* Side4Shape;
 
     SidebarClass(void);
     SidebarClass(NoInitClass const& x);
@@ -106,6 +97,7 @@ public:
     virtual void Init_IO(void);                     // Inits button list
     virtual void Init_Theater(TheaterType theater); // Theater-specific inits
     void Reload_Sidebar(void);                      // Loads house-specific sidebar art
+	void Hires_Positioning_Adjustments(void);
 
     virtual void AI(KeyNumType& input, int x, int y);
     virtual void Draw_It(bool complete);
@@ -127,6 +119,7 @@ public:
     */
     class StripClass : public StageClass
     {
+	public:
         class SelectClass : public ControlClass
         {
         public:
@@ -143,7 +136,7 @@ public:
             virtual int Action(unsigned flags, KeyNumType& key);
         };
 
-    public:
+
         StripClass(void)
         {
         }
@@ -168,6 +161,7 @@ public:
         void Flag_To_Redraw(void);
         bool Factory_Link(int factory, RTTIType type, int id);
         void const* Get_Special_Cameo(SpecialWeaponType type);
+		void Hires_Positiong_Adjustments(int ID);
 
         /*
         **	File I/O.
@@ -187,12 +181,9 @@ public:
             OBJECT_HEIGHT = 24,  // Pixel height of each buildable object.
             OBJECT_WIDTH = 32,   // Pixel width of each buildable object.
             STRIP_WIDTH = 35,    // Width of strip (not counting border lines).
-            MAX_VISIBLE = 4,     // Number of object slots visible at any one time.
             SCROLL_RATE = 12,    // The pixel jump while scrolling (larger is faster).
             UP_X_OFFSET = 2,     // Scroll up arrow coordinates.
-            UP_Y_OFFSET = int(MAX_VISIBLE) * int(OBJECT_HEIGHT) + 1,
-            DOWN_X_OFFSET = 18,          // Scroll down arrow coordinates.
-            DOWN_Y_OFFSET = UP_Y_OFFSET, // BGint(MAX_VISIBLE)*int(OBJECT_HEIGHT)+1,
+            DOWN_X_OFFSET = 18,          // Scroll down arrow coordinates.          
             SBUTTON_WIDTH = 16,          // Width of the mini-scroll button.
             SBUTTON_HEIGHT = 12,         // Height of the mini-scroll button.
             LEFT_EDGE_OFFSET = 2,        // Offset from left edge for building shapes.
@@ -200,6 +191,10 @@ public:
             TEXT_Y_OFFSET = 15,          // Y offset to print "ready" text.
             TEXT_COLOR = 255             // Color to use for the "Ready" text.
         };
+
+		static int MaxVisibleCameoIcons; // Number of object slots visible at any one time.
+		static int UpButtonYOffset;
+		static int DownButtonYOffset; // BGint(MAX_VISIBLE)*int(OBJECT_HEIGHT)+1,
 
         /*
         **	This is the coordinate of the upper left corner that this side strip
@@ -330,7 +325,8 @@ public:
 
         static ShapeButtonClass UpButton[COLUMNS];
         static ShapeButtonClass DownButton[COLUMNS];
-        static SelectClass SelectButton[COLUMNS][MAX_VISIBLE];
+        //static SelectClass SelectButton[COLUMNS][128]; // Hack hard-code 128 select buttons per column
+		static DynamicVectorClass<SelectClass*> SelectButton;
 
         /*
         **	This points to the shapes that are used for the clock overlay. This displays

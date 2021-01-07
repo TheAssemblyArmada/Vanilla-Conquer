@@ -48,6 +48,7 @@
 */
 void const* PowerClass::PowerShape;
 void const* PowerClass::PowerBarShape;
+void const* PowerClass::PowerTileShape;
 
 PowerClass::PowerButtonClass PowerClass::PowerButton;
 
@@ -131,12 +132,20 @@ void PowerClass::Init_Clear(void)
 void PowerClass::One_Time(void)
 {
     RadarClass::One_Time();
-    PowerButton.X = POWER_X * RESFACTOR;
+    PowerButton.X = ScreenWidth - 160;
     PowerButton.Y = POWER_Y * RESFACTOR;
     PowerButton.Width = (POWER_WIDTH * RESFACTOR) - 1;
-    PowerButton.Height = POWER_HEIGHT * RESFACTOR;
+    PowerButton.Height = (((SidebarClass::StripClass::MaxVisibleCameoIcons * int(SidebarClass::StripClass::OBJECT_HEIGHT))) * RESFACTOR) + 128;
+
+	if (SidebarClass::StripClass::MaxVisibleCameoIcons > 4) {
+		PowerBarHeight = (ScreenHeight / 2) - 90;
+	}
+	else {
+		PowerBarHeight = (200 - (7 + 70 + 13));
+	}
     PowerShape = MFCD::Retrieve("POWER.SHP");
     PowerBarShape = MFCD::Retrieve("POWERBAR.SHP");
+	PowerTileShape = MFCD::Retrieve("POWEREXT.SHP");
 }
 
 /***********************************************************************************************
@@ -163,53 +172,69 @@ void PowerClass::Draw_It(bool complete)
         BStart(BENCH_POWER);
 
         if (LogicPage->Lock()) {
-            if (Map.IsSidebarActive) {
-                IsToRedraw = false;
-                ShapeFlags_Type flags = SHAPE_NORMAL;
-                void const* remap = NULL;
+			if (Map.IsSidebarActive) {
+				IsToRedraw = false;
+				ShapeFlags_Type flags = SHAPE_NORMAL;
+				void const* remap = NULL;
 
-                if (FlashTimer > 1 && ((FlashTimer % 3) & 0x01) != 0) {
-                    flags = flags | SHAPE_FADING;
-                    remap = Map.FadingRed;
-                }
+				if (FlashTimer > 1 && ((FlashTimer % 3) & 0x01) != 0) {
+					flags = flags | SHAPE_FADING;
+					remap = Map.FadingRed;
+				}
 
-                //				LogicPage->Fill_Rect(POWER_X, POWER_Y, POWER_X+POWER_WIDTH-1, POWER_Y+POWER_HEIGHT-1,
-                //LTGREY);
-                CC_Draw_Shape(PowerBarShape,
-                              0,
-                              240 * RESFACTOR,
-                              88 * RESFACTOR,
-                              WINDOW_MAIN,
-                              flags | SHAPE_NORMAL | SHAPE_WIN_REL,
-                              remap);
+				//				LogicPage->Fill_Rect(POWER_X, POWER_Y, POWER_X+POWER_WIDTH-1, POWER_Y+POWER_HEIGHT-1,
+				//LTGREY);
+					CC_Draw_Shape(PowerBarShape,
+					0,
+					ScreenWidth - 160,
+					88 * RESFACTOR,
+					WINDOW_MAIN,
+					flags | SHAPE_NORMAL | SHAPE_WIN_REL,
+					remap);
 
-                /*
-                ** Hires power strip is too big to fit into a shape so it is in two parts
-                */
-                CC_Draw_Shape(PowerBarShape,
-                              1,
-                              240 * RESFACTOR,
-                              (88 * RESFACTOR) + (56 * RESFACTOR),
-                              WINDOW_MAIN,
-                              flags | SHAPE_NORMAL | SHAPE_WIN_REL,
-                              remap);
-                /*
-                **	Determine how much the power production exceeds or falls short
-                **	of power demands.
-                */
-                int bottom = (POWER_Y + POWER_HEIGHT - 1) * RESFACTOR;
+				/*
+				** Hires power strip is too big to fit into a shape so it is in two parts
+				*/
+				CC_Draw_Shape(PowerBarShape,
+					1,
+					ScreenWidth - 160,
+					//(88 * RESFACTOR) + (56 * RESFACTOR),
+					PowerButton.Height - 32,
+					WINDOW_MAIN,
+					flags | SHAPE_NORMAL | SHAPE_WIN_REL,
+					remap);
+				/*
+				**	Determine how much the power production exceeds or falls short
+				**	of power demands.
+				*/
+
+				int drawmaxheight = (((SidebarClass::StripClass::MaxVisibleCameoIcons * int(SidebarClass::StripClass::OBJECT_HEIGHT))) * RESFACTOR) + 96;
+				int currentheight = 288;
+				while (currentheight <= drawmaxheight)
+				{
+					CC_Draw_Shape(PowerTileShape,
+						0,
+						ScreenWidth - 160,
+						currentheight,
+						WINDOW_MAIN,
+						flags | SHAPE_NORMAL | SHAPE_WIN_REL,
+						remap);
+					currentheight += int(SidebarClass::StripClass::OBJECT_HEIGHT) * RESFACTOR;
+			}
+
                 int power_height = (PowerHeight == DesiredPowerHeight)
                                        ? PowerHeight + (_modtable[PowerBounce] * PowerDir)
                                        : PowerHeight;
                 int drain_height = (DrainHeight == DesiredDrainHeight)
                                        ? DrainHeight + (_modtable[DrainBounce] * DrainDir)
                                        : DrainHeight;
-                power_height = Bound(power_height, 0, POWER_HEIGHT - 2);
-                drain_height = Bound(drain_height, 0, POWER_HEIGHT - 2);
+                power_height = Bound(power_height, 0, PowerBarHeight - 2);
+                drain_height = Bound(drain_height, 0, PowerBarHeight - 2);
 
                 /*
                 **	Draw the power output graphic on top of the power bar framework.
                 */
+				int bottom = (((SidebarClass::StripClass::MaxVisibleCameoIcons * int(SidebarClass::StripClass::OBJECT_HEIGHT)) + 1) * RESFACTOR) + 157;
                 if (power_height) {
                     int color1 = 3;
                     int color2 = 4;
@@ -231,23 +256,25 @@ void PowerClass::Draw_It(bool complete)
                     ** ST - 5/2/96 11:23AM
                     */
                     power_height = (power_height * (76 * RESFACTOR + 1)) / (53 * RESFACTOR + 1);
-                    drain_height = (drain_height * (76 * RESFACTOR + 1)) / (53 * RESFACTOR + 1);
-                    bottom = (175 * RESFACTOR) + 1;
+					bottom = (((SidebarClass::StripClass::MaxVisibleCameoIcons * int(SidebarClass::StripClass::OBJECT_HEIGHT)) + 1) * RESFACTOR) + 157;
 
-                    LogicPage->Fill_Rect(245 * RESFACTOR, bottom - power_height, 245 * RESFACTOR + 1, bottom, color2);
-                    LogicPage->Fill_Rect(246 * RESFACTOR, bottom - power_height, 246 * RESFACTOR + 1, bottom, color1);
+                    LogicPage->Fill_Rect(ScreenWidth - 150, bottom - power_height, ScreenWidth - 149, bottom, color2);
+                    LogicPage->Fill_Rect(ScreenWidth - 148, bottom - power_height, ScreenWidth - 147, bottom, color1);
                 }
 
                 /*
                 **	Draw the power drain threshold marker.
                 */
-                CC_Draw_Shape(PowerShape,
-                              0,
-                              (POWER_X * RESFACTOR) + RESFACTOR,
-                              bottom - (drain_height + (2 * RESFACTOR)),
-                              WINDOW_MAIN,
-                              flags | SHAPE_NORMAL,
-                              remap);
+				drain_height = (drain_height * (76 * RESFACTOR + 1)) / (53 * RESFACTOR + 1);
+				if (PlayerPtr->Drain > 0) {
+					CC_Draw_Shape(PowerShape,
+						0,
+						ScreenWidth - 158,
+						bottom - (drain_height + 4),
+						WINDOW_MAIN,
+						flags | SHAPE_NORMAL,
+						remap);
+				}
             }
             LogicPage->Unlock();
         }
@@ -406,7 +433,7 @@ int PowerClass::Power_Height(int value)
     ** of each.
     */
     for (int lp = 0; lp < num; lp++) {
-        retval = retval + (((POWER_HEIGHT - 2) - retval) / POWER_STEP_FACTOR);
+        retval = retval + (((PowerBarHeight - 2) - retval) / POWER_STEP_FACTOR);
         value -= POWER_STEP_LEVEL;
     }
 
@@ -414,10 +441,10 @@ int PowerClass::Power_Height(int value)
     ** Adjust the retval to factor in the remainder
     */
     if (value) {
-        retval = retval + (((((POWER_HEIGHT - 2) - retval) / POWER_STEP_FACTOR) * value) / POWER_STEP_LEVEL);
+        retval = retval + (((((PowerBarHeight - 2) - retval) / POWER_STEP_FACTOR) * value) / POWER_STEP_LEVEL);
     }
 
-    retval = Bound(retval, 0, POWER_HEIGHT - 2);
+    retval = Bound(retval, 0, PowerBarHeight - 2);
     return (retval);
 }
 
