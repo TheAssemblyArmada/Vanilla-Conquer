@@ -97,6 +97,7 @@ public:
     virtual void Init_IO(void);                     // Inits button list
     virtual void Init_Theater(TheaterType theater); // Theater-specific inits
     void Reload_Sidebar(void);                      // Loads house-specific sidebar art
+	void Hires_Positioning_Adjustments(void);
 
     virtual void AI(KeyNumType& input, int x, int y);
     virtual void Draw_It(bool complete);
@@ -118,6 +119,7 @@ public:
     */
     class StripClass : public StageClass
     {
+	public:
         class SelectClass : public ControlClass
         {
         public:
@@ -134,7 +136,7 @@ public:
             virtual int Action(unsigned flags, KeyNumType& key);
         };
 
-    public:
+
         StripClass(void)
         {
         }
@@ -159,6 +161,7 @@ public:
         void Flag_To_Redraw(void);
         bool Factory_Link(int factory, RTTIType type, int id);
         void const* Get_Special_Cameo(SpecialWeaponType type);
+		void Hires_Positiong_Adjustments(int ID);
 
         /*
         **	File I/O.
@@ -322,7 +325,8 @@ public:
 
         static ShapeButtonClass UpButton[COLUMNS];
         static ShapeButtonClass DownButton[COLUMNS];
-        static SelectClass SelectButton[COLUMNS][128]; // Hack hard-code 128 select buttons per column
+        //static SelectClass SelectButton[COLUMNS][128]; // Hack hard-code 128 select buttons per column
+		static DynamicVectorClass<SelectClass*> SelectButton;
 
         /*
         **	This points to the shapes that are used for the clock overlay. This displays

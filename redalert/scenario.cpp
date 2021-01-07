@@ -725,6 +725,8 @@ void Post_Load_Game(int load_multi)
     }
     Scen.BridgeCount = Map.Intact_Bridge_Count();
     Map.Zone_Reset(MZONEF_ALL);
+	Map.Hires_Positioning_Adjustments();
+	Map.Radar_Hires_Positioning_Adjustments();
 }
 
 /***********************************************************************************************

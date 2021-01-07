@@ -144,28 +144,33 @@ RadarClass::RadarClass(void)
  *=============================================================================================*/
 void RadarClass::One_Time(void)
 {
-    RadWidth = 80 * RESFACTOR;
-    RadHeight = 70 * RESFACTOR;
-    RadX = SeenBuff.Get_Width() - RadWidth;
-    RadY = 7 * RESFACTOR;
-    RadPWidth = 64 * RESFACTOR;
-    RadPHeight = 64 * RESFACTOR;
-    RadOffX = 6;
-    RadOffY = 7;
-    RadIWidth = 128 + 18; //************
-    RadIHeight = 128 + 2; //************
+	Radar_Hires_Positioning_Adjustments();
+	DisplayClass::One_Time();
+}
 
-    DisplayClass::One_Time();
+void RadarClass::Radar_Hires_Positioning_Adjustments(void) {
+	RadWidth = 80 * RESFACTOR;
+	RadHeight = 70 * RESFACTOR;
+	RadX = SeenBuff.Get_Width() - RadWidth;
+	RadY = 7 * RESFACTOR;
+	RadPWidth = 64 * RESFACTOR;
+	RadPHeight = 64 * RESFACTOR;
+	RadOffX = 6;
+	RadOffY = 7;
+	RadIWidth = 128 + 18; //************
+	RadIHeight = 128 + 2; //************
+
+
 #ifdef OBSOLETE
-    RadarButton.X = RadX + RadOffX;
-    RadarButton.Y = RadY + RadOffY;
-    RadarButton.Width = RadIWidth;
-    RadarButton.Height = RadIHeight;
+	RadarButton.X = RadX + RadOffX;
+	RadarButton.Y = RadY + RadOffY;
+	RadarButton.Width = RadIWidth;
+	RadarButton.Height = RadIHeight;
 #else
-    RadarButton.X = RadX;
-    RadarButton.Y = RadY;
-    RadarButton.Width = RadWidth;
-    RadarButton.Height = RadHeight;
+	RadarButton.X = RadX;
+	RadarButton.Y = RadY;
+	RadarButton.Width = RadWidth;
+	RadarButton.Height = RadHeight;
 #endif
 }
 

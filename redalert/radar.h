@@ -78,6 +78,7 @@ public:
     virtual void Refresh_Cells(CELL cell, short const* list);
     virtual void Set_Map_Dimensions(int x, int y, int w, int h);
     virtual void Set_Tactical_Position(COORDINATE coord);
+	void Radar_Hires_Positioning_Adjustments(void);
     void Zoom_Mode(CELL cell);
     int Click_In_Radar(int& x, int& y, bool change = false) const;
     void Cell_XY_To_Radar_Pixel(int cellx, int celly, int& x, int& y);
