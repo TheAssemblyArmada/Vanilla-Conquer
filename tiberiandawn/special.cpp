@@ -33,6 +33,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/framelimit.h"
 
 #define OPTION_WIDTH  236
 #define OPTION_HEIGHT 162
@@ -270,4 +271,144 @@ void Special_Dialog(void)
     HiddenPage.Clear();
     Map.Flag_To_Redraw(true);
     Map.Render();
+}
+
+int Fetch_Difficulty(void)
+{
+    static const char TXT_EASY[] = "Easy";
+    static const char TXT_NORMAL[] = "Normal";
+    static const char TXT_HARD[] = "Hard";
+    static const char TXT_DIFFICULTY[] = "Difficulty";
+
+    int factor = (SeenBuff.Get_Width() == 320) ? 1 : 2;
+    int const w = 250 * factor;
+    int const h = 80 * factor;
+    int const x = ((320 * factor) / 2) - w / 2;
+    int const y = ((200 * factor) / 2) - h / 2;
+    int const bwidth = 30 * factor;
+
+    /*
+    **	Fill the description buffer with the description text. Break
+    **	the text into appropriate spacing.
+    */
+    char buffer[512];
+    strncpy(buffer, TXT_DIFFICULTY, sizeof(buffer) - 1);
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    Fancy_Text_Print(TXT_NONE, 0, 0, CC_GREEN, TBLACK, TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
+    int width;
+    int height;
+    Format_Window_String(buffer, w - 60 * factor, width, height);
+
+    /*
+    **	Create the OK button.
+    */
+    TextButtonClass okbutton(1, TXT_OK, TPF_BUTTON, (x + w) - (bwidth + 20 * factor), (y + h) - (18 * factor), bwidth);
+    GadgetClass* buttonlist = &okbutton;
+
+    /*
+    **	Create the slider button.
+    */
+    SliderClass slider(2, x + 20 * factor, y + h - 29 * factor, w - 40 * factor, 8 * factor, true);
+    if (Rule.IsFineDifficulty) {
+        slider.Set_Maximum(5);
+        slider.Set_Value(2);
+    } else {
+        slider.Set_Maximum(3);
+        slider.Set_Value(1);
+    }
+    slider.Add(*buttonlist);
+
+    /*
+    **	Main Processing Loop.
+    */
+    Set_Logic_Page(SeenBuff);
+    bool redraw = true;
+    bool process = true;
+    while (process) {
+
+        if (redraw) {
+            redraw = false;
+
+            /*
+            **	Draw the background of the dialog.
+            */
+            Hide_Mouse();
+            Dialog_Box(x, y, w, h);
+            Draw_Caption(TXT_NONE, x, y, w);
+
+            /*
+            **	Draw the body of the message.
+            */
+            Fancy_Text_Print(buffer,
+                             w / 2 + x,
+                             5 * factor + y,
+                             CC_GREEN,
+                             TBLACK,
+                             TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
+
+            /*
+            **	Display the descripton of the slider range.
+            */
+            Fancy_Text_Print(TXT_HARD,
+                             slider.X + slider.Width,
+                             slider.Y - 9 * factor,
+                             CC_GREEN,
+                             TBLACK,
+                             TPF_RIGHT | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_DROPSHADOW);
+            Fancy_Text_Print(TXT_EASY,
+                             slider.X,
+                             slider.Y - 9 * factor,
+                             CC_GREEN,
+                             TBLACK,
+                             TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_DROPSHADOW);
+            Fancy_Text_Print(TXT_NORMAL,
+                             slider.X + (slider.Width / 2),
+                             slider.Y - 9 * factor,
+                             CC_GREEN,
+                             TBLACK,
+                             TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_DROPSHADOW);
+
+            /*
+            **	Redraw the buttons.
+            */
+            if (buttonlist) {
+                buttonlist->Draw_All();
+            }
+            Show_Mouse();
+        }
+
+        /*
+        **	Invoke game callback.
+        */
+        Call_Back();
+
+        /*
+        ** Handle possible surface loss due to a focus switch
+        */
+        if (AllSurfaces.SurfacesRestored) {
+            AllSurfaces.SurfacesRestored = false;
+            redraw = true;
+            continue;
+        }
+
+        /*
+        **	Fetch and process input.
+        */
+        KeyNumType input = buttonlist->Input();
+
+        switch (input) {
+        case KN_RETURN:
+        case (1 | BUTTON_FLAG):
+            process = false;
+            break;
+
+        default:
+            break;
+        }
+
+        Frame_Limiter();
+    }
+
+    return (slider.Get_Value() * (Rule.IsFineDifficulty ? 1 : 2));
 }

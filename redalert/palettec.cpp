@@ -39,15 +39,6 @@
  *   PaletteClass::operator == -- Equality operator for palette objects.                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef NOINITCLASS
-#define NOINITCLASS
-struct NoInitClass
-{
-public:
-    void operator()(void) const {};
-};
-#endif
-
 void Set_Palette(void* palette);
 
 #include "function.h"
@@ -61,7 +52,7 @@ void Set_Palette(void* palette);
 #include <string.h>
 
 // PaletteClass const PaletteClass::CurrentPalette;
-extern "C" unsigned char CurrentPalette[];
+extern unsigned char CurrentPalette[768];
 
 PaletteClass const& PaletteClass::CurrentPalette = *(PaletteClass*)&::CurrentPalette[0];
 
@@ -369,7 +360,9 @@ void PaletteClass::Set(int time, void (*callback)(void)) const
     Set_Palette((void*)&Palette[0]);
 
     /*
-    ** Ensure the screen is updated.
+    ** Ensure the screen is updated if we had a timer fade.
     */
-    Frame_Limiter();
+    if (timer) {
+        Frame_Limiter();
+    }
 }

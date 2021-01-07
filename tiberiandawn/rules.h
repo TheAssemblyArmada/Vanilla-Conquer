@@ -259,6 +259,18 @@ public:
     bool IsComputerParanoid;
 
     /*
+    **	If the computer players will go to easy mode if there is more
+    **	than one human player, this flag will be true.
+    */
+    bool IsCompEasyBonus;
+
+    /*
+    **	If fine control of difficulty settings is desired, then set this value to true.
+    **	Fine control allows 5 settings. The coarse control only allows three settings.
+    */
+    bool IsFineDifficulty;
+
+    /*
     **	Are superweapons allowed?
     */
     bool AllowSuperWeapons;

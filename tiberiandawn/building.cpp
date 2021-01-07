@@ -95,6 +95,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "ccini.h"
 
 /*
 ** New sidebar for GlyphX multiplayer. ST - 3/26/2019 12:24PM
@@ -130,11 +131,6 @@ COORDINATE const BuildingClass::CenterOffset[BSIZE_COUNT] = {
 
     0x02800280L,
 };
-
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
-void* BuildingClass::VTable;
 
 /***********************************************************************************************
  * BuildingClass::Validate -- validates building pointer													  *
@@ -2140,10 +2136,6 @@ void BuildingClass::Init(void)
     BuildingClass* ptr;
 
     Buildings.Free_All();
-
-    ptr = new BuildingClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 /***********************************************************************************************
@@ -3239,31 +3231,23 @@ void BuildingClass::Begin_Mode(BStateType bstate)
  * HISTORY:                                                                                    *
  *   05/24/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BuildingClass::Read_INI(char* buffer)
+void BuildingClass::Read_INI(CCINIClass& ini)
 {
     BuildingClass* b;   // Working unit pointer.
-    char* tbuffer;      // Accumulation buffer of unit IDs.
     HousesType bhouse;  // Building house.
     StructType classid; // Building type.
-    int len;            // Size of data in buffer.
     CELL cell;          // Cell of building.
     char buf[128];
     char* trigname; // building's trigger's name
 
-    len = strlen(buffer) + 2;
-    tbuffer = buffer + len;
-
-    /*
-    **	Read the entire building INI section into HIDBUF
-    */
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
-
-    while (*tbuffer != '\0') {
+    int len = ini.Entry_Count(INI_Name());
+    for (int index = 0; index < len; index++) {
+        char const* entry = ini.Get_Entry(INI_Name(), index);
 
         /*
         **	Get a building entry.
         */
-        WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
+        ini.Get_String(INI_Name(), entry, NULL, buf, sizeof(buf));
 
         /*
         **	1st token: house name.
@@ -3288,6 +3272,12 @@ void BuildingClass::Read_INI(char* buffer)
             **	4th token: cell #.
             */
             cell = atoi(strtok(NULL, ","));
+
+#ifdef MEGAMAPS
+            if (Map.MapBinaryVersion == MAP_VERSION_NORMAL) {
+                cell = Confine_Old_Cell(cell);
+            }
+#endif
 
             /*
             **	5th token: facing.
@@ -3322,7 +3312,6 @@ void BuildingClass::Read_INI(char* buffer)
                 }
             }
         }
-        tbuffer += strlen(tbuffer) + 1;
     }
 }
 
@@ -3344,31 +3333,23 @@ void BuildingClass::Read_INI(char* buffer)
  * HISTORY:                                                                                    *
  *   05/28/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BuildingClass::Write_INI(char* buffer)
+void BuildingClass::Write_INI(CCINIClass& ini)
 {
-    int index;
-    char uname[10];
-    char buf[127];
-    char* tbuffer; // Accumulation buffer of unit IDs.
-
     /*
     **	First, clear out all existing building data from the ini file.
     */
-    tbuffer = buffer + strlen(buffer) + 2;
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - strlen(buffer), buffer);
-    while (*tbuffer != '\0') {
-        WWWritePrivateProfileString(INI_Name(), tbuffer, NULL, buffer);
-        tbuffer += strlen(tbuffer) + 1;
-    }
+    ini.Clear(INI_Name());
 
     /*
     **	Write the data out.
     */
-    for (index = 0; index < Buildings.Count(); index++) {
+    for (int index = 0; index < Buildings.Count(); index++) {
         BuildingClass* building;
 
         building = Buildings.Ptr(index);
         if (!building->IsInLimbo) {
+            char uname[10];
+            char buf[127];
 
             sprintf(uname, "%03d", index);
             sprintf(buf,
@@ -3379,7 +3360,7 @@ void BuildingClass::Write_INI(char* buffer)
                     Coord_Cell(building->Coord),
                     building->PrimaryFacing.Current(),
                     building->Trigger ? building->Trigger->Get_Name() : "None");
-            WWWritePrivateProfileString(INI_Name(), uname, buf, buffer);
+            ini.Put_String(INI_Name(), uname, buf);
         }
     }
 }

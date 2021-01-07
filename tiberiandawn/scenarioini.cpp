@@ -47,6 +47,7 @@
 
 #include "function.h"
 #include "common/irandom.h"
+#include "ccini.h"
 
 /************************************* Prototypes *********************************************/
 static void Assign_Houses(void);
@@ -206,7 +207,6 @@ extern void GlyphX_Assign_Houses(void); // ST - 6/25/2019 11:08AM
  *=============================================================================================*/
 bool Read_Scenario_Ini(char* root, bool fresh)
 {
-    char* buffer;                      // Scenario.ini staging buffer pointer.
     char fname[_MAX_FNAME + _MAX_EXT]; // full INI filename
     char buf[128];                     // Working string staging buffer.
 #ifndef USE_RA_AI
@@ -217,15 +217,6 @@ bool Read_Scenario_Ini(char* root, bool fresh)
     unsigned char val;
 
     ScenarioInit++;
-
-    /*
-    **	Fetch working pointer to the INI staging buffer. Make sure that the buffer
-    **	is cleared out before proceeding.  (Don't use the HidPage for this, since
-    **	the HidPage may be needed for various uncompressions during the INI
-    **	parsing.)
-    */
-    buffer = (char*)_ShapeBuffer;
-    memset(buffer, '\0', _ShapeBufferSize);
 
     if (fresh) {
         Clear_Scenario();
@@ -272,42 +263,36 @@ bool Read_Scenario_Ini(char* root, bool fresh)
     */
 
     sprintf(fname, "%s.INI", root);
+    CCINIClass ini;
     CCFileClass file(fname);
-    if (!file.Is_Available()) {
-        GlyphX_Debug_Print("Failed to find scenario file");
+
+    int result = ini.Load(file, true);
+    if (result == 0) {
+        GlyphX_Debug_Print("Failed to load scenario file");
         GlyphX_Debug_Print(fname);
         return (false);
     } else {
 
         GlyphX_Debug_Print("Opened scenario file");
         GlyphX_Debug_Print(fname);
-
-        file.Read(buffer, _ShapeBufferSize - 1);
     }
 
     /*
     ** Init the Scenario CRC value
     */
-    ScenarioCRC = 0;
-    len = strlen(buffer);
-    for (int i = 0; i < len; i++) {
-        val = (unsigned char)buffer[i];
-#ifndef DEMO
-        Add_CRC(&ScenarioCRC, (unsigned long)val);
-#endif
-    }
+    ScenarioCRC = ini.Get_Unique_ID();
 
     /*
     **	Fetch the appropriate movie names from the INI file.
     */
-    WWGetPrivateProfileString("Basic", "Intro", "x", IntroMovie, sizeof(IntroMovie), buffer);
-    WWGetPrivateProfileString("Basic", "Brief", "x", BriefMovie, sizeof(BriefMovie), buffer);
-    WWGetPrivateProfileString("Basic", "Win", "x", WinMovie, sizeof(WinMovie), buffer);
-    WWGetPrivateProfileString("Basic", "Win2", "x", WinMovie2, sizeof(WinMovie2), buffer);
-    WWGetPrivateProfileString("Basic", "Win3", "x", WinMovie3, sizeof(WinMovie3), buffer);
-    WWGetPrivateProfileString("Basic", "Win4", "x", WinMovie4, sizeof(WinMovie4), buffer);
-    WWGetPrivateProfileString("Basic", "Lose", "x", LoseMovie, sizeof(LoseMovie), buffer);
-    WWGetPrivateProfileString("Basic", "Action", "x", ActionMovie, sizeof(ActionMovie), buffer);
+    ini.Get_String("Basic", "Intro", "x", IntroMovie, sizeof(IntroMovie));
+    ini.Get_String("Basic", "Brief", "x", BriefMovie, sizeof(BriefMovie));
+    ini.Get_String("Basic", "Win", "x", WinMovie, sizeof(WinMovie));
+    ini.Get_String("Basic", "Win2", "x", WinMovie2, sizeof(WinMovie2));
+    ini.Get_String("Basic", "Win3", "x", WinMovie3, sizeof(WinMovie3));
+    ini.Get_String("Basic", "Win4", "x", WinMovie4, sizeof(WinMovie4));
+    ini.Get_String("Basic", "Lose", "x", LoseMovie, sizeof(LoseMovie));
+    ini.Get_String("Basic", "Action", "x", ActionMovie, sizeof(ActionMovie));
 
     /*
     **	For single-player scenarios, 'BuildLevel' is the scenario number.
@@ -323,7 +308,7 @@ bool Read_Scenario_Ini(char* root, bool fresh)
             // N64 missions require build level 15
             BuildLevel = 15;
         } else {
-            BuildLevel = WWGetPrivateProfileInt("Basic", "BuildLevel", Scenario, buffer);
+            BuildLevel = ini.Get_Int("Basic", "BuildLevel", Scenario);
         }
 #else
         BuildLevel = Scenario;
@@ -341,36 +326,34 @@ bool Read_Scenario_Ini(char* root, bool fresh)
     /*
     **	Fetch the transition theme for this scenario.
     */
-    TransitTheme = THEME_NONE;
-    WWGetPrivateProfileString("Basic", "Theme", "No Theme", buf, sizeof(buf), buffer);
-    TransitTheme = Theme.From_Name(buf);
+    TransitTheme = ini.Get_ThemeType("Basic", "Theme", THEME_NONE);
 
     /*
     **	Read in the team-type data. The team types must be created before any
     **	triggers can be created.
     */
-    TeamTypeClass::Read_INI(buffer);
+    TeamTypeClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in the specific information for each of the house types.  This creates
     **	the houses of different types.
     */
-    HouseClass::Read_INI(buffer);
+    HouseClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in the trigger data. The triggers must be created before any other
     **	objects can be initialized.
     */
-    TriggerClass::Read_INI(buffer);
+    TriggerClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in the map control values. This includes dimensions
     **	as well as theater information.
     */
-    Map.Read_INI(buffer);
+    Map.Read_INI(ini);
     Call_Back();
 
     /*
@@ -379,12 +362,11 @@ bool Read_Scenario_Ini(char* root, bool fresh)
     */
     //	if (GameToPlay == GAME_NORMAL && (ScenPlayer == SCEN_PLAYER_GDI || ScenPlayer == SCEN_PLAYER_NOD)) {
     if (GameToPlay == GAME_NORMAL) {
-        WWGetPrivateProfileString("Basic", "Player", "GoodGuy", buf, 127, buffer);
-        CarryOverPercent = WWGetPrivateProfileInt("Basic", "CarryOverMoney", 100, buffer);
+        CarryOverPercent = ini.Get_Int("Basic", "CarryOverMoney", 100);
         CarryOverPercent = Cardinal_To_Fixed(100, CarryOverPercent);
-        CarryOverCap = WWGetPrivateProfileInt("Basic", "CarryOverCap", -1, buffer);
+        CarryOverCap = ini.Get_Int("Basic", "CarryOverCap", -1);
 
-        PlayerPtr = HouseClass::As_Pointer(HouseTypeClass::From_Name(buf));
+        PlayerPtr = HouseClass::As_Pointer(ini.Get_HousesType("Basic", "Player", HOUSE_GOOD));
         PlayerPtr->IsHuman = true;
 #ifndef REMASTER_BUILD
         // This is needed to fix the object selection issues. OmniBlade - 09/07/2020
@@ -403,11 +385,7 @@ bool Read_Scenario_Ini(char* root, bool fresh)
             PlayerPtr->ActLike = Whom;
         }
 
-        if (Special.IsEasy) {
-            PlayerPtr->Assign_Handicap(DIFF_EASY);
-        } else if (Special.IsDifficult) {
-            PlayerPtr->Assign_Handicap(DIFF_HARD);
-        }
+        PlayerPtr->Assign_Handicap(ScenDifficulty);
     } else {
 
 #ifdef OBSOLETE
@@ -436,7 +414,7 @@ bool Read_Scenario_Ini(char* root, bool fresh)
     */
     if (fresh) {
         if (!Map.Read_Binary(root, &ScenarioCRC)) {
-            TemplateClass::Read_INI(buffer);
+            TemplateClass::Read_INI(ini);
         }
     }
     Call_Back();
@@ -444,101 +422,62 @@ bool Read_Scenario_Ini(char* root, bool fresh)
     /*
     **	Read in and place the 3D terrain objects.
     */
-    TerrainClass::Read_INI(buffer);
+    TerrainClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in and place the units (all sides).
     */
-    UnitClass::Read_INI(buffer);
+    UnitClass::Read_INI(ini);
     Call_Back();
 
-    AircraftClass::Read_INI(buffer);
+    AircraftClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in and place the infantry units (all sides).
     */
-    InfantryClass::Read_INI(buffer);
+    InfantryClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in and place all the buildings on the map.
     */
-    BuildingClass::Read_INI(buffer);
+    BuildingClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in the AI's base information.
     */
-    Base.Read_INI(buffer);
+    Base.Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in any normal overlay objects.
     */
-    OverlayClass::Read_INI(buffer);
+    OverlayClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in any smudge overlays.
     */
-    SmudgeClass::Read_INI(buffer);
+    SmudgeClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in any briefing text.
     */
-    char* stage = &BriefingText[0];
-    *stage = '\0';
-    int index = 1;
-
-    /*
-    **	Build the full text of the mission objective.
-    */
-    for (;;) {
-        int len = (sizeof(BriefingText) - strlen(BriefingText)) - 1;
-        if (len <= 0) {
-            break;
-        }
-
-        char buff[16];
-        sprintf(buff, "%d", index++);
-        *stage = '\0';
-        WWGetPrivateProfileString("Briefing", buff, "", stage, len, buffer);
-        if (strlen(stage) == 0)
-            break;
-        strcat(stage, " ");
-        stage += strlen(stage);
-    }
+    ini.Get_TextBlock("Briefing", BriefingText, sizeof(BriefingText));
 
     /*
     **	If the briefing text could not be found in the INI file, then search
     **	the mission.ini file.
     */
     if (BriefingText[0] == '\0') {
-        memset(_ShapeBuffer, '\0', _ShapeBufferSize);
-        CCFileClass("MISSION.INI").Read(_ShapeBuffer, _ShapeBufferSize);
-
-        char* buffer = (char*)Add_Long_To_Pointer(_ShapeBuffer, strlen(_ShapeBuffer));
-        char* work = &BriefingText[0];
-        int index = 1;
-
-        /*
-        **	Build the full text of the mission objective.
-        */
-        for (;;) {
-            char buff[16];
-
-            sprintf(buff, "%d", index++);
-            *work = '\0';
-            WWGetPrivateProfileString(
-                root, buff, "", work, (sizeof(BriefingText) - strlen(BriefingText)) - 1, _ShapeBuffer);
-            if (strlen(work) == 0)
-                break;
-            strcat(work, " ");
-            work += strlen(work);
-        }
+        INIClass mini;
+        CCFileClass missionIniFile("MISSION.INI");
+        mini.Load(missionIniFile);
+        mini.Get_TextBlock(root, BriefingText, sizeof(BriefingText));
     }
 
     /*
@@ -719,48 +658,40 @@ bool Read_Scenario_Ini_File(char* scenario_file_name, char* bin_file_name, const
 {
     ScenarioInit++;
 
-    char* buffer = (char*)_ShapeBuffer;
-    memset(buffer, '\0', _ShapeBufferSize);
     char buf[128];
     int len;
     unsigned char val;
 
+    CCINIClass ini;
     CCFileClass file(scenario_file_name);
-    if (!file.Is_Available()) {
-        GlyphX_Debug_Print("Failed to find scenario file");
+
+    int result = ini.Load(file, true);
+    if (result == 0) {
+        GlyphX_Debug_Print("Failed to load scenario file");
         GlyphX_Debug_Print(scenario_file_name);
         return (false);
     } else {
 
         GlyphX_Debug_Print("Opened scenario file");
         GlyphX_Debug_Print(scenario_file_name);
-
-        file.Read(buffer, _ShapeBufferSize - 1);
     }
 
     /*
     ** Init the Scenario CRC value
     */
-    ScenarioCRC = 0;
-    len = strlen(buffer);
-    for (int i = 0; i < len; i++) {
-        val = (unsigned char)buffer[i];
-#ifndef DEMO
-        Add_CRC(&ScenarioCRC, (unsigned long)val);
-#endif
-    }
+    ScenarioCRC = ini.Get_Unique_ID();
 
     /*
     **	Fetch the appropriate movie names from the INI file.
     */
-    WWGetPrivateProfileString("Basic", "Intro", "x", IntroMovie, sizeof(IntroMovie), buffer);
-    WWGetPrivateProfileString("Basic", "Brief", "x", BriefMovie, sizeof(BriefMovie), buffer);
-    WWGetPrivateProfileString("Basic", "Win", "x", WinMovie, sizeof(WinMovie), buffer);
-    WWGetPrivateProfileString("Basic", "Win2", "x", WinMovie2, sizeof(WinMovie2), buffer);
-    WWGetPrivateProfileString("Basic", "Win3", "x", WinMovie3, sizeof(WinMovie3), buffer);
-    WWGetPrivateProfileString("Basic", "Win4", "x", WinMovie4, sizeof(WinMovie4), buffer);
-    WWGetPrivateProfileString("Basic", "Lose", "x", LoseMovie, sizeof(LoseMovie), buffer);
-    WWGetPrivateProfileString("Basic", "Action", "x", ActionMovie, sizeof(ActionMovie), buffer);
+    ini.Get_String("Basic", "Intro", "x", IntroMovie, sizeof(IntroMovie));
+    ini.Get_String("Basic", "Brief", "x", BriefMovie, sizeof(BriefMovie));
+    ini.Get_String("Basic", "Win", "x", WinMovie, sizeof(WinMovie));
+    ini.Get_String("Basic", "Win2", "x", WinMovie2, sizeof(WinMovie2));
+    ini.Get_String("Basic", "Win3", "x", WinMovie3, sizeof(WinMovie3));
+    ini.Get_String("Basic", "Win4", "x", WinMovie4, sizeof(WinMovie4));
+    ini.Get_String("Basic", "Lose", "x", LoseMovie, sizeof(LoseMovie));
+    ini.Get_String("Basic", "Action", "x", ActionMovie, sizeof(ActionMovie));
 
     /*
     **	For single-player scenarios, 'BuildLevel' is the scenario number.
@@ -773,7 +704,7 @@ bool Read_Scenario_Ini_File(char* scenario_file_name, char* bin_file_name, const
         *none.
         ** ST - 4/22/2020 5:14PM
         */
-        BuildLevel = WWGetPrivateProfileInt("Basic", "BuildLevel", 98, buffer);
+        BuildLevel = ini.Get_Int("Basic", "BuildLevel", 98);
     }
 
     /*
@@ -787,50 +718,46 @@ bool Read_Scenario_Ini_File(char* scenario_file_name, char* bin_file_name, const
     /*
     **	Fetch the transition theme for this scenario.
     */
-    TransitTheme = THEME_NONE;
-    WWGetPrivateProfileString("Basic", "Theme", "No Theme", buf, sizeof(buf), buffer);
-    TransitTheme = Theme.From_Name(buf);
+    TransitTheme = ini.Get_ThemeType("Basic", "Theme", THEME_NONE);
 
     /*
     **	Read in the team-type data. The team types must be created before any
     **	triggers can be created.
     */
-    TeamTypeClass::Read_INI(buffer);
+    TeamTypeClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in the specific information for each of the house types.  This creates
     **	the houses of different types.
     */
-    HouseClass::Read_INI(buffer);
+    HouseClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in the trigger data. The triggers must be created before any other
     **	objects can be initialized.
     */
-    TriggerClass::Read_INI(buffer);
+    TriggerClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in the map control values. This includes dimensions
     **	as well as theater information.
     */
-    Map.Read_INI(buffer);
+    Map.Read_INI(ini);
     Call_Back();
 
     /*
     **	Assign PlayerPtr by reading the player's house from the INI;
     **	Must be done before any TechnoClass objects are created.
     */
-    //	if (GameToPlay == GAME_NORMAL && (ScenPlayer == SCEN_PLAYER_GDI || ScenPlayer == SCEN_PLAYER_NOD)) {
     if (GameToPlay == GAME_NORMAL) {
-        WWGetPrivateProfileString("Basic", "Player", "GoodGuy", buf, 127, buffer);
-        CarryOverPercent = WWGetPrivateProfileInt("Basic", "CarryOverMoney", 100, buffer);
+        CarryOverPercent = ini.Get_Int("Basic", "CarryOverMoney", 100);
         CarryOverPercent = Cardinal_To_Fixed(100, CarryOverPercent);
-        CarryOverCap = WWGetPrivateProfileInt("Basic", "CarryOverCap", -1, buffer);
+        CarryOverCap = ini.Get_Int("Basic", "CarryOverCap", -1);
 
-        PlayerPtr = HouseClass::As_Pointer(HouseTypeClass::From_Name(buf));
+        PlayerPtr = HouseClass::As_Pointer(ini.Get_HousesType("Basic", "Player", HOUSE_GOOD));
         PlayerPtr->IsHuman = true;
         int carryover;
         if (CarryOverCap != -1) {
@@ -851,18 +778,6 @@ bool Read_Scenario_Ini_File(char* scenario_file_name, char* bin_file_name, const
             PlayerPtr->Assign_Handicap(DIFF_HARD);
         }
     } else {
-
-#ifdef OBSOLETE
-        if (GameToPlay == GAME_NORMAL && ScenPlayer == SCEN_PLAYER_JP) {
-            PlayerPtr = HouseClass::As_Pointer(HOUSE_MULTI4);
-            PlayerPtr->IsHuman = true;
-            PlayerPtr->Credits += CarryOverMoney;
-            PlayerPtr->InitialCredits += CarryOverMoney;
-            PlayerPtr->ActLike = Whom;
-        } else {
-            Assign_Houses();
-        }
-#endif
 #ifdef REMASTER_BUILD
         // Call new Assign_Houses function. ST - 6/25/2019 11:07AM
         // Assign_Houses();
@@ -878,7 +793,7 @@ bool Read_Scenario_Ini_File(char* scenario_file_name, char* bin_file_name, const
     */
     if (fresh) {
         if (!Map.Read_Binary_File(bin_file_name, &ScenarioCRC)) {
-            TemplateClass::Read_INI(buffer);
+            TemplateClass::Read_INI(ini);
         }
     }
     Call_Back();
@@ -886,101 +801,62 @@ bool Read_Scenario_Ini_File(char* scenario_file_name, char* bin_file_name, const
     /*
     **	Read in and place the 3D terrain objects.
     */
-    TerrainClass::Read_INI(buffer);
+    TerrainClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in and place the units (all sides).
     */
-    UnitClass::Read_INI(buffer);
+    UnitClass::Read_INI(ini);
     Call_Back();
 
-    AircraftClass::Read_INI(buffer);
+    AircraftClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in and place the infantry units (all sides).
     */
-    InfantryClass::Read_INI(buffer);
+    InfantryClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in and place all the buildings on the map.
     */
-    BuildingClass::Read_INI(buffer);
+    BuildingClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in the AI's base information.
     */
-    Base.Read_INI(buffer);
+    Base.Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in any normal overlay objects.
     */
-    OverlayClass::Read_INI(buffer);
+    OverlayClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in any smudge overlays.
     */
-    SmudgeClass::Read_INI(buffer);
+    SmudgeClass::Read_INI(ini);
     Call_Back();
 
     /*
     **	Read in any briefing text.
     */
-    char* stage = &BriefingText[0];
-    *stage = '\0';
-    int index = 1;
-
-    /*
-    **	Build the full text of the mission objective.
-    */
-    for (;;) {
-        int len = (sizeof(BriefingText) - strlen(BriefingText)) - 1;
-        if (len <= 0) {
-            break;
-        }
-
-        char buff[16];
-        sprintf(buff, "%d", index++);
-        *stage = '\0';
-        WWGetPrivateProfileString("Briefing", buff, "", stage, len, buffer);
-        if (strlen(stage) == 0)
-            break;
-        strcat(stage, " ");
-        stage += strlen(stage);
-    }
+    ini.Get_TextBlock("Briefing", BriefingText, sizeof(BriefingText));
 
     /*
     **	If the briefing text could not be found in the INI file, then search
     **	the mission.ini file.
     */
     if (BriefingText[0] == '\0') {
-        memset(_ShapeBuffer, '\0', _ShapeBufferSize);
-        CCFileClass("MISSION.INI").Read(_ShapeBuffer, _ShapeBufferSize);
-
-        char* buffer = (char*)Add_Long_To_Pointer(_ShapeBuffer, strlen(_ShapeBuffer));
-        char* work = &BriefingText[0];
-        int index = 1;
-
-        /*
-        **	Build the full text of the mission objective.
-        */
-        for (;;) {
-            char buff[16];
-
-            sprintf(buff, "%d", index++);
-            *work = '\0';
-            WWGetPrivateProfileString(
-                root, buff, "", work, (sizeof(BriefingText) - strlen(BriefingText)) - 1, _ShapeBuffer);
-            if (strlen(work) == 0)
-                break;
-            strcat(work, " ");
-            work += strlen(work);
-        }
+        INIClass mini;
+        CCFileClass missionIniFile("MISSION.INI");
+        mini.Load(missionIniFile);
+        mini.Get_TextBlock(root, BriefingText, sizeof(BriefingText));
     }
 
     /*
@@ -1092,9 +968,7 @@ bool Read_Scenario_Ini_File(char* scenario_file_name, char* bin_file_name, const
  *=============================================================================================*/
 bool Read_Movies_From_Scenario_Ini(char* root, bool fresh)
 {
-    char* buffer;                      // Scenario.ini staging buffer pointer.
     char fname[_MAX_FNAME + _MAX_EXT]; // full INI filename
-//	char buf[128];				// Working string staging buffer.
 #ifndef USE_RA_AI
     int rndmax;
     int rndmin;
@@ -1103,15 +977,6 @@ bool Read_Movies_From_Scenario_Ini(char* root, bool fresh)
     unsigned char val;
 
     ScenarioInit++;
-
-    /*
-    **	Fetch working pointer to the INI staging buffer. Make sure that the buffer
-    **	is cleared out before proceeding.  (Don't use the HidPage for this, since
-    **	the HidPage may be needed for various uncompressions during the INI
-    **	parsing.)
-    */
-    buffer = (char*)_ShapeBuffer;
-    memset(buffer, '\0', _ShapeBufferSize);
 
     if (fresh) {
         Clear_Scenario();
@@ -1159,48 +1024,39 @@ bool Read_Movies_From_Scenario_Ini(char* root, bool fresh)
 
     sprintf(fname, "%s.INI", root);
     CCFileClass file(fname);
-    if (!file.Is_Available()) {
-        GlyphX_Debug_Print("Failed to find scenario file");
+    CCINIClass ini;
+    int result = ini.Load(file, false);
+    if (result != 0) {
+        GlyphX_Debug_Print("Failed to load scenario file");
         GlyphX_Debug_Print(fname);
         return (false);
     } else {
 
         GlyphX_Debug_Print("Opened scenario file");
         GlyphX_Debug_Print(fname);
-
-        file.Read(buffer, _ShapeBufferSize - 1);
     }
 
     /*
     ** Init the Scenario CRC value
     */
-    ScenarioCRC = 0;
-    len = strlen(buffer);
-    for (int i = 0; i < len; i++) {
-        val = (unsigned char)buffer[i];
-#ifndef DEMO
-        Add_CRC(&ScenarioCRC, (unsigned long)val);
-#endif
-    }
+    ScenarioCRC = ini.Get_Unique_ID();
 
     /*
     **	Fetch the appropriate movie names from the INI file.
     */
-    WWGetPrivateProfileString("Basic", "Intro", "x", IntroMovie, sizeof(IntroMovie), buffer);
-    WWGetPrivateProfileString("Basic", "Brief", "x", BriefMovie, sizeof(BriefMovie), buffer);
-    WWGetPrivateProfileString("Basic", "Win", "x", WinMovie, sizeof(WinMovie), buffer);
-    WWGetPrivateProfileString("Basic", "Win2", "x", WinMovie2, sizeof(WinMovie2), buffer);
-    WWGetPrivateProfileString("Basic", "Win3", "x", WinMovie3, sizeof(WinMovie3), buffer);
-    WWGetPrivateProfileString("Basic", "Win4", "x", WinMovie4, sizeof(WinMovie4), buffer);
-    WWGetPrivateProfileString("Basic", "Lose", "x", LoseMovie, sizeof(LoseMovie), buffer);
-    WWGetPrivateProfileString("Basic", "Action", "x", ActionMovie, sizeof(ActionMovie), buffer);
+    ini.Get_String("Basic", "Intro", "x", IntroMovie, sizeof(IntroMovie));
+    ini.Get_String("Basic", "Brief", "x", BriefMovie, sizeof(BriefMovie));
+    ini.Get_String("Basic", "Win", "x", WinMovie, sizeof(WinMovie));
+    ini.Get_String("Basic", "Win2", "x", WinMovie2, sizeof(WinMovie2));
+    ini.Get_String("Basic", "Win3", "x", WinMovie3, sizeof(WinMovie3));
+    ini.Get_String("Basic", "Win4", "x", WinMovie4, sizeof(WinMovie4));
+    ini.Get_String("Basic", "Lose", "x", LoseMovie, sizeof(LoseMovie));
+    ini.Get_String("Basic", "Action", "x", ActionMovie, sizeof(ActionMovie));
 
     /*
     **	Fetch the transition theme for this scenario.
     */
-    TransitTheme = THEME_NONE;
-    WWGetPrivateProfileString("Basic", "Theme", "No Theme", MovieThemeName, sizeof(MovieThemeName), buffer);
-    // TransitTheme = Theme.From_Name(buf);
+    TransitTheme = ini.Get_ThemeType("Basic", "Theme", THEME_NONE);
 
     /*
     **	Return with flag saying that the scenario file was read.
@@ -1230,105 +1086,61 @@ void Write_Scenario_Ini(char* root)
 #ifndef CHEAT_KEYS
     root = root;
 #else
-    char* buffer;                      // Scenario.ini staging buffer pointer.
     char fname[_MAX_FNAME + _MAX_EXT]; // full scenario name
     HousesType house;
-    CCFileClass file;
+    CCINIClass ini;
 
     /*
-    **	Get a working pointer to the INI staging buffer. Make sure that the buffer
-    **	starts cleared out of any data.
-    */
-    buffer = (char*)_ShapeBuffer;
-    memset(buffer, '\0', _ShapeBufferSize);
-
-    switch (ScenPlayer) {
-    case SCEN_PLAYER_GDI:
-        house = HOUSE_GOOD;
-        break;
-
-    case SCEN_PLAYER_NOD:
-        house = HOUSE_BAD;
-        break;
-
-    case SCEN_PLAYER_JP:
-        house = HOUSE_JP;
-        break;
-
-    default:
-        house = HOUSE_MULTI1;
-        break;
-    }
-
-    /*
-    **	Create scenario filename and clear the buffer to empty.
+    **	Preload the old scenario if it is present because there may
+    **	be some fields in the INI that are processed but not written
+    **	out. Preloading the scenario will preserve these manually
+    **	maintained entries.
     */
     sprintf(fname, "%s.INI", root);
-    file.Set_Name(fname);
-    if (file.Is_Available()) {
-        //		file.Open(READ);
-        file.Read(buffer, _ShapeBufferSize - 1);
-        //		file.Close();
-    } else {
-        sprintf(
-            buffer, "; Scenario %d control for house %s.\r\n", Scenario, HouseTypeClass::As_Reference(house).IniName);
+    if (CCFileClass(fname).Is_Available()) {
+        CCFileClass file(fname);
+        ini.Load(file, true);
     }
 
-    WWWritePrivateProfileString("Basic", "Intro", IntroMovie, buffer);
-    WWWritePrivateProfileString("Basic", "Brief", BriefMovie, buffer);
-    WWWritePrivateProfileString("Basic", "Win", WinMovie, buffer);
-    WWWritePrivateProfileString("Basic", "Win2", WinMovie, buffer);
-    WWWritePrivateProfileString("Basic", "Win3", WinMovie, buffer);
-    WWWritePrivateProfileString("Basic", "Win4", WinMovie, buffer);
-    WWWritePrivateProfileString("Basic", "Lose", LoseMovie, buffer);
-    WWWritePrivateProfileString("Basic", "Action", ActionMovie, buffer);
-    WWWritePrivateProfileString("Basic", "Player", PlayerPtr->Class->IniName, buffer);
-    WWWritePrivateProfileString("Basic", "Theme", Theme.Base_Name(TransitTheme), buffer);
-    WWWritePrivateProfileInt("Basic", "BuildLevel", BuildLevel, buffer);
-    WWWritePrivateProfileInt("Basic", "CarryOverMoney", Fixed_To_Cardinal(100, CarryOverPercent), buffer);
-    WWWritePrivateProfileInt("Basic", "CarryOverCap", CarryOverCap, buffer);
+    ini.Clear("Basic");
 
-    TeamTypeClass::Write_INI(buffer, true);
-    TriggerClass::Write_INI(buffer, true);
-    Map.Write_INI(buffer);
+    ini.Put_String("Basic", "Intro", IntroMovie);
+    ini.Put_String("Basic", "Brief", BriefMovie);
+    ini.Put_String("Basic", "Win", WinMovie);
+    ini.Put_String("Basic", "Win2", WinMovie);
+    ini.Put_String("Basic", "Win3", WinMovie);
+    ini.Put_String("Basic", "Win4", WinMovie);
+    ini.Put_String("Basic", "Lose", LoseMovie);
+    ini.Put_String("Basic", "Action", ActionMovie);
+    ini.Put_String("Basic", "Player", PlayerPtr->Class->IniName);
+    ini.Put_String("Basic", "Theme", Theme.Base_Name(TransitTheme));
+    ini.Put_Int("Basic", "BuildLevel", BuildLevel);
+    ini.Put_Int("Basic", "CarryOverMoney", Fixed_To_Cardinal(100, CarryOverPercent));
+    ini.Put_Int("Basic", "CarryOverCap", CarryOverCap);
+
+    TeamTypeClass::Write_INI(ini, true);
+    TriggerClass::Write_INI(ini, true);
+    Map.Write_INI(ini);
     Map.Write_Binary(root);
-    HouseClass::Write_INI(buffer);
-    UnitClass::Write_INI(buffer);
-    InfantryClass::Write_INI(buffer);
-    BuildingClass::Write_INI(buffer);
-    TerrainClass::Write_INI(buffer);
-    OverlayClass::Write_INI(buffer);
-    SmudgeClass::Write_INI(buffer);
+    HouseClass::Write_INI(ini);
+    UnitClass::Write_INI(ini);
+    InfantryClass::Write_INI(ini);
+    BuildingClass::Write_INI(ini);
+    TerrainClass::Write_INI(ini);
+    OverlayClass::Write_INI(ini);
+    SmudgeClass::Write_INI(ini);
 
-    Base.Write_INI(buffer);
+    Base.Write_INI(ini);
+
+    if (strlen(BriefingText)) {
+        ini.Put_TextBlock("Briefing", BriefingText);
+    }
 
     /*
     **	Write the scenario data out to a file.
     */
-    //	file.Open(WRITE);
-    file.Write(buffer, strlen(buffer));
-    //	file.Close();
-
-    /*
-    **	Now update the Master INI file, containing the master list of triggers & teams
-    */
-    memset(buffer, '\0', _ShapeBufferSize);
-
-    file.Set_Name("MASTER.INI");
-    if (file.Is_Available()) {
-        //		file.Open(READ);
-        file.Read(buffer, _ShapeBufferSize - 1);
-        //		file.Close();
-    } else {
-        sprintf(buffer, "; Master Trigger & Team List.\r\n");
-    }
-
-    TeamTypeClass::Write_INI(buffer, false);
-    TriggerClass::Write_INI(buffer, false);
-
-    //	file.Open(WRITE);
-    file.Write(buffer, strlen(buffer));
-//	file.Close();
+    RawFileClass rawfile(fname);
+    ini.Save(rawfile, true);
 #endif
 }
 
@@ -1415,6 +1227,8 @@ static void Assign_Houses(void)
         if (MPlayerID[i] == MPlayerLocalID) {
             PlayerPtr = housep;
         }
+
+        housep->Assign_Handicap(ScenDifficulty);
     }
 
     /*
@@ -1448,6 +1262,13 @@ static void Assign_Houses(void)
             */
             housep->IsHuman = false;
             housep->Init_Data(color, pref_house, MPlayerCredits);
+
+            DiffType difficulty = ScenCDifficulty;
+
+            if (Players.Count() > 1 && Rule.IsCompEasyBonus && difficulty > DIFF_EASY) {
+                difficulty = (DiffType)(difficulty - 1);
+            }
+            housep->Assign_Handicap(difficulty);
         }
     }
 

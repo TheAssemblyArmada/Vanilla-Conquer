@@ -42,6 +42,11 @@ GameType Select_Serial_Dialog(void)
     return GAME_NORMAL;
 }
 
+int Reconnect_Modem(void)
+{
+    return 0;
+}
+
 #ifdef FIXIT_RANDOM_GAME
 #include <time.h>
 #endif

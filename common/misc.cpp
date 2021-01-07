@@ -3,8 +3,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-#ifdef NOASM
-
 int calcx(signed short param1, short distance)
 {
     int tmp = (int)param1 * distance;
@@ -105,7 +103,7 @@ int _Bound(int original, int min, int max)
     if (original < min) {
         return min;
     }
-    
+
     if (original > max) {
         return max;
     }
@@ -165,5 +163,3 @@ void strtrim(char* str)
         *endp = '\0';
     }
 }
-
-#endif

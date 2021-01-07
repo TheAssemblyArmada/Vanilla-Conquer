@@ -56,6 +56,7 @@ public:
         SpeedAdd = MPH_IMMOBILE;
         SpeedAccum = 0;
     };
+    FlyClass(NoInitClass const&){};
 
     /*---------------------------------------------------------------------
     **	Member function prototypes.

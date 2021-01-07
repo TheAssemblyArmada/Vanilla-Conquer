@@ -37,6 +37,7 @@
 
 #include "list.h"
 #include "edit.h"
+#include "common/keyframe.h"
 
 class DropListClass : public EditClass
 {
@@ -75,9 +76,7 @@ public:
         return (List.Get_Item(index));
     };
 
-#ifdef WOLAPI_INTEGRATION
     virtual void Flag_To_Redraw(void);
-#endif
 
     void Expand(void);
     void Collapse(void);

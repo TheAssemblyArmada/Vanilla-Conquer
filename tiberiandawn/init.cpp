@@ -51,9 +51,7 @@
 *****************************************/
 static void Play_Intro(bool for_real = false);
 
-extern "C" {
-extern long RandNumb;
-}
+extern unsigned long RandNumb;
 
 extern int SimRandIndex;
 
@@ -191,21 +189,21 @@ bool Init_Game(int, char*[])
 
 #endif
     CCDebugString("C&C95 - About to load fonts\n");
-    Green12FontPtr = Load_Alloc_Data(&CCFileClass("12GREEN.FNT"));
-    Green12GradFontPtr = Load_Alloc_Data(&CCFileClass("12GRNGRD.FNT"));
-    MapFontPtr = Load_Alloc_Data(&CCFileClass("8FAT.FNT"));
+    Green12FontPtr = Load_Alloc_Data(CCFileClass("12GREEN.FNT"));
+    Green12GradFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
+    MapFontPtr = Load_Alloc_Data(CCFileClass("8FAT.FNT"));
     Font8Ptr = MFCD::Retrieve(FONT8);
     FontPtr = (char*)Font8Ptr;
     Set_Font(FontPtr);
     Font3Ptr = MFCD::Retrieve(FONT3);
     //	Font6Ptr = MFCD::Retrieve(FONT6);
-    Font6Ptr = Load_Alloc_Data(&CCFileClass("6POINT.FNT"));
+    Font6Ptr = Load_Alloc_Data(CCFileClass("6POINT.FNT"));
     // ScoreFontPtr = MFCD::Retrieve("12GRNGRD.FNT");	//GRAD12FN");	//("SCOREFNT.FNT");
-    ScoreFontPtr = Load_Alloc_Data(&CCFileClass("12GRNGRD.FNT"));
+    ScoreFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
     FontLEDPtr = MFCD::Retrieve("LED.FNT");
     VCRFontPtr = MFCD::Retrieve("VCR.FNT");
     //	GradFont6Ptr = MFCD::Retrieve("GRAD6FNT.FNT");
-    GradFont6Ptr = Load_Alloc_Data(&CCFileClass("GRAD6FNT.FNT"));
+    GradFont6Ptr = Load_Alloc_Data(CCFileClass("GRAD6FNT.FNT"));
     BlackPalette = new (MEM_CLEAR | MEM_REAL) unsigned char[768];
     GamePalette = new (MEM_CLEAR | MEM_REAL) unsigned char[768];
     OriginalPalette = new (MEM_CLEAR | MEM_REAL) unsigned char[768];
@@ -259,7 +257,7 @@ bool Init_Game(int, char*[])
     **	found on the hard drive, then look for it in the mixfile.
     */
     if (RawFileClass(Language_Name("CONQUER")).Is_Available()) {
-        SystemStrings = (char const*)Load_Alloc_Data(&RawFileClass(Language_Name("CONQUER")));
+        SystemStrings = (char const*)Load_Alloc_Data(CCFileClass(Language_Name("CONQUER")));
     } else {
         SystemStrings = (char const*)MFCD::Retrieve(Language_Name("CONQUER"));
     }
@@ -300,10 +298,17 @@ bool Init_Game(int, char*[])
 
 #ifndef REMASTER_BUILD
     CCDebugString("C&C95 - About to search for CD drives\n");
+
     /*
     **	Always try to look at the CD-ROM for data files.
     */
     if (!CCFileClass::Is_There_Search_Drives()) {
+        /*
+        **	This call is needed because of a side effect of this function. It will examine the
+        **	CD-ROMs attached to this computer and set the appropriate status values. Without this
+        **	call, the "?:\\" could not be filled in correctly.
+        */
+        Force_CD_Available(-1);
 
         /*
         ** If there are no search drives specified then we must be playing
@@ -981,6 +986,33 @@ bool Select_Game(bool fade)
             case SEL_NEW_SCENARIO:
                 CarryOverMoney = 0;
                 if (Expansion_Dialog()) {
+                    switch (Fetch_Difficulty()) {
+                    case 0:
+                        ScenCDifficulty = DIFF_HARD;
+                        ScenDifficulty = DIFF_EASY;
+                        break;
+
+                    case 1:
+                        ScenCDifficulty = DIFF_HARD;
+                        ScenDifficulty = DIFF_NORMAL;
+                        break;
+
+                    case 2:
+                        ScenCDifficulty = DIFF_NORMAL;
+                        ScenDifficulty = DIFF_NORMAL;
+                        break;
+
+                    case 3:
+                        ScenCDifficulty = DIFF_EASY;
+                        ScenDifficulty = DIFF_NORMAL;
+                        break;
+
+                    case 4:
+                        ScenCDifficulty = DIFF_EASY;
+                        ScenDifficulty = DIFF_HARD;
+                        break;
+                    }
+
                     Theme.Fade_Out();
                     //						Theme.Queue_Song(THEME_AOI);
                     GameToPlay = GAME_NORMAL;
@@ -1033,6 +1065,38 @@ bool Select_Game(bool fade)
             **	SEL_START_NEW_GAME: Play the game
             */
             case SEL_START_NEW_GAME:
+                if (Special.IsFromInstall) {
+                    ScenCDifficulty = DIFF_NORMAL;
+                    ScenDifficulty = DIFF_NORMAL;
+                } else {
+                    switch (Fetch_Difficulty()) {
+                    case 0:
+                        ScenCDifficulty = DIFF_HARD;
+                        ScenDifficulty = DIFF_EASY;
+                        break;
+
+                    case 1:
+                        ScenCDifficulty = DIFF_HARD;
+                        ScenDifficulty = DIFF_NORMAL;
+                        break;
+
+                    case 2:
+                        ScenCDifficulty = DIFF_NORMAL;
+                        ScenDifficulty = DIFF_NORMAL;
+                        break;
+
+                    case 3:
+                        ScenCDifficulty = DIFF_EASY;
+                        ScenDifficulty = DIFF_NORMAL;
+                        break;
+
+                    case 4:
+                        ScenCDifficulty = DIFF_EASY;
+                        ScenDifficulty = DIFF_HARD;
+                        break;
+                    }
+                }
+
                 CarryOverMoney = 0;
 
 #ifdef DEMO

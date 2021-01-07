@@ -181,6 +181,7 @@ int ScreenHeight = GBUFF_INIT_HEIGHT;
 int OutputWidth = GBUFF_INIT_WIDTH;
 int OutputHeight = GBUFF_INIT_HEIGHT;
 bool Show640x480BlackBars = false;
+>>>>>>> AssemblyArmada/vanilla
 GraphicBufferClass ModeXBuff;
 bool InMovie = false; // Are we currently playing a VQ movie?
 #ifdef _WIN32
@@ -383,6 +384,7 @@ DMonoType MonoPage = DMONO_STRESS; // The current page.
 */
 MFCD* TheaterData = 0;
 MFCD* MoviesMix = 0;
+MFCD* Movies2Mix = 0;
 MFCD* GeneralMix = 0;
 MFCD* ScoreMix = 0;
 MFCD* MainMix = 0;

@@ -220,6 +220,14 @@ public:
     */
     TechnoClass(void);
     TechnoClass(HousesType house);
+    TechnoClass(NoInitClass const& x)
+        : RadioClass(x)
+        , FlasherClass(x)
+        , StageClass(x)
+        , CargoClass(x)
+        , DoorClass(x)
+        , CrewClass(x)
+        , House(this->House){};
     virtual ~TechnoClass(void){};
 
     /*

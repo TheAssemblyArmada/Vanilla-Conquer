@@ -88,11 +88,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
-void* AircraftClass::VTable;
+#include "ccini.h"
 
 /***********************************************************************************************
  * AircraftClass::Validate -- validates aircraft pointer													  *
@@ -503,22 +499,18 @@ void AircraftClass::Draw_It(int x, int y, WindowNumberType window)
  * HISTORY:                                                                                    *
  *   07/26/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void AircraftClass::Read_INI(char* buffer)
+void AircraftClass::Read_INI(CCINIClass& ini)
 {
     AircraftClass* air;   // Working unit pointer.
-    char* tbuffer;        // Accumulation buffer of unit IDs.
     HousesType inhouse;   // Unit house.
     AircraftType classid; // Unit class.
-    int len;              // Length of data in buffer.
     char buf[128];
 
-    len = strlen(buffer) + 2;
-    tbuffer = buffer + len;
+    int counter = ini.Entry_Count(INI_Name());
+    for (int index = 0; index < counter; index++) {
+        char const* entry = ini.Get_Entry(INI_Name(), index);
 
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
-    while (*tbuffer != '\0') {
-
-        WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
+        ini.Get_String(INI_Name(), entry, NULL, buf, sizeof(buf) - 1);
         inhouse = HouseTypeClass::From_Name(strtok(buf, ","));
         if (inhouse != HOUSE_NONE) {
             classid = AircraftTypeClass::From_Name(strtok(NULL, ","));
@@ -554,7 +546,6 @@ void AircraftClass::Read_INI(char* buffer)
                 }
             }
         }
-        tbuffer += strlen(tbuffer) + 1;
     }
 }
 
@@ -573,31 +564,23 @@ void AircraftClass::Read_INI(char* buffer)
  * HISTORY:                                                                                    *
  *   07/26/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void AircraftClass::Write_INI(char* buffer)
+void AircraftClass::Write_INI(CCINIClass& ini)
 {
-    int index;
-    char uname[10];
-    char buf[128];
-    char* tbuffer; // Accumulation buffer of unit IDs.
-
     /*
     **	First, clear out all existing unit data from the ini file.
     */
-    tbuffer = buffer + strlen(buffer) + 2;
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - strlen(buffer), buffer);
-    while (*tbuffer != '\0') {
-        WWWritePrivateProfileString(INI_Name(), tbuffer, NULL, buffer);
-        tbuffer += strlen(tbuffer) + 1;
-    }
+    ini.Clear(INI_Name());
 
     /*
     **	Write the unit data out.
     */
-    for (index = 0; index < Aircraft.Count(); index++) {
+    for (int index = 0; index < Aircraft.Count(); index++) {
         AircraftClass* unit;
 
         unit = Aircraft.Ptr(index);
         if (!unit->IsInLimbo) {
+            char uname[10];
+            char buf[128];
 
             sprintf(uname, "%03d", index);
             sprintf(buf,
@@ -608,7 +591,7 @@ void AircraftClass::Write_INI(char* buffer)
                     Coord_Cell(unit->Coord),
                     unit->PrimaryFacing.Current(),
                     MissionClass::Mission_Name(unit->Mission));
-            WWWritePrivateProfileString(INI_Name(), uname, buf, buffer);
+            ini.Put_String(INI_Name(), uname, buf);
         }
     }
 }
@@ -1039,13 +1022,7 @@ short const* AircraftClass::Overlap_List(void) const
  *=============================================================================================*/
 void AircraftClass::Init(void)
 {
-    AircraftClass* ptr;
-
     Aircraft.Free_All();
-
-    ptr = new AircraftClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 /***********************************************************************************************
@@ -1657,7 +1634,8 @@ ResultType AircraftClass::Take_Damage(int& damage, int distance, WarheadType war
         Kill_Cargo(source);
         Death_Announcement();
         COORDINATE coord = Target_Coord();
-        if (!(coord & 0xC000C000L)) {
+
+        if (!(coord & HIGH_COORD_MASK)) {
             new AnimClass(ANIM_FBALL1, coord);
         }
         Delete_This();

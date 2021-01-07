@@ -34,7 +34,7 @@ int test_clear()
     GraphicBufferClass gb(10, 10);
 
     if (gb.Lock()) {
-        Buffer_Clear(&gb, 255);
+        gb.Clear(255);
         unsigned char* buff = static_cast<unsigned char*>(gb.Get_Buffer());
 
         for (int i = 0; i < 100; ++i) {
@@ -61,7 +61,7 @@ int test_fill()
     gb.Clear();
 
     if (gb.Lock()) {
-        Buffer_Fill_Rect(&gb, 3, 3, 7, 7, 15);
+        gb.Fill_Rect(3, 3, 7, 7, 15);
 
         if (memcmp(gb.Get_Buffer(), test_data, test_data_length) != 0) {
             fprintf(stderr, "Buffer_Fill_Rect(&gb, 3, 3, 7, 7, 15) did not generate the expected result.\n");
@@ -85,7 +85,7 @@ int test_frombuff()
     gb.Clear();
 
     if (gb.Lock()) {
-        Buffer_To_Page(1, 1, 8, 8, (void*)image_data, (void*)&gb);
+        Buffer_To_Page(1, 1, 8, 8, (void*)image_data, gb);
 
         if (memcmp(gb.Get_Buffer(), test_data, test_data_length) != 0) {
             fprintf(

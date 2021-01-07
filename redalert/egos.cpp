@@ -41,6 +41,7 @@ class EgoClass;
 
 #include "function.h"
 #include "common/mssleep.h"
+#include "common/framelimit.h"
 
 /*
 ** List of Ego Class instances
@@ -263,7 +264,6 @@ void EgoClass::Wipe(GraphicBufferClass* background)
         }
     }
 
-
 	if (YPos < LogicPage->Get_Height()) {
 		if (YPos  > 0 && YPos < (LogicPage->Get_Height() - HIRES_ADJ_H  - 7 * RESFACTOR - 1 ) )
 		background->Blit(*LogicPage, (x - 1), YPos, (x - 1), 
@@ -428,6 +428,13 @@ void Show_Who_Was_Responsible(void)
     ** Deault speed of credits scolling. This is the frame delay between pixel scrolls.
     */
     static int speed = 3;
+
+    /*
+    ** Demo did not have this feature and is missing background images.
+    */
+    if (Is_Demo()) {
+        return;
+    }
 
     /*
     ** Read in the credits file to be displayed
@@ -804,6 +811,7 @@ void Show_Who_Was_Responsible(void)
         ** Stop calling Theme.AI after a while so a different song doesnt start playing
         */
         Call_Back();
+        Frame_Limiter();
         //		if (frame <1000 ){
         //			Theme.AI();
         //		}else{
@@ -887,6 +895,7 @@ void Show_Who_Was_Responsible(void)
             Slide_Show(slide_number, picture_frame);
 
             Call_Back();
+            Frame_Limiter();
             //			Sound_Callback();		//Theme.AI();
 
             /*

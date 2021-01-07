@@ -117,6 +117,9 @@ bool Remote_Connect(void)
 {
     return false;
 }
+void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned long timeval)
+{
+}
 
 #ifdef _WIN32
 #ifdef WINSOCK_IPX
@@ -149,11 +152,6 @@ bool bSpecialAftermathScenario(const char* szScenarioDescription);
 
 #ifdef FIXIT_VERSION_3
 bool Force_Scenario_Available(const char* szName);
-#endif
-#ifdef WOLAPI_INTEGRATION
-#include "WolStrng.h"
-#include "WolapiOb.h"
-extern WolapiObject* pWolapi;
 #endif
 
 //---------------------------------------------------------------------------

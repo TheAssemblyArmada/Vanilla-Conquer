@@ -162,10 +162,17 @@ public:
     /*---------------------------------------------------------------------
     **	Constructors, Destructors, and overloaded operators.
     */
-    static void* BuildingClass::operator new(size_t size);
-    static void BuildingClass::operator delete(void* ptr);
+    static void* operator new(size_t size);
+    static void* operator new(size_t, void* ptr)
+    {
+        return (ptr);
+    };
+    static void operator delete(void* ptr);
     BuildingClass(void)
         : Class(0){};
+    BuildingClass(NoInitClass const& x)
+        : TechnoClass(x)
+        , Class(this->Class){};
     BuildingClass(StructType type, HousesType house);
     virtual ~BuildingClass(void);
     virtual RTTIType What_Am_I(void) const
@@ -288,14 +295,12 @@ public:
     /*
     **	File I/O.
     */
-    static void Read_INI(char* buffer);
-    static void Write_INI(char* buffer);
+    static void Read_INI(CCINIClass& ini);
+    static void Write_INI(CCINIClass& ini);
     static char* INI_Name(void)
     {
         return "STRUCTURES";
     };
-    bool Load(FileClass& file);
-    bool Save(FileClass& file);
     virtual void Code_Pointers(void);
     virtual void Decode_Pointers(void);
     void Update_Specials(void);
@@ -316,11 +321,6 @@ private:
     unsigned char SaveLoadPadding[32];
 
     static COORDINATE const CenterOffset[BSIZE_COUNT];
-
-    /*
-    ** This contains the value of the Virtual Function Table Pointer
-    */
-    static void* VTable;
 };
 
 #endif

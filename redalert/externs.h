@@ -64,9 +64,7 @@
 #define HIRES_ADJ_H ((ScreenHeight - 400) /2)
 
 extern char _staging_buffer[32000];
-extern "C" {
 void _PRO(void);
-}
 
 /*
 **	Convenient alias for MixFileClass<CDFileClass> object. This allows
@@ -198,6 +196,7 @@ extern ScoreClass Score;
 extern MonoClass MonoArray[DMONO_COUNT];
 extern MFCD* TheaterData;
 extern MFCD* MoviesMix;
+extern MFCD* Movies2Mix;
 extern MFCD* GeneralMix;
 extern MFCD* ScoreMix;
 extern MFCD* MainMix;
@@ -422,9 +421,7 @@ extern class DynamicVectorClass<ActionChoiceClass> test3;
 
 extern bool LogDump_Print;
 
-extern "C" {
 extern unsigned int IsTheaterShape;
-}
 
 extern void Reset_Theater_Shapes(void);
 extern TheaterType LastTheater;
@@ -456,7 +453,6 @@ extern unsigned long PlanetWestwoodGameID;      // Game ID
 extern HWND WChatHWND; // Handle to Wchat window.
 #endif
 extern bool GameStatisticsPacketSent;
-extern bool ConnectionLost;
 extern void* PacketLater;
 extern bool SpawnedFromWChat;
 extern int ShowCommand;

@@ -52,6 +52,10 @@ public:
     int RadPHeight;
 
     RadarClass(void);
+    RadarClass(NoInitClass const& x)
+        : DisplayClass(x)
+    {
+    }
 
     /*
     ** Initialization
@@ -79,7 +83,7 @@ public:
     void Radar_Pixel(CELL cell);
     void Coord_To_Radar_Pixel(COORDINATE coord, int& x, int& y);
     void Cursor_Cell(CELL cell, int value);
-    void RadarClass::Mark_Radar(int x1, int y1, int x2, int y2, int value, int barlen);
+    void Mark_Radar(int x1, int y1, int x2, int y2, int value, int barlen);
     void Radar_Cursor(int forced = false);
     void Render_Terrain(CELL cell, int x, int y, int size);
     bool Cell_On_Radar(CELL cell);

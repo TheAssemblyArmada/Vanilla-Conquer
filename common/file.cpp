@@ -1,4 +1,39 @@
 #include "file.h"
+#include <string.h>
+
+#ifndef _WIN32
+static void Resolve_File_Single(char* fname)
+{
+    Find_File_Data* ffblk;
+
+    ffblk = Find_File_Data::CreateFindData();
+
+    if (ffblk == nullptr) {
+        return;
+    }
+
+    if (ffblk->FindFirst(fname) && strlen(fname) == strlen(ffblk->GetName())) {
+        strncpy(fname, ffblk->GetName(), strlen(fname) + 1);
+    }
+
+    delete ffblk;
+}
+#endif
+
+void Resolve_File(char* fname)
+{
+#ifndef _WIN32
+    // step through each sub-directory before going for the win
+    char* next = fname;
+    while (next = strchr(next, '/')) {
+        *next = '\0';
+        Resolve_File_Single(fname);
+        *next++ = '/';
+    }
+
+    Resolve_File_Single(fname);
+#endif
+}
 
 bool Find_First(const char* fname, unsigned int mode, Find_File_Data** ffblk)
 {

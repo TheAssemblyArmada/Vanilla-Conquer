@@ -247,7 +247,9 @@ typedef enum DiffType : unsigned char
 #define VERSION_NUMBER 1
 #define RELEASE_NUMBER 01
 
-#define FAME_FILE_NAME "HALLFAME.DAT"
+#define FAME_FILE_NAME     "HALLFAME.DAT"
+#define NET_SAVE_FILE_NAME "SAVEGAME.NET"
+#define CONFIG_FILE_NAME   "CONQUER.INI"
 
 /**********************************************************************
 **	Map controls. The map is composed of square elements called 'cells'.
@@ -258,9 +260,16 @@ typedef enum DiffType : unsigned char
 //	of two. This is accomplished by setting the width by the number of
 //	bits it occupies. The number of meta-cells will be a subset of the
 //	cell width.
+#ifdef MEGAMAPS
+#define MAP_CELL_MAX_X_BITS 7
+#define MAP_CELL_MAX_Y_BITS 7
+#define HIGH_COORD_MASK     0x80008000
+#else
 #define MAP_CELL_MAX_X_BITS 6
 #define MAP_CELL_MAX_Y_BITS 6
-#define MAP_CELL_X_MASK     (~(~0 << MAP_CELL_MAX_X_BITS))
+#define HIGH_COORD_MASK     0xC000C000
+#endif
+#define MAP_CELL_X_MASK (~(~0 << MAP_CELL_MAX_X_BITS))
 //#define	MAP_CELL_Y_MASK			((~(~0 << MAP_CELL_MAX_Y_BITS)) << MAP_CELL_MAX_Y_BITS)
 
 // Size of the map in cells.
@@ -279,6 +288,12 @@ typedef enum DiffType : unsigned char
 #define MAP_REGION_WIDTH  (((MAP_CELL_W + (REGION_WIDTH - 1)) / REGION_WIDTH) + 2)
 #define MAP_REGION_HEIGHT (((MAP_CELL_H + (REGION_WIDTH - 1)) / REGION_HEIGHT) + 2)
 #define MAP_TOTAL_REGIONS (MAP_REGION_WIDTH * MAP_REGION_HEIGHT)
+
+/*
+**	To enable big maps we need to load the normal format a little differently.
+*/
+#define MAP_VERSION_NORMAL 0
+#define MAP_VERSION_MEGA   1
 
 /**********************************************************************
 **	These are the various return conditions that production may
@@ -1639,10 +1654,14 @@ typedef enum RadioMessageType : unsigned char
 **	with cell resolution. The COORD type is used for map coordinates that
 **	have a lepton resolution.
 */
-typedef unsigned long COORDINATE;
+typedef unsigned COORDINATE;
 typedef signed short CELL;
 
+#ifdef MEGAMAPS
+typedef long TARGET;
+#else
 typedef unsigned short TARGET;
+#endif
 #define TARGET_NONE ((TARGET)0)
 
 /****************************************************************************
@@ -1921,6 +1940,11 @@ inline TextPrintType operator~(TextPrintType a)
 {
     return static_cast<TextPrintType>(~static_cast<int>(a));
 }
+
+// Standard button text print flags.
+#define TPF_BUTTON  (TPF_CENTER | TPF_6PT_GRAD | TPF_NOSHADOW)
+#define TPF_EBUTTON (TPF_CENTER | TPF_EFNT | TPF_NOSHADOW)
+#define TPF_TEXT    (TPF_6PT_GRAD | TPF_NOSHADOW)
 
 /**********************************************************************
 **	These control the maximum number of objects in the game. Make sure that these

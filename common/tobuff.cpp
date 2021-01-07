@@ -13,9 +13,7 @@
 #include <algorithm>
 #include <cstring>
 
-#ifdef NOASM
-
-extern "C" void Buffer_To_Buffer(void* thisptr, int x, int y, int w, int h, void* buff, int size)
+int Buffer_To_Buffer(void* thisptr, int x, int y, int w, int h, void* buff, int size)
 {
     GraphicViewPortClass& vp = *static_cast<GraphicViewPortClass*>(thisptr);
     int xstart = x;
@@ -28,7 +26,7 @@ extern "C" void Buffer_To_Buffer(void* thisptr, int x, int y, int w, int h, void
 
     // If we aren't drawing within the viewport, return
     if (!buff || size <= 0 || xstart >= vp.Get_Width() || ystart >= vp.Get_Height() || xend < 0 || yend < 0) {
-        return;
+        return 0;
     }
 
     // Clipping
@@ -61,6 +59,6 @@ extern "C" void Buffer_To_Buffer(void* thisptr, int x, int y, int w, int h, void
             dst += w;
         }
     }
-}
 
-#endif
+    return 0;
+}

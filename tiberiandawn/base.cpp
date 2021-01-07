@@ -45,6 +45,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "ccini.h"
 
 /***********************************************************************************************
  * BaseNodeClass::operator == -- equality operator                                             *
@@ -126,7 +127,7 @@ int BaseNodeClass::operator>(BaseNodeClass const&)
  * HISTORY:                                                                                    *
  *   03/24/1995 BRR : Created.                                                                 *
  *=============================================================================================*/
-void BaseClass::Read_INI(char* buffer)
+void BaseClass::Read_INI(CCINIClass& ini)
 {
     char buf[128];
     char uname[10];
@@ -136,7 +137,7 @@ void BaseClass::Read_INI(char* buffer)
     **	First, determine the house of the human player, and set the Base's house
     **	accordingly.
     */
-    WWGetPrivateProfileString("BASIC", "Player", "GoodGuy", buf, 20, buffer);
+    ini.Get_String("BASIC", "Player", "GoodGuy", buf, 20);
     if (HouseTypeClass::From_Name(buf) == HOUSE_GOOD) {
         House = HOUSE_BAD;
     } else {
@@ -146,7 +147,7 @@ void BaseClass::Read_INI(char* buffer)
     /*
     **	Read the number of buildings that will go into the base node list
     */
-    int count = WWGetPrivateProfileInt(INI_Name(), "Count", 0, buffer);
+    int count = ini.Get_Int(INI_Name(), "Count", 0);
 
     /*
     **	Read each entry in turn, in the same order they were written out.
@@ -157,7 +158,7 @@ void BaseClass::Read_INI(char* buffer)
         ** Get an INI entry
         */
         sprintf(uname, "%03d", i);
-        WWGetPrivateProfileString(INI_Name(), uname, NULL, buf, sizeof(buf) - 1, buffer);
+        ini.Get_String(INI_Name(), uname, NULL, buf, sizeof(buf) - 1);
 
         /*
         ** Set the node's building type
@@ -168,6 +169,16 @@ void BaseClass::Read_INI(char* buffer)
         ** Read & set the node's coordinate
         */
         node.Coord = atol(strtok(NULL, ","));
+
+#ifdef MEGAMAPS
+        /*
+        ** Convert the normal cell position to a new big map position.
+        */
+        if (Map.MapBinaryVersion == MAP_VERSION_NORMAL) {
+            CELL cell = Confine_Old_Cell(XY_Cell(Coord_X(node.Coord), Coord_Y(node.Coord)));
+            node.Coord = Cell_Coord(cell);
+        }
+#endif
 
         /*
         ** Add this node to the Base's list
@@ -196,7 +207,7 @@ void BaseClass::Read_INI(char* buffer)
  * HISTORY:                                                                                    *
  *   03/24/1995 BRR : Created.                                                                 *
  *=============================================================================================*/
-void BaseClass::Write_INI(char* buffer)
+void BaseClass::Write_INI(CCINIClass& ini)
 {
     char buf[128];
     char uname[10];
@@ -204,14 +215,14 @@ void BaseClass::Write_INI(char* buffer)
     /*
     **	Clear out all existing teamtype data from the INI file.
     */
-    WWWritePrivateProfileString(INI_Name(), NULL, NULL, buffer);
+    ini.Clear(INI_Name());
 
     /*
     **	Save the # of buildings in the Nodes list.  This is essential because
     **	they must be read in the same order they were created, so "000" must be
     **	read first, etc.
     */
-    WWWritePrivateProfileInt(INI_Name(), "Count", Nodes.Count(), buffer);
+    ini.Put_Int(INI_Name(), "Count", Nodes.Count());
 
     /*
     **	Write each entry into the INI
@@ -220,7 +231,7 @@ void BaseClass::Write_INI(char* buffer)
         sprintf(uname, "%03d", i);
         sprintf(buf, "%s,%d", BuildingTypeClass::As_Reference(Nodes[i].Type).IniName, Nodes[i].Coord);
 
-        WWWritePrivateProfileString(INI_Name(), uname, buf, buffer);
+        ini.Put_String(INI_Name(), uname, buf);
     }
 }
 

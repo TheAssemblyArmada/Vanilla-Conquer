@@ -123,7 +123,7 @@ BufferClass::BufferClass()
 BufferClass::~BufferClass()
 {
     if (Allocated) {
-        delete[] Buffer;
+        delete[] static_cast<unsigned char*>(Buffer);
     }
 }
 

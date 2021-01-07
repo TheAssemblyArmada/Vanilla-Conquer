@@ -613,7 +613,9 @@ int Main_Menu(unsigned long)
     starty += ystep;
 
     TextButtonClass introbtn(BUTTON_INTRO, TXT_INTRO, TPF_BUTTON, d_intro_x, starty, d_intro_w, d_intro_h);
-    starty += ystep;
+    if (!Is_Demo()) {
+        starty += ystep;
+    }
 
     TextButtonClass exitbtn(BUTTON_EXIT, TXT_EXIT_GAME, TPF_BUTTON, d_exit_x, starty, d_exit_w, d_exit_h);
     starty += ystep;
@@ -651,7 +653,9 @@ int Main_Menu(unsigned long)
     //#endif
     loadbtn.Add_Tail(*commands);
     multibtn.Add_Tail(*commands);
-    introbtn.Add_Tail(*commands);
+    if (!Is_Demo()) {
+        introbtn.Add_Tail(*commands);
+    }
     exitbtn.Add_Tail(*commands);
 
     /*

@@ -65,6 +65,7 @@ typedef enum TeamMissionType : signed char
 ** Forward declarations.
 */
 class TechnoTypeClass;
+class CCINIClass;
 
 /*
 **	This structure contains one team mission value & its argument.
@@ -91,6 +92,8 @@ public:
     **	Constructor/Destructor
     */
     TeamTypeClass(void);
+    TeamTypeClass(NoInitClass const& x)
+        : AbstractTypeClass(x){};
     virtual ~TeamTypeClass(void){};
 
     /*
@@ -101,10 +104,10 @@ public:
     /*
     **	File I/O routines
     */
-    static void Read_INI(char* buffer);
+    static void Read_INI(CCINIClass& ini);
     void Fill_In(char* name, char* entry);
-    static void Write_INI(char* buffer, bool refresh);
-    static void Read_Old_INI(char* buffer);
+    static void Write_INI(CCINIClass& ini, bool refresh);
+    static void Read_Old_INI(CCINIClass& ini);
     static char* INI_Name(void)
     {
         return "TeamTypes";
@@ -139,6 +142,10 @@ public:
     **	Overloaded operators
     */
     void* operator new(size_t);
+    static void* operator new(size_t, void* ptr)
+    {
+        return (ptr);
+    };
     void operator delete(void* ptr);
 
     /*
@@ -236,7 +243,7 @@ public:
     /*
     **	Number of different classes in the team
     */
-    unsigned char ClassCount;
+    unsigned int ClassCount;
 
     /*
     **	Array of object types comprising the team
@@ -256,11 +263,6 @@ public:
 
 private:
     static char const* TMissions[TMISSION_COUNT];
-
-    /*
-    ** This contains the value of the Virtual Function Table Pointer
-    */
-    static void* VTable;
 };
 
 #endif

@@ -47,11 +47,7 @@
 #include "function.h"
 #include "template.h"
 #include "tile.h"
-
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
-void* TemplateClass::VTable;
+#include "ccini.h"
 
 /***********************************************************************************************
  * TemplateClass::Validate -- validates template pointer													  *
@@ -99,27 +95,23 @@ int TemplateClass::Validate(void) const
  * HISTORY:                                                                                    *
  *   05/24/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TemplateClass::Read_INI(char* buffer)
+void TemplateClass::Read_INI(CCINIClass& ini)
 {
-    char* tbuffer; // Accumulation buffer of unit IDs.
-    int len;       // Size of data in buffer.
-    CELL cell;     // Cell of building.
-    char buf[128]; // Working string staging buffer.
+    int len = ini.Entry_Count(INI_Name());
+    for (int index = 0; index < len; index++) {
+        char const* entry = ini.Get_Entry(INI_Name(), index);
+        char buf[128]; // Working string staging buffer.
+        CELL cell = atoi(entry);
 
-    len = strlen(buffer) + 2;
-    tbuffer = buffer + len;
+        /*
+        **	Get the template entry.
+        */
+        ini.Get_String(INI_Name(), entry, NULL, buf, sizeof(buf));
 
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
-    while (*tbuffer != '\0') {
-        TemplateType temp; // Terrain type.
-
-        cell = atoi(tbuffer);
-        WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
-        temp = TemplateTypeClass::From_Name(strtok(buf, ",\r\n"));
+        TemplateType temp = TemplateTypeClass::From_Name(strtok(buf, ",\r\n"));
         if (temp != TEMPLATE_NONE) {
             new TemplateClass(temp, cell);
         }
-        tbuffer += strlen(tbuffer) + 1;
     }
 }
 
@@ -138,33 +130,23 @@ void TemplateClass::Read_INI(char* buffer)
  * HISTORY:                                                                                    *
  *   05/28/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TemplateClass::Write_INI(char* buffer)
+void TemplateClass::Write_INI(CCINIClass& ini)
 {
-    char uname[10];
-    char buf[127];
-    char* tbuffer; // Accumulation buffer of unit IDs.
-
-    /*
-    **	First, clear out all existing template data from the ini file.
-    */
-    tbuffer = buffer + strlen(buffer) + 2;
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - strlen(buffer), buffer);
-    while (*tbuffer != '\0') {
-        WWWritePrivateProfileString(INI_Name(), tbuffer, NULL, buffer);
-        tbuffer += strlen(tbuffer) + 1;
-    }
+    ini.Clear(INI_Name());
 
     /*
     **	Find all templates and write them to the file.
     */
     for (int index = 0; index < MAP_CELL_TOTAL; index++) {
         CellClass* ptr;
+        char uname[10];
+        char buf[127];
 
         ptr = &Map[index];
         if (ptr->TType != TEMPLATE_NONE && ptr->TIcon == 0) {
             sprintf(uname, "%03d", index);
             sprintf(buf, "%s", TemplateTypeClass::As_Reference(ptr->TType).IniName);
-            WWWritePrivateProfileString(INI_Name(), uname, buf, buffer);
+            ini.Put_String(INI_Name(), uname, buf);
         }
     }
 }
@@ -228,13 +210,7 @@ TARGET TemplateClass::As_Target(void) const
  *=============================================================================================*/
 void TemplateClass::Init(void)
 {
-    TemplateClass* ptr;
-
     Templates.Free_All();
-
-    ptr = new TemplateClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 /***********************************************************************************************

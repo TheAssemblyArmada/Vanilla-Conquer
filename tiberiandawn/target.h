@@ -57,7 +57,11 @@ typedef enum KindType : unsigned char
     KIND_TEAMTYPE
 } KindType;
 
-#define TARGET_MANTISSA      12 // Bits of value precision.
+#ifdef MEGAMAPS
+#define TARGET_MANTISSA 24 // Bits of value precision.
+#else
+#define TARGET_MANTISSA 12 // Bits of value precision.
+#endif
 #define TARGET_MANTISSA_MASK (~((~0) << TARGET_MANTISSA))
 #define TARGET_EXPONENT      ((sizeof(TARGET) * 8) - TARGET_MANTISSA)
 #define TARGET_EXPONENT_MASK (~(((unsigned)(~0)) >> TARGET_EXPONENT))
@@ -70,6 +74,9 @@ inline unsigned Target_Value(TARGET a)
 {
     return (((unsigned)a) & TARGET_MANTISSA_MASK);
 }
+
+// intentionally discarding higher bits that do not decode the target information
+#define Target_Ptr(ptr) ((TARGET)(intptr_t)ptr)
 
 inline bool Is_Target_Team(TARGET a)
 {

@@ -382,7 +382,7 @@ ColourList ColourLookup[9] = {0,  0,  0,  63, 0, 0,  0,  63, 0,  0,  0,  63, 63,
 
 int DebugColour = 1;
 
-extern "C" void Set_Palette_Register(int number, int red, int green, int blue);
+void Set_Palette_Register(int number, int red, int green, int blue);
 //#pragma off (unreferenced)
 void Colour_Debug(int call_number)
 {
@@ -550,7 +550,7 @@ void Memory_Error_Handler(void)
     while (Get_Mouse_State()) {
         Show_Mouse();
     };
-    WWMessageBox().Process("Error - out of memory.", "Abort", false);
+    WWMessageBox().Process("Error - out of memory.", "Abort", nullptr, nullptr, false);
 
     // Nope. ST - 1/10/2019 10:38AM
     // PostQuitMessage( 0 );

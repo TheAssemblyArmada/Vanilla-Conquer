@@ -105,6 +105,7 @@
 #include "sidebarglyphx.h"
 #include "defines.h"
 #include "common/irandom.h"
+#include "ccini.h"
 
 /***********************************************************************************************
  * HouseClass::Validate -- validates house pointer															  *
@@ -1888,7 +1889,7 @@ void HouseClass::Silo_Redraw_Check(long oldtib, long oldcap)
  *   05/24/1994 JLB : Created.                                                                 *
  *   05/18/1995 JLB : Creates all houses.                                                      *
  *=============================================================================================*/
-void HouseClass::Read_INI(char* buffer)
+void HouseClass::Read_INI(CCINIClass& ini)
 {
     HouseClass* p;     // Pointer to current player data.
     char const* hname; //	Pointer to house name.
@@ -1896,15 +1897,15 @@ void HouseClass::Read_INI(char* buffer)
 
     for (HousesType index = HOUSE_FIRST; index < HOUSE_COUNT; index++) {
         hname = HouseTypeClass::As_Reference(index).IniName;
-        int maxunit = WWGetPrivateProfileInt(hname, "MaxUnit", EACH_UNIT_MAX, buffer);
+        int maxunit = ini.Get_Int(hname, "MaxUnit", EACH_UNIT_MAX);
 
         maxunit = MAX(maxunit, 150);
 
-        int maxbuilding = WWGetPrivateProfileInt(hname, "MaxBuilding", EACH_BUILDING_MAX, buffer);
+        int maxbuilding = ini.Get_Int(hname, "MaxBuilding", EACH_BUILDING_MAX);
 
         maxbuilding = MAX(maxbuilding, 150);
 
-        int credits = WWGetPrivateProfileInt(hname, "Credits", 0, buffer);
+        int credits = ini.Get_Int(hname, "Credits", 0);
 
         p = new HouseClass(index);
 
@@ -1912,14 +1913,10 @@ void HouseClass::Read_INI(char* buffer)
         p->MaxUnit = maxunit;
         p->Credits = (long)credits * 100;
         p->InitialCredits = p->Credits;
-        WWGetPrivateProfileString(hname, "Edge", "", buf, sizeof(buf) - 1, buffer);
-        p->Edge = Source_From_Name(buf);
-        if (p->Edge == SOURCE_NONE) {
-            p->Edge = SOURCE_NORTH;
-        }
+        p->Edge = ini.Get_SourceType(hname, "Edge", SOURCE_NORTH);
 
         if (GameToPlay == GAME_NORMAL) {
-            WWGetPrivateProfileString(hname, "Allies", "", buf, sizeof(buf) - 1, buffer);
+            ini.Get_String(hname, "Allies", "", buf, sizeof(buf) - 1);
             if (strlen(buf)) {
                 char* tok = strtok(buf, ", \t");
                 while (tok) {
@@ -1958,28 +1955,29 @@ void HouseClass::Read_INI(char* buffer)
  * HISTORY:                                                                                    *
  *   05/28/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void HouseClass::Write_INI(char* buffer)
+void HouseClass::Write_INI(CCINIClass& ini)
 {
     for (HousesType i = HOUSE_FIRST; i < HOUSE_COUNT; i++) {
         HouseClass* p = As_Pointer(i);
 
         if (p) {
-            WWWritePrivateProfileInt(p->Class->IniName, "Credits", (int)(p->Credits / 100), buffer);
-            WWWritePrivateProfileString(p->Class->IniName, "Edge", Name_From_Source(p->Edge), buffer);
-            WWWritePrivateProfileInt(p->Class->IniName, "MaxUnit", p->MaxUnit, buffer);
-            WWWritePrivateProfileInt(p->Class->IniName, "MaxBuilding", p->MaxBuilding, buffer);
+            ini.Put_Int(p->Class->IniName, "Credits", (int)(p->Credits / 100));
+            ini.Put_SourceType(p->Class->IniName, "Edge", p->Edge);
+            ini.Put_Int(p->Class->IniName, "MaxUnit", p->MaxUnit);
+            ini.Put_Int(p->Class->IniName, "MaxBuilding", p->MaxBuilding);
 
             bool first = true;
             char sbuffer[100] = "";
             for (HousesType house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
                 if (p->Is_Ally(house)) {
-                    if (!first)
+                    if (!first) {
                         strcat(sbuffer, ",");
+                    }
                     strcat(sbuffer, As_Pointer(house)->Class->IniName);
                     first = false;
                 }
             }
-            WWWritePrivateProfileString(p->Class->IniName, "Allies", sbuffer, buffer);
+            ini.Put_String(p->Class->IniName, "Allies", sbuffer);
         }
     }
 }
@@ -7972,205 +7970,6 @@ int HouseClass::Get_Quantity(StructType building)
 {
     return (BQuantity[building]);
 }
-
-/***********************************************************************************************
- * HouseClass::Read_INI -- Reads house specific data from INI.                                 *
- *                                                                                             *
- *    This routine reads the house specific data for a particular                              *
- *    scenario from the scenario INI file. Typical data includes starting                      *
- *    credits, maximum unit count, etc.                                                        *
- *                                                                                             *
- * INPUT:   buffer   -- Pointer to loaded scenario INI file.                                   *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   05/24/1994 JLB : Created.                                                                 *
- *   05/18/1995 JLB : Creates all houses.                                                      *
- *=============================================================================================*/
-#if (0) // ST 7/17/2019
-void HouseClass::Read_INI(CCINIClass& ini)
-{
-    HouseClass* p;     // Pointer to current player data.
-    char const* hname; //	Pointer to house name.
-
-    for (HousesType index = HOUSE_FIRST; index < HOUSE_COUNT; index++) {
-        hname = HouseTypeClass::As_Reference(index).IniName;
-
-        p = new HouseClass(index);
-        p->Control.TechLevel = ini.Get_Int(hname, "TechLevel", Scen.Scenario);
-        p->Control.MaxBuilding = ini.Get_Int(hname, "MaxBuilding", p->Control.MaxBuilding);
-        p->Control.MaxUnit = ini.Get_Int(hname, "MaxUnit", p->Control.MaxUnit);
-        p->Control.MaxInfantry = ini.Get_Int(hname, "MaxInfantry", p->Control.MaxInfantry);
-        p->Control.MaxVessel = ini.Get_Int(hname, "MaxVessel", p->Control.MaxVessel);
-        if (p->Control.MaxVessel == 0)
-            p->Control.MaxVessel = p->Control.MaxUnit;
-        p->Control.InitialCredits = ini.Get_Int(hname, "Credits", 0) * 100;
-        p->Credits = p->Control.InitialCredits;
-
-        int iq = ini.Get_Int(hname, "IQ", 0);
-        if (iq > Rule.MaxIQ)
-            iq = 1;
-        p->IQ = p->Control.IQ = iq;
-
-        p->Control.Edge = ini.Get_SourceType(hname, "Edge", SOURCE_NORTH);
-        p->IsPlayerControl = ini.Get_Bool(hname, "PlayerControl", false);
-
-        int owners = ini.Get_Owners(hname, "Allies", (1 << HOUSE_NEUTRAL));
-        p->Make_Ally(index);
-        p->Make_Ally(HOUSE_NEUTRAL);
-        for (HousesType h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
-            if ((owners & (1 << h)) != 0) {
-                p->Make_Ally(h);
-            }
-        }
-    }
-}
-#endif
-
-/***********************************************************************************************
- * HouseClass::Write_INI -- Writes the house data to the INI database.                         *
- *                                                                                             *
- *    This routine will write out all data necessary to recreate it in anticipation of a       *
- *    new scenario. All houses (that are active) will have their scenario type data written    *
- *    out.                                                                                     *
- *                                                                                             *
- * INPUT:   ini   -- Reference to the INI database to write the data to.                       *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   07/09/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
-#if (0) // ST 7/17/2019
-void HouseClass::Write_INI(CCINIClass& ini)
-{
-    /*
-    **	The identity house control object. Only if the house value differs from the
-    **	identity, will the data be written out.
-    */
-    HouseStaticClass control;
-
-    for (HousesType i = HOUSE_FIRST; i < HOUSE_COUNT; i++) {
-        HouseClass* p = As_Pointer(i);
-
-        if (p != NULL) {
-            char const* name = p->Class->IniName;
-
-            ini.Clear(name);
-            if (i >= HOUSE_MULTI1)
-                continue;
-
-            if (p->Control.InitialCredits != control.InitialCredits) {
-                ini.Put_Int(name, "Credits", (int)(p->Control.InitialCredits / 100));
-            }
-
-            if (p->Control.Edge != control.Edge) {
-                ini.Put_SourceType(name, "Edge", p->Control.Edge);
-            }
-
-            if (p->Control.MaxUnit > 0 && p->Control.MaxUnit != control.MaxUnit) {
-                ini.Put_Int(name, "MaxUnit", p->Control.MaxUnit);
-            }
-
-            if (p->Control.MaxInfantry > 0 && p->Control.MaxInfantry != control.MaxInfantry) {
-                ini.Put_Int(name, "MaxInfantry", p->Control.MaxInfantry);
-            }
-
-            if (p->Control.MaxBuilding > 0 && p->Control.MaxBuilding != control.MaxBuilding) {
-                ini.Put_Int(name, "MaxBuilding", p->Control.MaxBuilding);
-            }
-
-            if (p->Control.MaxVessel > 0 && p->Control.MaxVessel != control.MaxVessel) {
-                ini.Put_Int(name, "MaxVessel", p->Control.MaxVessel);
-            }
-
-            if (p->Control.TechLevel != control.TechLevel) {
-                ini.Put_Int(name, "TechLevel", p->Control.TechLevel);
-            }
-
-            if (p->Control.IQ != control.IQ) {
-                ini.Put_Int(name, "IQ", p->Control.IQ);
-            }
-
-            if (p->IsPlayerControl != false && p != PlayerPtr) {
-                ini.Put_Bool(name, "PlayerControl", p->IsPlayerControl);
-            }
-
-            ini.Put_Owners(name, "Allies", p->Control.Allies & ~((1 << p->Class->House) | (1 << HOUSE_NEUTRAL)));
-        }
-    }
-}
-#endif
-
-#if (0)
-/***********************************************************************************************
- * HouseClass::Is_No_YakMig -- Determines if no more yaks or migs should be allowed.           *
- *                                                                                             *
- *    This routine will examine the current yak and mig situation verses airfields. If there   *
- *    are equal aircraft to airfields, then this routine will return TRUE.                     *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  bool; Are all airfields full and thus no more yaks or migs are allowed?            *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/23/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool HouseClass::Is_No_YakMig(void) const
-{
-    int quantity = AQuantity[AIRCRAFT_YAK] + AQuantity[AIRCRAFT_MIG];
-
-    /*
-    **	Adjust the quantity down one if there is an aircraft in production. This will
-    **	allow production to resume after being held.
-    */
-    FactoryClass const* factory = Fetch_Factory(RTTI_AIRCRAFT);
-    if (factory != NULL && factory->Get_Object() != NULL) {
-        AircraftClass const* air = (AircraftClass const*)factory->Get_Object();
-        if (*air == AIRCRAFT_MIG || *air == AIRCRAFT_YAK) {
-            quantity -= 1;
-        }
-    }
-
-    if (quantity >= BQuantity[STRUCT_AIRSTRIP]) {
-        return (true);
-    }
-    return (false);
-}
-
-/***********************************************************************************************
- * HouseClass::Is_Hack_Prevented -- Is production of the specified type and id prohibted?      *
- *                                                                                             *
- *    This is a special hack check routine to see if the object type and id specified is       *
- *    prevented from being produced. The Yak and the Mig are so prevented if there would be    *
- *    insufficient airfields for them to land upon.                                            *
- *                                                                                             *
- * INPUT:   rtti  -- The RTTI type of the value specified.                                     *
- *                                                                                             *
- *          value -- The type number (according to the RTTI type specified).                   *
- *                                                                                             *
- * OUTPUT:  bool; Is production of this object prohibited?                                     *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/23/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool HouseClass::Is_Hack_Prevented(RTTIType rtti, int value) const
-{
-    if (rtti == RTTI_AIRCRAFTTYPE && (value == AIRCRAFT_MIG || value == AIRCRAFT_YAK)) {
-        return (Is_No_YakMig());
-    }
-    return (false);
-}
-#endif
 
 /***********************************************************************************************
  * HouseClass::Fire_Sale -- Cause all buildings to be sold.                                    *

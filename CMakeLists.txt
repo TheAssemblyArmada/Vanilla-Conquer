@@ -7,18 +7,12 @@ if(NOT DEFINED CMAKE_BUILD_TYPE)
 endif()
 
 option(FORCE_32BIT "Build 32-bit binaries on a 64-bit host" OFF)
-option(USE_ASM "Use x86 assembly optimizations." OFF)
-
-if(USE_ASM)
-    set(FORCE_32BIT ON)
-endif()
 
 if(FORCE_32BIT AND NOT MSVC)
     list(APPEND CMAKE_CXX_FLAGS_INIT "-m32")
-    list(APPEND CMAKE_C_FLAGS_INIT "-m32")
 endif()
 
-project(VanillaConquer)
+project(VanillaConquer CXX)
 
 # as long as there is no feature parity between win32 and the rest, set defaults based on platform
 if(WIN32)
@@ -56,35 +50,19 @@ option(BUILD_TESTS "Build unit tests." OFF)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-if(MSVC)
-    if(USE_ASM)
-        enable_language(ASM_MASM)
-        set(CMAKE_ASM_MASM_FLAGS "/Zm /Cp /safeseh" CACHE INTERNAL "MASM flags")
-    endif()
-else()
-    if(USE_ASM)
-        set(ASM_DIALECT "_JWASM")
-        enable_language(ASM_JWASM)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-        # use native object format and disable cdecl decorations for non-Windows
-        if(NOT WIN32)
-            set(CMAKE_ASM_JWASM_FLAGS "-elf -zcw")
-        else()
-            set(CMAKE_ASM_JWASM_FLAGS "-coff")
-        endif()
-    endif()
-
+if(NOT MSVC)
     if(WIN32)
         set(CMAKE_CXX_FLAGS_DEBUG "-gstabs3")
-        set(CMAKE_C_FLAGS_DEBUG "-gstabs3")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
+        set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
     else()
         set(CMAKE_CXX_FLAGS_DEBUG "-g3")
-        set(CMAKE_C_FLAGS_DEBUG "-g3")
     endif()
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fpermissive -fcheck-new -fsigned-char -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fpermissive -fcheck-new -fsigned-char -fdata-sections -ffunction-sections -Wl,--gc-sections -DNOMINMAX")
-    set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fcheck-new -fsigned-char -fdata-sections -ffunction-sections -DNOMINMAX")
 endif()
 
 add_definitions(-DENGLISH -DTRUE_FALSE_DEFINED)
@@ -111,10 +89,6 @@ endif()
 
 find_package(ClangFormat)
 include(ClangFormat)
-
-if(NOT USE_ASM)
-    add_definitions(-DNOASM)
-endif()
 
 if(BUILD_TESTS)
     # Tests need to respect some options so need to occur after the options are set.
@@ -216,12 +190,6 @@ if(OPENAL)
     message(STATUS "  OpenAL is enabled.")
 else()
     message(STATUS "  OpenAL is disabled.")
-endif()
-
-if(USE_ASM)
-    message(STATUS "  Using x86 assembly optimizations.")
-else()
-    message(STATUS "  Using C replacements for x86 assembly.")
 endif()
 
 if(BUILD_TESTS)

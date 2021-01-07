@@ -54,6 +54,9 @@
 **	These are the actual filename list for the theme sample files.
 */
 ThemeClass::ThemeControl ThemeClass::_themes[THEME_COUNT] = {
+    /*
+    ** Retail
+    */
     {"BIGF226M", TXT_THEME_BIGF, 0, 307, true, false, true, HOUSEF_ALLIES},
     {"CRUS226M", TXT_THEME_CRUS, 0, 222, true, false, true, HOUSEF_SOVIET},
     {"FAC1226M", TXT_THEME_FAC1, 0, 271, true, false, true, HOUSEF_ALLIES},
@@ -78,15 +81,21 @@ ThemeClass::ThemeControl ThemeClass::_themes[THEME_COUNT] = {
     {"INTRO", TXT_THEME_INTRO, 0, 205, false, true, true, HOUSEF_NONE},
     {"CREDITS", TXT_THEME_CREDITS, 0, 163, false, true, true, HOUSEF_NONE},
 
+    /*
+    ** Counterstrike
+    */
     {"2ND_HAND", TXT_THEME_2ND_HAND, 0, 268, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
-    {"ARAZIOD", TXT_THEME_ARAZOID, 0, 257, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
+    {"ARAZOID", TXT_THEME_ARAZOID, 0, 257, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
     {"BACKSTAB", TXT_THEME_BACKSTAB, 0, 278, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
     {"CHAOS2", TXT_THEME_CHAOS2, 0, 250, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
     {"SHUT_IT", TXT_THEME_SHUT_IT, 0, 261, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
     {"TWINMIX1", TXT_THEME_TWINMIX1, 0, 222, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
     {"UNDER3", TXT_THEME_UNDER3, 0, 246, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
     {"VR2", TXT_THEME_VR2, 0, 255, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
+
+    /*
+    ** Aftermath
+    */
     {"BOG", TXT_THEME_BOG, 0, 212, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
     {"FLOAT_V2", TXT_THEME_FLOAT_V2, 0, 274, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
     {"GLOOM", TXT_THEME_GLOOM, 0, 236, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
@@ -95,7 +104,6 @@ ThemeClass::ThemeControl ThemeClass::_themes[THEME_COUNT] = {
     {"SEARCH", TXT_THEME_SEARCH, 0, 276, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
     {"TRACTION", TXT_THEME_TRACTION, 0, 237, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
     {"WASTELND", TXT_THEME_WASTELND, 0, 242, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
-#endif
 };
 
 /***********************************************************************************************
@@ -537,11 +545,12 @@ ThemeType ThemeClass::From_Name(char const* name) const
         **	a substring within the full name of the score. This might
         **	yield a match, but is not guaranteed to be unique.
         */
-/*        for (ThemeType theme = THEME_FIRST; theme < THEME_COUNT; theme++) {
-            if (strstr(Text_String(_themes[theme].Fullname), name) != NULL) {
+        for (ThemeType theme = THEME_FIRST; theme < THEME_COUNT; theme++) {
+            const char* fullname = Text_String(_themes[theme].Fullname);
+            if (fullname != nullptr && strstr(fullname, name) != NULL) {
                 return (theme);
             }
-        }*/
+        }
     }
 
     return (THEME_NONE);

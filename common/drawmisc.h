@@ -3,7 +3,6 @@
 
 class GraphicViewPortClass;
 
-extern "C" {
 extern unsigned char CurrentPalette[768];
 extern unsigned char PaletteTable[1024];
 
@@ -43,6 +42,5 @@ extern int IconCount;
 void Init_Stamps(unsigned int icondata);
 
 void Fat_Put_Pixel(int x, int y, int value, int size, GraphicViewPortClass& gvp);
-}
 
 #endif

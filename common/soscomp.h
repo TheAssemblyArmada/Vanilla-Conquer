@@ -73,16 +73,8 @@ typedef struct _tagCOMPRESS_HEADER
 } _SOS_COMPRESS_HEADER;
 
 /* Prototypes */
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void sosCODECInitStream(_SOS_COMPRESS_INFO*);
 unsigned long sosCODECCompressData(_SOS_COMPRESS_INFO*, unsigned long);
 unsigned long sosCODECDecompressData(_SOS_COMPRESS_INFO*, unsigned long);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

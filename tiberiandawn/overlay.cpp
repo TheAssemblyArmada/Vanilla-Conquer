@@ -42,11 +42,11 @@
 
 #include "function.h"
 #include "overlay.h"
+#include "ccini.h"
 
 /*
 ** This contains the value of the Virtual Function Table Pointer
 */
-void* OverlayClass::VTable;
 
 HousesType OverlayClass::ToOwn = HOUSE_NONE;
 
@@ -107,10 +107,6 @@ void OverlayClass::Init(void)
     OverlayClass* ptr;
 
     Overlays.Free_All();
-
-    ptr = new OverlayClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 /***********************************************************************************************
@@ -345,24 +341,21 @@ bool OverlayClass::Mark(MarkType mark)
  *   09/01/1994 JLB : Created.                                                                 *
  *   07/24/1995 JLB : Specifically forbid manual crates in multiplayer scenarios.              *
  *=============================================================================================*/
-void OverlayClass::Read_INI(char* buffer)
+void OverlayClass::Read_INI(CCINIClass& ini)
 {
-    char* tbuffer;
-    int len; // Length of data in buffer.
-    char buf[128];
-
-    len = strlen(buffer) + 2;
-    tbuffer = buffer + len;
-
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
-    while (*tbuffer != '\0') {
-        CELL cell;
-        OverlayType classid;
-
-        cell = atoi(tbuffer);
-        WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
-        classid = OverlayTypeClass::From_Name(strtok(buf, ",\n\r"));
-
+    int len = ini.Entry_Count(INI_Name());
+    for (int index = 0; index < len; index++) {
+        char const* entry = ini.Get_Entry(INI_Name(), index);
+        CELL cell = atoi(entry);
+        OverlayType classid = ini.Get_OverlayType(INI_Name(), entry, OVERLAY_NONE);
+#ifdef MEGAMAPS
+        /*
+        ** Convert the normal cell position to a new big map position.
+        */
+        if (Map.MapBinaryVersion == MAP_VERSION_NORMAL) {
+            cell = Confine_Old_Cell(cell);
+        }
+#endif
         /*
         **	Don't allow placement of crates in the multiplayer scenarios.
         */
@@ -377,7 +370,6 @@ void OverlayClass::Read_INI(char* buffer)
                 new OverlayClass(classid, cell);
             }
         }
-        tbuffer += strlen(tbuffer) + 1;
     }
 }
 
@@ -396,33 +388,25 @@ void OverlayClass::Read_INI(char* buffer)
  * HISTORY:                                                                                    *
  *   09/01/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void OverlayClass::Write_INI(char* buffer)
+void OverlayClass::Write_INI(CCINIClass& ini)
 {
-    int index;
-    char uname[10];
-    char buf[128];
-    char* tbuffer; // Accumulation buffer of unit IDs.
-
     /*
     **	First, clear out all existing unit data from the ini file.
     */
-    tbuffer = buffer + strlen(buffer) + 2;
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - strlen(buffer), buffer);
-    while (*tbuffer != '\0') {
-        WWWritePrivateProfileString(INI_Name(), tbuffer, NULL, buffer);
-        tbuffer += strlen(tbuffer) + 1;
-    }
+    ini.Clear(INI_Name());
 
     /*
     **	Write the unit data out.
     */
-    for (index = 0; index < MAP_CELL_TOTAL; index++) {
+    for (int index = 0; index < MAP_CELL_TOTAL; index++) {
         CellClass* cellptr = &Map[index];
 
         if (cellptr->Overlay != OVERLAY_NONE) {
+            char uname[10];
+            char buf[128];
             sprintf(uname, "%03d", index);
             sprintf(buf, "%s", OverlayTypeClass::As_Reference(cellptr->Overlay).IniName);
-            WWWritePrivateProfileString(INI_Name(), uname, buf, buffer);
+            ini.Put_String(INI_Name(), uname, buf);
         }
     }
 }

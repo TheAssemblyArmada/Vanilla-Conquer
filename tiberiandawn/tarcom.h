@@ -50,6 +50,9 @@ public:
     **	Constructors, Destructors, and overloaded operators.
     */
     TarComClass(void){};
+    TarComClass(NoInitClass const& x)
+        : TurretClass(x){};
+
     TarComClass(UnitType classid, HousesType house)
         : TurretClass(classid, house){};
     virtual ~TarComClass(void);

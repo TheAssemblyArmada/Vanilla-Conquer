@@ -15,8 +15,6 @@
 
 #include "cliprect.h"
 
-#ifdef NOASM
-
 /**************************************************************************
 * Clip_Rect -- clip a given rectangle against a given window              *
 *                                                                         *
@@ -116,5 +114,3 @@ int Confine_Rect(int* x, int* y, int w, int h, int width, int height)
 
     return confined;
 }
-
-#endif  // NOASM

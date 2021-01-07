@@ -531,7 +531,7 @@ ColourList ColourLookup[9] = {0,  0,  0,  63, 0, 0,  0,  63, 0,  0,  0,  63, 63,
 
 int DebugColour = 1;
 
-extern "C" void Set_Palette_Register(int number, int red, int green, int blue);
+void Set_Palette_Register(int number, int red, int green, int blue);
 //#pragma off (unreferenced)
 void Colour_Debug(int call_number)
 {
@@ -720,7 +720,7 @@ void Memory_Error_Handler(void)
     while (Get_Mouse_State()) {
         Show_Mouse();
     };
-    WWMessageBox().Process(TEXT_MEMORY_ERROR, TEXT_ABORT, false);
+    WWMessageBox().Process(TEXT_MEMORY_ERROR, TEXT_ABORT, nullptr, nullptr, false);
 
     ReadyToQuit = 1;
 

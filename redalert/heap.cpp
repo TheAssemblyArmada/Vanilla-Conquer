@@ -74,7 +74,6 @@ template class TFixedIHeapClass<OverlayTypeClass>;
 template class TFixedIHeapClass<SmudgeClass>;
 template class TFixedIHeapClass<SmudgeTypeClass>;
 template class TFixedIHeapClass<TeamClass>;
-template class TFixedIHeapClass<TeamClass>;
 template class TFixedIHeapClass<TeamTypeClass>;
 template class TFixedIHeapClass<TemplateClass>;
 template class TFixedIHeapClass<TemplateTypeClass>;
@@ -306,7 +305,7 @@ void FixedHeapClass::Clear(void)
     **	Free the old buffer (if present).
     */
     if (Buffer && IsAllocated) {
-        delete[] Buffer;
+        delete[] static_cast<char*>(Buffer);
     }
     Buffer = 0;
     IsAllocated = false;

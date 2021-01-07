@@ -175,11 +175,11 @@ static void Stop_Game(void);
 // Packet compression/decompression:
 //...........................................................................
 static int Build_Send_Packet(void* buf, int bufsize, int frame_delay, int num_cmds, int cap);
-int Add_Uncompressed_Events(void* buf, int bufsize, int frame_delay, int size, int cap);
-int Add_Compressed_Events(void* buf, int bufsize, int frame_delay, int size, int cap);
+static int Add_Uncompressed_Events(void* buf, int bufsize, int frame_delay, int size, int cap);
+static int Add_Compressed_Events(void* buf, int bufsize, int frame_delay, int size, int cap);
 static int Breakup_Receive_Packet(void* buf, int bufsize);
-int Extract_Uncompressed_Events(void* buf, int bufsize);
-int Extract_Compressed_Events(void* buf, int bufsize);
+static int Extract_Uncompressed_Events(void* buf, int bufsize);
+static int Extract_Compressed_Events(void* buf, int bufsize);
 
 //...........................................................................
 // DoList management:
@@ -2284,7 +2284,6 @@ static void Stop_Game(void)
         MonoClass::Disable();
     }
     if (Session.Type == GAME_INTERNET) {
-        ConnectionLost = true;
         Send_Statistics_Packet(); //	Stop_Game()
     }
 

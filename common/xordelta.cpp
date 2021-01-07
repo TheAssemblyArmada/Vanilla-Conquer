@@ -17,8 +17,6 @@
 #define XOR_LARGE 16383
 #define XOR_MAX   32767
 
-#ifdef NOASM
-
 void Apply_XOR_Delta(void* dst, const void* src)
 {
     unsigned char* putp = (unsigned char*)(dst);
@@ -283,8 +281,6 @@ void Apply_XOR_Delta_To_Page_Or_Viewport(void* offset, const void* delta, int wi
         XOR_Delta_Buffer(width, offset, delta, pitch);
     }
 }
-
-#endif
 
 int Generate_XOR_Delta(void* dst, const void* src, const void* base, int size)
 {

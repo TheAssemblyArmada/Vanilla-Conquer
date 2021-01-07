@@ -127,7 +127,7 @@ extern HINSTANCE ProgramInstance;
 #endif
 extern unsigned long PlanetWestwoodStartTime;
 
-extern "C" char CPUType;
+char CPUType;
 
 bool GameTimerInUse = false;
 TimerClass GameTimer;

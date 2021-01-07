@@ -37,6 +37,8 @@
 
 #include "ftimer.h"
 
+struct NoInitClass;
+
 class SuperClass
 {
 public:

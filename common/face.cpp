@@ -11,7 +11,6 @@
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 #include "face.h"
 
-#ifdef NOASM
 int Desired_Facing256(long x1, long y1, long x2, long y2)
 {
     signed char unk1 = 0;
@@ -102,5 +101,3 @@ int Desired_Facing8(long x1, long y1, long x2, long y2)
 
     return dirtype + 32;
 }
-
-#endif

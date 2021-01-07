@@ -415,8 +415,7 @@ bool Save_Game(const char* file_name, const char* descr)
     */
     SHAPipe sha;
     BlowPipe bpipe(BlowPipe::ENCRYPT);
-    LZOPipe pipe(LZOPipe::COMPRESS, SAVE_BLOCK_SIZE);
-    //	LCWPipe pipe(LCWPipe::COMPRESS, SAVE_BLOCK_SIZE);
+    LCWPipe pipe(LCWPipe::COMPRESS, SAVE_BLOCK_SIZE);
     bpipe.Key(&FastKey, BlowfishEngine::MAX_KEY_LENGTH);
 
     sha.Put_To(fpipe);
@@ -602,9 +601,7 @@ bool Load_Game(const char* file_name)
     */
     file.Seek(pos, SEEK_SET);
     BlowStraw bstraw(BlowStraw::DECRYPT);
-    LZOStraw straw(LZOStraw::DECOMPRESS, SAVE_BLOCK_SIZE);
-    //	LZWStraw straw(LZWStraw::DECOMPRESS, SAVE_BLOCK_SIZE);
-    //	LCWStraw straw(LCWStraw::DECOMPRESS, SAVE_BLOCK_SIZE);
+    LCWStraw straw(LCWStraw::DECOMPRESS, SAVE_BLOCK_SIZE);
 
     bstraw.Key(&FastKey, BlowfishEngine::MAX_KEY_LENGTH);
     bstraw.Get_From(fstraw);

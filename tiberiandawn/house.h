@@ -41,10 +41,8 @@
 #include "credits.h"
 #include "common/miscasm.h"
 
-// extern "C" {
-// unsigned Cardinal_To_Fixed(unsigned base, unsigned cardinal);
-//}
 class TriggerClass;
+class CCINIClass;
 #ifdef USE_RA_AI
 class FootClass;    // ST - 7/17/2019 11:54AM
 class FactoryClass; // ST - 7/17/2019 11:54AM
@@ -413,10 +411,16 @@ public:
     **	Constructors, Destructors, and overloaded operators.
     */
     static void* operator new(size_t size);
+    static void* operator new(size_t, void* ptr)
+    {
+        return (ptr);
+    };
     static void operator delete(void* ptr);
     HouseClass(void)
         : Class(0){};
     HouseClass(HousesType house);
+    HouseClass(NoInitClass const&)
+        : Class(this->Class){};
     ~HouseClass(void);
     operator HousesType(void) const;
 
@@ -506,10 +510,10 @@ public:
     /*
     **	File I/O.
     */
-    static void Read_INI(char* buffer);
-    static void Write_INI(char* buffer);
-    static void Read_Flag_INI(char* buffer);
-    static void Write_Flag_INI(char* buffer);
+    static void Read_INI(CCINIClass& ini);
+    static void Write_INI(CCINIClass& ini);
+    static void Read_Flag_INI(CCINIClass& ini);
+    static void Write_Flag_INI(CCINIClass& ini);
     bool Load(FileClass& file);
     bool Save(FileClass& file);
     void Code_Pointers(void);
@@ -914,6 +918,7 @@ public:
         BuildChoiceClass(UrgencyType u, StructType s)
             : Urgency(u)
             , Structure(s){};
+        BuildChoiceClass(NoInitClass const&){};
         int Save(FileClass&) const
         {
             return (true);

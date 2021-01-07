@@ -66,10 +66,20 @@ public:
     /*---------------------------------------------------------------------
     **	Constructors, Destructors, and overloaded operators.
     */
-    static void* BulletClass::operator new(size_t size);
-    static void BulletClass::operator delete(void* ptr);
+    static void* operator new(size_t size);
+    static void* operator new(size_t, void* ptr)
+    {
+        return (ptr);
+    };
+    static void operator delete(void* ptr);
     BulletClass(void);
     BulletClass(BulletType id);
+    BulletClass(NoInitClass const& x)
+        : ObjectClass(x)
+        , FlyClass(x)
+        , FuseClass(x)
+        , Class(this->Class)
+        , PrimaryFacing(x){};
     virtual ~BulletClass(void)
     {
         if (GameActive)
@@ -112,8 +122,6 @@ public:
     /*
     **	File I/O.
     */
-    bool Load(FileClass& file);
-    bool Save(FileClass& file);
     virtual void Code_Pointers(void);
     virtual void Decode_Pointers(void);
 
@@ -163,11 +171,6 @@ private:
     *save/load
     */
     unsigned char SaveLoadPadding[32];
-
-    /*
-    ** This contains the value of the Virtual Function Table Pointer
-    */
-    static void* VTable;
 };
 
 #endif

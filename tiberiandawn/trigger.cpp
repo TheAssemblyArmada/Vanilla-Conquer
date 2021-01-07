@@ -56,6 +56,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "ccini.h"
 
 static void Do_All_To_Hunt(void);
 
@@ -100,6 +101,13 @@ static const char* ActionText[TriggerClass::ACTION_COUNT + 1] = {"None",
                                                                  "Autocreate",
                                                                  "Cap=Win/Des=Lose",
                                                                  "Allow Win"};
+
+void TriggerClass::Load()
+{
+    if (House != HOUSE_NONE) {
+        HouseTriggers[House].Add(this);
+    }
+}
 
 /***********************************************************************************************
  * TriggerClass::Validate -- validates trigger pointer													  *
@@ -1010,28 +1018,15 @@ bool TriggerClass::Remove(void)
  * HISTORY:                                                                                    *
  *   11/28/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-void TriggerClass::Read_INI(char* buffer)
+void TriggerClass::Read_INI(CCINIClass& ini)
 {
     TriggerClass* trigger; // Working trigger pointer.
-    char* tbuffer;         // Accumulation buffer of trigger IDs.
-    int len;               // Length of data in buffer.
     char buf[128];
 
-    /*
-    **	Set 'tbuffer' to point just past the INI buffer
-    */
-    len = strlen(buffer) + 2;
-    tbuffer = buffer + len;
+    int len = ini.Entry_Count(INI_Name());
 
-    /*
-    **	Read all TRIGGER entry names into 'tbuffer'
-    */
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
-
-    /*
-    **	Loop for all trigger entries.
-    */
-    while (*tbuffer != '\0') {
+    for (int index = 0; index < len; index++) {
+        char const* entry = ini.Get_Entry(INI_Name(), index);
 
         /*
         **	Create a new trigger.
@@ -1039,36 +1034,25 @@ void TriggerClass::Read_INI(char* buffer)
         trigger = new TriggerClass();
 
         /*
-        **	Set its name.
-        */
-        trigger->Set_Name(tbuffer);
-
-        /*
         **	Get the trigger entry.
         */
-        WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
+        ini.Get_String(INI_Name(), entry, NULL, buf, sizeof(buf));
 
         /*
         **	Fill in the trigger.
         */
-        trigger->Fill_In(tbuffer, buf);
+        trigger->Fill_In((char*)entry, buf);
 
         /*
         **	Add 'trigger' to the House's list.
         */
-        //		if (trigger->House != HOUSE_NONE && trigger->Event != EVENT_PLAYER_ENTERED) {
-        //		if (Event_Need_House(trigger->Event) && !Event_Need_Object(trigger->Event)) {
         if (trigger->House != HOUSE_NONE) {
-            if (trigger->Action == ACTION_ALLOWWIN)
+            if (trigger->Action == ACTION_ALLOWWIN) {
                 HouseClass::As_Pointer(trigger->House)->Blockage++;
+            }
             HouseTriggers[trigger->House].Add(trigger);
             trigger->AttachCount++;
         }
-
-        /*
-        **	Go to next entry.
-        */
-        tbuffer += strlen(tbuffer) + 1;
     }
 }
 
@@ -1164,7 +1148,7 @@ void TriggerClass::Fill_In(char* name, char* entry)
  * HISTORY:                                                                                    *
  *   11/28/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-void TriggerClass::Write_INI(char* buffer, bool refresh)
+void TriggerClass::Write_INI(CCINIClass& ini, bool refresh)
 {
     int index;
     char buf[128];
@@ -1176,7 +1160,7 @@ void TriggerClass::Write_INI(char* buffer, bool refresh)
     **	First, clear out all existing trigger data from the INI file.
     */
     if (refresh) {
-        WWWritePrivateProfileString(INI_Name(), NULL, NULL, buffer);
+        ini.Clear(INI_Name());
     }
 
     /*
@@ -1212,7 +1196,7 @@ void TriggerClass::Write_INI(char* buffer, bool refresh)
                 hname,
                 tname,
                 trigger->IsPersistant);
-        WWWritePrivateProfileString(INI_Name(), trigger->Get_Name(), buf, buffer);
+        ini.Put_String(INI_Name(), trigger->Get_Name(), buf);
     }
 }
 

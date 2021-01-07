@@ -79,17 +79,13 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "ccini.h"
 
 int const InfantryClass::HumanShape[32] = {0, 0, 7, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 5, 5, 4,
                                            4, 4, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 0};
 
 int Infantry_Kick_Damage[] = {10, 15};
 int Infantry_Punch_Damage[] = {4, 7};
-
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
-void* InfantryClass::VTable;
 
 /***************************************************************************
 ** This is the array of constant data associated with infantry maneuvers. It
@@ -855,10 +851,6 @@ void InfantryClass::Init(void)
     InfantryClass* ptr;
 
     Infantry.Free_All();
-
-    ptr = new InfantryClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 /***********************************************************************************************
@@ -2944,29 +2936,21 @@ ActionType InfantryClass::What_Action(ObjectClass* object) const
  * HISTORY:                                                                                    *
  *   05/24/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void InfantryClass::Read_INI(char* buffer)
+void InfantryClass::Read_INI(CCINIClass& ini)
 {
     InfantryClass* infantry; // Working infantry pointer.
-    char* tbuffer;           // Accumulation buffer of infantry IDs.
     HousesType inhouse;      // Infantry house.
     InfantryType classid;    // Infantry class.
-    int len;                 // Length of data in buffer.
     char buf[128];
 
-    len = strlen(buffer) + 2;
-    tbuffer = buffer + len;
-
-    /*------------------------------------------------------------------------
-    Read the entire INFANTRY INI section into HIDBUF
-    ------------------------------------------------------------------------*/
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
-
-    while (*tbuffer != '\0') {
+    int len = ini.Entry_Count(INI_Name());
+    for (int index = 0; index < len; index++) {
+        char const* entry = ini.Get_Entry(INI_Name(), index);
 
         /*
         **	Get an infantry entry
         */
-        WWGetPrivateProfileString(INI_Name(), tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
+        ini.Get_String(INI_Name(), entry, NULL, buf, sizeof(buf));
 
         /*
         **	1st token: house name.
@@ -3001,7 +2985,18 @@ void InfantryClass::Read_INI(char* buffer)
                         /*
                         **	4th token: cell #.
                         */
-                        COORDINATE coord = Cell_Coord((CELL)atoi(strtok(NULL, ",\n\r")));
+                        CELL cell = (CELL)atoi(strtok(NULL, ",\n\r"));
+
+#ifdef MEGAMAPS
+                        /*
+                        ** Convert the normal cell position to a new big map position.
+                        */
+                        if (Map.MapBinaryVersion == MAP_VERSION_NORMAL) {
+                            cell = Confine_Old_Cell(cell);
+                        }
+#endif
+
+                        COORDINATE coord = Cell_Coord(cell);
 
                         /*
                         **	5th token: cell sub-location.
@@ -3044,7 +3039,6 @@ void InfantryClass::Read_INI(char* buffer)
                 }
             }
         }
-        tbuffer += strlen(tbuffer) + 1;
     }
 }
 
@@ -3067,31 +3061,23 @@ void InfantryClass::Read_INI(char* buffer)
  * HISTORY:                                                                                    *
  *   05/28/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void InfantryClass::Write_INI(char* buffer)
+void InfantryClass::Write_INI(CCINIClass& ini)
 {
-    int index;
-    char uname[10];
-    char buf[128];
-    char* tbuffer; // Accumulation buffer of infantry IDs.
-
     /*
     **	First, clear out all existing infantry data from the ini file.
     */
-    tbuffer = buffer + strlen(buffer) + 2;
-    WWGetPrivateProfileString(INI_Name(), NULL, NULL, tbuffer, ShapeBufferSize - strlen(buffer), buffer);
-    while (*tbuffer != '\0') {
-        WWWritePrivateProfileString(INI_Name(), tbuffer, NULL, buffer);
-        tbuffer += strlen(tbuffer) + 1;
-    }
+    ini.Clear(INI_Name());
 
     /*
     **	Write the infantry data out.
     */
-    for (index = 0; index < Infantry.Count(); index++) {
+    for (int index = 0; index < Infantry.Count(); index++) {
         InfantryClass* infantry;
 
         infantry = Infantry.Ptr(index);
         if (!infantry->IsInLimbo) {
+            char uname[10];
+            char buf[128];
 
             sprintf(uname, "%03d", index);
             sprintf(buf,
@@ -3105,7 +3091,7 @@ void InfantryClass::Write_INI(char* buffer)
                                                                                    : infantry->Mission),
                     infantry->PrimaryFacing.Current(),
                     infantry->Trigger ? infantry->Trigger->Get_Name() : "None");
-            WWWritePrivateProfileString(INI_Name(), uname, buf, buffer);
+            ini.Put_String(INI_Name(), uname, buf);
         }
     }
 }

@@ -77,6 +77,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include "function.h"
 #include "common/fading.h"
+#include "ccini.h"
 
 /*
 **	These layer control elements are used to group the displayable objects
@@ -1263,34 +1264,33 @@ CELL DisplayClass::Click_Cell_Calc(int x, int y)
  * HISTORY:                                                                                    *
  *   05/27/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void DisplayClass::Read_INI(char* buffer)
+void DisplayClass::Read_INI(CCINIClass& ini)
 {
-    char name[16];
-    int len;       // Length of data in buffer.
-    char* tbuffer; // Accumulation buffer of Trigger names.
-    char* trigsection = "CellTriggers";
-    char buf[20]; // trigger name for a cell
-    int cell;
-    int i;
-
     /*
     **	Read the map dimensions.
     */
-    Set_Map_Dimensions(WWGetPrivateProfileInt("MAP", "X", 1, buffer),
-                       WWGetPrivateProfileInt("MAP", "Y", 1, buffer),
-                       WWGetPrivateProfileInt("MAP", "Width", MAP_CELL_W - 2, buffer),
-                       WWGetPrivateProfileInt("MAP", "Height", MAP_CELL_H - 2, buffer));
+    char const* const name = "MAP";
+    int x = ini.Get_Int(name, "X", 1);
+    int y = ini.Get_Int(name, "Y", 1);
+    int w = ini.Get_Int(name, "Width", MAP_CELL_W - 2);
+    int h = ini.Get_Int(name, "Height", MAP_CELL_H - 2);
+
+    Set_Map_Dimensions(x, y, w, h);
 
     /*
     **	The theater is determined at this point. There is specific data that
     **	is custom to this data. Load the custom data (as it related to terrain)
     **	at this point.
     */
-    WWGetPrivateProfileString("MAP", "Theater", Theaters[THEATER_DESERT].Name, name, 13, buffer);
-    Theater = Theater_From_Name(name);
+    Theater = Theater = ini.Get_TheaterType(name, "Theater", THEATER_TEMPERATE);
     if (Theater == THEATER_NONE) {
         Theater = THEATER_DESERT;
     }
+
+#ifdef MEGAMAPS
+    MapBinaryVersion = ini.Get_Int("MAP", "Version", MAP_VERSION_NORMAL);
+    MapBinaryVersion = Bound(MapBinaryVersion, 0, 1); // Little hack to stop arbitrary values.
+#endif
 
     /*
     ** Remove any old theater specific uncompressed shapes
@@ -1323,10 +1323,19 @@ void DisplayClass::Read_INI(char* buffer)
     /*
     **	Read the Waypoint entries.
     */
-    for (i = 0; i < WAYPT_COUNT; i++) {
+    for (int i = 0; i < WAYPT_COUNT; i++) {
+        char buf[20];
         sprintf(buf, "%d", i);
-        Waypoint[i] = WWGetPrivateProfileInt("Waypoints", buf, -1, buffer);
+        Waypoint[i] = ini.Get_Int("Waypoints", buf, -1);
         if (Waypoint[i] != -1) {
+#ifdef MEGAMAPS
+            /*
+            ** Convert the waypoints normal cell position to a new big map position.
+            */
+            if (Map.MapBinaryVersion == MAP_VERSION_NORMAL) {
+                Waypoint[i] = Confine_Old_Cell(Waypoint[i]);
+            }
+#endif
             (*this)[Waypoint[i]].IsWaypoint = 1;
         }
     }
@@ -1342,36 +1351,30 @@ void DisplayClass::Read_INI(char* buffer)
     Views[0] = Views[1] = Views[2] = Views[3] = Waypoint[WAYPT_HOME];
 
     /*
-    **	Read the cell trigger names, and assign TriggerClass pointers
-    */
-    len = strlen(buffer) + 2; // len is the length of the INI data
-    tbuffer = buffer + len;   // tbuffer is after the INI data
-
-    /*
-    **	Read all entry names into 'tbuffer'.
-    */
-    WWGetPrivateProfileString(trigsection, NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
-
-    /*
     **	Loop through all CellTrigger entries.
     */
-    while (*tbuffer != '\0') {
+    int len = ini.Entry_Count("CellTriggers");
+    for (int index = 0; index < len; index++) {
 
         /*
-        **	Get a cell trigger assignment.
+        **	Get a cell trigger and cell assignment.
         */
-        WWGetPrivateProfileString(trigsection, tbuffer, NULL, buf, sizeof(buf) - 1, buffer);
-
+        char const* cellentry = ini.Get_Entry("CellTriggers", index);
+        CELL cell = atoi(cellentry);
+#ifdef MEGAMAPS
         /*
-        **	Get cell # from entry name.
+        ** Convert the normal cell position to a big big map position.
         */
-        cell = atoi(tbuffer);
+        if (Map.MapBinaryVersion == MAP_VERSION_NORMAL) {
+            cell = Confine_Old_Cell(cell);
+        }
+#endif
         if (cell > 0 && cell < MAP_CELL_TOTAL && !(*this)[cell].IsTrigger) {
 
             /*
             **	Assign trigger pointer using trigger name.
             */
-            CellTriggers[cell] = TriggerClass::As_Pointer(buf);
+            CellTriggers[cell] = ini.Get_Trigger("CellTriggers", cellentry);
             if (CellTriggers[cell]) {
                 (*this)[cell].IsTrigger = 1;
                 if (CellTriggers[cell]) {
@@ -1379,11 +1382,6 @@ void DisplayClass::Read_INI(char* buffer)
                 }
             }
         }
-
-        /*
-        **	Step to next entry name.
-        */
-        tbuffer += strlen(tbuffer) + 1;
     }
 }
 
@@ -1403,52 +1401,65 @@ void DisplayClass::Read_INI(char* buffer)
  * HISTORY:                                                                                    *
  *   05/27/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void DisplayClass::Write_INI(char* buffer)
+void DisplayClass::Write_INI(CCINIClass& ini)
 {
     char entry[20];
 
     /*
     **	Save the map parameters.
     */
-    WWWritePrivateProfileString("MAP", "Theater", Theaters[Theater].Name, buffer);
-    WWWritePrivateProfileInt("MAP", "X", MapCellX, buffer);
-    WWWritePrivateProfileInt("MAP", "Y", MapCellY, buffer);
-    WWWritePrivateProfileInt("MAP", "Width", MapCellWidth, buffer);
-    WWWritePrivateProfileInt("MAP", "Height", MapCellHeight, buffer);
+    static char const* const NAME = "MAP";
+    ini.Clear(NAME);
+    ini.Put_TheaterType(NAME, "Theater", Theater);
+    ini.Put_Int(NAME, "X", MapCellX);
+    ini.Put_Int(NAME, "Y", MapCellY);
+    ini.Put_Int(NAME, "Width", MapCellWidth);
+    ini.Put_Int(NAME, "Height", MapCellHeight);
+
+#ifdef MEGAMAPS
+    /*
+    ** Unconditionally set it for now, need to conditionally write cell numbers to the ini file
+    ** to support being able to write either version.
+    */
+    MapBinaryVersion = MAP_VERSION_MEGA;
+
+    if (MapBinaryVersion == MAP_VERSION_MEGA) {
+        ini.Put_Int(NAME, "Version", 1);
+    }
+#endif
 
     /*
     **	Save the Waypoint entries.
     */
+    static char const* const WAYNAME = "Waypoints";
+    ini.Clear(WAYNAME);
     for (int i = 0; i < WAYPT_COUNT; i++) {
-        sprintf(entry, "%d", i);
-        WWWritePrivateProfileInt("Waypoints", entry, Waypoint[i], buffer);
+        if (Waypoint[i] != -1) {
+            sprintf(entry, "%d", i);
+            ini.Put_Int(WAYNAME, entry, Waypoint[i]);
+        }
     }
-
-    /*
-    **	Erase the CellTriggers section.
-    */
-    WWWritePrivateProfileString("CellTriggers", NULL, NULL, buffer);
 
     /*
     **	Save the cell's triggers.
     */
+    static char const* const CELLTRIG = "CellTriggers";
+    ini.Clear(CELLTRIG);
     for (CELL cell = 0; cell < MAP_CELL_TOTAL; cell++) {
         if ((*this)[cell].IsTrigger) {
+            TriggerClass* tp = CellTriggers[cell];
+            if (tp != NULL) {
 
-            /*
-            **	Get cell trigger pointer.
-            */
-            TriggerClass const* trig = CellTriggers[cell];
+                /*
+                **	Generate entry name.
+                */
+                sprintf(entry, "%d", cell);
 
-            /*
-            **	Generate entry name.
-            */
-            sprintf(entry, "%d", cell);
-
-            /*
-            **	Save entry.
-            */
-            WWWritePrivateProfileString("CellTriggers", entry, trig->Get_Name(), buffer);
+                /*
+                **	Save entry.
+                */
+                ini.Put_Trigger(CELLTRIG, entry, tp);
+            }
         }
     }
 }
@@ -2712,7 +2723,7 @@ COORDINATE DisplayClass::Pixel_To_Coord(int x, int y)
     */
     // Possibly ignore the view constraints if we aren't using the internal renderer. ST - 4/17/2019 9:06AM
     // if (x < TacLeptonWidth && y < TacLeptonHeight) {
-    if (IgnoreViewConstraints || (x < TacLeptonWidth && y < TacLeptonHeight)) {
+    if (IgnoreViewConstraints || ((unsigned)x < TacLeptonWidth && (unsigned)y < TacLeptonHeight)) {
         return (Coord_Add(TacticalCoord, XY_Coord(x, y)));
     }
     return (0);
@@ -2941,7 +2952,7 @@ CELL DisplayClass::Calculated_Cell(SourceType dir, HousesType house)
         **	The selected edge cell must be unoccupied and if this is for
         **	the player, then it must be on an accessible map cell.
         */
-        cell &= 0x0FFF;
+        cell &= MAP_CELL_TOTAL - 1;
         if (cell && (*this)[cell].Cell_Techno()) {
             cell = 0;
         }
@@ -4317,7 +4328,7 @@ bool DisplayClass::In_View(register CELL cell)
 
 COORDINATE DisplayClass::Closest_Free_Spot(COORDINATE coord, bool any) const
 {
-    if (coord & 0xC000C000) {
+    if (coord & HIGH_COORD_MASK) {
         return (0x00800080);
     }
     return (*this)[Coord_Cell(coord)].Closest_Free_Spot(coord, any);

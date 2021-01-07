@@ -35,15 +35,12 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "settings.h"
 
 #include "ipx95.h"
 
 #ifdef MCIMPEG // Denzil 6/15/98
 #include "mcimovie.h"
-#endif
-
-#ifdef WOLAPI_INTEGRATION
-//#include "WolDebug.h"
 #endif
 
 extern char RedAlertINI[_MAX_PATH];
@@ -78,11 +75,9 @@ const char* Game_Registry_Key();
 // Added. ST - 5/14/2019
 bool ProgEndCalled = false;
 
-extern "C" {
 extern char* BigShapeBufferStart;
 extern char* TheaterShapeBufferStart;
 extern unsigned int IsTheaterShape;
-}
 
 extern void Free_Heaps(void);
 extern void DLL_Shutdown(void);
@@ -307,40 +302,6 @@ int main(int argc, char* argv[])
     SetCurrentDirectoryA(path);
 #endif
 
-#ifdef WOLAPI_INTEGRATION
-    //	Look for special wolapi install program, used after the patch to version 3, to install "Shared Internet
-    //Components".
-    WIN32_FIND_DATA wfd;
-    HANDLE hWOLSetupFile = FindFirstFile("wolsetup.exe", &wfd);
-    bool bWOLSetupFile = (hWOLSetupFile != INVALID_HANDLE_VALUE);
-    //	if( bWOLSetupFile )
-    //		debugprint( "Found wolsetup.exe\n" );
-    FindClose(hWOLSetupFile);
-    //	Look for special registry entry that tells us when the setup exe has done its thing.
-    HKEY hKey;
-    RegOpenKeyEx(HKEY_LOCAL_MACHINE, Game_Registry_Key(), 0, KEY_READ, &hKey);
-    DWORD dwValue;
-    DWORD dwBufSize = sizeof(DWORD);
-    if (RegQueryValueEx(hKey, "WolapiInstallComplete", 0, NULL, (LPBYTE)&dwValue, &dwBufSize) == ERROR_SUCCESS) {
-        //		debugprint( "Found WolapiInstallComplete in registry\n" );
-        //	Setup has finished. Delete the setup exe and remove reg key.
-        if (bWOLSetupFile) {
-            if (DeleteFile("wolsetup.exe"))
-                RegDeleteValue(hKey, "WolapiInstallComplete");
-        } else
-            RegDeleteValue(hKey, "WolapiInstallComplete");
-    }
-    RegCloseKey(hKey);
-
-    //	I've been having problems getting the patch to delete "conquer.eng", which is present in the game
-    //	directory for 1.08, but which must NOT be present for this version (Aftermath mix files provide the
-    //	string overrides that the 1.08 separate conquer.eng did before Aftermath).
-    //	Delete conquer.eng if it's found.
-    if (FindFirstFileA("conquer.eng", &wfd) != INVALID_HANDLE_VALUE)
-        DeleteFileA("conquer.eng");
-
-#endif
-
     if (Parse_Command_Line(argc, argv)) {
 
         WinTimerClass::Init(60);
@@ -410,10 +371,6 @@ int main(int argc, char* argv[])
 #ifdef REMASTER_BUILD
             video_success = true;
 #else
-
-#ifdef SDL2_BUILD
-            video_success = static_cast<bool>(Set_Video_Mode(OutputWidth, OutputHeight, 8));
-#else
             if (ScreenHeight == 400) {
                 if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
                     video_success = true;
@@ -428,8 +385,6 @@ int main(int argc, char* argv[])
                     video_success = true;
                 }
             }
-#endif // SDL2_BUILD
-
 #endif
 
             if (!video_success) {
@@ -590,10 +545,19 @@ int main(int argc, char* argv[])
                 delete MciMovie;
 #endif
 #endif
+            /*
+            ** Save settings if they were changed during gameplay.
+            */
+            Settings.Save(ini);
+            ini.Save(cfile);
 
             VisiblePage.Clear();
             HiddenPage.Clear();
             Memory_Error_Exit = Print_Error_Exit;
+
+#ifdef SDL2_BUILD
+            Reset_Video_Mode();
+#endif
 
             /*
             ** Flag that this is a clean shutdown (not killed with Ctrl-Alt-Del)
@@ -860,6 +824,11 @@ void Read_Setup_Options(RawFileClass* config_file)
         ini.Load(*config_file);
 
         /*
+        ** Read in global settings
+        */
+        Settings.Load(ini);
+
+        /*
         ** Read in the boolean options
         */
         VideoBackBufferAllowed = ini.Get_Bool("Options", "VideoBackBuffer", true);
@@ -867,8 +836,6 @@ void Read_Setup_Options(RawFileClass* config_file)
 
 		Show640x480BlackBars = ini.Get_Bool("Options", "Show640x480BlackBars", false);
 
-        ScreenHeight = ini.Get_Bool("Options", "Resolution", false) ? GBUFF_INIT_ALTHEIGHT : GBUFF_INIT_HEIGHT;
-		
 		ScreenWidth = ini.Get_Int("Options", "Width", 640);
 		ScreenHeight = ini.Get_Int("Options", "Height", ScreenHeight);
 

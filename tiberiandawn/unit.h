@@ -58,9 +58,16 @@ public:
     **	Constructors, Destructors, and overloaded operators.
     */
     static void* operator new(size_t size);
+    static void* operator new(size_t, void* ptr)
+    {
+        return (ptr);
+    };
     static void operator delete(void* ptr);
     UnitClass(void){};
     UnitClass(UnitType classid, HousesType house);
+    UnitClass(NoInitClass const& x)
+        : TarComClass(x)
+        , HarvestTimer(x){};
     operator UnitType(void) const
     {
         return Class->Type;
@@ -160,7 +167,7 @@ public:
     virtual int Mission_Harvest(void);
     virtual int Mission_Hunt(void);
     virtual int Mission_Enter(void);
-    virtual int UnitClass::Mission_Move(void);
+    virtual int Mission_Move(void);
     virtual FireErrorType Can_Fire(TARGET, int which) const;
 
 /*
@@ -183,14 +190,12 @@ public:
     /*
     **	File I/O.
     */
-    static void Read_INI(char* buffer);
-    static void Write_INI(char* buffer);
+    static void Read_INI(CCINIClass& ini);
+    static void Write_INI(CCINIClass& ini);
     static char* INI_Name(void)
     {
         return "UNITS";
     };
-    bool Load(FileClass& file);
-    bool Save(FileClass& file);
     virtual void Code_Pointers(void);
     virtual void Decode_Pointers(void);
 
@@ -215,11 +220,6 @@ private:
     *save/load
     */
     unsigned char SaveLoadPadding[28];
-
-    /*
-    ** This contains the value of the Virtual Function Table Pointer
-    */
-    static void* VTable;
 };
 
 #endif

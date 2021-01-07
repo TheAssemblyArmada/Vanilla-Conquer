@@ -100,8 +100,6 @@ int Linear_Blit_To_Linear(void* thisptr,
     return 0;
 }
 
-#ifdef NOASM
-
 // Note that this function does not generate pixel perfect results when compared to the ASM implementation
 // It should not generate anything that is visibly different without doing side byt side comparisons however.
 bool Linear_Scale_To_Linear(void* thisptr,
@@ -248,5 +246,3 @@ bool Linear_Scale_To_Linear(void* thisptr,
 
     return true;
 }
-
-#endif

@@ -147,6 +147,8 @@ SidebarClass::SidebarClass(void)
     , IsUpgradeActive(false)
     , IsDemolishActive(false)
 {
+    new (&Column[0]) StripClass(InitClass());
+    new (&Column[1]) StripClass(InitClass());
 }
 
 /***********************************************************************************************
@@ -1033,7 +1035,7 @@ bool SidebarClass::Activate(int control)
  * HISTORY:                                                                                    *
  *   12/31/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-SidebarClass::StripClass::StripClass(void)
+SidebarClass::StripClass::StripClass(InitClass const&)
     : X(0)
     , Y(0)
     , ID(0)

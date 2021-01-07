@@ -1,10 +1,6 @@
 #ifndef COMMON_MISCASM_H
 #define COMMON_MISCASM_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 int calcx(signed short param1, short distance);
 int calcy(signed short param1, short distance);
 unsigned int Cardinal_To_Fixed(unsigned base, unsigned cardinal);
@@ -17,9 +13,5 @@ int _Bound(int original, int min, int max);
 #define Bound _Bound
 int Reverse_Long(int number);
 void strtrim(char* buffer);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -67,14 +67,6 @@
 #include <stdarg.h>
 #include <string.h>
 
-// PG
-// extern void output(short port, short data);
-//#pragma aux output parm [dx] [ax] =		\
-//		"out	dx,al"		\
-//		"inc	dx"			\
-//		"mov	al,ah"		\
-//		"out	dx,al"
-
 bool MonoClass::Enabled = 0;
 MonoClass* MonoClass::PageUsage[MonoClass::MAX_MONO_PAGES];
 // MonoClass::MonoPageType * MonoClass::MonoRAM = (MonoClass::MonoPageType *) 0xB0000;

@@ -208,10 +208,6 @@ typedef struct _VQASN2JHeader
 } VQASN2JHeader;
 #pragma pack(pop)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 int VQA_Open(VQAHandle* handle, const char* filename, VQAConfig* config);
 void VQA_Close(VQAHandle* handle);
 int VQA_LoadFrame(VQAHandle* handle);
@@ -219,9 +215,5 @@ int VQA_SeekFrame(VQAHandle* handle, int framenum, int fromwhere);
 VQAData* VQA_AllocBuffers(VQAHeader* header, VQAConfig* config);
 void VQA_FreeBuffers(VQAData* data, VQAConfig* config, VQAHeader* header);
 int VQA_PrimeBuffers(VQAHandle* handle);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

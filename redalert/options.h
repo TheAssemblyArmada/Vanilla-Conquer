@@ -85,15 +85,17 @@ public:
 #ifdef FIXIT_VERSION_3
     fixed MultiScoreVolume; //	Volume for scores during multiplayer games.
 #endif
-    fixed Brightness;             // Brightness.
-    fixed Tint;                   // Hue
-    fixed Saturation;             // Saturation
-    fixed Contrast;               // Value
-    unsigned AutoScroll : 1;      // Does map autoscroll?
-    unsigned IsScoreRepeat : 1;   // Score should repeat?
-    unsigned IsScoreShuffle : 1;  // Score list should shuffle?
-    unsigned IsPaletteScroll : 1; // Allow palette scrolling?
-    unsigned ToggleSidebar : 1;   // Allow sidebar to be toggled?
+    fixed Brightness;                  // Brightness.
+    fixed Tint;                        // Hue
+    fixed Saturation;                  // Saturation
+    fixed Contrast;                    // Value
+    unsigned AutoScroll : 1;           // Does map autoscroll?
+    unsigned IsScoreRepeat : 1;        // Score should repeat?
+    unsigned IsScoreShuffle : 1;       // Score list should shuffle?
+    unsigned IsPaletteScroll : 1;      // Allow palette scrolling?
+    unsigned ToggleSidebar : 1;        // Allow sidebar to be toggled?
+    unsigned CounterstrikeEnabled : 1; // Allow counterstrike to be detected?
+    unsigned AftermathEnabled : 1;     // Allow aftermath to be detected?
 
     /*
     **	These are the hotkeys used for keyboard control.

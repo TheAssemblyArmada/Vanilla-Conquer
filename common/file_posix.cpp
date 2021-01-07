@@ -1,5 +1,6 @@
 #include "file.h"
 
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -24,6 +25,8 @@ private:
     DIR* Directory;
     struct dirent* DirEntry;
     const char* FileFilter;
+    char FullName[PATH_MAX];
+    char DirName[PATH_MAX];
 
     bool FindNextWithFilter();
 };
@@ -44,7 +47,7 @@ const char* Find_File_Data_Posix::GetName() const
     if (DirEntry == nullptr) {
         return nullptr;
     }
-    return DirEntry->d_name;
+    return FullName;
 }
 
 unsigned long Find_File_Data_Posix::GetTime() const
@@ -66,14 +69,9 @@ bool Find_File_Data_Posix::FindNextWithFilter()
         if (DirEntry == nullptr) {
             return false;
         }
-        struct stat buf = {0};
-        if (stat(DirEntry->d_name, &buf) != 0) {
-            return false;
-        }
-        if (!S_ISREG(buf.st_mode)) {
-            continue;
-        }
-        if (fnmatch(FileFilter, DirEntry->d_name, FNM_PATHNAME) == 0) {
+        if (fnmatch(FileFilter, DirEntry->d_name, FNM_PATHNAME | FNM_CASEFOLD) == 0) {
+            strcpy(FullName, DirName);
+            strcat(FullName, DirEntry->d_name);
             break;
         }
     }
@@ -83,13 +81,24 @@ bool Find_File_Data_Posix::FindNextWithFilter()
 bool Find_File_Data_Posix::FindFirst(const char* fname)
 {
     Close();
-    FileFilter = fname;
-    char cwd[PATH_MAX] = {0};
-    getcwd(cwd, PATH_MAX);
-    Directory = opendir(cwd);
+    FullName[0] = '\0';
+    DirName[0] = '\0';
+
+    // split directory and file from the path
+    char* fdir = strrchr((char*)fname, '/');
+    if (fdir != nullptr) {
+        strncat(DirName, fname, (fdir - fname + 1));
+        FileFilter = fdir + 1;
+        Directory = opendir(DirName);
+    } else {
+        FileFilter = fname;
+        Directory = opendir(".");
+    }
+
     if (Directory == nullptr) {
         return false;
     }
+
     return FindNextWithFilter();
 }
 

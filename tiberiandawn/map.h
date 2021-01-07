@@ -37,11 +37,13 @@
 
 #include "gscreen.h"
 
-#define BIGMAP 0
-
 class MapClass : public GScreenClass
 {
 public:
+    MapClass(void){};
+    MapClass(NoInitClass const& x)
+        : GScreenClass(x)
+        , Array(x){};
     /*
     ** Initialization
     */
@@ -122,7 +124,45 @@ public:
     */
     long TotalValue;
 
+#ifdef MEGAMAPS
+    /*
+    **	To enable big maps we need to load the normal format a little differently.
+    **  This value should be set when reading the map ini before the binary is loaded.
+    */
+    int MapBinaryVersion;
+
+    /*
+    **	Slighty different version of Read/Write_Binary, suited for big maps.
+    */
+    bool Read_Binary_Big(char const* fname, uint32_t* crc);
+    bool Write_Binary_Big(char const* root);
+#endif
+
+    CellClass& operator[](unsigned index)
+    {
+        return Array[index];
+    };
+
+    CellClass const& operator[](unsigned index) const
+    {
+        return Array[index];
+    };
+
+    int ID(CellClass const* ptr)
+    {
+        return (Array.ID(ptr));
+    };
+    int ID(CellClass const& ptr)
+    {
+        return (Array.ID(ptr));
+    };
+
 protected:
+    /*
+    **	This is the array of cell objects.
+    */
+    VectorClass<CellClass> Array;
+
     /*
     **	These are the size dimensions of the underlying array of cell objects.
     **	This is the dimensions of the "map" that the tactical view is

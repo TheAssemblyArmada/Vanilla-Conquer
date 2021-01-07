@@ -50,9 +50,17 @@ public:
     **	Constructors and destructors.
     */
     static void* operator new(size_t size);
+    static void* operator new(size_t, void* ptr)
+    {
+        return (ptr);
+    };
     static void operator delete(void* ptr);
     OverlayClass(void);
     OverlayClass(OverlayType type, CELL pos = -1, HousesType = HOUSE_NONE);
+    OverlayClass(NoInitClass const& x)
+        : ObjectClass(x)
+        , Class(this->Class){};
+
     virtual ~OverlayClass(void)
     {
         if (GameActive)
@@ -72,14 +80,12 @@ public:
     /*
     **	File I/O.
     */
-    static void Read_INI(char*);
-    static void Write_INI(char*);
+    static void Read_INI(CCINIClass& ini);
+    static void Write_INI(CCINIClass& ini);
     static char* INI_Name(void)
     {
         return "OVERLAY";
     };
-    bool Load(FileClass& file);
-    bool Save(FileClass& file);
     virtual void Code_Pointers(void);
     virtual void Decode_Pointers(void);
 
@@ -116,11 +122,6 @@ private:
     *save/load
     */
     unsigned char SaveLoadPadding[8];
-
-    /*
-    ** This contains the value of the Virtual Function Table Pointer
-    */
-    static void* VTable;
 };
 
 #endif

@@ -42,90 +42,16 @@
 
 //#pragma warn -hid
 
-#ifdef NEVER
-Map(screen) class heirarchy.
-
-    MapeditClass(most derived class)-- scenario editor
-        ³ MouseClass-- handles mouse animation and display control
-        ³ ScrollClass-- map scroll handler
-        ³ HelpClass-- pop
-    - up help text handler
-        ³ TabClass-- file folder tab screen mode control dispatcher
-        ³ SidebarClass-- displays and controls construction list sidebar
-        ³ PowerClass-- display power production
-          / consumption bargraph
-        ³ RadarClass-- displays and controls radar map
-        ³ DisplayClass-- general tactical map display handler
-        ³ MapClass-- general tactical map data handler
-        ³ GScreenClass(pure virtual base class)-- generic screen control
-
-          AbstractClass
-                                  ³
-                                  ³
-                                  ³
-                                  ³ ObjectClass
-                                  ³
-       ÚÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄ¿
-          AnimClass  ³ TemplateClass    ³        ÃÄ FuseClass     ³ TerrainClass
-              ³                   ³        ÃÄ FlyClass      ³
-              ³                   ³ BulletClass            ³ OverlayClass MissionClass SmudgeClass
-                                  ³ RadioClass
-                                  ³
-                                  ÃÄ CrewClass
-                                  ÃÄ FlasherClass
-                                  ÃÄ StageClass
-                                  ÃÄ CargoClass TechnoClass
-                                  ³
-                       ÚÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿ FootClass BuildingClass
-                       ³
-         ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÁÂÄÄÄÄÄÄÄÄÄÄÄÄÄ¿ DriveClass InfantryClass         ÃÄ FlyClass
-         ³ AircraftClass
-       ÚÄÁÄÄÄÄÄÄÄÄÄ¿
-       ³           ³
-       ³ VesselClass
-       ³ UnitClass
-
-          AbstractTypeClass
-                                    ³ ObjectTypeClass
-                                    ³
-             ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-             ³                      ³            ³                 ³ TechnoTypeClass              ³            ³                 ³
-             ³ BulletTypeClass    ³                 ³
-             ³ TemplateTypeClass         ³
-    ÚÄÄÄÄÄÄÄÄÁÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄ¿ TerrainTypeClass
-    ³              ³           ³              ³        ³ UnitTypeClass      ³ BuildingTypeClass      ³ VesselTypeClass
-                   ³                          ³ AircraftTypeClass InfantryTypeClass
-#endif
-
 #ifdef _WIN32
 #define MONOC_H
 #endif
 
 #define _MAX_NAME _MAX_FNAME
 
-/**********************************************************************
-**	This class is solely used as a parameter to a constructor that does
-**	absolutely no initialization to the object being constructed. By using
-**	this method, it is possible to load and save data directly from a
-**	class that has virtual functions. The construction process automatically
-**	takes care of initializing the virtual function table pointer and the
-**	rest of the constructor doesn't initialize any data members. After loading
-**	into a class object, simply perform an in-place new operation.
-*/
-#ifndef NOINITCLASS
-#define NOINITCLASS
-          struct NoInitClass
-{
-public:
-    void operator()(void) const {};
-};
-#endif
-
 #define WWMEM_H
 
 #include "common/wwkeyboard.h"
 #include "common/wwlib32.h"
-#include "mpu.h"
 #include "bench.h"
 #include "common/rect.h"
 #include "jshell.h"
@@ -141,14 +67,12 @@ public:
 #include "ramfile.h"
 #include "lcw.h"
 #include "lcwpipe.h"
-#include "lzopipe.h"
 #include "shapipe.h"
 #include "b64pipe.h"
 #include "straw.h"
 #include "xstraw.h"
 #include "b64straw.h"
 #include "lcwstraw.h"
-#include "lzostraw.h"
 #include "shastraw.h"
 #include "rndstraw.h"
 
@@ -230,6 +154,7 @@ CELL Coord_Cell(COORDINATE coord);
 #include "textbtn.h"
 #include "statbtn.h"
 #include "slider.h"
+#include "dialog.h"
 #include "list.h"
 #include "drop.h"
 #include "cheklist.h"
@@ -387,6 +312,7 @@ int Owner_From_Name(char const* text);
 CrateType Crate_From_Name(char const* name);
 Rect const Shape_Dimensions(void const* shapedata, int shapenum);
 void IPX_Call_Back(void);
+bool Is_Demo(void);
 bool Is_Counterstrike_Installed(void);
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
 bool Is_Aftermath_Installed(void);
@@ -502,41 +428,6 @@ void Debug_Key(unsigned input);
 void Self_Regulate(void);
 
 /*
-**	DIALOG.CPP
-*/
-void Draw_Caption(int text, int x, int y, int w);
-void Draw_Caption(char const* text, int x, int y, int w);
-int Format_Window_String(char* string, int maxlinelen, int& width, int& height);
-extern void Dialog_Box(int x, int y, int w, int h);
-void Conquer_Clip_Text_Print(char const*,
-                             unsigned x,
-                             unsigned y,
-                             RemapControlType* fore,
-                             unsigned back = (unsigned)TBLACK,
-                             TextPrintType flag = TPF_8POINT | TPF_DROPSHADOW,
-                             int width = -1,
-                             int const* tabs = 0);
-void Draw_Box(int x, int y, int w, int h, BoxStyleEnum up, bool filled);
-int Dialog_Message(char* errormsg, ...);
-void Window_Box(WindowNumberType window, BoxStyleEnum style);
-void Fancy_Text_Print(char const* text,
-                      unsigned x,
-                      unsigned y,
-                      RemapControlType* fore,
-                      unsigned back,
-                      TextPrintType flag,
-                      ...);
-void Fancy_Text_Print(int text, unsigned x, unsigned y, RemapControlType* fore, unsigned back, TextPrintType flag, ...);
-void Simple_Text_Print(char const* text,
-                       unsigned x,
-                       unsigned y,
-                       RemapControlType* fore,
-                       unsigned back,
-                       TextPrintType flag);
-void Plain_Text_Print(int text, unsigned x, unsigned y, unsigned fore, unsigned back, TextPrintType flag, ...);
-void Plain_Text_Print(char const* text, unsigned x, unsigned y, unsigned fore, unsigned back, TextPrintType flag, ...);
-
-/*
 **	DISPLAY.CPP
 */
 ObjectClass* Best_Object_With_Action(DynamicVectorClass<ObjectClass*>& objects, const ObjectClass* object);
@@ -622,7 +513,6 @@ int Load_Picture(char const* filename,
 void* Conquer_Build_Fading_Table(PaletteClass const& palette, void* dest, int color, int frac);
 void* Small_Icon(void const* iconptr, int iconnum);
 void Set_Window(int window, int x, int y, int w, int h);
-void* Load_Alloc_Data(FileClass& file);
 long Load_Uncompress(FileClass& file, BuffType& uncomp_buff, BuffType& dest_buff, void* reserved_data);
 long Translucent_Table_Size(int count);
 void* Build_Translucent_Table(PaletteClass const& palette, TLucentType const* control, int count, void* buffer);
@@ -632,9 +522,7 @@ void* Make_Fading_Table(PaletteClass const& palette, void* dest, int color, int 
 /*
 **	KEYFBUFF.ASM
 */
-extern "C" {
-long Buffer_Frame_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortClass& view, int flags, ...);
-}
+void Buffer_Frame_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortClass& view, int flags, ...);
 
 /*
 **	KEYFRAME.CPP
@@ -707,36 +595,6 @@ void Log_End_Nest_Time(char* string);
 /*
 **	OBJECT.CPP
 */
-
-/*
-**	PROFILE.CPP
-*/
-int WWGetPrivateProfileInt(char const* section, char const* entry, int def, char* profile);
-bool WWWritePrivateProfileInt(char const* section, char const* entry, int value, char* profile);
-bool WWWritePrivateProfileString(char const* section, char const* entry, char const* string, char* profile);
-char* WWGetPrivateProfileString(char const* section,
-                                char const* entry,
-                                char const* def,
-                                char* retbuffer,
-                                int retlen,
-                                char const* profile);
-unsigned WWGetPrivateProfileHex(char const* section, char const* entry, char* profile);
-
-char* Read_Bin_Buffer(void);
-bool Read_Bin_Init(char* buffer, int length);
-int Read_Bin_Length(char* buffer);
-bool Read_Bin_Num(void* num, int length, char* buffer);
-int Read_Bin_Pos(char* buffer);
-int Read_Bin_PosSet(unsigned int pos, char* buffer);
-bool Read_Bin_String(char* string, char* buffer);
-
-char* Write_Bin_Buffer(void);
-bool Write_Bin_Init(char* buffer, int length);
-int Write_Bin_Length(char* buffer);
-bool Write_Bin_Num(void* num, int length, char* buffer);
-int Write_Bin_Pos(char* buffer);
-int Write_Bin_PosSet(unsigned int pos, char* buffer);
-bool Write_Bin_String(char* string, int length, char* buffer);
 
 /*
 ** QUEUE.CPP

@@ -46,6 +46,7 @@
 
 #include "function.h"
 #include "common/framelimit.h"
+#include "common/wsa.h"
 
 #define SCORETEXT_X 184
 #define SCORETEXT_Y 8
@@ -98,6 +99,7 @@ int ControlQ; // cheat key to skip past score/mapsel screens
 bool StillUpdating;
 
 char* ScreenNames[2] = {"ALIBACKH.PCX", "SOVBACKH.PCX"};
+char* AnimNames[2] = {"ALI-TRAN.WSA", "SOV-TRAN.WSA"};
 
 struct Fame
 {
@@ -317,6 +319,7 @@ int Alloc_Object(ScoreAnimClass* obj)
  * HISTORY:                                                                                    *
  *   05/02/1994     : Created.                                                                 *
  *=============================================================================================*/
+extern int CopyType;
 static unsigned char const _bluepal[] =
     {0xC0, 0xC1, 0xC1, 0xC3, 0xC2, 0xC5, 0xC3, 0xC7, 0xC4, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xC0, 0xCF};
 static unsigned char const _greenpal[] =
@@ -349,7 +352,7 @@ void ScoreClass::Presentation(void)
     */
     Disable_Uncompressed_Shapes();
 #endif // FIXIT
-    PseudoSeenBuff = new GraphicBufferClass(SeenBuff.Get_Width(), SeenBuff.Get_Height(), (void*)NULL);
+    PseudoSeenBuff = new GraphicBufferClass(320, 200, (void*)NULL);
     int i;
     void const* yellowptr;
     void const* redptr;
@@ -367,6 +370,7 @@ void ScoreClass::Presentation(void)
     Theme.Queue_Song(THEME_SCORE);
 
     VisiblePage.Clear();
+    PseudoSeenBuff->Clear();
     SysMemPage.Clear();
     WWMouse->Erase_Mouse(&HidPage, true);
     HiddenPage.Clear();
@@ -377,6 +381,11 @@ void ScoreClass::Presentation(void)
     void const* sfx4 = MFCD::Retrieve("SFX4.AUD");
     Beepy6 = MFCD::Retrieve("BEEPY6.AUD");
 
+    void* anim = Open_Animation(AnimNames[house],
+                                NULL,
+                                0L,
+                                (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE),
+                                (unsigned char*)ScorePalette.Get_Data());
     unsigned minutes = (unsigned)((ElapsedTime / (long)TIMER_MINUTE)) + 1;
 
     // Load up the shapes for the Nod score screen
@@ -389,12 +398,32 @@ void ScoreClass::Presentation(void)
 
     /* --- Now display the background animation --- */
     Hide_Mouse();
-    Load_Title_Screen(ScreenNames[house], &HidPage, (unsigned char*)ScorePalette.Get_Data());
-    Increase_Palette_Luminance((unsigned char*)ScorePalette.Get_Data(), 30, 30, 30, 63);
-    HidPage.Blit(SeenPage);
-    HidPage.Blit(*PseudoSeenBuff);
+    Animate_Frame(anim, *PseudoSeenBuff, 1);
+    InterpolationPalette = (unsigned char*)ScorePalette.Get_Data();
+    InterpolationPaletteChanged = true;
+    CopyType = 2;
+    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL);
     ScorePalette.Set(FADE_PALETTE_FAST, Call_Back);
     Play_Sample(country4, 255, Options.Normalize_Volume(150));
+
+    int frame = 1;
+    StreamLowImpact = true;
+    while (frame < Get_Animation_Frame_Count(anim)) {
+        CopyType = 2;
+        Animate_Frame(anim, *PseudoSeenBuff, frame++);
+        Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL);
+        CopyType = 0;
+        Call_Back_Delay(2);
+    }
+    StreamLowImpact = false;
+    Call_Back();
+    Close_Animation(anim);
+
+    Load_Title_Screen(ScreenNames[house], &HidPage, (unsigned char*)ScorePalette.Get_Data());
+    Increase_Palette_Luminance((unsigned char*)ScorePalette.Get_Data(), 30, 30, 30, 63);
+    ScorePalette.Set(0, nullptr);
+    HidPage.Blit(SeenPage);
+    HidPage.Blit(*PseudoSeenBuff);
 
     /*
     ** Background's up, so now load various shapes and animations

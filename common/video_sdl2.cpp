@@ -42,6 +42,7 @@
 #include "video.h"
 #include "wwkeyboard.h"
 #include "wwmouse.h"
+#include "settings.h"
 
 #include <SDL.h>
 
@@ -50,6 +51,7 @@ extern WWKeyboardClass* Keyboard;
 SDL_Window* window;
 SDL_Renderer* renderer;
 static SDL_Palette* palette;
+static Uint32 pixel_format;
 
 class SurfaceMonitorClassDummy : public SurfaceMonitorClass
 {
@@ -92,16 +94,57 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     SDL_ShowCursor(SDL_DISABLE);
 
-    window = SDL_CreateWindow("Vanilla Conquer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, 0);
+    int win_w = w;
+    int win_h = h;
+    int win_flags = 0;
+
+    if (!Settings.Video.Windowed) {
+        /*
+        ** Native fullscreen if no proper width and height set.
+        */
+        if (Settings.Video.Width < w || Settings.Video.Height < h) {
+            win_w = 0;
+            win_h = 0;
+            win_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+        } else {
+            win_w = Settings.Video.Width;
+            win_h = Settings.Video.Height;
+            win_flags |= SDL_WINDOW_FULLSCREEN;
+        }
+    } else if (Settings.Video.WindowWidth > w && Settings.Video.WindowHeight > h) {
+        win_w = Settings.Video.WindowWidth;
+        win_h = Settings.Video.WindowHeight;
+    }
+
+    window =
+        SDL_CreateWindow("Vanilla Conquer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, win_w, win_h, win_flags);
+    if (window == nullptr) {
+        return false;
+    }
+
+    pixel_format = SDL_GetWindowPixelFormat(window);
+    if (pixel_format == SDL_PIXELFORMAT_UNKNOWN || SDL_BITSPERPIXEL(pixel_format) < 16) {
+        SDL_DestroyWindow(window);
+        window = nullptr;
+        return false;
+    }
+
     palette = SDL_AllocPalette(256);
-    renderer = SDL_CreateRenderer(window, -1, 0);
+
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+    if (renderer == nullptr) {
+        return false;
+    }
 
     return true;
 }
 
 bool Is_Video_Fullscreen()
 {
-    return false;
+    /*
+    ** Until we can toggle, just return the setting.
+    */
+    return !Settings.Video.Windowed;
 }
 
 /***********************************************************************************************
@@ -269,8 +312,8 @@ public:
         SDL_SetSurfacePalette(surface, palette);
 
         if (flags & GBC_VISIBLE) {
-            windowSurface = SDL_CreateRGBSurface(0, w, h, 32, 0, 0, 0, 0);
-            texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, w, h);
+            windowSurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(pixel_format), pixel_format);
+            texture = SDL_CreateTexture(renderer, windowSurface->format->format, SDL_TEXTUREACCESS_STREAMING, w, h);
             frontSurface = this;
         }
     }
@@ -341,16 +384,7 @@ public:
         int pitch;
 
         SDL_BlitSurface(surface, NULL, windowSurface, NULL);
-        SDL_LockTexture(texture, NULL, &pixels, &pitch);
-        SDL_ConvertPixels(windowSurface->w,
-                          windowSurface->h,
-                          windowSurface->format->format,
-                          windowSurface->pixels,
-                          windowSurface->pitch,
-                          SDL_PIXELFORMAT_RGBA8888,
-                          pixels,
-                          pitch);
-        SDL_UnlockTexture(texture);
+        SDL_UpdateTexture(texture, NULL, windowSurface->pixels, windowSurface->pitch);
         SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
     }

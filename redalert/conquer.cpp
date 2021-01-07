@@ -60,6 +60,7 @@
  *   Unselect_All -- Causes all selected objects to become unselected.                         *
  *   VQ_Call_Back -- Maintenance callback used for VQ movies.                                  *
  *   Game_Registry_Key -- Returns pointer to string containing the registry subkey for the game.
+ *   Is_Demo -- Function to determine if we are running with demo files.
  *   Is_Counterstrike_Installed -- Function to determine the availability of the CS expansion.
  *   Is_Aftermath_Installed -- Function to determine the availability of the AM expansion.
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -72,6 +73,7 @@
 #include "common/tcpip.h"
 #endif // WINSOCK_IPX
 #else
+#include <unistd.h>
 #include "fakesock.h"
 TcpipManagerClass Winsock;
 #endif
@@ -82,14 +84,6 @@ TcpipManagerClass Winsock;
 #include "common/framelimit.h"
 #include "common/vqatask.h"
 #include "common/vqaloader.h"
-
-#ifdef WOLAPI_INTEGRATION
-//#include "WolDebug.h"
-#include "WolStrng.h"
-#include "WolapiOb.h"
-extern WolapiObject* pWolapi;
-#define PAGE_RESPOND_KEY KN_RETURN // KN_COMMA
-#endif
 
 #ifdef MPEGMOVIE
 #ifdef MCIMPEG
@@ -128,9 +122,7 @@ static void Message_Input(KeyNumType& input);
 void Color_Cycle(void);
 bool Map_Edit_Loop(void);
 
-extern "C" {
 bool UseOldShapeDraw = false;
-}
 
 #ifdef CHEAT_KEYS
 void Dump_Heap_Pointers(void);
@@ -140,9 +132,7 @@ static void Do_Record_Playback(void);
 
 void Toggle_Formation(void);
 
-extern "C" {
 extern char* __nheapbeg;
-}
 
 //
 // Special module globals for recording and playback
@@ -1103,14 +1093,8 @@ static void Message_Input(KeyNumType& input)
     **	'to' portion.  At the other end, the buffer allocated to display the
     **	message must be MAX_MESSAGE_LENGTH plus the size of "From: xxx (house)".
     */
-#ifdef WOLAPI_INTEGRATION
-    if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH
-        && ((input >= KN_F1 && input < (KN_F1 + Session.MaxPlayers)) || input == PAGE_RESPOND_KEY)
-        && !Session.Messages.Is_Edit()) {
-#else
     if (Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH && input >= KN_F1
         && input < (KN_F1 + Session.MaxPlayers) && !Session.Messages.Is_Edit()) {
-#endif
         memset(txt, 0, 40);
 
         /*
@@ -1143,11 +1127,7 @@ static void Message_Input(KeyNumType& input)
 
                 Map.Flag_To_Redraw(false);
 
-#ifdef WOLAPI_INTEGRATION
-            } else if ((input - KN_F1) < Ipx.Num_Connections() && !Session.ObiWan && input != PAGE_RESPOND_KEY) {
-#else
             } else if ((input - KN_F1) < Ipx.Num_Connections() && !Session.ObiWan) {
-#endif
                 id = Ipx.Connection_ID(input - KN_F1);
                 Session.MessageAddress = (*(Ipx.Connection_Address(id)));
                 sprintf(txt, Text_String(TXT_TO), Ipx.Connection_Name(id));
@@ -1157,40 +1137,6 @@ static void Message_Input(KeyNumType& input)
 
                 Map.Flag_To_Redraw(false);
             }
-#ifdef WOLAPI_INTEGRATION
-            else if (Session.Type == GAME_INTERNET && pWolapi && !pWolapi->bConnectionDown
-                     && input == PAGE_RESPOND_KEY) {
-                if (*pWolapi->szExternalPager) {
-                    //	Respond to a page from external ww online user that paged me.
-                    //	Set MessageAddress to all zeroes, as a flag to ourselves later on.
-                    NetNumType blip;
-                    NetNodeType blop;
-                    memset(blip, 0, 4);
-                    memset(blop, 0, 6);
-                    Session.MessageAddress = IPXAddressClass(blip, blop);
-
-                    //	Tell pWolapi not to reset szExternalPager for the time being.
-                    pWolapi->bFreezeExternalPager = true;
-
-                    sprintf(txt, Text_String(TXT_TO), pWolapi->szExternalPager);
-
-                    Session.Messages.Add_Edit(
-                        Session.ColorIdx, TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW, txt, 0, 232 * RESFACTOR);
-
-                    Map.Flag_To_Redraw(false);
-
-                    Keyboard->Clear();
-                } else {
-                    Session.Messages.Add_Message(NULL,
-                                                 0,
-                                                 TXT_WOL_NOTPAGED,
-                                                 PCOLOR_GOLD,
-                                                 TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW,
-                                                 Rule.MessageDelay * TICKS_PER_MINUTE);
-                    Sound_Effect(VOC_SYS_ERROR);
-                }
-            }
-#endif
         }
     }
 
@@ -1216,12 +1162,6 @@ static void Message_Input(KeyNumType& input)
     if (rc == 2 && Session.Type != GAME_NORMAL) {
         if (copy_input == KN_ESC) {
             Map.Flag_To_Redraw(true);
-#ifdef WOLAPI_INTEGRATION
-            if (pWolapi)
-                //	Just in case user was responding to a page from outside the game, and we had frozen the
-                //"szExternalPager".
-                pWolapi->bFreezeExternalPager = false;
-#endif
         } else {
             Map.Flag_To_Redraw(false);
         }
@@ -1476,42 +1416,6 @@ void Call_Back(void)
     if (Session.Type == GAME_NULL_MODEM || ((Session.Type == GAME_MODEM) && Session.ModemService)) {
         // NullModem.Service();		ST - 5/7/2019
     }
-
-#ifdef WOLAPI_INTEGRATION
-    //	Wolapi maintenance.
-    if (pWolapi) {
-        if (pWolapi->bInGame) {
-            if (!pWolapi->bConnectionDown && ::timeGetTime() > pWolapi->dwTimeNextWolapiPump) {
-                pWolapi->pChat->PumpMessages();
-                pWolapi->pNetUtil->PumpMessages();
-                pWolapi->dwTimeNextWolapiPump = ::timeGetTime() + WOLAPIPUMPWAIT + 700; //	Slower pump during games.
-                if (pWolapi->bConnectionDown) {
-                    //	Connection to server lost.
-                    Session.Messages.Add_Message(NULL,
-                                                 0,
-                                                 TXT_WOL_WOLAPIGONE,
-                                                 PCOLOR_GOLD,
-                                                 TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW,
-                                                 Rule.MessageDelay * TICKS_PER_MINUTE);
-                    Sound_Effect(WOLSOUND_LOGOUT);
-                    //	ajw (Wolapi object is now left around, so we can try to send game results.)
-                    //					//	Kill wolapi.
-                    //					pWolapi->UnsetupCOMStuff();
-                    //					delete pWolapi;
-                    //					pWolapi = NULL;
-                }
-            }
-        } else {
-            //	When showing a modal dialog during chat, this pumping is turned on. It's turned off immediately
-            //following.
-            if (pWolapi->bPump_In_Call_Back && (::timeGetTime() > pWolapi->dwTimeNextWolapiPump)) {
-                pWolapi->pChat->PumpMessages();
-                pWolapi->pNetUtil->PumpMessages();
-                pWolapi->dwTimeNextWolapiPump = ::timeGetTime() + WOLAPIPUMPWAIT;
-            }
-        }
-    }
-#endif
 }
 
 void IPX_Call_Back(void)
@@ -4033,7 +3937,9 @@ typedef enum
     CD_COUNTERSTRIKE,
     CD_AFTERMATH,
     CD_CS_OR_AM,
-    CD_DVD
+    CD_DVD,
+    CD_DATADIR = 4,
+    CD_COUNT = 5
 } CD_VOLUME;
 
 #ifdef FIXIT_VERSION_3
@@ -4042,9 +3948,135 @@ typedef enum
 #error DVD must be defined!
 #endif
 
+static void Reinit_Secondary_Mixfiles()
+{
+    // Only reinitialised if the main mix file has been initialised once already.
+    if (MainMix != nullptr) {
+        delete MoviesMix;
+        delete Movies2Mix;
+        delete GeneralMix;
+        delete ScoreMix;
+        delete MainMix;
+
+        MainMix = new MFCD("MAIN.MIX", &FastKey);
+        assert(MainMix != NULL);
+        //		ConquerMix = new MFCD("CONQUER.MIX", &FastKey);
+        if (CCFileClass("MOVIES1.MIX").Is_Available()) {
+            MoviesMix = new MFCD("MOVIES1.MIX", &FastKey);
+        } else {
+            MoviesMix = nullptr;
+        }
+        if (CCFileClass("MOVIES2.MIX").Is_Available()) {
+            Movies2Mix = new MFCD("MOVIES2.MIX", &FastKey);
+        } else {
+            Movies2Mix = nullptr;
+        }
+        GeneralMix = new MFCD("GENERAL.MIX", &FastKey);
+        ScoreMix = new MFCD("SCORES.MIX", &FastKey);
+    }
+}
+
+/**
+ * Checks for local folders containing data from the various discs.
+ */
+static int LastCD = -1;
+
+static bool Change_Local_Dir(int cd)
+{
+    static bool _initialised = false;
+    static unsigned _detected = 0;
+    static const char* _vol_labels[CD_COUNT] = {"allied", "soviet", "counterstrike", "aftermath", "."};
+    char vol_buff[16];
+
+    // Detect which if any of the discs have had their data copied to an appropriate local folder.
+    if (!_initialised) {
+        for (int i = 0; i < CD_COUNT; ++i) {
+            RawFileClass vol(_vol_labels[i]);
+
+            if (vol.Is_Directory()) {
+                CDFileClass::Refresh_Search_Drives();
+                snprintf(vol_buff, sizeof(vol_buff), "%s/", _vol_labels[i]);
+                CDFileClass::Add_Search_Drive(vol_buff);
+                CCFileClass fc("MAIN.MIX");
+
+                // Populate _detected as a bitfield for which discs we found a local copy of.
+                if (fc.Is_Available()) {
+                    _detected |= 1 << i;
+                }
+            }
+        }
+
+        _initialised = true;
+    }
+
+    // No local folders with cd data dectected so we can't load any.
+    if (_detected == 0) {
+        return false;
+    }
+
+    // This condition just does a CD check to make sure we have at least one disc available.
+    // If we reached this point we must have detected at least one stored locally.
+    if (cd == CD_ANY) {
+        // If the last CD isn't set to CD_ANY, we already did detection and set a CD path so just return true.
+        if (LastCD != CD_ANY) {
+            return true;
+        }
+
+        // Set current disc to most recent expansion.
+        for (int i = CD_COUNT - 2; i >= 0; --i) {
+            if (_detected & (1 << i)) {
+                cd = i;
+                break;
+            }
+        }
+    }
+
+    // This condition handles a request for either expansion disk, if we have one initialised already we are good to go.
+    // Otherwise initialise to most recent expansion, aftermath.
+    if (cd == CD_CS_OR_AM) {
+        if (LastCD == CD_AFTERMATH || LastCD == CD_COUNTERSTRIKE) {
+            return true;
+        } else {
+            cd = CD_AFTERMATH;
+        }
+    }
+
+    // Prevent unneeded changes.
+    if (LastCD == cd) {
+        return true;
+    }
+
+    // If we only detected CD files locally, act like that handles all discs.
+    if (_detected == (1 << CD_DATADIR)) {
+        cd = CD_DATADIR;
+    }
+
+    // If the data from the CD we want was detected, then double check it and set it as though we used the -CD command line.
+    if (_detected & (1 << cd)) {
+        RawFileClass vol(_vol_labels[cd]);
+
+        // Verify that the file is still available and hasn't been deleted out from under us.
+        if (vol.Is_Directory()) {
+            CDFileClass::Refresh_Search_Drives();
+            snprintf(vol_buff, sizeof(vol_buff), "%s/", _vol_labels[cd]);
+            CDFileClass::Add_Search_Drive(vol_buff);
+
+            // The file should be available if we reached this point.
+            assert(CCFileClass("MAIN.MIX").Is_Available());
+
+            CurrentCD = cd;
+            LastCD = cd;
+            Reinit_Secondary_Mixfiles();
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool Force_CD_Available(int cd_desired) //	ajw
 {
-    static int _last = -1;
     static void* font;
 #ifdef FRENCH
     static char* _cd_name[] = {
@@ -4084,8 +4116,16 @@ bool Force_CD_Available(int cd_desired) //	ajw
     ** If the required CD is set to -2 then it means that the file is present
     ** on the local hard drive and we shouldn't have to worry about it.
     */
-    if (cd_desired == CD_LOCAL || CDFileClass::Is_Local())
+    if (cd_desired == CD_LOCAL || CDFileClass::Is_Local()) {
         return (true);
+    }
+
+    /*
+    ** Search for the data in local folder first.
+    */
+    if (Change_Local_Dir(cd_desired)) {
+        return (true);
+    }
 
     /*
     ** Find out if the CD in the current drive is the one we are looking for
@@ -4298,31 +4338,11 @@ bool Force_CD_Available(int cd_desired) //	ajw
     //	Since the DVD is the only disk that can possibly be required when Using_DVD(), I never have to reload the mix
     //	files here, because no other disk could ever have been asked for. And if not Using_DVD(), cd_desired will never
     //	be equal to 5. So this is safe.
-    if (cd_desired > -1 && _last != cd_desired && cd_desired != 5) {
-        _last = cd_desired;
+    if (cd_desired > -1 && LastCD != cd_desired && cd_desired != 5) {
+        LastCD = cd_desired;
 
         Theme.Stop();
-
-        //		if (ConquerMix) delete ConquerMix;
-        if (MoviesMix)
-            delete MoviesMix;
-        if (GeneralMix)
-            delete GeneralMix;
-        if (ScoreMix)
-            delete ScoreMix;
-        if (MainMix)
-            delete MainMix;
-
-        MainMix = new MFCD("MAIN.MIX", &FastKey);
-        assert(MainMix != NULL);
-        //		ConquerMix = new MFCD("CONQUER.MIX", &FastKey);
-        if (CCFileClass("MOVIES1.MIX").Is_Available())
-            MoviesMix = new MFCD("MOVIES1.MIX", &FastKey);
-        else
-            MoviesMix = new MFCD("MOVIES2.MIX", &FastKey);
-        assert(MoviesMix != NULL);
-        GeneralMix = new MFCD("GENERAL.MIX", &FastKey);
-        ScoreMix = new MFCD("SCORES.MIX", &FastKey);
+        Reinit_Secondary_Mixfiles();
         ThemeClass::Scan();
     }
 
@@ -5095,6 +5115,30 @@ const char* Game_Registry_Key()
 }
 
 /***********************************************************************************************
+ * Is_Demo -- Function to determine if we are running with demo files                          *
+ *                                                                                             *
+ * INPUT:    Nothing                                                                           *
+ *                                                                                             *
+ * OUTPUT:   true if we seem to have demo files                                                *
+ *                                                                                             *
+ * WARNINGS: None                                                                              *
+ *                                                                                             *
+ *=============================================================================================*/
+bool Is_Demo(void)
+{
+    static bool bAlreadyChecked = false;
+    static bool bDemo = false;
+
+    if (!bAlreadyChecked) {
+        CCFileClass file("DEMOPIC.PCX");
+        bDemo = file.Is_Available();
+        bAlreadyChecked = true;
+    }
+
+    return bDemo;
+}
+
+/***********************************************************************************************
  * Is_Counterstrike_Installed -- Function to determine the availability of the CS expansion    *
  *                                                                                             *
  *                                                                                             *
@@ -5110,31 +5154,23 @@ const char* Game_Registry_Key()
  *=============================================================================================*/
 bool Is_Counterstrike_Installed(void)
 {
-    return true; // Remasters always have Counterstrike. ST - 10/18/2019 11:06AM
+#ifdef REMASTER_BUILD
+    return true; // Remasters always have Aftermath. ST - 10/18/2019 11:06AM
 
-#if (0)
+#else
     //	ajw 9/29/98
     static bool bAlreadyChecked = false;
     static bool bInstalled = false;
 
     if (!bAlreadyChecked) {
-        HKEY hKey;
-        if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, Game_Registry_Key(), 0, KEY_READ, &hKey) != ERROR_SUCCESS)
-            return false;
-        DWORD dwValue;
-        DWORD dwBufSize = sizeof(DWORD);
-        if (RegQueryValueEx(hKey, "CStrikeInstalled", 0, NULL, (LPBYTE)&dwValue, &dwBufSize) != ERROR_SUCCESS)
-            bInstalled = false;
-        else
-            bInstalled = (bool)dwValue; //	(Presumably true, if it's there...)
-
-        RegCloseKey(hKey);
-        bAlreadyChecked = true;
+        if (!bAlreadyChecked) {
+            CCFileClass file("EXPAND.MIX");
+            bInstalled = file.Is_Available();
+            bAlreadyChecked = true;
+        }
     }
-    return bInstalled;
 
-//	RawFileClass file("EXPAND.MIX");
-//	return(file.Is_Available());
+    return bInstalled && Options.CounterstrikeEnabled;
 #endif
 }
 
@@ -5143,31 +5179,20 @@ bool Is_Counterstrike_Installed(void)
  *=============================================================================================*/
 bool Is_Aftermath_Installed(void)
 {
+#ifdef REMASTER_BUILD
     return true; // Remasters always have Aftermath. ST - 10/18/2019 11:06AM
 
-#if (0)
-    //	ajw 9/29/98
+#else
     static bool bAlreadyChecked = false;
     static bool bInstalled = false;
 
     if (!bAlreadyChecked) {
-        HKEY hKey;
-        if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, Game_Registry_Key(), 0, KEY_READ, &hKey) != ERROR_SUCCESS)
-            return false;
-        DWORD dwValue;
-        DWORD dwBufSize = sizeof(DWORD);
-        if (RegQueryValueEx(hKey, "AftermathInstalled", 0, NULL, (LPBYTE)&dwValue, &dwBufSize) != ERROR_SUCCESS)
-            bInstalled = false;
-        else
-            bInstalled = (bool)dwValue; //	(Presumably true, if it's there...)
-
-        RegCloseKey(hKey);
+        CCFileClass file("EXPAND2.MIX");
+        bInstalled = file.Is_Available();
         bAlreadyChecked = true;
     }
-    return bInstalled;
 
-//	RawFileClass file("EXPAND2.MIX");
-//	return(file.Is_Available());
+    return bInstalled && Options.AftermathEnabled;
 #endif
 }
 #endif

@@ -82,7 +82,7 @@ void Wait_Blit();
 
 unsigned Get_Video_Hardware_Capabilities();
 
-extern "C" void Wait_Vert_Blank();
-extern "C" void Set_DD_Palette(void* palette);
+void Wait_Vert_Blank();
+void Set_DD_Palette(void* palette);
 
 #endif // VIDEO_H

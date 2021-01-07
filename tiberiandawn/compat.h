@@ -38,10 +38,8 @@
 #define BuffType        BufferClass
 #define movmem(a, b, c) memmove(b, a, c)
 #define ShapeBufferSize _ShapeBufferSize
-extern "C" {
 extern long ShapeBufferSize;
 extern char* ShapeBuffer;
-}
 
 /*=========================================================================*/
 /* Define some equates for the different graphic routines we will install	*/
@@ -147,9 +145,7 @@ typedef struct {
 
 void Stuff_Key_Num(int);
 
-extern "C" {
 extern int MouseQX;
 extern int MouseQY;
-}
 
 #endif

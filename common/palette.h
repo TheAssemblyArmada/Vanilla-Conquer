@@ -59,17 +59,9 @@ void Load_Palette(char* palette_file_name, void* palette_pointer);
 /*
 ---------------------------------- pal.asm ----------------------------------
 */
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 extern void Set_Palette_Range(void* palette);
 extern bool Bump_Color(void* palette, int changable, int target);
 extern unsigned char CurrentPalette[]; /* in pal.asm */
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif // PALETTE_H
 

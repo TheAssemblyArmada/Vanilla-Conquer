@@ -118,9 +118,9 @@ void Choose_Side(void)
 
     Call_Back();
 
-    staticaud = Load_Alloc_Data(&CCFileClass("STRUGGLE.AUD"));
-    speechg = Load_Alloc_Data(&CCFileClass("GDI_SLCT.AUD"));
-    speechn = Load_Alloc_Data(&CCFileClass("NOD_SLCT.AUD"));
+    staticaud = Load_Alloc_Data(CCFileClass("STRUGGLE.AUD"));
+    speechg = Load_Alloc_Data(CCFileClass("GDI_SLCT.AUD"));
+    speechn = Load_Alloc_Data(CCFileClass("NOD_SLCT.AUD"));
 
     //	staticaud = MFCD::Retrieve("STRUGGLE.AUD");
     //	speechg = MFCD::Retrieve("GDI_SLCT.AUD");
@@ -237,6 +237,7 @@ void Choose_Side(void)
         }
     }
 
+    Stop_Sample(statichandle);
     Hide_Mouse();
     Close_Animation(anim);
 

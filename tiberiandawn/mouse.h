@@ -42,6 +42,8 @@ class MouseClass : public ScrollClass
 {
 public:
     MouseClass(void);
+    MouseClass(NoInitClass const& x)
+        : ScrollClass(x){};
 
     /*
     ** Initialization
@@ -118,11 +120,6 @@ private:
     static CountDownTimerClass Timer;
     int Frame;
     //		StageClass Control;
-
-    /*
-    ** This contains the value of the Virtual Function Table Pointer
-    */
-    static void* VTable;
 };
 
 #endif

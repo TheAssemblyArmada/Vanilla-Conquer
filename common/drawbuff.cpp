@@ -14,8 +14,6 @@
 #include <string.h>
 #include <algorithm>
 
-#ifdef NOASM
-
 int Buffer_Get_Pixel(void* thisptr, int x, int y)
 {
     GraphicViewPortClass& vp = *static_cast<GraphicViewPortClass*>(thisptr);
@@ -178,5 +176,3 @@ long Buffer_To_Page(int x, int y, int w, int h, void* buffer, void* view)
 
     return 0;
 }
-
-#endif

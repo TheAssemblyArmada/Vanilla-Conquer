@@ -35,15 +35,14 @@
  *   RawFileClass::Create -- Creates an empty file.                                            *
  *   RawFileClass::Delete -- Deletes the file object from the disk.                            *
  *   RawFileClass::Error -- Handles displaying a file error message.                           *
- *   RawFileClass::Get_Date_Time -- Gets the date and time the file was last modified.         *
  *   RawFileClass::Is_Available -- Checks to see if the specified file is available to open.   *
+ *   RawFileClass::Is_Directory -- Checks to see if the specified file is a directory.         *
  *   RawFileClass::Open -- Assigns name and opens file in one operation.                       *
  *   RawFileClass::Open -- Opens the file object with the rights specified.                    *
  *   RawFileClass::RawFileClass -- Simple constructor for a file object.                       *
  *   RawFileClass::Raw_Seek -- Performs a seek on the unbiased file                            *
  *   RawFileClass::Read -- Reads the specified number of bytes into a memory buffer.           *
  *   RawFileClass::Seek -- Reposition the file pointer as indicated.                           *
- *   RawFileClass::Set_Date_Time -- Sets the date and time the file was last modified.         *
  *   RawFileClass::Set_Name -- Manually sets the name for a file object.                       *
  *   RawFileClass::Size -- Determines size of file (in bytes).                                 *
  *   RawFileClass::Write -- Writes the specified data to the buffer specified.                 *
@@ -55,11 +54,15 @@
 #include <stddef.h>
 
 #include "rawfile.h"
+#include "file.h"
+#include "wwstd.h"
 
 #ifndef _WIN32
 #include <unistd.h>
 #define _unlink unlink
 #endif
+
+#include <sys/stat.h>
 
 /***********************************************************************************************
  * RawFileClass::Error -- Handles displaying a file error message.                             *
@@ -84,8 +87,12 @@
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void RawFileClass::Error(int, int, char const*)
+void RawFileClass::Error(int error, int canretry, char const* filename)
 {
+#ifndef _WIN32
+    perror(filename);
+#endif
+    exit(1);
 }
 
 /***********************************************************************************************
@@ -110,9 +117,9 @@ RawFileClass::RawFileClass(char const* filename)
     , BiasStart(0)
     , BiasLength(-1)
     , Handle(nullptr)
-    , Filename(filename)
-    , Allocated(false)
+    , Filename(nullptr)
 {
+    Set_Name(filename);
 }
 
 /***********************************************************************************************
@@ -137,10 +144,9 @@ RawFileClass::RawFileClass(char const* filename)
  *=============================================================================================*/
 char const* RawFileClass::Set_Name(char const* filename)
 {
-    if (Filename != NULL && Allocated) {
-        free((char*)Filename);
-        ((char*&)Filename) = 0;
-        Allocated = false;
+    if (Filename != NULL) {
+        free(Filename);
+        Filename = nullptr;
     }
 
     if (filename == NULL)
@@ -152,7 +158,19 @@ char const* RawFileClass::Set_Name(char const* filename)
     if (Filename == NULL) {
         Error(ENOMEM, false, filename);
     }
-    Allocated = true;
+
+    /*
+    ** If we ever save this file, make sure we save it in lowercase but
+    ** if Resolve_File finds an actual file on-disk we use the real name
+    ** instead.
+    */
+    _strlwr(Filename);
+
+    /*
+    ** Try to locate an existing file ignoring case, updates Filename
+    */
+    Resolve_File(Filename);
+
     return (Filename);
 }
 
@@ -332,6 +350,24 @@ int RawFileClass::Is_Available(int forced)
 }
 
 /***********************************************************************************************
+ * RawFileClass::Is_Directory -- Checks to see if the specified file is a directory.           *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  bool; Is the file a directory?                                                     *
+ *                                                                                             *
+ *=============================================================================================*/
+bool RawFileClass::Is_Directory()
+{
+    if (Filename == NULL) {
+        return false;
+    }
+
+    struct stat st;
+    return stat(Filename, &st) == 0 && (st.st_mode & S_IFDIR) == S_IFDIR;
+}
+
+/***********************************************************************************************
  * RawFileClass::Close -- Perform a closure of the file.                                       *
  *                                                                                             *
  *    Close the file object. In the rare case of an error, handle it as appropriate.           *
@@ -364,6 +400,12 @@ void RawFileClass::Close(void)
         **	At this point the file must have been closed. Mark the file as empty and return.
         */
         Handle = nullptr;
+
+        /*
+        **	Clear any positioning information incase class is reused to open another file.
+        */
+        BiasStart = 0;
+        BiasLength = -1;
     }
 }
 

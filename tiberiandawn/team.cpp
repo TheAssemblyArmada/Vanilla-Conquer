@@ -64,11 +64,6 @@ unsigned char TeamClass::Number[TEAMTYPE_MAX];
 */
 unsigned char TeamClass::Success[TEAMTYPE_MAX];
 
-/*
-** This contains the value of the Virtual Function Table Pointer
-*/
-void* TeamClass::VTable;
-
 /***********************************************************************************************
  * TeamClass::Validate -- validates team pointer															  *
  *                                                                                             *
@@ -117,15 +112,9 @@ int TeamClass::Validate(void) const
  *=============================================================================================*/
 void TeamClass::Init(void)
 {
-    TeamClass* ptr;
-
     Teams.Free_All();
     memset(Number, 0, sizeof(Number));
     memset(Success, 0, sizeof(Success));
-
-    ptr = new TeamClass();
-    VTable = ((void**)(((char*)ptr) + sizeof(AbstractClass) - 4))[0];
-    delete ptr;
 }
 
 void* TeamClass::operator new(size_t)

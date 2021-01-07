@@ -50,7 +50,6 @@ char FontHeight = 8;
 // only font.c and set_font.c use the following
 char* FontWidthBlockPtr = nullptr;
 
-#ifdef NOASM
 unsigned char ColorXlat[16][16] = {
     {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15},
     {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -69,9 +68,7 @@ unsigned char ColorXlat[16][16] = {
     {14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
-#else
-extern "C" unsigned char ColorXlat[16][16];
-#endif
+
 /***************************************************************************
  * SET_FONT -- Changes the default text printing font.                     *
  *                                                                         *
@@ -287,7 +284,6 @@ void* Load_Font(char const* name)
     return (ptr);
 }
 
-#ifdef NOASM
 #pragma pack(push, 1)
 struct FontHeader
 {
@@ -485,5 +481,3 @@ void* Get_Font_Palette_Ptr()
 {
     return ColorXlat;
 }
-
-#endif

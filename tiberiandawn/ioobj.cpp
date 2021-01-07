@@ -48,8 +48,6 @@
  *   AircraftClass::Save -- Write to a save game file.                                         *
  *   AircraftClass::Code_Pointers -- codes class's pointers for load/save                      *
  *   AircraftClass::Decode_Pointers -- decodes pointers for load/save                          *
- *   AnimClass::Load -- Reads from a save game file.                                           *
- *   AnimClass::Save -- Write to a save game file.                                             *
  *   AnimClass::Code_Pointers -- codes class's pointers for load/save                          *
  *   AnimClass::Decode_Pointers -- decodes pointers for load/save                              *
  *   BuildingClass::Load -- Reads from a save game file.                                       *
@@ -148,10 +146,10 @@
  *=============================================================================================*/
 bool TeamTypeClass::Load(FileClass& file)
 {
-    ::new (this) TeamTypeClass();
-    return (Read_Object(this, sizeof(*this), file, true));
-
-    // return(Read_Object(this, sizeof(AbstractTypeClass), sizeof(*this), file, VTable));
+    if (file.Read(this, sizeof(*this)) != sizeof(*this)) {
+        return false;
+    }
+    ::new (this) TeamTypeClass(NoInitClass());
 }
 
 /***********************************************************************************************
@@ -168,7 +166,7 @@ bool TeamTypeClass::Load(FileClass& file)
  *=============================================================================================*/
 bool TeamTypeClass::Save(FileClass& file)
 {
-    return (Write_Object(this, sizeof(*this), file));
+    return (file.Write(this, sizeof(*this) == sizeof(*this)));
 }
 
 /***********************************************************************************************
@@ -225,46 +223,9 @@ void TeamTypeClass::Decode_Pointers(void)
     ------------------------- Decode the Class array -------------------------
     */
     for (int i = 0; i < ClassCount; i++) {
-        Class[i] = Target_To_TechnoType((TARGET)Class[i]);
+        Class[i] = Target_To_TechnoType(Target_Ptr(Class[i]));
         Check_Ptr((void*)Class[i], __FILE__, __LINE__);
     }
-}
-
-/***********************************************************************************************
- * TeamClass::Load -- Loads from a save game file.                                             *
- *                                                                                             *
- * INPUT:   file  -- The file to read the cell's data from.                                    *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool TeamClass::Load(FileClass& file)
-{
-    ::new (this) TeamClass();
-    return (Read_Object(this, sizeof(*this), file, true));
-
-    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
-
-/***********************************************************************************************
- * TeamClass::Save -- Write to a save game file.                                               *
- *                                                                                             *
- * INPUT:   file  -- The file to write the cell's data to.                                     *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool TeamClass::Save(FileClass& file)
-{
-    return (Write_Object(this, sizeof(*this), file));
 }
 
 /***********************************************************************************************
@@ -329,7 +290,7 @@ void TeamClass::Decode_Pointers(void)
     /*
     ------------------- Decode Class & House for this team -------------------
     */
-    ((TeamTypeClass*&)Class) = As_TeamType((TARGET)Class);
+    ((TeamTypeClass*&)Class) = As_TeamType(Target_Ptr(Class));
     Check_Ptr((void*)Class, __FILE__, __LINE__);
     ((HouseClass*&)House) = HouseClass::As_Pointer(*((HousesType*)&House));
     Check_Ptr((void*)House, __FILE__, __LINE__);
@@ -338,17 +299,17 @@ void TeamClass::Decode_Pointers(void)
     -------------------------- Decode the 'Member' ---------------------------
     */
     if (Member) {
-        switch (Target_Kind((TARGET)Member)) {
+        switch (Target_Kind(Target_Ptr(Member))) {
         case KIND_INFANTRY:
-            Member = As_Infantry((TARGET)Member, false);
+            Member = As_Infantry(Target_Ptr(Member), false);
             break;
 
         case KIND_UNIT:
-            Member = As_Unit((TARGET)Member, false);
+            Member = As_Unit(Target_Ptr(Member), false);
             break;
 
         case KIND_AIRCRAFT:
-            Member = As_Aircraft((TARGET)Member, false);
+            Member = As_Aircraft(Target_Ptr(Member), false);
             break;
 
         default:
@@ -358,54 +319,6 @@ void TeamClass::Decode_Pointers(void)
 
         Check_Ptr((void*)Member, __FILE__, __LINE__);
     }
-}
-
-/***********************************************************************************************
- * TriggerClass::Load -- Loads from a save game file.                                          *
- *                                                                                             *
- * INPUT:   file  -- The file to read the cell's data from.                                    *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool TriggerClass::Load(FileClass& file)
-{
-    ::new (this) TriggerClass();
-    int rc = Read_Object(this, sizeof(*this), file, false);
-
-    // int rc = Read_Object(this, sizeof(*this), sizeof(*this), file, 0);
-
-    /*
-    -------------------------- Add to HouseTriggers --------------------------
-    */
-    if (rc) {
-        if (House != HOUSE_NONE) {
-            HouseTriggers[House].Add(this);
-        }
-    }
-
-    return (rc);
-}
-
-/***********************************************************************************************
- * TriggerClass::Save -- Write to a save game file.                                            *
- *                                                                                             *
- * INPUT:   file  -- The file to write the cell's data to.                                     *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool TriggerClass::Save(FileClass& file)
-{
-    return (Write_Object(this, sizeof(*this), file));
 }
 
 /***********************************************************************************************
@@ -456,46 +369,9 @@ void TriggerClass::Code_Pointers(void)
 void TriggerClass::Decode_Pointers(void)
 {
     if (Team) {
-        Team = As_TeamType((TARGET)Team);
+        Team = As_TeamType(Target_Ptr(Team));
         Check_Ptr((void*)Team, __FILE__, __LINE__);
     }
-}
-
-/***********************************************************************************************
- * AircraftClass::Load -- Loads from a save game file.                                         *
- *                                                                                             *
- * INPUT:   file  -- The file to read the cell's data from.                                    *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool AircraftClass::Load(FileClass& file)
-{
-    ::new (this) AircraftClass();
-    return (Read_Object(this, sizeof(*this), file, true));
-
-    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
-
-/***********************************************************************************************
- * AircraftClass::Save -- Write to a save game file.                                           *
- *                                                                                             *
- * INPUT:   file  -- The file to write the cell's data to.                                     *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool AircraftClass::Save(FileClass& file)
-{
-    return (Write_Object(this, sizeof(*this), file));
 }
 
 /***********************************************************************************************
@@ -563,43 +439,6 @@ void AircraftClass::Decode_Pointers(void)
     */
     FootClass::Decode_Pointers();
     FlyClass::Decode_Pointers();
-}
-
-/***********************************************************************************************
- * AnimClass::Load -- Loads from a save game file.                                             *
- *                                                                                             *
- * INPUT:   file  -- The file to read the cell's data from.                                    *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool AnimClass::Load(FileClass& file)
-{
-    ::new (this) AnimClass();
-    return (Read_Object(this, sizeof(*this), file, true));
-
-    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
-
-/***********************************************************************************************
- * AnimClass::Save -- Write to a save game file.                                               *
- *                                                                                             *
- * INPUT:   file  -- The file to write the cell's data to.                                     *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool AnimClass::Save(FileClass& file)
-{
-    return (Write_Object(this, sizeof(*this), file));
 }
 
 /***********************************************************************************************
@@ -680,7 +519,7 @@ void AnimClass::Decode_Pointers(void)
     ---------------------------- Decode 'Object' -----------------------------
     */
     if (Object) {
-        Object = As_Object((TARGET)Object, false);
+        Object = As_Object(Target_Ptr(Object), false);
         Check_Ptr((void*)Object, __FILE__, __LINE__);
     }
 
@@ -688,7 +527,7 @@ void AnimClass::Decode_Pointers(void)
     ---------------------------- Decode 'VirtualAnim' ------------------------
     */
     if (VirtualAnim) {
-        VirtualAnim = As_Animation((TARGET)VirtualAnim, false);
+        VirtualAnim = As_Animation(Target_Ptr(VirtualAnim), false);
         Check_Ptr((void*)VirtualAnim, __FILE__, __LINE__);
     }
 
@@ -697,43 +536,6 @@ void AnimClass::Decode_Pointers(void)
     */
     ObjectClass::Decode_Pointers();
     StageClass::Decode_Pointers();
-}
-
-/***********************************************************************************************
- * BuildingClass::Load -- Loads from a save game file.                                         *
- *                                                                                             *
- * INPUT:   file  -- The file to read the cell's data from.                                    *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool BuildingClass::Load(FileClass& file)
-{
-    ::new (this) BuildingClass();
-    return (Read_Object(this, sizeof(*this), file, true));
-
-    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
-
-/***********************************************************************************************
- * BuildingClass::Save -- Write to a save game file.                                           *
- *                                                                                             *
- * INPUT:   file  -- The file to write the cell's data to.                                     *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool BuildingClass::Save(FileClass& file)
-{
-    return (Write_Object(this, sizeof(*this), file));
 }
 
 /***********************************************************************************************
@@ -808,7 +610,7 @@ void BuildingClass::Decode_Pointers(void)
     Decode the Factory value, subtracting off the '1' we added when coding it
     ------------------------------------------------------------------------*/
     if (Factory) {
-        Factory = Factories.Raw_Ptr((int)Factory - 1);
+        Factory = Factories.Raw_Ptr((intptr_t)Factory - 1);
         Check_Ptr((void*)Factory, __FILE__, __LINE__);
     }
 
@@ -816,43 +618,6 @@ void BuildingClass::Decode_Pointers(void)
     ---------------------------- Chain to parent -----------------------------
     */
     TechnoClass::Decode_Pointers();
-}
-
-/***********************************************************************************************
- * BulletClass::Load -- Loads from a save game file.                                           *
- *                                                                                             *
- * INPUT:   file  -- The file to read the cell's data from.                                    *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool BulletClass::Load(FileClass& file)
-{
-    ::new (this) BulletClass();
-    return (Read_Object(this, sizeof(*this), file, true));
-
-    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
-
-/***********************************************************************************************
- * BulletClass::Save -- Write to a save game file.                                             *
- *                                                                                             *
- * INPUT:   file  -- The file to write the cell's data to.                                     *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool BulletClass::Save(FileClass& file)
-{
-    return (Write_Object(this, sizeof(*this), file));
 }
 
 /***********************************************************************************************
@@ -926,7 +691,7 @@ void BulletClass::Decode_Pointers(void)
     ---------------------------- Decode 'Payback' ----------------------------
     */
     if (Payback) {
-        Payback = As_Techno((TARGET)Payback, false);
+        Payback = As_Techno(Target_Ptr(Payback), false);
         Check_Ptr((void*)Payback, __FILE__, __LINE__);
     }
 
@@ -936,43 +701,6 @@ void BulletClass::Decode_Pointers(void)
     ObjectClass::Decode_Pointers();
     FlyClass::Decode_Pointers();
     FuseClass::Decode_Pointers();
-}
-
-/***********************************************************************************************
- * InfantryClass::Load -- Loads from a save game file.                                         *
- *                                                                                             *
- * INPUT:   file  -- The file to read the cell's data from.                                    *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool InfantryClass::Load(FileClass& file)
-{
-    ::new (this) InfantryClass();
-    return (Read_Object(this, sizeof(*this), file, true));
-
-    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
-
-/***********************************************************************************************
- * InfantryClass::Save -- Write to a save game file.                                           *
- *                                                                                             *
- * INPUT:   file  -- The file to write the cell's data to.                                     *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool InfantryClass::Save(FileClass& file)
-{
-    return (Write_Object(this, sizeof(*this), file));
 }
 
 /***********************************************************************************************
@@ -1041,43 +769,6 @@ void InfantryClass::Decode_Pointers(void)
 }
 
 /***********************************************************************************************
- * OverlayClass::Load -- Loads from a save game file.                                          *
- *                                                                                             *
- * INPUT:   file  -- The file to read the cell's data from.                                    *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool OverlayClass::Load(FileClass& file)
-{
-    ::new (this) OverlayClass();
-    return (Read_Object(this, sizeof(*this), file, true));
-
-    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
-
-/***********************************************************************************************
- * OverlayClass::Save -- Write to a save game file.                                            *
- *                                                                                             *
- * INPUT:   file  -- The file to write the cell's data to.                                     *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool OverlayClass::Save(FileClass& file)
-{
-    return (Write_Object(this, sizeof(*this), file));
-}
-
-/***********************************************************************************************
  * OverlayClass::Code_Pointers -- codes class's pointers for load/save                         *
  *                                                                                             *
  * This routine "codes" the pointers in the class by converting them to a number               *
@@ -1140,43 +831,6 @@ void OverlayClass::Decode_Pointers(void)
     ---------------------------- Chain to parent -----------------------------
     */
     ObjectClass::Decode_Pointers();
-}
-
-/***********************************************************************************************
- * SmudgeClass::Load -- Loads from a save game file.                                           *
- *                                                                                             *
- * INPUT:   file  -- The file to read the cell's data from.                                    *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool SmudgeClass::Load(FileClass& file)
-{
-    ::new (this) SmudgeClass();
-    return (Read_Object(this, sizeof(*this), file, true));
-
-    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
-
-/***********************************************************************************************
- * SmudgeClass::Save -- Write to a save game file.                                             *
- *                                                                                             *
- * INPUT:   file  -- The file to write the cell's data to.                                     *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool SmudgeClass::Save(FileClass& file)
-{
-    return (Write_Object(this, sizeof(*this), file));
 }
 
 /***********************************************************************************************
@@ -1245,43 +899,6 @@ void SmudgeClass::Decode_Pointers(void)
 }
 
 /***********************************************************************************************
- * TemplateClass::Load -- Loads from a save game file.                                         *
- *                                                                                             *
- * INPUT:   file  -- The file to read the cell's data from.                                    *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool TemplateClass::Load(FileClass& file)
-{
-    ::new (this) TemplateClass();
-    return (Read_Object(this, sizeof(*this), file, true));
-
-    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
-
-/***********************************************************************************************
- * TemplateClass::Save -- Write to a save game file.                                           *
- *                                                                                             *
- * INPUT:   file  -- The file to write the cell's data to.                                     *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool TemplateClass::Save(FileClass& file)
-{
-    return (Write_Object(this, sizeof(*this), file));
-}
-
-/***********************************************************************************************
  * TemplateClass::Code_Pointers -- codes class's pointers for load/save                        *
  *                                                                                             *
  * This routine "codes" the pointers in the class by converting them to a number               *
@@ -1344,43 +961,6 @@ void TemplateClass::Decode_Pointers(void)
     ---------------------------- Chain to parent -----------------------------
     */
     ObjectClass::Decode_Pointers();
-}
-
-/***********************************************************************************************
- * TerrainClass::Load -- Loads from a save game file.                                          *
- *                                                                                             *
- * INPUT:   file  -- The file to read the cell's data from.                                    *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool TerrainClass::Load(FileClass& file)
-{
-    ::new (this) TerrainClass();
-    return (Read_Object(this, sizeof(*this), file, true));
-
-    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
-
-/***********************************************************************************************
- * TerrainClass::Save -- Write to a save game file.                                            *
- *                                                                                             *
- * INPUT:   file  -- The file to write the cell's data to.                                     *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool TerrainClass::Save(FileClass& file)
-{
-    return (Write_Object(this, sizeof(*this), file));
 }
 
 /***********************************************************************************************
@@ -1451,43 +1031,6 @@ void TerrainClass::Decode_Pointers(void)
 }
 
 /***********************************************************************************************
- * UnitClass::Load -- Loads from a save game file.                                             *
- *                                                                                             *
- * INPUT:   file  -- The file to read the cell's data from.                                    *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool UnitClass::Load(FileClass& file)
-{
-    ::new (this) UnitClass();
-    return (Read_Object(this, sizeof(*this), file, true));
-
-    // return(Read_Object(this, sizeof(AbstractClass), sizeof(*this), file, VTable));
-}
-
-/***********************************************************************************************
- * UnitClass::Save -- Write to a save game file.                                               *
- *                                                                                             *
- * INPUT:   file  -- The file to write the cell's data to.                                     *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool UnitClass::Save(FileClass& file)
-{
-    return (Write_Object(this, sizeof(*this), file));
-}
-
-/***********************************************************************************************
  * UnitClass::Code_Pointers -- codes class's pointers for load/save                            *
  *                                                                                             *
  * This routine "codes" the pointers in the class by converting them to a number               *
@@ -1537,48 +1080,11 @@ void UnitClass::Code_Pointers(void)
 void UnitClass::Decode_Pointers(void)
 {
     if (TiberiumUnloadRefinery) {
-        TiberiumUnloadRefinery = As_Building((TARGET)TiberiumUnloadRefinery, false);
+        TiberiumUnloadRefinery = As_Building(Target_Ptr(TiberiumUnloadRefinery), false);
         Check_Ptr((void*)TiberiumUnloadRefinery, __FILE__, __LINE__);
     }
 
     TarComClass::Decode_Pointers();
-}
-
-/***********************************************************************************************
- * FactoryClass::Load -- Loads from a save game file.                                          *
- *                                                                                             *
- * INPUT:   file  -- The file to read the cell's data from.                                    *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool FactoryClass::Load(FileClass& file)
-{
-    ::new (this) FactoryClass();
-    return (Read_Object(this, sizeof(*this), file, false));
-
-    // return(Read_Object(this, sizeof(StageClass), sizeof(*this), file, 0));
-}
-
-/***********************************************************************************************
- * FactoryClass::Save -- Write to a save game file.                                            *
- *                                                                                             *
- * INPUT:   file  -- The file to write the cell's data to.                                     *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool FactoryClass::Save(FileClass& file)
-{
-    return (Write_Object(this, sizeof(*this), file));
 }
 
 /***********************************************************************************************
@@ -1633,7 +1139,7 @@ void FactoryClass::Code_Pointers(void)
 void FactoryClass::Decode_Pointers(void)
 {
     if (Object) {
-        Object = As_Techno((TARGET)Object, false);
+        Object = As_Techno(Target_Ptr(Object), false);
         Check_Ptr((void*)Object, __FILE__, __LINE__);
     }
 
@@ -1776,47 +1282,10 @@ void LayerClass::Decode_Pointers(void)
     TARGET target;
 
     for (int i = 0; i < Count(); i++) {
-        target = (TARGET)(*this)[i];
+        target = Target_Ptr((*this)[i]);
         (*this)[i] = (ObjectClass*)As_Object(target, false);
         Check_Ptr((*this)[i], __FILE__, __LINE__);
     }
-}
-
-/***********************************************************************************************
- * HouseClass::Load -- Loads from a save game file.                                            *
- *                                                                                             *
- * INPUT:   file  -- The file to read the cell's data from.                                    *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool HouseClass::Load(FileClass& file)
-{
-    ::new (this) HouseClass();
-    return (Read_Object(this, sizeof(*this), file, false));
-
-    // return(Read_Object(this, sizeof(*this), sizeof(*this), file, 0));
-}
-
-/***********************************************************************************************
- * HouseClass::Save -- Write to a save game file.                                              *
- *                                                                                             *
- * INPUT:   file  -- The file to write the cell's data to.                                     *
- *                                                                                             *
- * OUTPUT:  true = success, false = failure                                                    *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/19/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-bool HouseClass::Save(FileClass& file)
-{
-    return (Write_Object(this, sizeof(*this), file));
 }
 
 /***********************************************************************************************
@@ -1888,10 +1357,11 @@ void HouseClass::Decode_Pointers(void)
  *=============================================================================================*/
 bool ScoreClass::Load(FileClass& file)
 {
-    ::new (this) ScoreClass();
-    return (Read_Object(this, sizeof(*this), file, false));
-
-    // return(Read_Object(this, sizeof(*this), sizeof(*this), file, 0));
+    if (file.Read(this, sizeof(*this)) != sizeof(*this)) {
+        return false;
+    }
+    ::new (this) ScoreClass(NoInitClass());
+    return true;
 }
 
 /***********************************************************************************************
@@ -1908,7 +1378,7 @@ bool ScoreClass::Load(FileClass& file)
  *=============================================================================================*/
 bool ScoreClass::Save(FileClass& file)
 {
-    return (Write_Object(this, sizeof(*this), file));
+    return (file.Write(this, sizeof(*this)) == sizeof(*this));
 }
 
 /***********************************************************************************************
@@ -2255,12 +1725,12 @@ void FootClass::Code_Pointers(void)
 void FootClass::Decode_Pointers(void)
 {
     if (Team) {
-        Team = As_Team((TARGET)Team, false);
+        Team = As_Team(Target_Ptr(Team), false);
         Check_Ptr((void*)Team, __FILE__, __LINE__);
     }
 
     if (Member) {
-        Member = (FootClass*)As_Techno((TARGET)Member, false);
+        Member = (FootClass*)As_Techno(Target_Ptr(Member), false);
         Check_Ptr((void*)Member, __FILE__, __LINE__);
     }
 
@@ -2323,7 +1793,7 @@ void RadioClass::Decode_Pointers(void)
     ----------------------------- Decode 'Radio' -----------------------------
     */
     if (Radio) {
-        Radio = As_Techno((TARGET)Radio, false);
+        Radio = As_Techno(Target_Ptr(Radio), false);
         Check_Ptr((void*)Radio, __FILE__, __LINE__);
     }
 
@@ -2499,7 +1969,7 @@ void CargoClass::Decode_Pointers(void)
     --------------------------- Decode 'CargoHold' ---------------------------
     */
     if (CargoHold) {
-        CargoHold = (FootClass*)As_Techno((TARGET)CargoHold, false);
+        CargoHold = (FootClass*)As_Techno(Target_Ptr(CargoHold), false);
         Check_Ptr((void*)CargoHold, __FILE__, __LINE__);
     }
 }
@@ -2604,12 +2074,12 @@ void ObjectClass::Code_Pointers(void)
 void ObjectClass::Decode_Pointers(void)
 {
     if (Next) {
-        Next = As_Object((TARGET)Next, false);
+        Next = As_Object(Target_Ptr(Next), false);
         Check_Ptr((void*)Next, __FILE__, __LINE__);
     }
 
     if (Trigger) {
-        Trigger = As_Trigger((TARGET)Trigger, false);
+        Trigger = As_Trigger(Target_Ptr(Trigger), false);
         Check_Ptr((void*)Trigger, __FILE__, __LINE__);
     }
 }

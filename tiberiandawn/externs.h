@@ -52,9 +52,15 @@
 #include "common/vqaconfig.h"
 
 #ifdef REMASTER_BUILD
+#ifdef MEGAMAPS
+#define GBUFF_INIT_WIDTH     3072
+#define GBUFF_INIT_HEIGHT    3072
+#define GBUFF_INIT_ALTHEIGHT 3072
+#else
 #define GBUFF_INIT_WIDTH     1536
 #define GBUFF_INIT_HEIGHT    1536
 #define GBUFF_INIT_ALTHEIGHT 1536
+#endif
 #else
 #define GBUFF_INIT_WIDTH     640
 #define GBUFF_INIT_HEIGHT    400
@@ -216,6 +222,8 @@ extern HouseClass* PlayerPtr;
 extern unsigned char* BlackPalette;
 extern unsigned char* WhitePalette;
 extern unsigned char* GamePalette;
+extern DiffType ScenDifficulty;  // For human player.
+extern DiffType ScenCDifficulty; // For computer players.
 extern unsigned Scenario;
 extern ScenarioPlayerType ScenPlayer;
 extern ScenarioDirType ScenDir;
@@ -415,9 +423,7 @@ void CCDebugString(const char* string);
 extern void* PacketLater;
 void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned char* palette);
 
-extern "C" {
 extern unsigned int IsTheaterShape;
-}
 
 extern void Reset_Theater_Shapes(void);
 extern TheaterType LastTheater;

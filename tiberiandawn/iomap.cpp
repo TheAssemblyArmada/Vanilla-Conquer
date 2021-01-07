@@ -103,26 +103,25 @@ bool CellClass::Should_Save(void) const
  *=============================================================================================*/
 bool CellClass::Load(FileClass& file)
 {
-    int rc;
     TriggerClass* trig;
 
     /*
     -------------------------- Load the object data --------------------------
     */
-    rc = Read_Object(this, sizeof(CellClass), file, false);
+    if (file.Read(this, sizeof(*this)) != sizeof(*this)) {
+        return false;
+    }
 
     /*
     ------------------------ Load the trigger pointer ------------------------
     */
-    if (rc) {
-        if (IsTrigger) {
-            if (file.Read(&trig, sizeof(trig)) != sizeof(trig))
-                return (false);
-            CellTriggers[Cell_Number()] = trig;
-        }
+    if (IsTrigger) {
+        if (file.Read(&trig, sizeof(trig)) != sizeof(trig))
+            return (false);
+        CellTriggers[Cell_Number()] = trig;
     }
 
-    return (rc);
+    return true;
 }
 
 /***********************************************************************************************
@@ -139,26 +138,18 @@ bool CellClass::Load(FileClass& file)
  *=============================================================================================*/
 bool CellClass::Save(FileClass& file)
 {
-    int rc;
-    TriggerClass* trig;
-
-    /*
-    -------------------------- Save the object data --------------------------
-    */
-    rc = Write_Object(this, sizeof(CellClass), file);
-
-    /*
-    ------------------------ Save the trigger pointer ------------------------
-    */
-    if (rc) {
-        if (IsTrigger) {
-            trig = CellTriggers[Cell_Number()];
-            if (file.Write(&trig, sizeof(trig)) != sizeof(trig))
-                return (false);
-        }
+    if (file.Write(this, sizeof(*this)) != sizeof(*this)) {
+        return false;
     }
 
-    return (rc);
+    if (IsTrigger) {
+        TriggerClass* trig;
+        trig = CellTriggers[Cell_Number()];
+        if (file.Write(&trig, sizeof(trig)) != sizeof(trig))
+            return (false);
+    }
+
+    return true;
 }
 
 /***********************************************************************************************
@@ -235,7 +226,7 @@ void CellClass::Decode_Pointers(void)
     char bad[128];
 
     if (OccupierPtr) {
-        OccupierPtr = As_Object((TARGET)OccupierPtr, false);
+        OccupierPtr = As_Object(Target_Ptr(OccupierPtr), false);
         Check_Ptr((void*)OccupierPtr, __FILE__, __LINE__);
 
         /*
@@ -252,17 +243,17 @@ void CellClass::Decode_Pointers(void)
     }
 
     if (Overlapper[0]) {
-        Overlapper[0] = As_Object((TARGET)Overlapper[0], false);
+        Overlapper[0] = As_Object(Target_Ptr(Overlapper[0]), false);
         Check_Ptr((void*)Overlapper[0], __FILE__, __LINE__);
     }
 
     if (Overlapper[1]) {
-        Overlapper[1] = As_Object((TARGET)Overlapper[1], false);
+        Overlapper[1] = As_Object(Target_Ptr(Overlapper[1]), false);
         Check_Ptr((void*)Overlapper[1], __FILE__, __LINE__);
     }
 
     if (Overlapper[2]) {
-        Overlapper[2] = As_Object((TARGET)Overlapper[2], false);
+        Overlapper[2] = As_Object(Target_Ptr(Overlapper[2]), false);
         Check_Ptr((void*)Overlapper[2], __FILE__, __LINE__);
     }
 
@@ -286,7 +277,7 @@ void CellClass::Decode_Pointers(void)
     **	Convert trigger pointer.
     */
     if (IsTrigger) {
-        CellTriggers[Cell_Number()] = As_Trigger((TARGET)CellTriggers[Cell_Number()], false);
+        CellTriggers[Cell_Number()] = As_Trigger(Target_Ptr(CellTriggers[Cell_Number()]), false);
         Check_Ptr((void*)CellTriggers[Cell_Number()], __FILE__, __LINE__);
     }
 
@@ -372,9 +363,10 @@ bool MouseClass::Load(FileClass& file)
     ** Read the entire map object in.  Only read in sizeof(MouseClass), so if we're
     ** in editor mode, none of the map editor object is read in.
     */
-    if (!Read_Object(this, sizeof(MouseClass), file, true)) {
+    if (file.Read(this, sizeof(*this)) != sizeof(*this)) {
         return (false);
     }
+    new (this) MouseClass(NoInitClass());
 
     /*
     ** Reallocate the cell array
@@ -430,7 +422,7 @@ bool MouseClass::Save(FileClass& file)
     if (file.Write(&Theater, sizeof(Theater)) != sizeof(Theater))
         return (false);
 
-    if (!Write_Object(this, sizeof(MouseClass), file))
+    if (file.Write(this, sizeof(*this)) != sizeof(*this))
         return (false);
 
     /*
@@ -948,7 +940,7 @@ void DisplayClass::Decode_Pointers(void)
     **	either.  These have to be done as last-minute fixups.
     */
     if (PendingObjectPtr) {
-        PendingObjectPtr = As_Object((TARGET)PendingObjectPtr, false);
+        PendingObjectPtr = As_Object(Target_Ptr(PendingObjectPtr), false);
         Check_Ptr((void*)PendingObjectPtr, __FILE__, __LINE__);
     }
 

@@ -35,6 +35,8 @@
 #ifndef TRIGGER_H
 #define TRIGGER_H
 
+class CCINIClass;
+
 typedef enum EventType : signed char
 {
     EVENT_NONE = -1,
@@ -118,7 +120,12 @@ public:
     **	Constructor/Destructor
     */
     TriggerClass(void);
+    TriggerClass(NoInitClass const& x)
+    {
+    }
     ~TriggerClass(void);
+
+    void Load();
 
     /*
     **	Initialization: clears all triggers in preparation for new scenario
@@ -136,15 +143,13 @@ public:
     /*
     **	File I/O routines
     */
-    static void Read_INI(char* buffer);
+    static void Read_INI(CCINIClass& ini);
     void Fill_In(char* name, char* entry);
-    static void Write_INI(char* buffer, bool refresh);
+    static void Write_INI(CCINIClass& ini, bool refresh);
     static char* INI_Name(void)
     {
         return "Triggers";
     };
-    bool Load(FileClass& file);
-    bool Save(FileClass& file);
     void Code_Pointers(void);
     void Decode_Pointers(void);
 
@@ -191,6 +196,10 @@ public:
     **	Overloaded operators
     */
     static void* operator new(size_t size);
+    static void* operator new(size_t, void* ptr)
+    {
+        return (ptr);
+    };
     static void operator delete(void* ptr);
 
     /*

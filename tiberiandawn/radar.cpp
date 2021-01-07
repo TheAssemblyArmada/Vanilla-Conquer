@@ -129,8 +129,9 @@ void RadarClass::One_Time(void)
     RadHeight = 70 << factor;
     RadX = SeenBuff.Get_Width() - RadWidth;
     RadY = Map.Get_Tab_Height() - (1 << factor);
-    RadPWidth = 64 << factor;
-    RadPHeight = 64 << factor;
+    RadPWidth = MAP_CELL_W << factor;
+    RadPHeight = MAP_CELL_H << factor;
+
     if (factor) {
         RadOffX = 16;
         RadOffY = 7;
@@ -230,8 +231,10 @@ bool RadarClass::Radar_Activate(int control)
     case 0:
         if (Map.IsSidebarActive) {
             if (IsRadarActive && !IsRadarDeactivating) {
-                // Sound_Effect(VOC_RADAR_OFF); // MBL 07.20.2020: These are never being sent to the client, so handled
-                // there; Disabling here for good measure.
+#ifndef REMASTER_BUILD
+                // MBL 07.20.2020: These are never being sent to the client, so handled there; Disabling here for good measure.
+                Sound_Effect(VOC_RADAR_OFF);
+#endif
                 IsRadarDeactivating = true;
                 IsRadarActive = false;
                 if (IsRadarActivating == true) {
@@ -248,8 +251,10 @@ bool RadarClass::Radar_Activate(int control)
     case 1:
         if (Map.IsSidebarActive) {
             if (!IsRadarActivating && !IsRadarActive) {
-                // Sound_Effect(VOC_RADAR_ON); // MBL 07.20.2020: These are never being sent to the client, so handled
-                // there; Disabling here for good measure.
+#ifndef REMASTER_BUILD
+                // MBL 07.20.2020: These are never being sent to the client, so handled there; Disabling here for good measure.
+                Sound_Effect(VOC_RADAR_ON);
+#endif
                 IsRadarActivating = true;
                 if (IsRadarDeactivating == true) {
                     IsRadarDeactivating = false;
@@ -914,7 +919,7 @@ int RadarClass::Click_In_Radar(int& ptr_x, int& ptr_y, bool change)
 
     x -= (RadX + RadOffX);
     y -= (RadY + RadOffY);
-    if (x < RadIWidth && y < RadIHeight) {
+    if ((unsigned)x < (unsigned)RadIWidth && (unsigned)y < (unsigned)RadIHeight) {
         x -= BaseX;
         y -= BaseY;
 
