@@ -15,6 +15,7 @@ const char GitSHA1[] = "@GIT_HEAD_SHA1@";
 const char GitShortSHA1[] = "@GIT_HEAD_SHORT_SHA1@";
 const char GitCommitDate[] = "@GIT_COMMIT_DATE_ISO8601@";
 const char GitCommitAuthorName[] = "@GIT_AUTHOR_NAME@";
+const char GitTag[] = "@GIT_TAG@";
 time_t GitCommitTimeStamp = @GIT_COMMIT_TSTAMP@;
 bool GitUncommittedChanges = @GIT_IS_DIRTY@;
 bool GitHaveInfo = @GIT_RETRIEVED_STATE@;
