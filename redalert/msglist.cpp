@@ -341,7 +341,7 @@ TextLabelClass* MessageListClass::Add_Message(char const* name,
         strcpy(message, txt);
     }
 
-#if (0)
+#ifndef REMASTER_BUILD
 
     int i;
     int found;
@@ -444,7 +444,7 @@ TextLabelClass* MessageListClass::Add_Message(char const* name,
 #endif
     // Sound_Effect(VOC_INCOMING_MESSAGE);
 
-#if (0)
+#ifndef REMASTER_BUILD
 
     //------------------------------------------------------------------------
     //	Attach the message to our list
