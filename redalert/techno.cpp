@@ -609,7 +609,7 @@ void TechnoClass::Debug_Dump(MonoClass* mono) const
     mono->Set_Cursor(47, 3);
     mono->Printf("%02X:%02X", PrimaryFacing.Current(), PrimaryFacing.Desired());
     mono->Set_Cursor(64, 1);
-    mono->Printf("%d(%d)", Cloak, CloakingDevice);
+    mono->Printf("%d(%d)", Cloak, CloakingDevice.Fetch_Stage());
 
     mono->Fill_Attrib(14, 15, 12, 1, IsUseless ? MonoClass::INVERSE : MonoClass::NORMAL);
     mono->Fill_Attrib(14, 16, 12, 1, IsTickedOff ? MonoClass::INVERSE : MonoClass::NORMAL);
