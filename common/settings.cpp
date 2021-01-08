@@ -11,6 +11,7 @@ SettingsClass::SettingsClass()
     */
     Mouse.RawInput = true;
     Mouse.Sensitivity = 100;
+    Options.MouseWheelScrolling = true;
 
     /*
     ** Video settings
@@ -37,6 +38,7 @@ void SettingsClass::Load(INIClass& ini)
     */
     Mouse.RawInput = ini.Get_Bool("Mouse", "RawInput", Mouse.RawInput);
     Mouse.Sensitivity = ini.Get_Int("Mouse", "Sensitivity", Mouse.Sensitivity);
+    Options.MouseWheelScrolling = ini.Get_Bool("Options", "MouseWheelScrolling", Video.FrameLimit);
 
     /*
     ** Video settings
@@ -74,6 +76,7 @@ void SettingsClass::Save(INIClass& ini)
     */
     ini.Put_Bool("Mouse", "RawInput", Mouse.RawInput);
     ini.Put_Int("Mouse", "Sensitivity", Mouse.Sensitivity);
+    ini.Put_Bool("Options", "MouseWheelScrolling", Video.FrameLimit);
 
     /*
     ** Video settings

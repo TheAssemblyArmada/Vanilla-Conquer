@@ -34,6 +34,11 @@ public:
         std::string Driver;
         std::string PixelFormat;
     } Video;
+
+    struct
+    {
+        bool MouseWheelScrolling;
+    } Options;
 };
 
 extern SettingsClass Settings;
