@@ -2378,8 +2378,17 @@ void Parse_INI_File(void)
  *=============================================================================================*/
 int Version_Number(void)
 {
-    snprintf(
-        VersionText, sizeof(VersionText), "R:%d %s%s", GitRevision, (GitUncommittedChanges ? "~" : ""), GitShortSHA1);
+    if (*GitTag == '\0' || GitUncommittedChanges) {
+        snprintf(VersionText,
+                 sizeof(VersionText),
+                 "r%d %s%s",
+                 GitRevision,
+                 (GitUncommittedChanges ? "~" : ""),
+                 GitShortSHA1);
+    } else {
+        snprintf(VersionText, sizeof(VersionText), "%s %s%s", GitTag, (GitUncommittedChanges ? "~" : ""), GitShortSHA1);
+    }
+
     return (1);
 }
 

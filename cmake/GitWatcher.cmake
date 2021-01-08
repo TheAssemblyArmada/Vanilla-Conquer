@@ -89,6 +89,7 @@ set(_state_variable_names
     GIT_COMMIT_TSTAMP
     GIT_HEAD_SHORT_SHA1
     GIT_REV_LIST_COUNT
+    GIT_TAG
     # >>>
     # 1. Add the name of the additional git variable you're interested in monitoring
     #    to this list.
@@ -196,6 +197,13 @@ function(GetGitState _working_dir)
     RunGitCommand(rev-list --count ${object})
     if(exit_code EQUAL 0)
         set(ENV{GIT_REV_LIST_COUNT} ${output})
+    endif()
+
+    RunGitCommand(describe --tags ${object})
+    if(exit_code EQUAL 0)
+        set(ENV{GIT_TAG} ${output})
+    else()
+        set(ENV{GIT_TAG} "")
     endif()
     
     # >>>

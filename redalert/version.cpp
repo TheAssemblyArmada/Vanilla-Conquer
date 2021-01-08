@@ -408,7 +408,17 @@ unsigned short VersionClass::Minor_Version(void)
  *=========================================================================*/
 char* VersionClass::Version_Name(void)
 {
-    snprintf(VersionName, sizeof(VersionName), "R:%d %s%s", GitRevision, (GitUncommittedChanges ? "~" : ""), GitShortSHA1);
+    if (*GitTag == '\0') {
+        snprintf(VersionName,
+                 sizeof(VersionName),
+                 "r%d %s%s",
+                 GitRevision,
+                 (GitUncommittedChanges ? "~" : ""),
+                 GitShortSHA1);
+    } else {
+        snprintf(VersionName, sizeof(VersionName), "%s %s%s", GitTag, (GitUncommittedChanges ? "~" : ""), GitShortSHA1);
+    }
+
     return (VersionName);
 
 } /* end of Version_Name */
