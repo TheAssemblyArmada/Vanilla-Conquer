@@ -3814,16 +3814,14 @@ int BuildingClass::Mission_Deconstruction(void)
                 }
             }
 
-// MBL 07.10.2020 - In 1v1, sometimes both players will hear this SFX, or neither player will hear it
-// Making it so all players hear it positionally in the map; Per thread discussion in
-// https://jaas.ea.com/browse/TDRA-7245
-//
-#if 0
-					if (House->IsPlayerControl) {
-						Sound_Effect(VOC_CASHTURN, Coord);
-					}
-#else
+#ifdef REMASTER_BUILD
+            // MBL 07.10.2020 - In 1v1, sometimes both players will hear this SFX, or neither player will hear it
+            // Making it so all players hear it positionally in the map;
             Sound_Effect(VOC_CASHTURN, Coord);
+#else
+            if (House->IsPlayerControl) {
+                Sound_Effect(VOC_CASHTURN, Coord);
+            }
 #endif
 
             /*
