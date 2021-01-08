@@ -2574,7 +2574,7 @@ void InfantryClass::Response_Select(void)
         HousesType house = PlayerPtr->ActLike;
         switch (Class->Type) {
         case INFANTRY_GENERAL:
-            if (house != HOUSE_USSR && house != HOUSE_BAD) {
+            if (house != HOUSE_USSR && house != HOUSE_BAD && house != HOUSE_UKRAINE) {
                 response = _stavros;
                 size = ARRAY_SIZE(_stavros);
             } else {
@@ -2702,7 +2702,7 @@ void InfantryClass::Response_Move(void)
         HousesType house = PlayerPtr->ActLike;
         switch (Class->Type) {
         case INFANTRY_GENERAL:
-            if (house != HOUSE_USSR && house != HOUSE_BAD) {
+            if (house != HOUSE_USSR && house != HOUSE_BAD && house != HOUSE_UKRAINE) {
                 response = _stavros;
                 size = ARRAY_SIZE(_stavros);
             } else {
@@ -2834,7 +2834,7 @@ void InfantryClass::Response_Attack(void)
         HousesType house = PlayerPtr->ActLike;
         switch (Class->Type) {
         case INFANTRY_GENERAL:
-            if (house != HOUSE_USSR && house != HOUSE_BAD) {
+            if (house != HOUSE_USSR && house != HOUSE_BAD && house != HOUSE_UKRAINE) {
                 response = _stavros;
                 size = ARRAY_SIZE(_stavros);
             } else {
