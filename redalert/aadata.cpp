@@ -561,7 +561,10 @@ int AircraftTypeClass::Max_Pips(void) const
     if (PrimaryWeapon != NULL) {
         // Camera weapon (ex. on the Spy plane) doesn't display any pips
         if (!PrimaryWeapon->IsCamera) {
-            return (5);
+            if (MaxAmmo > 5) {
+                return 5;
+            }
+            return MaxAmmo;
         }
     }
     return (Max_Passengers());
