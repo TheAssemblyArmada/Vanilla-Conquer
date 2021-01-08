@@ -541,6 +541,13 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
     while (!Is_Buffer_Full() && SDL_PollEvent(&event)) {
         unsigned short key;
         switch (event.type) {
+        case SDL_MOUSEWHEEL:
+            if (event.wheel.y > 0) { // scroll up 
+                Put_Key_Message(VK_MOUSEWHEEL_UP, false);
+            } else if (event.wheel.y < 0) {// scroll down
+                Put_Key_Message(VK_MOUSEWHEEL_DOWN, false);
+            }
+            break;
         case SDL_QUIT:
             exit(0);
             break;
