@@ -921,8 +921,9 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
 {
     int i, maxval;
     int xpos = 174;
-    int house = (PlayerPtr->Class->House == HOUSE_USSR || PlayerPtr->Class->House == HOUSE_UKRAINE); // 0 or 1
-    if (house) {
+    bool issovietplayer = (PlayerPtr->Class->House == HOUSE_USSR || PlayerPtr->Class->House == HOUSE_BAD
+                           || PlayerPtr->Class->House == HOUSE_UKRAINE);
+    if (issovietplayer) {
         int temp = gkilled;
         gkilled = nkilled;
         nkilled = temp;
@@ -952,7 +953,7 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
     HidPage.Fill_Rect(0, 0, 124 * RESFACTOR, 9 * RESFACTOR, TBLACK);
     CC_Draw_Shape(redptr, 119, 0, 0, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
     Set_Logic_Page(SeenBuff);
-    Set_Font_Palette(house ? _redpal : _bluepal);
+    Set_Font_Palette(issovietplayer ? _redpal : _bluepal);
 
     for (i = 1; i <= gdikilled; i++) {
         if (i != gdikilled) {
@@ -966,7 +967,7 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
             HidPage.Blit(
                 *PseudoSeenBuff, 0, 0, xpos * RESFACTOR, ypos * RESFACTOR, (3 + gdikilled) * RESFACTOR, 8 * RESFACTOR);
         }
-
+        Set_Font_Palette(issovietplayer ? _redpal : _bluepal);
         Count_Up_Print("%d", (i * gkilled) / maxval, gkilled, 297, ypos + 2);
         // BG		if (!Keyboard->Check()) {
         Play_Sample(Beepy6, 255, Options.Normalize_Volume(150));
@@ -980,7 +981,7 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
     Count_Up_Print("%d", gkilled, gkilled, 297, ypos + 2);
     /*BG	if (!Keyboard->Check()) */ Call_Back_Delay(40);
 
-    Set_Font_Palette(house ? _bluepal : _redpal);
+    Set_Font_Palette(issovietplayer ? _bluepal : _redpal);
     for (i = 1; i <= nodkilled; i++) {
         if (i != nodkilled) {
             Set_Logic_Page(*PseudoSeenBuff);
