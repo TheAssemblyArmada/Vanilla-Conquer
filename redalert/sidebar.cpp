@@ -832,36 +832,11 @@ void SidebarClass::AI(KeyNumType& input, int x, int y)
     } else if (!Debug_Map) {
         Activate(1); // Force the sidebar always on in Win95 mode
     }
+
     if (!Debug_Map) {
         Column[0].AI(input, x, y);
         Column[1].AI(input, x, y);
     }
-
-#ifdef NEVER
-    if (IsSidebarActive && !Debug_Map) {
-
-        if (input == KN_DOWN) {
-            int scr = 0;
-            scr |= Column[0].Scroll(false);
-            scr |= Column[1].Scroll(false);
-            if (!scr) {
-                Sound_Effect(VOC_SCOLD);
-            }
-            redraw |= scr;
-            input = KN_NONE;
-        }
-        if (input == KN_UP) {
-            int scr = 0;
-            scr |= Column[0].Scroll(true);
-            scr |= Column[1].Scroll(true);
-            if (!scr) {
-                Sound_Effect(VOC_SCOLD);
-            }
-            redraw |= scr;
-            input = KN_NONE;
-        }
-    }
-#endif
 
     if (IsSidebarActive) {
 
