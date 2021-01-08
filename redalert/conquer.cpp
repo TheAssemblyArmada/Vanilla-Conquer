@@ -680,18 +680,12 @@ void Keyboard_Process(KeyNumType& input)
         input = KN_NONE;
     }
 
-#ifdef TOFIX
-    /*
-    ** For multiplayer, 'R' pops up the surrender dialog.
-    */
     if (input != 0 && input == Options.KeyResign) {
-        if (!PlayerLoses && /*Session.Type != GAME_NORMAL &&*/ !PlayerPtr->IsDefeated) {
+        if (!PlayerPtr->IsDefeated) {
             SpecialDialog = SDLG_SURRENDER;
-            input = KN_NONE;
         }
         input = KN_NONE;
     }
-#endif
 
     /*
     **	Handle making and breaking alliances.
