@@ -538,9 +538,9 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
         switch (event.type) {
         case SDL_MOUSEWHEEL:
             if (event.wheel.y > 0) { // scroll up 
-                Put_Key_Message(VK_MOUSEWHEEL_UP, true);
+                Put_Key_Message(VK_MOUSEWHEEL_UP, false);
             } else if (event.wheel.y < 0) {// scroll down
-                Put_Key_Message(VK_MOUSEWHEEL_DOWN, true);
+                Put_Key_Message(VK_MOUSEWHEEL_DOWN, false);
             }
             break;
         case SDL_QUIT:

@@ -20,6 +20,11 @@ public:
         int Height;
         int FrameLimit;
     } Video;
+
+    struct
+    {
+        bool MouseWheelScrolling;
+    } Options;
 };
 
 extern SettingsClass Settings;

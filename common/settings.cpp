@@ -11,6 +11,8 @@ SettingsClass::SettingsClass()
     Video.Width = 0;
     Video.Height = 0;
     Video.FrameLimit = 120;
+
+    Options.MouseWheelScrolling = true;
 }
 
 void SettingsClass::Load(INIClass& ini)
@@ -21,6 +23,8 @@ void SettingsClass::Load(INIClass& ini)
     Video.Width = ini.Get_Int("Video", "Width", Video.Width);
     Video.Height = ini.Get_Int("Video", "Height", Video.Height);
     Video.FrameLimit = ini.Get_Int("Video", "FrameLimit", Video.FrameLimit);
+
+    Options.MouseWheelScrolling = ini.Get_Bool("Options", "MouseWheelScrolling", Video.FrameLimit);
 }
 
 void SettingsClass::Save(INIClass& ini)
@@ -31,4 +35,6 @@ void SettingsClass::Save(INIClass& ini)
     ini.Put_Int("Video", "Width", Video.Width);
     ini.Put_Int("Video", "Height", Video.Height);
     ini.Put_Int("Video", "FrameLimit", Video.FrameLimit);
+
+    ini.Put_Bool("Options", "MouseWheelScrolling", Video.FrameLimit);
 }
