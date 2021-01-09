@@ -623,6 +623,21 @@ bool Read_Scenario_Ini(char* root, bool fresh)
                 Map.Place_Random_Crate();
             }
         }
+
+#ifndef REMASTER_BUILD
+        /*
+        ** All this was originally done within Compute_Start_Pos.
+        */
+        long start_x = 0;
+        long start_y = 0;
+        Map.Compute_Start_Pos(start_x, start_y);
+        for (int i = 0; i < ARRAY_SIZE(Views); ++i) {
+            Views[i] = XY_Cell(start_x, start_y);
+        }
+        Waypoint[27] = XY_Cell(start_x, start_y);
+        COORDINATE pos = Cell_Coord(XY_Cell(start_x, start_y));
+        Map.Set_Tactical_Position(pos);
+#endif
     }
 
     Call_Back();
