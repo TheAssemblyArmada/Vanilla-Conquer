@@ -1,4 +1,4 @@
-name: mingw32
+name: mingw-w64
 
 on:
   pull_request:
@@ -7,51 +7,107 @@ on:
     types: published
 
 jobs:
-  build:
+  remaster_gcc:
     runs-on: ubuntu-18.04
-    strategy:
-      matrix:
-        buildtype: [Debug, Release]
-        features: [ON, OFF]
     steps:
     - uses: actions/checkout@v2
       with:
         submodules: 'true'
+        
+    - name: Set Git Info
+      id: gitinfo
+      run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
-    - name: Install dependencies
+    - name: Install Dependencies
       run: |
-        sudo dpkg --add-architecture i386
-        sudo apt-get update
-        sudo apt-get install -y mingw-w64 clang-format-10 wine-stable:i386 imagemagick
-        if [ ${{ matrix.features }} == "ON" ]; then
-            curl -L -O https://github.com/JWasm/JWasm/archive/45f69e4b96ff3e93522464f2c8bb2ff56e6ecbf8.zip
-            unzip 45f69e4b96ff3e93522464f2c8bb2ff56e6ecbf8.zip
-            cd JWasm-45f69e4b96ff3e93522464f2c8bb2ff56e6ecbf8
-            make -f GccUnix.mak
-            sudo cp GccUnixR/jwasm /usr/local/bin/
-        fi
-   
+        sudo apt-get update -qq > /dev/null
+        sudo apt-get install -qq -y mingw-w64 > /dev/null
+        
+    - name: Configure Vanilla Conquer
+      run: |
+        cmake -DCMAKE_TOOLCHAIN_FILE=cmake/i686-mingw-w64-toolchain.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_REMASTERTD=ON -DBUILD_REMASTERRA=ON -DBUILD_VANILLATD=OFF -DBUILD_VANILLARA=OFF -B build
+
     - name: Build Vanilla Conquer
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=cmake/mingw-toolchain.cmake -DCMAKE_BUILD_TYPE=${{ matrix.buildtype }} -DBUILD_TESTS=ON -DDSOUND=${{ matrix.features }} -DDDRAW=${{ matrix.features }} -DUSE_ASM=${{ matrix.features }} -DNETWORKING=${{ matrix.features }} -DMAP_EDITORRA=${{ matrix.features }} -DMAP_EDITORTD=${{ matrix.features }} -B build
-        cmake --build build --target format
-        git diff --exit-code
         cmake --build build -- -j 4
-
-    - name: Run unit tests
-      run: |
-        cd build
-        ctest
+        cp ./build/TiberianDawn.dll ./build/TiberianDawn.dbg
+        cp ./build/RedAlert.dll ./build/RedAlert.dbg
+        i686-w64-mingw32-strip --strip-all ./build/TiberianDawn.dll
+        i686-w64-mingw32-strip --strip-all ./build/RedAlert.dll
+        i686-w64-mingw32-objcopy --add-gnu-debuglink=./build/TiberianDawn.dbg ./build/TiberianDawn.dll
+        i686-w64-mingw32-objcopy --add-gnu-debuglink=./build/RedAlert.dbg ./build/RedAlert.dll
 
     - name: Create archives
       run: |
         mkdir artifact
-        export ZIPNAME=vanillaconquer_mingw-w64_${{ matrix.buildtype }}
-        if [ ${{ matrix.features }} == "ON" ]; then export FEATURES=_full; fi
-        7z a artifact/$ZIPNAME$FEATURES.zip ./build/vanillara.exe ./build/vanillatd.exe ./build/RedAlert.dll ./build/TiberianDawn.dll
+        7z a artifact/vanilla-conquer-remasterdll-gcc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/TiberianDawn.dll ./build/RedAlert.dll
+        7z a artifact/vanilla-conquer-remasterdll-gcc-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/TiberianDawn.dbg ./build/RedAlert.dbg
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
-        name: vanilla_conquer
+        name: vanilla-conquer-remaster-gcc
+        path: artifact
+        
+  vanilla_win_gcc:
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        platform: [x86, amd64]
+        
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+        
+    - name: Set Git Info
+      id: gitinfo
+      run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      
+    - name: Set variables
+      id: vars
+      run: |
+        if [ "${{ matrix.platform }}" = "x86" ]
+        then
+          echo "::set-output name=oal_path::Win32"
+          echo "::set-output name=arc_path::i686"
+        else
+          echo "::set-output name=oal_path::Win64"
+          echo "::set-output name=arc_path::x86_64"
+        fi
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update -qq > /dev/null
+        sudo apt-get install -qq -y mingw-w64 imagemagick > /dev/null
+        wget -q https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz
+        wget -q https://www.openal-soft.org/openal-binaries/openal-soft-1.21.0-bin.zip
+        tar -xf SDL2-devel-2.0.12-mingw.tar.gz -C /tmp
+        unzip -qq openal-soft-1.21.0-bin.zip -d /tmp
+        mv /tmp/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/soft_oal.dll /tmp/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll
+        
+    - name: Configure Vanilla Conquer
+      run: |
+        cmake -DCMAKE_TOOLCHAIN_FILE=cmake/${{ steps.vars.outputs.arc_path }}-mingw-w64-toolchain.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DSDL2=ON -DSDL2_ROOT_DIR=/tmp/SDL2-2.0.12 -DSDL2_INCLUDE_DIR=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/include/SDL2 -DSDL2_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/lib/libSDL2.dll.a -DSDL2_SDLMAIN_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/lib/libSDL2main.a -DSDL2_RUNTIME_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/bin/SDL2.dll -DOPENAL=ON -DOPENAL_ROOT=/tmp/openal-soft-1.21.0-bin -DOPENAL_INCLUDE_DIR=/tmp/openal-soft-1.21.0-bin/include/AL -DOPENAL_LIBRARY=/tmp/openal-soft-1.21.0-bin/libs/${{ steps.vars.outputs.oal_path }}/libOpenAL32.dll.a -DOPENAL_RUNTIME_LIBRARY=/tmp/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DNETWORKING=OFF -B build
+
+    - name: Build Vanilla Conquer
+      run: |
+        cmake --build build -- -j 4
+        cp ./build/vanillatd.exe ./build/vanillatd.dbg
+        cp ./build/vanillara.exe ./build/vanillara.dbg
+        ${{ steps.vars.outputs.arc_path }}-w64-mingw32-strip --strip-all ./build/vanillatd.exe
+        ${{ steps.vars.outputs.arc_path }}-w64-mingw32-strip --strip-all ./build/vanillara.exe
+        ${{ steps.vars.outputs.arc_path }}-w64-mingw32-objcopy --add-gnu-debuglink=./build/vanillatd.dbg ./build/vanillatd.exe
+        ${{ steps.vars.outputs.arc_path }}-w64-mingw32-objcopy --add-gnu-debuglink=./build/vanillara.dbg ./build/vanillara.exe
+
+    - name: Create archives
+      run: |
+        mkdir artifact
+        7z a artifact/vanilla-conquer-standalone-win-i386-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd.exe ./build/vanillara.exe /tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/bin/SDL2.dll /tmp/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll
+        7z a artifact/vanilla-conquer-standalone-win-i386-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dbg ./build/vanillara.dbg
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: vanilla-conquer-win-gcc-${{ steps.vars.outputs.arc_path }}
         path: artifact
