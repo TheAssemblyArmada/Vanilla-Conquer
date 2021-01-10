@@ -875,7 +875,7 @@ GraphicBufferClass HiddenPage;
 GraphicViewPortClass SeenBuff(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
 GraphicBufferClass ModeXBuff;
 GraphicViewPortClass HidPage(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-GraphicBufferClass SysMemPage(320, 200, (void*)NULL);
+GraphicBufferClass SysMemPage(320, 240, (void*)NULL);
 int SoundOn;
 CountDownTimerClass FrameTimer(BT_SYSTEM, 0L);
 CountDownTimerClass DebugTimer(BT_SYSTEM, 0L);

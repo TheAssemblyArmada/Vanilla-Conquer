@@ -2076,6 +2076,8 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn)
             AnimControl.OptionFlags &= ~VQAOPTF_AUDIO;
         }
 
+        AnimControl.ImageHeight = 240;
+
         if ((vqa = VQA_Alloc()) != NULL) {
             VQA_Init(vqa, MixFileHandler);
             if (VQA_Open(vqa, fullname, &AnimControl) == 0) {

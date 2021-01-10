@@ -225,7 +225,7 @@ int main(int argc, char** argv)
     /*
     **	Remember the current working directory and drive.
     */
-    Paths.Init("vanillatd", "CONQUER.INI", "CONQUER.MIX", args.ArgV[0]);
+    Paths.Init("vanillass", "CONQUER.INI", "CONQUER.MIX", args.ArgV[0]);
     vc_chdir(Paths.Data_Path());
     CDFileClass::Refresh_Search_Drives();
 
@@ -400,6 +400,7 @@ int main(int argc, char** argv)
             }
         }
 #endif
+        ScreenHeight = GBUFF_INIT_HEIGHT;
 
         SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
         HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
