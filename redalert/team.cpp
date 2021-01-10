@@ -2482,8 +2482,8 @@ int TeamClass::TMission_Formation(void)
     case FORMATION_NONE:
         while (member != NULL) {
             member->Group = 0xFF;
-            member->XFormOffset = 0x80000000;
-            member->YFormOffset = 0x80000000;
+            member->XFormOffset = INVALID_FORMATION;
+            member->YFormOffset = INVALID_FORMATION;
             member->IsFormationMove = false;
             member = member->Member;
         }

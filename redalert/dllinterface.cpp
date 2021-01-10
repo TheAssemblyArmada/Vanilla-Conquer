@@ -3561,7 +3561,7 @@ void DLLExportClass::DLL_Draw_Intercept(int shape_number,
         if (object->Is_Foot()) {
             const FootClass* foot = static_cast<const FootClass*>(object);
             new_object.ControlGroup = foot->Group;
-            new_object.IsInFormation = foot->XFormOffset != 0x80000000UL;
+            new_object.IsInFormation = foot->XFormOffset != INVALID_FORMATION;
         }
 
         bool is_infantry = what_is_object == RTTI_INFANTRY;
@@ -7602,7 +7602,7 @@ void DLLExportClass::Team_Units_Formation_Toggle_On(uint64 player_id)
                     if (obj->Is_Selected_By_Player(PlayerPtr)) {
                         team = obj->Group;
                         if (team < MAX_TEAMS) {
-                            setform = obj->XFormOffset == (int)0x80000000;
+                            setform = obj->XFormOffset == INVALID_FORMATION;
                             team_form_data.TeamSpeed[team] = SPEED_WHEEL;
                             team_form_data.TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
                             break;
@@ -7621,7 +7621,7 @@ void DLLExportClass::Team_Units_Formation_Toggle_On(uint64 player_id)
                         if (obj->Is_Selected_By_Player(PlayerPtr)) {
                             team = obj->Group;
                             if (team < MAX_TEAMS) {
-                                setform = obj->XFormOffset == (int)0x80000000;
+                                setform = obj->XFormOffset == INVALID_FORMATION;
                                 team_form_data.TeamSpeed[team] = SPEED_WHEEL;
                                 team_form_data.TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
                                 break;
@@ -7642,7 +7642,7 @@ void DLLExportClass::Team_Units_Formation_Toggle_On(uint64 player_id)
                         if (obj->Is_Selected_By_Player(PlayerPtr)) {
                             team = obj->Group;
                             if (team < MAX_TEAMS) {
-                                setform = obj->XFormOffset == 0x80000000UL;
+                                setform = obj->XFormOffset == INVALID_FORMATION;
                                 team_form_data.TeamSpeed[team] = SPEED_WHEEL;
                                 team_form_data.TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
                                 break;
@@ -7679,7 +7679,7 @@ void DLLExportClass::Team_Units_Formation_Toggle_On(uint64 player_id)
                     team_form_data.TeamSpeed[team] = obj->Class->Speed;
                 }
             } else {
-                obj->XFormOffset = obj->YFormOffset = (int)0x80000000;
+                obj->XFormOffset = obj->YFormOffset = INVALID_FORMATION;
             }
         }
     }
@@ -7703,7 +7703,7 @@ void DLLExportClass::Team_Units_Formation_Toggle_On(uint64 player_id)
                     team_form_data.TeamMaxSpeed[team] = obj->Class->MaxSpeed;
                 }
             } else {
-                obj->XFormOffset = obj->YFormOffset = (int)0x80000000;
+                obj->XFormOffset = obj->YFormOffset = INVALID_FORMATION;
             }
         }
     }
@@ -7727,7 +7727,7 @@ void DLLExportClass::Team_Units_Formation_Toggle_On(uint64 player_id)
                     team_form_data.TeamMaxSpeed[team] = obj->Class->MaxSpeed;
                 }
             } else {
-                obj->XFormOffset = obj->YFormOffset = 0x80000000UL;
+                obj->XFormOffset = obj->YFormOffset = INVALID_FORMATION;
             }
         }
     }
