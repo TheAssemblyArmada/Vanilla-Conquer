@@ -2508,6 +2508,11 @@ typedef enum FormationType : unsigned char
     FORMATION_FIRST = 0
 } FormationType;
 
+/*
+** When a unit is not in formation this magic value is used.
+*/
+#define INVALID_FORMATION 0x80000000
+
 /****************************************************************************
 **	Selected units have a special selected unit box around them. These are the
 **	defines for the two types of selected unit boxes. One is for infantry and

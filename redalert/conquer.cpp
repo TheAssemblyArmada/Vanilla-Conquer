@@ -884,7 +884,7 @@ void Toggle_Formation(void)
             team = obj->Group;
             if (team != -1) {
                 TeamFormDataStruct& team_form_data = TeamFormData[obj->Owner()];
-                setform = obj->XFormOffset == (int)0x80000000;
+                setform = obj->XFormOffset == INVALID_FORMATION;
                 team_form_data.TeamSpeed[team] = SPEED_WHEEL;
                 team_form_data.TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
                 break;
@@ -898,7 +898,7 @@ void Toggle_Formation(void)
                 team = obj->Group;
                 if (team != -1) {
                     TeamFormDataStruct& team_form_data = TeamFormData[obj->Owner()];
-                    setform = obj->XFormOffset == (int)0x80000000;
+                    setform = obj->XFormOffset == INVALID_FORMATION;
                     team_form_data.TeamSpeed[team] = SPEED_WHEEL;
                     team_form_data.TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
                     break;
@@ -914,7 +914,7 @@ void Toggle_Formation(void)
                 team = obj->Group;
                 if (team != -1) {
                     TeamFormDataStruct& team_form_data = TeamFormData[obj->Owner()];
-                    setform = obj->XFormOffset == 0x80000000UL;
+                    setform = obj->XFormOffset == INVALID_FORMATION;
                     team_form_data.TeamSpeed[team] = SPEED_WHEEL;
                     team_form_data.TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
                     break;
@@ -949,7 +949,7 @@ void Toggle_Formation(void)
                     team_form_data.TeamSpeed[team] = obj->Class->Speed;
                 }
             } else {
-                obj->XFormOffset = obj->YFormOffset = (int)0x80000000;
+                obj->XFormOffset = obj->YFormOffset = INVALID_FORMATION;
             }
         }
     }
@@ -974,7 +974,7 @@ void Toggle_Formation(void)
                     team_form_data.TeamMaxSpeed[team] = obj->Class->MaxSpeed;
                 }
             } else {
-                obj->XFormOffset = obj->YFormOffset = (int)0x80000000;
+                obj->XFormOffset = obj->YFormOffset = INVALID_FORMATION;
             }
         }
     }
@@ -999,7 +999,7 @@ void Toggle_Formation(void)
                     team_form_data.TeamMaxSpeed[team] = obj->Class->MaxSpeed;
                 }
             } else {
-                obj->XFormOffset = obj->YFormOffset = 0x80000000UL;
+                obj->XFormOffset = obj->YFormOffset = INVALID_FORMATION;
             }
         }
     }
@@ -3641,7 +3641,7 @@ void Handle_Team(int team, int action)
                 ** offsets, and they'll be formationed.
                 */
 #if (1)
-                obj->XFormOffset = obj->YFormOffset = (int)0x80000000;
+                obj->XFormOffset = obj->YFormOffset = INVALID_FORMATION;
 #else
 #if (1)
                 // Old always-north formation stuff
@@ -3668,7 +3668,7 @@ void Handle_Team(int team, int action)
                     obj->Group = team;
                 if (obj->Group == team && obj->Is_Selected_By_Player()) {
 #if (1)
-                    obj->XFormOffset = obj->YFormOffset = (int)0x80000000;
+                    obj->XFormOffset = obj->YFormOffset = INVALID_FORMATION;
 #else
 #if (1)
                     // Old always-north formation stuff
