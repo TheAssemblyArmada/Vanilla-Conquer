@@ -112,11 +112,6 @@ int Bound(signed int, signed int, signed int);
 unsigned Bound(unsigned, unsigned, unsigned);
 long Bound(long, long, long);
 
-template <class T> T _rotl(T X, int n)
-{
-    return ((T)((((X) << n) | ((X) >> ((sizeof(T) * 8) - n)))));
-}
-
 /*
 **	This macro serves as a general way to determine the number of elements
 **	within an array.
