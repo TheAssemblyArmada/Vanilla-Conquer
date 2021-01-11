@@ -92,6 +92,14 @@ public:
     unsigned IsDeathAnnounce : 1; // Announce enemy deaths?
     unsigned IsFreeScroll : 1;    // Allow free direction scrolling?
 
+    /*
+    ** Sole Additions.
+    */
+    int AISlider;
+    unsigned IsVerbose : 1;
+    int OfflineGametime;
+    int NoMovies;
+
 protected:
     void Adjust_Palette(void* oldpal,
                         void* newpal,

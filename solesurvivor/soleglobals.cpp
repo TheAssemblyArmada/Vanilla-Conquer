@@ -13,7 +13,29 @@
 
 bool LogTeams;
 bool OfflineMode;
+bool WDTRadarAdded;
+bool ClientAICalled;
+bool server_534780 = true; // Seems to be related to if some server logic is processed.
+bool somestate_591BCC;
+
 int Steel;
 int Green;
 int Orange;
 int TeamScores[4];
+char TeamMessages[10][80];
+
+int ClientFPS;
+int LastServerAIFrame;
+int CommStatsSpeedScale;
+int RecievedBytesSec;
+int SentBytesSec;
+int SentTCP;
+int SentUDP;
+int RecievedTCP;
+int RecievedUDP;
+CountDownTimerClass CountDownTimerClass_590454;
+CountDownTimerClass TransmisionStatsTimer;
+CountDownTimerClass ServerCountDownTimerClass_5721D4;
+
+int Density = 200;
+int CrateDensity;

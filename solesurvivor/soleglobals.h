@@ -13,11 +13,35 @@
 #ifndef SOLEGLOBALS_H
 #define SOLEGLOBALS_H
 
+#include "common/timer.h"
+
 extern bool LogTeams;
 extern bool OfflineMode;
+extern bool WDTRadarAdded;
+extern bool ClientAICalled;
+extern bool server_534780; // Possibly indicates server is remote?
+extern bool somestate_591BCC;
+
 extern int Steel;
 extern int Green;
 extern int Orange;
 extern int TeamScores[4];
+extern char TeamMessages[10][80];
+
+extern int ClientFPS;
+extern int LastServerAIFrame;
+extern int CommStatsSpeedScale;
+extern int RecievedBytesSec;
+extern int SentBytesSec;
+extern int SentTCP;
+extern int SentUDP;
+extern int RecievedTCP;
+extern int RecievedUDP;
+extern CountDownTimerClass CountDownTimerClass_590454;
+extern CountDownTimerClass TransmisionStatsTimer;
+extern CountDownTimerClass ServerCountDownTimerClass_5721D4;
+
+extern int Density;
+extern int CrateDensity;
 
 #endif

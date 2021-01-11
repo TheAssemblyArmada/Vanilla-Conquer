@@ -60,6 +60,8 @@ extern unsigned long RandNumb;
 
 extern int SimRandIndex;
 
+extern TimerClass GameTimer;
+
 #define ATTRACT_MODE_TIMEOUT 3600 // timeout for attract mode
 #if (0)
 
@@ -696,17 +698,16 @@ bool Select_Game(bool fade)
     enum
     {
         SEL_TIMEOUT = -1, // main menu timeout--go into attract mode
-        SEL_PRACTICE,     // Expansion scenario to play.
-        SEL_PLAYONLINE,   // start a new game
-        SEL_HELP,         // load a saved game
-        SEL_SNEEKPEEK,    // play modem/null-modem/network game
-        SEL_LADDER,       // replay the intro
+        SEL_PRACTICE,     // start practice game
+        SEL_PLAYONLINE,   // start online game
+        SEL_HELP,         // display help screen
+        SEL_SNEEKPEEK,    // play preview movies
         SEL_EXIT,         // exit to DOS
         SEL_NONE,         // placeholder default value
     };
-    bool gameloaded = false; // Has the game been loaded from the menu?
-    int selection;           // the default selection
-    bool process = true;     // false = break out of while loop
+    bool gameloaded = false;  // Has the game been loaded from the menu?
+    int selection = SEL_NONE; // the default selection
+    bool process = true;      // false = break out of while loop
     bool display = true;
     CountDownTimerClass count;
 
@@ -725,51 +726,24 @@ bool Select_Game(bool fade)
     PlayerWins = false;
     PlayerLoses = false;
     MPlayerObiWan = false;
-    Debug_Unshroud = false;
+    if (!Debug_Map) {
+        Debug_Unshroud = false;
+    }
     Map.Set_Cursor_Shape(0);
     Map.PendingObjectPtr = 0;
     Map.PendingObject = 0;
     Map.PendingHouse = HOUSE_NONE;
 
     /*
-    ** Initialize multiplayer-protocol-specific variables:
-    ** If CommProtocol MULTI_E_COMP is used, you must:
-    ** Init FrameSendRate to a sensible value (3 is good)
-    ** Init MPlayerMaxAhead to an even multiple of FrameSendRate, and it must
-    **   be at least 2 * MPlayerMaxAhead
+    **	Some new Sole Globals
     */
-    CommProtocol = COMM_PROTOCOL_SINGLE_NO_COMP;
-
-    ProcessTicks = 0;
-    ProcessFrames = 0;
-    DesiredFrameRate = 30;
-    //#if(TIMING_FIX)
-    NewMaxAheadFrame1 = 0;
-    NewMaxAheadFrame2 = 0;
-    //#endif
-
-    /*
-    **	Init multiplayer game scores.  Let Wins accumulate; just init the current
-    ** Kills for this game.  Kills of -1 means this player didn't play this round.
-    */
-    for (int i = 0; i < MAX_MULTI_GAMES; i++) {
-        MPlayerScore[i].Kills[MPlayerCurGame] = -1;
-    }
+    WDTRadarAdded = false;
+    server_534780 = true;
 
     /*
     **	Set default mouse shape
     */
     Map.Set_Default_Mouse(MOUSE_NORMAL, false);
-
-    /*
-    **	If the last game we played was a multiplayer game, jump right to that
-    **	menu by pre-setting 'selection'.
-    */
-    if (GameToPlay == GAME_NORMAL) {
-        selection = SEL_NONE;
-    } else {
-        selection = SEL_SNEEKPEEK;
-    }
 
     /*
     **	Main menu processing; only do this if we're not in editor mode.
@@ -783,20 +757,12 @@ bool Select_Game(bool fade)
         Theme.Queue_Song(THEME_WIN1);
         ScenarioInit--;
 
-        /*
-        ** If we're playing back a recording, load all pertinant values & skip
-        ** the menu loop.  Hide the now-useless mouse pointer.
-        */
-        if (PlaybackGame && RecordFile.Is_Available()) {
-            if (RecordFile.Open(READ)) {
-                Load_Recording_Values();
-                process = false;
-                Theme.Fade_Out();
-            } else
-                PlaybackGame = false;
-        }
-
         while (process) {
+            if (Theme.What_Is_Playing() != THEME_WIN1) {
+                Theme.Play_Song(THEME_NONE);
+                Theme.Queue_Song(THEME_WIN1);
+                Theme.AI();
+            }
 
             /*
             ** If we have just received input focus again after running in the background then
@@ -810,7 +776,7 @@ bool Select_Game(bool fade)
             /*
             **	Redraw the title page if needed
             */
-            if (display) {
+            if (display && selection != 0) {
                 Hide_Mouse();
 
                 /*
@@ -841,454 +807,130 @@ bool Select_Game(bool fade)
             } else {
                 if (RunningAsDLL) {
                     return true;
-                    ;
                 }
             }
+
             /*
             **	Display menu and fetch selection from player.
             */
-            if (Special.IsFromInstall) {
-                selection = SEL_PLAYONLINE;
-                Theme.Queue_Song(THEME_NONE);
+            if (selection != SEL_PRACTICE) {
+                OfflineMode = false;
             }
 
             if (selection == SEL_NONE) {
-                //				selection = Main_Menu(0);
                 selection = Main_Menu(ATTRACT_MODE_TIMEOUT);
             }
             Call_Back();
 
             switch (selection) {
 
-#ifdef NEWMENU
-
             /*
-            **	Pick an expansion scenario.
+            **	Start an offline practice mode.
             */
-            case SEL_PRACTICE:
-                CarryOverMoney = 0;
-                if (Expansion_Dialog()) {
-                    switch (Fetch_Difficulty()) {
-                    case 0:
-                        ScenCDifficulty = DIFF_HARD;
-                        ScenDifficulty = DIFF_EASY;
-                        break;
-
-                    case 1:
-                        ScenCDifficulty = DIFF_HARD;
-                        ScenDifficulty = DIFF_NORMAL;
-                        break;
-
-                    case 2:
-                        ScenCDifficulty = DIFF_NORMAL;
-                        ScenDifficulty = DIFF_NORMAL;
-                        break;
-
-                    case 3:
-                        ScenCDifficulty = DIFF_EASY;
-                        ScenDifficulty = DIFF_NORMAL;
-                        break;
-
-                    case 4:
-                        ScenCDifficulty = DIFF_EASY;
-                        ScenDifficulty = DIFF_HARD;
-                        break;
+            case SEL_PRACTICE: {
+                OfflineMode = 1;
+                GameParams.TimeLimit = Options.OfflineGametime;
+                GameParams.ScoreLimit = 0;
+                GameParams.LifeLimit = 0;
+                GameParams.CaptureTheFlag = 0;
+                GameParams.HealthBars = 0;
+                GameParams.FreeRadarForAll = 0;
+                GameParams.Football = 0;
+                GameParams.MinPlayers = 0;
+                GameParams.IonCannon = 0;
+                GameParams.TeamCrates = 0;
+                GameParams.SuperSeconds = 30;
+                GameParams.ArmageddonTimer = 400;
+                GameParams.NoReshroud = false;
+                GameParams.IsLadder = false;
+                GameParams.IsCrates = true;
+                GameParams.UnkBool = false;
+                GameParams.IsMaxNumAIsScaled = 0;
+                strcpy(GameParams.ChannelName, "Offline Practice");
+                GameParams.CrateDensityOverride = 0;
+                GameParams.IsAutoTeaming = 0;
+                GameParams.IsSquadChannel = 0;
+                GameParams.SuperInvuln = 1;
+                GameParams.NumTeams = 0;
+                GameTimer.Set(0, 1);
+                server_534780 = 0;
+                Fade_Palette_To(BlackPalette, 15, Call_Back);
+                //Making_a_choice = 1;
+                bool choice_made = false /* Unit_Choice_Dialog(); */;
+                //Making_a_choice = 0;
+                if (choice_made) {
+                    if (false /*Listener || Init_Listener()*/) {
+                        Read_MultiPlayer_Settings();
+                        ScenPlayer = SCEN_PLAYER_MPLAYER;
+                        ScenDir = SCEN_DIR_EAST;
+                        //v5 = randomize();
+                        //Scenario = Get_Map(v5);
+                        Whom = HOUSE_NEUTRAL;
+                        GameToPlay = GAME_SERVER;
+                        display = true;
+                        fade = true;
+                        process = false;
+                    } else {
+                        WWMessageBox().Process("Unable to initialize server!", TXT_OK);
+                        selection = SEL_NONE;
+                        display = true;
                     }
-
-                    Theme.Fade_Out();
-                    //						Theme.Queue_Song(THEME_AOI);
-                    GameToPlay = GAME_NORMAL;
-                    process = false;
                 } else {
                     display = true;
                     selection = SEL_NONE;
-                }
-                break;
-
-#ifdef BONUS_MISSIONS
-
-            /*
-            **	User selected to play a bonus scenario.
-            */
-            case SEL_BONUS_MISSIONS:
-                CarryOverMoney = 0;
-
-                /*
-                ** Ensure that CD1 or CD2 is in the drive. These missions
-                ** are not on the covert CD.
-                */
-                cd_index = Get_CD_Index(CCFileClass::Get_CD_Drive(), 1 * 60);
-                /*
-                ** If cd_index == 2 then its a covert CD
-                */
-                if (cd_index == 2) {
-                    RequiredCD = 0;
-                    if (!Force_CD_Available(RequiredCD)) {
-                        Prog_End("Select_Game - CD not found", true);
-                        exit(EXIT_FAILURE);
-                    }
-                }
-
-                if (Bonus_Dialog()) {
-                    Theme.Fade_Out();
                     GameToPlay = GAME_NORMAL;
-                    process = false;
-                } else {
-                    display = true;
-                    selection = SEL_NONE;
+                    somestate_591BCC = false;
                 }
                 break;
-
-#endif // BONUS_MISSIONS
-
-#endif
-
+            }
             /*
-            **	SEL_START_NEW_GAME: Play the game
+            **	Connect to an online game.
             */
             case SEL_PLAYONLINE:
-                if (Special.IsFromInstall) {
-                    ScenCDifficulty = DIFF_NORMAL;
-                    ScenDifficulty = DIFF_NORMAL;
-                } else {
-                    switch (Fetch_Difficulty()) {
-                    case 0:
-                        ScenCDifficulty = DIFF_HARD;
-                        ScenDifficulty = DIFF_EASY;
-                        break;
 
-                    case 1:
-                        ScenCDifficulty = DIFF_HARD;
-                        ScenDifficulty = DIFF_NORMAL;
-                        break;
-
-                    case 2:
-                        ScenCDifficulty = DIFF_NORMAL;
-                        ScenDifficulty = DIFF_NORMAL;
-                        break;
-
-                    case 3:
-                        ScenCDifficulty = DIFF_EASY;
-                        ScenDifficulty = DIFF_NORMAL;
-                        break;
-
-                    case 4:
-                        ScenCDifficulty = DIFF_EASY;
-                        ScenDifficulty = DIFF_HARD;
-                        break;
-                    }
-                }
-
-                CarryOverMoney = 0;
-
-                if (Is_Demo()) {
-                    Hide_Mouse();
-                    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-                    Load_Title_Screen("PREPICK.CPS", &HidPage, Palette);
-                    Blit_Hid_Page_To_Seen_Buff();
-                    Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-                    Keyboard->Clear();
-                    Keyboard->Get();
-                    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-                    Show_Mouse();
-                }
-
-                Scenario = 1;
-                BuildLevel = 1;
-
-                ScenPlayer = SCEN_PLAYER_GDI;
-                ScenDir = SCEN_DIR_EAST;
-                Whom = HOUSE_GOOD;
-
-                if (!Is_Demo()) {
-                    Theme.Fade_Out();
-                    Choose_Side();
-                }
-
-                /*
-                ** If user is playing special mode, do NOT change Whom; leave it set to
-                ** GDI or NOD.  Ini.cpp will set the player's ActLike to mirror the
-                ** Whom value.
-                */
-                if (Special.IsJurassic && AreThingiesEnabled) {
-                    ScenPlayer = SCEN_PLAYER_JP;
-                    ScenDir = SCEN_DIR_EAST;
-                }
-
-                GameToPlay = GAME_NORMAL;
-                process = false;
                 break;
 
             /*
             **	Load a saved game.
             */
             case SEL_HELP:
-                if (LoadOptionsClass(LoadOptionsClass::LOAD).Process()) {
-                    // Theme.Fade_Out();
-                    process = false;
-                    gameloaded = true;
-                } else {
-                    display = true;
-                    selection = SEL_NONE;
-                }
-                break;
-
-            /*
-            **	SEL_MULTIPLAYER_GAME: set 'GameToPlay' to NULL-modem, modem, or
-            **	network play.
-            */
-            case SEL_SNEEKPEEK:
-                switch (GameToPlay) {
-
-                /*
-                **	If 'GameToPlay' isn't already set up for a multiplayer game,
-                **	we must prompt the user for which type of multiplayer game
-                **	they want.
-                */
-                case GAME_NORMAL:
-                    GameToPlay = Select_MPlayer_Game();
-                    if (GameToPlay == GAME_NORMAL) { // 'Cancel'
-                        display = true;
-                        selection = SEL_NONE;
-                    }
-                    break;
-
-                case GAME_SKIRMISH:
-#ifndef REMASTER_BUILD
-                    if (!Com_Scenario_Dialog()) {
-                        GameToPlay = Select_MPlayer_Game();
-                        if (GameToPlay == GAME_NORMAL) { // user hit Cancel
-                            display = true;
-                            selection = SEL_NONE;
-                        }
-                    }
-#endif
-                    break;
-                case GAME_NULL_MODEM:
-                case GAME_MODEM:
-#if (0)
-                    if (NullModem.Num_Connections()) {
-                        NullModem.Init_Send_Queue();
-
-                        if ((GameToPlay == GAME_NULL_MODEM && ModemGameToPlay == MODEM_NULL_HOST)
-                            || (GameToPlay == GAME_MODEM && ModemGameToPlay == MODEM_DIALER)) {
-
-                            if (!Com_Scenario_Dialog()) {
-                                GameToPlay = Select_Serial_Dialog();
-                                if (GameToPlay == GAME_NORMAL) { // user hit Cancel
-                                    display = true;
-                                    selection = SEL_NONE;
-                                }
-                            }
-                        } else {
-                            if (!Com_Show_Scenario_Dialog()) {
-                                GameToPlay = Select_Serial_Dialog();
-                                if (GameToPlay == GAME_NORMAL) { // user hit Cancel
-                                    display = true;
-                                    selection = SEL_NONE;
-                                }
-                            }
-                        }
-                    } else {
-                        GameToPlay = Select_MPlayer_Game();
-                        if (GameToPlay == GAME_NORMAL) { // 'Cancel'
-                            display = true;
-                            selection = SEL_NONE;
-                        }
-                    }
-#endif
-                    break;
-
-#ifdef FORCE_WINSOCK
-                /*
-                ** Handle being spawned from WChat. Intermnet play based on IPX code now.
-                */
-                case GAME_INTERNET:
-                    break;
-
-#endif // FORCE_WINSOCK
-                }
-
-                switch (GameToPlay) {
-                /*
-                **	Internet, Modem or Null-Modem
-                */
-                case GAME_MODEM:
-                case GAME_NULL_MODEM:
-                case GAME_INTERNET:
-                    Theme.Fade_Out();
-                    ScenPlayer = SCEN_PLAYER_2PLAYER;
-                    ScenDir = SCEN_DIR_EAST;
-                    process = false;
-                    Options.ScoreVolume = 0;
-                    break;
-
-                case GAME_SKIRMISH:
-                    Theme.Fade_Out();
-                    ScenPlayer = SCEN_PLAYER_MPLAYER;
-                    ScenDir = SCEN_DIR_EAST;
-                    process = false;
-                    break;
-
-                /*
-                **	Network (IPX): start a new network game.
-                */
-                case GAME_IPX:
-                    /*
-                    ** Init network system & remote-connect
-                    */
-                    if (Init_Network() && Remote_Connect()) {
-#if (0)
-                        char seed[80];
-                        sprintf(seed, "Seed: %08x\n", Seed);
-                        CCDebugString(seed);
-
-                        sprintf(seed, "rand: %04x\n", rand());
-                        CCDebugString(seed);
-
-                        sprintf(seed, "rand: %04x\n", rand());
-                        CCDebugString(seed);
-
-                        sprintf(seed, "rand: %04x\n", rand());
-                        CCDebugString(seed);
-#endif
-                        Options.ScoreVolume = 0;
-                        ScenPlayer = SCEN_PLAYER_MPLAYER;
-                        ScenDir = SCEN_DIR_EAST;
-                        process = false;
-                        Theme.Fade_Out();
-                    } else { // user hit cancel, or init failed
-                        GameToPlay = GAME_NORMAL;
-                        display = true;
-                        selection = SEL_NONE;
-                    }
-                    break;
-                }
-                break;
-
-            /*
-            **	Play a VQ
-            */
-            case SEL_LADDER:
-                Theme.Fade_Out();
-                Theme.Stop();
-                Call_Back();
-
-                Force_CD_Available(-1);
-                Play_Intro(false);
-                Hide_Mouse();
-
-                // verify existance of movie file before playing this sequence.
-                if (CCFileClass("TRAILER.VQA").Is_Available()) {
-                    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-                    VisiblePage.Clear();
-                    if (CCFileClass("ATTRACT2.CPS").Is_Available()) {
-                        Load_Uncompress(CCFileClass("ATTRACT2.CPS"), SysMemPage, SysMemPage, Palette);
-                        SysMemPage.Scale(SeenBuff, 0, 0, 0, 0, 320, 199, 640, 398);
-                        Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-                    }
-                    Keyboard->Clear();
-                    count.Set(TIMER_SECOND * 3);
-                    while (count.Time()) {
-                        Call_Back();
-                    }
-                    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-
-                    Play_Movie("TRAILER"); // Red Alert teaser.
-                }
-
-                if (CCFileClass("SIZZLE.VQA").Is_Available()) {
-                    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-                    VisiblePage.Clear();
-                    if (CCFileClass("ATTRACT2.CPS").Is_Available()) {
-                        Load_Uncompress(CCFileClass("ATTRACT2.CPS"), SysMemPage, SysMemPage, Palette);
-                        SysMemPage.Scale(SeenBuff, 0, 0, 0, 0, 320, 199, 640, 398);
-                        Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-                    }
-                    Keyboard->Clear();
-                    count.Set(TIMER_SECOND * 3);
-                    while (count.Time()) {
-                        Call_Back();
-                    }
-                    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-
-                    Play_Movie("SIZZLE"); // Red Alert teaser.
-                }
-
-                if (CCFileClass("SIZZLE2.VQA").Is_Available()) {
-                    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-                    VisiblePage.Clear();
-                    if (CCFileClass("ATTRACT2.CPS").Is_Available()) {
-                        Load_Uncompress(CCFileClass("ATTRACT2.CPS"), SysMemPage, SysMemPage, Palette);
-                        SysMemPage.Scale(SeenBuff, 0, 0, 0, 0, 320, 199, 640, 398);
-                        Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-                    }
-                    Keyboard->Clear();
-                    count.Set(TIMER_SECOND * 3);
-                    while (count.Time()) {
-                        Call_Back();
-                    }
-                    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-
-                    Play_Movie("SIZZLE2"); // Red Alert teaser.
-                }
-
-                Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-                VisiblePage.Clear();
-                if (CCFileClass("ATTRACT2.CPS").Is_Available()) {
-                    Load_Uncompress(CCFileClass("ATTRACT2.CPS"), SysMemPage, SysMemPage, Palette);
-                    SysMemPage.Scale(SeenBuff, 0, 0, 0, 0, 320, 199, 640, 398);
-                    Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-                }
-                Keyboard->Clear();
-                count.Set(TIMER_SECOND * 3);
-                while (count.Time()) {
-                    Call_Back();
-                }
-                Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-
-                Play_Movie("CC2TEASE");
-                Show_Mouse();
-
-                ScenarioInit++;
-                Theme.Play_Song(THEME_WIN1);
-                ScenarioInit--;
+                // Help_Menu();
                 display = true;
                 fade = true;
                 selection = SEL_NONE;
                 break;
 
             /*
+            **	Play some VQA trailers.
+            */
+            case SEL_SNEEKPEEK: {
+                GameEnum saved = GameToPlay;
+                GameToPlay = GAME_NORMAL;
+                Hide_Mouse();
+                Play_Movie("SIZZLE", THEME_NONE, 0);
+                Play_Movie("SIZZLE2", THEME_NONE, 0);
+                Show_Mouse();
+                GameToPlay = saved;
+                display = true;
+                fade = true;
+                selection = SEL_NONE;
+
+                break;
+            }
+
+            /*
             **	Exit to DOS.
             */
             case SEL_EXIT:
-#ifdef JAPANESE
-                Hide_Mouse();
-#endif
                 Theme.Fade_Out();
                 Fade_Palette_To(BlackPalette, FADE_PALETTE_SLOW, NULL);
-#ifdef JAPANESE
-                VisiblePage.Clear();
-#endif
+
                 return (false);
 
-            case SEL_TIMEOUT:
-                if (AllowAttract && RecordFile.Is_Available()) {
-                    PlaybackGame = true;
-                    if (RecordFile.Open(READ)) {
-                        Load_Recording_Values();
-                        process = false;
-                        Theme.Fade_Out();
-                    } else {
-                        PlaybackGame = false;
-                        selection = SEL_NONE;
-                    }
-                } else {
-                    selection = SEL_NONE;
-                }
-                break;
-
             default:
+                display = true;
+                fade = true;
+                selection = SEL_NONE;
                 break;
             }
         }
@@ -1302,14 +944,19 @@ bool Select_Game(bool fade)
             ScenPlayer = SCEN_PLAYER_JP;
             ScenDir = SCEN_DIR_EAST;
         }
+
+        /*
+        ** SS: Looks like debug mode was supposed to create a server in sole.
+        */
+        if (GameToPlay == GAME_SERVER) {
+            // TODO: Listener class stuff.
+            ScenPlayer = SCEN_PLAYER_MPLAYER;
+            ScenDir = SCEN_DIR_EAST;
+            // Scenario = Get_Map(rand());
+            Whom = HOUSE_NEUTRAL;
+        }
     }
     CCDebugString("C&C95 - About to start game initialisation.\n");
-#ifdef FORCE_WINSOCK
-    if (GameToPlay == GAME_INTERNET) {
-        CommProtocol = COMM_PROTOCOL_MULTI_E_COMP;
-        FrameSendRate = 5; // 3;
-    }
-#endif // FORCE_WINSOCK
     /*
     **	Don't carry stray keystrokes into game.
     */
@@ -1320,23 +967,8 @@ bool Select_Game(bool fade)
     **	the Get_EAX() must follow immediately after the srand(0) in order to save
     **	the address of the random seed.  (Currently not used.)
     */
-    srand(0);
-    // RandSeedPtr = (long *)Get_EAX();	 // ST - 1/2/2019 5:26PM
-
-    /*
-    **	Initialize the random number Seed.  For multiplayer, this will have been done
-    ** in the connection dialogs.  For single-player games, AND if we're not playing
-    ** back a recording, init the Seed to a random value.
-    */
-    if (GameToPlay == GAME_NORMAL && !PlaybackGame) {
-#ifdef _WIN32
-        srand(timeGetTime());
-#else
-        srand(time(NULL));
-#endif
-        // randomize();
-        Seed = rand();
-    }
+    srand(time(NULL));
+    Seed = rand();
 
     /*
     ** If user has specified a desired random number seed, use it for multiplayer games
@@ -1345,46 +977,9 @@ bool Select_Game(bool fade)
         Seed = CustomSeed;
     }
 
-    /*
-    ** Save initialization values if we're recording this game.
-    ** This must be done after 'Seed' has been initialized.
-    */
-    if (RecordGame) {
-        if (RecordFile.Open(WRITE)) {
-            Save_Recording_Values();
-        } else {
-            RecordGame = false;
-        }
-    }
-
-    /*
-    **	Initialize the random-number generator.
-    */
-    // Seed = 1;
-
     srand(Seed);
     RandNumb = Seed;
     SimRandIndex = 0;
-#if (0)
-    DWORD actual;
-    HANDLE sfile = CreateFile("random.txt", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
-    if (sfile != INVALID_HANDLE_VALUE) {
-        SetFilePointer(sfile, 0, NULL, FILE_END);
-
-        int minimum;
-        int maximum;
-        char whatever[80];
-        for (int i = 0; i < 1000; i++) {
-            minimum = rand();
-            maximum = rand();
-
-            sprintf(whatever, "%04x\n", Random_Pick(minimum, maximum));
-            WriteFile(sfile, whatever, strlen(whatever), &actual, NULL);
-        }
-        CloseHandle(sfile);
-    }
-#endif
 
     /*
     **	Load the scenario.  Specify variation 'A' for the editor; for the game,
@@ -1403,12 +998,9 @@ bool Select_Game(bool fade)
         ** before calling it.
         */
         Hide_Mouse();
-
-        if (selection != SEL_PLAYONLINE) {
-            Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-            HiddenPage.Clear();
-            VisiblePage.Clear();
-        }
+        Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
+        HiddenPage.Clear();
+        VisiblePage.Clear();
         Show_Mouse();
 
         Special.IsFromInstall = 0;
@@ -1454,23 +1046,75 @@ bool Select_Game(bool fade)
     Map.Flag_To_Redraw();
     Call_Back();
     Map.Render();
-    // Show_Mouse();
-
-    /*
-    ** Special hack initialization of 'MPlayerMaxAhead' to accommodate the
-    ** compression protocol technology.
-    */
-#ifdef FORCE_WINSOCK
-    if (CommProtocol == COMM_PROTOCOL_MULTI_E_COMP && GameToPlay != GAME_NORMAL) {
-        MPlayerMaxAhead = FrameSendRate * 3; // 2;
-    }
-#endif // FORCE_WINSOCK
 
     if (Debug_Map) {
         while (Get_Mouse_State() > 1) {
             Show_Mouse();
         }
     }
+
+    constexpr int SpeedScale = 256;
+
+    // Destroy_Server_Vector();
+    ClientFPS = 30;
+    LastServerAIFrame = 0;
+    CountDownTimerClass_590454.Set(120, 1);
+    CommStatsSpeedScale = SpeedScale;
+    RecievedBytesSec = 0;
+    SentBytesSec = 0;
+    SentTCP = 0;
+    SentUDP = 0;
+    RecievedTCP = 0;
+    RecievedUDP = 0;
+    TransmisionStatsTimer.Set(120, 1);
+    CrateMaker = true;
+    int crate_density = 1;
+    ServerCountDownTimerClass_5721D4.Set(36000, 1);
+
+    if (GameParams.CrateDensityOverride <= 0) {
+        if (Density <= 0) {
+            CrateDensity = Map.MapCellHeight * Map.MapCellWidth;
+        } else {
+            crate_density = Density;
+            CrateDensity = (Map.MapCellHeight * Map.MapCellWidth) / Density;
+        }
+    } else {
+        crate_density = GameParams.CrateDensityOverride;
+        CrateDensity = Map.MapCellHeight * Map.MapCellWidth / GameParams.CrateDensityOverride;
+    }
+
+    if (CrateDensity > 1000) {
+        CrateDensity = 1000;
+    }
+
+    Map.Activate(1);
+
+    if (!OfflineMode && (somestate_591BCC || PlayerPtr->Class->House == HOUSE_MULTI2)) {
+        Debug_Unshroud = true;
+        Map.Activate(1);
+        // Add_WDT_Radar();
+
+        if (Debug_Map) {
+            Map.Activate(0);
+        }
+    }
+
+    if (GameParams.FreeRadarForAll && !WDTRadarAdded) {
+        Map.Activate(1);
+        // Add_WDT_Radar();
+
+        if (Debug_Map) {
+            Map.Activate(0);
+        }
+
+        PlayerPtr->IsAlerted = true; // This needs verifying as bitfield layout may have changed.
+    }
+
+    if (GameToPlay == GAME_SERVER && (GameParams.CaptureTheFlag || GameParams.Football)) {
+        // house_server_47A5F8();
+    }
+
+    ClientAICalled = false;
 
     return (true);
 }

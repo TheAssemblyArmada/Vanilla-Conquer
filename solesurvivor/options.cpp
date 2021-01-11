@@ -59,6 +59,7 @@
 #include "function.h"
 #include "options.h"
 #include "common/ini.h"
+#include "soleglobals.h"
 
 /***********************************************************************************************
  * OptionsClass::OptionsClass -- The default constructor for the options class.                *
@@ -95,6 +96,10 @@ OptionsClass::OptionsClass(void)
     IsScoreRepeat = false;
     IsScoreShuffle = false;
     IsFreeScroll = false;
+
+    IsVerbose = true;
+    OfflineGametime = 15;
+    NoMovies = 0;
 }
 
 /***********************************************************************************************
@@ -522,6 +527,22 @@ void OptionsClass::Load_Settings(void)
     IsDeathAnnounce = ini.Get_Int("Options", "DeathAnnounce", 0);
     IsFreeScroll = ini.Get_Int("Options", "FreeScrolling", 0);
     SlowPalette = ini.Get_Int("Options", "SlowPalette", 1);
+
+    IsVerbose = ini.Get_Bool("Options", "IsVerbose", true);
+    AISlider = ini.Get_Int("Options", "AISlider", 10);
+    NoMovies = ini.Get_Int("Options", "NoMovies", 0);
+    OfflineGametime = Bound(ini.Get_Int("Options", "OfflineGametime", 15), 1, 300);
+
+    ini.Get_String("TeamMessages", "TeamMessage0", "Pick up that flag!!!", TeamMessages[0], 80);
+    ini.Get_String("TeamMessages", "TeamMessage1", "HELP !!! SAVE OUR FLAG !!!", TeamMessages[1], 80);
+    ini.Get_String("TeamMessages", "TeamMessage2", "Their base is ", TeamMessages[2], 80);
+    ini.Get_String("TeamMessages", "TeamMessage3", "Got their flag, need escort, quick!", TeamMessages[3], 80);
+    ini.Get_String("TeamMessages", "TeamMessage4", "Their base is destroyed!", TeamMessages[4], 80);
+    ini.Get_String("TeamMessages", "TeamMessage5", "Our base is destroyed! Defend our flag!", TeamMessages[5], 80);
+    ini.Get_String("TeamMessages", "TeamMessage6", "Converge on their base NOW!", TeamMessages[6], 80);
+    ini.Get_String("TeamMessages", "TeamMessage7", "Help needed: campers at base!", TeamMessages[7], 80);
+    ini.Get_String("TeamMessages", "TeamMessage8", "Get Crates!", TeamMessages[8], 80);
+    ini.Get_String("TeamMessages", "TeamMessage9", "Locate the Enemy!", TeamMessages[9], 80);
 
     char workbuf[128];
 
