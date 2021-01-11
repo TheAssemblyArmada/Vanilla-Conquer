@@ -181,14 +181,14 @@ private:
     /*
     **	Tiberium growth potiential cells are recorded here.
     */
-    CELL TiberiumGrowth[50];
+    CELL TiberiumGrowth[MAP_CELL_W / 2];
     int TiberiumGrowthCount;
 
     /*
     **	List of cells that are full enough strength that they could spread
     **	Tiberium to adjacent cells.
     */
-    CELL TiberiumSpread[50];
+    CELL TiberiumSpread[MAP_CELL_W / 2];
     int TiberiumSpreadCount;
 
     /*
