@@ -220,7 +220,7 @@ int main(int argc, char** argv)
 
         WinTimerClass::Init(60);
 
-        RawFileClass cfile("CONQUER.INI");
+        CCFileClass cfile("CONQUER.INI");
 
         Keyboard = new WWKeyboardClass();
 
@@ -270,56 +270,86 @@ int main(int argc, char** argv)
         }
 #endif
 
-        if (cfile.Is_Available()) {
+        Read_Private_Config_Struct(cfile, &NewConfig);
 
-            Read_Private_Config_Struct(cfile, &NewConfig);
+        /*
+        ** Set the options as requested by the ccsetup program
+        */
+        Read_Setup_Options(&cfile);
 
-            /*
-            ** Set the options as requested by the ccsetup program
-            */
-            Read_Setup_Options(&cfile);
-
-            CCDebugString("C&C95 - Creating main window.\n");
+        CCDebugString("C&C95 - Creating main window.\n");
 
 #if defined(_WIN32) && !defined(SDL2_BUILD)
-            Create_Main_Window(ProgramInstance, ScreenWidth, ScreenHeight);
+        Create_Main_Window(ProgramInstance, ScreenWidth, ScreenHeight);
 #endif
 
-            CCDebugString("C&C95 - Initialising audio.\n");
+        CCDebugString("C&C95 - Initialising audio.\n");
 
-            SoundOn = Audio_Init(16, false, 11025 * 2, 0);
+        SoundOn = Audio_Init(16, false, 11025 * 2, 0);
 
-            Palette = new (MEM_CLEAR) unsigned char[768];
+        Palette = new (MEM_CLEAR) unsigned char[768];
 
-            bool video_success = false;
-            CCDebugString("C&C95 - Setting video mode.\n");
-            /*
-            ** Set 640x400 video mode. If its not available then try for 640x480
-            */
+        bool video_success = false;
+        CCDebugString("C&C95 - Setting video mode.\n");
+        /*
+        ** Set 640x400 video mode. If its not available then try for 640x480
+        */
 #ifdef REMASTER_BUILD
-            video_success = true;
+        video_success = true;
 #else
-            if (ScreenHeight == 400) {
-                if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
-                    video_success = true;
-                } else {
-                    if (Set_Video_Mode(ScreenWidth, 480, 8)) {
-                        video_success = true;
-                        ScreenHeight = 480;
-                    }
-                }
+        if (ScreenHeight == 400) {
+            if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
+                video_success = true;
             } else {
-                if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
+                if (Set_Video_Mode(ScreenWidth, 480, 8)) {
                     video_success = true;
+                    ScreenHeight = 480;
                 }
             }
+        } else {
+            if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
+                video_success = true;
+            }
+        }
 #endif
 
-            if (!video_success) {
-                CCDebugString("C&C95 - Failed to set video mode.\n");
+        if (!video_success) {
+            CCDebugString("C&C95 - Failed to set video mode.\n");
+#ifdef _WIN32
+            MessageBoxA(
+                MainWindow, "Error - Unable to set the video mode.", "Command & Conquer", MB_ICONEXCLAMATION | MB_OK);
+#endif
+            if (Palette)
+                delete[] Palette;
+            return (EXIT_FAILURE);
+        }
+
+        CCDebugString("C&C95 - Initialising video surfaces.\n");
+
+        if (ScreenWidth == 320) {
+            VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
+            ModeXBuff.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VISIBLE | GBC_VIDEOMEM));
+        } else {
+
+#ifdef REMASTER_BUILD
+
+            VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
+            HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
+
+#else
+            VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VISIBLE | GBC_VIDEOMEM));
+
+            /*
+            ** Check that we really got a video memory page. Failure is fatal.
+            */
+            if (VisiblePage.IsAllocated()) {
+                /*
+                ** Aaaarrgghh!
+                */
+                CCDebugString("C&C95 - Unable to allocate primary surface.\n");
 #ifdef _WIN32
                 MessageBoxA(MainWindow,
-                            "Error - Unable to set the video mode.",
+                            Text_String(TXT_UNABLE_TO_ALLOCATE_PRIMARY_VIDEO_BUFFER),
                             "Command & Conquer",
                             MB_ICONEXCLAMATION | MB_OK);
 #endif
@@ -328,200 +358,137 @@ int main(int argc, char** argv)
                 return (EXIT_FAILURE);
             }
 
-            CCDebugString("C&C95 - Initialising video surfaces.\n");
-
-            if (ScreenWidth == 320) {
-                VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
-                ModeXBuff.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VISIBLE | GBC_VIDEOMEM));
-            } else {
-
-#ifdef REMASTER_BUILD
-
-                VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
+            /*
+            ** If we have enough left then put the hidpage in video memory unless...
+            **
+            ** If there is no blitter then we will get better performance with a system
+            ** memory hidpage
+            **
+            ** Use a system memory page if the user has specified it via the ccsetup program.
+            */
+            CCDebugString("C&C95 - Allocating back buffer ");
+            long video_memory = Get_Free_Video_Memory();
+            unsigned video_capabilities = Get_Video_Hardware_Capabilities();
+            if (video_memory < ScreenWidth * ScreenHeight || (!(video_capabilities & VIDEO_BLITTER))
+                || (video_capabilities & VIDEO_NO_HARDWARE_ASSIST) || !VideoBackBufferAllowed) {
+                CCDebugString("in system memory.\n");
                 HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
-
-#else
-                VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VISIBLE | GBC_VIDEOMEM));
+            } else {
+                // HiddenPage.Init (ScreenWidth , ScreenHeight , NULL , 0 , (GBC_Enum)0);
+                CCDebugString("in video memory.\n");
+                HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)GBC_VIDEOMEM);
 
                 /*
-                ** Check that we really got a video memory page. Failure is fatal.
+                ** Make sure we really got a video memory hid page. If we didnt then things
+                ** will run very slowly.
                 */
-                if (VisiblePage.IsAllocated()) {
+                if (HiddenPage.IsAllocated()) {
                     /*
-                    ** Aaaarrgghh!
+                    ** Oh dear, big trub. This must be an IBM Aptiva or something similarly cruddy.
+                    ** We must redo the Hidden Page as system memory.
                     */
-                    CCDebugString("C&C95 - Unable to allocate primary surface.\n");
-#ifdef _WIN32
-                    MessageBoxA(MainWindow,
-                                Text_String(TXT_UNABLE_TO_ALLOCATE_PRIMARY_VIDEO_BUFFER),
-                                "Command & Conquer",
-                                MB_ICONEXCLAMATION | MB_OK);
-#endif
-                    if (Palette)
-                        delete[] Palette;
-                    return (EXIT_FAILURE);
-                }
-
-                /*
-                ** If we have enough left then put the hidpage in video memory unless...
-                **
-                ** If there is no blitter then we will get better performance with a system
-                ** memory hidpage
-                **
-                ** Use a system memory page if the user has specified it via the ccsetup program.
-                */
-                CCDebugString("C&C95 - Allocating back buffer ");
-                long video_memory = Get_Free_Video_Memory();
-                unsigned video_capabilities = Get_Video_Hardware_Capabilities();
-                if (video_memory < ScreenWidth * ScreenHeight || (!(video_capabilities & VIDEO_BLITTER))
-                    || (video_capabilities & VIDEO_NO_HARDWARE_ASSIST) || !VideoBackBufferAllowed) {
-                    CCDebugString("in system memory.\n");
+                    HiddenPage.Un_Init();
                     HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
                 } else {
-                    // HiddenPage.Init (ScreenWidth , ScreenHeight , NULL , 0 , (GBC_Enum)0);
-                    CCDebugString("in video memory.\n");
-                    HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)GBC_VIDEOMEM);
-
-                    /*
-                    ** Make sure we really got a video memory hid page. If we didnt then things
-                    ** will run very slowly.
-                    */
-                    if (HiddenPage.IsAllocated()) {
-                        /*
-                        ** Oh dear, big trub. This must be an IBM Aptiva or something similarly cruddy.
-                        ** We must redo the Hidden Page as system memory.
-                        */
-                        HiddenPage.Un_Init();
-                        HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
-                    } else {
-                        VisiblePage.Attach_DD_Surface(&HiddenPage);
-                    }
+                    VisiblePage.Attach_DD_Surface(&HiddenPage);
                 }
-#endif
             }
-            ScreenHeight = GBUFF_INIT_HEIGHT;
-
-            if (VisiblePage.Get_Height() == 480) {
-                SeenBuff.Attach(&VisiblePage, 0, 40, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-                HidPage.Attach(&HiddenPage, 0, 40, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-            } else {
-                SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-                HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-            }
-            CCDebugString("C&C95 - Adjusting variables for resolution.\n");
-            Options.Adjust_Variables_For_Resolution();
-
-            CCDebugString("C&C95 - Setting palette.\n");
-            /////////Set_Palette(Palette);
-
-            WindowList[0][WINDOWWIDTH] = SeenBuff.Get_Width();
-            WindowList[0][WINDOWHEIGHT] = SeenBuff.Get_Height();
-
-            /*
-            ** Install the memory error handler
-            */
-            Memory_Error = &Memory_Error_Handler;
-
-            CCDebugString("C&C95 - Creating mouse class.\n");
-            WWMouse = new WWMouseClass(&SeenBuff, 32, 32);
-            //			MouseInstalled = Install_Mouse(32,24,320,200);
-            MouseInstalled = true;
-
-            /*
-            ** See if we should run the intro
-            */
-            INIClass ini;
-            ini.Load(cfile);
-
-            /*
-            **	Check for forced intro movie run disabling. If the conquer
-            **	configuration file says "no", then don't run the intro.
-            */
-            if (!Special.IsFromInstall) {
-                Special.IsFromInstall = ini.Get_Bool("Intro", "PlayIntro", true);
-            }
-            SlowPalette = ini.Get_Bool("Options", "SlowPalette", false);
-
-            /*
-            ** Regardless of whether we should run it or not, here we're
-            ** gonna change it to say "no" in the future.
-            */
-            if (Special.IsFromInstall) {
-                BreakoutAllowed = true;
-                ini.Put_Bool("Intro", "PlayIntro", false);
-                ini.Save(cfile);
-            }
-
-#ifdef DEMO
-            /*
-            **	Check for override directory path for CD searches.
-            */
-            ini.Get_String("CD", "Path", ".", OverridePath, sizeof(OverridePath));
-#endif
-
-            /*
-            **	If the intro is being run for the first time, then don't
-            **	allow breaking out of it with the <ESC> key.
-            */
-            if (Special.IsFromInstall) {
-                BreakoutAllowed = false;
-            }
-
-            Memory_Error_Exit = Print_Error_End_Exit;
-
-            CCDebugString("C&C95 - Entering main game.\n");
-            Main_Game(argc, argv);
-
-            if (RunningAsDLL) {
-                return (EXIT_SUCCESS);
-            }
-
-            /*
-            ** Save settings if they were changed during gameplay.
-            */
-            Settings.Save(ini);
-            ini.Save(cfile);
-
-            VisiblePage.Clear();
-            HiddenPage.Clear();
-
-            Memory_Error_Exit = Print_Error_Exit;
-
-            CCDebugString("C&C95 - About to exit.\n");
-            ReadyToQuit = 1;
-
-#if defined(SDL2_BUILD)
-            Reset_Video_Mode();
-#elif defined(_WIN32)
-            PostMessageA(MainWindow, WM_DESTROY, 0, 0);
-            do {
-                Keyboard->Check();
-            } while (ReadyToQuit == 1);
-#endif
-
-            CCDebugString("C&C95 - Returned from final message loop.\n");
-            // Prog_End();
-            // Invalidate_Cached_Icons();
-            // VisiblePage.Un_Init();
-            // HiddenPage.Un_Init();
-            // AllSurfaces.Release();
-            // Reset_Video_Mode();
-            // Stop_Profiler();
-            return (EXIT_SUCCESS);
-
-        } else {
-#ifdef GERMAN
-            puts("Bitte erst das SETUP-Programm starten.\n");
-#else
-#ifdef FRENCH
-            puts("Lancez d'abord le programme de configuration SETUP.\n");
-#else
-            puts("Run SETUP program first.");
-            puts("\n");
-#endif
-            Keyboard->Get();
 #endif
         }
+        ScreenHeight = GBUFF_INIT_HEIGHT;
+
+        if (VisiblePage.Get_Height() == 480) {
+            SeenBuff.Attach(&VisiblePage, 0, 40, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+            HidPage.Attach(&HiddenPage, 0, 40, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+        } else {
+            SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+            HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+        }
+        CCDebugString("C&C95 - Adjusting variables for resolution.\n");
+        Options.Adjust_Variables_For_Resolution();
+
+        CCDebugString("C&C95 - Setting palette.\n");
+        /////////Set_Palette(Palette);
+
+        WindowList[0][WINDOWWIDTH] = SeenBuff.Get_Width();
+        WindowList[0][WINDOWHEIGHT] = SeenBuff.Get_Height();
+
+        /*
+        ** Install the memory error handler
+        */
+        Memory_Error = &Memory_Error_Handler;
+
+        CCDebugString("C&C95 - Creating mouse class.\n");
+        WWMouse = new WWMouseClass(&SeenBuff, 32, 32);
+        //			MouseInstalled = Install_Mouse(32,24,320,200);
+        MouseInstalled = true;
+
+        /*
+        ** See if we should run the intro
+        */
+        INIClass ini;
+        ini.Load(cfile);
+
+        /*
+        **	Check for forced intro movie run disabling. If the conquer
+        **	configuration file says "no", then don't run the intro.
+        */
+        if (!Special.IsFromInstall) {
+            Special.IsFromInstall = ini.Get_Bool("Intro", "PlayIntro", true);
+        }
+        SlowPalette = ini.Get_Bool("Options", "SlowPalette", false);
+
+        /*
+        ** Regardless of whether we should run it or not, here we're
+        ** gonna change it to say "no" in the future.
+        */
+        if (Special.IsFromInstall) {
+            BreakoutAllowed = true;
+            ini.Put_Bool("Intro", "PlayIntro", false);
+            ini.Save(cfile);
+        }
+
+        Memory_Error_Exit = Print_Error_End_Exit;
+
+        CCDebugString("C&C95 - Entering main game.\n");
+        Main_Game(argc, argv);
+
+        if (RunningAsDLL) {
+            return (EXIT_SUCCESS);
+        }
+
+        /*
+        ** Save settings if they were changed during gameplay.
+        */
+        Settings.Save(ini);
+        ini.Save(cfile);
+
+        VisiblePage.Clear();
+        HiddenPage.Clear();
+
+        Memory_Error_Exit = Print_Error_Exit;
+
+        CCDebugString("C&C95 - About to exit.\n");
+        ReadyToQuit = 1;
+
+#if defined(SDL2_BUILD)
+        Reset_Video_Mode();
+#elif defined(_WIN32)
+        PostMessageA(MainWindow, WM_DESTROY, 0, 0);
+        do {
+            Keyboard->Check();
+        } while (ReadyToQuit == 1);
+#endif
+
+        CCDebugString("C&C95 - Returned from final message loop.\n");
+        // Prog_End();
+        // Invalidate_Cached_Icons();
+        // VisiblePage.Un_Init();
+        // HiddenPage.Un_Init();
+        // AllSurfaces.Release();
+        // Reset_Video_Mode();
+        // Stop_Profiler();
+        return (EXIT_SUCCESS);
 
         if (Palette) {
             delete[] Palette;
@@ -623,73 +590,70 @@ void Print_Error_Exit(char* string)
  *=============================================================================================*/
 void Read_Setup_Options(RawFileClass* config_file)
 {
-    if (config_file->Is_Available()) {
+    INIClass ini;
 
-        INIClass ini;
+    ini.Load(*config_file);
 
-        ini.Load(*config_file);
+    /*
+    ** Read in global settings
+    */
+    Settings.Load(ini);
+
+    /*
+    ** Read in the boolean options
+    */
+    VideoBackBufferAllowed = ini.Get_Bool("Options", "VideoBackBuffer", true);
+    AllowHardwareBlitFills = ini.Get_Bool("Options", "HardwareFills", true);
+    ScreenHeight = ini.Get_Bool("Options", "Resolution", false) ? GBUFF_INIT_ALTHEIGHT : GBUFF_INIT_HEIGHT;
+
+    /*
+    ** See if an alternative socket number has been specified
+    */
+    int socket = ini.Get_Int("Options", "Socket", 0);
+    if (socket > 0) {
+        socket += 0x4000;
+        if (socket >= 0x4000 && socket < 0x8000) {
+            Ipx.Set_Socket(socket);
+        }
+    }
+
+    /*
+    ** See if a destination network has been specified
+    */
+    char netbuf[512];
+    memset(netbuf, 0, sizeof(netbuf));
+    char* netptr = netbuf;
+    bool found = ini.Get_String("Options", "DestNet", NULL, netbuf, sizeof(netbuf));
+
+    if (found && netptr != NULL && strlen(netbuf)) {
+        NetNumType net;
+        NetNodeType node;
 
         /*
-        ** Read in global settings
+        ** Scan the string, pulling off each address piece
         */
-        Settings.Load(ini);
-
-        /*
-        ** Read in the boolean options
-        */
-        VideoBackBufferAllowed = ini.Get_Bool("Options", "VideoBackBuffer", true);
-        AllowHardwareBlitFills = ini.Get_Bool("Options", "HardwareFills", true);
-        ScreenHeight = ini.Get_Bool("Options", "Resolution", false) ? GBUFF_INIT_ALTHEIGHT : GBUFF_INIT_HEIGHT;
-
-        /*
-        ** See if an alternative socket number has been specified
-        */
-        int socket = ini.Get_Int("Options", "Socket", 0);
-        if (socket > 0) {
-            socket += 0x4000;
-            if (socket >= 0x4000 && socket < 0x8000) {
-                Ipx.Set_Socket(socket);
+        int i = 0;
+        char* p = strtok(netbuf, ".");
+        int x;
+        while (p != NULL) {
+            sscanf(p, "%x", &x); // convert from hex string to int
+            if (i < 4) {
+                net[i] = (char)x; // fill NetNum
+            } else {
+                node[i - 4] = (char)x; // fill NetNode
             }
+            i++;
+            p = strtok(NULL, ".");
         }
 
         /*
-        ** See if a destination network has been specified
+        ** If all the address components were successfully read, fill in the
+        ** BridgeNet with a broadcast address to the network across the bridge.
         */
-        char netbuf[512];
-        memset(netbuf, 0, sizeof(netbuf));
-        char* netptr = netbuf;
-        bool found = ini.Get_String("Options", "DestNet", NULL, netbuf, sizeof(netbuf));
-
-        if (found && netptr != NULL && strlen(netbuf)) {
-            NetNumType net;
-            NetNodeType node;
-
-            /*
-            ** Scan the string, pulling off each address piece
-            */
-            int i = 0;
-            char* p = strtok(netbuf, ".");
-            int x;
-            while (p != NULL) {
-                sscanf(p, "%x", &x); // convert from hex string to int
-                if (i < 4) {
-                    net[i] = (char)x; // fill NetNum
-                } else {
-                    node[i - 4] = (char)x; // fill NetNode
-                }
-                i++;
-                p = strtok(NULL, ".");
-            }
-
-            /*
-            ** If all the address components were successfully read, fill in the
-            ** BridgeNet with a broadcast address to the network across the bridge.
-            */
-            if (i >= 4) {
-                IsBridge = 1;
-                memset(node, 0xff, 6);
-                BridgeNet = IPXAddressClass(net, node);
-            }
+        if (i >= 4) {
+            IsBridge = 1;
+            memset(node, 0xff, 6);
+            BridgeNet = IPXAddressClass(net, node);
         }
     }
 }

@@ -60,7 +60,7 @@ bool Read_Private_Config_Struct(FileClass& file, NewConfigType* config)
     config->Channels = ini.Get_Int("Sound", "Channels", 0);
     config->Reverse = ini.Get_Int("Sound", "Reverse", 0);
     config->Speed = ini.Get_Int("Sound", "Speed", 0);
-    ini.Get_String("Language", "Language", NULL, config->Language, sizeof(config->Language));
+    ini.Get_String("Language", "Language", "Eng", config->Language, sizeof(config->Language));
 
     return ((config->DigitCard == 0) && (config->IRQ == 0) && (config->DMA == 0));
 }
