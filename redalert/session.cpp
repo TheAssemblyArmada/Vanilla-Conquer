@@ -853,8 +853,6 @@ void SessionClass::Read_Scenario_Descriptions(void)
     if (ffd) {
         Find_Close(ffd);
     }
-
-    delete ffd;
 }
 
 /***************************************************************************
