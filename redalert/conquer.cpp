@@ -4861,7 +4861,7 @@ void Load_Tutorial_Text(INIClass &ini, DynamicVectorClass<const char*> &Tutorial
 
     // Because of special reading logic entries can overwrite older ones because
     // the entry name is used as id and the first id starts at 1 and not zero
-
+    // in conquer.ini 
     int entries = ini.Entry_Count("Tutorial") + 1;
     
     // Add all the empty entries as NULL strings
