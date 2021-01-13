@@ -324,6 +324,11 @@ bool Start_Scenario(char* name, bool briefing)
         return (false);
     }
 
+    /*
+    ** This was added in the Sept 16th 2020 update, causes colors to alternate for both in standalone.
+    ** Seems likely it would affect the remaster classic renderer as well?
+    */
+#ifdef REMASTER_BUILD
     /* Swap Lt. Blue and Blue color remaps in skirmish/multiplayer */
     if (Session.Type != GAME_NORMAL) {
         RemapControlType temp;
@@ -331,6 +336,7 @@ bool Start_Scenario(char* name, bool briefing)
         memcpy(&ColorRemaps[PCOLOR_LTBLUE], &ColorRemaps[PCOLOR_BLUE], sizeof(RemapControlType));
         memcpy(&ColorRemaps[PCOLOR_BLUE], &temp, sizeof(RemapControlType));
     }
+#endif
 
     /*
     **	Play the winning movie and then start the next scenario.
