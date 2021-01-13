@@ -3831,8 +3831,12 @@ typedef enum
 
 static void Reinit_Secondary_Mixfiles()
 {
+    static bool in_progress = false;
+
     // Only reinitialised if the main mix file has been initialised once already.
-    if (MainMix != nullptr) {
+    if (MainMix != nullptr && !in_progress) {
+        in_progress = true;
+
         delete MoviesMix;
         delete Movies2Mix;
         delete GeneralMix;
@@ -3854,6 +3858,8 @@ static void Reinit_Secondary_Mixfiles()
         }
         GeneralMix = new MFCD("GENERAL.MIX", &FastKey);
         ScoreMix = new MFCD("SCORES.MIX", &FastKey);
+
+        in_progress = false;
     }
 }
 

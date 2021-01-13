@@ -3344,7 +3344,11 @@ typedef enum
 
 static void Reinit_Secondary_Mixfiles()
 {
-    if (GeneralMix != nullptr) {
+    static bool in_progress = false;
+
+    if (GeneralMix != nullptr && !in_progress) {
+        in_progress = true;
+
         delete MoviesMix;
         delete GeneralMix;
         delete ScoreMix;
@@ -3352,6 +3356,8 @@ static void Reinit_Secondary_Mixfiles()
         MoviesMix = new MFCD("MOVIES.MIX");
         GeneralMix = new MFCD("GENERAL.MIX");
         ScoreMix = new MFCD("SCORES.MIX");
+
+        in_progress = false;
     }
 }
 
