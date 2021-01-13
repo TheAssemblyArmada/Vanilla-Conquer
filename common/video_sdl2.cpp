@@ -68,6 +68,8 @@ static struct
     SDL_Surface* Surface;
 } hwcursor;
 
+static void Update_HWCursor();
+
 static void Update_HWCursor_Settings()
 {
     /*
@@ -82,6 +84,11 @@ static void Update_HWCursor_Settings()
     ** Ensure cursor clip is in the desired state.
     */
     Set_Video_Cursor_Clip(hwcursor.Clip);
+
+    /*
+    ** Update visible cursor scaling.
+    */
+    Update_HWCursor();
 }
 
 class SurfaceMonitorClassDummy : public SurfaceMonitorClass
