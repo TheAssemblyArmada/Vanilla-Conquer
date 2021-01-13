@@ -200,7 +200,7 @@ void RadarClass::Init_Clear(void)
     ** If we have a valid map lets make sure that we set it correctly
     */
     if (MapCellWidth || MapCellHeight) {
-        IsZoomed = false;
+        IsZoomed = true;
         Zoom_Mode(Coord_Cell(Map.TacticalCoord));
     }
 }
