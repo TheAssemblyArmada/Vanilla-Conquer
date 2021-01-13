@@ -879,13 +879,6 @@ CELL DisplayClass::Set_Cursor_Pos(CELL pos)
         y = Coord_YCell(TacticalCoord) + Lepton_To_Cell(TacLeptonHeight) - h;
     pos = XY_Cell(x, y) - ZoneOffset;
 
-    /*
-    ** This checks to see if NO animation or drawing is to occur and, if so,
-    **	exits.
-    */
-    if (pos == ZoneCell)
-        return (pos);
-
     prevpos = ZoneCell;
 
     /*
@@ -3098,9 +3091,7 @@ int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType& key)
         /*
         ** Cause any displayed cursor to move along with the mouse cursor.
         */
-        if (cell != Map.ZoneCell) {
-            Map.Set_Cursor_Pos(cell);
-        }
+        Map.Set_Cursor_Pos(cell);
 
         /*
         **	Determine the object that the mouse is currently over.
