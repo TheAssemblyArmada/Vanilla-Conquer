@@ -2418,8 +2418,17 @@ void BuildingClass::Update_Buildables(void)
 
         case RTTI_AIRCRAFTTYPE:
             for (a = AIRCRAFT_FIRST; a < AIRCRAFT_COUNT; a++) {
+
                 if (PlayerPtr->Can_Build(&AircraftTypeClass::As_Reference((AircraftType)a), ActLike)) {
-                    Map.Add(RTTI_AIRCRAFTTYPE, a);
+                    if (AircraftTypeClass::As_Reference((AircraftType)a).IsFixedWing) {
+                        if (*this == STRUCT_AIRSTRIP) {
+                            Map.Add(RTTI_AIRCRAFTTYPE, a);
+                        }
+                    } else {
+                        if (*this == STRUCT_HELIPAD) {
+                            Map.Add(RTTI_AIRCRAFTTYPE, a);
+                        }
+                    }
                 }
             }
             break;
