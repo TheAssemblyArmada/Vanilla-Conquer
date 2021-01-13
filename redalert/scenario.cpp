@@ -161,6 +161,7 @@ ScenarioClass::ScenarioClass(void)
     , IsNoMapSel(false)
     , IsTruckCrate(false)
     , IsMoneyTiberium(false)
+    , UseMapTutorialText(false)
     ,
 #ifdef FIXIT_VERSION_3 //	For endgame auto-sonar pulse.
 #define AUTOSONAR_PERIOD TICKS_PER_SECOND * 40
@@ -2260,6 +2261,13 @@ bool Read_Scenario_INI(char* fname, bool)
         Add_CRC(&ScenarioCRC, (unsigned long)val);
     }
 #endif
+
+    if (ini.Section_Present("Tutorial")) {
+        Load_Tutorial_Text(ini, MapTutorialText);
+        Scen.UseMapTutorialText = true;
+    } else {
+        Scen.UseMapTutorialText = false;
+    }
 
     /*
     **	Fetch the appropriate movie names from the INI file.

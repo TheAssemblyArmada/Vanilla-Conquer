@@ -141,7 +141,8 @@ extern GraphicBufferClass ModeXBuff;
 **	Dynamic global variables (these change or are initialized at run time).
 */
 extern MissionControlClass MissionControl[MISSION_COUNT];
-extern char const* TutorialText[225];
+extern DynamicVectorClass<const char*> TutorialText;
+extern DynamicVectorClass<const char*> MapTutorialText;
 extern Buffer* TheaterBuffer;
 extern CCINIClass RuleINI;
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98

@@ -318,6 +318,8 @@ bool Is_Counterstrike_Installed(void);
 bool Is_Aftermath_Installed(void);
 #endif
 
+void Load_Tutorial_Text(INIClass& ini, DynamicVectorClass<const char*>& TutorialText);
+
 #define ALWAYS_RELOAD_CD 1000
 
 void Center_About_Objects(void);

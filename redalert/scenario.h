@@ -327,6 +327,8 @@ public:
     bool bLocalProposesDraw; //	True if the local player in a 2-player game has a draw offer extended.
     bool bOtherProposesDraw; //	True if the other player in a 2-player game has a draw offer extended.
 #endif
+
+    bool UseMapTutorialText;
 };
 
 #endif

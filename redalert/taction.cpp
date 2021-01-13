@@ -363,14 +363,16 @@ bool TActionClass::operator()(HousesType house, ObjectClass* object, int id, CEL
     /*
     **	Display a text message overlayed onto the tactical map.
     */
-    case TACTION_TEXT_TRIGGER:
+    case TACTION_TEXT_TRIGGER: {
+        const char* txt = Scen.UseMapTutorialText ? MapTutorialText[Data.Value] : TutorialText[Data.Value];
         Session.Messages.Add_Message(NULL,
                                      Data.Value,
-                                     (char*)TutorialText[Data.Value],
+                                     txt,
                                      PCOLOR_GREEN,
                                      TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW,
                                      Rule.MessageDelay * TICKS_PER_MINUTE);
         break;
+    }
 
     /*
     ** Launch nuclear missiles (duds) from all mslo's
