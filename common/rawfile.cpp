@@ -59,7 +59,11 @@
 
 #ifndef _WIN32
 #include <unistd.h>
-#define _unlink unlink
+#define _unlink         unlink
+#define raw_fopen(x, y) fopen(x, y)
+#else
+#include "utf.h"
+#define raw_fopen(x, y) _wfopen(UTF8To16(x), UTF8To16(y))
 #endif
 
 #include <sys/stat.h>
@@ -256,15 +260,15 @@ int RawFileClass::Open(int rights)
             break;
 
         case READ:
-            Handle = fopen(Filename, "rb");
+            Handle = raw_fopen(Filename, "rb");
             break;
 
         case WRITE:
-            Handle = fopen(Filename, "wb");
+            Handle = raw_fopen(Filename, "wb");
             break;
 
         case READ | WRITE:
-            Handle = fopen(Filename, "rwb");
+            Handle = raw_fopen(Filename, "rwb");
             break;
         }
 
@@ -333,7 +337,7 @@ int RawFileClass::Is_Available(int forced)
     **	CD-ROM, this routine will return a failure condition. In all but the missing file
     **	condition, go through the normal error recover channels.
     */
-    Handle = fopen(Filename, "r");
+    Handle = raw_fopen(Filename, "r");
     if (Handle == nullptr) {
         return (false);
     }
