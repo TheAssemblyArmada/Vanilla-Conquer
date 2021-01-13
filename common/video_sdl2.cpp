@@ -410,7 +410,7 @@ void Set_DD_Palette(void* rpalette)
         colors[i].r = (unsigned char)rcolors[i * 3] << 2;
         colors[i].g = (unsigned char)rcolors[i * 3 + 1] << 2;
         colors[i].b = (unsigned char)rcolors[i * 3 + 2] << 2;
-        colors[i].a = 0;
+        colors[i].a = 0xFF;
     }
 
     SDL_SetPaletteColors(palette, colors, 0, 256);
