@@ -785,6 +785,8 @@ void Clear_Scenario(void)
     Scen.CarryOverPercent = 0;
     Scen.TransitTheme = THEME_NONE;
     Scen.Percent = 0;
+    Scen.EvacInMP = false;
+    Scen.DisableEvac = false;
 
     memset(Scen.GlobalFlags, 0, sizeof(Scen.GlobalFlags));
 
@@ -2304,8 +2306,8 @@ bool Read_Scenario_INI(char* fname, bool)
     Scen.IsTruckCrate = ini.Get_Bool(BASIC, "TruckCrate", Scen.IsTruckCrate);
     Scen.IsMoneyTiberium = ini.Get_Bool(BASIC, "FillSilos", Scen.IsMoneyTiberium);
     Scen.Percent = ini.Get_Int(BASIC, "Percent", Scen.Percent);
-    Scen.EvacInMP = ini.Get_Int(BASIC, "EvacInMP", Scen.EvacInMP);
-    Scen.DisableEvac = ini.Get_Int(BASIC, "DisableEvac", Scen.DisableEvac);
+    Scen.EvacInMP = ini.Get_Bool(BASIC, "EvacInMP", Scen.EvacInMP);
+    Scen.DisableEvac = ini.Get_Bool(BASIC, "DisableEvac", Scen.DisableEvac);
 
     /*
     **	Read in the specific information for each of the house types.  This creates
