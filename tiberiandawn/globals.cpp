@@ -479,20 +479,20 @@ char MPlayerName[MPLAYER_NAME_MAX];
 */
 int MPlayerGColors[MAX_MPLAYER_COLORS] = {
     5,   // Yellow
+    202, // Blue-Grey
     127, // Red
-    135, // BlueGreen
-    26,  // Orange
     4,   // Green
-    202  // Blue-Grey
+    26,  // Orange
+    135, // BlueGreen
 };
 
 int MPlayerTColors[MAX_MPLAYER_COLORS] = {
     CC_GDI_COLOR,  // Yellow
-    CC_NOD_COLOR,  // Red
-    CC_BLUE_GREEN, // BlueGreen
-    CC_ORANGE,     // Orange	//26
-    CC_GREEN,      // Green
     CC_BLUE_GREY,  // Blue
+    CC_NOD_COLOR,  // Red
+    CC_GREEN,      // Green
+    CC_ORANGE,     // Orange	//26
+    CC_BLUE_GREEN, // BlueGreen
 };
 
 /***************************************************************************
