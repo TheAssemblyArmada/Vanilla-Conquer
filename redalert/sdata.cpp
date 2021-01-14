@@ -358,14 +358,12 @@ short const* SmudgeTypeClass::Occupy_List(bool) const
  *=============================================================================================*/
 void SmudgeTypeClass::Init(TheaterType theater)
 {
-    if (theater != LastTheater) {
-        for (SmudgeType index = SMUDGE_FIRST; index < SMUDGE_COUNT; index++) {
-            SmudgeTypeClass const& smudge = As_Reference(index);
-            char fullname[_MAX_FNAME + _MAX_EXT]; // Fully constructed smudge data set name.
+    for (SmudgeType index = SMUDGE_FIRST; index < SMUDGE_COUNT; index++) {
+        SmudgeTypeClass const& smudge = As_Reference(index);
+        char fullname[_MAX_FNAME + _MAX_EXT]; // Fully constructed smudge data set name.
 
-            _makepath(fullname, NULL, NULL, smudge.IniName, Theaters[theater].Suffix);
-            ((void const*&)smudge.ImageData) = MFCD::Retrieve(fullname);
-        }
+        _makepath(fullname, NULL, NULL, smudge.IniName, Theaters[theater].Suffix);
+        ((void const*&)smudge.ImageData) = MFCD::Retrieve(fullname);
     }
 }
 
@@ -516,7 +514,7 @@ void SmudgeTypeClass::Draw_It(int x, int y, int data) const
  * HISTORY:                                                                                    *
  *   08/12/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void SmudgeTypeClass::One_Time(void)
+void SmudgeTypeClass::Init_Clear(void)
 {
 }
 

@@ -571,7 +571,7 @@ void TerrainTypeClass::Init_Heap(void)
  * HISTORY:                                                                                    *
  *   07/19/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TerrainTypeClass::One_Time(void)
+void TerrainTypeClass::Init_Clear(void)
 {
 }
 
@@ -592,32 +592,29 @@ void TerrainTypeClass::One_Time(void)
  *=============================================================================================*/
 void TerrainTypeClass::Init(TheaterType theater)
 {
-    if (theater != LastTheater) {
+    for (TerrainType index = TERRAIN_FIRST; index < TERRAIN_COUNT; index++) {
+        TerrainTypeClass const& terrain = As_Reference(index);
+        char fullname[_MAX_FNAME + _MAX_EXT];
 
-        for (TerrainType index = TERRAIN_FIRST; index < TERRAIN_COUNT; index++) {
-            TerrainTypeClass const& terrain = As_Reference(index);
-            char fullname[_MAX_FNAME + _MAX_EXT];
-
-            /*
+        /*
             **	Clear any existing shape pointer. All terrain is theater specific, thus if
             **	it isn't loaded in this routine, it shouldn't exist at all.
             */
-            ((void const*&)terrain.ImageData) = NULL;
+        ((void const*&)terrain.ImageData) = NULL;
 
-            if (terrain.Theater & (1 << theater)) {
+        if (terrain.Theater & (1 << theater)) {
 
-                /*
+            /*
                 **	Load in the appropriate object shape data.
                 */
-                _makepath(fullname, NULL, NULL, terrain.IniName, Theaters[theater].Suffix);
-                ((void const*&)terrain.ImageData) = MFCD::Retrieve(fullname);
+            _makepath(fullname, NULL, NULL, terrain.IniName, Theaters[theater].Suffix);
+            ((void const*&)terrain.ImageData) = MFCD::Retrieve(fullname);
 
-                IsTheaterShape = true; // Let Build_Frame know that this is a theater specific shape
-                if (terrain.RadarIcon != NULL)
-                    delete[](char*) terrain.RadarIcon;
-                ((void const*&)terrain.RadarIcon) = Get_Radar_Icon(terrain.Get_Image_Data(), 0, 1, 3);
-                IsTheaterShape = false;
-            }
+            IsTheaterShape = true; // Let Build_Frame know that this is a theater specific shape
+            if (terrain.RadarIcon != NULL)
+                delete[](char*) terrain.RadarIcon;
+            ((void const*&)terrain.RadarIcon) = Get_Radar_Icon(terrain.Get_Image_Data(), 0, 1, 3);
+            IsTheaterShape = false;
         }
     }
 }

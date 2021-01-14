@@ -390,7 +390,7 @@ AircraftType AircraftTypeClass::From_Name(char const* name)
  * HISTORY:                                                                                    *
  *   07/26/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void AircraftTypeClass::One_Time(void)
+void AircraftTypeClass::Init_Clear(void)
 {
     for (int index = AIRCRAFT_FIRST; index < AIRCRAFT_COUNT; index++) {
         char fullname[_MAX_FNAME + _MAX_EXT];

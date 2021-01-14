@@ -194,7 +194,7 @@ void BulletTypeClass::Init_Heap(void)
  * HISTORY:                                                                                    *
  *   05/28/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BulletTypeClass::One_Time(void)
+void BulletTypeClass::Init_Clear(void)
 {
     /*
     **	Load the bullet shapes.

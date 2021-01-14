@@ -1355,7 +1355,7 @@ InfantryType InfantryTypeClass::From_Name(char const* name)
  * HISTORY:                                                                                    *
  *   09/24/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void InfantryTypeClass::One_Time(void)
+void InfantryTypeClass::Init_Clear(void)
 {
     for (InfantryType index = INFANTRY_FIRST; index < INFANTRY_COUNT; index++) {
         char fullname[_MAX_FNAME + _MAX_EXT];

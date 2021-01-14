@@ -2329,7 +2329,7 @@ short const* ObjectTypeClass::Overlap_List(void) const
  * HISTORY:                                                                                    *
  *   11/01/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void ObjectTypeClass::One_Time(void)
+void ObjectTypeClass::Init_Clear(void)
 {
     SelectShapes = MFCD::Retrieve("SELECT.SHP");
 

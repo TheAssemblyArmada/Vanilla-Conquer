@@ -336,14 +336,16 @@ static void Difficulty_Get(CCINIClass& ini, DifficultyClass& diff, char const* s
  * HISTORY:                                                                                    *
  *   06/17/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool RulesClass::Process(CCINIClass& ini)
+bool RulesClass::Process(CCINIClass& ini, bool setheapmaximums)
 {
     BStart(BENCH_RULES);
 
     General(ini);
     MPlayer(ini);
     Recharge(ini);
-    Heap_Maximums(ini);
+    if (setheapmaximums) {
+        Heap_Maximums(ini);
+    }
     AI(ini);
     Powerups(ini);
     Land_Types(ini);
