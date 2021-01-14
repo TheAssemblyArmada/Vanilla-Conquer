@@ -4857,6 +4857,10 @@ bool Force_Scenario_Available(const char* szName)
 
 void Load_Tutorial_Text(INIClass &ini, DynamicVectorClass<const char*> &TutorialText)
 {
+    for (int i = 0; i < TutorialText.Count(); i++) {
+        free((void*)TutorialText[i]);
+    }
+
     TutorialText.Clear();
 
     // Because of special reading logic entries can overwrite older ones because
