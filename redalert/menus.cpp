@@ -669,7 +669,7 @@ int Main_Menu(unsigned long)
     buttons[2] = &startbtn;
     buttons[3] = &loadbtn;
     buttons[4] = &multibtn;
-    buttons[5] = &introbtn;
+    buttons[5] = Is_Demo() ? nullptr : &introbtn;
     buttons[6] = &exitbtn;
 #else
     if (expansions) {
@@ -861,7 +861,9 @@ int Main_Menu(unsigned long)
         case KN_UP:
             buttons[curbutton]->Turn_Off();
             buttons[curbutton]->Flag_To_Redraw();
-            curbutton--;
+            do {
+                curbutton--;
+            } while (buttons[curbutton] == nullptr && curbutton > 0);
 #ifdef FIXIT_VERSION_3
             switch (curbutton) {
             case -1:
@@ -898,7 +900,9 @@ int Main_Menu(unsigned long)
         case KN_DOWN:
             buttons[curbutton]->Turn_Off();
             buttons[curbutton]->Flag_To_Redraw();
-            curbutton++;
+            do {
+                curbutton++;
+            } while (buttons[curbutton] == nullptr && curbutton < max_buttons);
 #ifdef FIXIT_VERSION_3
             if (curbutton == max_buttons) {
                 if (bExpansionCS)
