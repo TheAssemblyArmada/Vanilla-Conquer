@@ -165,7 +165,9 @@ ScenarioClass::ScenarioClass(void)
     , IsNoMapSel(false)
     , IsTruckCrate(false)
     , IsMoneyTiberium(false)
-    ,
+    , EvacInMP(false)
+    , DisableEvac(false)
+    , 
 #ifdef FIXIT_VERSION_3 //	For endgame auto-sonar pulse.
 #define AUTOSONAR_PERIOD TICKS_PER_SECOND * 40
     AutoSonarTimer(AUTOSONAR_PERIOD)
@@ -2302,6 +2304,8 @@ bool Read_Scenario_INI(char* fname, bool)
     Scen.IsTruckCrate = ini.Get_Bool(BASIC, "TruckCrate", Scen.IsTruckCrate);
     Scen.IsMoneyTiberium = ini.Get_Bool(BASIC, "FillSilos", Scen.IsMoneyTiberium);
     Scen.Percent = ini.Get_Int(BASIC, "Percent", Scen.Percent);
+    Scen.EvacInMP = ini.Get_Int(BASIC, "EvacInMP", Scen.EvacInMP);
+    Scen.DisableEvac = ini.Get_Int(BASIC, "DisableEvac", Scen.DisableEvac);
 
     /*
     **	Read in the specific information for each of the house types.  This creates

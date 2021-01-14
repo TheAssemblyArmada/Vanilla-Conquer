@@ -111,6 +111,16 @@
  *=============================================================================================*/
 static bool _Counts_As_Civ_Evac(ObjectClass const* candidate)
 {
+    if (Scen.DisableEvac) {
+        return false;
+    }
+
+    // If it's a multiplayer game and the scenario doesn't have 
+    // evacuate in multiplayer keyword defined, don't evacuate
+    if (Scen.EvacInMP == false && Session.Type != GAME_NORMAL) {
+        return false;
+    }
+
     /*
     **	If the candidate pointer is missing, then return with failure code.
     */
