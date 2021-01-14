@@ -282,7 +282,7 @@ bool Init_Game(int, char*[])
     */
     CCFileClass rulesIniFile("RULES.INI");
     if (RuleINI.Load(rulesIniFile, false)) {
-        Rule.Process(RuleINI);
+        Rule.Process(RuleINI, true);
     }
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
     //  Aftermath runtime change 9/29/98
@@ -290,7 +290,7 @@ bool Init_Game(int, char*[])
     if (Is_Aftermath_Installed() == true) {
         CCFileClass aftermathIniFile("AFTRMATH.INI");
         if (AftermathINI.Load(aftermathIniFile, false)) {
-            Rule.Process(AftermathINI);
+            Rule.Process(AftermathINI, true);
         }
     }
 #endif
@@ -2262,21 +2262,6 @@ static void Init_One_Time_Systems(void)
     Logic.One_Time();
     Options.One_Time();
     Session.One_Time();
-
-    ObjectTypeClass::One_Time();
-    BuildingTypeClass::One_Time();
-    BulletTypeClass::One_Time();
-    HouseTypeClass::One_Time();
-    TemplateTypeClass::One_Time();
-    OverlayTypeClass::One_Time();
-    SmudgeTypeClass::One_Time();
-    TerrainTypeClass::One_Time();
-    UnitTypeClass::One_Time();
-    VesselTypeClass::One_Time();
-    InfantryTypeClass::One_Time();
-    AnimTypeClass::One_Time();
-    AircraftTypeClass::One_Time();
-    HouseClass::One_Time();
 }
 
 /***********************************************************************************************

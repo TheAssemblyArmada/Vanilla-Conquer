@@ -61,7 +61,7 @@ class RulesClass
 public:
     RulesClass(void);
 
-    bool Process(CCINIClass& file);
+    bool Process(CCINIClass& file, bool setheapmaximums);
     bool General(CCINIClass& ini);
     bool MPlayer(CCINIClass& ini);
     bool Recharge(CCINIClass& ini);

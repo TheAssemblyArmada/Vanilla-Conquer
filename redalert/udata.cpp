@@ -1033,7 +1033,7 @@ void UnitTypeClass::Prep_For_Add(void)
  * HISTORY:                                                                                    *
  *   05/28/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void UnitTypeClass::One_Time(void)
+void UnitTypeClass::Init_Clear(void)
 {
     for (UnitType index = UNIT_FIRST; index < UNIT_COUNT; index++) {
         char fullname[_MAX_FNAME + _MAX_EXT];

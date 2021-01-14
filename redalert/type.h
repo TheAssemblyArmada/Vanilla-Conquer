@@ -182,7 +182,7 @@ public:
 
     static HousesType From_Name(char const* name);
     static HouseTypeClass& As_Reference(HousesType house);
-    static void One_Time(void);
+    static void Init_Clear(void);
     static void Init_Heap(void);
 
     virtual bool Read_INI(CCINIClass& ini);
@@ -302,7 +302,7 @@ public:
                     int fullname,
                     char const* name);
 
-    static void One_Time(void);
+    static void Init_Clear(void);
 
     bool Is_Foot(void) const
     {
@@ -823,7 +823,7 @@ public:
     static BuildingTypeClass& As_Reference(StructType type);
     static StructType From_Name(char const* name);
     static void Init(TheaterType theater);
-    static void One_Time(void);
+    static void Init_Clear(void);
     static void Prep_For_Add(void);
 
     int Width(void) const;
@@ -1035,7 +1035,7 @@ public:
     static UnitType From_Name(char const* name);
     static UnitTypeClass& As_Reference(UnitType type);
     static void Init(TheaterType){};
-    static void One_Time(void);
+    static void Init_Clear(void);
     static void Prep_For_Add(void);
 
     virtual bool Read_INI(CCINIClass& ini);
@@ -1142,7 +1142,7 @@ public:
     static VesselType From_Name(char const* name);
     static VesselTypeClass& As_Reference(VesselType type);
     static void Init(TheaterType){};
-    static void One_Time(void);
+    static void Init_Clear(void);
     static void Prep_For_Add(void);
 
     virtual void Dimensions(int& width, int& height) const;
@@ -1298,7 +1298,7 @@ public:
     static InfantryType From_Name(char const* name);
     static InfantryTypeClass& As_Reference(InfantryType type);
     static void Init(TheaterType){};
-    static void One_Time(void);
+    static void Init_Clear(void);
     static void Prep_For_Add(void);
 
     virtual bool Read_INI(CCINIClass& ini);
@@ -1401,7 +1401,7 @@ public:
     static AircraftType From_Name(char const* name);
     static AircraftTypeClass& As_Reference(AircraftType a);
     static void Init(TheaterType){};
-    static void One_Time(void);
+    static void Init_Clear(void);
     static void Prep_For_Add(void);
 
     virtual void Dimensions(int& width, int& height) const;
@@ -1584,7 +1584,7 @@ public:
     static void Init_Heap(void);
     static BulletTypeClass& As_Reference(BulletType type);
     static void Init(TheaterType){};
-    static void One_Time(void);
+    static void Init_Clear(void);
 
     virtual bool Read_INI(CCINIClass& ini);
     virtual bool Create_And_Place(CELL, HousesType = HOUSE_NONE) const
@@ -1654,7 +1654,7 @@ public:
     static TerrainType From_Name(char const* name);
     static TerrainTypeClass& As_Reference(TerrainType type);
     static void Init(TheaterType theater = THEATER_TEMPERATE);
-    static void One_Time(void);
+    static void Init_Clear(void);
     static void Prep_For_Add(void);
 
     virtual COORDINATE Coord_Fixup(COORDINATE coord) const;
@@ -1714,7 +1714,7 @@ public:
     static TemplateType From_Name(char const* name);
     static TemplateTypeClass& As_Reference(TemplateType type);
     static void Init(TheaterType theater);
-    static void One_Time(void);
+    static void Init_Clear(void);
     static void Prep_For_Add(void);
 
     virtual COORDINATE Coord_Fixup(COORDINATE coord) const;
@@ -1938,7 +1938,7 @@ public:
 
     static AnimTypeClass& As_Reference(AnimType type);
     static void Init(TheaterType theater);
-    static void One_Time(void);
+    static void Init_Clear(void);
 
     virtual bool Create_And_Place(CELL, HousesType = HOUSE_NONE) const
     {
@@ -2057,7 +2057,7 @@ public:
     static OverlayType From_Name(char const* name);
     static OverlayTypeClass& As_Reference(OverlayType type);
     static void Init(TheaterType);
-    static void One_Time(void);
+    static void Init_Clear(void);
     static void Prep_For_Add(void);
 
     virtual COORDINATE Coord_Fixup(COORDINATE coord) const;
@@ -2130,7 +2130,7 @@ public:
     static SmudgeType From_Name(char const* name);
     static SmudgeTypeClass& As_Reference(SmudgeType type);
     static void Init(TheaterType);
-    static void One_Time(void);
+    static void Init_Clear(void);
     static void Prep_For_Add(void);
 
     virtual bool Create_And_Place(CELL cell, HousesType house = HOUSE_NONE) const;

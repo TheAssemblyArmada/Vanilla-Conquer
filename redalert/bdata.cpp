@@ -2955,7 +2955,7 @@ void BuildingTypeClass::Init_Heap(void)
  *   05/28/1994 JLB : Created.                                                                 *
  *   06/11/1994 JLB : Updated construction time and frame count logic.                         *
  *=============================================================================================*/
-void BuildingTypeClass::One_Time(void)
+void BuildingTypeClass::Init_Clear(void)
 {
     static const struct
     {
@@ -3008,17 +3008,14 @@ void BuildingTypeClass::One_Time(void)
         /*
         **	Fetch the sidebar cameo image for this building.
         */
-        if (building.Level != -1) {
-            //		if (building.IsBuildable) {
-            sprintf(buffer, "%sICON", building.Graphic_Name());
+        sprintf(buffer, "%sICON", building.Graphic_Name());
 
-            if (building.IsFake) {
-                buffer[3] = 'F';
-            }
-
-            _makepath(fullname, NULL, NULL, buffer, ".SHP");
-            ((void const*&)building.CameoData) = MFCD::Retrieve(fullname);
+        if (building.IsFake) {
+            buffer[3] = 'F';
         }
+
+        _makepath(fullname, NULL, NULL, buffer, ".SHP");
+        ((void const*&)building.CameoData) = MFCD::Retrieve(fullname);
 
         /*
         **	Fetch the construction animation for this building.
@@ -3248,30 +3245,28 @@ void BuildingTypeClass::Init_Anim(BStateType state, int start, int count, int ra
  *=============================================================================================*/
 void BuildingTypeClass::Init(TheaterType theater)
 {
-    if (theater != LastTheater) {
-        char fullname[_MAX_FNAME + _MAX_EXT];
+    char fullname[_MAX_FNAME + _MAX_EXT];
 
-        for (int sindex = STRUCT_FIRST; sindex < STRUCT_COUNT; sindex++) {
-            BuildingTypeClass const* classptr = &As_Reference((StructType)sindex);
+    for (int sindex = STRUCT_FIRST; sindex < STRUCT_COUNT; sindex++) {
+        BuildingTypeClass const* classptr = &As_Reference((StructType)sindex);
 
-            if (classptr->IsTheater) {
-                _makepath(fullname, NULL, NULL, classptr->Graphic_Name(), Theaters[theater].Suffix);
-                ((void const*&)classptr->ImageData) = MFCD::Retrieve(fullname);
+        if (classptr->IsTheater) {
+            _makepath(fullname, NULL, NULL, classptr->Graphic_Name(), Theaters[theater].Suffix);
+            ((void const*&)classptr->ImageData) = MFCD::Retrieve(fullname);
 
-                /*
+            /*
                 **	Buildup data is probably theater specific as well. Fetch a pointer to the
                 **	data at this time as well.
                 */
-                sprintf(fullname, "%sMAKE.%s", classptr->Graphic_Name(), Theaters[theater].Suffix);
-                ((void const*&)classptr->BuildupData) = MFCD::Retrieve(fullname);
-                if (classptr->BuildupData) {
-                    int timedelay = 1;
-                    int count = Get_Build_Frame_Count(classptr->BuildupData);
-                    if (count != 0) {
-                        timedelay = (5 * TICKS_PER_SECOND) / count;
-                    }
-                    classptr->Init_Anim(BSTATE_CONSTRUCTION, 0, count, timedelay);
+            sprintf(fullname, "%sMAKE.%s", classptr->Graphic_Name(), Theaters[theater].Suffix);
+            ((void const*&)classptr->BuildupData) = MFCD::Retrieve(fullname);
+            if (classptr->BuildupData) {
+                int timedelay = 1;
+                int count = Get_Build_Frame_Count(classptr->BuildupData);
+                if (count != 0) {
+                    timedelay = (5 * TICKS_PER_SECOND) / count;
                 }
+                classptr->Init_Anim(BSTATE_CONSTRUCTION, 0, count, timedelay);
             }
         }
     }

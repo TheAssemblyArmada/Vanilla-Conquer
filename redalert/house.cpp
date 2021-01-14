@@ -251,7 +251,7 @@ HouseClass* HouseClass::As_Pointer(HousesType house)
  * HISTORY:                                                                                    *
  *   12/09/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void HouseClass::One_Time(void)
+void HouseClass::Init_Clear(void)
 {
     BuildChoice.Set_Heap(STRUCT_COUNT);
 }
