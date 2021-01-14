@@ -749,6 +749,7 @@ void Post_Load_Game(int load_multi)
 void Clear_Scenario(void)
 {
     // TCTCTC -- possibly just use in-place new of scenario object?
+    ChronalVortex.Stop();
 
     Scen.MissionTimer = 0;
     Scen.MissionTimer.Stop();
