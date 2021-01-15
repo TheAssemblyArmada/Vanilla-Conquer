@@ -133,6 +133,7 @@ bool PlayMpegMovie(const char* name);
 #endif
 
 #include "externs.h"
+#include "keyframe.h"
 
 extern int Get_CD_Drive(void);
 extern void Fatal(char const* message, ...);
