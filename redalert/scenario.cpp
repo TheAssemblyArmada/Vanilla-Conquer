@@ -3104,7 +3104,11 @@ static void Create_Units(bool official)
     **	loop verifies that.
     */
 
+#ifdef REMASTER_BUILD
     const unsigned int MAX_STORED_WAYPOINTS = 26;
+#else
+    const unsigned int MAX_STORED_WAYPOINTS = 8;
+#endif
 
     bool taken[MAX_STORED_WAYPOINTS];
     CELL waypts[MAX_STORED_WAYPOINTS];
@@ -3129,8 +3133,14 @@ static void Create_Units(bool official)
     int look_for = Session.Players.Count();
 #endif
 
+#ifdef REMASTER_BUILD
     for (int waycount = 0; waycount < 26; waycount++) {
-        //	for (int waycount = 0; waycount < max(4, Session.Players.Count()+Session.Options.AIPlayers); waycount++) {
+#else
+    // This is needed for original game behavior, for example in original game you only spawn at corner spawns
+    // in 1vs1 on A Path Beyond as the corner spawns are the first 4, with the remaster logic you also spawn at
+    // the other 4 spawns in 1vs1 randomly
+    for (int waycount = 0; waycount < max(4, Session.Players.Count() + Session.Options.AIPlayers); waycount++) {
+#endif
         if (Scen.Waypoint[waycount] != -1) {
             waypts[num_waypts] = Scen.Waypoint[waycount];
             taken[num_waypts] = false;
