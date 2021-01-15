@@ -420,6 +420,12 @@ void Set_DD_Palette(void* rpalette)
         colors[i].a = 0xFF;
     }
 
+    /*
+    ** First color is transparent. This needs to be set so that hardware cursor has transparent
+    ** surroundings when converting from 8-bit to 32-bit.
+    */
+    colors[0].a = 0;
+
     SDL_SetPaletteColors(palette, colors, 0, 256);
 
     /*
