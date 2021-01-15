@@ -74,7 +74,7 @@ static short const _List111000010110[] = {0, 1, 2, MAP_CELL_W + 3, MAP_CELL_W * 
 
 static TerrainTypeClass const Mine(TERRAIN_MINE,
                                    THEATERF_TEMPERATE | THEATERF_SNOW,
-                                   XYP_COORD(12, 24), // Center base coordinate offset.
+                                   XYP_COORD(12, 12), // Center base coordinate offset.
                                    true,              // Is it immune to normal combat damage?
                                    false,             // Is based on the water?
                                    "MINE",
