@@ -7434,6 +7434,8 @@ void HouseClass::Read_INI(CCINIClass& ini)
         hname = HouseTypeClass::As_Reference(index).IniName;
 
         p = new HouseClass(index);
+        p->RemapColor = ini.Get_PlayerColorType(hname, "Color", p->RemapColor);
+        p->ActLike = ini.Get_HousesType(hname, "Country", p->ActLike);
         p->Control.TechLevel = ini.Get_Int(hname, "TechLevel", Scen.Scenario);
         p->Control.MaxBuilding = ini.Get_Int(hname, "MaxBuilding", p->Control.MaxBuilding);
         p->Control.MaxUnit = ini.Get_Int(hname, "MaxUnit", p->Control.MaxUnit);

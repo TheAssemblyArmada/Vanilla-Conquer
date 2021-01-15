@@ -967,6 +967,30 @@ bool CCINIClass::Put_VQType(char const* section, char const* entry, VQType value
     return (Put_String(section, entry, VQName[value]));
 }
 
+PlayerColorType CCINIClass::Get_PlayerColorType(char const* section, char const* entry, PlayerColorType defvalue) const
+{
+    char buffer[128];
+
+    if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+        for (PlayerColorType c = PCOLOR_FIRST; c < 8; c++) {
+            if (stricmp(buffer, ColorNames[c]) == 0) {
+                return (c);
+            }
+        }
+    }
+    return (defvalue);
+}
+
+
+bool CCINIClass::Put_PlayerColorType(char const* section, char const* entry, PlayerColorType value)
+{
+    if (value == PCOLOR_NONE) {
+        return (Put_String(section, entry, "<none>"));
+    }
+    return (Put_String(section, entry, ColorNames[value]));
+}
+
+
 /***********************************************************************************************
  * CCINIClass::Get_TheaterType -- Fetch the theater type from the INI database.                *
  *                                                                                             *

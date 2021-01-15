@@ -96,7 +96,6 @@ bool bReconnectDialogCancelled;
 static unsigned long GameCRC;
 static unsigned long CRC[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-static char* ColorNames[8] = {"Yellow", "LtBlue", "Red", "Green", "Orange", "Grey", "Blue", "Brown"};
 
 //...........................................................................
 // Mono debugging variables:

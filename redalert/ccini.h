@@ -74,6 +74,7 @@ public:
     ThemeType Get_ThemeType(char const* section, char const* entry, ThemeType defvalue) const;
     TriggerTypeClass* Get_TriggerType(char const* section, char const* entry) const;
     VQType Get_VQType(char const* section, char const* entry, VQType defvalue) const;
+    PlayerColorType Get_PlayerColorType(char const* section, char const* entry, PlayerColorType defvalue) const;
     VocType Get_VocType(char const* section, char const* entry, VocType defvalue) const;
     WarheadType Get_WarheadType(char const* section, char const* entry, WarheadType defvalue) const;
     WeaponType Get_WeaponType(char const* section, char const* entry, WeaponType defvalue) const;
@@ -89,6 +90,7 @@ public:
     bool Put_Lepton(char const* section, char const* entry, LEPTON value);
     bool Put_MPHType(char const* section, char const* entry, MPHType value);
     bool Put_VQType(char const* section, char const* entry, VQType value);
+    bool Put_PlayerColorType(char const* section, char const* entry, PlayerColorType value);
     bool Put_OverlayType(char const* section, char const* entry, OverlayType value);
     bool Put_Owners(char const* section, char const* entry, long value);
     bool Put_SourceType(char const* section, char const* entry, SourceType value);

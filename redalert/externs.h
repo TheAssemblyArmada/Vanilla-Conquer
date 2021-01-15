@@ -416,6 +416,8 @@ extern bool LogDump_Print;
 
 extern unsigned int IsTheaterShape;
 
+extern char* ColorNames[8];
+
 extern void Reset_Theater_Shapes(void);
 extern TheaterType LastTheater;
 void Coordinate_Remap(GraphicViewPortClass* inbuffer, int x, int y, int width, int height, unsigned char* remap_table);
