@@ -3794,6 +3794,12 @@ int BuildingClass::Mission_Deconstruction(void)
                     if (infantry != NULL) {
                         ScenarioInit++;
                         COORDINATE coord = Coord_Add(Center_Coord(), XYP_COORD(0, -12));
+
+                        /* extra check to prevent building crew for Tesla Coil spawning
+                           one cell above building foundation */
+                        if (*this == STRUCT_TESLA) {
+                            coord = Map[coord].Adjacent_Cell(FACING_S)->Cell_Coord();
+                        }
                         coord = Map[coord].Closest_Free_Spot(coord, false);
 
                         if (infantry->Unlimbo(coord, DIR_N)) {
