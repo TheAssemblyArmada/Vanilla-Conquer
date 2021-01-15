@@ -397,6 +397,7 @@ bool Save_Game(const char* file_name, const char* descr)
     fpipe.Put(&scenario, sizeof(scenario));
 
     fpipe.Put(&house, sizeof(house));
+    fpipe.Put(&Session.Type, sizeof(Session.Type));
 
     /*
     **	Save the save-game version, for loading verification
@@ -513,6 +514,7 @@ bool Load_Game(const char* file_name)
     int i;
     unsigned scenario;
     HousesType house;
+    GameType session_type;
     char descr_buf[DESCRIP_MAX];
     int load_net = 0; // 1 = save network/modem game
 
@@ -547,6 +549,10 @@ bool Load_Game(const char* file_name)
     }
 
     if (fstraw.Get(&house, sizeof(house)) != sizeof(house)) {
+        return (false);
+    }
+
+    if (fstraw.Get(&session_type, sizeof(session_type)) != sizeof(session_type)) {
         return (false);
     }
 
@@ -613,6 +619,10 @@ bool Load_Game(const char* file_name)
     bstraw.Key(&FastKey, BlowfishEngine::MAX_KEY_LENGTH);
     bstraw.Get_From(fstraw);
     straw.Get_From(bstraw);
+
+    /* set the correct session type, as loaded from the header
+        this is needed for skirmish games */
+    Session.Type = session_type;
 
     /*
     **	Clear the scenario so we start fresh; this calls the Init_Clear() routine
@@ -1429,7 +1439,7 @@ void Decode_All_Pointers(void)
  * HISTORY:                                                                *
  *   01/12/1995 BR : Created.                                              *
  *=========================================================================*/
-bool Get_Savefile_Info(int id, char* buf, unsigned* scenp, HousesType* housep)
+bool Get_Savefile_Info(int id, char* buf, unsigned* scenp, HousesType* housep, GameType* session_type)
 {
     char name[_MAX_FNAME + _MAX_EXT];
     unsigned long version;
@@ -1458,6 +1468,10 @@ bool Get_Savefile_Info(int id, char* buf, unsigned* scenp, HousesType* housep)
     }
 
     if (straw.Get(housep, sizeof(HousesType)) != sizeof(HousesType)) {
+        return (false);
+    }
+
+    if (straw.Get(session_type, sizeof(GameType)) != sizeof(GameType)) {
         return (false);
     }
 
