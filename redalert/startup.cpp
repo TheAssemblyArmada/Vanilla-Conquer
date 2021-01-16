@@ -37,6 +37,7 @@
 #include "function.h"
 #include "language.h"
 #include "settings.h"
+#include "common/paths.h"
 
 #include "ipx95.h"
 
@@ -51,8 +52,14 @@ void Print_Error_End_Exit(char* string);
 void Print_Error_Exit(char* string);
 
 #ifdef _WIN32
+#include <direct.h>
+#include "common/utf.h"
+#define vc_chdir(x) _wchdir(UTF8To16(x))
 extern void Create_Main_Window(HANDLE instance, int command_show, int width, int height);
 HINSTANCE ProgramInstance;
+#else
+#include <unistd.h>
+#define vc_chdir(x) chdir(x)
 #endif
 extern bool RA95AlreadyRunning;
 void Check_Use_Compressed_Shapes(void);
@@ -264,44 +271,7 @@ int main(int argc, char* argv[])
     /*
     **	Remember the current working directory and drive.
     */
-#if (0) // PG
-    unsigned olddrive;
-    char oldpath[MAX_PATH];
-    getcwd(oldpath, sizeof(oldpath));
-    _dos_getdrive(&olddrive);
-
-    /*
-    **	Change directory to the where the executable is located. Handle the
-    **	case where there is no path attached to argv[0].
-    */
-    char drive[_MAX_DRIVE];
-    char path[_MAX_PATH];
-    unsigned drivecount;
-    _splitpath(argv[0], drive, path, NULL, NULL);
-    if (!drive[0]) {
-        drive[0] = ('A' + olddrive) - 1;
-    }
-    if (!path[0]) {
-        strcpy(path, ".");
-    }
-    _dos_setdrive(toupper((drive[0]) - 'A') + 1, &drivecount);
-    if (path[strlen(path) - 1] == '\\') {
-        path[strlen(path) - 1] = '\0';
-    }
-    chdir(path);
-#elif defined _WIN32 // OmniBlade: Win32 version of the commented out dos/watcom code.
-    char path[MAX_PATH];
-    GetModuleFileNameA(GetModuleHandleA(nullptr), path, sizeof(path));
-
-    for (char* i = &path[strlen(path)]; i != path; --i) {
-        if (*i == '\\' || *i == '/') {
-            *i = '\0';
-            break;
-        }
-    }
-
-    SetCurrentDirectoryA(path);
-#endif
+    vc_chdir(PathsClass::Instance().Program_Path());
 
     if (Parse_Command_Line(argc, argv)) {
 

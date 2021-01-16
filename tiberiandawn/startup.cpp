@@ -36,14 +36,21 @@
 
 #include "function.h"
 #include "common/ini.h"
+#include "common/paths.h"
 #include "settings.h"
 
 bool Read_Private_Config_Struct(FileClass& file, NewConfigType* config);
 void Print_Error_End_Exit(char* string);
 void Print_Error_Exit(char* string);
 #ifdef _WIN32
+#include < direct.h>
+#include "common/utf.h"
+#define vc_chdir(x) _wchdir(UTF8To16(x))
 extern void Create_Main_Window(HANDLE instance, int width, int height);
 HINSTANCE ProgramInstance;
+#else
+#include <unistd.h>
+#define vc_chdir(x) chdir(x)
 #endif
 
 extern int ReadyToQuit;
@@ -187,23 +194,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 
     } while (command_char != 0 && command_char != 13 && argc < 20);
 
-    /*
-    **	Remember the current working directory and drive.
-    */
-#ifndef REMASTER_BUILD
-    char path[MAX_PATH];
-    GetModuleFileNameA(GetModuleHandleA(nullptr), path, sizeof(path));
-
-    for (char* i = &path[strlen(path)]; i != path; --i) {
-        if (*i == '\\' || *i == '/') {
-            *i = '\0';
-            break;
-        }
-    }
-
-    SetCurrentDirectoryA(path);
-#endif
-
     return main(argc, argv);
 }
 
@@ -216,6 +206,12 @@ int main(int argc, char** argv)
 #ifdef JAPANESE
     ForceEnglish = false;
 #endif
+
+    /*
+    **	Remember the current working directory and drive.
+    */
+    vc_chdir(PathsClass::Instance().Program_Path());
+
     if (Parse_Command_Line(argc, argv)) {
 
         WinTimerClass::Init(60);
