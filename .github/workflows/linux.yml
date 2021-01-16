@@ -17,6 +17,8 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: 'true'
+        fetch-depth: 0
+        ref: ${{ github.event.pull_request.head.sha }}
         
     - name: Set Git Info
       id: gitinfo

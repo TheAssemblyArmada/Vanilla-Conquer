@@ -197,6 +197,8 @@ function(GetGitState _working_dir)
     RunGitCommand(rev-list --count ${object})
     if(exit_code EQUAL 0)
         set(ENV{GIT_REV_LIST_COUNT} ${output})
+    else()
+        set(ENV{GIT_REV_LIST_COUNT} "0")
     endif()
 
     RunGitCommand(describe --tags ${object})
