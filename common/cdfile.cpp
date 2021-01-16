@@ -39,6 +39,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "cdfile.h"
+#include "paths.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -114,6 +115,19 @@ int Is_Disk_Inserted(int disk)
  *=============================================================================================*/
 int CDFileClass::Open(int rights)
 {
+    std::string path = File_Name();
+    /*
+    ** If we are wanting a writeable file and the path is not based off of the User_Path
+    ** then we might have a problem. If the filename is relative then just append to User_Path.
+    ** Otherwise it will try and write it to the working directory, probably the binary dir.
+    */
+    if ((rights & WRITE) && !PathsClass::Is_Absolute(File_Name())) {
+        path = Paths.User_Path();
+        path += PathsClass::SEP;
+        path += File_Name();
+        BufferIOFileClass::Set_Name(path.c_str());
+    }
+
     return (BufferIOFileClass::Open(rights));
 }
 /***********************************************************************************************
@@ -133,7 +147,10 @@ int CDFileClass::Open(int rights)
 void CDFileClass::Refresh_Search_Drives(void)
 {
     Clear_Search_Drives();
+    // User_Path always first so the game always looks here first.
+    Add_Search_Drive(Paths.User_Path());
     Set_Search_Drives(RawPath);
+    Add_Search_Drive(Paths.Data_Path());
 }
 
 /***********************************************************************************************
@@ -196,29 +213,30 @@ int CDFileClass::Set_Search_Drives(char* pathlist)
     char const* ptr = strtok(pathlist, ";");
     while (ptr) {
         if (strlen(ptr)) {
-
-            char path[MAX_PATH]; // Working path buffer.
-
             /*
-            **	Fixup the path to be legal. Legal is defined as all that is necessary to
-            **	create a pathname is to append the actual filename submitted to the
-            **	file system. This means that it must have either a trailing ':' or '\'
-            **	character.
+            **	If the path is relative, append it to user and data paths for searching, otherwise just append as is.
             */
-            strcpy(path, ptr);
-            switch (path[strlen(path) - 1]) {
-            case ':':
-            case '\\':
-            case '/':
-                break;
+            if (PathsClass::Is_Absolute(ptr)) {
+                Add_Search_Drive(ptr);
+            } else {
+                std::string fullpath = Paths.User_Path();
+                fullpath += ptr;
+                Add_Search_Drive(fullpath.c_str());
 
-            default:
-                strcat(path, "/");
-                break;
+                /*
+                ** If the Data path is not the same as the user path, append that too.
+                */
+                if (Paths.User_Path() != Paths.Data_Path()) {
+                    fullpath = Paths.Data_Path();
+                    fullpath += ptr;
+                    Add_Search_Drive(fullpath.c_str());
+                }
+
+                /*
+                ** Regardless of anything else, add the relative path so it works if its in the working dir.
+                */
+                Add_Search_Drive(ptr);
             }
-
-            found = true;
-            Add_Search_Drive(path);
         }
 
         /*
@@ -247,7 +265,7 @@ int CDFileClass::Set_Search_Drives(char* pathlist)
  * HISTORY:                                                                                    *
  *    5/22/96 10:12AM ST : Created                                                             *
  *=============================================================================================*/
-void CDFileClass::Add_Search_Drive(char* path)
+void CDFileClass::Add_Search_Drive(const char* path)
 {
     SearchDriveType* srch; // Working pointer to path object.
     /*
@@ -354,13 +372,13 @@ void CDFileClass::Clear_Search_Drives(void)
 char const* CDFileClass::Set_Name(char const* filename)
 {
     /*
-    **	Try to find the file in the current directory first. If it can be found, then
-    **	just return with the normal file name setting process. Do the same if there is
-    **	no multi-drive search path.
+    **	Just return with the normal file name setting process if there is
+    **	no multi-drive search path or searching is disabled.
     */
-    BufferIOFileClass::Set_Name(filename);
-    if (IsDisabled || !First || BufferIOFileClass::Is_Available())
+    if (IsDisabled || !First || PathsClass::Is_Absolute(filename)) {
+        BufferIOFileClass::Set_Name(filename);
         return (File_Name());
+    }
 
     /*
     **	Attempt to find the file first. Check the current directory. If not found there, then
@@ -370,20 +388,19 @@ char const* CDFileClass::Set_Name(char const* filename)
     SearchDriveType* srch = First;
 
     while (srch) {
-        char path[_MAX_PATH];
-
         /*
         **	Build a pathname to search for.
         */
-        strcpy(path, srch->Path);
-        strcat(path, filename);
+        std::string path = srch->Path;
+        path += PathsClass::SEP;
+        path += filename;
 
         /*
         **	Check to see if the file could be found. The low level Is_Available logic will
         **	prompt if necessary when the CD-ROM drive has been removed. In all other cases,
         **	it will return false and the search process will continue.
         */
-        BufferIOFileClass::Set_Name(path);
+        BufferIOFileClass::Set_Name(path.c_str());
         if (BufferIOFileClass::Is_Available()) {
             return (File_Name());
         }
@@ -440,8 +457,14 @@ int CDFileClass::Open(char const* filename, int rights)
     /*
     **	If writing is requested, then multiple drive searching is not performed.
     */
-    if (IsDisabled || rights == WRITE) {
+    if (IsDisabled || PathsClass::Is_Absolute(filename)) {
+        BufferIOFileClass::Set_Name(filename);
+        return (BufferIOFileClass::Open(rights));
+    }
 
+    if ((rights | WRITE)) {
+        std::string write_path = Paths.User_Path() + PathsClass::SEP;
+        write_path += filename;
         BufferIOFileClass::Set_Name(filename);
         return (BufferIOFileClass::Open(rights));
     }
