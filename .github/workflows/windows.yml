@@ -33,7 +33,7 @@ jobs:
         
     - name: Configure Vanilla Conquer
       run: |
-        cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_VANILLATD=OFF -DBUILD_VANILLARA=OFF -B build
+        cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_REMASTERTD=ON -DBUILD_REMASTERRA=ON -DBUILD_VANILLATD=OFF -DBUILD_VANILLARA=OFF -B build
         
     - name: Build Vanilla Conquer
       run: |

@@ -1,52 +1,53 @@
 # Vanilla Conquer
-No extras. No bloat. No major changes. Just the games on your favourite platform.
+Vanilla Conquer is a fully portable version of the first generation C&C engine and is capable of running both Tiberian Dawn and Red Alert on multiple platforms. It can also be used for mod development for the Remastered Collection.
 
-This project aims to be a clean portable upstream for anyone wanting to mod the Remastered Collection or add features to the original standalone games.
+The main focus of Vanilla Conquer is to keep the default out-of-box experience faithful to what the games were back when they were released and work as a drop-in replacement for the original executables while also providing bug fixes, compatiblity and quality of life improvements.
 
 Current project goals are tracked as [GitHub issues with the goal label](https://github.com/Vanilla-Conquer/Vanilla-Conquer/issues?q=is%3Aissue+is%3Aopen+label%3Agoal).
-
-All contributions towards project goals are welcome.
-Please use GitHub issues in advance to make sure your work will be accepted.
-If you are suggesting a new feature please bear in mind that we do not plan on adding gameplay changes.
-Work that do not fit the project will be recommended to be developed as a downstream project.
 
 Developers hang around [The Assembly Armada Discord server](https://discord.gg/UnWK2Tw) if you feel like chatting.
 
 ## Building
 
+We support wide variety of compilers and platforms to target. Vanilla Conquer is known to compile with recent enough gcc, MSVC, mingw-w64 or clang and known to run on Windows, Linux, macOS and BSDs.
+
 ### Windows
 
 #### Requirements
-For Remastered DLLs you need [Visual Studio Build Tools 2019](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
-The following components are needed:
 
- - MSVC v142 C++ x86/x64 build tools
+The following components are needed to build Vanilla Conquer executables:
+
+ - [MSVC v142 C++ x86/x64 build tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
  - Windows 10 SDK
- - CMake
+ - CMake (installable from MSVC build tools)
+ - [SDL2 development libraries, Visual C++](https://libsdl.org/download-2.0.php)
+ - [OpenAL Core SDK](https://www.openal.org/downloads/)
+
+Extract SDL2 and OpenAL somewhere you know. If you are building only Remastered dlls you can skip installing SDL2 and OpenAL.
 
 #### Building
 
-From an x86 VS command line window:
+In a VS command line window:
 
 ```sh
 mkdir build
 cd build
-cmake .. -A win32
+cmake .. -DSDL2_ROOT_DIR=C:\path\to\SDL2 -DOPENAL_ROOT=C:\path\to\OpenAL
 cmake --build .
 ```
 
-This will build all available targets to the build directory.
+This will build Vanilla Conquer executables in the build directory. If you are building Remastered dlls you need to configure cmake with `-A win32` and ensure your VS command line is x86.
 
-### Linux
+### Linux / macOS / BSD
 
 #### Requirements
 
-- GNU C++ Compiler (g++)
+- GNU C++ Compiler (g++) or Clang
 - CMake
 - SDL2
 - OpenAL
 
-On 64-bit Debian/Ubuntu you can install the build requirements as follows:
+On Debian/Ubuntu you can install the build requirements as follows:
 
 ```
 sudo apt-get update
@@ -59,40 +60,30 @@ sudo apt-get install g++ cmake libsdl2-dev libopenal-dev
 mkdir build
 cd build
 cmake ..
-make -j
+make -j8
 ```
 
-This will build all available targets to the build directory.
-
-### Linux (MinGW cross-compiling)
-
-#### Requirements
-
-- MinGW-w64
-- CMake
-
-On Debian/Ubuntu you can install the build requirements as follows:
-
-```
-sudo apt install mingw-w64 cmake
-```
-
-#### Building
-
-```sh
-mkdir build
-cd build
-cmake .. -DCMAKE_TOOLCHAIN_FILE=cmake/mingw-toolchain.cmake
-make -j
-```
-
-This will build all available targets to the build directory.
+This will build Vanilla Conquer executables in the build directory.
 
 ## Running
 
+### VanillaTD and VanillaRA
+
+Copy the Vanilla executable (`vanillatd.exe` or `vanillara.exe`) to your legacy game directory, on Windows also copy `SDL2.dll` and `OpenAL32.dll`.
+
+For Tiberian Dawn the final freeware Gold CD release ([GDI](https://www.fileplanet.com/archive/p-63497/Command-Conquer-Gold), [NOD](https://www.fileplanet.com/archive/p-8778/Command-Conquer-Gold)) works fine.
+
+For Red Alert the freeware [CD release](https://web.archive.org/web/20080901183216/http://www.ea.com/redalert/news-detail.jsp?id=62) works fine as well.
+The official [Red Alert demo](https://www.moddb.com/games/cc-red-alert/downloads/command-conquer-red-alert-demo) is also fully playable.
+The demo supports custom skirmish maps (except interior) and includes one campaign mission for both Allied and Soviet from the retail game.
+
+While it is possible to use the game data from the Remastered Collection, The Ultimate Collection or The First Decade they are currently _not_ supported.
+Any repackaged version that you may already have from any unofficial source is _not_ supported.
+If you encounter a bug that may be data related like invisible things or crashing when using a certain unit please retest with the retail data first before submitting a bug report.
+
 ### Remastered
 
-The build process will produce `TiberianDawn.dll` and `RedAlert.dll` in your build directory.
+The build process will produce `TiberianDawn.dll` and `RedAlert.dll` in your build directory if you enable them with `-DBUILD_REMASTERTD=ON` and `-DBUILD_REMASTERRA=ON`.
 These work as mods for the Remastered Collection.
 
 To manually create a local Remastered mod after launching both games once, head to _My Documents/CnCRemastered/CnCRemastered/Mods_.
@@ -145,11 +136,3 @@ The directory structure should look like this:
     My Documents/CnCRemastered/CnCRemastered/Mods/Red_Alert/Vanilla/ccmod.json
 
 You should now see the new mod in the mods list of Tiberian Dawn Remastered.
-
-### VanillaTD and VanillaRA
-
-Copy the Vanilla executable (`vanillatd.exe` or `vanillara.exe`) to your legacy game directory and run.
-
-For Tiberian Dawn the final freeware Gold CD release ([GDI](https://www.fileplanet.com/archive/p-63497/Command-Conquer-Gold), [NOD](https://www.fileplanet.com/archive/p-8778/Command-Conquer-Gold)) works fine.
-
-For Red Alert on top of the freeware [CD release](https://web.archive.org/web/20080901183216/http://www.ea.com/redalert/news-detail.jsp?id=62) you need the unreleased [3.03 patch](https://www.moddb.com/games/cc-red-alert/downloads/red-alert-303-beta-english-patch).
