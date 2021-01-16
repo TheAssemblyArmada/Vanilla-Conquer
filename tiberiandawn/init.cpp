@@ -2393,23 +2393,12 @@ void Init_CDROM_Access(void)
 
     /*
     **	Always try to look at the CD-ROM for data files.
+    **
+    **	This call is needed because of a side effect of this function. It will examine the
+    **	CD-ROMs attached to this computer and set the appropriate status values. Without this
+    **	call, the "?:\\" could not be filled in correctly.
     */
-    if (!CCFileClass::Is_There_Search_Drives()) {
-        /*
-        **	This call is needed because of a side effect of this function. It will examine the
-        **	CD-ROMs attached to this computer and set the appropriate status values. Without this
-        **	call, the "?:\\" could not be filled in correctly.
-        */
-        Force_CD_Available(-1);
-        RequiredCD = -1;
-    } else {
-
-        /*
-        ** If there are search drives specified then all files are to be
-        ** considered local.
-        */
-        RequiredCD = -2;
-    }
+    RequiredCD = Force_CD_Available(-1) ? -1 : -2;
 }
 
 /***************************************************************************

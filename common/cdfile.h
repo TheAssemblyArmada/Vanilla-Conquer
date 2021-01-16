@@ -69,7 +69,7 @@ public:
         return (First != NULL);
     };
     static int Set_Search_Drives(char* pathlist);
-    static void Add_Search_Drive(char* path);
+    static void Add_Search_Drive(const char* path);
     static void Clear_Search_Drives(void);
     static void Refresh_Search_Drives(void);
     static void Set_CD_Drive(int drive);
