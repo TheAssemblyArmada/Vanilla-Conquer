@@ -204,24 +204,28 @@ bool Expansion_Dialog(void)
         switch (input) {
         case KN_RETURN:
         case 200 | KN_BUTTON:
-            if (list.Current_Item()[sizeof(int)] == 'G') {
-                ScenPlayer = SCEN_PLAYER_GDI;
-            } else {
-                ScenPlayer = SCEN_PLAYER_NOD;
+            if (list.Current_Item()) {
+                if (list.Current_Item()[sizeof(int)] == 'G') {
+                    ScenPlayer = SCEN_PLAYER_GDI;
+                } else {
+                    ScenPlayer = SCEN_PLAYER_NOD;
+                }
+                ScenDir = SCEN_DIR_EAST;
+                Whom = HOUSE_GOOD;
+                Scenario = *(int*)list.Current_Item();
+                okval = true;
+                process = false;
+                break;
             }
-            ScenDir = SCEN_DIR_EAST;
-            Whom = HOUSE_GOOD;
-            Scenario = *(int*)list.Current_Item();
-            process = false;
-            okval = true;
-            break;
 
         case KN_ESC:
         case 201 | KN_BUTTON:
             ScenPlayer = SCEN_PLAYER_GDI;
             ScenDir = SCEN_DIR_EAST;
             Whom = HOUSE_GOOD;
-            Scenario = *(int*)list.Current_Item();
+            if (list.Current_Item()) {
+                Scenario = *(int*)list.Current_Item();
+            }
             process = false;
             okval = false;
             break;
@@ -383,24 +387,28 @@ bool Bonus_Dialog(void)
         switch (input) {
         case KN_RETURN:
         case 200 | KN_BUTTON:
-            if (list.Current_Item()[sizeof(int)] == 'G') {
-                ScenPlayer = SCEN_PLAYER_GDI;
-            } else {
-                ScenPlayer = SCEN_PLAYER_NOD;
+            if (list.Current_Item()) {
+                if (list.Current_Item()[sizeof(int)] == 'G') {
+                    ScenPlayer = SCEN_PLAYER_GDI;
+                } else {
+                    ScenPlayer = SCEN_PLAYER_NOD;
+                }
+                ScenDir = SCEN_DIR_EAST;
+                Whom = HOUSE_GOOD;
+                Scenario = *(int*)list.Current_Item();
+                process = false;
+                okval = true;
+                break;
             }
-            ScenDir = SCEN_DIR_EAST;
-            Whom = HOUSE_GOOD;
-            Scenario = *(int*)list.Current_Item();
-            process = false;
-            okval = true;
-            break;
 
         case KN_ESC:
         case 201 | KN_BUTTON:
             ScenPlayer = SCEN_PLAYER_GDI;
             ScenDir = SCEN_DIR_EAST;
             Whom = HOUSE_GOOD;
-            Scenario = *(int*)list.Current_Item();
+            if (list.Current_Item()) {
+                Scenario = *(int*)list.Current_Item();
+            }
             process = false;
             okval = false;
             break;
