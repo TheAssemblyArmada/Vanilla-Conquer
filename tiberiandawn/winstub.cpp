@@ -405,58 +405,6 @@ bool Any_Locked()
     }
 }
 
-#ifdef _WIN32
-HANDLE DebugFile = INVALID_HANDLE_VALUE;
-#endif
-
-/***********************************************************************************************
- * CCDebugString -- sends a string to the debugger and echos it to disk                        *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    string                                                                            *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *    10/28/96 12:48PM ST : Created                                                            *
- *=============================================================================================*/
-void CCDebugString(const char* string)
-{
-#ifndef REMASTER_BUILD
-
-#ifdef _WIN32
-    char outstr[256];
-
-    sprintf(outstr, "%s", string);
-
-    DWORD actual;
-    if (DebugFile == INVALID_HANDLE_VALUE) {
-        DebugFile = CreateFile("debug.txt", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-    } else {
-        DebugFile = CreateFile("debug.txt", GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-    }
-
-    if (DebugFile != INVALID_HANDLE_VALUE) {
-        SetFilePointer(DebugFile, 0, NULL, FILE_END);
-        WriteFile(DebugFile, outstr, strlen(outstr) + 1, &actual, NULL);
-        CloseHandle(DebugFile);
-    }
-
-    OutputDebugString(string);
-#else
-    fprintf(stderr, "%s", string);
-#endif
-
-#else
-
-    string = string;
-
-#endif
-}
-
 //
 // Miscellaneous stubs. Mainly for multi player stuff
 //

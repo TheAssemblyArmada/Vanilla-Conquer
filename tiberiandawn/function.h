@@ -1057,10 +1057,12 @@ void WWDOS_Shutdown(void);
 
 #endif
 
+#ifdef REMASTER_BUILD
 /*
 ** Debug output. ST - 6/27/2019 10:00PM
 */
 void GlyphX_Debug_Print(const char* debug_text);
+#endif
 
 /*
 ** Achievement event. ST - 11/11/2019 11:39AM

@@ -787,10 +787,12 @@ extern CCPtr<TerrainTypeClass> y25;
 extern CCPtr<OverlayTypeClass> y26;
 extern CCPtr<SmudgeTypeClass> y27;
 
+#ifdef REMASTER_BUILD
 /*
 ** Debug output. ST - 6/27/2019 10:00PM
 */
 void GlyphX_Debug_Print(const char* debug_text);
+#endif
 
 void Disable_Uncompressed_Shapes(void);
 void Enable_Uncompressed_Shapes(void);
