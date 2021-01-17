@@ -338,52 +338,6 @@ HANDLE DebugFile = INVALID_HANDLE_VALUE;
 #endif
 
 /***********************************************************************************************
- * WWDebugString -- sends a string to the debugger and echos it to disk                        *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    string                                                                            *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *    10/28/96 12:48PM ST : Created                                                              *
- *=============================================================================================*/
-void WWDebugString(const char* string)
-{
-#if (0)
-    char outstr[256];
-
-    sprintf(outstr, "%s", string);
-
-    DWORD actual;
-    if (DebugFile == INVALID_HANDLE_VALUE) {
-        DebugFile = CreateFile("debug.txt", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-    } else {
-        DebugFile = CreateFile("debug.txt", GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-    }
-
-    if (DebugFile != INVALID_HANDLE_VALUE) {
-        SetFilePointer(DebugFile, 0, NULL, FILE_END);
-        WriteFile(DebugFile, outstr, strlen(outstr) + 1, &actual, NULL);
-        CloseHandle(DebugFile);
-    }
-
-    OutputDebugString(string);
-#else //(0)
-
-#ifndef _WIN32
-    fprintf(stderr, "%s", string);
-#else
-    string = string;
-#endif
-
-#endif //(0)
-}
-
-/***********************************************************************************************
  * Create_Main_Window -- opens the MainWindow for C&C                                          *
  *                                                                                             *
  *                                                                                             *
