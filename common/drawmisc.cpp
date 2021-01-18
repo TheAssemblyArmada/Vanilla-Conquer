@@ -10,9 +10,6 @@ HWND MainWindow; // Handle to programs main window
 unsigned char CurrentPalette[768] = {255};
 unsigned char PaletteTable[1024] = {0};
 
-bool SystemToVideoBlits = false;  // Does hardware support system mem to video mem blits?
-bool VideoToSystemBlits = false;  // Does hardware support video mem to system mem blits?
-bool SystemToSystemBlits = false; // Does hardware support system mem to system mem blits?
 bool OverlappedVideoBlits = true; // Can video driver blit overlapped regions?
 bool AllowHardwareBlitFills = true;
 
