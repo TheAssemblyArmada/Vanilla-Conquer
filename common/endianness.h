@@ -68,32 +68,49 @@
 #undef bswap64
 #endif
 
+/* Check if we have the facility to check if a compiler supports a given builtin function */
+#ifndef __has_builtin
+#define __has_builtin(x) 0
+#endif
+
 /* Define unconditional byte-swap functions, using fast processor-native built-ins where possible */
 #if defined(_MSC_VER) /* needs to be first because msvc doesn't short-circuit after failing defined(__has_builtin) */
 #define bswap16(x) _byteswap_ushort((x))
 #define bswap32(x) _byteswap_ulong((x))
 #define bswap64(x) _byteswap_uint64((x))
-#elif (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
-#define bswap16(x) __builtin_bswap16((x))
-#define bswap32(x) __builtin_bswap32((x))
-#define bswap64(x) __builtin_bswap64((x))
-#elif defined(__has_builtin)                                                                                           \
-    && __has_builtin(                                                                                                  \
-        __builtin_bswap64) /* for clang; gcc 5 fails on this and && shortcircuit fails; must be after GCC check */
-#define bswap16(x) __builtin_bswap16((x))
-#define bswap32(x) __builtin_bswap32((x))
-#define bswap64(x) __builtin_bswap64((x))
 #else
+
+#if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8) || __has_builtin(__builtin_bswap16)
+#define bswap16(x) __builtin_bswap16((x))
+#endif
+
+#if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 3) || __has_builtin(__builtin_bswap32)
+#define bswap32(x) __builtin_bswap32((x))
+#endif
+
+#if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 3) || __has_builtin(__builtin_bswap64)
+#define bswap64(x) __builtin_bswap64((x))
+#endif
+
+#endif
+
 /* even in this case, compilers often optimize by using native instructions */
+#ifndef bswap16
 static inline uint16_t bswap16(uint16_t x)
 {
     return (((x >> 8) & 0xffu) | ((x & 0xffu) << 8));
 }
+#endif
+
+#ifndef bswap32
 static inline uint32_t bswap32(uint32_t x)
 {
     return (((x & 0xff000000u) >> 24) | ((x & 0x00ff0000u) >> 8) | ((x & 0x0000ff00u) << 8)
             | ((x & 0x000000ffu) << 24));
 }
+#endif
+
+#ifndef bswap64
 static inline uint64_t bswap64(uint64_t x)
 {
     return (((x & 0xff00000000000000ull) >> 56) | ((x & 0x00ff000000000000ull) >> 40)
