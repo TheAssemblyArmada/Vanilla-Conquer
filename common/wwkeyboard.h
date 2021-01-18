@@ -768,7 +768,7 @@ private:
     /*
     ** Large bit array to hold which keys are held down
     */
-    uint8_t DownState[(UINT16_MAX / 8) + 1];
+    uint8_t DownState[0x2000]; // (UINT16_MAX / 8) + 1
     int DownSkip;
 };
 
