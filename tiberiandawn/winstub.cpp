@@ -300,7 +300,6 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
  *=============================================================================================*/
 
 #define CC_ICON 1
-int ShowCommand;
 
 #if defined(_WIN32) && !defined(SDL2_BUILD)
 void Create_Main_Window(HANDLE instance, int width, int height)
