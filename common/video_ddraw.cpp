@@ -44,8 +44,7 @@
 #include "misc.h"
 #include <cstdio>
 
-LPDIRECTDRAW DirectDrawObject = NULL;      // Pointer to the direct draw object
-LPDIRECTDRAW2 DirectDraw2Interface = NULL; // Pointer to direct draw 2 interface
+LPDIRECTDRAW DirectDrawObject = NULL; // Pointer to the direct draw object
 
 PALETTEENTRY PaletteEntries[256]; // 256 windows palette entries
 LPDIRECTDRAWPALETTE PalettePtr;   // Pointer to direct draw palette object
@@ -687,33 +686,6 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     }
 
     Check_Overlapped_Blit_Capability();
-
-    /*
-    ** Find out if DirectX 2 extensions are available
-    */
-    result = DirectDrawObject->QueryInterface(IID_IDirectDraw2, (LPVOID*)&DirectDraw2Interface);
-    SystemToVideoBlits = FALSE;
-    VideoToSystemBlits = FALSE;
-    SystemToSystemBlits = FALSE;
-    if (result != DD_OK) {
-        DirectDraw2Interface = NULL;
-    } else {
-        DDCAPS capabilities;
-        DDCAPS emulated_capabilities;
-
-        memset((char*)&capabilities, 0, sizeof(capabilities));
-        memset((char*)&emulated_capabilities, 0, sizeof(emulated_capabilities));
-        capabilities.dwSize = sizeof(capabilities);
-        emulated_capabilities.dwSize = sizeof(emulated_capabilities);
-
-        DirectDrawObject->GetCaps(&capabilities, &emulated_capabilities);
-
-        if (capabilities.dwCaps & DDCAPS_CANBLTSYSMEM) {
-            SystemToVideoBlits = (capabilities.dwSVBCaps & DDCAPS_BLT) ? TRUE : FALSE;
-            VideoToSystemBlits = (capabilities.dwVSBCaps & DDCAPS_BLT) ? TRUE : FALSE;
-            SystemToSystemBlits = (capabilities.dwSSBCaps & DDCAPS_BLT) ? TRUE : FALSE;
-        }
-    }
 
     /*
     ** In legacy DirectDraw mode we clip the cursor for the duration of the session.
