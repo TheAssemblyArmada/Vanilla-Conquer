@@ -313,7 +313,7 @@ void TcpipManagerClass::Start_Client(void)
  *    3/20/96 3:24PM ST : Created                                                              *
  *=============================================================================================*/
 
-void TcpipManagerClass::Close_Socket(unsigned s)
+void TcpipManagerClass::Close_Socket(SOCKET s)
 {
 }
 
@@ -321,7 +321,7 @@ void TcpipManagerClass::Set_Protocol_UDP(bool state)
 {
 }
 
-void TcpipManagerClass::Clear_Socket_Error(unsigned int socket)
+void TcpipManagerClass::Clear_Socket_Error(SOCKET socket)
 {
 }
 
