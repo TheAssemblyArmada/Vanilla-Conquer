@@ -31,7 +31,6 @@ set(REDALERT_SRC
     coord.cpp
     crate.cpp
     credits.cpp
-    crew.cpp
     debug.cpp
     dial8.cpp
     dialog.cpp

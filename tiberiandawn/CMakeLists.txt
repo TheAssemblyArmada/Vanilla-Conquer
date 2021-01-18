@@ -24,7 +24,6 @@ set(TIBDAWN_SRC
     const.cpp
     coord.cpp
     credits.cpp
-    crew.cpp
     debug.cpp
     dial8.cpp
     dialog.cpp

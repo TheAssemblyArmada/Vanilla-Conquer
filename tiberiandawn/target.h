@@ -35,6 +35,8 @@
 #ifndef TARGET_H
 #define TARGET_H
 
+#include "defines.h"
+
 /**************************************************************************
 ** When a unit proceeds with carrying out its mission, it can have several
 **	intermediate goals. Each goal (or target if you will) can be one of the
