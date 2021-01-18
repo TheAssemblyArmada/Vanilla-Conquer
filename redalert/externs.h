@@ -48,6 +48,13 @@
 #include "logic.h"
 #include "base.h"
 #include "scenario.h"
+#include "theme.h"
+#include "queue.h"
+#include "event.h"
+#include "rules.h"
+#include "ipxmgr.h"
+#include "session.h"
+
 class CarryoverClass;
 
 #ifdef REMASTER_BUILD

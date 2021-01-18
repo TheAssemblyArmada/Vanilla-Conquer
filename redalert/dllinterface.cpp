@@ -32,6 +32,8 @@
 #include <set>
 
 #include "function.h"
+#include "keyframe.h"
+#include "utracker.h"
 #include "carry.h"
 #include "externs.h"
 #include "dllinterface.h"

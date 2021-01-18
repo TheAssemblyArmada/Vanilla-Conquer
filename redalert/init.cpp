@@ -57,6 +57,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "language.h"
+#include "msgbox.h"
 #include "loaddlg.h"
 
 #ifdef NETWORKING

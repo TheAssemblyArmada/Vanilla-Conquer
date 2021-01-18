@@ -39,6 +39,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "colrlist.h"
 
 /***************************************************************************
  * ColorListClass::ColorListClass -- class constructor                     *

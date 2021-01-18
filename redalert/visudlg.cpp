@@ -35,6 +35,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "list.h"
+#include "textbtn.h"
 #include "visudlg.h"
 #include "common/framelimit.h"
 

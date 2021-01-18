@@ -40,6 +40,10 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "msgbox.h"
+#include "edit.h"
+#include "drop.h"
+#include "textbtn.h"
 #include "loaddlg.h"
 #include "common/file.h"
 #include "common/framelimit.h"

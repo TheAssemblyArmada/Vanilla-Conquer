@@ -40,6 +40,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "list.h"
+#include "textbtn.h"
 #include "common/framelimit.h"
 
 extern bool Is_Mission_Counterstrike(char* file_name);

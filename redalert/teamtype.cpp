@@ -58,6 +58,13 @@
 
 #include "function.h"
 
+#ifdef SCENARIO_EDITOR
+#include "edit.h"
+#include "checkbox.h"
+#include "drop.h"
+#include "textbtn.h"
+#endif
+
 TeamMissionClass TeamMissions[TMISSION_COUNT] = {
     {TMISSION_ATTACK},
     {TMISSION_ATT_WAYPT},

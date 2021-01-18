@@ -44,6 +44,9 @@
 #include "dial8.h"
 
 #ifdef SCENARIO_EDITOR
+#include "list.h"
+#include "txtlabel.h"
+#include "textbtn.h"
 
 /***************************************************************************
  * Select_Object -- selects an object for processing                       *

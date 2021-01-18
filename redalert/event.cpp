@@ -45,6 +45,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "msgbox.h"
+#include "event.h"
 
 #ifdef FIXIT_VERSION_3 //	Stalemate games.
 #include "wolstrng.h"

@@ -75,6 +75,7 @@
  *   Check_Mirror -- Checks mirror memory                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include "function.h"
+#include "msgbox.h"
 
 #ifdef WOLAPI_INTEGRATION
 //#include "WolDebug.h"

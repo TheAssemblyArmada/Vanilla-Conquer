@@ -34,6 +34,9 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "list.h"
+#include "textbtn.h"
+#include "msgbox.h"
 #include "gamedlg.h"
 #include "sounddlg.h"
 #include "visudlg.h"

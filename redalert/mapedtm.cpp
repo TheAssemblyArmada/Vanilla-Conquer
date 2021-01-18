@@ -40,6 +40,9 @@
 #include "common/framelimit.h"
 
 #ifdef SCENARIO_EDITOR
+#include "msgbox.h"
+#include "list.h"
+#include "textbtn.h"
 
 /***************************************************************************
  * MapEditClass::Handle_Teams -- main team-dialog-handling function        *

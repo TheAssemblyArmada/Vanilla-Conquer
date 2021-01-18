@@ -47,7 +47,13 @@
 
 #include "mouse.h"
 
+class ListClass;
+class ListClass;
+class TextLabelClass;
+class TextButtonClass;
 class Dial8Class;
+class GaugeClass;
+class TriColorGaugeClass;
 /*
 **	This is the maximum # of ObjectTypeClasses the editor has to deal with.
 */

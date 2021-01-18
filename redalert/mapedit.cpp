@@ -56,10 +56,15 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include "dial8.h"
 #include "common/framelimit.h"
 
 #ifdef SCENARIO_EDITOR
+#include "dial8.h"
+#include "edit.h"
+#include "list.h"
+#include "txtlabel.h"
+#include "textbtn.h"
+#include "msgbox.h"
 
 /*
 **	Array of all missions supported by the map editor

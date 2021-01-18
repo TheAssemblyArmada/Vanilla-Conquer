@@ -37,6 +37,7 @@
 #include "function.h"
 #include "msgbox.h"
 #include "gadget.h"
+#include "textbtn.h"
 #include "common/framelimit.h"
 
 #ifdef FIXIT_VERSION_3

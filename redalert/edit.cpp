@@ -41,6 +41,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "edit.h"
 
 /***********************************************************************************************
  * EditClass::EditClass -- Normal constructor for edit class object.                           *
