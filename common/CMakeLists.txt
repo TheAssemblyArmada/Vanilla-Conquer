@@ -46,6 +46,7 @@ set(COMMON_SRC
     iff.cpp
     ini.cpp
     int.cpp
+    internet.cpp
     irandom.cpp
     keybuff.cpp
     keyframe.cpp

@@ -48,5 +48,10 @@ int Read_Game_Options(char* name);
 extern char PlanetWestwoodIPAddress[IP_ADDRESS_MAX];
 extern unsigned short PlanetWestwoodPortNumber;
 extern bool PlanetWestwoodIsHost;
+extern bool ConnectionLost;
+extern unsigned PlanetWestwoodGameID;
+extern unsigned PlanetWestwoodStartTime;
+extern char PlanetWestwoodHandle[];   // Planet WW user name
+extern char PlanetWestwoodPassword[]; // Planet WW password
 
 #endif

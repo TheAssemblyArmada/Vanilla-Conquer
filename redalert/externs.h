@@ -442,12 +442,7 @@ void Memory_Error_Handler(void); // Memory error handler function
 ** Internet specific externs
 */
 
-extern char PlanetWestwoodHandle[];             // Planet WW user name
-extern char PlanetWestwoodPassword[];           // Planet WW password
-extern char PlanetWestwoodIPAddress[];          // IP of server or other player
-extern unsigned short PlanetWestwoodPortNumber; // Port number to send to
-extern bool PlanetWestwoodIsHost;               // Flag true if player has control of game options
-extern unsigned long PlanetWestwoodGameID;      // Game ID
+#include "common/internet.h"
 #ifdef _WIN32
 extern HWND WChatHWND; // Handle to Wchat window.
 #endif
