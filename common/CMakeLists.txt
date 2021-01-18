@@ -24,6 +24,7 @@ set(COMMON_SRC
     combuf.cpp
     control.cpp
     crc.cpp
+    crew.cpp
     cstraw.cpp
     delay.cpp
     dipthong.cpp
@@ -34,6 +35,7 @@ set(COMMON_SRC
     fading.cpp
     field.cpp
     file.cpp
+    filepcx.cpp
     fixed.cpp
     font.cpp
     gadget.cpp
@@ -88,7 +90,6 @@ set(COMMON_SRC
     winasm.cpp
     windows.cpp
     winhide.cpp
-    writepcx.cpp
     wsa.cpp
     xordelta.cpp
     xpipe.cpp

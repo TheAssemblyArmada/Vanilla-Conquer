@@ -13,9 +13,9 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\crew.cpv   2.18   16 Oct 1995 16:50:50   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/CREW.CPP 1     3/03/97 10:24a Joe_bostic $ */
 /***********************************************************************************************
- ***             C O N F I D E N T I A L  ---  W E S T W O O D   S T U D I O S               ***
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
@@ -31,5 +31,3 @@
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-#include "function.h"

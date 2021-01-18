@@ -467,7 +467,7 @@ int Load_Picture(char const* filename,
 void* Conquer_Build_Fading_Table(PaletteClass const& palette, void* dest, int color, int frac);
 void* Small_Icon(void const* iconptr, int iconnum);
 void Set_Window(int window, int x, int y, int w, int h);
-long Load_Uncompress(FileClass& file, BuffType& uncomp_buff, BuffType& dest_buff, void* reserved_data);
+long Load_Uncompress(FileClass& file, BufferClass& uncomp_buff, BufferClass& dest_buff, void* reserved_data);
 long Translucent_Table_Size(int count);
 void* Build_Translucent_Table(PaletteClass const& palette, TLucentType const* control, int count, void* buffer);
 void* Conquer_Build_Translucent_Table(PaletteClass const& palette, TLucentType const* control, int count, void* buffer);
