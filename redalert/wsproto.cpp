@@ -57,6 +57,8 @@
 
 #include <stdio.h>
 
+WinsockInterfaceClass* PacketTransport = nullptr; // The object for interfacing with Winsock
+
 #ifdef NETWORKING
 
 /***********************************************************************************************

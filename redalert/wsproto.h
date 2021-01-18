@@ -34,7 +34,8 @@
 #ifndef WSPROTO_H
 #define WSPROTO_H
 
-#include "_wsproto.h"
+class WinsockInterfaceClass;
+extern WinsockInterfaceClass* PacketTransport; // The object for interfacing with Winsock
 
 /*
 ** Include compatability sockets header file.
