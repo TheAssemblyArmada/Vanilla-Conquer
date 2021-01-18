@@ -51,6 +51,11 @@
 #include "function.h"
 #include "trigtype.h"
 
+#ifdef SCENARIO_EDITOR
+#include "drop.h"
+#include "textbtn.h"
+#endif
+
 /***********************************************************************************************
  * TriggerTypeClass::TriggerTypeClass -- Constructor for trigger class object.                 *
  *                                                                                             *

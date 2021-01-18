@@ -36,7 +36,6 @@
  *   CDFileClass::Set_Name -- Performs a multiple directory scan to set the filename.          *
  *   CDFileClass::Set_Search_Drives -- Sets a list of search paths for file access.            *
  *   Is_Disk_Inserted -- Checks to see if a disk is inserted in specified drive.               *
- *   harderr_handler -- Handles hard DOS errors.                                               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "cdfile.h"

@@ -66,6 +66,10 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "msgbox.h"
+#include "keyframe.h"
+#include "language.h"
+
 #ifdef _WIN32
 #ifdef WINSOCK_IPX
 #include "wsproto.h"
@@ -80,6 +84,8 @@ TcpipManagerClass Winsock;
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "interpal.h"
 #include "vortex.h"
 #include "common/framelimit.h"
 #include "common/vqatask.h"

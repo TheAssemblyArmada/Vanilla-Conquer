@@ -105,6 +105,9 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "utracker.h"
+#include "event.h"
+#include "rules.h"
 
 /*
 ** New sidebar for GlyphX multiplayer. ST - 8/2/2019 2:35PM

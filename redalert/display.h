@@ -36,6 +36,7 @@
 #define DISPLAY_H
 
 #include "map.h"
+#include "gadget.h"
 #include "layer.h"
 
 #define ICON_PIXEL_W  24

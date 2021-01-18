@@ -55,6 +55,9 @@
 #include "common/framelimit.h"
 
 #ifdef SCENARIO_EDITOR
+#include "msgbox.h"
+#include "list.h"
+#include "textbtn.h"
 
 /***************************************************************************
  * MapEditClass::Placement_Dialog -- adds an object to the scenario        *

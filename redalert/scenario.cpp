@@ -60,6 +60,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "msgbox.h"
+#include "textbtn.h"
 #include "factory.h"
 #include "carry.h"
 #include "common/tcpip.h"

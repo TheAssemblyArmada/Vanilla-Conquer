@@ -37,6 +37,8 @@
 
 #include "cell.h"
 
+class GadgetClass;
+
 class GScreenClass
 {
 public:

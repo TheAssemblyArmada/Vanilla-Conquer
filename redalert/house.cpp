@@ -132,6 +132,8 @@
 
 #include "function.h"
 #include "vortex.h"
+#include "rules.h"
+#include "utracker.h"
 
 //#include "WolDebug.h"
 

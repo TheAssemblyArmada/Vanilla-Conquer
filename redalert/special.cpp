@@ -38,6 +38,9 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "edit.h"
+#include "list.h"
+#include "textbtn.h"
 #include "common/framelimit.h"
 
 #define OPTION_WIDTH  236 * 2

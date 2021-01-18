@@ -48,6 +48,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "keyframe.h"
 
 /*
 **	This is the list of animation stages to use when the harvester

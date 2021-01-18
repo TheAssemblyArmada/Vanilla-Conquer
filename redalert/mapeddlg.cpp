@@ -46,6 +46,13 @@
 #include "common/framelimit.h"
 
 #ifdef SCENARIO_EDITOR
+#include "msgbox.h"
+#include "edit.h"
+#include "drop.h"
+#include "checkbox.h"
+#include "cheklist.h"
+#include "statbtn.h"
+#include "textbtn.h"
 
 /***************************************************************************
  * MapEditClass::New_Scenario -- creates a new scenario                    *

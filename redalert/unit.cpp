@@ -98,6 +98,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "keyframe.h"
 #include "common/miscasm.h"
 
 extern void Logic_Switch_Player_Context(ObjectClass* object);

@@ -38,6 +38,7 @@
 #include "type.h"
 #include "region.h"
 #include "credits.h"
+#include "super.h"
 
 class FootClass;
 class BuildingClass;
@@ -48,6 +49,7 @@ class TechnoClass;
 class UnitClass;
 struct NoInitClass;
 class FactoryClass;
+class UnitTrackerClass;
 
 #define HOUSE_NAME_MAX 12
 

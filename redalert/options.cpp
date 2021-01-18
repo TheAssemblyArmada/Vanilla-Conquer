@@ -59,6 +59,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "hsv.h"
 #include "options.h"
 
 #ifdef SDL2_BUILD

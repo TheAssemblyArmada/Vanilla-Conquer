@@ -43,6 +43,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "msgbox.h"
+#include "language.h"
 
 #ifdef WINSOCK_IPX
 #include "wsproto.h"

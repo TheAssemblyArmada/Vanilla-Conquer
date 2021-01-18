@@ -43,6 +43,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "cheklist.h"
 
 /***************************************************************************
  * CheckListClass::CheckListClass -- constructor                           *

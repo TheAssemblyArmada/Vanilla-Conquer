@@ -45,6 +45,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "interpal.h"
 #include "common/framelimit.h"
 #include "common/wsa.h"
 

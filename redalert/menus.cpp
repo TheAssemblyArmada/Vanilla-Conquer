@@ -34,6 +34,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "textbtn.h"
 #include "common/framelimit.h"
 #include <time.h>
 

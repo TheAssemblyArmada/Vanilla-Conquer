@@ -36,6 +36,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "interpal.h"
 
 void Cycle_Call_Back_Delay(int time, PaletteClass& pal);
 extern int ControlQ;

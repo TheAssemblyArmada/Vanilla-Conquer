@@ -50,13 +50,8 @@
 
 #define WWMEM_H
 
-#include "common/wwkeyboard.h"
 #include "common/wwlib32.h"
 #include "bench.h"
-#include "common/rect.h"
-#include "jshell.h"
-#include "buff.h"
-#include "face.h"
 #include "compat.h"
 #include "fixed.h"
 
@@ -87,7 +82,6 @@ extern bool GameActive;
 extern long LParam;
 
 #include <assert.h>
-#include "vector.h"
 #include "heap.h"
 #include "ccfile.h"
 #include "monoc.h"
@@ -97,66 +91,20 @@ extern long LParam;
 #include "defines.h"
 #include "ccini.h"
 #include "ccptr.h"
-#include "bar.h"
-
-/*
-**	Greenleaf specific includes.
-*/
-//#include <modem.h>
-//#include <fast.h>
 
 extern long Frame;
 CELL Coord_Cell(COORDINATE coord);
 
-#include "utracker.h"
-#include "crate.h"
-#include "rules.h"
-#include "ini.h"
-#include "language.h"
-#include "hsv.h"
-#include "rgb.h"
-#include "common/palette.h"
 #include "palettec.h" //ST 5/13/2019
-#include "ftimer.h"
-#include "theme.h"
-#include "link.h"
-#include "gadget.h"
-#include "control.h"
-#include "toggle.h"
-#include "checkbox.h"
-#include "shapebtn.h"
-#include "textbtn.h"
-#include "statbtn.h"
-#include "slider.h"
 #include "dialog.h"
-#include "list.h"
-#include "drop.h"
-#include "cheklist.h"
-#include "colrlist.h"
-#include "edit.h"
-#include "gauge.h"
-#include "msgbox.h"
-#include "txtlabel.h"
-#include "loaddlg.h"
-#include "super.h"
 #include "house.h"
-#include "gscreen.h"
-#include "map.h"
-#include "display.h"
-#include "radar.h"
 #include "sidebar.h"
 #include "target.h"
-#include "theme.h"
 #include "team.h" // Team objects.
 #include "warhead.h"
 #include "weapon.h"
 #include "trigtype.h"
-#include "teamtype.h" // Team type objects.
-#include "taction.h"
-#include "tevent.h"
-#include "trigger.h" // Trigger event objects.
-#include "abstract.h"
-#include "object.h"
+#include "trigger.h"  // Trigger event objects.
 #include "bullet.h"   // Bullet objects.
 #include "terrain.h"  // Terrain objects.
 #include "anim.h"     // Animation objects.
@@ -169,12 +117,6 @@ CELL Coord_Cell(COORDINATE coord);
 #include "infantry.h" // Infantry objects.
 #include "score.h"    // Scoring system class.
 #include "factory.h"  // Production manager class.
-#include "queue.h"
-#include "event.h"
-#include "session.h" // Multiplayer session class
-//#include "phone.h"			// Phone list manager
-#include "ipxmgr.h" // IPX connection manager
-//#include	"nullmgr.h"			// Modem connection manager
 
 // Denzil 5/18/98 - Mpeg movie playback
 #ifdef MPEGMOVIE
@@ -216,11 +158,6 @@ extern void Rebuild_Interpolated_Palette(unsigned char* interpal);
 char const* Anim_Name(AnimType anim);
 
 /*
-**	AIRCRAFT.CPP
-*/
-bool Building_Check(void);
-
-/*
 **	ANIM.CPP
 */
 void Shorten_Attached_Anims(ObjectClass* obj);
@@ -243,11 +180,6 @@ void Speak_AI(void);
 void Stop_Speaking(void);
 void Sound_Effect(VocType voc, COORDINATE coord, int variation = 1, HousesType house = HOUSE_NONE);
 bool Is_Speaking(void);
-
-/*
-**	CDFILE.CPP
-*/
-int harderr_handler(unsigned, unsigned, unsigned*);
 
 /*
 **	COMBAT.CPP
@@ -348,7 +280,6 @@ void CC_Draw_Pip(const ObjectClass* object,
                  DirType rotation = DIR_N);
 
 void Go_Editor(bool flag);
-// long MixFileHandler(VQAHandle * vqa, long action, void * buffer, long nbytes);
 char* CC_Get_Shape_Filename(void const* shapeptr);
 void CC_Add_Shape_To_Global(void const* shapeptr, char* filename, char code);
 void Bubba_Print(char* format, ...);
@@ -377,7 +308,6 @@ short const* Coord_Spillage_List(COORDINATE coord, int maxsize);
 /*
 **	DEBUG.CPP
 */
-void Log_Event(char const* text, ...);
 void Debug_Key(unsigned input);
 void Self_Regulate(void);
 
@@ -417,10 +347,6 @@ bool Expansion_AM_Present(void);
 int Optimize_Moves(PathType* path, int (*callback)(CELL, FacingType), int threshhold);
 
 /*
-**	GOPTIONS.CPP
-*/
-
-/*
 **	INI.CPP
 */
 void Write_Scenario_INI(char* root);
@@ -452,11 +378,6 @@ bool Parse_Command_Line(int argc, char* argv[]);
 void Parse_INI_File(void);
 
 /*
-** INTERPAL.CPP
-*/
-#include "common/interpal.h"
-
-/*
 ** JSHELL.CPP
 */
 int Load_Picture(char const* filename,
@@ -479,11 +400,6 @@ void* Make_Fading_Table(PaletteClass const& palette, void* dest, int color, int 
 void Buffer_Frame_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortClass& view, int flags, ...);
 
 /*
-**	KEYFRAME.CPP
-*/
-#include "common/keyframe.h"
-
-/*
 **	MAP.CPP
 */
 int Terrain_Cost(CELL cell, FacingType facing);
@@ -501,6 +417,7 @@ int Main_Menu(unsigned long timeout);
 /*
 ** MPLAYER.CPP
 */
+class ListClass;
 GameType Select_MPlayer_Game(void);
 void Clear_Listbox(ListClass* list);
 void Clear_Vector(DynamicVectorClass<NodeNameType*>* vector);
@@ -540,15 +457,6 @@ int Com_Show_Scenario_Dialog(void);
 void Smart_Printf(char* format, ...);
 void Hex_Dump_Data(char* buffer, int length);
 void itoh(int i, char* s);
-void Log_Start_Time(char* string);
-void Log_End_Time(char* string);
-void Log_Time(char* string);
-void Log_Start_Nest_Time(char* string);
-void Log_End_Nest_Time(char* string);
-
-/*
-**	OBJECT.CPP
-*/
 
 /*
 ** QUEUE.CPP
@@ -569,10 +477,6 @@ void Queue_AI(void);
 void Add_CRC(unsigned long* crc, unsigned long val);
 
 /*
-**	RANDOM.CPP
-*/
-
-/*
 **	REINF.CPP
 */
 bool Do_Reinforcements(TeamTypeClass const* team);
@@ -588,11 +492,6 @@ int Create_Air_Reinforcement(HouseClass* house,
                              TARGET tarcom,
                              TARGET navcom,
                              InfantryType passenger = INFANTRY_NONE);
-
-/*
-**	ROTBMP.CPP
-*/
-int Rotate_Bitmap(GraphicViewPortClass* srcvp, GraphicViewPortClass* destvp, int angle);
 
 /*
 **	RULES.CPP

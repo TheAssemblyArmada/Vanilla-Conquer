@@ -37,6 +37,7 @@
 
 #include "function.h"
 #include "shapebtn.h"
+#include "keyframe.h"
 
 /***********************************************************************************************
  * ShapeButtonClass::ShapeButtonClass -- Default Constructor for a shape type button.          *

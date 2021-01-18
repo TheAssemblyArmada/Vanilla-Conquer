@@ -36,6 +36,7 @@
 #define MISSION_H
 
 #include "object.h"
+#include "ftimer.h"
 #include "monoc.h"
 
 /****************************************************************************

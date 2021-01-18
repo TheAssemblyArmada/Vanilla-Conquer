@@ -58,6 +58,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "keyframe.h"
 
 #define FATSHIP
 

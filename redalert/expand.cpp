@@ -34,6 +34,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "list.h"
+#include "textbtn.h"
 #include "common/framelimit.h"
 #include "common/ini.h"
 

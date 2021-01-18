@@ -83,6 +83,7 @@
 ** New sidebar for GlyphX multiplayer. ST - 8/2/2019 2:50PM
 */
 #include "sidebarglyphx.h"
+#include "utracker.h"
 
 /***********************************************************************************************
  * CellClass::CellClass -- Constructor for cell objects.                                       *

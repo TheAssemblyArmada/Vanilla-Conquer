@@ -34,7 +34,13 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "msgbox.h"
+#include "drop.h"
+#include "cheklist.h"
+#include "colrlist.h"
 #include "framelimit.h"
+#include "statbtn.h"
+#include "textbtn.h"
 
 // PG
 GameType Select_Serial_Dialog(void)
