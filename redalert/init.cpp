@@ -2146,8 +2146,9 @@ static void Init_Expansion_Files(void)
     const char* path = ".\\";
     char search_path[_MAX_PATH];
     char scan_path[_MAX_PATH];
+    Find_File_Data* ffd;
+    bool found;
 
-#ifdef _WIN32
     for (int p = 0; p < 100; p++) {
 
         strcpy(search_path, path);
@@ -2158,27 +2159,27 @@ static void Init_Expansion_Files(void)
         strcpy(scan_path, search_path);
         strcat(scan_path, "SC*.MIX");
 
-        WIN32_FIND_DATA find_data;
-        memset(&find_data, 0, sizeof(find_data));
-        HANDLE file_handle = FindFirstFile(scan_path, &find_data);
-        if (file_handle != INVALID_HANDLE_VALUE) {
-            do {
-                char* ptr = strdup(find_data.cFileName);
-                new MFCD(ptr, &FastKey);
-            } while (FindNextFile(file_handle, &find_data));
-            FindClose(file_handle);
+        found = Find_First(scan_path, 0, &ffd);
+        while (found) {
+            char* ptr = strdup(ffd->GetName());
+            new MFCD(ptr, &FastKey);
+            found = Find_Next(ffd);
+        }
+        if (ffd) {
+            Find_Close(ffd);
         }
 
-        memset(&find_data, 0, sizeof(find_data));
         strcpy(scan_path, search_path);
         strcat(scan_path, "Ss*.MIX");
-        file_handle = FindFirstFile(scan_path, &find_data);
-        if (file_handle != INVALID_HANDLE_VALUE) {
-            do {
-                char* ptr = strdup(find_data.cFileName);
-                new MFCD(ptr, &FastKey);
-            } while (FindNextFile(file_handle, &find_data));
-            FindClose(file_handle);
+
+        found = Find_First(scan_path, 0, &ffd);
+        while (found) {
+            char* ptr = strdup(ffd->GetName());
+            new MFCD(ptr, &FastKey);
+            found = Find_Next(ffd);
+        }
+        if (ffd) {
+            Find_Close(ffd);
         }
 
         path = CDFileClass::Get_Search_Path(p);
@@ -2187,29 +2188,6 @@ static void Init_Expansion_Files(void)
             break;
         }
     }
-#endif
-
-#if (0)
-    /*
-    **	Before all else, cache any additional mixfiles.
-    */
-    struct find_t ff; // for _dos_findfirst
-    if (!_dos_findfirst("SC*.MIX", _A_NORMAL, &ff)) {
-        char* ptr;
-        do {
-            ptr = strdup(ff.name);
-            new MFCD(ptr, &FastKey);
-            MFCD::Cache(ptr);
-        } while (!_dos_findnext(&ff));
-    }
-    if (!_dos_findfirst("SS*.MIX", _A_NORMAL, &ff)) {
-        char* ptr;
-        do {
-            ptr = strdup(ff.name);
-            new MFCD(ptr, &FastKey);
-        } while (!_dos_findnext(&ff));
-    }
-#endif
 }
 
 /***********************************************************************************************
