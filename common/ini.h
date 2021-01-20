@@ -151,7 +151,7 @@ protected:
         }
         int Index_ID(void) const
         {
-            return (CRCEngine()(Entry, strlen(Entry)));
+            return CRC(Entry);
         };
 
         char* Entry;
@@ -177,7 +177,7 @@ protected:
         INIEntry* Find_Entry(char const* entry) const;
         int Index_ID(void) const
         {
-            return (CRCEngine()(Section, strlen(Section)));
+            return CRC(Section);
         };
 
         char* Section;
@@ -191,6 +191,7 @@ protected:
     INISection* Find_Section(char const* section) const;
     INIEntry* Find_Entry(char const* section, char const* entry) const;
     static void Strip_Comments(char* buffer);
+    static int32_t CRC(const char* string);
 
     /*
     **	This is the list of all sections within this INI file.
