@@ -78,7 +78,12 @@ WinsockInterfaceClass* PacketTransport = nullptr; // The object for interfacing 
 WinsockInterfaceClass::WinsockInterfaceClass(void)
 {
     WinsockInitialised = false;
+#if defined _WIN32 && !defined SDL2_BUILD
     ASync = INVALID_HANDLE_VALUE;
+#else
+    FD_ZERO(&ReadSockets);
+    FD_ZERO(&WriteSockets);
+#endif
     Socket = INVALID_SOCKET;
 }
 
@@ -179,6 +184,7 @@ void WinsockInterfaceClass::Close_Socket(void)
  *=============================================================================================*/
 bool WinsockInterfaceClass::Start_Listening(void)
 {
+#if defined _WIN32 && !defined SDL2_BUILD
     /*
     ** Enable asynchronous events on the socket
     */
@@ -189,6 +195,17 @@ bool WinsockInterfaceClass::Start_Listening(void)
         ASync = INVALID_HANDLE_VALUE;
         return (false);
     }
+#else
+    /*
+    ** Without the windows event loop, we have to fall back on non-blocking
+    ** sockets and select from the look of things. This sets up what sockets we
+    ** want to listen for activity on.
+    */
+    if (Socket != INVALID_SOCKET) {
+        FD_SET(Socket, &ReadSockets);
+        FD_SET(Socket, &WriteSockets);
+    }
+#endif
     return (true);
 }
 
@@ -208,10 +225,17 @@ bool WinsockInterfaceClass::Start_Listening(void)
  *=============================================================================================*/
 void WinsockInterfaceClass::Stop_Listening(void)
 {
+#if defined _WIN32 && !defined SDL2_BUILD
     if (ASync != INVALID_HANDLE_VALUE) {
         WSACancelAsyncRequest(ASync);
         ASync = INVALID_HANDLE_VALUE;
     }
+#else
+    if (Socket != INVALID_SOCKET) {
+        FD_CLR(Socket, &ReadSockets);
+        FD_CLR(Socket, &WriteSockets);
+    }
+#endif
 }
 
 /***********************************************************************************************
@@ -292,7 +316,12 @@ bool WinsockInterfaceClass::Init(void)
     ** Initialise socket and event handle to null
     */
     Socket = INVALID_SOCKET;
+#if defined _WIN32 && !defined SDL2_BUILD
     ASync = INVALID_HANDLE_VALUE;
+#else
+    FD_ZERO(&ReadSockets);
+    FD_ZERO(&WriteSockets);
+#endif
     Discard_In_Buffers();
     Discard_Out_Buffers();
 
@@ -300,12 +329,14 @@ bool WinsockInterfaceClass::Init(void)
     ** Start WinSock, and fill in our Winsock info structure
     */
     rc = socket_startup();
+#if defined _WIN32
     if (rc != 0) {
         char out[128];
         sprintf(out, "TS: Winsock failed to initialise - error code %d.\n", GetLastError());
         OutputDebugString(out);
         return (false);
     }
+#endif
 
     /*
     ** Everything is OK so return success
@@ -413,10 +444,12 @@ void WinsockInterfaceClass::WriteTo(void* buffer, int buffer_len, void* address)
     */
     OutBuffers.Add(packet);
 
+#if defined _WIN32 && !defined SDL2_BUILD
     /*
     ** Send a message to ourselves so that we can initiate a write if Winsock is idle.
     */
     SendMessage(MainWindow, Protocol_Event_Message(), 0, (LONG)FD_WRITE);
+#endif
 
     /*
     ** Make sure the message loop gets called.
@@ -463,10 +496,12 @@ void WinsockInterfaceClass::Broadcast(void* buffer, int buffer_len)
     */
     OutBuffers.Add(packet);
 
+#if defined _WIN32 && !defined SDL2_BUILD
     /*
     ** Send a message to ourselves so that we can initiate a write if Winsock is idle.
     */
     SendMessage(MainWindow, Protocol_Event_Message(), 0, (LONG)FD_WRITE);
+#endif
 
     /*
     ** Make sure the message loop gets called.
@@ -491,7 +526,7 @@ void WinsockInterfaceClass::Broadcast(void* buffer, int buffer_len)
 void WinsockInterfaceClass::Clear_Socket_Error(SOCKET socket)
 {
     unsigned long error_code;
-    int length = 4;
+    socklen_t length = 4;
 
     getsockopt(socket, SOL_SOCKET, SO_ERROR, (char*)&error_code, &length);
     error_code = 0;
@@ -523,8 +558,8 @@ bool WinsockInterfaceClass::Set_Socket_Options(void)
     int err = setsockopt(Socket, SOL_SOCKET, SO_RCVBUF, (char*)&socket_receive_buffer_size, 4);
     if (err == INVALID_SOCKET) {
         char out[128];
-        sprintf(out, "TS: Failed to set IPX socket option SO_RCVBUF - error code %d.\n", GetLastError());
-        OutputDebugString(out);
+        sprintf(out, "TS: Failed to set socket option SO_RCVBUF - error code %d.\n", LastSocketError);
+        fprintf(stderr, out);
         assert(err != INVALID_SOCKET);
     }
 
@@ -534,8 +569,8 @@ bool WinsockInterfaceClass::Set_Socket_Options(void)
     err = setsockopt(Socket, SOL_SOCKET, SO_SNDBUF, (char*)&socket_transmit_buffer_size, 4);
     if (err == INVALID_SOCKET) {
         char out[128];
-        sprintf(out, "TS: Failed to set IPX socket option SO_SNDBUF - error code %d.\n", GetLastError());
-        OutputDebugString(out);
+        sprintf(out, "TS: Failed to set socket option SO_SNDBUF - error code %d.\n", LastSocketError);
+        fprintf(stderr, out);
         assert(err != INVALID_SOCKET);
     }
 

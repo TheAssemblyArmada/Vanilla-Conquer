@@ -93,7 +93,9 @@ endif()
 
 if(NETWORKING)
     list(APPEND VANILLA_DEFS NETWORKING)
-    list(APPEND VANILLA_LIBS ws2_32)
+    if(WIN32)
+        list(APPEND VANILLA_LIBS ws2_32)
+    endif()
 endif()
 
 if(SDL2)
