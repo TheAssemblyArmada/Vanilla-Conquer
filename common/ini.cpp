@@ -73,6 +73,8 @@
 #include "xstraw.h"
 #include "b64straw.h"
 #include "miscasm.h"
+#include "debugstring.h"
+#include "wwstd.h" // For linux version of strupr.
 
 #ifdef FIXIT_FAST_LOAD
 #include "cstraw.h"
@@ -217,12 +219,17 @@ bool INIClass::Load(Straw& file)
     **	Process a section. The buffer is prefilled with the section name line.
     */
     while (!end_of_file) {
-
+        bool section_found = false;
         buffer[0] = ' ';
         char* ptr = strchr(buffer, ']');
-        if (ptr)
+        if (ptr != nullptr)
             *ptr = '\0';
         strtrim(buffer);
+        int32_t section_id = CRC(buffer);
+        if (SectionIndex.Is_Present(section_id)) {
+            DBG_WARN("[%s] hash collision with existing section [%s].", buffer, SectionIndex.Fetch_Index(section_id)->Section);
+            section_found = true;
+        }
         INISection* secptr = new INISection(strdup(buffer));
         if (secptr == NULL) {
             Clear();
@@ -271,22 +278,29 @@ bool INIClass::Load(Straw& file)
             if (!strlen(divider))
                 continue;
 
-            INIEntry* entryptr = new INIEntry(strdup(buffer), strdup(divider));
-            if (entryptr == NULL) {
-                delete secptr;
-                Clear();
-                return (false);
-            }
+            int32_t entry_id = CRC(buffer);
+            if (secptr->EntryIndex.Is_Present(entry_id)) {
+                DBG_WARN("'%s' hash collision with existing entry key '%s'.",
+                         buffer,
+                         secptr->EntryIndex.Fetch_Index(entry_id)->Entry);
+            } else {
+                INIEntry* entryptr = new INIEntry(strdup(buffer), strdup(divider));
+                if (entryptr == NULL) {
+                    delete secptr;
+                    Clear();
+                    return (false);
+                }
 
-            secptr->EntryIndex.Add_Index(entryptr->Index_ID(), entryptr);
-            secptr->EntryList.Add_Tail(entryptr);
+                secptr->EntryIndex.Add_Index(entryptr->Index_ID(), entryptr);
+                secptr->EntryList.Add_Tail(entryptr);
+            }
         }
 
         /*
         **	All the entries for this section have been parsed. If this section is blank, then
-        **	don't bother storing it.
+        **	don't bother storing it. Also don't store if it has a hash collision.
         */
-        if (secptr->EntryList.Is_Empty()) {
+        if (secptr->EntryList.Is_Empty() || section_found) {
             delete secptr;
         } else {
             SectionIndex.Add_Index(secptr->Index_ID(), secptr);
@@ -394,7 +408,7 @@ INIClass::INISection* INIClass::Find_Section(char const* section) const
 {
     if (section != NULL) {
 
-        long crc = CRCEngine()(section, strlen(section));
+        int32_t crc = CRC(section);
 
         if (SectionIndex.Is_Present(crc)) {
             return (SectionIndex.Fetch_Index(crc));
@@ -598,7 +612,7 @@ int INIClass::Get_UUBlock(char const* section, void* block, int len) const
     int total = 0;
     int counter = Entry_Count(section);
     for (int index = 0; index < counter; index++) {
-        char buffer[128];
+        char buffer[MAX_LINE_LENGTH];
 
         int length = Get_String(section, Get_Entry(section, index), "=", buffer, sizeof(buffer));
         int outcount = b64pipe.Put(buffer, length);
@@ -639,7 +653,7 @@ bool INIClass::Put_TextBlock(char const* section, char const* text)
     int index = 1;
     while (text != NULL && *text != NULL) {
 
-        char buffer[128];
+        char buffer[MAX_LINE_LENGTH];
 
         strncpy(buffer, text, 75);
         buffer[75] = '\0';
@@ -1115,7 +1129,7 @@ bool INIClass::Get_Bool(char const* section, char const* entry, bool defvalue) c
 INIClass::INIEntry* INIClass::INISection::Find_Entry(char const* entry) const
 {
     if (entry != NULL) {
-        int crc = CRCEngine()(entry, strlen(entry));
+        int crc = CRC(entry);
         if (EntryIndex.Is_Present(crc)) {
             return (EntryIndex.Fetch_Index(crc));
         }
@@ -1219,7 +1233,7 @@ PKey INIClass::Get_PKey(bool fast) const
  *=============================================================================================*/
 fixed INIClass::Get_Fixed(char const* section, char const* entry, fixed defvalue) const
 {
-    char buffer[128];
+    char buffer[MAX_LINE_LENGTH];
     fixed retval = defvalue;
 
     if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
@@ -1277,4 +1291,13 @@ void INIClass::Strip_Comments(char* buffer)
             strtrim(buffer);
         }
     }
+}
+
+int32_t INIClass::CRC(const char* string)
+{
+    assert((strlen(string) + 1) < MAX_LINE_LENGTH);
+    char buffer[MAX_LINE_LENGTH];
+    strcpy(buffer, string);
+    _strupr(buffer);
+    return CRCEngine()(buffer, strlen(buffer));
 }
