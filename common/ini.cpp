@@ -227,7 +227,9 @@ bool INIClass::Load(Straw& file)
         strtrim(buffer);
         int32_t section_id = CRC(buffer);
         if (SectionIndex.Is_Present(section_id)) {
-            DBG_WARN("[%s] hash collision with existing section [%s].", buffer, SectionIndex.Fetch_Index(section_id)->Section);
+            DBG_WARN("[%s] hash collision with existing section [%s].",
+                     buffer,
+                     SectionIndex.Fetch_Index(section_id)->Section);
             section_found = true;
         }
         INISection* secptr = new INISection(strdup(buffer));
@@ -356,19 +358,19 @@ int INIClass::Save(Pipe& pipe) const
         **	Output the section identifier.
         */
         total += pipe.Put("[", 1);
-        total += pipe.Put(secptr->Section, strlen(secptr->Section));
+        total += pipe.Put(secptr->Section, (int)strlen(secptr->Section));
         total += pipe.Put("]", 1);
-        total += pipe.Put("\r\n", strlen("\r\n"));
+        total += pipe.Put("\r\n", (int)strlen("\r\n"));
 
         /*
         **	Output all the entries and values in this section.
         */
         INIEntry* entryptr = secptr->EntryList.First();
         while (entryptr && entryptr->Is_Valid()) {
-            total += pipe.Put(entryptr->Entry, strlen(entryptr->Entry));
+            total += pipe.Put(entryptr->Entry, (int)strlen(entryptr->Entry));
             total += pipe.Put("=", 1);
-            total += pipe.Put(entryptr->Value, strlen(entryptr->Value));
-            total += pipe.Put("\r\n", strlen("\r\n"));
+            total += pipe.Put(entryptr->Value, (int)strlen(entryptr->Value));
+            total += pipe.Put("\r\n", (int)strlen("\r\n"));
 
             entryptr = entryptr->Next();
         }
@@ -377,7 +379,7 @@ int INIClass::Save(Pipe& pipe) const
         **	After the last entry in this section, output an extra
         **	blank line for readability purposes.
         */
-        total += pipe.Put("\r\n", strlen("\r\n"));
+        total += pipe.Put("\r\n", (int)strlen("\r\n"));
 
         secptr = secptr->Next();
     }
@@ -664,7 +666,7 @@ bool INIClass::Put_TextBlock(char const* section, char const* text)
         /*
         **	Scan backward looking for a good break position.
         */
-        int count = strlen(buffer);
+        int count = (int)strlen(buffer);
         if (count > 0) {
             if (count >= 75) {
                 while (count) {
@@ -740,7 +742,7 @@ int INIClass::Get_TextBlock(char const* section, char* buffer, int len) const
 
         Get_String(section, Get_Entry(section, index), "", buffer, len);
 
-        int partial = strlen(buffer);
+        int partial = (int)strlen(buffer);
         total += partial;
         buffer += partial;
         len -= partial;
@@ -1024,12 +1026,12 @@ int INIClass::Get_String(char const* section, char const* entry, char const* def
         buffer[0] = '\0';
         return (0);
     } else if (buffer == defvalue) {
-        return (strlen(buffer));
+        return ((int)strlen(buffer));
     } else {
         strncpy(buffer, defvalue, size);
         buffer[size - 1] = '\0';
         strtrim(buffer);
-        return (strlen(buffer));
+        return ((int)strlen(buffer));
     }
 }
 
@@ -1298,6 +1300,6 @@ int32_t INIClass::CRC(const char* string)
     assert((strlen(string) + 1) < MAX_LINE_LENGTH);
     char buffer[MAX_LINE_LENGTH];
     strcpy(buffer, string);
-    _strupr(buffer);
+    strupr(buffer);
     return CRCEngine()(buffer, strlen(buffer));
 }
