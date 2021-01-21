@@ -59,6 +59,11 @@
 #include "function.h"
 #include "ipx95.h"
 
+// temp until more work is done merging the networking code between games.
+void Process_Network()
+{
+}
+
 /***************************************************************************
  * IPX_SPX_Installed -- checks for installation of IPX/SPX                 *
  *                                                                         *

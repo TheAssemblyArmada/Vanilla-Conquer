@@ -59,6 +59,15 @@
 
 WinsockInterfaceClass* PacketTransport = nullptr; // The object for interfacing with Winsock
 
+void Process_Network()
+{
+#if !defined _WIN32 || defined SDL2_BUILD
+    if (PacketTransport != nullptr) {
+        PacketTransport->Message_Handler();
+    }
+#endif
+}
+
 #ifdef NETWORKING
 
 /***********************************************************************************************
