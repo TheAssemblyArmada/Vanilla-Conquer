@@ -529,9 +529,12 @@ bool WWKeyboardClass::Is_Buffer_Empty(void) const
  * HISTORY:                                                                                    *
  *   09/30/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
+void Process_Network();
+
 void WWKeyboardClass::Fill_Buffer_From_System(void)
 {
 #ifdef SDL2_BUILD
+    Process_Network();
     SDL_Event event;
 
     while (!Is_Buffer_Full() && SDL_PollEvent(&event)) {
