@@ -70,17 +70,11 @@
 #include "keyframe.h"
 #include "language.h"
 
-#ifdef _WIN32
 #ifdef WINSOCK_IPX
 #include "wsproto.h"
 #else // WINSOCK_IPX
 #include "common/tcpip.h"
 #endif // WINSOCK_IPX
-#else
-#include <unistd.h>
-#include "fakesock.h"
-TcpipManagerClass Winsock;
-#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -1417,7 +1411,7 @@ void Call_Back(void)
 
 void IPX_Call_Back(void)
 {
-#if (0) // PG
+#ifndef REMASTER_BUILD // PG
     Ipx.Service();
 
     /*
