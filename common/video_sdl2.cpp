@@ -45,6 +45,7 @@
 #include "settings.h"
 
 #include <SDL.h>
+#include <SDL_opengles2.h>
 
 static SDL_Window* window;
 static SDL_Renderer* renderer;
@@ -90,6 +91,28 @@ static void Update_HWCursor_Settings()
     */
     Update_HWCursor();
 }
+
+SDL_GLContext context;
+
+const GLchar* vertexSource =
+    "attribute vec4 position;    \n"
+    "varying vec2 texcoord;      \n"
+    "void main()                  \n"
+    "{                            \n"
+    "   gl_Position = position;\n"
+    "   texcoord = position.xy * vec2(0.5, -0.5) + 0.5;\n"
+    "}                            \n";
+const GLchar* fragmentSource =
+    "precision mediump float;\n"
+    "uniform sampler2D texture;\n"
+    "uniform sampler2D palette;\n"
+    "varying vec2 texcoord;\n"
+    "void main()                                  \n"
+    "{                                            \n"
+    "  float index = texture2D(texture, texcoord).a * 255.0;\n"
+    "  gl_FragColor = texture2D(palette, vec2((index + 0.5) / 256.0, 0.5));\n"
+    "}                                            \n";
+GLuint shaderProgram;
 
 class SurfaceMonitorClassDummy : public SurfaceMonitorClass
 {
@@ -157,6 +180,8 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
         Settings.Video.WindowHeight = win_h;
     }
 
+    win_flags |= SDL_WINDOW_OPENGL;
+
     window =
         SDL_CreateWindow("Vanilla Conquer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, win_w, win_h, win_flags);
     if (window == nullptr) {
@@ -183,6 +208,80 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     hwcursor.GameW = w;
     hwcursor.GameH = h;
     Update_HWCursor_Settings();
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
+    context = SDL_GL_CreateContext(window);
+    if (context == nullptr) {
+        return false;
+    }
+
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexSource, NULL);
+    glCompileShader(vertexShader);
+    GLint status = 255;
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &status);
+    printf("vertex shader compiled: %d\n", status);
+
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
+    glCompileShader(fragmentShader);
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &status);
+    printf("fragment shader compiled: %d\n", status);
+
+    char buf[256];
+    memset(buf, 0, sizeof(buf));
+    GLsizei length = 0;
+    glGetShaderInfoLog(fragmentShader, sizeof(buf), &length, buf);
+    printf("fragment shader info: '%s' %d\n", buf, length);
+
+    shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    glUseProgram(shaderProgram);
+
+    glGetProgramInfoLog(shaderProgram, sizeof(buf), &length, buf);
+    printf("program info: '%s' %d\n", buf, length);
+
+    GLfloat vertices[] = {
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f, 1.0f, -1.0f 
+    };
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+
+    GLint imageLoc = glGetUniformLocation(shaderProgram, "texture");
+    GLint paletteLoc = glGetUniformLocation(shaderProgram, "palette");
+    printf("imageLoc = %d, paletteLoc = %d\n", imageLoc, paletteLoc);
+    glUniform1i(imageLoc, 0);
+    glUniform1i(paletteLoc, 1);
+
+    GLuint imageTex;
+    glGenTextures(1, &imageTex);
+    printf("tex tex %d\n", imageTex);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, imageTex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, 640, 400, 0, GL_ALPHA, GL_UNSIGNED_BYTE, 0);
+
+    GLuint imagePal;
+    glGenTextures(1, &imagePal);
+    printf("pal tex %d\n", imagePal);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, imagePal);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
     return true;
 }
@@ -428,6 +527,9 @@ void Set_DD_Palette(void* rpalette)
 
     SDL_SetPaletteColors(palette, colors, 0, 256);
 
+    glActiveTexture(GL_TEXTURE1);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 256, 1, GL_RGBA, GL_UNSIGNED_BYTE, (void*)colors);
+
     /*
     ** Cursor needs to be updated when palette changes.
     */
@@ -482,17 +584,15 @@ static VideoSurfaceSDL2* frontSurface = nullptr;
 class VideoSurfaceSDL2 : public VideoSurface
 {
 public:
-    VideoSurfaceSDL2(int w, int h, GBC_Enum flags)
-        : flags(flags)
-        , windowSurface(nullptr)
-        , texture(nullptr)
+    VideoSurfaceSDL2(int w, int h, GBC_Enum flags) : flags(flags)
     {
         surface = SDL_CreateRGBSurface(0, w, h, 8, 0, 0, 0, 0);
-        SDL_SetSurfacePalette(surface, palette);
 
         if (flags & GBC_VISIBLE) {
+#if 0
             windowSurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(pixel_format), pixel_format);
             texture = SDL_CreateTexture(renderer, windowSurface->format->format, SDL_TEXTUREACCESS_STREAMING, w, h);
+#endif
             frontSurface = this;
         }
     }
@@ -504,14 +604,6 @@ public:
         }
 
         SDL_FreeSurface(surface);
-
-        if (texture) {
-            SDL_DestroyTexture(texture);
-        }
-
-        if (windowSurface) {
-            SDL_FreeSurface(windowSurface);
-        }
     }
 
     virtual void* GetData() const
@@ -562,7 +654,13 @@ public:
         void* pixels;
         int pitch;
 
+#if 0
         SDL_BlitSurface(surface, NULL, windowSurface, NULL);
+#endif
+
+        glClear(GL_COLOR_CLEAR_VALUE|GL_DEPTH_CLEAR_VALUE);
+        glActiveTexture(GL_TEXTURE0);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, GL_ALPHA, GL_UNSIGNED_BYTE, surface->pixels);
 
         if (Settings.Video.HardwareCursor) {
             /*
@@ -595,20 +693,26 @@ public:
             dst.x = (x / hwcursor.ScaleX) - (hwcursor.HotX);
             dst.y = (y / hwcursor.ScaleY) - (hwcursor.HotY);
             dst.w = hwcursor.Surface->w;
-            dst.w = hwcursor.Surface->h;
+            dst.h = hwcursor.Surface->h;
 
+#if 0
             SDL_BlitSurface(hwcursor.Surface, nullptr, windowSurface, &dst);
+#endif
+            glTexSubImage2D(GL_TEXTURE_2D, 0, dst.x, dst.y, dst.w, dst.h, GL_ALPHA, GL_UNSIGNED_BYTE, hwcursor.Surface->pixels);
         }
 
+#if 0
         SDL_UpdateTexture(texture, NULL, windowSurface->pixels, windowSurface->pitch);
         SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
+#endif
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        SDL_GL_SwapWindow(window);
     }
 
 private:
     SDL_Surface* surface;
-    SDL_Surface* windowSurface;
-    SDL_Texture* texture;
     GBC_Enum flags;
 };
 
