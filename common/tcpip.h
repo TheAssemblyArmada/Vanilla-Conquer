@@ -46,6 +46,7 @@
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #endif
 
 extern bool Server;
@@ -152,18 +153,17 @@ private:
         bool InUse : 1;
     } InternetBufferType;
 
-#ifdef _WIN32
     bool WinsockInitialised;
-    WSADATA WinsockInfo;
     SOCKET ListenSocket;
     SOCKET ConnectSocket;
     SOCKET UDPSocket;
-    IN_ADDR ClientIPAddress;
+    in_addr ClientIPAddress;
+#ifdef _WIN32
     HANDLE Async;
     char HostBuff[MAXGETHOSTSTRUCT];
+#endif
     char ClientName[128];
     char ReceiveBuffer[WS_RECEIVE_BUFFER_LEN];
-#endif
     // char					InBuffer[WS_IN_BUFFER_LEN];
     // int					InBufferHead;
     // int					InBufferTail;
