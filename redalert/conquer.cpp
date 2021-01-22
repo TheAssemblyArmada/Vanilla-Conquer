@@ -1688,6 +1688,11 @@ FacingType KN_To_Facing(int input)
 static void Sync_Delay(void)
 {
     /*
+    ** Slow down with frame limiter first.
+    */
+    Frame_Limiter();
+
+    /*
     **	Accumulate the number of 'spare' ticks that are frittered away here.
     */
     SpareTicks += FrameTimer;
