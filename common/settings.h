@@ -14,6 +14,12 @@ public:
 
     struct
     {
+        bool RawInput;
+        int Sensitivity;
+    } Mouse;
+
+    struct
+    {
         int WindowWidth;
         int WindowHeight;
         bool Windowed;
