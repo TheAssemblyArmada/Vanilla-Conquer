@@ -1387,6 +1387,11 @@ FacingType KN_To_Facing(int input)
 static void Sync_Delay(void)
 {
     /*
+    ** Slow down with frame limiter first.
+    */
+    Frame_Limiter();
+
+    /*
     **	Delay one tick and keep a record that one tick was "wasted" here.
     **	This accumulates into a running histogram of performance.
     */
