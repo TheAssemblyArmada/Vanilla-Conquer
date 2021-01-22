@@ -2,6 +2,7 @@
 #define SETTINGS_H
 
 class INIClass;
+#include "fixed.h"
 
 class SettingsClass
 {
@@ -20,6 +21,8 @@ public:
         int Height;
         int FrameLimit;
         bool HardwareCursor;
+        bool RawInput;
+        float Sensitivity;
     } Video;
 };
 

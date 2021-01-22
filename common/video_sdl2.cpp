@@ -43,6 +43,7 @@
 #include "wwkeyboard.h"
 #include "wwmouse.h"
 #include "settings.h"
+#include "debugstring.h"
 
 #include <SDL.h>
 
@@ -63,6 +64,8 @@ static struct
     int H;
     int HotX;
     int HotY;
+    float X;
+    float Y;
     SDL_Cursor* Pending;
     SDL_Cursor* Current;
     SDL_Surface* Surface;
@@ -182,6 +185,8 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     */
     hwcursor.GameW = w;
     hwcursor.GameH = h;
+    hwcursor.X = w / 2;
+    hwcursor.Y = h / 2;
     Update_HWCursor_Settings();
 
     return true;
@@ -217,11 +222,54 @@ void Set_Video_Cursor_Clip(bool clipped)
     hwcursor.Clip = clipped;
 
     if (window) {
+        int relative;
+
         if (Settings.Video.Windowed) {
             SDL_SetWindowGrab(window, hwcursor.Clip ? SDL_TRUE : SDL_FALSE);
+            relative = SDL_SetRelativeMouseMode(Settings.Video.RawInput && hwcursor.Clip ? SDL_TRUE : SDL_FALSE);
         } else {
             SDL_SetWindowGrab(window, SDL_TRUE);
+            relative = SDL_SetRelativeMouseMode(Settings.Video.RawInput ? SDL_TRUE : SDL_FALSE);
         }
+
+        if (relative < 0) {
+            DBG_ERROR("Raw input not supported, disabling.");
+            Settings.Video.RawInput = false;
+        }
+    }
+}
+
+void Move_Video_Mouse(int xrel, int yrel)
+{
+    if (hwcursor.Clip || !Settings.Video.Windowed) {
+        hwcursor.X += xrel * Settings.Video.Sensitivity;
+        hwcursor.Y += yrel * Settings.Video.Sensitivity;
+    }
+
+    if (hwcursor.X > hwcursor.GameW) {
+        hwcursor.X = hwcursor.GameW;
+    } else if (hwcursor.X < 0) {
+        hwcursor.X = 0;
+    }
+
+    if (hwcursor.Y > hwcursor.GameH) {
+        hwcursor.Y = hwcursor.GameH;
+    } else if (hwcursor.Y < 0) {
+        hwcursor.Y = 0;
+    }
+}
+
+void Get_Video_Mouse(int& x, int& y)
+{
+    if (Settings.Video.RawInput && (hwcursor.Clip || !Settings.Video.Windowed)) {
+        x = hwcursor.X;
+        y = hwcursor.Y;
+    } else {
+        float scale_x, scale_y;
+        Get_Video_Scale(scale_x, scale_y);
+        SDL_GetMouseState(&x, &y);
+        x /= scale_x;
+        y /= scale_y;
     }
 }
 
@@ -590,10 +638,10 @@ public:
             int x, y;
             SDL_Rect dst;
 
-            SDL_GetMouseState(&x, &y);
+            Get_Video_Mouse(x, y);
 
-            dst.x = (x / hwcursor.ScaleX) - (hwcursor.HotX);
-            dst.y = (y / hwcursor.ScaleY) - (hwcursor.HotY);
+            dst.x = x - hwcursor.HotX;
+            dst.y = y - hwcursor.HotY;
             dst.w = hwcursor.Surface->w;
             dst.w = hwcursor.Surface->h;
 

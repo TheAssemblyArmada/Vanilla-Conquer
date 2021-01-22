@@ -12,6 +12,8 @@ SettingsClass::SettingsClass()
     Video.Height = 0;
     Video.FrameLimit = 120;
     Video.HardwareCursor = true;
+    Video.RawInput = false;
+    Video.Sensitivity = 1.0f;
 }
 
 void SettingsClass::Load(INIClass& ini)
@@ -23,6 +25,15 @@ void SettingsClass::Load(INIClass& ini)
     Video.Height = ini.Get_Int("Video", "Height", Video.Height);
     Video.FrameLimit = ini.Get_Int("Video", "FrameLimit", Video.FrameLimit);
     Video.HardwareCursor = ini.Get_Bool("Video", "HardwareCursor", Video.HardwareCursor);
+    Video.RawInput = ini.Get_Bool("Video", "RawInput", Video.RawInput);
+    Video.Sensitivity = ini.Get_Float("Video", "Sensitivity", Video.Sensitivity);
+
+    /*
+    ** Raw input requires software cursor.
+    */
+    if (Video.RawInput) {
+        Video.HardwareCursor = false;
+    }
 }
 
 void SettingsClass::Save(INIClass& ini)
@@ -34,4 +45,6 @@ void SettingsClass::Save(INIClass& ini)
     ini.Put_Int("Video", "Height", Video.Height);
     ini.Put_Int("Video", "FrameLimit", Video.FrameLimit);
     ini.Put_Bool("Video", "HardwareCursor", Video.HardwareCursor);
+    ini.Put_Bool("Video", "RawInput", Video.RawInput);
+    ini.Put_Float("Video", "Sensitivity", Video.Sensitivity);
 }

@@ -59,6 +59,8 @@
 #include <SDL.h>
 #include "sdl_keymap.h"
 #endif
+#include "settings.h"
+#include "debugstring.h"
 
 #define ARRAY_SIZE(x) int(sizeof(x) / sizeof(x[0]))
 
@@ -549,9 +551,13 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
                 Put_Key_Message(event.key.keysym.scancode, true);
             }
             break;
+        case SDL_MOUSEMOTION:
+            Move_Video_Mouse(event.motion.xrel, event.motion.yrel);
+            break;
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP: {
-            float scale_x = 1.0f, scale_y = 1.0f;
+            int x, y;
+
             switch (event.button.button) {
             case SDL_BUTTON_LEFT:
             default:
@@ -564,11 +570,17 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
                 key = VK_MBUTTON;
                 break;
             }
-            Get_Video_Scale(scale_x, scale_y);
-            Put_Mouse_Message(key,
-                              event.button.x / scale_x,
-                              event.button.y / scale_y,
-                              event.type == SDL_MOUSEBUTTONDOWN ? false : true);
+
+            if (Settings.Video.RawInput) {
+                Get_Video_Mouse(x, y);
+            } else {
+                float scale_x = 1.0f, scale_y = 1.0f;
+                Get_Video_Scale(scale_x, scale_y);
+                x = event.button.x / scale_x;
+                y = event.button.y / scale_y;
+            }
+
+            Put_Mouse_Message(key, x, y, event.type == SDL_MOUSEBUTTONDOWN ? false : true);
         } break;
         case SDL_WINDOWEVENT:
             switch (event.window.event) {

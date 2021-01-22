@@ -618,11 +618,7 @@ int WWMouseClass::Get_Mouse_Y(void)
 void WWMouseClass::Get_Mouse_XY(int& x, int& y)
 {
 #if defined(SDL2_BUILD)
-    float scale_x, scale_y;
-    Get_Video_Scale(scale_x, scale_y);
-    SDL_GetMouseState(&x, &y);
-    x /= scale_x;
-    y /= scale_y;
+    Get_Video_Mouse(x, y);
 #elif defined(_WIN32)
     POINT pt;
 

@@ -112,11 +112,13 @@ public:
     int Get_UUBlock(char const* section, void* buffer, int len) const;
     PKey Get_PKey(bool fast) const;
     fixed Get_Fixed(char const* section, char const* entry, fixed defvalue) const;
+    float Get_Float(char const* section, char const* entry, float defvalue) const;
 
     /*
     **	Put a data type to the section and entry specified.
     */
     bool Put_Fixed(char const* section, char const* entry, fixed value);
+    bool Put_Float(char const* section, char const* entry, float value);
     bool Put_String(char const* section, char const* entry, char const* string);
     bool Put_Hex(char const* section, char const* entry, int number);
     bool Put_Int(char const* section, char const* entry, int number, int format = 0);

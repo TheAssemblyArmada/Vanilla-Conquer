@@ -1244,6 +1244,18 @@ fixed INIClass::Get_Fixed(char const* section, char const* entry, fixed defvalue
     return (retval);
 }
 
+float INIClass::Get_Float(char const* section, char const* entry, float defvalue) const
+{
+    char buffer[MAX_LINE_LENGTH];
+    float retval = defvalue;
+
+    if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+        sscanf(buffer, "%f", &retval);
+    }
+
+    return (retval);
+}
+
 /***********************************************************************************************
  * INIClass::Put_Fixed -- Store a fixed point number to the INI database.                      *
  *                                                                                             *
@@ -1267,6 +1279,13 @@ fixed INIClass::Get_Fixed(char const* section, char const* entry, fixed defvalue
 bool INIClass::Put_Fixed(char const* section, char const* entry, fixed value)
 {
     return (Put_String(section, entry, value.As_ASCII()));
+}
+
+bool INIClass::Put_Float(char const* section, char const* entry, float value)
+{
+    char buffer[32];
+    sprintf(buffer, "%f", value);
+    return (Put_String(section, entry, buffer));
 }
 
 /***********************************************************************************************
