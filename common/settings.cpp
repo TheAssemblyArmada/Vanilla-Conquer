@@ -5,6 +5,15 @@ SettingsClass Settings;
 
 SettingsClass::SettingsClass()
 {
+    /*
+    ** Mouse settings
+    */
+    Mouse.RawInput = false;
+    Mouse.Sensitivity = 100;
+
+    /*
+    ** Video settings
+    */
     Video.WindowWidth = 640;
     Video.WindowHeight = 400;
     Video.Windowed = false;
@@ -20,6 +29,15 @@ SettingsClass::SettingsClass()
 
 void SettingsClass::Load(INIClass& ini)
 {
+    /*
+    ** Mouse settings
+    */
+    Mouse.RawInput = ini.Get_Bool("Mouse", "RawInput", Mouse.RawInput);
+    Mouse.Sensitivity = ini.Get_Int("Mouse", "Sensitivity", Mouse.Sensitivity);
+
+    /*
+    ** Video settings
+    */
     Video.WindowWidth = ini.Get_Int("Video", "WindowWidth", Video.WindowWidth);
     Video.WindowHeight = ini.Get_Int("Video", "WindowHeight", Video.WindowHeight);
     Video.Windowed = ini.Get_Bool("Video", "Windowed", Video.Windowed);
@@ -33,15 +51,24 @@ void SettingsClass::Load(INIClass& ini)
     Video.PixelFormat = ini.Get_String("Video", "PixelFormat", Video.PixelFormat);
 
     /*
-    ** Boxing requires software cursor.
+    ** Boxing and raw input require software cursor.
     */
-    if (Video.Boxing) {
+    if (Video.Boxing || Mouse.RawInput) {
         Video.HardwareCursor = false;
     }
 }
 
 void SettingsClass::Save(INIClass& ini)
 {
+    /*
+    ** Mouse settings
+    */
+    ini.Put_Bool("Mouse", "RawInput", Mouse.RawInput);
+    ini.Put_Int("Mouse", "Sensitivity", Mouse.Sensitivity);
+
+    /*
+    ** Video settings
+    */
     ini.Put_Int("Video", "WindowWidth", Video.WindowWidth);
     ini.Put_Int("Video", "WindowHeight", Video.WindowHeight);
     ini.Put_Bool("Video", "Windowed", Video.Windowed);
