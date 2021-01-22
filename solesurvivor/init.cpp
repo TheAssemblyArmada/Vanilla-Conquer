@@ -44,6 +44,7 @@
 #include "loaddlg.h"
 #include "common/gitinfo.h"
 #include "soleglobals.h"
+#include "solehelp.h"
 #include "soleparams.h"
 #include "voicethemes.h"
 #include "common/tcpip.h"
@@ -894,7 +895,7 @@ bool Select_Game(bool fade)
             **	Load a saved game.
             */
             case SEL_HELP:
-                // Help_Menu();
+                Help_Menu();
                 display = true;
                 fade = true;
                 selection = SEL_NONE;

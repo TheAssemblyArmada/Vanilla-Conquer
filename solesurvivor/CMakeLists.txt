@@ -110,6 +110,7 @@ set(SOLE_SRC
     slider.cpp
     smudge.cpp
     soleglobals.cpp
+    solehelp.cpp
     soleparams.cpp
     solerandom.cpp
     sounddlg.cpp
