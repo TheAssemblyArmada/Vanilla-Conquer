@@ -43,6 +43,7 @@
 #include "wwkeyboard.h"
 #include "wwmouse.h"
 #include "settings.h"
+#include "debugstring.h"
 
 #include <SDL.h>
 
@@ -67,6 +68,50 @@ static struct
     SDL_Cursor* Current;
     SDL_Surface* Surface;
 } hwcursor;
+
+#define ARRAY_SIZE(x) int(sizeof(x) / sizeof(x[0]))
+#define MAKEFORMAT(f)                                                                                                  \
+    {                                                                                                                  \
+        SDL_PIXELFORMAT_##f, #f                                                                                        \
+    }
+Uint32 SettingsPixelFormat()
+{
+    /*
+    ** Known good RGB formats for both the surface and texture.
+    */
+    static struct
+    {
+        Uint32 format;
+        std::string name;
+    } formats[] = {
+        MAKEFORMAT(ARGB8888),
+        MAKEFORMAT(RGBA8888),
+        MAKEFORMAT(ABGR8888),
+        MAKEFORMAT(BGRA8888),
+        MAKEFORMAT(RGB24),
+        MAKEFORMAT(BGR24),
+        MAKEFORMAT(RGB888),
+        MAKEFORMAT(BGR888),
+        MAKEFORMAT(RGB555),
+        MAKEFORMAT(BGR555),
+        MAKEFORMAT(RGB565),
+        MAKEFORMAT(BGR565),
+    };
+
+    std::string str = Settings.Video.PixelFormat;
+
+    for (auto& c : str) {
+        c = toupper(c);
+    }
+
+    for (int i = 0; i < ARRAY_SIZE(formats); i++) {
+        if (str.compare(formats[i].name) == 0) {
+            return formats[i].format;
+        }
+    }
+
+    return SDL_PIXELFORMAT_UNKNOWN;
+}
 
 static void Update_HWCursor();
 
@@ -135,6 +180,7 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     int win_w = w;
     int win_h = h;
     int win_flags = 0;
+    Uint32 requested_pixel_format = SettingsPixelFormat();
 
     if (!Settings.Video.Windowed) {
         /*
@@ -160,21 +206,99 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     window =
         SDL_CreateWindow("Vanilla Conquer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, win_w, win_h, win_flags);
     if (window == nullptr) {
+        DBG_ERROR("SDL_CreateWindow failed: %s", SDL_GetError());
+        Reset_Video_Mode();
         return false;
     }
+
+    DBG_INFO("Created SDL2 %s window in %dx%d", (win_flags ? "fullscreen" : "windowed"), win_w, win_h);
 
     pixel_format = SDL_GetWindowPixelFormat(window);
     if (pixel_format == SDL_PIXELFORMAT_UNKNOWN || SDL_BITSPERPIXEL(pixel_format) < 16) {
-        SDL_DestroyWindow(window);
-        window = nullptr;
+        DBG_ERROR("SDL2 window pixel format unsupported: %s (%d bpp)",
+                  SDL_GetPixelFormatName(pixel_format),
+                  SDL_BITSPERPIXEL(pixel_format));
+        Reset_Video_Mode();
         return false;
     }
 
-    palette = SDL_AllocPalette(256);
+    DBG_INFO("  pixel format: %s (%d bpp)", SDL_GetPixelFormatName(pixel_format), SDL_BITSPERPIXEL(pixel_format));
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+    DBG_INFO("SDL2 drivers available: (user preference '%s')", Settings.Video.Driver.c_str());
+    int renderer_index = -1;
+    for (int i = 0; i < SDL_GetNumRenderDrivers(); i++) {
+        SDL_RendererInfo info;
+        if (SDL_GetRenderDriverInfo(i, &info) == 0) {
+            if (Settings.Video.Driver.compare(info.name) == 0) {
+                renderer_index = i;
+            }
+
+            DBG_INFO(" %s%s", info.name, (i == renderer_index ? " (selected)" : ""));
+        }
+    }
+
+    renderer = SDL_CreateRenderer(window, renderer_index, SDL_RENDERER_TARGETTEXTURE);
     if (renderer == nullptr) {
+        DBG_ERROR("SDL_CreateRenderer failed: %s", SDL_GetError());
+        Reset_Video_Mode();
         return false;
+    }
+
+    SDL_RendererInfo info;
+    if (SDL_GetRendererInfo(renderer, &info) != 0) {
+        DBG_ERROR("SDL_GetRendererInfo failed: %s", SDL_GetError());
+        Reset_Video_Mode();
+        return false;
+    }
+
+    DBG_INFO("Initialized SDL2 driver '%s'", info.name);
+    DBG_INFO("  flags:");
+    if (info.flags & SDL_RENDERER_SOFTWARE) {
+        DBG_INFO("    SDL_RENDERER_SOFTWARE");
+    }
+    if (info.flags & SDL_RENDERER_ACCELERATED) {
+        DBG_INFO("    SDL_RENDERER_ACCELERATED");
+    }
+    if (info.flags & SDL_RENDERER_PRESENTVSYNC) {
+        DBG_INFO("    SDL_RENDERER_PRESENT_VSYNC");
+    }
+    if (info.flags & SDL_RENDERER_TARGETTEXTURE) {
+        DBG_INFO("    SDL_RENDERER_TARGETTEXTURE");
+    }
+
+    DBG_INFO("  max texture size: %dx%d", info.max_texture_width, info.max_texture_height);
+
+    DBG_INFO("  %d texture formats supported: (user preference '%s')",
+             info.num_texture_formats,
+             SDL_GetPixelFormatName(requested_pixel_format));
+
+    /*
+    ** Pick the first pixel format or the user requested one. It better be RGB.
+    */
+    pixel_format = SDL_PIXELFORMAT_UNKNOWN;
+    for (int i = 0; i < info.num_texture_formats; i++) {
+        if ((pixel_format == SDL_PIXELFORMAT_UNKNOWN && i == 0) || info.texture_formats[i] == requested_pixel_format) {
+            pixel_format = info.texture_formats[i];
+        }
+    }
+
+    for (int i = 0; i < info.num_texture_formats; i++) {
+        DBG_INFO("    %s%s",
+                 SDL_GetPixelFormatName(info.texture_formats[i]),
+                 (pixel_format == info.texture_formats[i] ? " (selected)" : ""));
+    }
+
+    /*
+    ** Set requested scaling algorithm.
+    */
+    if (!SDL_SetHintWithPriority(SDL_HINT_RENDER_SCALE_QUALITY, Settings.Video.Scaler.c_str(), SDL_HINT_OVERRIDE)) {
+        DBG_WARN("  scaler '%s' is unsupported");
+    } else {
+        DBG_INFO("  scaler set to '%s'", Settings.Video.Scaler.c_str());
+    }
+
+    if (palette == nullptr) {
+        palette = SDL_AllocPalette(256);
     }
 
     /*
@@ -601,6 +725,7 @@ public:
         }
 
         SDL_UpdateTexture(texture, NULL, windowSurface->pixels, windowSurface->pitch);
+        SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
     }

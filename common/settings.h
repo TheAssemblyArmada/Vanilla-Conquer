@@ -1,6 +1,7 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include <string>
 class INIClass;
 
 class SettingsClass
@@ -20,6 +21,9 @@ public:
         int Height;
         int FrameLimit;
         bool HardwareCursor;
+        std::string Scaler;
+        std::string Driver;
+        std::string PixelFormat;
     } Video;
 };
 

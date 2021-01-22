@@ -12,6 +12,9 @@ SettingsClass::SettingsClass()
     Video.Height = 0;
     Video.FrameLimit = 120;
     Video.HardwareCursor = true;
+    Video.Scaler = "nearest";
+    Video.Driver = "default";
+    Video.PixelFormat = "default";
 }
 
 void SettingsClass::Load(INIClass& ini)
@@ -23,6 +26,9 @@ void SettingsClass::Load(INIClass& ini)
     Video.Height = ini.Get_Int("Video", "Height", Video.Height);
     Video.FrameLimit = ini.Get_Int("Video", "FrameLimit", Video.FrameLimit);
     Video.HardwareCursor = ini.Get_Bool("Video", "HardwareCursor", Video.HardwareCursor);
+    Video.Scaler = ini.Get_String("Video", "Scaler", Video.Scaler);
+    Video.Driver = ini.Get_String("Video", "Driver", Video.Driver);
+    Video.PixelFormat = ini.Get_String("Video", "PixelFormat", Video.PixelFormat);
 }
 
 void SettingsClass::Save(INIClass& ini)
@@ -34,4 +40,7 @@ void SettingsClass::Save(INIClass& ini)
     ini.Put_Int("Video", "Height", Video.Height);
     ini.Put_Int("Video", "FrameLimit", Video.FrameLimit);
     ini.Put_Bool("Video", "HardwareCursor", Video.HardwareCursor);
+    ini.Put_String("Video", "Scaler", Video.Scaler);
+    ini.Put_String("Video", "Driver", Video.Driver);
+    ini.Put_String("Video", "PixelFormat", Video.PixelFormat);
 }
