@@ -35,6 +35,7 @@
 #ifndef INI_H
 #define INI_H
 
+#include <string>
 #include <stdlib.h>
 #include <string.h>
 #include "listnode.h"
@@ -105,6 +106,7 @@ public:
     **	Get the various data types from the section and entry specified.
     */
     int Get_String(char const* section, char const* entry, char const* defvalue, char* buffer, int size) const;
+    std::string Get_String(char const* section, char const* entry, std::string const& defvalue) const;
     int Get_Int(char const* section, char const* entry, int defvalue = 0) const;
     int Get_Hex(char const* section, char const* entry, int defvalue = 0) const;
     bool Get_Bool(char const* section, char const* entry, bool defvalue = false) const;
@@ -118,6 +120,7 @@ public:
     */
     bool Put_Fixed(char const* section, char const* entry, fixed value);
     bool Put_String(char const* section, char const* entry, char const* string);
+    bool Put_String(char const* section, char const* entry, std::string const& string);
     bool Put_Hex(char const* section, char const* entry, int number);
     bool Put_Int(char const* section, char const* entry, int number, int format = 0);
     bool Put_Bool(char const* section, char const* entry, bool value);

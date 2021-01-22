@@ -968,6 +968,11 @@ bool INIClass::Put_String(char const* section, char const* entry, char const* st
     return (true);
 }
 
+bool INIClass::Put_String(char const* section, char const* entry, std::string const& string)
+{
+    return Put_String(section, entry, string.c_str());
+}
+
 /***********************************************************************************************
  * INIClass::Get_String -- Fetch the value of a particular entry in a specified section.       *
  *                                                                                             *
@@ -1033,6 +1038,13 @@ int INIClass::Get_String(char const* section, char const* entry, char const* def
         strtrim(buffer);
         return ((int)strlen(buffer));
     }
+}
+
+std::string INIClass::Get_String(char const* section, char const* entry, std::string const& defvalue) const
+{
+    std::string buffer(MAX_LINE_LENGTH, '\0');
+    buffer.resize(Get_String(section, entry, defvalue.c_str(), &buffer[0], static_cast<int>(buffer.capacity())));
+    return buffer;
 }
 
 /***********************************************************************************************
