@@ -8,7 +8,7 @@ SettingsClass::SettingsClass()
     /*
     ** Mouse settings
     */
-    Mouse.RawInput = false;
+    Mouse.RawInput = true;
     Mouse.Sensitivity = 100;
 
     /*
@@ -19,9 +19,9 @@ SettingsClass::SettingsClass()
     Video.Windowed = false;
     Video.Width = 0;
     Video.Height = 0;
-    Video.Boxing = false;
+    Video.Boxing = true;
     Video.FrameLimit = 120;
-    Video.HardwareCursor = true;
+    Video.HardwareCursor = false;
     Video.Scaler = "nearest";
     Video.Driver = "default";
     Video.PixelFormat = "default";
