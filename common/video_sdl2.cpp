@@ -51,6 +51,7 @@ static SDL_Window* window;
 static SDL_Renderer* renderer;
 static SDL_Palette* palette;
 static Uint32 pixel_format;
+static SDL_Rect render_dst;
 
 static struct
 {
@@ -126,6 +127,26 @@ static void Update_HWCursor_Settings()
     hwcursor.ScaleY = win_h / (float)hwcursor.GameH;
 
     /*
+    ** Update screen boxing settings.
+    */
+    float ar = (float)hwcursor.GameW / hwcursor.GameH;
+    if (Settings.Video.Boxing) {
+        render_dst.w = win_w;
+        render_dst.h = render_dst.w / ar;
+        if (render_dst.h > win_h) {
+            render_dst.h = win_h;
+            render_dst.w = render_dst.h * ar;
+        }
+        render_dst.x = (win_w - render_dst.w) / 2;
+        render_dst.y = (win_h - render_dst.h) / 2;
+    } else {
+        render_dst.w = win_w;
+        render_dst.h = win_h;
+        render_dst.x = 0;
+        render_dst.y = 0;
+    }
+
+    /*
     ** Ensure cursor clip is in the desired state.
     */
     Set_Video_Cursor_Clip(hwcursor.Clip);
@@ -195,7 +216,7 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
             win_h = Settings.Video.Height;
             win_flags |= SDL_WINDOW_FULLSCREEN;
         }
-    } else if (Settings.Video.WindowWidth > w && Settings.Video.WindowHeight > h) {
+    } else if (Settings.Video.WindowWidth > w || Settings.Video.WindowHeight > h) {
         win_w = Settings.Video.WindowWidth;
         win_h = Settings.Video.WindowHeight;
     } else {
@@ -719,14 +740,14 @@ public:
             dst.x = (x / hwcursor.ScaleX) - (hwcursor.HotX);
             dst.y = (y / hwcursor.ScaleY) - (hwcursor.HotY);
             dst.w = hwcursor.Surface->w;
-            dst.w = hwcursor.Surface->h;
+            dst.h = hwcursor.Surface->h;
 
             SDL_BlitSurface(hwcursor.Surface, nullptr, windowSurface, &dst);
         }
 
         SDL_UpdateTexture(texture, NULL, windowSurface->pixels, windowSurface->pitch);
         SDL_RenderClear(renderer);
-        SDL_RenderCopy(renderer, texture, NULL, NULL);
+        SDL_RenderCopy(renderer, texture, NULL, &render_dst);
         SDL_RenderPresent(renderer);
     }
 
