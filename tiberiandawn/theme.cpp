@@ -182,7 +182,7 @@ char const* ThemeClass::Full_Name(ThemeType theme) const
 void ThemeClass::AI(void)
 {
     if (SampleType && !Debug_Quiet) {
-        if (ScoresPresent && Options.ScoreVolume && !Still_Playing() && Pending != THEME_NONE) {
+        if (ScoresPresent && Options.ScoreVolume && !Still_Playing() && Pending != THEME_NONE && GameInFocus) {
 
             /*
             **	If the pending song needs to be picked, then pick it now.
@@ -403,6 +403,16 @@ void ThemeClass::Stop(void)
             Score = THEME_NONE;
             Pending = THEME_NONE;
         }
+    }
+}
+
+void ThemeClass::Suspend(void)
+{
+    if (ScoresPresent && SampleType && !Debug_Quiet && Current != -1) {
+        Stop_Sample(Current);
+        Current = -1;
+        Pending = Score;
+        Score = THEME_NONE;
     }
 }
 

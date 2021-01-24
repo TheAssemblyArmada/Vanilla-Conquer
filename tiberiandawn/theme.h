@@ -82,6 +82,7 @@ public:
         return Score;
     };
     void Stop(void);
+    void Suspend(void);
     void Fade_Out(void)
     {
         Queue_Song(THEME_NONE);

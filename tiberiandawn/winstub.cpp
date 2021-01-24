@@ -70,17 +70,25 @@ ThemeType OldTheme = THEME_NONE;
 
 void Focus_Loss(void)
 {
+#ifdef SDL2_BUILD
+    GameInFocus = false;
+    Theme.Suspend();
+#else
     if (SoundOn) {
         if (OldTheme == THEME_NONE) {
             OldTheme = Theme.What_Is_Playing();
         }
     }
     Theme.Stop();
+#endif
     Stop_Primary_Sound_Buffer();
 }
 
 void Focus_Restore(void)
 {
+#ifdef SDL2_BUILD
+    GameInFocus = true;
+#endif
     Map.Flag_To_Redraw(true);
     Start_Primary_Sound_Buffer(true);
 
