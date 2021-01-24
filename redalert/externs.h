@@ -58,13 +58,11 @@
 class CarryoverClass;
 
 #ifdef REMASTER_BUILD
-#define GBUFF_INIT_WIDTH     3072
-#define GBUFF_INIT_HEIGHT    3072
-#define GBUFF_INIT_ALTHEIGHT 3072
+#define GBUFF_INIT_WIDTH  3072
+#define GBUFF_INIT_HEIGHT 3072
 #else
-#define GBUFF_INIT_WIDTH     640
-#define GBUFF_INIT_HEIGHT    400
-#define GBUFF_INIT_ALTHEIGHT 480
+#define GBUFF_INIT_WIDTH  640
+#define GBUFF_INIT_HEIGHT 400
 #endif
 
 extern char _staging_buffer[32000];

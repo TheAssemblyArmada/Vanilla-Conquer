@@ -292,24 +292,13 @@ int main(int argc, char** argv)
         bool video_success = false;
         CCDebugString("C&C95 - Setting video mode.\n");
         /*
-        ** Set 640x400 video mode. If its not available then try for 640x480
+        ** Set 640x400 video mode.
         */
 #ifdef REMASTER_BUILD
         video_success = true;
 #else
-        if (ScreenHeight == 400) {
-            if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
-                video_success = true;
-            } else {
-                if (Set_Video_Mode(ScreenWidth, 480, 8)) {
-                    video_success = true;
-                    ScreenHeight = 480;
-                }
-            }
-        } else {
-            if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
-                video_success = true;
-            }
+        if (Set_Video_Mode(ScreenWidth, ScreenHeight, 8)) {
+            video_success = true;
         }
 #endif
 
@@ -395,15 +384,10 @@ int main(int argc, char** argv)
             }
 #endif
         }
-        ScreenHeight = GBUFF_INIT_HEIGHT;
 
-        if (VisiblePage.Get_Height() == 480) {
-            SeenBuff.Attach(&VisiblePage, 0, 40, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-            HidPage.Attach(&HiddenPage, 0, 40, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-        } else {
-            SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-            HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-        }
+        SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+        HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+
         CCDebugString("C&C95 - Adjusting variables for resolution.\n");
         Options.Adjust_Variables_For_Resolution();
 
@@ -605,7 +589,6 @@ void Read_Setup_Options(RawFileClass* config_file)
     */
     VideoBackBufferAllowed = ini.Get_Bool("Options", "VideoBackBuffer", true);
     AllowHardwareBlitFills = ini.Get_Bool("Options", "HardwareFills", true);
-    ScreenHeight = ini.Get_Bool("Options", "Resolution", false) ? GBUFF_INIT_ALTHEIGHT : GBUFF_INIT_HEIGHT;
 
     /*
     ** See if an alternative socket number has been specified
