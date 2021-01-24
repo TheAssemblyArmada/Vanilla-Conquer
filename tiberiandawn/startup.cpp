@@ -460,6 +460,7 @@ int main(int argc, char** argv)
         /*
         ** Save settings if they were changed during gameplay.
         */
+        ini.Load(cfile);
         Settings.Save(ini);
         ini.Save(cfile);
 
