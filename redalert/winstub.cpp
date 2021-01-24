@@ -81,12 +81,18 @@ unsigned long CCFocusMessage = WM_USER + 50; // Private message for receiving ap
 
 void Focus_Loss(void)
 {
+#ifdef SDL2_BUILD
+    GameInFocus = false;
+#endif
     Theme.Suspend();
     Stop_Primary_Sound_Buffer();
 }
 
 void Focus_Restore(void)
 {
+#ifdef SDL2_BUILD
+    GameInFocus = true;
+#endif
     Map.Flag_To_Redraw(true);
     Start_Primary_Sound_Buffer(true);
 
