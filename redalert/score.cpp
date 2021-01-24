@@ -1607,7 +1607,6 @@ void Call_Back_Delay(int time)
     if (time > 60)
         time = 60;
     CDTimerClass<SystemTimerClass> cd;
-    CDTimerClass<SystemTimerClass> callbackcd = 0;
 
     if (!ControlQ) {
         if (Keyboard->Down(KN_LCTRL) && Keyboard->Down(KN_Q)) {
@@ -1621,10 +1620,7 @@ void Call_Back_Delay(int time)
     cd = time;
     StreamLowImpact = true;
     do {
-        if (callbackcd == 0) {
-            Call_Back();
-            callbackcd = TIMER_SECOND / 4;
-        }
+        Call_Back();
         Animate_Score_Objs();
         Frame_Limiter();
     } while (cd);
