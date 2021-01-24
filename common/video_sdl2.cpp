@@ -390,14 +390,14 @@ void Move_Video_Mouse(int xrel, int yrel)
         hwcursor.Y += yrel * (Settings.Mouse.Sensitivity / 100.0f);
     }
 
-    if (hwcursor.X > hwcursor.GameW) {
-        hwcursor.X = hwcursor.GameW;
+    if (hwcursor.X >= hwcursor.GameW) {
+        hwcursor.X = hwcursor.GameW - 1;
     } else if (hwcursor.X < 0) {
         hwcursor.X = 0;
     }
 
-    if (hwcursor.Y > hwcursor.GameH) {
-        hwcursor.Y = hwcursor.GameH;
+    if (hwcursor.Y >= hwcursor.GameH) {
+        hwcursor.Y = hwcursor.GameH - 1;
     } else if (hwcursor.Y < 0) {
         hwcursor.Y = 0;
     }
