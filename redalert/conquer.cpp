@@ -1904,7 +1904,9 @@ bool Main_Loop()
         PlayerWins = false;
         PlayerRestarts = false;
         Map.Help_Text(TXT_NONE);
+        Set_Video_Cursor_Clip(false);
         Do_Win();
+        Set_Video_Cursor_Clip(true);
         return (!GameActive);
     }
     if (PlayerLoses) {
@@ -1913,7 +1915,9 @@ bool Main_Loop()
         PlayerLoses = false;
         PlayerRestarts = false;
         Map.Help_Text(TXT_NONE);
+        Set_Video_Cursor_Clip(false);
         Do_Lose();
+        Set_Video_Cursor_Clip(true);
         return (!GameActive);
     }
     if (PlayerRestarts) {
@@ -1922,7 +1926,9 @@ bool Main_Loop()
         PlayerLoses = false;
         PlayerRestarts = false;
         Map.Help_Text(TXT_NONE);
+        Set_Video_Cursor_Clip(false);
         Do_Restart();
+        Set_Video_Cursor_Clip(true);
         return (!GameActive);
     }
 
@@ -1932,7 +1938,9 @@ bool Main_Loop()
         //	End game in a draw.
         WWMouse->Erase_Mouse(&HidPage, true);
         Map.Help_Text(TXT_NONE);
+        Set_Video_Cursor_Clip(false);
         Do_Draw();
+        Set_Video_Cursor_Clip(true);
         return (!GameActive);
     }
 #endif

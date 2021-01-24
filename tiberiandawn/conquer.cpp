@@ -1602,7 +1602,9 @@ bool Main_Loop()
         PlayerWins = false;
         PlayerRestarts = false;
         Map.Help_Text(TXT_NONE);
+        Set_Video_Cursor_Clip(false);
         Do_Win();
+        Set_Video_Cursor_Clip(true);
     }
     if (PlayerLoses) {
 
@@ -1616,7 +1618,9 @@ bool Main_Loop()
         PlayerLoses = false;
         PlayerRestarts = false;
         Map.Help_Text(TXT_NONE);
+        Set_Video_Cursor_Clip(false);
         Do_Lose();
+        Set_Video_Cursor_Clip(true);
     }
     if (PlayerRestarts) {
         WWMouse->Erase_Mouse(&HidPage, true);
@@ -1624,7 +1628,9 @@ bool Main_Loop()
         PlayerLoses = false;
         PlayerRestarts = false;
         Map.Help_Text(TXT_NONE);
+        Set_Video_Cursor_Clip(false);
         Do_Restart();
+        Set_Video_Cursor_Clip(true);
     }
 
     /*
