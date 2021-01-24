@@ -1540,14 +1540,6 @@ bool Parse_Command_Line(int argc, char* argv[])
             continue;
         }
 
-        /*
-        ** Set screen to 640x480 instead of 640x400
-        */
-        if (strstr(string, "-480")) {
-            ScreenHeight = 480;
-            continue;
-        }
-
 #ifdef CHEAT_KEYS
         /*
         **	Specify the random number seed (for debugging)
