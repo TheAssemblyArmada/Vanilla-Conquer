@@ -46,6 +46,7 @@
 #include "soleglobals.h"
 #include "solehelp.h"
 #include "soleparams.h"
+#include "solewdt.h"
 #include "voicethemes.h"
 #include "common/tcpip.h"
 #include "common/vqaconfig.h"
@@ -829,7 +830,7 @@ bool Select_Game(bool fade)
             **	Start an offline practice mode.
             */
             case SEL_PRACTICE: {
-                OfflineMode = 1;
+                OfflineMode = true;
                 GameParams.TimeLimit = Options.OfflineGametime;
                 GameParams.ScoreLimit = 0;
                 GameParams.LifeLimit = 0;
@@ -856,9 +857,7 @@ bool Select_Game(bool fade)
                 GameTimer.Set(0, 1);
                 server_534780 = 0;
                 Fade_Palette_To(BlackPalette, 15, Call_Back);
-                //Making_a_choice = 1;
-                bool choice_made = false /* Unit_Choice_Dialog(); */;
-                //Making_a_choice = 0;
+                bool choice_made = Unit_Choice_Dialog();
                 if (choice_made) {
                     if (false /*Listener || Init_Listener()*/) {
                         Read_MultiPlayer_Settings();
@@ -888,7 +887,7 @@ bool Select_Game(bool fade)
             **	Connect to an online game.
             */
             case SEL_PLAYONLINE:
-
+                selection = SEL_NONE;
                 break;
 
             /*

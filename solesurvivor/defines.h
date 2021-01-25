@@ -648,6 +648,13 @@ typedef enum HousesType : signed char
     HOUSE_MULTI5,  // Multi-Player house #5
     HOUSE_MULTI6,  // Multi-Player house #6
 
+    HOUSE_SOLE_ADMIN = 4,
+    HOUSE_SOLE_OBSERVER,
+    HOUSE_SOLE_TEAM1,
+    HOUSE_SOLE_TEAM2,
+    HOUSE_SOLE_TEAM3,
+    HOUSE_SOLE_TEAM4,
+
     HOUSE_COUNT,
     HOUSE_FIRST = HOUSE_GOOD
 } HousesType;

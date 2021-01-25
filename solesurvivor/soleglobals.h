@@ -14,6 +14,7 @@
 #define SOLEGLOBALS_H
 
 #include "common/timer.h"
+#include "function.h"
 
 extern bool LogTeams;
 extern bool OfflineMode;
@@ -21,7 +22,11 @@ extern bool WDTRadarAdded;
 extern bool ClientAICalled;
 extern bool server_534780; // Possibly indicates server is remote?
 extern bool somestate_591BCC;
+extern bool UseAltArt;
 
+extern HousesType Side;
+extern RTTIType ChosenRTTI;
+extern int ChosenType;
 extern int Steel;
 extern int Green;
 extern int Orange;

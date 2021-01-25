@@ -113,6 +113,7 @@ set(SOLE_SRC
     solehelp.cpp
     soleparams.cpp
     solerandom.cpp
+    solewdt.cpp
     sounddlg.cpp
     sounddlg.cpp
     sounddlg.cpp
