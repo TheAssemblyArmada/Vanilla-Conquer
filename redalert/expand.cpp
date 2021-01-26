@@ -475,26 +475,21 @@ bool Expansion_Dialog(void)
 
         KeyNumType input = buttons->Input();
         switch (input) {
+        case (KN_RETURN):
         case 200 | KN_BUTTON:
-            Whom = list.Current_Object()->House;
-            Scen.Scenario = list.Current_Object()->Scenario;
-            strcpy(Scen.ScenarioName, list.Current_Object()->FullName);
-            process = false;
-            okval = true;
+            if (list.Current_Object()) {
+                Whom = list.Current_Object()->House;
+                Scen.Scenario = list.Current_Object()->Scenario;
+                strcpy(Scen.ScenarioName, list.Current_Object()->FullName);
+                process = false;
+                okval = true;
+            }
             break;
 
         case KN_ESC:
         case 201 | KN_BUTTON:
             process = false;
             okval = false;
-            break;
-
-        case (KN_RETURN):
-            Whom = list.Current_Object()->House;
-            Scen.Scenario = list.Current_Object()->Scenario;
-            strcpy(Scen.ScenarioName, list.Current_Object()->FullName);
-            process = false;
-            okval = true;
             break;
 
         default:
