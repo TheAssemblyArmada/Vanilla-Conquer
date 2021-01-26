@@ -881,17 +881,20 @@ GadgetClass* ListClass::Remove(void)
  *=============================================================================================*/
 void ListClass::Set_Selected_Index(int index)
 {
-    if (index < List.Count()) {
-        SelectedIndex = index;
-        Flag_To_Redraw();
-        if (SelectedIndex < CurrentTopIndex) {
-            Set_View_Index(SelectedIndex);
-        }
-        if (SelectedIndex >= CurrentTopIndex + LineCount) {
-            Set_View_Index(SelectedIndex - (LineCount - 1));
-        }
-    } else {
+    if (List.Count() == 0 || index >= List.Count()) {
         SelectedIndex = 0;
+    } else if (index < 0) {
+        SelectedIndex = List.Count() - 1;
+    } else {
+        SelectedIndex = index;
+    }
+
+    Flag_To_Redraw();
+    if (SelectedIndex < CurrentTopIndex) {
+        Set_View_Index(SelectedIndex);
+    }
+    if (SelectedIndex >= CurrentTopIndex + LineCount) {
+        Set_View_Index(SelectedIndex - (LineCount - 1));
     }
 }
 
