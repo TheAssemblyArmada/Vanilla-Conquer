@@ -56,6 +56,7 @@
 #include "rawfile.h"
 #include "file.h"
 #include "wwstd.h"
+#include "debugstring.h"
 
 #ifndef _WIN32
 #include <unistd.h>
@@ -63,6 +64,7 @@
 #endif
 
 #include <sys/stat.h>
+#include <SDL_messagebox.h>
 
 /***********************************************************************************************
  * RawFileClass::Error -- Handles displaying a file error message.                             *
@@ -89,10 +91,14 @@
  *=============================================================================================*/
 void RawFileClass::Error(int error, int canretry, char const* filename)
 {
-#ifndef _WIN32
-    perror(filename);
-#endif
-    exit(1);
+    char buffer[64];
+    const char* errorstr = strerror(error);
+
+    snprintf(buffer, 64, "Error on file %s: %s\n", filename, errorstr);
+    fprintf(stdout, buffer);
+    if (!canretry) {
+        DBG_FATAL(buffer);
+    }
 }
 
 /***********************************************************************************************
@@ -219,6 +225,7 @@ int RawFileClass::Open(char const* filename, int rights)
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
+
 int RawFileClass::Open(int rights)
 {
     Close();
@@ -269,13 +276,6 @@ int RawFileClass::Open(int rights)
         }
 
         /*
-        **	Biased files must be positioned past the bias start position.
-        */
-        if (BiasStart != 0 || BiasLength != -1) {
-            Seek(0, SEEK_SET);
-        }
-
-        /*
         **	If the handle indicates the file is not open, then this is an error condition.
         **	For the case of the file cannot be found, then allow a retry. All other cases
         **	are fatal.
@@ -283,6 +283,14 @@ int RawFileClass::Open(int rights)
         if (Handle == nullptr) {
             Error(errno, false, Filename);
         }
+
+        /*
+        **	Biased files must be positioned past the bias start position.
+        */
+        if (BiasStart != 0 || BiasLength != -1) {
+            Seek(0, SEEK_SET);
+        }
+
         break;
     }
 
@@ -573,7 +581,6 @@ long RawFileClass::Write(void const* buffer, long size)
  *=============================================================================================*/
 long RawFileClass::Seek(long pos, int dir)
 {
-
     /*
     **	A file that is biased will have a seek operation modified so that the file appears to
     **	exist only within the bias range. All bytes outside of this range appear to be
@@ -864,13 +871,13 @@ long RawFileClass::Raw_Seek(long pos, int dir)
     /*
     **	If the file isn't opened, then this is a fatal error condition.
     */
-    if (!Is_Open()) {
-        Error(EBADF, false, Filename);
+    if (!RawFileClass::Is_Open()) {
+        RawFileClass::Error(EBADF, false, Filename);
     }
 
     clearerr(Handle);
     if (fseek(Handle, pos, dir) < 0) {
-        Error(errno, false, Filename);
+        RawFileClass::Error(errno, false, Filename);
     }
 
     pos = ftell(Handle);
