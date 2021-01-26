@@ -878,17 +878,19 @@ int Com_Scenario_Dialog(bool skirmish)
             //
             // make sure we got a game options packet from the other player
             //
-            if (gameoptions) {
-                rc = true;
-                process = false;
+            if (Session.Scenarios.Count() > 0) {
+                if (gameoptions) {
+                    rc = true;
+                    process = false;
 
-                // force transmitting of game options packet one last time
+                    // force transmitting of game options packet one last time
 
-                transmit = true;
-                transmittime = 0;
-            } else {
-                WWMessageBox().Process(TXT_ONLY_ONE, TXT_OOPS, NULL);
-                display = REDRAW_ALL;
+                    transmit = true;
+                    transmittime = 0;
+                } else {
+                    WWMessageBox().Process(TXT_ONLY_ONE, TXT_OOPS, NULL);
+                    display = REDRAW_ALL;
+                }
             }
             if (input == (BUTTON_LOAD | KN_BUTTON))
                 load_game = true;
