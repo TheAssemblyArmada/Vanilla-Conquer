@@ -61,7 +61,7 @@ static UnitTypeClass const UnitVisceroid(UNIT_VICE,
                                          true,          // Always use the given name for the vehicle?
                                          false,         //	Is this a typical transport vehicle?
                                          false,         // Can it be crushed by a heavy vehicle?
-                                         true,          // Can this unit squash infantry?
+                                         false,         // Can this unit squash infantry?
                                          false,         // Does this unit harvest Tiberium?
                                          true,          // Is invisible to radar?
                                          true,          // Is selectable by player?
@@ -71,7 +71,7 @@ static UnitTypeClass const UnitVisceroid(UNIT_VICE,
                                          false,         // Is it equipped with a combat turret?
                                          false,         // Fires multiple shots in quick succession?
                                          false,         // Can it be repaired in a repair facility?
-                                         false,         // Can the player construct or order this unit?
+                                         true,          // Can the player construct or order this unit?
                                          false,         // Is there a crew inside?
                                          false,         // Does it have a rotating radar dish?
                                          false,         // Is there an associated firing animation?
@@ -82,8 +82,8 @@ static UnitTypeClass const UnitVisceroid(UNIT_VICE,
                                          false,         // Is the unit capable of cloaking?
                                          true,          // Does the unit have a constant animation?
                                          -1,            // AMMO:			Number of shots it has (default).
-                                         150,           // STRENGTH:	Strength (in damage points).
-                                         4,             // SIGHTRANGE:	Range of sighting.
+                                         300,           // STRENGTH:	Strength (in damage points).
+                                         5,             // SIGHTRANGE:	Range of sighting.
                                          800,           // COST:			Cost to build (Credits).
                                          1,             // SCENARIO:	Starting availability scenario.
                                          80,
@@ -93,12 +93,12 @@ static UnitTypeClass const UnitVisceroid(UNIT_VICE,
                                              | HOUSEF_JP, // OWNABLE:		Ownable by house (bit field).
                                          WEAPON_CHEMSPRAY,
                                          WEAPON_NONE,
-                                         ARMOR_WOOD,  // ARMOR:		Armor type
-                                         SPEED_TRACK, // MOVE:			Locomotion type.
-                                         MPH_MEDIUM,  // SPEED:		Miles per hour.
-                                         5,           // ROT:			Rate of turn (degrees per tick).
-                                         0,           // Turret center offset along body centerline.
-                                         MISSION_HUNT // ORDERS:		Default order to give new unit.
+                                         ARMOR_ALUMINUM, // ARMOR:		Armor type
+                                         SPEED_TRACK,    // MOVE:			Locomotion type.
+                                         MPH_MEDIUM,     // SPEED:		Miles per hour.
+                                         5,              // ROT:			Rate of turn (degrees per tick).
+                                         0,              // Turret center offset along body centerline.
+                                         MISSION_HUNT    // ORDERS:		Default order to give new unit.
 );
 
 // Flame tank
@@ -114,7 +114,7 @@ static UnitTypeClass const UnitFTank(UNIT_FTANK,
                                      false,         // Always use the given name for the vehicle?
                                      false,         //	Is this a typical transport vehicle?
                                      false,         // Can it be crushed by a heavy vehicle?
-                                     true,          // Can this unit squash infantry?
+                                     false,         // Can this unit squash infantry?
                                      false,         // Does this unit harvest Tiberium?
                                      false,         // Is invisible to radar?
                                      true,          // Is selectable by player?
@@ -135,8 +135,8 @@ static UnitTypeClass const UnitFTank(UNIT_FTANK,
                                      false,         // Is the unit capable of cloaking?
                                      false,         // Does the unit have a constant animation?
                                      -1,            // AMMO:			Number of shots it has (default).
-                                     300,           // STRENGTH:	Strength (in damage points).
-                                     4,             // SIGHTRANGE:	Range of sighting.
+                                     450,           // STRENGTH:	Strength (in damage points).
+                                     5,             // SIGHTRANGE:	Range of sighting.
                                      800,           // COST:			Cost to build (Credits).
                                      9,             // SCENARIO:	Starting availability scenario.
                                      80,
@@ -167,7 +167,7 @@ static UnitTypeClass const UnitSTank(UNIT_STANK,
                                      false,         // Always use the given name for the vehicle?
                                      false,         //	Is this a typical transport vehicle?
                                      false,         // Can it be crushed by a heavy vehicle?
-                                     true,          // Can this unit squash infantry?
+                                     false,         // Can this unit squash infantry?
                                      false,         // Does this unit harvest Tiberium?
                                      true,          // Is invisible to radar?
                                      true,          // Is selectable by player?
@@ -188,7 +188,7 @@ static UnitTypeClass const UnitSTank(UNIT_STANK,
                                      true,          // Is the unit capable of cloaking?
                                      false,         // Does the unit have a constant animation?
                                      -1,            // AMMO:			Number of shots it has (default).
-                                     110,           // STRENGTH:	Strength (in damage points).
+                                     250,           // STRENGTH:	Strength (in damage points).
                                      4,             // SIGHTRANGE:	Range of sighting.
                                      900,           // COST:			Cost to build (Credits).
                                      12,            // SCENARIO:	Starting availability scenario.
@@ -220,7 +220,7 @@ static UnitTypeClass const UnitLTank(UNIT_LTANK,
                                      false,        // Always use the given name for the vehicle?
                                      false,        //	Is this a typical transport vehicle?
                                      false,        // Can it be crushed by a heavy vehicle?
-                                     true,         // Can this unit squash infantry?
+                                     false,        // Can this unit squash infantry?
                                      false,        // Does this unit harvest Tiberium?
                                      false,        // Is invisible to radar?
                                      true,         // Is selectable by player?
@@ -241,7 +241,7 @@ static UnitTypeClass const UnitLTank(UNIT_LTANK,
                                      false,        // Is the unit capable of cloaking?
                                      false,        // Does the unit have a constant animation?
                                      -1,           // AMMO:			Number of shots it has (default).
-                                     300,          // STRENGTH:	Strength (in damage points).
+                                     500,          // STRENGTH:	Strength (in damage points).
                                      3,            // SIGHTRANGE:	Range of sighting.
                                      600,          // COST:			Cost to build (Credits).
                                      5,            // SCENARIO:	Starting availability scenario.
@@ -273,7 +273,7 @@ static UnitTypeClass const UnitMTank(UNIT_MTANK,
                                      false,        // Always use the given name for the vehicle?
                                      false,        //	Is this a typical transport vehicle?
                                      false,        // Can it be crushed by a heavy vehicle?
-                                     true,         // Can this unit squash infantry?
+                                     false,        // Can this unit squash infantry?
                                      false,        // Does this unit harvest Tiberium?
                                      false,        // Is invisible to radar?
                                      true,         // Is selectable by player?
@@ -294,7 +294,7 @@ static UnitTypeClass const UnitMTank(UNIT_MTANK,
                                      false,        // Is the unit capable of cloaking?
                                      false,        // Does the unit have a constant animation?
                                      -1,           // AMMO:			Number of shots it has (default).
-                                     400,          // STRENGTH:	Strength (in damage points).
+                                     450,          // STRENGTH:	Strength (in damage points).
                                      3,            // SIGHTRANGE:	Range of sighting.
                                      800,          // COST:			Cost to build (Credits).
                                      7,            // SCENARIO:	Starting availability scenario.
@@ -326,7 +326,7 @@ static UnitTypeClass const UnitHTank(UNIT_HTANK,
                                      false,          // Always use the given name for the vehicle?
                                      false,          //	Is this a typical transport vehicle?
                                      false,          // Can it be crushed by a heavy vehicle?
-                                     true,           // Can this unit squash infantry?
+                                     false,          // Can this unit squash infantry?
                                      false,          // Does this unit harvest Tiberium?
                                      false,          // Is invisible to radar?
                                      true,           // Is selectable by player?
@@ -347,7 +347,7 @@ static UnitTypeClass const UnitHTank(UNIT_HTANK,
                                      false,          // Is the unit capable of cloaking?
                                      false,          // Does the unit have a constant animation?
                                      -1,             // AMMO:			Number of shots it has (default).
-                                     600,            // STRENGTH:	Strength (in damage points).
+                                     750,            // STRENGTH:	Strength (in damage points).
                                      4,              // SIGHTRANGE:	Range of sighting.
                                      1500,           // COST:			Cost to build (Credits).
                                      13,             // SCENARIO:	Starting availability scenario.
@@ -379,7 +379,7 @@ static UnitTypeClass const UnitMHQ(UNIT_MHQ,
                                    false,        // Always use the given name for the vehicle?
                                    false,        //	Is this a typical transport vehicle?
                                    false,        // Can it be crushed by a heavy vehicle?
-                                   true,         // Can this unit squash infantry?
+                                   false,        // Can this unit squash infantry?
                                    false,        // Does this unit harvest Tiberium?
                                    false,        // Is invisible to radar?
                                    true,         // Is selectable by player?
@@ -507,7 +507,7 @@ static UnitTypeClass const UnitSAM(UNIT_MSAM,
                                    false,          // Is the unit capable of cloaking?
                                    false,          // Does the unit have a constant animation?
                                    2,              // AMMO:			Number of shots it has (default).
-                                   120,            // STRENGTH:	Strength (in damage points).
+                                   300,            // STRENGTH:	Strength (in damage points).
                                    4,              // SIGHTRANGE:	Range of sighting.
                                    750,            // COST:			Cost to build (Credits).
                                    98,             // SCENARIO:	Starting availability scenario.
@@ -561,7 +561,7 @@ static UnitTypeClass const UnitArty(UNIT_ARTY,
                                     false,         // Is the unit capable of cloaking?
                                     false,         // Does the unit have a constant animation?
                                     -1,            // AMMO:			Number of shots it has (default).
-                                    75,            // STRENGTH:	Strength (in damage points).
+                                    350,           // STRENGTH:	Strength (in damage points).
                                     4,             // SIGHTRANGE:	Range of sighting.
                                     450,           // COST:			Cost to build (Credits).
                                     9,             // SCENARIO:	Starting availability scenario.
@@ -721,8 +721,8 @@ static UnitTypeClass const UnitJeep(UNIT_JEEP,
                                     false,        // Is the unit capable of cloaking?
                                     false,        // Does the unit have a constant animation?
                                     -1,           // AMMO:			Number of shots it has (default).
-                                    150,          // STRENGTH:	Strength (in damage points).
-                                    2,            // SIGHTRANGE:	Range of sighting.
+                                    310,          // STRENGTH:	Strength (in damage points).
+                                    4,            // SIGHTRANGE:	Range of sighting.
                                     400,          // COST:			Cost to build (Credits).
                                     5,            // SCENARIO:	Starting availability scenario.
                                     80,
@@ -774,8 +774,8 @@ static UnitTypeClass const UnitBuggy(UNIT_BUGGY,
                                      false,          // Is the unit capable of cloaking?
                                      false,          // Does the unit have a constant animation?
                                      -1,             // AMMO:			Number of shots it has (default).
-                                     140,            // STRENGTH:	Strength (in damage points).
-                                     2,              // SIGHTRANGE:	Range of sighting.
+                                     230,            // STRENGTH:	Strength (in damage points).
+                                     4,              // SIGHTRANGE:	Range of sighting.
                                      300,            // COST:			Cost to build (Credits).
                                      5,              // SCENARIO:	Starting availability scenario.
                                      80,
@@ -830,7 +830,7 @@ static UnitTypeClass const UnitBike(UNIT_BIKE,
 #ifdef ADVANCED
                                     90, // STRENGTH:	Strength (in damage points).
 #else
-                                    160, // STRENGTH:	Strength (in damage points).
+                                    210, // STRENGTH:	Strength (in damage points).
 #endif
                                     2,   // SIGHTRANGE:	Range of sighting.
                                     500, // COST:			Cost to build (Credits).
@@ -884,7 +884,7 @@ static UnitTypeClass const UnitMLRS(UNIT_MLRS,
                                     false,         // Is the unit capable of cloaking?
                                     false,         // Does the unit have a constant animation?
                                     -1,            // AMMO:			Number of shots it has (default).
-                                    100,           // STRENGTH:	Strength (in damage points).
+                                    400,           // STRENGTH:	Strength (in damage points).
                                     4,             // SIGHTRANGE:	Range of sighting.
                                     800,           // COST:			Cost to build (Credits).
                                     11,            // SCENARIO:	Starting availability scenario.
@@ -916,7 +916,7 @@ static UnitTypeClass const UnitAPC(UNIT_APC,
                                    false,            // Always use the given name for the vehicle?
                                    true,             //	Is this a typical transport vehicle?
                                    false,            // Can it be crushed by a heavy vehicle?
-                                   true,             // Can this unit squash infantry?
+                                   false,            // Can this unit squash infantry?
                                    false,            // Does this unit harvest Tiberium?
                                    false,            // Is invisible to radar?
                                    true,             // Is selectable by player?
@@ -937,7 +937,7 @@ static UnitTypeClass const UnitAPC(UNIT_APC,
                                    false,            // Is the unit capable of cloaking?
                                    false,            // Does the unit have a constant animation?
                                    -1,               // AMMO:			Number of shots it has (default).
-                                   200,              // STRENGTH:	Strength (in damage points).
+                                   400,              // STRENGTH:	Strength (in damage points).
                                    4,                // SIGHTRANGE:	Range of sighting.
                                    700,              // COST:			Cost to build (Credits).
                                    5,                // SCENARIO:	Starting availability scenario.
@@ -948,10 +948,10 @@ static UnitTypeClass const UnitAPC(UNIT_APC,
                                        | HOUSEF_GOOD, // OWNABLE:		Ownable by house (bit field).
                                    WEAPON_M60MG,
                                    WEAPON_NONE,
-                                   ARMOR_STEEL,       // ARMOR:		Armor type
+                                   ARMOR_ALUMINUM,    // ARMOR:		Armor type
                                    SPEED_TRACK,       // MOVE:			Locomotion type.
                                    MPH_MEDIUM_FASTER, // SPEED:		Miles per hour.
-                                   5,                 // ROT:			Rate of turn (degrees per tick).
+                                   10,                // ROT:			Rate of turn (degrees per tick).
                                    0,                 // Turret center offset along body centerline.
                                    MISSION_HUNT       // ORDERS:		Default order to give new unit.
 );
@@ -1022,7 +1022,7 @@ static UnitTypeClass const UnitTric(UNIT_TRIC,
                                     true,          // Always use the given name for the vehicle?
                                     false,         //	Is this a typical transport vehicle?
                                     false,         // Can it be crushed by a heavy vehicle?
-                                    true,          // Can this unit squash infantry?
+                                    false,         // Can this unit squash infantry?
                                     false,         // Does this unit harvest Tiberium?
                                     true,          // Is invisible to radar?
                                     true,          // Is selectable by player?
@@ -1032,7 +1032,7 @@ static UnitTypeClass const UnitTric(UNIT_TRIC,
                                     false,         // Is it equipped with a combat turret?
                                     false,         // Fires multiple shots in quick succession?
                                     false,         // Can it be repaired in a repair facility?
-                                    false,         // Can the player construct or order this unit?
+                                    true,          // Can the player construct or order this unit?
                                     false,         // Is there a crew inside?
                                     false,         // Does it have a rotating radar dish?
                                     true,          // Is there an associated firing animation?
@@ -1043,7 +1043,7 @@ static UnitTypeClass const UnitTric(UNIT_TRIC,
                                     false,         // Is the unit capable of cloaking?
                                     false,         // Does the unit have a constant animation?
                                     -1,            // AMMO:			Number of shots it has (default).
-                                    700,           // STRENGTH:	Strength (in damage points).
+                                    500,           // STRENGTH:	Strength (in damage points).
                                     5,             // SIGHTRANGE:	Range of sighting.
                                     0,             // COST:			Cost to build (Credits).
                                     99,            // SCENARIO:	Starting availability scenario.
@@ -1073,7 +1073,7 @@ static UnitTypeClass const UnitTrex(UNIT_TREX,
                                     true,          // Always use the given name for the vehicle?
                                     false,         //	Is this a typical transport vehicle?
                                     false,         // Can it be crushed by a heavy vehicle?
-                                    true,          // Can this unit squash infantry?
+                                    false,         // Can this unit squash infantry?
                                     false,         // Does this unit harvest Tiberium?
                                     true,          // Is invisible to radar?
                                     true,          // Is selectable by player?
@@ -1083,7 +1083,7 @@ static UnitTypeClass const UnitTrex(UNIT_TREX,
                                     false,         // Is it equipped with a combat turret?
                                     false,         // Fires multiple shots in quick succession?
                                     false,         // Can it be repaired in a repair facility?
-                                    false,         // Can the player construct or order this unit?
+                                    true,          // Can the player construct or order this unit?
                                     false,         // Is there a crew inside?
                                     false,         // Does it have a rotating radar dish?
                                     true,          // Is there an associated firing animation?
@@ -1094,7 +1094,7 @@ static UnitTypeClass const UnitTrex(UNIT_TREX,
                                     false,         // Is the unit capable of cloaking?
                                     false,         // Does the unit have a constant animation?
                                     -1,            // AMMO:			Number of shots it has (default).
-                                    750,           // STRENGTH:	Strength (in damage points).
+                                    600,           // STRENGTH:	Strength (in damage points).
                                     5,             // SIGHTRANGE:	Range of sighting.
                                     0,             // COST:			Cost to build (Credits).
                                     99,            // SCENARIO:	Starting availability scenario.
@@ -1134,7 +1134,7 @@ static UnitTypeClass const UnitRapt(UNIT_RAPT,
                                     false,          // Is it equipped with a combat turret?
                                     false,          // Fires multiple shots in quick succession?
                                     false,          // Can it be repaired in a repair facility?
-                                    false,          // Can the player construct or order this unit?
+                                    true,           // Can the player construct or order this unit?
                                     false,          // Is there a crew inside?
                                     false,          // Does it have a rotating radar dish?
                                     true,           // Is there an associated firing animation?
@@ -1145,7 +1145,7 @@ static UnitTypeClass const UnitRapt(UNIT_RAPT,
                                     false,          // Is the unit capable of cloaking?
                                     false,          // Does the unit have a constant animation?
                                     -1,             // AMMO:			Number of shots it has (default).
-                                    180,            // STRENGTH:	Strength (in damage points).
+                                    300,            // STRENGTH:	Strength (in damage points).
                                     5,              // SIGHTRANGE:	Range of sighting.
                                     0,              // COST:			Cost to build (Credits).
                                     99,             // SCENARIO:	Starting availability scenario.
@@ -1175,7 +1175,7 @@ static UnitTypeClass const UnitSteg(UNIT_STEG,
                                     true,          // Always use the given name for the vehicle?
                                     false,         //	Is this a typical transport vehicle?
                                     false,         // Can it be crushed by a heavy vehicle?
-                                    true,          // Can this unit squash infantry?
+                                    false,         // Can this unit squash infantry?
                                     false,         // Does this unit harvest Tiberium?
                                     true,          // Is invisible to radar?
                                     true,          // Is selectable by player?
@@ -1185,7 +1185,7 @@ static UnitTypeClass const UnitSteg(UNIT_STEG,
                                     false,         // Is it equipped with a combat turret?
                                     false,         // Fires multiple shots in quick succession?
                                     false,         // Can it be repaired in a repair facility?
-                                    false,         // Can the player construct or order this unit?
+                                    true,          // Can the player construct or order this unit?
                                     false,         // Is there a crew inside?
                                     false,         // Does it have a rotating radar dish?
                                     true,          // Is there an associated firing animation?
@@ -1196,7 +1196,7 @@ static UnitTypeClass const UnitSteg(UNIT_STEG,
                                     false,         // Is the unit capable of cloaking?
                                     false,         // Does the unit have a constant animation?
                                     -1,            // AMMO:			Number of shots it has (default).
-                                    600,           // STRENGTH:	Strength (in damage points).
+                                    800,           // STRENGTH:	Strength (in damage points).
                                     5,             // SIGHTRANGE:	Range of sighting.
                                     0,             // COST:			Cost to build (Credits).
                                     99,            // SCENARIO:	Starting availability scenario.
