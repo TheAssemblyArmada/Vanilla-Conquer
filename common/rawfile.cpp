@@ -93,11 +93,11 @@ void RawFileClass::Error(int error, int canretry, char const* filename)
 {
     char buffer[64];
     const char* errorstr = strerror(error);
+    const char* fmtstring = "Error on file %s: %s\n";
 
-    snprintf(buffer, 64, "Error on file %s: %s\n", filename, errorstr);
-    fprintf(stdout, buffer);
+    printf(fmtstring, filename, errorstr);
     if (!canretry) {
-        DBG_FATAL(buffer);
+        DBG_FATAL(fmtstring, filename, errorstr);
     }
 }
 
@@ -323,7 +323,7 @@ int RawFileClass::Is_Available(int forced)
     **	If the file is already open, then is must have already passed the availability check.
     **	Return true in this case.
     */
-    if (Is_Open())
+    if (RawFileClass::Is_Open())
         return (true);
 
     /*
@@ -395,7 +395,7 @@ void RawFileClass::Close(void)
     **	If the file is open, then close it. If the file is already closed, then just return. This
     **	isn't considered an error condition.
     */
-    if (Is_Open()) {
+    if (RawFileClass::Is_Open()) {
         /*
         **	Try to close the file. If there was an error (who knows what that could be), then
         **	call the error routine.
@@ -448,12 +448,12 @@ long RawFileClass::Read(void* buffer, long size)
     **	If the file isn't opened, open it. This serves as a convenience
     **	for the programmer.
     */
-    if (!Is_Open()) {
+    if (!RawFileClass::Is_Open()) {
 
         /*
         **	The error check here is moot. Open will never return unless it succeeded.
         */
-        if (!Open(READ)) {
+        if (!RawFileClass::Open(READ)) {
             return (0);
         }
         opened = true;
@@ -522,8 +522,8 @@ long RawFileClass::Write(void const* buffer, long size)
     **	it. Otherwise, open the file for writing and then close the file when the
     **	output is finished.
     */
-    if (!Is_Open()) {
-        if (!Open(WRITE)) {
+    if (!RawFileClass::Is_Open()) {
+        if (!RawFileClass::Open(WRITE)) {
             return (0);
         }
         opened = true;
@@ -660,7 +660,7 @@ long RawFileClass::Size(void)
     /*
     **	If the file is open, then proceed normally.
     */
-    if (Is_Open()) {
+    if (RawFileClass::Is_Open()) {
 
         /*
         ** With stdio we seek to end to obtain the length, then reset the position back.
@@ -691,14 +691,14 @@ long RawFileClass::Size(void)
         **	If the file wasn't open, then open the file and call this routine again. Count on
         **	the fact that the open function must succeed.
         */
-        if (Open()) {
+        if (RawFileClass::Open()) {
             size = Size();
 
             /*
             **	Since we needed to open the file we must remember to close the file when the
             **	size has been determined.
             */
-            Close();
+            RawFileClass::Close();
         }
     }
 
@@ -843,7 +843,7 @@ void RawFileClass::Bias(int start, int length)
     **	Move the current file offset to a legal position if necessary and the
     **	file was open.
     */
-    if (Is_Open()) {
+    if (RawFileClass::Is_Open()) {
         RawFileClass::Seek(0, SEEK_SET);
     }
 }

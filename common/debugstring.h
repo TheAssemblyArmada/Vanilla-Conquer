@@ -23,6 +23,8 @@ void Debug_String_File(const char* file);
 #define Debug_String_File(file)                       ((void)0)
 #endif
 
+int FatalErrorMessageBox(const char* fmt, ...);
+
 /* Default to debug logging */
 #ifndef LOGGING_LEVEL
 #define LOGGING_LEVEL 5
@@ -70,7 +72,7 @@ void Debug_String_File(const char* file);
 #define _DBG_FATAL_COMMON(x, ...)                                                                                      \
     do {                                                                                                               \
         fprintf(stdout, x, ##__VA_ARGS__);                                                                             \
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Fatal Error", buffer, NULL);                                   \
+        FatalErrorMessageBox(x, ##__VA_ARGS__);                                                                        \
         exit(1);                                                                                                       \
     } while (false)
 

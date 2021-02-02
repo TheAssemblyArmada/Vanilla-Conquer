@@ -104,6 +104,7 @@ else()
 endif()
 
 set(COMMONR_SRC
+    debugstring.cpp
     framelimit.cpp
     gbuffer.cpp
     interpal.cpp
@@ -115,6 +116,7 @@ set(COMMONR_SRC
 )
 
 set(COMMONV_SRC
+    debugstring.cpp
     framelimit.cpp
     gbuffer.cpp
     interpal.cpp

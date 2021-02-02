@@ -6,6 +6,9 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#include <winuser.h>
+#elif defined(SDL2_BUILD)
+#include <SDL_messagebox.h>
 #endif
 
 static class DebugStateClass
@@ -74,4 +77,22 @@ void Debug_String_File(const char* file)
     }
 
     DebugState.File = fopen(file, "w");
+}
+
+int FatalErrorMessageBox(const char* fmt, ...)
+{
+    char buffer[256];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(buffer, 256, fmt, args);
+    va_end(args);
+
+    /* Prefer WinAPI MessageBoxA on Windows.  */
+#ifdef _WIN32
+    return MessageBoxA(NULL, (LPCSTR) "Fatal Error", (LPCSTR)buffer, MB_OK | MB_ICONERROR);
+#elif defined(SDL2_BUILD)
+    return SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Fatal Error", buffer, NULL);
+#else
+    return 0;
+#endif
 }

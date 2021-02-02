@@ -235,7 +235,7 @@ bool BufferIOFileClass::Cache(long size, void* ptr)
                 readsize = BufferSize;
             }
 
-            if (Is_Open()) {
+            if (BufferIOFileClass::Is_Open()) {
                 //
                 // get previous file position
                 //
@@ -568,8 +568,8 @@ long BufferIOFileClass::Write(void const* buffer, long size)
 {
     int opened = false;
 
-    if (!Is_Open()) {
-        if (!Open(WRITE)) {
+    if (!BufferIOFileClass::Is_Open()) {
+        if (!BufferIOFileClass::Open(WRITE)) {
             return (0);
         }
         TrueFileStart = RawFileClass::Seek(0);
@@ -710,8 +710,8 @@ long BufferIOFileClass::Read(void* buffer, long size)
 {
     int opened = false;
 
-    if (!Is_Open()) {
-        if (Open()) {
+    if (!BufferIOFileClass::Is_Open()) {
+        if (BufferIOFileClass::Open()) {
             TrueFileStart = RawFileClass::Seek(0);
             opened = true;
         }
