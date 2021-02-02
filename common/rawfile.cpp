@@ -64,7 +64,6 @@
 #endif
 
 #include <sys/stat.h>
-#include <SDL_messagebox.h>
 
 /***********************************************************************************************
  * RawFileClass::Error -- Handles displaying a file error message.                             *
