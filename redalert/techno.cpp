@@ -1142,11 +1142,7 @@ void TechnoClass::Draw_It(int x, int y, WindowNumberType window) const
     int width, height;
     Class_Of().Dimensions(width, height);
 
-    const bool show_health_bar =
-        (Strength > 0) && !Is_Cloaked(PlayerPtr)
-        && (Is_Selected_By_Player()
-            || ((Rule.HealthBarDisplayMode == RulesClass::HB_DAMAGED) && (Strength < Techno_Type_Class()->MaxStrength))
-            || (Rule.HealthBarDisplayMode == RulesClass::HB_ALWAYS));
+    const bool show_health_bar = ((TechnoClass*)this)->Should_Show_Health_Bar();
 
     /*
     **	Draw the selected object graphic.
@@ -1243,9 +1239,26 @@ void TechnoClass::Draw_It(int x, int y, WindowNumberType window) const
     // if ((window == WINDOW_VIRTUAL) || (Is_Selected_By_Player() && (House->Is_Ally(PlayerPtr) || (Spied_By() & (1 <<
     // (PlayerPtr->Class->House))))))
     if ((window == WINDOW_VIRTUAL)
-        || (selected && (House->Is_Ally(PlayerPtr) || (Spied_By() & (1 << (PlayerPtr->Class->House)))))) {
+        || ((selected || Map.HoverObject == this) && (House->Is_Ally(PlayerPtr) || (Spied_By() & (1 << (PlayerPtr->Class->House)))))) {
         Draw_Pips((x - lx) + 5, y + ly - 3, window);
     }
+}
+
+bool TechnoClass::Should_Show_Health_Bar()
+{
+    if ((Strength <= 0) || Is_Cloaked(PlayerPtr)) {
+        return false;
+    }
+    if (Map.HoverObject && Map.HoverObject->Is_Techno() && (TechnoClass*)Map.HoverObject == (TechnoClass*)this) {
+        return true;
+    }
+    if ((Is_Selected_By_Player()
+         || ((Rule.HealthBarDisplayMode == RulesClass::HB_DAMAGED) && (Strength < Techno_Type_Class()->MaxStrength))
+         || (Rule.HealthBarDisplayMode == RulesClass::HB_ALWAYS))) {
+        return true;
+    }
+
+    return false;
 }
 
 /***********************************************************************************************
