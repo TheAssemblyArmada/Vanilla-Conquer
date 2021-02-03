@@ -180,6 +180,7 @@ public:
     virtual void Set_Tactical_Position(COORDINATE coord);
     void Refresh_Band(void);
     void Select_These(COORDINATE coord1, COORDINATE coord2, bool additive = false);
+    bool Is_Mouse_At_Tactical_View_Edge(int x, int y);
     COORDINATE Pixel_To_Coord(int x, int y) const;
     bool Coord_To_Pixel(COORDINATE coord, int& x, int& y) const;
     bool Push_Onto_TacMap(COORDINATE& source, COORDINATE& dest);
@@ -222,11 +223,14 @@ public:
 
 protected:
     virtual void Mouse_Right_Press(void);
+    virtual void Mouse_Right_Release(CELL cell, int x, int y, ObjectClass* object, ActionType action, bool wsmall = false);
+    virtual void Mouse_Right_Held(int x, int y);
+
+
     virtual void Mouse_Left_Press(int x, int y);
     virtual void Mouse_Left_Up(CELL cell, bool shadow, ObjectClass* object, ActionType action, bool wsmall = false);
     virtual void Mouse_Left_Held(int x, int y);
-    virtual void
-    Mouse_Left_Release(CELL cell, int x, int y, ObjectClass* object, ActionType action, bool wsmall = false);
+    virtual void Mouse_Left_Release(CELL cell, int x, int y, ObjectClass* object, ActionType action, bool wsmall = false);
 
 public:
     /*
@@ -282,6 +286,14 @@ protected:
     */
     unsigned IsTentative : 1;
 
+    // Right click scroll coasting like in Red Alert 2 & Yuri's revenge. When holding
+    // the right mouse button and moving the mouse around the map gets scrolled
+    unsigned IsScrollCoasting;
+    
+    // When the right mouse button is held down this flag gets set, if held and the mouse is
+    // dragged a sufficient distance, then IsScrollCoasting will be set to true
+    unsigned IsTentativeScrollCoast; 
+
     /*
     **	This gadget class is used for capturing input to the tactical map. All mouse input
     **	will be routed through this gadget.
@@ -290,7 +302,7 @@ protected:
     {
     public:
         TacticalClass(void)
-            : GadgetClass(0, 0, 0, 0, LEFTPRESS | LEFTRELEASE | LEFTHELD | LEFTUP | RIGHTPRESS, true){};
+            : GadgetClass(0, 0, 0, 0, LEFTPRESS | LEFTRELEASE | LEFTHELD | LEFTUP | RIGHTPRESS | RIGHTRELEASE | RIGHTHELD, true){};
 
         int Selection_At_Mouse(unsigned flags, KeyNumType& key);
         int Command_Object(unsigned flags, KeyNumType& key);
@@ -322,6 +334,11 @@ private:
     */
     int BandX, BandY;
     int NewX, NewY;
+
+    // When right clickign record the position of the mouse at time of the click
+    // this is to record the origin point of a scroll coast, the scroll coasting 
+    // direction is calculated from this origin.
+    int ScrollCoastPressPointX, ScrollCoastPressPointY;
 
     static void const* ShadowShapes;
     static unsigned char ShadowTrans[(SHADOW_COL_COUNT + 1) * 256];
