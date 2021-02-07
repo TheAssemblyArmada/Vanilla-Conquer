@@ -1145,6 +1145,7 @@ void HouseClass::AI(void)
     */
     if (PlayerPtr == this) {
 
+#ifdef REMASTER_BUILD
         if (SpeakMoneyDelay.Expired() && Available_Money() < 100
             && UnitFactories + BuildingFactories + InfantryFactories > 0) {
 
@@ -1168,14 +1169,13 @@ void HouseClass::AI(void)
             //
             // SpeakMoneyDelay.Set(Options.Normalize_Delay(SPEAK_DELAY / 2));	// 1 minute (new)
             SpeakMoneyDelay.Set(Options.Normalize_Delay(SPEAK_DELAY)); // 2 minutes (original)
-#ifdef REMASTER_BUILD
             int text_id = TXT_INSUFFICIENT_FUNDS;
             char const* text = Text_String(TXT_INSUFFICIENT_FUNDS);
             if (text != NULL) {
                 On_Message(text, 35.0f, text_id);
             }
-#endif
         }
+#endif
         if (SpeakMaxedDelay.Expired() && IsMaxedOut) {
             IsMaxedOut = false;
             if ((Capacity - Tiberium) < 300 && Capacity > 500 && (BScan & (STRUCTF_REFINERY | STRUCTF_CONST))) {
