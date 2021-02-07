@@ -43,6 +43,7 @@
 #include "function.h"
 #include "loaddlg.h"
 #include "common/gitinfo.h"
+#include "listener.h"
 #include "soleglobals.h"
 #include "solehelp.h"
 #include "soleparams.h"
@@ -859,12 +860,12 @@ bool Select_Game(bool fade)
                 Fade_Palette_To(BlackPalette, 15, Call_Back);
                 bool choice_made = Unit_Choice_Dialog();
                 if (choice_made) {
-                    if (false /*Listener || Init_Listener()*/) {
+                    if (Listener != nullptr || Init_Listener()) {
                         Read_MultiPlayer_Settings();
                         ScenPlayer = SCEN_PLAYER_MPLAYER;
                         ScenDir = SCEN_DIR_EAST;
-                        //v5 = randomize();
-                        //Scenario = Get_Map(v5);
+                        srand(time(NULL));
+                        //Scenario = Get_Map(rand());
                         Whom = HOUSE_NEUTRAL;
                         GameToPlay = GAME_SERVER;
                         display = true;
@@ -949,9 +950,14 @@ bool Select_Game(bool fade)
         ** SS: Looks like debug mode was supposed to create a server in sole.
         */
         if (GameToPlay == GAME_SERVER) {
-            // TODO: Listener class stuff.
+            if (Listener == nullptr && !Init_Listener()) {
+                WWMessageBox().Process("Unable to initialize server!", TXT_OK);
+                selection = SEL_NONE;
+                display = true;
+            }
             ScenPlayer = SCEN_PLAYER_MPLAYER;
             ScenDir = SCEN_DIR_EAST;
+            srand(time(NULL));
             // Scenario = Get_Map(rand());
             Whom = HOUSE_NEUTRAL;
         }

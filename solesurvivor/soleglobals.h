@@ -49,4 +49,9 @@ extern CountDownTimerClass ServerCountDownTimerClass_5721D4;
 extern int Density;
 extern int CrateDensity;
 
+class ProtocolClass;
+class ListenerClass;
+extern ProtocolClass* ListenerProtocol;
+extern ListenerClass* Listener;
+
 #endif

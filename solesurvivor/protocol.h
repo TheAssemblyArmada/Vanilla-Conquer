@@ -9,40 +9,22 @@
 // distributed with this program. You should have received a copy of the
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
-#include "soleglobals.h"
+#ifndef PROTOCOL_H
+#define PROTOCOL_H
 
-bool LogTeams;
-bool OfflineMode;
-bool WDTRadarAdded;
-bool ClientAICalled;
-bool server_534780 = true; // Seems to be related to if some server logic is processed.
-bool somestate_591BCC;
-bool UseAltArt;
+class CommBufferClass;
 
-HousesType Side;
-RTTIType ChosenRTTI;
-int ChosenType;
-int Steel;
-int Green;
-int Orange;
-int TeamScores[4];
-char TeamMessages[10][80];
+class ProtocolClass
+{
+public:
+    virtual void Data_Received() = 0;
+    virtual void Connected_To_Server(int) = 0;
+    virtual void Connection_Requested() = 0;
+    virtual void Closed() = 0;
+    virtual void Name_Resolved() = 0;
 
-int ClientFPS;
-int LastServerAIFrame;
-int CommStatsSpeedScale;
-int RecievedBytesSec;
-int SentBytesSec;
-int SentTCP;
-int SentUDP;
-int RecievedTCP;
-int RecievedUDP;
-CountDownTimerClass CountDownTimerClass_590454;
-CountDownTimerClass TransmisionStatsTimer;
-CountDownTimerClass ServerCountDownTimerClass_5721D4;
+public:
+    CommBufferClass *Queue;
+};
 
-int Density = 200;
-int CrateDensity;
-
-ProtocolClass* ListenerProtocol;
-ListenerClass* Listener;
+#endif

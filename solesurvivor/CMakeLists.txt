@@ -68,6 +68,7 @@ set(SOLE_SRC
     layer.cpp
     lib.cpp
     list.cpp
+    listener.cpp
     loaddlg.cpp
     logic.cpp
     map.cpp
