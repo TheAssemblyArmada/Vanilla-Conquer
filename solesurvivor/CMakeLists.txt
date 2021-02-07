@@ -99,6 +99,7 @@ set(SOLE_SRC
     radar.cpp
     radio.cpp
     reinf.cpp
+    reliable.cpp
     rules.cpp
     saveload.cpp
     scenario.cpp
