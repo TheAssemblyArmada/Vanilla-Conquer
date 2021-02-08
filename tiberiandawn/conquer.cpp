@@ -67,6 +67,7 @@
 #include "common/framelimit.h"
 #include "common/vqatask.h"
 #include "common/vqaloader.h"
+#include "common/settings.h"
 
 #define SHAPE_TRANS 0x40
 
@@ -2825,7 +2826,7 @@ long VQ_Call_Back(unsigned char*, long)
 
     Check_VQ_Palette_Set();
 
-    Interpolate_2X_Scale(&SysMemPage, &SeenBuff, NULL);
+    Interpolate_2X_Scale(&SysMemPage, &SeenBuff, NULL, Settings.Video.InterpolationMode);
     Frame_Limiter();
 
     if ((BreakoutAllowed || Debug_Flag) && key == KN_ESC) {

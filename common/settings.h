@@ -27,6 +27,7 @@ public:
         int Width;
         int Height;
         int FrameLimit;
+        int InterpolationMode;
         bool HardwareCursor;
         std::string Scaler;
         std::string Driver;

@@ -37,6 +37,7 @@
 
 #include "function.h"
 #include "interpal.h"
+#include "common/settings.h"
 
 void Cycle_Call_Back_Delay(int time, PaletteClass& pal);
 extern int ControlQ;
@@ -93,7 +94,6 @@ struct point
  * HISTORY:                                                                                    *
  *   07/18/1996 BWG : Created.                                                                 *
  *=============================================================================================*/
-extern int CopyType;
 extern bool StreamLowImpact;
 char const* Map_Selection(void)
 {
@@ -154,17 +154,14 @@ char const* Map_Selection(void)
     Animate_Frame(anim, *pseudoseenbuff, 1);
     for (int x = 0; x < 256; x++)
         memset(&PaletteInterpolationTable[x][0], x, 256);
-    CopyType = 1;
-    Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, 0);
+    Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, NULL, 1);
 
     int frame = 1;
     StreamLowImpact = true;
     Play_Sample(appear1, 255, Options.Normalize_Volume(170));
     while (frame < Get_Animation_Frame_Count(anim)) {
-        CopyType = 1;
         Animate_Frame(anim, *pseudoseenbuff, frame++);
-        Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, NULL);
-        CopyType = 0;
+        Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, NULL, 1);
         Call_Back_Delay(2);
         switch (frame) {
         case 16:
@@ -196,9 +193,7 @@ char const* Map_Selection(void)
         */
         if (AllSurfaces.SurfacesRestored) {
             AllSurfaces.SurfacesRestored = false;
-            CopyType = 1;
-            Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, NULL);
-            CopyType = 0;
+            Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, NULL, 1);
         }
         Cycle_Call_Back_Delay(1, mappalette);
         int choice = Mouse_Over_Spot(house, scenario);

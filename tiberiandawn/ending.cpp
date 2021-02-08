@@ -34,6 +34,7 @@
 
 #include "function.h"
 #include "textblit.h"
+#include "common/settings.h"
 
 void GDI_Ending(void)
 {
@@ -155,7 +156,7 @@ void Nod_Ending(void)
     InterpolationPalette = (unsigned char*)localpal;
     Increase_Palette_Luminance(InterpolationPalette, 30, 30, 30, 63);
     Read_Interpolation_Palette("SATSELIN.PAL");
-    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "SATSELIN.PAL");
+    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "SATSELIN.PAL", Settings.Video.InterpolationMode);
 
     Keyboard->Clear();
     Play_Sample(kanefinl, 255, 128);

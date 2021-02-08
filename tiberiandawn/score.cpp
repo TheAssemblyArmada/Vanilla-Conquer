@@ -48,6 +48,7 @@
 #include "textblit.h"
 #include "common/irandom.h"
 #include "common/framelimit.h"
+#include "common/settings.h"
 
 #define SCORETEXT_X 184
 #define SCORETEXT_Y 8
@@ -723,7 +724,7 @@ void ScoreClass::Presentation(void)
     InterpolationPalette = Palette;
     InterpolationPaletteChanged = true;
     Read_Interpolation_Palette(inter_pal);
-    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, inter_pal);
+    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, inter_pal, Settings.Video.InterpolationMode);
     Fade_Palette_To(Palette, FADE_PALETTE_FAST, Call_Back);
 
     Play_Sample(country4, 255, Options.Normalize_Sound(90));
@@ -1173,7 +1174,7 @@ void ScoreClass::Do_Nod_Buildings_Graph(void)
         /*
         ** Extra font related stuff. ST - 7/29/96 2:22PM
         */
-        Interpolate_2X_Scale(PseudoSeenBuff, &HidPage, NULL);
+        Interpolate_2X_Scale(PseudoSeenBuff, &HidPage, NULL, Settings.Video.InterpolationMode);
         BlitList.Update();
         WWMouse->Draw_Mouse(&HidPage);
         Blit_Hid_Page_To_Seen_Buff();
@@ -1344,7 +1345,7 @@ void ScoreClass::Do_Nod_Casualties_Graph(void)
     /*
     ** Extra font related stuff. ST - 7/29/96 2:22PM
     */
-    Interpolate_2X_Scale(PseudoSeenBuff, &HidPage, NULL);
+    Interpolate_2X_Scale(PseudoSeenBuff, &HidPage, NULL, Settings.Video.InterpolationMode);
     BlitList.Update();
     WWMouse->Draw_Mouse(&HidPage);
     Blit_Hid_Page_To_Seen_Buff();
@@ -1571,7 +1572,7 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
         /*
         ** Extra font related stuff. ST - 7/29/96 2:22PM
         */
-        Interpolate_2X_Scale(PseudoSeenBuff, &HidPage, NULL);
+        Interpolate_2X_Scale(PseudoSeenBuff, &HidPage, NULL, Settings.Video.InterpolationMode);
         BlitList.Update();
         Blit_Hid_Page_To_Seen_Buff();
 
@@ -1882,7 +1883,7 @@ void Call_Back_Delay(int time)
         // BlitList.Update();
         //}else{
         Animate_Score_Objs();
-        Interpolate_2X_Scale(PseudoSeenBuff, &HidPage, NULL);
+        Interpolate_2X_Scale(PseudoSeenBuff, &HidPage, NULL, Settings.Video.InterpolationMode);
         BlitList.Update();
         WWMouse->Draw_Mouse(&HidPage);
         Blit_Hid_Page_To_Seen_Buff();
@@ -1983,7 +1984,7 @@ void Multi_Score_Presentation(void)
     InterpolationPalette = Palette;
     Increase_Palette_Luminance(Palette, 30, 30, 30, 63);
     Animate_Frame(anim, *PseudoSeenBuff, 1);
-    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "MULTSCOR.PAL");
+    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "MULTSCOR.PAL", Settings.Video.InterpolationMode);
     Fade_Palette_To(Palette, FADE_PALETTE_FAST, Call_Back);
 
     int frame = 1;

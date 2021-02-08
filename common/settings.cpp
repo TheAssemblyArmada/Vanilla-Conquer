@@ -1,5 +1,6 @@
 #include "settings.h"
 #include "ini.h"
+#include "miscasm.h"
 
 SettingsClass Settings;
 
@@ -21,6 +22,7 @@ SettingsClass::SettingsClass()
     Video.Height = 0;
     Video.Boxing = true;
     Video.FrameLimit = 120;
+    Video.InterpolationMode = 2;
     Video.HardwareCursor = false;
     Video.Scaler = "nearest";
     Video.Driver = "default";
@@ -49,6 +51,11 @@ void SettingsClass::Load(INIClass& ini)
     Video.Scaler = ini.Get_String("Video", "Scaler", Video.Scaler);
     Video.Driver = ini.Get_String("Video", "Driver", Video.Driver);
     Video.PixelFormat = ini.Get_String("Video", "PixelFormat", Video.PixelFormat);
+
+    /*
+    ** VQA and WSA interpolation mode 0 = scanlines, 1 = vertical doubling, 2 = linear
+    */
+    Video.InterpolationMode = Bound(ini.Get_Int("Video", "InterpolationMode", Video.InterpolationMode), 0, 2);
 
     /*
     ** Boxing and raw input require software cursor.
@@ -80,4 +87,9 @@ void SettingsClass::Save(INIClass& ini)
     ini.Put_String("Video", "Scaler", Video.Scaler);
     ini.Put_String("Video", "Driver", Video.Driver);
     ini.Put_String("Video", "PixelFormat", Video.PixelFormat);
+
+    /*
+    ** VQA and WSA interpolation mode 0 = scanlines, 1 = vertical doubling, 2 = linear
+    */
+    ini.Put_Int("Video", "InterpolationMode", Video.InterpolationMode);
 }

@@ -48,6 +48,7 @@
 #include "interpal.h"
 #include "common/framelimit.h"
 #include "common/wsa.h"
+#include "common/settings.h"
 
 #define SCORETEXT_X 184
 #define SCORETEXT_Y 8
@@ -320,7 +321,6 @@ int Alloc_Object(ScoreAnimClass* obj)
  * HISTORY:                                                                                    *
  *   05/02/1994     : Created.                                                                 *
  *=============================================================================================*/
-extern int CopyType;
 static unsigned char const _bluepal[] =
     {0xC0, 0xC1, 0xC1, 0xC3, 0xC2, 0xC5, 0xC3, 0xC7, 0xC4, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xC0, 0xCF};
 static unsigned char const _greenpal[] =
@@ -402,18 +402,15 @@ void ScoreClass::Presentation(void)
     Animate_Frame(anim, *PseudoSeenBuff, 1);
     InterpolationPalette = (unsigned char*)ScorePalette.Get_Data();
     InterpolationPaletteChanged = true;
-    CopyType = 2;
-    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL);
+    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL, 2);
     ScorePalette.Set(FADE_PALETTE_FAST, Call_Back);
     Play_Sample(country4, 255, Options.Normalize_Volume(150));
 
     int frame = 1;
     StreamLowImpact = true;
     while (frame < Get_Animation_Frame_Count(anim)) {
-        CopyType = 2;
         Animate_Frame(anim, *PseudoSeenBuff, frame++);
-        Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL);
-        CopyType = 0;
+        Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL, 2);
         Call_Back_Delay(2);
     }
     StreamLowImpact = false;
@@ -1667,8 +1664,6 @@ char* Int_Print(int a)
  * HISTORY:                                                                                    *
  *   06/11/1995  BWG: Created.                                                                 *
  *=============================================================================================*/
-extern int CopyType;
-
 void Multi_Score_Presentation(void)
 {
 #if (0) // PG
@@ -1697,23 +1692,18 @@ void Multi_Score_Presentation(void)
     Animate_Frame(anim, *pseudoseenbuff, 1);
     for (int x = 0; x < 256; x++)
         memset(&PaletteInterpolationTable[x][0], x, 256);
-    CopyType = 1;
-    Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, 0);
+    Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, 0, Settings.Video.InterpolationMode);
     ScorePalette.Set(FADE_PALETTE_FAST, Call_Back);
 
     int frame = 1;
     while (frame < Get_Animation_Frame_Count(anim)) {
         Animate_Frame(anim, *pseudoseenbuff, frame++);
-        CopyType = 1;
-        Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, NULL);
-        CopyType = 0;
+        Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, NULL, Settings.Video.InterpolationMode);
         Call_Back_Delay(2);
     }
     Close_Animation(anim);
 
-    CopyType = 1;
-    Interpolate_2X_Scale(pseudoseenbuff, PseudoSeenBuff, NULL);
-    CopyType = 0;
+    Interpolate_2X_Scale(pseudoseenbuff, PseudoSeenBuff, NULL, Settings.Video.InterpolationMode);
 
     /* Change to the six-point font for Text_Print */
     oldfont = Set_Font(ScoreFontPtr);

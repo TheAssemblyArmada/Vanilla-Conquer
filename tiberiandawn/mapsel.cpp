@@ -38,6 +38,7 @@
 #include "function.h"
 #include "textblit.h"
 #include "common/irandom.h"
+#include "common/settings.h"
 
 #ifndef DEMO
 
@@ -595,7 +596,7 @@ void Map_Selection(void)
     Bit_It_In_Scale(0, 0, 320, 200, &SysMemPage, PseudoSeenBuff, &SeenBuff);
     PseudoSeenBuff->Put_Pixel(237, 92, TBLACK);
     PseudoSeenBuff->Put_Pixel(237, 93, TBLACK);
-    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "MAP1.PAL");
+    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "MAP1.PAL", Settings.Video.InterpolationMode);
 
     InterpolationPaletteChanged = true;
     InterpolationPalette = localpalette;
@@ -635,7 +636,7 @@ void Map_Selection(void)
     SysMemPage.Clear();
     Animate_Frame(anim, SysMemPage, 1); //, 0,0, (WSAType)0,0,0);
     SysMemPage.Blit(*PseudoSeenBuff);
-    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL);
+    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL, Settings.Video.InterpolationMode);
 
     Stop_Speaking();
 
@@ -650,7 +651,7 @@ void Map_Selection(void)
     ** now make the grid appear
     */
     SysMemPage.Blit(*PseudoSeenBuff);
-    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL);
+    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL, Settings.Video.InterpolationMode);
     Play_Sample(sfx4, 255, Options.Normalize_Sound(130));
     Play_Sample(text2, 255, Options.Normalize_Sound(90));
 
@@ -810,7 +811,7 @@ void Map_Selection(void)
     PseudoSeenBuff->Fill_Rect(xcoord, 0, xcoord + 6 * 16, 8, BLACK);
     TextPrintBuffer->Fill_Rect(2 * xcoord, 0, 2 * (xcoord + 6 * 16), 2 * 8, BLACK);
 #endif
-    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL);
+    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL, Settings.Video.InterpolationMode);
     SysMemPage.Blit(backpage, xcoord, 1, 0, 0, 20 * 6, 8);
     if (!lastscenario) {
         Play_Sample(text2, 255, Options.Normalize_Sound(90));
@@ -836,7 +837,7 @@ void Map_Selection(void)
     PseudoSeenBuff->Fill_Rect(xcoord, 12, xcoord + 6 * 16, 20, BLACK);
     TextPrintBuffer->Fill_Rect(2 * xcoord, 2 * 12, 2 * (xcoord + 6 * 16), 2 * 20, BLACK);
 #endif
-    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL);
+    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL, Settings.Video.InterpolationMode);
 
     startframe = CountryArray[scenario].ContAnim[ScenDir];
 
@@ -882,10 +883,10 @@ void Map_Selection(void)
         InterpolationPalette = CurrentPalette;
         if (house == HOUSE_GOOD) {
             Read_Interpolation_Palette("LASTSCNG.PAL");
-            Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "LASTSCNG.PAL");
+            Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "LASTSCNG.PAL", Settings.Video.InterpolationMode);
         } else {
             Read_Interpolation_Palette("LASTSCNB.PAL");
-            Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "LASTSCNB.PAL");
+            Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "LASTSCNB.PAL", Settings.Video.InterpolationMode);
         }
     }
 
@@ -981,7 +982,7 @@ void Map_Selection(void)
         TextPrintBuffer->Fill_Rect(0, 2 * 160, 2 * 20 * 6, 2 * 176, BLACK);
 #endif
     }
-    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL);
+    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL, Settings.Video.InterpolationMode);
 
     /*
     ** Now the crosshairs are over the target countries - loop until a
@@ -1057,7 +1058,7 @@ void Map_Selection(void)
         TextPrintBuffer->Fill_Rect(
             2 * attackxcoord + (17 * 6 * 2), 2 * 160, 2 * (attackxcoord + (21 * 6)), 2 * 178, BLACK);
 #endif // GERMAN
-        Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL);
+        Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL, Settings.Video.InterpolationMode);
 
         /*
         ** Draw the country's shape in non-fading colors
@@ -1076,7 +1077,7 @@ void Map_Selection(void)
                       0,
                       0);
         SysMemPage.Blit(*PseudoSeenBuff);
-        Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL);
+        Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL, Settings.Video.InterpolationMode);
 
         /*
         ** Now clear the palette of all but the country's colors, and fade
@@ -1088,7 +1089,7 @@ void Map_Selection(void)
         InterpolationPalette = localpalette;
         Increase_Palette_Luminance(localpalette, 30, 30, 30, 63);
         Read_Interpolation_Palette("MAP_LOC2.PAL");
-        Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "MAP_LOC2.PAL");
+        Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "MAP_LOC2.PAL", Settings.Video.InterpolationMode);
         Fade_Palette_To(localpalette, FADE_PALETTE_MEDIUM, Call_Back);
 
         countryshape = 0;
@@ -1100,7 +1101,7 @@ void Map_Selection(void)
         InterpolationPalette = localpalette;
         Increase_Palette_Luminance(localpalette, 30, 30, 30, 63);
         Read_Interpolation_Palette("MAP_LOC3.PAL");
-        Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "MAP_LOC3.PAL");
+        Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "MAP_LOC3.PAL", Settings.Video.InterpolationMode);
         Set_Palette(localpalette);
         //		Load_Data(house == HOUSE_GOOD ? "DARK_B.PAL" : "DARK_SA.PAL", localpalette, 768);
 
@@ -1117,7 +1118,7 @@ void Map_Selection(void)
                                    2 * 199,
                                    BLACK); // erase "Select country to attack"
 #endif
-        Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL);
+        Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL, Settings.Video.InterpolationMode);
         Animate_Frame(progress, *PseudoSeenBuff, Get_Animation_Frame_Count(progress) - 1);
         Set_Palette(localpalette);
         Close_Animation(progress);
