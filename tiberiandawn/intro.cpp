@@ -36,6 +36,7 @@
 #include "textblit.h"
 #include "common/vqatask.h"
 #include "common/vqaloader.h"
+#include "common/settings.h"
 
 #ifndef DEMO
 // From conquer.cpp
@@ -244,7 +245,7 @@ void Choose_Side(void)
     // erase the "choose side" text
     PseudoSeenBuff->Fill_Rect(0, 180, 319, 199, 0);
     SeenBuff.Fill_Rect(0, 180 * 2, 319 * 2, 199 * 2, 0);
-    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "SIDES.PAL");
+    Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "SIDES.PAL", Settings.Video.InterpolationMode);
     Keyboard->Clear();
     SysMemPage.Clear();
 

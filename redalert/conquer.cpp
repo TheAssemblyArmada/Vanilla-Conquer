@@ -90,6 +90,7 @@ TcpipManagerClass Winsock;
 #include "common/framelimit.h"
 #include "common/vqatask.h"
 #include "common/vqaloader.h"
+#include "common/settings.h"
 
 #ifdef MPEGMOVIE
 #ifdef MCIMPEG
@@ -3384,7 +3385,7 @@ long VQ_Call_Back(unsigned char*, long)
     if (IsVQ640) {
         VQ640.Blit(SeenBuff);
     } else {
-        Interpolate_2X_Scale(&SysMemPage, &SeenBuff, NULL);
+        Interpolate_2X_Scale(&SysMemPage, &SeenBuff, NULL, Settings.Video.InterpolationMode);
     }
 #else
     Interpolate_2X_Scale(&SysMemPage, &SeenBuff, NULL);

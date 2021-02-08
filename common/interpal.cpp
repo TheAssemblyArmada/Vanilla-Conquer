@@ -264,8 +264,6 @@ void Increase_Palette_Luminance(unsigned char* palette,
     }
 }
 
-int CopyType = 0;
-
 /***************************************************************************
  * INTERPOLATE_2X_SCALE                                                    *
  *                                                                         *
@@ -278,7 +276,10 @@ int CopyType = 0;
  * HISTORY:                                                                *
  *   12/06/1995  MG : Created.                                             *
  *=========================================================================*/
-void Interpolate_2X_Scale(GraphicBufferClass* source, GraphicViewPortClass* dest, char const* palette_file_name)
+void Interpolate_2X_Scale(GraphicBufferClass* source,
+                          GraphicViewPortClass* dest,
+                          char const* palette_file_name,
+                          int mode)
 {
 // Don't think we need this. ST - 12/20/2018 2:25PM
 #ifndef REMASTER_BUILD
@@ -354,7 +355,7 @@ void Interpolate_2X_Scale(GraphicBufferClass* source, GraphicViewPortClass* dest
     /*
     ** Call the appropriate assembly language copy routine
     */
-    switch (CopyType) {
+    switch (mode) {
     case 0:
         Asm_Interpolate(src_ptr, dest_ptr, source->Get_Height(), src_width, dest_width);
         break;
