@@ -811,7 +811,7 @@ void RadarClass::Plot_Radar_Pixel(CELL cell)
         if (color == TBLACK) {
             if (ZoomFactor > 1) {
                 void const* ptr;
-                long offset;
+                int32_t offset;
                 int icon;
 
                 if (cellptr->TType != TEMPLATE_NONE) {
