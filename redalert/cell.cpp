@@ -559,7 +559,7 @@ void CellClass::Recalc_Attributes(void)
     **	If there is a template associated with this cell, then fetch the
     **	land type given the template type and icon number.
     */
-    if (TType != TEMPLATE_NONE && TType != 255) {
+    if (TType != TEMPLATE_NONE) {
         TemplateTypeClass const* ttype = &TemplateTypeClass::As_Reference(TType);
         Land = ttype->Land_Type(TIcon);
         return;
@@ -972,8 +972,7 @@ bool CellClass::Get_Template_Info(char* template_name, int& icon, void*& image_d
 {
     TemplateTypeClass const* ttype = NULL;
 
-    if (TType != TEMPLATE_NONE && TType != TEMPLATE_CLEAR1
-        && TType != 255) { // Not sure why it's checking for 255 here since that's a valid tile type. ST - 6/4/2019
+    if (TType != TEMPLATE_NONE && TType != TEMPLATE_CLEAR1) {
         ttype = &TemplateTypeClass::As_Reference(TType);
         icon = TIcon;
     } else {
@@ -1038,7 +1037,7 @@ void CellClass::Draw_It(int x, int y, bool objects) const
         /*
         **	Fetch a pointer to the template type associated with this cell.
         */
-        if (TType != TEMPLATE_NONE && TType != TEMPLATE_CLEAR1 && TType != 255) {
+        if (TType != TEMPLATE_NONE && TType != TEMPLATE_CLEAR1) {
             ttype = &TemplateTypeClass::As_Reference(TType);
             icon = TIcon;
         } else {
