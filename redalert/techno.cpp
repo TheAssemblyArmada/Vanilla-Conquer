@@ -3404,12 +3404,6 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             */
             Mark(MARK_CHANGE);
 
-            /*
-            **	If a projectile was fired from a unit that is hidden in the darkness,
-            **	reveal that unit and a little area around it.
-            ** For multiplayer games, only reveal the unit if the target is the
-            ** local player.
-            */
 #if (0)
             if ((!IsOwnedByPlayer && !IsDiscoveredByPlayer)
                 || (!Map[Center_Coord()].IsMapped && (What_Am_I() != RTTI_AIRCRAFT || !IsOwnedByPlayer))) {
@@ -3429,6 +3423,16 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
 
 #else
 
+        // If a projectile was fired from a unit that is hidden in the darkness,
+        //reveal that unit and a little area around it.
+        if ((!IsOwnedByPlayer && !IsDiscoveredByPlayer)
+            || (!Map[Center_Coord()].IsMapped && (What_Am_I() != RTTI_AIRCRAFT || !IsOwnedByPlayer))) {
+            if (Session.Type == GAME_NORMAL) {
+                Map.Sight_From(Coord_Cell(Center_Coord()), 2, PlayerPtr, false);
+            }
+        }
+
+        //For multiplayer games, only reveal the unit if the target is the **local player.
         /*
         ** For client/server multiplayer, we need to reveal for any human player that is the target. ST - 3/13/2019
         *5:43PM
