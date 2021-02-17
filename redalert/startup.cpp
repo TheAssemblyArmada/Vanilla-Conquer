@@ -37,6 +37,7 @@
 #include "function.h"
 #include "language.h"
 #include "settings.h"
+#include "common/crashpad.h"
 #include "common/paths.h"
 #include "common/utfargs.h"
 
@@ -260,6 +261,7 @@ int main(int argc, char* argv[])
     Paths.Init("vanillara", CONFIG_FILE_NAME, "REDALERT.MIX", args.ArgV[0]);
     vc_chdir(Paths.Data_Path());
     CDFileClass::Refresh_Search_Drives();
+    Init_Crash_Handler(CONFIG_FILE_NAME);
 
     if (Parse_Command_Line(args.ArgC, args.ArgV)) {
 

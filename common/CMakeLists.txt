@@ -108,6 +108,7 @@ else()
 endif()
 
 set(COMMONR_SRC
+    crashpad.cpp
     framelimit.cpp
     gbuffer.cpp
     interpal.cpp
@@ -119,6 +120,7 @@ set(COMMONR_SRC
 )
 
 set(COMMONV_SRC
+    crashpad.cpp
     framelimit.cpp
     gbuffer.cpp
     interpal.cpp
@@ -157,6 +159,10 @@ if(DSOUND OR DDRAW)
     list(APPEND VANILLA_LIBS dxguid)
 endif()
 
+if(USE_CRASHPAD)
+    list(APPEND VANILLA_LIBS crashpad_client)
+endif()
+
 file(GLOB_RECURSE COMMON_HEADERS "*.h")
 
 add_library(common STATIC ${COMMON_SRC} ${COMMON_HEADERS})
@@ -185,5 +191,10 @@ if(BUILD_VANILLATD OR BUILD_VANILLARA)
     endif()
     if(SDL2)
         target_compile_definitions(commonv PUBLIC SDL2_BUILD)
+    endif()
+    if(USE_CRASHPAD)
+        add_dependencies(commonv crashpad_handler)
+        target_include_directories(commonv PRIVATE ${crashpad_git_SOURCE_DIR})
+        message("crashpad_client directory is at ${crashpad_git_SOURCE_DIR}")
     endif()
 endif()

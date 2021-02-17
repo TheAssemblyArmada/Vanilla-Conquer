@@ -35,6 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/crashpad.h"
 #include "common/ini.h"
 #include "common/paths.h"
 #include "common/utfargs.h"
@@ -228,6 +229,7 @@ int main(int argc, char** argv)
     Paths.Init("vanillatd", "CONQUER.INI", "CONQUER.MIX", args.ArgV[0]);
     vc_chdir(Paths.Data_Path());
     CDFileClass::Refresh_Search_Drives();
+    Init_Crash_Handler("CONQUER.INI");
 
     if (Parse_Command_Line(args.ArgC, args.ArgV)) {
 

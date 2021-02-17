@@ -1,0 +1,17 @@
+set(CTEST_CUSTOM_TESTS_IGNORE
+    example
+    example64
+    SystemSnapshotWinTest.TimeZone
+    FileReaderHTTPBodyStream.ReadASCIIFile
+    FileReaderHTTPBodyStream.ReadBinaryFile
+    HTTPMultipartBuilder.ThreeFileAttachments
+    HTTPMultipartBuilder.OverwriteFileAttachment
+    HTTPMultipartBuilder.SharedFormDataAndAttachmentKeyNamespace
+    VariableBufferSize/CompositeHTTPBodyStreamBufferSize.StringsAndFile/1
+    VariableBufferSize/CompositeHTTPBodyStreamBufferSize.StringsAndFile/2
+    VariableBufferSize/CompositeHTTPBodyStreamBufferSize.StringsAndFile/9
+    VariableBufferSize/CompositeHTTPBodyStreamBufferSize.StringsAndFile/16
+    VariableBufferSize/CompositeHTTPBodyStreamBufferSize.StringsAndFile/31
+    VariableBufferSize/CompositeHTTPBodyStreamBufferSize.StringsAndFile/128
+    VariableBufferSize/CompositeHTTPBodyStreamBufferSize.StringsAndFile/1024
+)
