@@ -232,10 +232,10 @@ if(BUILD_VANILLARA)
         # Generate windows version info.
         generate_product_version(
             VANILLARA_RC
-            NAME "Vanilla Conquer VanillaRA EXE"
+            NAME "VanillaRA"
             BUNDLE "Vanilla Conquer"
-            VERSION_MAJOR 3
-            VERSION_MINOR 3
+            VERSION_MAJOR 1
+            VERSION_MINOR 0
             COMPANY_NAME "Vanilla Conquer"
             COMPANY_COPYRIGHT "Based on code released under GPLv3 by EA"
             ORIGINAL_FILENAME "vanillara.exe"
@@ -257,6 +257,6 @@ if(BUILD_VANILLARA)
     endif()
     # Control if we auto generate a console and which "main" function we link using MSVC.
     if(MSVC)
-        set_target_properties(VanillaRA PROPERTIES LINK_FLAGS "/subsystem:windows /ENTRY:WinMainCRTStartup")
+        target_link_options(VanillaRA PRIVATE /subsystem:windows /ENTRY:WinMainCRTStartup)
     endif()
 endif()
