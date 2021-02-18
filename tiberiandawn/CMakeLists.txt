@@ -196,10 +196,10 @@ if(BUILD_VANILLATD)
         # Generate windows version info.
         generate_product_version(
             VANILLATD_RC
-            NAME "Vanilla Conquer VanillaTD EXE"
+            NAME "VanillaTD"
             BUNDLE "Vanilla Conquer"
             VERSION_MAJOR 1
-            VERSION_MINOR 7
+            VERSION_MINOR 0
             COMPANY_NAME "Vanilla Conquer"
             COMPANY_COPYRIGHT "Based on code released under GPLv3 by EA"
             ORIGINAL_FILENAME "vanillatd.exe"
@@ -219,7 +219,7 @@ if(BUILD_VANILLATD)
     endif()
     # Control if we auto generate a console and which "main" function we link using MSVC.
     if(MSVC)
-        set_target_properties(VanillaTD PROPERTIES LINK_FLAGS "/subsystem:windows /ENTRY:WinMainCRTStartup")
+        target_link_options(VanillaTD PRIVATE /subsystem:windows /ENTRY:WinMainCRTStartup)
     endif()
     if(WIN32 AND NOT MSVC)
         set_target_properties(VanillaTD PROPERTIES LINK_FLAGS "-mwindows")
