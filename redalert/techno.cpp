@@ -1132,12 +1132,14 @@ void TechnoClass::Draw_It(int x, int y, WindowNumberType window) const
     */
     ((TechnoClass*)this)->Clear_Redraw_Flag();
 
+#ifdef REMASTER_BUILD
     /*
     ** Draw electric zap
     */
     if ((ElectricZapDelay >= 0) && ElectricZapTarget) {
         Electric_Zap(ElectricZapTarget, ElectricZapWhich, window);
     }
+#endif
 
     int width, height;
     Class_Of().Dimensions(width, height);
@@ -2582,9 +2584,17 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         /*
         **	Handle electric zap delay logic.
         */
+
+        // Iran: KEEP THIS HERE  FOR STANDALONE UNTIL WE GOT NETWORKING WORKING WITHOUT DESYNC, THEN
+        // WE CAN ATTEMPT TO MOVE IT TO THE START OF TECHNOCLASS::DRAW_IT() LIKE IN REMASTER!!!!
         if (ElectricZapDelay >= 0) {
             Map.Flag_To_Redraw(true);
+            //   ElectricZapFrame = Frame;
+
             if (--ElectricZapDelay < 0) {
+#ifndef REMASTER_BUILD
+                Electric_Zap(ElectricZapTarget, ElectricZapWhich, WINDOW_TACTICAL);
+#endif
                 ElectricZapTarget = 0;
                 ElectricZapWhich = 0;
             }
@@ -3112,7 +3122,11 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         }
         bool gonnadraw = false;
 
+#ifdef REMASTER_BUILD
         if (SpecialDialog == SDLG_NONE) {
+#else
+    if (SpecialDialog == SDLG_NONE && Map.Push_Onto_TacMap(source, target_coord)) {
+#endif
             Map.Coord_To_Pixel(source, x, y);
             Map.Coord_To_Pixel(target_coord, x1, y1);
             x += Map.TacPixelX;
@@ -3180,9 +3194,12 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                     ** draw it and move the x & y coords in the right
                     ** direction for the next piece.
                     */
-                    // Electric zap coordinates are always tactical, so don't use the partial window if passed - SKY
+
                     x += _xadd[facing][lastfacing];
                     y += _yadd[facing][lastfacing];
+
+#ifdef REMASTER_BUILD
+                    // Electric zap coordinates are always tactical, so don't use the partial window if passed - SKY
                     if (remap != NULL) {
                         CC_Draw_Shape(this,
                                       "LITNING",
@@ -3203,6 +3220,28 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                                       (window != WINDOW_PARTIAL) ? window : WINDOW_TACTICAL,
                                       SHAPE_CENTER | SHAPE_WIN_REL);
                     }
+#else
+                if (remap != NULL) {
+                    CC_Draw_Shape(this,
+                                  "LITNING",
+                                  LightningShapes,
+                                  _shape[facing] + (shots ? 4 : 0),
+                                  x,
+                                  y,
+                                  window,
+                                  SHAPE_FADING | SHAPE_CENTER | SHAPE_WIN_REL,
+                                  remap);
+                } else {
+                    CC_Draw_Shape(this,
+                                  "LITNING",
+                                  LightningShapes,
+                                  _shape[facing] + (shots ? 4 : 0),
+                                  x,
+                                  y,
+                                  window,
+                                  SHAPE_CENTER | SHAPE_WIN_REL);
+                }
+#endif
                     lastfacing = facing;
                 }
             }
