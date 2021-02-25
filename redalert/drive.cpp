@@ -748,7 +748,7 @@ bool DriveClass::While_Moving(void)
                                 return (false);
                             if (Start_Driver(c)) {
                                 Set_Speed(oldspeed);
-                                memcpy((char*)&Path[0], (char*)&Path[1], CONQUER_PATH_MAX - 1);
+                                memmove((char*)&Path[0], (char*)&Path[1], CONQUER_PATH_MAX - 1);
                                 Path[CONQUER_PATH_MAX - 1] = FACING_NONE;
                             } else {
                                 Path[0] = FACING_NONE;
@@ -1242,12 +1242,12 @@ bool DriveClass::Start_Of_Move(void)
                             return (true);
                         }
                     } else {
-                        memcpy((char*)&Path[0], (char*)&Path[2], CONQUER_PATH_MAX - 2);
+                        memmove((char*)&Path[0], (char*)&Path[2], CONQUER_PATH_MAX - 2);
                         Path[CONQUER_PATH_MAX - 2] = FACING_NONE;
                         IsPlanningToLook = true;
                     }
                 } else {
-                    memcpy((char*)&Path[0], (char*)&Path[1], CONQUER_PATH_MAX - 1);
+                    memmove((char*)&Path[0], (char*)&Path[1], CONQUER_PATH_MAX - 1);
                 }
                 Path[CONQUER_PATH_MAX - 1] = FACING_NONE;
             }

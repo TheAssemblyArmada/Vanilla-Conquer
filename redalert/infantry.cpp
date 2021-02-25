@@ -4203,7 +4203,7 @@ void InfantryClass::Movement_AI(void)
             Mark(MARK_UP);
             if (Distance(Head_To_Coord()) < 0x0010) {
 
-                memcpy(&Path[0], &Path[1], sizeof(Path) - sizeof(Path[0]));
+                memmove(&Path[0], &Path[1], sizeof(Path) - sizeof(Path[0]));
                 Path[(sizeof(Path) / sizeof(Path[0])) - 1] = FACING_NONE;
                 Coord = Head_To_Coord();
                 Per_Cell_Process(PCP_END);
