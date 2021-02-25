@@ -61,7 +61,7 @@
  *   07/29/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 Buffer::Buffer(void* buffer, long size)
-    : BufferPtr(buffer)
+    : BufferPtr((char*)buffer)
     , Size(size)
     , IsAllocated(false)
 {
@@ -77,7 +77,7 @@ Buffer::Buffer(char* buffer, long size)
 
 // Alternate constructor for void const * pointer.
 Buffer::Buffer(void const* buffer, long size)
-    : BufferPtr((void*)buffer)
+    : BufferPtr((char*)buffer)
     , Size(size)
     , IsAllocated(false)
 {
