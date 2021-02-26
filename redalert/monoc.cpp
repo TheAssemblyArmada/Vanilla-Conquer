@@ -67,7 +67,7 @@
 #include <stdarg.h>
 #include <string.h>
 
-bool MonoClass::Enabled = 0;
+bool MonoClass::Enabled = false;
 MonoClass* MonoClass::PageUsage[MonoClass::MAX_MONO_PAGES];
 // MonoClass::MonoPageType * MonoClass::MonoRAM = (MonoClass::MonoPageType *) 0xB0000;
 

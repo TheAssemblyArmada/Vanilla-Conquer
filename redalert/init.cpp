@@ -489,7 +489,7 @@ bool Select_Game(bool fade)
 
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
     NewUnitsEnabled = SecretUnitsEnabled =
-        0; // Assume new units disabled, unless specifically .INI enabled or multiplayer negotiations enable it.
+        false; // Assume new units disabled, unless specifically .INI enabled or multiplayer negotiations enable it.
 #endif
 
     /*

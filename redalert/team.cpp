@@ -2471,7 +2471,7 @@ int TeamClass::TMission_Formation(void)
     int group = ID + 10;
     int xdir = 0;
     int ydir = 0;
-    bool evenodd = 1;
+    bool evenodd = true;
     HousesType house = (member != NULL) ? member->Owner() : HOUSE_NONE;
 
     /*

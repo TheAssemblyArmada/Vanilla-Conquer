@@ -777,7 +777,7 @@ ActionType VesselClass::What_Action(ObjectClass const* object) const
             action = ACTION_NONE;
         } else {
             // check to see if the transporter can unload.
-            bool found = 0;
+            bool found = false;
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
             if (*this != VESSEL_CARRIER)
 #endif

@@ -665,7 +665,7 @@ int Com_Scenario_Dialog(void)
                     name_edt.Flag_To_Redraw();
                     strcpy(MPlayerName, namebuf);
                     transmit = 1;
-                    changed = 1;
+                    changed = true;
                 }
             }
             break;
@@ -677,7 +677,7 @@ int Com_Scenario_Dialog(void)
             if (!ready_to_go) {
                 strcpy(MPlayerName, namebuf);
                 transmit = 1;
-                changed = 1;
+                changed = true;
             }
             break;
 

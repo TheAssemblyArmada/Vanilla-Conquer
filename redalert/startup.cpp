@@ -357,7 +357,7 @@ int main(int argc, char* argv[])
 #if defined(_WIN32) && !defined(SDL2_BUILD)
         Create_Main_Window(instance, command_show, ScreenWidth, ScreenHeight);
 #endif
-        SoundOn = Audio_Init(16, false, 11025 * 2, 0);
+        SoundOn = Audio_Init(16, false, 11025 * 2, false);
 
 #ifdef MPEGMOVIE // Denzil 6/10/98
         if (!InitDDraw())

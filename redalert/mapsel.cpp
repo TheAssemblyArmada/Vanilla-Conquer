@@ -184,7 +184,7 @@ char const* Map_Selection(void)
     Show_Mouse();
     Keyboard->Clear();
 
-    bool done = 0;
+    bool done = false;
     MouseType shape = MOUSE_NORMAL;
     while (!done) {
         /*
@@ -213,7 +213,7 @@ char const* Map_Selection(void)
         if (Keyboard->Check()) {
             if ((Keyboard->Get() & 0x10FF) == KN_LMOUSE) {
                 if (choice != -1) {
-                    done = 1;
+                    done = true;
                     selection = choice;
                     Play_Sample(country1, 255, Options.Normalize_Volume(170));
                 } else {

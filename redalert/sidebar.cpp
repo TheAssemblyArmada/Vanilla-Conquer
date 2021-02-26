@@ -2403,9 +2403,9 @@ void SidebarClass::Zoom_Mode_Control(void)
             }
         } else {
             if (!Spying_On_House() && !Is_Player_Names()) {
-                Player_Names(1);
+                Player_Names(true);
             } else {
-                Player_Names(0);
+                Player_Names(false);
                 if (!Spy_Next_House()) {
                     Zoom_Mode(Coord_Cell(TacticalCoord));
                 }

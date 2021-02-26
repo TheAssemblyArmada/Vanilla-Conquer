@@ -271,7 +271,7 @@ static const char* Get_OpenAL_Error(ALenum error)
 static void Init_Locked_Data()
 {
     LockedData.DigiHandle = INVALID_AUDIO_HANDLE;
-    LockedData.ServiceSomething = 0;
+    LockedData.ServiceSomething = false;
     LockedData.MagicNumber = AUD_CHUNK_MAGIC_ID;
     LockedData.UncompBuffer = 0;
     LockedData.StreamBufferSize = BUFFER_CHUNK_SIZE + 128;
@@ -1045,7 +1045,7 @@ int Play_Sample_Handle(const void* sample, int priority, int volume, signed shor
         st->Original = sample;
         st->Odd = 0;
         st->Reducer = 0;
-        st->Restart = 0;
+        st->Restart = false;
         st->QueueBuffer = nullptr;
         st->QueueSize = 0;
         st->OriginalSize = raw_header.Size + sizeof(AUDHeaderType);
@@ -1222,7 +1222,7 @@ int Get_Free_Sample_Handle(int priority)
         }
     }
 
-    LockedData.SampleTracker[index].IsScore = 0;
+    LockedData.SampleTracker[index].IsScore = false;
     return index;
 };
 
