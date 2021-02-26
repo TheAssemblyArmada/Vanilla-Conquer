@@ -56,6 +56,9 @@ public:
         : DisplayClass(x)
     {
     }
+    virtual ~RadarClass()
+    {
+    }
 
     /*
     ** Initialization

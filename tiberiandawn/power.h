@@ -52,6 +52,9 @@ public:
         : RadarClass(x)
     {
     }
+    virtual ~PowerClass()
+    {
+    }
 
     /*
     ** Initialization

@@ -44,6 +44,9 @@ class GScreenClass
 public:
     GScreenClass(void);
     GScreenClass(NoInitClass const&){};
+    virtual ~GScreenClass()
+    {
+    }
 
     /*
     ** Initialization

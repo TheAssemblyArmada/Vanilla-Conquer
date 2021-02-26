@@ -52,7 +52,7 @@ public:
         , PrevNode(0)
     {
     }
-    ~GenericNode(void)
+    virtual ~GenericNode(void)
     {
         Unlink();
     }
@@ -125,6 +125,10 @@ public:
     GenericList(void)
     {
         FirstNode.Link(&LastNode);
+    }
+
+    virtual ~GenericList()
+    {
     }
 
     GenericNode* First(void) const

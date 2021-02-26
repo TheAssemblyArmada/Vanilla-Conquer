@@ -61,6 +61,9 @@ public:
     ScrollClass(void);
     ScrollClass(NoInitClass const& x)
         : HelpClass(x){};
+    virtual ~ScrollClass()
+    {
+    }
 
     bool Set_Autoscroll(int control);
 

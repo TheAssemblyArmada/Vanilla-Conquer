@@ -103,6 +103,9 @@ public:
 
     SidebarClass(void);
     SidebarClass(NoInitClass const& x);
+    virtual ~SidebarClass()
+    {
+    }
 
     /*
     ** Initialization

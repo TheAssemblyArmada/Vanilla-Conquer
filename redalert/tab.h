@@ -47,6 +47,9 @@ public:
         , Credits(x)
         , FlasherTimer(x)
         , MoneyFlashTimer(x){};
+    virtual ~TabClass()
+    {
+    }
 
     virtual void AI(KeyNumType& input, int x, int y);
     virtual void Draw_It(bool complete = false);

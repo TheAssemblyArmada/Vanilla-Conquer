@@ -115,6 +115,9 @@ public:
         : PowerClass(x)
     {
     }
+    virtual ~SidebarClass()
+    {
+    }
 
     /*
     ** Initialization
