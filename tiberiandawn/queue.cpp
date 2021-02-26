@@ -399,7 +399,7 @@ static void Queue_AI_Normal(void)
     // Execute the DoList
     //------------------------------------------------------------------------
     if (!Execute_DoList(1, PlayerPtr->Class->House, NULL, NULL, NULL, NULL, NULL)) {
-        GameActive = 0;
+        GameActive = false;
         return;
     }
     //------------------------------------------------------------------------
@@ -853,7 +853,7 @@ static RetcodeType Wait_For_Players(int first_time,
     dialog_timer.Set(dialog_time, true); // time to show dlg
     timeout_timer.Set(timeout, true);    // time to bail out
 
-    while (1) {
+    while (true) {
 
         Update_Queue_Mono(net, 2);
 
@@ -1432,7 +1432,7 @@ static int Send_Packets(ConnManClass* net, char* multi_packet_buf, int multi_pac
     //------------------------------------------------------------------------
     //	Build our meta-packet & transmit it.
     //------------------------------------------------------------------------
-    while (1) {
+    while (true) {
 
         Update_Queue_Mono(net, 1);
 
@@ -2038,7 +2038,7 @@ static int Handle_Timeout(ConnManClass* net, long* their_frame, unsigned short* 
 static void Stop_Game(void)
 {
     CCDebugString("C&C95 - In Stop_Game.\n");
-    GameActive = 0;
+    GameActive = false;
     if (IsMono) {
         MonoClass::Disable();
     }
@@ -3138,7 +3138,7 @@ static void Queue_Playback(void)
         // recording, end it no matter what the user does (any key or mouse).
         //
         if (key == KA_ESC || AllowAttract) {
-            GameActive = 0;
+            GameActive = false;
             return;
         }
     }
@@ -3148,7 +3148,7 @@ static void Queue_Playback(void)
     // playback.
     //------------------------------------------------------------------------
     if (AllowAttract && Frame > 0 && (mx != Get_Mouse_X() || my != Get_Mouse_Y())) {
-        GameActive = 0;
+        GameActive = false;
         return;
     }
     mx = Get_Mouse_X();
@@ -3199,7 +3199,7 @@ static void Queue_Playback(void)
     }
 
     if (!ok) {
-        GameActive = 0;
+        GameActive = false;
         return;
     }
 
@@ -3214,7 +3214,7 @@ static void Queue_Playback(void)
         base_house = HOUSE_MULTI1;
     }
     if (!Execute_DoList(max_houses, base_house, NULL, NULL, NULL, NULL, NULL)) {
-        GameActive = 0;
+        GameActive = false;
         return;
     }
 

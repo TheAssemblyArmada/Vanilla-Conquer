@@ -811,7 +811,7 @@ static void Garble_Message(char* buf)
     Pull off any trailing punctuation
     ------------------------------------------------------------------------*/
     p = buf + strlen(buf) - 1;
-    while (1) {
+    while (true) {
         if (p < buf)
             break;
         if (p[0] == '!' || p[0] == '.' || p[0] == '?') {

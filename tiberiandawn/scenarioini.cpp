@@ -1576,7 +1576,7 @@ static void Create_Units(void)
         'centroid' will be the centroid of all this house's stuff.
         .....................................................................*/
         try_count = 0;
-        while (1) {
+        while (true) {
             j = IRandom(0, MPlayerMax - 1);
             if (sorted_waypts[j] != -1) {
                 centroid = sorted_waypts[j];
@@ -1590,7 +1590,7 @@ static void Create_Units(void)
             as it's mappable.
             ..................................................................*/
             if (try_count > 200) {
-                while (1) {
+                while (true) {
                     centroid = IRandom(0, MAP_CELL_TOTAL - 1);
                     if (Map.In_Radar(centroid))
                         break;

@@ -46,11 +46,11 @@
 // Stub in old IPX here ST - 12/20/2018 1:53PM
 extern bool IPX_Initialise(void)
 {
-    return 0;
+    return false;
 }
 extern bool IPX_Get_Outstanding_Buffer95(unsigned char* buffer)
 {
-    return 0;
+    return false;
 }
 extern void IPX_Shut_Down95(void)
 {
@@ -65,7 +65,7 @@ extern int IPX_Broadcast_Packet95(unsigned char*, int)
 }
 extern bool IPX_Start_Listening95(void)
 {
-    return 0;
+    return false;
 }
 extern int IPX_Open_Socket95(int socket)
 {

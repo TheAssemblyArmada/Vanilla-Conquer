@@ -189,7 +189,7 @@ int BooleanVectorClass::Resize(unsigned size)
         BitCount = size;
         if (success && oldsize < (int)size) {
             for (int index = oldsize; index < (int)size; index++) {
-                (*this)[index] = 0;
+                (*this)[index] = false;
             }
         }
 

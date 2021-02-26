@@ -658,7 +658,7 @@ bool GraphicViewPortClass::Scale(GraphicViewPortClass& dest,
                                  bool trans,
                                  char* remap)
 {
-    bool return_code = 0;
+    bool return_code = false;
     if (Lock()) {
         if (dest.Lock()) {
             return_code = (Linear_Scale_To_Linear(
@@ -696,8 +696,8 @@ bool GraphicViewPortClass::Scale(GraphicViewPortClass& dest,
     bool return_code = false;
     if (Lock()) {
         if (dest.Lock()) {
-            return_code =
-                (Linear_Scale_To_Linear(this, &dest, src_x, src_y, dst_x, dst_y, src_w, src_h, dst_w, dst_h, 0, remap));
+            return_code = (Linear_Scale_To_Linear(
+                this, &dest, src_x, src_y, dst_x, dst_y, src_w, src_h, dst_w, dst_h, false, remap));
             dest.Unlock();
         }
         Unlock();

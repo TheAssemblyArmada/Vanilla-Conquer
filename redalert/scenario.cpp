@@ -916,7 +916,7 @@ void Do_Win(void)
                 Session.CurGame = MAX_MULTI_GAMES - 1;
             }
         }
-        GameActive = 0;
+        GameActive = false;
         Show_Mouse();
         return;
     }
@@ -1183,7 +1183,7 @@ void Do_Lose(void)
                 Session.CurGame = MAX_MULTI_GAMES - 1;
             }
         }
-        GameActive = 0;
+        GameActive = false;
         Show_Mouse();
         return;
     }
@@ -1217,7 +1217,7 @@ void Do_Lose(void)
         Map.Render();
     } else {
         Hide_Mouse();
-        GameActive = 0;
+        GameActive = false;
     }
 
     GamePalette.Set(FADE_PALETTE_FAST, Call_Back);
@@ -1277,7 +1277,7 @@ void Do_Draw(void)
             Session.CurGame = MAX_MULTI_GAMES - 1;
         }
     }
-    GameActive = 0;
+    GameActive = false;
     Show_Mouse();
 }
 #endif
@@ -2848,7 +2848,7 @@ void Assign_Houses(void)
         //.....................................................................
         // Pick a color for this house; keep looping until we find one.
         //.....................................................................
-        while (1) {
+        while (true) {
             color = Random_Pick(0, 7);
             if (color_used[color] == false) {
                 break;

@@ -175,9 +175,9 @@ SessionClass::SessionClass(void)
     Attract = 0;                       // set via command line
 
     IsBridge = 0;
-    NetStealth = 0;
-    NetProtect = 1;
-    NetOpen = 0;
+    NetStealth = false;
+    NetProtect = true;
+    NetOpen = false;
     GameName[0] = 0;
     GProductID = 0;
 

@@ -2565,9 +2565,9 @@ void SidebarClass::Zoom_Mode_Control(void)
             Zoom_Mode(Coord_Cell(TacticalCoord));
         } else {
             if (!Is_Player_Names()) {
-                Player_Names(1);
+                Player_Names(true);
             } else {
-                Player_Names(0);
+                Player_Names(false);
                 Zoom_Mode(Coord_Cell(TacticalCoord));
             }
         }

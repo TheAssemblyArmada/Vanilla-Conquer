@@ -38,7 +38,7 @@ unsigned long RandNumb = 0x12349876;
 static bool bsr(unsigned int* index, unsigned mask)
 {
     if (mask == 0 || index == 0)
-        return 0;
+        return false;
 
     int i = 0;
     for (i = 31; i >= 0; --i) {

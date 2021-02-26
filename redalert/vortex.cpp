@@ -713,7 +713,7 @@ void ChronalVortexClass::Zap_Target(void)
             if (ZapFrame == ZAP_COUNT) {
                 ZapFrame = 0;
                 int damage = Damage;
-                obj->Take_Damage(damage, TargetDistance, WARHEAD_TESLA, NULL, 1);
+                obj->Take_Damage(damage, TargetDistance, WARHEAD_TESLA, NULL, true);
                 TargetObject = TARGET_NONE;
             }
         }
