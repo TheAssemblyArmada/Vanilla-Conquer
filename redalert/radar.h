@@ -43,6 +43,9 @@ public:
     RadarClass(void);
     RadarClass(NoInitClass const& x)
         : DisplayClass(x){};
+    virtual ~RadarClass()
+    {
+    }
 
     /*
     **	The dimensions and coordinates of the radar map.

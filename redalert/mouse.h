@@ -44,6 +44,9 @@ public:
     MouseClass(void);
     MouseClass(NoInitClass const& x)
         : ScrollClass(x){};
+    virtual ~MouseClass()
+    {
+    }
 
     /*
     ** Initialization

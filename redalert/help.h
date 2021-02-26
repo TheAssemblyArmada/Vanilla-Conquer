@@ -45,6 +45,9 @@ public:
     HelpClass(void);
     HelpClass(NoInitClass const& x)
         : TabClass(x){};
+    virtual ~HelpClass()
+    {
+    }
 
     /*
     ** Initialization

@@ -253,6 +253,10 @@ public:
     AbstractTypeClass(void){};
     AbstractTypeClass(NoInitClass const&){};
     AbstractTypeClass(int name, char const* ini);
+    virtual ~AbstractTypeClass()
+    {
+    }
+
     virtual RTTIType What_Am_I(void) const;
 
     virtual COORDINATE Coord_Fixup(COORDINATE coord) const;
@@ -368,6 +372,9 @@ public:
                     unsigned short strength);
     ObjectTypeClass(NoInitClass const& x)
         : AbstractTypeClass(x)
+    {
+    }
+    virtual ~ObjectTypeClass()
     {
     }
 
@@ -578,6 +585,9 @@ public:
                     WeaponType primary,
                     WeaponType secondary,
                     ArmorType armor);
+    virtual ~TechnoTypeClass()
+    {
+    }
 
     virtual int Raw_Cost(void) const;
     virtual int Max_Passengers(void) const;

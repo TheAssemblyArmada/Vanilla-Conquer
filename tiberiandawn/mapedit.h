@@ -174,6 +174,10 @@ public:
     ............................. mapedit.cpp .............................
     */
     MapEditClass(void);
+    virtual ~MapEditClass()
+    {
+    }
+
     virtual void One_Time(void); // One-time init
     virtual void Init_IO(void);  // Inits button list
     virtual void AI(KeyNumType& input, int x, int y);

@@ -45,6 +45,9 @@ public:
     MapClass(NoInitClass const& x)
         : GScreenClass(x)
         , Array(x){};
+    virtual ~MapClass()
+    {
+    }
 
     /*
     ** Initialization

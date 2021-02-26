@@ -27,6 +27,10 @@ public:
 class VideoSurface
 {
 public:
+    virtual ~VideoSurface()
+    {
+    }
+
     virtual void* GetData() const = 0;
     virtual long GetPitch() const = 0;
     virtual bool IsAllocated() const = 0;
@@ -43,6 +47,9 @@ class SurfaceMonitorClass
 {
 public:
     SurfaceMonitorClass();
+    virtual ~SurfaceMonitorClass()
+    {
+    }
 
     virtual void Restore_Surfaces() = 0;
     virtual void Set_Surface_Focus(bool in_focus) = 0;

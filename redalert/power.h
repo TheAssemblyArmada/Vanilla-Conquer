@@ -44,6 +44,9 @@ public:
     PowerClass(NoInitClass const& x)
         : RadarClass(x)
         , FlashTimer(x){};
+    virtual ~PowerClass()
+    {
+    }
 
     /*
     ** Initialization

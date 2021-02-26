@@ -45,6 +45,9 @@ public:
         : TabClass(x)
     {
     }
+    virtual ~HelpClass()
+    {
+    }
 
     /*
     ** Initialization

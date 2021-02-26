@@ -74,7 +74,9 @@ public:
 
     AbstractTypeClass(RTTIType rtti, int id, int name, char const* ini);
     AbstractTypeClass(NoInitClass const&){};
-    ~AbstractTypeClass(void){};
+    virtual ~AbstractTypeClass(void)
+    {
+    }
 
     RTTIType What_Am_I(void) const
     {
