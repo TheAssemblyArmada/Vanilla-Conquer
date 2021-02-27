@@ -1694,14 +1694,13 @@ static int Send_Packets(ConnManClass* net, char* multi_packet_buf, int multi_pac
  *=========================================================================*/
 static void Send_FrameSync(ConnManClass* net, int cmd_count)
 {
-    EventClass packet;
+    EventClass packet{};
 
     //------------------------------------------------------------------------
     //	Build a frame-sync event to send.  FRAMESYNC packets contain a
     // scenario-based CRC rather than a game-state-based CRC, to let the
     // games compare scenario CRC's on startup.
     //------------------------------------------------------------------------
-    memset(&packet, 0, sizeof(EventClass));
     packet.Type = EventClass::FRAMESYNC;
     if (Session.CommProtocol == COMM_PROTOCOL_MULTI_E_COMP) {
         packet.Frame =
@@ -2510,17 +2509,12 @@ static int Add_Compressed_Events(void* buf, int bufsize, int frame_delay, int si
 {
     int num = 0;                     // # of events processed
     EventClass::EventType eventtype; // type of event being compressed
-    EventClass prevevent;            // last event processed
+    EventClass prevevent{};          // last event processed
     int datasize;                    // size of element plucked from event union
     int storedsize;                  // actual # bytes stored from event
     unsigned char* unitsptr = NULL;  // ptr to buffer pos to store mega. rep count
     unsigned char numunits = 0;      // megamission rep count value
     bool missiondup = false;         // flag: is this event a megamission repeat?
-
-    //------------------------------------------------------------------------
-    // clear previous event
-    //------------------------------------------------------------------------
-    memset(&prevevent, 0, sizeof(EventClass));
 
     if (Debug_Print_Events) {
         printf("\n(%d) Building Send Packet\n", Frame);
@@ -2925,13 +2919,8 @@ static int Extract_Compressed_Events(void* buf, int bufsize)
     EventClass* event;          // event ptr for parsing buffer
     int count = 0;              // # events processed
     int datasize = 0;           // size of data to copy
-    EventClass eventdata;       // stores Frame, ID, etc
+    EventClass eventdata{};     // stores Frame, ID, etc
     unsigned char numunits = 0; // # units stored in compressed MegaMissions
-
-    //------------------------------------------------------------------------
-    // Clear work event structure
-    //------------------------------------------------------------------------
-    memset(&eventdata, 0, sizeof(EventClass));
 
     //------------------------------------------------------------------------
     // Assume the first event is a FRAMEINFO event
