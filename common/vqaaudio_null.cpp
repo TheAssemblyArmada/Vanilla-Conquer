@@ -48,10 +48,12 @@ void VQA_StopAudio(VQAHandle* handle)
 
 void VQA_PauseAudio()
 {
+    timer.Stop();
 }
 
 void VQA_ResumeAudio()
 {
+    timer.Start();
 }
 
 int VQA_CopyAudio(VQAHandle* handle)

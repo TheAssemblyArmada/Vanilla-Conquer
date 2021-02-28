@@ -83,6 +83,7 @@ void Focus_Loss(void)
 {
 #ifdef SDL2_BUILD
     GameInFocus = false;
+    VQA_PauseAudio();
 #endif
     Theme.Suspend();
     Stop_Primary_Sound_Buffer();
@@ -92,6 +93,7 @@ void Focus_Restore(void)
 {
 #ifdef SDL2_BUILD
     GameInFocus = true;
+    VQA_ResumeAudio();
 #endif
     Map.Flag_To_Redraw(true);
     Start_Primary_Sound_Buffer(true);
@@ -119,7 +121,9 @@ void Focus_Restore(void)
 
 void Check_For_Focus_Loss(void)
 {
-#if defined(_WIN32) && !defined(REMASTER_BUILD) // PG
+#if defined(SDL2_BUILD)
+    Keyboard->Check();
+#elif defined(_WIN32) && !defined(REMASTER_BUILD) // PG
     static BOOL focus_last_time = 1;
     MSG msg;
 
