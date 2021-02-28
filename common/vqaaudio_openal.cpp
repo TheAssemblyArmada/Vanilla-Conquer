@@ -24,7 +24,7 @@ int TimerIntCount;
 int TimerMethod;
 int VQATickCount;
 int TickOffset;
-int VQAAudioPaused;
+unsigned VQAAudioPaused;
 VQAHandle* AudioVQAHandle;
 
 // 8192 has some chopping issues, like its not overlapping correctlying between each chunk?
@@ -326,7 +326,7 @@ void VQA_PauseAudio()
                 if (AudioFlags & 0x40) {
                     if (!VQAAudioPaused) {
                         alSourcePause(source);
-                        VQAAudioPaused = 1;
+                        VQAAudioPaused = VQA_GetTime(AudioVQAHandle);
                     }
                 }
             }
@@ -345,6 +345,7 @@ void VQA_ResumeAudio()
                 if (AudioFlags & 0x40) {
                     if (VQAAudioPaused) {
                         alSourcePlay(source);
+                        TickOffset -= VQA_GetTime(AudioVQAHandle) - VQAAudioPaused;
                         VQAAudioPaused = 0;
                     }
                 }
