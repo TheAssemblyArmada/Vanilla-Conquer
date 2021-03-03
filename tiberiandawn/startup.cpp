@@ -37,6 +37,7 @@
 #include "function.h"
 #include "common/ini.h"
 #include "common/paths.h"
+#include "common/utfargs.h"
 #include "settings.h"
 
 bool Read_Private_Config_Struct(FileClass& file, NewConfigType* config);
@@ -83,11 +84,7 @@ void Move_Point(short& x, short& y, register DirType dir, unsigned short distanc
 void Check_Use_Compressed_Shapes(void);
 extern void DLL_Shutdown(void);
 
-#ifdef _WIN32
-
-int main(int argc, char** argv);
-
-#ifdef REMASTER_BUILD
+#if defined REMASTER_BUILD && defined _WIN32
 BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserved)
 {
     lpvReserved;
@@ -114,17 +111,25 @@ BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserve
 
     return true;
 }
+#endif
 
+#ifdef REMASTER_BUILD
 int DLL_Startup(const char* command_line_in)
 {
     RunningAsDLL = true;
     HINSTANCE instance = ProgramInstance;
     char command_line[1024];
     strcpy(command_line, command_line_in);
+    int argc = 0;
+    char** argv = nullptr;
 #else // not remaster
-int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int command_show)
+
+int main(int argc, char** argv)
 {
 #endif
+    UtfArgs args(argc, argv);
+    CCDebugString("C&C95 - Starting up.\n");
+
     if (Ram_Free(MEM_NORMAL) < 5000000) {
 #ifdef GERMAN
         printf("Zuwenig Hauptspeicher verf?gbar.\n");
@@ -138,71 +143,6 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
         return (EXIT_FAILURE);
     }
 
-    int argc; // Command line argument count
-    unsigned command_scan;
-    char command_char;
-    char* argv[20]; // Pointers to command line arguments
-    char path_to_exe[280];
-
-    ProgramInstance = instance;
-
-    /*
-    ** Get the full path to the .EXE
-    */
-    GetModuleFileNameA(instance, &path_to_exe[0], 280);
-
-    /*
-    ** First argument is supposed to be a pointer to the .EXE that is running
-    **
-    */
-    argc = 1;                  // Set argument count to 1
-    argv[0] = &path_to_exe[0]; // Set 1st command line argument to point to full path
-
-    /*
-    ** Get pointers to command line arguments just like if we were in DOS
-    **
-    ** The command line we get is cr/zero? terminated.
-    **
-    */
-
-    command_scan = 0;
-
-    do {
-        /*
-        ** Scan for non-space character on command line
-        */
-        do {
-            command_char = *(command_line + command_scan++);
-        } while (command_char == ' ');
-
-        if (command_char != 0 && command_char != 13) {
-            argv[argc++] = command_line + command_scan - 1;
-
-            /*
-            ** Scan for space character on command line
-            */
-            bool in_quotes = false;
-            do {
-                command_char = *(command_line + command_scan++);
-                if (command_char == '"') {
-                    in_quotes = !in_quotes;
-                }
-            } while ((in_quotes || command_char != ' ') && command_char != 0 && command_char != 13);
-
-            *(command_line + command_scan - 1) = 0;
-        }
-
-    } while (command_char != 0 && command_char != 13 && argc < 20);
-
-    return main(argc, argv);
-}
-
-#endif // _WIN32
-
-int main(int argc, char** argv)
-{
-    CCDebugString("C&C95 - Starting up.\n");
-
 #ifdef JAPANESE
     ForceEnglish = false;
 #endif
@@ -210,11 +150,11 @@ int main(int argc, char** argv)
     /*
     **	Remember the current working directory and drive.
     */
-    Paths.Init("vanillatd", "CONQUER.INI", "CONQUER.MIX", argv[0]);
+    Paths.Init("vanillatd", "CONQUER.INI", "CONQUER.MIX", args.ArgV[0]);
     vc_chdir(Paths.Program_Path());
     CDFileClass::Refresh_Search_Drives();
 
-    if (Parse_Command_Line(argc, argv)) {
+    if (Parse_Command_Line(args.ArgC, args.ArgV)) {
 
         WinTimerClass::Init(60);
 
@@ -231,11 +171,11 @@ int main(int argc, char** argv)
         */
         Check_Use_Compressed_Shapes();
 
-#if 0
         /*
         ** If there is not enough disk space free, dont allow the product to run.
         */
         if (Disk_Space_Available() < INIT_FREE_DISK_SPACE) {
+#if (0) // PG
 #ifdef GERMAN
             char disk_space_message[512];
             sprintf(disk_space_message,
@@ -265,8 +205,8 @@ int main(int argc, char** argv)
             }
 
 #endif
-        }
 #endif
+        }
 
         Read_Private_Config_Struct(cfile, &NewConfig);
 
@@ -478,14 +418,6 @@ int main(int argc, char** argv)
             Palette = NULL;
         }
     }
-
-    /*
-    **	Restore the current drive and directory.
-    */
-#ifdef NOT_FOR_WIN95
-    _dos_setdrive(olddrive, &drivecount);
-    chdir(oldpath);
-#endif // NOT_FOR_WIN95
 
     return (EXIT_SUCCESS);
 }
