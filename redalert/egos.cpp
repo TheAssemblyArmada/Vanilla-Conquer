@@ -915,8 +915,8 @@ void Show_Who_Was_Responsible(void)
     Theme.Stop();
     Options.Set_Score_Volume(oldvolume, false);
 
-    for (int index = 0; index < NUM_SLIDES; index++) {
-        delete SlideBuffers[index];
+    for (GraphicBufferClass* SlideBuffer : SlideBuffers) {
+        delete SlideBuffer;
     }
 
     delete BackgroundPage;

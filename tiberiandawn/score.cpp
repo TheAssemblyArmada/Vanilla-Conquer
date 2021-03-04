@@ -281,9 +281,9 @@ void ScorePrintClass::Update(void)
         0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F};
 
     if (Stage && (((char*)DataPtr)[Stage - 1] == 0)) {
-        for (int i = 0; i < MAXSCOREOBJS; i++) {
-            if (ScoreObjs[i] == this) {
-                ScoreObjs[i] = 0;
+        for (ScoreAnimClass* ScoreObj : ScoreObjs) {
+            if (ScoreObj == this) {
+                ScoreObj = 0;
             }
         }
         BlitList.Add(XPos * 2, YPos * 2, XPos * 2, YPos * 2, (Stage * 6) + 14, 8 * 2);
@@ -362,9 +362,9 @@ void MultiStagePrintClass::Update(void)
         0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F};
 
     if (Stage && (((char*)DataPtr)[Stage - 1] == 0)) {
-        for (int i = 0; i < MAXSCOREOBJS; i++) {
-            if (ScoreObjs[i] == this) {
-                ScoreObjs[i] = 0;
+        for (ScoreAnimClass* ScoreObj : ScoreObjs) {
+            if (ScoreObj == this) {
+                ScoreObj = 0;
             }
         }
         BlitList.Add(XPos * 2, YPos * 2, XPos * 2, YPos * 2, (Stage * 6) + 14, 8 * 2);
@@ -470,9 +470,9 @@ void ScoreScaleClass::Update(void)
             Stage--;
         } else {
             Set_Font_Palette(Palette);
-            for (int i = 0; i < MAXSCOREOBJS; i++) {
-                if (ScoreObjs[i] == this)
-                    ScoreObjs[i] = 0;
+            for (ScoreAnimClass* ScoreObj : ScoreObjs) {
+                if (ScoreObj == this)
+                    ScoreObj = 0;
             }
             TextPrintBuffer->Print((char*)DataPtr, XPos * 2, YPos * 2, TBLACK, TBLACK);
             // TextPrintBuffer->Blit(HidPage, XPos*2, YPos*2, XPos*2, YPos*2,2*6,2*6);
@@ -1898,9 +1898,9 @@ void Call_Back_Delay(int time)
 void Animate_Score_Objs()
 {
     StillUpdating = false;
-    for (int i = 0; i < MAXSCOREOBJS; i++) {
-        if (ScoreObjs[i]) {
-            ScoreObjs[i]->Update();
+    for (ScoreAnimClass* ScoreObj : ScoreObjs) {
+        if (ScoreObj) {
+            ScoreObj->Update();
         }
     }
 }

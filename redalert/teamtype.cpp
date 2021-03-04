@@ -184,9 +184,9 @@ TeamTypeClass::TeamTypeClass(void)
     , MissionCount(0)
     , ClassCount(0)
 {
-    for (int i = 0; i < MAX_TEAM_CLASSCOUNT; i++) {
-        Members[i].Class = NULL;
-        Members[i].Quantity = 0;
+    for (TeamMemberClass& Member : Members) {
+        Member.Class = NULL;
+        Member.Quantity = 0;
     }
 }
 

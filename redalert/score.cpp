@@ -195,9 +195,9 @@ void ScorePrintClass::Update(void)
         0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F};
 
     if (Stage && (((char*)DataPtr)[Stage - 1] == 0)) {
-        for (int i = 0; i < MAXSCOREOBJS; i++) {
-            if (ScoreObjs[i] == this) {
-                ScoreObjs[i] = 0;
+        for (ScoreAnimClass* ScoreObj : ScoreObjs) {
+            if (ScoreObj == this) {
+                ScoreObj = 0;
             }
         }
         delete this;
@@ -278,9 +278,9 @@ void ScoreScaleClass::Update(void)
             Stage--;
         } else {
             Set_Font_Palette(Palette);
-            for (int i = 0; i < MAXSCOREOBJS; i++) {
-                if (ScoreObjs[i] == this)
-                    ScoreObjs[i] = 0;
+            for (ScoreAnimClass* ScoreObj : ScoreObjs) {
+                if (ScoreObj == this)
+                    ScoreObj = 0;
             }
             HidPage.Print((char*)DataPtr, XPos, YPos, TBLACK, TBLACK);
             HidPage.Blit(SeenPage, XPos, YPos, XPos, YPos, 6 * RESFACTOR, 6 * RESFACTOR);
@@ -1637,9 +1637,9 @@ void Animate_Score_Objs()
         AllSurfaces.SurfacesRestored = false;
         PseudoSeenBuff->Blit(SeenPage);
     }
-    for (int i = 0; i < MAXSCOREOBJS; i++) {
-        if (ScoreObjs[i]) {
-            ScoreObjs[i]->Update();
+    for (ScoreAnimClass* ScoreObj : ScoreObjs) {
+        if (ScoreObj) {
+            ScoreObj->Update();
         }
     }
 }

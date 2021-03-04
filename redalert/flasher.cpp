@@ -78,9 +78,9 @@ void FlasherClass::Debug_Dump(MonoClass* mono) const
 bool FlasherClass::Process(void)
 {
     // 2019/09/20 JAS - Flashing info needs to exist per player
-    for (int i = 0; i < HOUSE_COUNT; i++) {
-        if (FlashCountPerPlayer[i]) {
-            FlashCountPerPlayer[i]--;
+    for (unsigned int& i : FlashCountPerPlayer) {
+        if (i) {
+            i--;
         }
     }
 

@@ -1309,8 +1309,8 @@ void Print_Statistics(int country, int xpos, int ypos)
     int done = 0;
     while (!done) {
         done = 1;
-        for (int x = 0; x < MAXSCOREOBJS; x++)
-            if (ScoreObjs[x]) {
+        for (ScoreAnimClass* ScoreObj : ScoreObjs)
+            if (ScoreObj) {
                 done = 0;
                 Call_Back_Delay(1);
             }

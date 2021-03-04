@@ -5990,9 +5990,9 @@ bool HouseClass::AI_Raise_Power(UrgencyType urgency) const
     **	Find a structure to sell and then sell it. Bail from further scanning until
     **	the next time.
     */
-    for (int i = 0; i < ARRAY_SIZE(_types); i++) {
-        if (urgency >= _types[i].Urgency) {
-            BuildingClass* b = Find_Building(_types[i].Structure);
+    for (auto& _type : _types) {
+        if (urgency >= _type.Urgency) {
+            BuildingClass* b = Find_Building(_type.Structure);
             if (b != NULL) {
                 b->Sell_Back(1);
                 return (true);
@@ -6072,9 +6072,9 @@ bool HouseClass::AI_Raise_Money(UrgencyType urgency) const
     **	Find a structure to sell and then sell it. Bail from further scanning until
     **	the next time.
     */
-    for (int i = 0; i < ARRAY_SIZE(_types); i++) {
-        if (urgency >= _types[i].Urgency) {
-            b = Find_Building(_types[i].Structure);
+    for (auto& _type : _types) {
+        if (urgency >= _type.Urgency) {
+            b = Find_Building(_type.Structure);
             if (b != NULL) {
                 b->Sell_Back(1);
                 return (true);

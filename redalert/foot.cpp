@@ -128,8 +128,8 @@ FootClass::FootClass(RTTIType rtti, int id, HousesType house)
     , HeadToCoord(0)
 {
     Path[0] = FACING_NONE;
-    for (int index = 0; index < ARRAY_SIZE(NavQueue); index++) {
-        NavQueue[index] = TARGET_NONE;
+    for (long& index : NavQueue) {
+        index = TARGET_NONE;
     }
 }
 
@@ -935,8 +935,8 @@ void FootClass::Approach_Target(void)
             for (int range = maxrange; range > 0x0080; range -= 0x0100) {
                 static int _angles[] = {0, 8, -8, 16, -16, 24, -24, 32, -32, 48, -48, 64, -64};
 
-                for (int index = 0; index < (sizeof(_angles) / sizeof(_angles[0])); index++) {
-                    trycoord = Coord_Move(tcoord, (DirType)(dir + _angles[index]), range);
+                for (int _angle : _angles) {
+                    trycoord = Coord_Move(tcoord, (DirType)(dir + _angle), range);
 
                     if (::Distance(trycoord, tcoord) < range) {
                         trycell = Coord_Cell(trycoord);
@@ -2354,9 +2354,9 @@ void FootClass::Handle_Navigation_List(void)
             **	target value from the first part to the end of the queue.
             */
             if (IsNavQueueLoop) {
-                for (int index = 0; index < ARRAY_SIZE(NavQueue); index++) {
-                    if (NavQueue[index] == TARGET_NONE) {
-                        NavQueue[index] = target;
+                for (long& index : NavQueue) {
+                    if (index == TARGET_NONE) {
+                        index = target;
                         break;
                     }
                 }
@@ -2439,8 +2439,8 @@ void FootClass::Queue_Navigation_List(TARGET target)
  *=============================================================================================*/
 void FootClass::Clear_Navigation_List(void)
 {
-    for (int index = 0; index < ARRAY_SIZE(NavQueue); index++) {
-        NavQueue[index] = TARGET_NONE;
+    for (long& index : NavQueue) {
+        index = TARGET_NONE;
     }
 }
 
