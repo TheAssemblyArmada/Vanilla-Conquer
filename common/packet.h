@@ -62,35 +62,35 @@ public:
     // These conveniance functions allow us to add a field directly to the list without
     // having to worry about newing one first.
     //
-    void Add_Field(char* field, char data)
+    void Add_Field(const char* field, char data)
     {
         Add_Field(new FieldClass(field, data));
     };
-    void Add_Field(char* field, unsigned char data)
+    void Add_Field(const char* field, unsigned char data)
     {
         Add_Field(new FieldClass(field, data));
     };
-    void Add_Field(char* field, short data)
+    void Add_Field(const char* field, short data)
     {
         Add_Field(new FieldClass(field, data));
     };
-    void Add_Field(char* field, unsigned short data)
+    void Add_Field(const char* field, unsigned short data)
     {
         Add_Field(new FieldClass(field, data));
     };
-    void Add_Field(char* field, long data)
+    void Add_Field(const char* field, long data)
     {
         Add_Field(new FieldClass(field, data));
     };
-    void Add_Field(char* field, unsigned long data)
+    void Add_Field(const char* field, unsigned long data)
     {
         Add_Field(new FieldClass(field, data));
     };
-    void Add_Field(char* field, char* data)
+    void Add_Field(const char* field, const char* data)
     {
         Add_Field(new FieldClass(field, data));
     };
-    void Add_Field(char* field, void* data, int length)
+    void Add_Field(const char* field, void* data, int length)
     {
         Add_Field(new FieldClass(field, data, length));
     };
@@ -99,15 +99,15 @@ public:
     // These functions search for a field of a given name in the list and
     // return the data via a reference value.
     //
-    FieldClass* Find_Field(char* id);
-    bool Get_Field(char* id, char& data);
-    bool Get_Field(char* id, unsigned char& data);
-    bool Get_Field(char* id, short& data);
-    bool Get_Field(char* id, unsigned short& data);
-    bool Get_Field(char* id, long& data);
-    bool Get_Field(char* id, unsigned long& data);
-    bool Get_Field(char* id, char* data);
-    bool Get_Field(char* id, void* data, int& length);
+    FieldClass* Find_Field(const char* id);
+    bool Get_Field(const char* id, char& data);
+    bool Get_Field(const char* id, unsigned char& data);
+    bool Get_Field(const char* id, short& data);
+    bool Get_Field(const char* id, unsigned short& data);
+    bool Get_Field(const char* id, long& data);
+    bool Get_Field(const char* id, unsigned long& data);
+    bool Get_Field(const char* id, char* data);
+    bool Get_Field(const char* id, void* data, int& length);
 
     char* Create_Comms_Packet(int& size);
 

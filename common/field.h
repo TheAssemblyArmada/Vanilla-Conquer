@@ -65,14 +65,14 @@ public:
     // of fields.
     //
     FieldClass(void){};
-    FieldClass(char* id, char data);
-    FieldClass(char* id, unsigned char data);
-    FieldClass(char* id, short data);
-    FieldClass(char* id, unsigned short data);
-    FieldClass(char* id, long data);
-    FieldClass(char* id, unsigned long data);
-    FieldClass(char* id, char* data);
-    FieldClass(char* id, void* data, int length);
+    FieldClass(const char* id, char data);
+    FieldClass(const char* id, unsigned char data);
+    FieldClass(const char* id, short data);
+    FieldClass(const char* id, unsigned short data);
+    FieldClass(const char* id, long data);
+    FieldClass(const char* id, unsigned long data);
+    FieldClass(const char* id, const char* data);
+    FieldClass(const char* id, void* data, int length);
 
     void Host_To_Net(void);
     void Net_To_Host(void);
