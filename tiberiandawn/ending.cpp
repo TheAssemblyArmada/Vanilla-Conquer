@@ -207,10 +207,10 @@ void Nod_Ending(void)
 #endif // NOT_FOR_WIN95
 
     /* get rid of all the animating objects */
-    for (int i = 0; i < MAXSCOREOBJS; i++)
-        if (ScoreObjs[i]) {
-            delete ScoreObjs[i];
-            ScoreObjs[i] = 0;
+    for (ScoreAnimClass* ScoreObj : ScoreObjs)
+        if (ScoreObj) {
+            delete ScoreObj;
+            ScoreObj = 0;
         }
     // erase the "choose a target" text
     SeenBuff.Fill_Rect(0, 180 * 2, 319 * 2, 199 * 2, 0);

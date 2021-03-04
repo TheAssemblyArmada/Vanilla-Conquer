@@ -1868,8 +1868,8 @@ void TechnoClass::Clicked_As_Target(HousesType house,
         FlashCountPerPlayer[house] = count;
     } else {
         // receiving HOUSE_COUNT means do it for every player
-        for (int i = 0; i < HOUSE_COUNT; ++i) {
-            FlashCountPerPlayer[i] = count;
+        for (unsigned int& i : FlashCountPerPlayer) {
+            i = count;
         }
     }
 }

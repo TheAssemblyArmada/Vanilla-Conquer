@@ -1973,10 +1973,10 @@ int Load_Interpolated_Palettes(char const* filename, bool add)
 
 void Free_Interpolated_Palettes(void)
 {
-    for (int i = 0; i < ARRAY_SIZE(InterpolatedPalettes); i++) {
-        if (InterpolatedPalettes[i]) {
-            free(InterpolatedPalettes[i]);
-            InterpolatedPalettes[i] = NULL;
+    for (auto& InterpolatedPalette : InterpolatedPalettes) {
+        if (InterpolatedPalette) {
+            free(InterpolatedPalette);
+            InterpolatedPalette = NULL;
         }
     }
 }

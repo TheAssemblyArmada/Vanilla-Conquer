@@ -6,7 +6,7 @@
 
 int test_calcx_calcy()
 {
-    struct test_data
+    struct Test_data
     {
         int16_t a;
         int16_t b;
@@ -16,7 +16,7 @@ int test_calcx_calcy()
 
     int ret = 0;
 
-    struct test_data test_data[] = {
+    static const Test_data test_data[] = {
         {0, 0, 0, 0},
         {1000, 1000, 7812, -7812},
         {3123, -827, 45358, -45358},
@@ -25,19 +25,17 @@ int test_calcx_calcy()
         {127, 304, 301, -301},
     };
 
-    for (int i = 0; i < sizeof(test_data) / sizeof(test_data[0]); i++) {
-        struct test_data* test = &test_data[i];
+    for (const Test_data& test : test_data) {
+        int outx = calcx(test.a, test.b);
+        int outy = calcy(test.a, test.b);
 
-        int outx = calcx(test->a, test->b);
-        int outy = calcy(test->a, test->b);
-
-        if (outx != test->outx) {
-            fprintf(stderr, "calcx(%d, %d) -> %d, expected %d\n", test->a, test->b, outx, test->outx);
+        if (outx != test.outx) {
+            fprintf(stderr, "calcx(%d, %d) -> %d, expected %d\n", test.a, test.b, outx, test.outx);
             ret = 1;
         }
 
-        if (outy != test->outy) {
-            fprintf(stderr, "calcy(%d, %d) -> %d, expected %d\n", test->a, test->b, outy, test->outy);
+        if (outy != test.outy) {
+            fprintf(stderr, "calcy(%d, %d) -> %d, expected %d\n", test.a, test.b, outy, test.outy);
             ret = 1;
         }
     }
@@ -47,7 +45,7 @@ int test_calcx_calcy()
 
 int test_fixed_cardinal()
 {
-    struct test_data
+    struct Test_data
     {
         int16_t a;
         int16_t b;
@@ -57,7 +55,7 @@ int test_fixed_cardinal()
 
     int ret = 0;
 
-    struct test_data test_data[] = {
+    static const Test_data test_data[] = {
         {0, 0, 65535, 0},
         {1000, 1000, 256, 3906},
         {3123, -827, 1375201, 65535},
@@ -65,19 +63,17 @@ int test_fixed_cardinal()
         {-1, -1, 0, 0},
     };
 
-    for (int i = 0; i < sizeof(test_data) / sizeof(test_data[0]); i++) {
-        struct test_data* test = &test_data[i];
+    for (const Test_data& test : test_data) {
+        int outx = Cardinal_To_Fixed(test.a, test.b);
+        int outy = Fixed_To_Cardinal(test.a, test.b);
 
-        int outx = Cardinal_To_Fixed(test->a, test->b);
-        int outy = Fixed_To_Cardinal(test->a, test->b);
-
-        if (outx != test->outx) {
-            fprintf(stderr, "Cardinal_To_Fixed(%d, %d) -> %d, expected %d\n", test->a, test->b, outx, test->outx);
+        if (outx != test.outx) {
+            fprintf(stderr, "Cardinal_To_Fixed(%d, %d) -> %d, expected %d\n", test.a, test.b, outx, test.outx);
             ret = 1;
         }
 
-        if (outy != test->outy) {
-            fprintf(stderr, "Fixed_To_Cardinal(%d, %d) -> %d, expected %d\n", test->a, test->b, outy, test->outy);
+        if (outy != test.outy) {
+            fprintf(stderr, "Fixed_To_Cardinal(%d, %d) -> %d, expected %d\n", test.a, test.b, outy, test.outy);
             ret = 1;
         }
     }

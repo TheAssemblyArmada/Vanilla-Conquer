@@ -566,8 +566,8 @@ int File_Stream_Sample_Vol(char const* filename, int volume, bool real_time_star
     if (FileStreamBuffer == nullptr) {
         FileStreamBuffer = malloc((unsigned long)(LockedData.StreamBufferSize * LockedData.StreamBufferCount));
 
-        for (int i = 0; i < MAX_SAMPLE_TRACKERS; ++i) {
-            LockedData.SampleTracker[i].FileBuffer = FileStreamBuffer;
+        for (SampleTrackerType& i : LockedData.SampleTracker) {
+            i.FileBuffer = FileStreamBuffer;
         }
     }
 
@@ -844,8 +844,8 @@ bool Audio_Init(int bits_per_sample, bool stereo, int rate, bool reverse_channel
     }
 
     // Create placback buffers for all trackers.
-    for (int i = 0; i < MAX_SAMPLE_TRACKERS; ++i) {
-        SampleTrackerType* st = &LockedData.SampleTracker[i];
+    for (SampleTrackerType& i : LockedData.SampleTracker) {
+        SampleTrackerType* st = &i;
 
         // Gen buffers on audio start?
         // alGenBuffers(OPENAL_BUFFER_COUNT, st->AudioBuffers);
@@ -1157,11 +1157,9 @@ int Set_Score_Vol(int volume)
     int old = LockedData.ScoreVolume;
     LockedData.ScoreVolume = volume;
 
-    for (int i = 0; i < MAX_SAMPLE_TRACKERS; ++i) {
-        SampleTrackerType* st = &LockedData.SampleTracker[i];
-
-        if (st->IsScore & st->Active) {
-            alSourcef(st->OpenALSource, AL_GAIN, ((LockedData.ScoreVolume * st->Volume) / 256) / 256.0f);
+    for (SampleTrackerType& st : LockedData.SampleTracker) {
+        if (st.IsScore & st.Active) {
+            alSourcef(st.OpenALSource, AL_GAIN, ((LockedData.ScoreVolume * st.Volume) / 256) / 256.0f);
         }
     }
 

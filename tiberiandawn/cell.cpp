@@ -390,12 +390,12 @@ void CellClass::Redraw_Objects(bool forced)
         /*
         **	Flag any overlapping object in this cell to be redrawn.
         */
-        for (int index = 0; index < sizeof(Overlapper) / sizeof(Overlapper[0]); index++) {
-            if (Overlapper[index]) {
-                if (!Overlapper[index]->IsActive) {
-                    Overlapper[index] = 0;
+        for (ObjectClass* ptr : Overlapper) {
+            if (ptr) {
+                if (!ptr->IsActive) {
+                    ptr = 0;
                 } else {
-                    Overlapper[index]->Mark(MARK_CHANGE);
+                    ptr->Mark(MARK_CHANGE);
                 }
             }
         }
@@ -783,9 +783,9 @@ void CellClass::Overlap_Down(ObjectClass* object)
 void CellClass::Overlap_Up(ObjectClass* object)
 {
     Validate();
-    for (int index = 0; index < sizeof(Overlapper) / sizeof(Overlapper[0]); index++) {
-        if (Overlapper[index] == object) {
-            Overlapper[index] = 0;
+    for (ObjectClass* ptr : Overlapper) {
+        if (ptr == object) {
+            ptr = 0;
             break;
         }
     }
@@ -1417,8 +1417,8 @@ void CellClass::Wall_Update(void)
         return;
     }
 
-    for (unsigned index = 0; index < (sizeof(_offsets) / sizeof(_offsets[0])); index++) {
-        CellClass* newcell = Adjacent_Cell(_offsets[index]);
+    for (FacingType& _offset : _offsets) {
+        CellClass* newcell = Adjacent_Cell(_offset);
 
         if (newcell && newcell->Overlay != OVERLAY_NONE && OverlayTypeClass::As_Reference(newcell->Overlay).IsWall) {
             int icon = 0;

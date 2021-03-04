@@ -435,8 +435,8 @@ void MapClass::Init_Clear(void)
     TiberiumGrowthExcess = 0;
     TiberiumSpreadCount = 0;
     TiberiumSpreadExcess = 0;
-    for (int index = 0; index < ARRAY_SIZE(Crates); index++) {
-        Crates[index].Init();
+    for (CrateClass& Crate : Crates) {
+        Crate.Init();
     }
 }
 
@@ -1316,9 +1316,9 @@ void MapClass::Logic(void)
         **	Find any crate that has expired and then regenerate it at a new
         **	spot.
         */
-        for (int index = 0; index < ARRAY_SIZE(Crates); index++) {
-            if (Crates[index].Is_Expired()) {
-                Crates[index].Remove_It();
+        for (CrateClass& Crate : Crates) {
+            if (Crate.Is_Expired()) {
+                Crate.Remove_It();
                 Place_Random_Crate();
             }
         }
@@ -1531,9 +1531,9 @@ bool MapClass::Place_Random_Crate(void)
 bool MapClass::Remove_Crate(CELL cell)
 {
     if (Session.Type != GAME_NORMAL) {
-        for (int index = 0; index < ARRAY_SIZE(Crates); index++) {
-            if (Crates[index].Is_Here(cell)) {
-                return (Crates[index].Remove_It());
+        for (CrateClass& Crate : Crates) {
+            if (Crate.Is_Here(cell)) {
+                return (Crate.Remove_It());
             }
         }
     }
@@ -1708,13 +1708,13 @@ ObjectClass* MapClass::Close_Object(COORDINATE coord) const
     */
     static int _offsets[] = {
         0, -1, 1, -MAP_CELL_W, MAP_CELL_W, MAP_CELL_W - 1, MAP_CELL_W + 1, -(MAP_CELL_W - 1), -(MAP_CELL_W + 1)};
-    for (int index = 0; index < (sizeof(_offsets) / sizeof(_offsets[0])); index++) {
+    for (int _offset : _offsets) {
 
         /*
         **	Examine the cell for close object. Make sure that the cell actually is a
         **	legal one.
         */
-        CELL newcell = cell + _offsets[index];
+        CELL newcell = cell + _offset;
         if (In_Radar(newcell)) {
 
             /*

@@ -631,8 +631,8 @@ bool Read_Scenario_Ini(char* root, bool fresh)
         long start_x = 0;
         long start_y = 0;
         Map.Compute_Start_Pos(start_x, start_y);
-        for (int i = 0; i < ARRAY_SIZE(Views); ++i) {
-            Views[i] = XY_Cell(start_x, start_y);
+        for (short& View : Views) {
+            View = XY_Cell(start_x, start_y);
         }
         Waypoint[27] = XY_Cell(start_x, start_y);
         COORDINATE pos = Cell_Coord(XY_Cell(start_x, start_y));

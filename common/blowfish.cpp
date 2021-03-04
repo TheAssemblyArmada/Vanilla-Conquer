@@ -172,11 +172,11 @@ void BlowfishEngine::Submit_Key(void const* key, int length)
     **	working 64 bit number is carried into this process from the previous
     **	operation.
     */
-    for (int sbox_index = 0; sbox_index < 4; sbox_index++) {
+    for (auto& sbox_index : bf_S) {
         for (int ss_index = 0; ss_index < UCHAR_MAX + 1; ss_index += 2) {
             Sub_Key_Encrypt(left, right);
-            bf_S[sbox_index][ss_index] = left;
-            bf_S[sbox_index][ss_index + 1] = right;
+            sbox_index[ss_index] = left;
+            sbox_index[ss_index + 1] = right;
         }
     }
 

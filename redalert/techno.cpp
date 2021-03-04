@@ -162,7 +162,7 @@ const char* NewName[] = {
     "Fire Ant",
     "Feuer-Ameise",
     "Queen Ant",
-    "Ameisenk”nigin",
+    "Ameisenkï¿½nigin",
     "ATS",
     "Angriffs-U-Boot",
     "Tesla Tank",
@@ -188,7 +188,7 @@ const char* NewName[] = {
     "Scout Ant",
     "Fourmi de Reconnaissance",
     "Warrior Ant",
-    "Fourmi GuerriŠre",
+    "Fourmi Guerriï¿½re",
     "Fire Ant",
     "Fourmi Lance-Flammes",
     "Queen Ant",
@@ -204,11 +204,11 @@ const char* NewName[] = {
     "Stavros",
     "Stavros",
     "F-A Longbow",
-    "HAA (H‚licoptŠre d'Assaut Avanc‚)",
+    "HAA (Hï¿½licoptï¿½re d'Assaut Avancï¿½)",
     "Civilian Specialist",
-    "Sp‚cialiste Civil",
+    "Spï¿½cialiste Civil",
     "Alloy Facility",
-    "Usine M‚tallurgique",
+    "Usine Mï¿½tallurgique",
     NULL,
 };
 
@@ -2463,8 +2463,8 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             FlashCountPerPlayer[house] = count;
         } else {
             // receiving HOUSE_COUNT means do it for every player
-            for (int i = 0; i < HOUSE_COUNT; ++i) {
-                FlashCountPerPlayer[i] = count;
+            for (unsigned int& i : FlashCountPerPlayer) {
+                i = count;
             }
         }
     }

@@ -203,8 +203,8 @@ void Choose_Side(void)
         /* keep the mouse hidden until the letters are thru printing */
         if (!lettersdone) {
             lettersdone = true;
-            for (int i = 0; i < MAXSCOREOBJS; i++)
-                if (ScoreObjs[i])
+            for (ScoreAnimClass* ScoreObj : ScoreObjs)
+                if (ScoreObj)
                     lettersdone = 0;
             if (lettersdone) {
                 Show_Mouse();
@@ -292,10 +292,10 @@ void Choose_Side(void)
     Free_Interpolated_Palettes();
     Set_Primary_Buffer_Format();
     /* get rid of all the animating objects */
-    for (int i = 0; i < MAXSCOREOBJS; i++)
-        if (ScoreObjs[i]) {
-            delete ScoreObjs[i];
-            ScoreObjs[i] = 0;
+    for (ScoreAnimClass* ScoreObj : ScoreObjs)
+        if (ScoreObj) {
+            delete ScoreObj;
+            ScoreObj = 0;
         }
 
     if (Whom == HOUSE_GOOD) {
