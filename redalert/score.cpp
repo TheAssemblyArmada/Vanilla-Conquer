@@ -1667,7 +1667,7 @@ char* Int_Print(int a)
  *=============================================================================================*/
 void Multi_Score_Presentation(void)
 {
-#if (0) // PG
+#ifndef REMASTER_BUILD
     char remap[16];
     GraphicBufferClass* pseudoseenbuff = new GraphicBufferClass(320, 200, (void*)NULL);
     PseudoSeenBuff = new GraphicBufferClass(SeenBuff.Get_Width(), SeenBuff.Get_Height(), (void*)NULL);
@@ -1684,8 +1684,8 @@ void Multi_Score_Presentation(void)
     SeenPage.Clear();
     HidPage.Clear();
     Hide_Mouse();
-    void* anim =
-        Open_Animation("MLTIPLYR.WSA", NULL, 0L, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), ScorePalette);
+    void* anim = Open_Animation(
+        "MLTIPLYR.WSA", (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), (unsigned char*)ScorePalette.Get_Data());
     /*
     ** Display the background animation
     */

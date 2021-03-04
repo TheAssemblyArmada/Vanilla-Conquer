@@ -39,6 +39,7 @@
 #include "connect.h"
 #include "version.h"
 #include "event.h"
+#include <stdint.h>
 
 //---------------------------------------------------------------------------
 // Forward declarations
@@ -528,7 +529,7 @@ public:
     //.....................................................................
     int Create_Connections(void);
     bool Am_I_Master(void);
-    unsigned long Compute_Unique_ID(void);
+    uint32_t Compute_Unique_ID(void);
 
     //.....................................................................
     // File I/O

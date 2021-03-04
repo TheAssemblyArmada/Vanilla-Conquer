@@ -554,8 +554,9 @@ static void Queue_AI_Multiplayer(void)
     if (Session.Type == GAME_SKIRMISH)
         return;
 
+#ifdef REMASTER_BUILD
     return;
-#if (0) // PG
+#else // PG
     //........................................................................
     // Enums:
     //........................................................................
@@ -601,12 +602,8 @@ static void Queue_AI_Multiplayer(void)
     //------------------------------------------------------------------------
     //	Initialize the packet buffer pointer & its max size
     //------------------------------------------------------------------------
-#if (0) // PG
-    if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
-        multi_packet_buf = NullModem.BuildBuf;
-        multi_packet_max = NullModem.MaxLen - sizeof(CommHeaderType);
-        net = &NullModem;
-    } else if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+#ifndef REMASTER_BUILD
+    if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
         multi_packet_buf = Session.MetaPacket;
         multi_packet_max = Session.MetaSize;
         net = &Ipx;
@@ -791,16 +788,18 @@ static void Queue_AI_Multiplayer(void)
     //------------------------------------------------------------------------
 #ifdef FIXIT_VERSION_3
     int iFramesyncTimeout;
+#ifdef WOLAPI_INTEGRATION
     if (Session.Type == GAME_INTERNET && pWolapi && pWolapi->GameInfoCurrent.iPlayerCount > 2)
         //	Shortened resync timeout for non-2 player games.
         iFramesyncTimeout = 5 * 60; //	One minute.
     else
+#endif
         iFramesyncTimeout = FRAMESYNC_TIMEOUT;
 
     rc = Wait_For_Players(0,
                           net,
                           (Session.MaxAhead << 3),
-                          MAX(net->Response_Time() * 3, FRAMESYNC_DLG_TIME * timeout_factor),
+                          MAX(net->Response_Time() * 3, (unsigned long)(FRAMESYNC_DLG_TIME * timeout_factor)),
                           iFramesyncTimeout * (2 * timeout_factor),
                           multi_packet_buf,
                           my_sent,
@@ -2569,7 +2568,7 @@ static int Add_Compressed_Events(void* buf, int bufsize, int frame_delay, int si
                 if (OutList.First().Data.MegaMission.Mission == prevevent.Data.MegaMission.Mission
                     && OutList.First().Data.MegaMission.Target == prevevent.Data.MegaMission.Target
                     && OutList.First().Data.MegaMission.Destination == prevevent.Data.MegaMission.Destination) {
-#if (0) // PG
+#ifndef REMASTER_BUILD
                     if (Debug_Print_Events) {
                         printf("      adding Whom:%x (%x) Mission:%s Target:%x (%x) Dest:%x (%x)\n",
                                OutList.First().Data.MegaMission.Whom.As_TARGET(),
@@ -3296,13 +3295,9 @@ static int Execute_DoList(int max_houses,
                         if (CRC[index] != DoList[j].Data.FrameInfo.CRC) {
                             Print_CRCs(&DoList[j]);
 
-#if (0) // PG
+#ifndef REMASTER_BUILD
                             if (WWMessageBox().Process(TXT_OUT_OF_SYNC, TXT_CONTINUE, TXT_STOP) == 0) {
-                                if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
-                                    // PG Destroy_Null_Connection( house, -1 );
-                                    Shutdown_Modem();
-                                    Session.Type = GAME_NORMAL;
-                                } else if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && net) {
+                                if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && net) {
                                     while (net->Num_Connections()) {
                                         Keyboard->Check();
                                         Destroy_Connection(net->Connection_ID(0), -1);

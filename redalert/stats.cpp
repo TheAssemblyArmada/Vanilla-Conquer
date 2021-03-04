@@ -38,8 +38,12 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "utracker.h"
 #include "common/tcpip.h"
 #include "common/packet.h"
+#include "common/endianness.h"
+#include "common/internet.h"
+#include "common/gitinfo.h"
 
 #define FIELD_PACKET_TYPE      "TYPE"
 #define FIELD_GAME_ID          "IDNO"
@@ -73,9 +77,10 @@
 #define FIELD_DISCONNECT_PINGS      "PING"
 #define FIELD_COMPUTERTOOKOVER      "QUIT"
 //#define FIELD_HARDWARE_GUID					"GUID"
+#endif
+
 #define FIELD_PLAYER1_IP "ADR1"
 #define FIELD_PLAYER2_IP "ADR2"
-#endif
 
 //	ajw The following were never used (thank god).
 #define FIELD_PLAYER1_HANDLE  "NAM1"
@@ -146,14 +151,6 @@ enum
 #endif
 };
 
-extern unsigned long PlanetWestwoodGameID;
-#ifdef _WIN32
-extern HINSTANCE ProgramInstance;
-#endif
-extern unsigned long PlanetWestwoodStartTime;
-
-extern char CPUType;
-
 bool GameTimerInUse = false;
 TimerClass GameTimer;
 long GameEndTime;
@@ -185,7 +182,7 @@ extern bool bReconnectDialogCancelled;
 
 void Send_Statistics_Packet(void)
 {
-#if (0) // PG
+#if !defined REMASTER_BUILD && defined NETWORKING
 //	debugprint( "Stats: Send_Statistics_Packet() called.\n" );
 #ifndef INTERNET_OFF // Denzil 5/4/98
 
@@ -249,7 +246,7 @@ void Send_Statistics_Packet(void)
         /*
         ** Game ID. A unique game identifier assigned by WChat.
         */
-        stats.Add_Field(FIELD_GAME_ID, PlanetWestwoodGameID);
+        stats.Add_Field(FIELD_GAME_ID, (unsigned long)PlanetWestwoodGameID);
 
 #ifdef WOLAPI_INTEGRATION
 
@@ -529,30 +526,9 @@ void Send_Statistics_Packet(void)
 #endif
 
         /*
-        ** CPU type
-        */
-        stats.Add_Field(FIELD_CPU_TYPE, (char)CPUType);
-
-        /*
         ** Memory
         */
         stats.Add_Field(FIELD_MEMORY, (long)-1);
-
-        /*
-        ** Video memory
-        */
-        DDCAPS video_capabilities;
-        long video_memory;
-
-        if (DirectDrawObject) {
-            video_capabilities.dwSize = sizeof(video_capabilities);
-            if (DD_OK == DirectDrawObject->GetCaps(&video_capabilities, NULL)) {
-                video_memory = video_capabilities.dwVidMemTotal;
-                video_memory += 1024 * 1024 - 1;
-                video_memory &= 0xfff00000;
-                stats.Add_Field(FIELD_VIDEO_MEMORY, (long)video_memory);
-            }
-        }
 
         /*
         ** Game speed setting.
@@ -562,28 +538,9 @@ void Send_Statistics_Packet(void)
         /*
         ** Red Alert version/build date
         */
-#ifdef _WIN32
-        char version[128];
-        sprintf(version, "%s", VerNum.Version_Name());
-        stats.Add_Field(FIELD_GAME_VERSION, (char*)version);
-
-        char path_to_exe[280];
-        FILETIME write_time; // File time is 64 bits
-
-        GetModuleFileName(ProgramInstance, path_to_exe, 280);
-        RawFileClass file;
-        file.Set_Name(path_to_exe);
-        file.Open();
-        HANDLE handle = file.Get_File_Handle();
-
-        if (handle != INVALID_HANDLE_VALUE) {
-            if (GetFileTime(handle, NULL, NULL, &write_time)) {
-                write_time.dwLowDateTime = hton32(write_time.dwLowDateTime);
-                write_time.dwHighDateTime = hton32(write_time.dwHighDateTime);
-                stats.Add_Field(FIELD_GAME_BUILD_DATE, (void*)&write_time, sizeof(write_time));
-            }
-        }
-#endif
+        int64_t build_time = GitCommitTimeStamp;
+        build_time = hton64(build_time);
+        stats.Add_Field(FIELD_GAME_BUILD_DATE, (void*)&build_time, sizeof(build_time));
 
         /*
         ** Covert installed? (Yes/No)
@@ -846,6 +803,7 @@ void Send_Statistics_Packet(void)
     /*
     ** Send it.....
     */
+#ifdef WOLAPI_INTEGRATION
     const char* szGameResServer;
     int iPort;
     if (pWolapi->GameInfoCurrent.GameKind == CREATEGAMEINFO::AMGAME) {
@@ -861,12 +819,12 @@ void Send_Statistics_Packet(void)
             // debugprint( "RequestGameresSend( %s, %i ) failed!!!\n", szGameResServer, iPort );
             ;
     }
-
+#endif
     /*
     ** Save it to disk as well so I can see it
     */
-    //	RawFileClass anotherfile ("packet.net");
-    //	anotherfile.Write(packet, packet_size);
+    CDFileClass anotherfile("packet.net");
+    anotherfile.Write(packet, packet_size);
     // debugprint( "Wrote out packet.net\n" );
 
     /*
@@ -876,7 +834,7 @@ void Send_Statistics_Packet(void)
 
     GameStatisticsPacketSent = true;
 #endif // INTERNET_OFF
-#endif
+#endif // !defined REMASTER_BUILD && defined NETWORKING
 }
 
 void Register_Game_Start_Time(void)
