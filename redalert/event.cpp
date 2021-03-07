@@ -94,7 +94,7 @@ unsigned char EventClass::EventLength[EventClass::LAST_EVENT] = {
 #endif
 };
 
-char* EventClass::EventNames[EventClass::LAST_EVENT] = {
+const char* EventClass::EventNames[EventClass::LAST_EVENT] = {
     "EMPTY",        "ALLY",          "MEGAMISSION",  "MEGAMISSION_F", "IDLE",      "SCATTER",  "DESTRUCT",
     "DEPLOY",       "PLACE",         "OPTIONS",      "GAMESPEED",     "PRODUCE",   "SUSPEND",  "ABANDON",
     "PRIMARY",      "SPECIAL_PLACE", "EXIT",         "ANIMATION",     "REPAIR",    "SELL",     "SELLCELL",

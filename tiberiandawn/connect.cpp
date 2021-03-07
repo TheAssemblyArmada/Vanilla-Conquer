@@ -47,7 +47,7 @@
 /*
 ********************************* Globals ***********************************
 */
-char* ConnectionClass::Commands[PACKET_COUNT] = {"ADATA", "NDATA", "ACK"};
+const char* ConnectionClass::Commands[PACKET_COUNT] = {"ADATA", "NDATA", "ACK"};
 
 /***************************************************************************
  * ConnectionClass::ConnectionClass -- class constructor                   *
@@ -232,7 +232,7 @@ unsigned long ConnectionClass::Time(void)
  * HISTORY:                                                                *
  *   05/31/1995 BRR : Created.                                             *
  *=========================================================================*/
-char* ConnectionClass::Command_Name(int command)
+const char* ConnectionClass::Command_Name(int command)
 {
     if (command >= 0 && command < PACKET_COUNT) {
         return (Commands[command]);

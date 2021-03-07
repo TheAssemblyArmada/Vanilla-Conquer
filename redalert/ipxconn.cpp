@@ -106,7 +106,7 @@ IPXConnClass::IPXConnClass(int numsend,
                            unsigned short magicnum,
                            IPXAddressClass* address,
                            int id,
-                           char* name,
+                           const char* name,
                            int extralen)
     : ConnectionClass(numsend,
                       numreceive,

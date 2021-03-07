@@ -1571,7 +1571,7 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
     Hide_Mouse();
 
     PaletteClass temp;
-    char* filename = "SOVPAPER.PCX";
+    const char* filename = "SOVPAPER.PCX";
     if (PlayerPtr->Class->House != HOUSE_USSR && PlayerPtr->Class->House != HOUSE_UKRAINE) {
         filename = "ALIPAPER.PCX";
     }

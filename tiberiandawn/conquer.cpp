@@ -3557,7 +3557,7 @@ bool Force_CD_Available(int cd)
     static char _palette[768];
     static char _hold[256];
     static void* font;
-    static char* _volid[] = {"GDI", "NOD", "COVERT"};
+    static const char* _volid[] = {"GDI", "NOD", "COVERT"};
 
     int drive;
 

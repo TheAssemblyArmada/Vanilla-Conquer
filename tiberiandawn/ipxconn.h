@@ -74,7 +74,7 @@ public:
                  unsigned short magicnum,
                  IPXAddressClass* address,
                  int id,
-                 char* name);
+                 const char* name);
     virtual ~IPXConnClass(){};
 
     /*.....................................................................

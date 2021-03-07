@@ -649,8 +649,8 @@ public:
     static char Descriptions[100][40];
     static int CountMin[2];
     static int CountMax[2];
-    static char* GlobalPacketNames[];
-    static char* SerialPacketNames[];
+    static const char* GlobalPacketNames[];
+    static const char* SerialPacketNames[];
 
     //.....................................................................
     // For Recording & Playing back a file
@@ -689,8 +689,8 @@ public:
 
     DynamicVectorClass<PhoneEntryClass*> PhoneBook;
     DynamicVectorClass<char*> InitStrings;
-    static char* DialMethodCheck[DIAL_METHODS];
-    static char* CallWaitStrings[CALL_WAIT_STRINGS_NUM];
+    static const char* DialMethodCheck[DIAL_METHODS];
+    static const char* CallWaitStrings[CALL_WAIT_STRINGS_NUM];
 
     //.....................................................................
     // For finding Sync Bugs

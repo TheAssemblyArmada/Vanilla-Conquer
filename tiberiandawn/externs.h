@@ -308,8 +308,8 @@ extern int MPlayerCurGame;
 extern int TheirProcessTime[MAX_PLAYERS - 1];
 extern int DesiredFrameRate;
 
-extern char* GlobalPacketNames[];
-extern char* SerialPacketNames[];
+extern const char* GlobalPacketNames[];
+extern const char* SerialPacketNames[];
 
 typedef struct
 {
