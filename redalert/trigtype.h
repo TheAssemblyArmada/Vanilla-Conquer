@@ -128,7 +128,7 @@ public:
     void Fill_In(char* name, char* entry);
     void Build_INI_Entry(char* buf) const;
 
-    static char* INI_Name(void)
+    static const char* INI_Name(void)
     {
         return "Trigs";
     };

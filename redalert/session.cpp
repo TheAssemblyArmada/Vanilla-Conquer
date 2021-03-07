@@ -90,21 +90,21 @@ char SessionClass::Descriptions[100][40];
 // These values are used purely for the Mono debug display.  They show the
 // names of the Global Channel packet types, and the event types.
 //---------------------------------------------------------------------------
-char* SessionClass::GlobalPacketNames[] = {"Game?",
-                                           "Game!",
-                                           "Player?",
-                                           "Player!",
-                                           "Join?",
-                                           "Join!",
-                                           "Reject",
-                                           "GameOptions",
-                                           "Sign Off",
-                                           "GO!",
-                                           "Message",
-                                           "Ping",
-                                           "Load"};
+const char* SessionClass::GlobalPacketNames[] = {"Game?",
+                                                 "Game!",
+                                                 "Player?",
+                                                 "Player!",
+                                                 "Join?",
+                                                 "Join!",
+                                                 "Reject",
+                                                 "GameOptions",
+                                                 "Sign Off",
+                                                 "GO!",
+                                                 "Message",
+                                                 "Ping",
+                                                 "Load"};
 
-char* SessionClass::SerialPacketNames[] = {
+const char* SessionClass::SerialPacketNames[] = {
     "CONNECT",
     "GAME_OPTIONS",
     "SIGN_OFF",
@@ -116,9 +116,12 @@ char* SessionClass::SerialPacketNames[] = {
     "LAST_COMMAND",
 };
 
-char* SessionClass::DialMethodCheck[DIAL_METHODS] = {"T", "P"};
+const char* SessionClass::DialMethodCheck[DIAL_METHODS] = {"T", "P"};
 
-char* SessionClass::CallWaitStrings[CALL_WAIT_STRINGS_NUM] = {"*70,", "70#,", "1170,", "CUSTOM -                "};
+const char* SessionClass::CallWaitStrings[CALL_WAIT_STRINGS_NUM] = {"*70,",
+                                                                    "70#,",
+                                                                    "1170,",
+                                                                    "CUSTOM -                "};
 
 /***************************************************************************
  * SessionClass::SessionClass -- Constructor                               *

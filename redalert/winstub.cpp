@@ -600,7 +600,7 @@ bool Any_Locked()
  *    4/17/96 9:58AM ST : Created                                                              *
  *=============================================================================================*/
 
-void Assert_Failure(char* expression, int line, char* file)
+void Assert_Failure(const char* expression, int line, const char* file)
 {
     char assertbuf[256];
     char timebuff[512];

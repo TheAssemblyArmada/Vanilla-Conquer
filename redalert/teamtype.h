@@ -144,7 +144,7 @@ public:
     static void Read_INI(CCINIClass& ini);
     void Fill_In(char* name, char* entry);
     static void Write_INI(CCINIClass& ini);
-    static char* INI_Name(void)
+    static const char* INI_Name(void)
     {
         return "TeamTypes";
     };
