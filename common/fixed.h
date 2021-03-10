@@ -63,7 +63,7 @@
 **	Note that when integer values are returns from the arithmetic operators, the value is rounded
 **	to the nearest whole integer value. This differs from normal integer math that always rounds down.
 */
-class fixed
+class alignas(uint32_t) fixed
 {
     static constexpr unsigned int PRECISION = 1 << 16;
 
