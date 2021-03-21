@@ -111,10 +111,9 @@ const char* PathsClass::Data_Path()
 const char* PathsClass::User_Path()
 {
     if (UserPath.empty()) {
-        LPWSTR path = nullptr;
+        wchar_t path[MAX_PATH];
         HRESULT hr;
-        hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, KF_FLAG_CREATE, nullptr, &path);
-        FreeCoTaskMemory scope(path);
+        hr = SHGetFolderPathW(nullptr, CSIDL_APPDATA | CSIDL_FLAG_CREATE, nullptr, 0, path);
 
         if (!SUCCEEDED(hr)) {
             DBG_WARN("Failed to retrieve FOLDERID_RoamingAppData for PathsClass::User_Path()");
