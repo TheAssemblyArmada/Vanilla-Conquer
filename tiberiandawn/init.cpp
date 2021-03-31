@@ -2355,7 +2355,8 @@ void Parse_INI_File(void)
  *=============================================================================================*/
 int Version_Number(void)
 {
-    if (*GitTag == '\0' || GitUncommittedChanges) {
+    // Only print the git tag version number if it starts with 'v'
+    if (*GitTag == '\0' || GitUncommittedChanges || *GitTag != 'v') {
         snprintf(VersionText,
                  sizeof(VersionText),
                  "r%d %s%s",

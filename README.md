@@ -65,6 +65,10 @@ make -j8
 
 This will build Vanilla Conquer executables in the build directory.
 
+## Releases
+
+Binary releases of the latest commit are available from [here](https://github.com/TheAssemblyArmada/Vanilla-Conquer/releases/tag/latest), which is updated whenever new code is merged into the main branch.
+
 ## Running
 
 ### VanillaTD and VanillaRA

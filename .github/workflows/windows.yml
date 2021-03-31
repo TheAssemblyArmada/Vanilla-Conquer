@@ -3,8 +3,6 @@ name: windows
 on:
   pull_request:
   push:
-  release:
-    types: published
 
 jobs:
   remaster_msvc:
@@ -51,6 +49,27 @@ jobs:
       with:
         name: vanilla-conquer-remaster-msvc
         path: artifact
+
+    - name: Upload development release
+      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' }}
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Development Build
+        tag_name: "latest"
+        prerelease: true
+        files: |
+          artifact\*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload tagged release
+      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          artifact\*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   vanilla_win_msvc:
     runs-on: windows-2019
@@ -120,3 +139,24 @@ jobs:
       with:
         name: vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}
         path: artifact
+        
+    - name: Upload development release
+      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' }}
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Development Build
+        tag_name: "latest"
+        prerelease: true
+        files: |
+          artifact\*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload tagged release
+      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          artifact\*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

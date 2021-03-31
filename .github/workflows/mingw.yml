@@ -3,8 +3,6 @@ name: mingw-w64
 on:
   pull_request:
   push:
-  release:
-    types: published
 
 jobs:
   remaster_gcc:
@@ -107,11 +105,32 @@ jobs:
     - name: Create archives
       run: |
         mkdir artifact
-        7z a artifact/vanilla-conquer-standalone-win-i386-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd.exe ./build/vanillara.exe /tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/bin/SDL2.dll /tmp/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll
-        7z a artifact/vanilla-conquer-standalone-win-i386-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dbg ./build/vanillara.dbg
+        7z a artifact/vanilla-conquer-win-gcc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd.exe ./build/vanillara.exe /tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/bin/SDL2.dll /tmp/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll
+        7z a artifact/vanilla-conquer-win-gcc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dbg ./build/vanillara.dbg
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
         name: vanilla-conquer-win-gcc-${{ steps.vars.outputs.arc_path }}
         path: artifact
+        
+    - name: Upload development release
+      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' }}
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Development Build
+        tag_name: "latest"
+        prerelease: true
+        files: |
+          artifact/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload tagged release
+      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          artifact/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
