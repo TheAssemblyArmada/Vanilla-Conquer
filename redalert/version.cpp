@@ -408,7 +408,8 @@ unsigned short VersionClass::Minor_Version(void)
  *=========================================================================*/
 char* VersionClass::Version_Name(void)
 {
-    if (*GitTag == '\0') {
+    // Only print the git tag version number if it starts with 'v'
+    if (*GitTag == '\0' || GitUncommittedChanges || *GitTag != 'v') {
         snprintf(VersionName,
                  sizeof(VersionName),
                  "r%d %s%s",

@@ -3,10 +3,20 @@ name: linux
 on:
   pull_request:
   push:
-  release:
-    types: published
 
 jobs:
+  create_dev_release:
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Create Development release
+      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' }}
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Development Build"
+        
   vanilla-linux:
     runs-on: ubuntu-18.04
     strategy:
@@ -80,3 +90,24 @@ jobs:
       with:
         name: vanilla-conquer-linux-${{ matrix.platform }}-x86_64
         path: artifact
+        
+    - name: Upload development release
+      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' }}
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Development Build
+        tag_name: "latest"
+        prerelease: true
+        files: |
+          artifact\*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload tagged release
+      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          artifact\*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
