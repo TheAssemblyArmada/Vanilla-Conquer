@@ -259,4 +259,16 @@ if(BUILD_VANILLARA)
     if(MSVC)
         target_link_options(VanillaRA PRIVATE /subsystem:windows /ENTRY:WinMainCRTStartup)
     endif()
+    if(BUILD_WITH_UBSAN)
+        target_compile_options(VanillaRA PUBLIC
+                    -fsanitize=undefined,float-divide-by-zero,integer,implicit-conversion,implicit-integer-truncation,implicit-integer-arithmetic-value-change,local-bounds,nullability
+                    -g3 -fno-omit-frame-pointer)
+        target_link_options(VanillaRA PUBLIC -fsanitize=undefined,float-divide-by-zero,integer,implicit-conversion,implicit-integer-truncation,implicit-integer-arithmetic-value-change,local-bounds,nullability)
+    endif()
+    if(BUILD_WITH_ASAN)
+        target_compile_options(VanillaRA PUBLIC
+                    -fsanitize=address
+                    -g3 -fno-omit-frame-pointer)
+            target_link_options(VanillaRA PUBLIC -fsanitize=address)
+    endif()
 endif()

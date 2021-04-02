@@ -225,4 +225,16 @@ if(BUILD_VANILLATD)
         set_target_properties(VanillaTD PROPERTIES LINK_FLAGS "-mwindows")
         target_compile_definitions(VanillaTD PUBLIC main=_main)
     endif()
+    if(BUILD_WITH_UBSAN)
+        target_compile_options(VanillaTD PUBLIC
+                    -fsanitize=undefined,float-divide-by-zero,integer,implicit-conversion,implicit-integer-truncation,implicit-integer-arithmetic-value-change,local-bounds,nullability
+                    -g3 -fno-omit-frame-pointer)
+        target_link_options(VanillaTD PUBLIC -fsanitize=undefined,float-divide-by-zero,integer,implicit-conversion,implicit-integer-truncation,implicit-integer-arithmetic-value-change,local-bounds,nullability)
+    endif()
+    if(BUILD_WITH_ASAN)
+        target_compile_options(VanillaTD PUBLIC
+                    -fsanitize=address
+                    -g3 -fno-omit-frame-pointer)
+        target_link_options(VanillaTD PUBLIC -fsanitize=address)
+    endif()
 endif()
