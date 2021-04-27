@@ -1,0 +1,9 @@
+{
+    "name": "Vanilla TD",
+    "description": "Default changes from Vanilla Conquer.",
+    "author": "The Assembly Armada",
+    "load_order": 1,
+    "version_high": 1,
+    "version_low": 0,
+    "game_type": "TD"
+}

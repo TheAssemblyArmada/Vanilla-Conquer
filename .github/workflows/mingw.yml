@@ -36,12 +36,16 @@ jobs:
         i686-w64-mingw32-strip --strip-all ./build/RedAlert.dll
         i686-w64-mingw32-objcopy --add-gnu-debuglink=./build/TiberianDawn.dbg ./build/TiberianDawn.dll
         i686-w64-mingw32-objcopy --add-gnu-debuglink=./build/RedAlert.dbg ./build/RedAlert.dll
+        cp -f ./build/TiberianDawn.dll ./build/Vanilla_TD/Data/
+        cp -f ./build/RedAlert.dll ./build/Vanilla_RA/Data/
 
     - name: Create archives
       run: |
         mkdir artifact
         7z a artifact/vanilla-conquer-remasterdll-gcc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/TiberianDawn.dll ./build/RedAlert.dll
         7z a artifact/vanilla-conquer-remasterdll-gcc-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/TiberianDawn.dbg ./build/RedAlert.dbg
+        7z a artifact/vanilla-ra-remaster-mod-gcc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/Vanilla_RA
+        7z a artifact/vanilla-td-remaster-mod-gcc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/Vanilla_TD
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
