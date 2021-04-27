@@ -43,7 +43,9 @@ jobs:
         mkdir artifact
         7z a artifact/vanilla-conquer-remasterdll-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/RedAlert.dll ./build/TiberianDawn.dll
         7z a artifact/vanilla-conquer-remasterdll-msvc-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/RedAlert.pdb ./build/TiberianDawn.pdb
-  
+        7z a artifact/vanilla-ra-remaster-mod-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/Vanilla_RA
+        7z a artifact/vanilla-td-remaster-mod-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/Vanilla_TD
+        
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:

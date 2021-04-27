@@ -87,56 +87,31 @@ If you encounter a bug that may be data related like invisible things or crashin
 
 ### Remastered
 
-The build process will produce `TiberianDawn.dll` and `RedAlert.dll` in your build directory if you enable them with `-DBUILD_REMASTERTD=ON` and `-DBUILD_REMASTERRA=ON`.
+The build process will produce _Vanilla_TD_ and _Vanilla_RA_ directories in your build directory if you enable them with `-DBUILD_REMASTERTD=ON` and `-DBUILD_REMASTERRA=ON`.
 These work as mods for the Remastered Collection.
 
-To manually create a local Remastered mod after launching both games once, head to _My Documents/CnCRemastered/CnCRemastered/Mods_.
+To manually install a local Remastered mod, launch both games once then head to _My Documents/CnCRemastered/CnCRemastered/Mods_.
 You should see _Tiberian\_Dawn_ and _Red\_Alert_ directories.
-
-Create a mod directory within either game, we'll call it _Vanilla_. Create a directory inside it called _Data_.
 
 #### Tiberian Dawn
 
-Copy _TiberianDawn.dll_ to the _Data_ directory. Next create a JSON file (a text file) `ccmod.json` in the mod directory and add the following content:
-
-```json
-{
-    "name": "Vanilla",
-    "description": "",
-    "author": "",
-    "load_order": 1,
-    "version_high": 1,
-    "version_low": 0,
-    "game_type": "TD"
-}
-```
+Copy the _Vanilla_TD_ directory to the _Tiberian\_Dawn_ directory.
 
 The directory structure should look like this:
 
-    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/Vanilla/Data/TiberianDawn.dll
-    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/Vanilla/ccmod.json
+    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/Vanilla_TD/Data/TiberianDawn.dll
+    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/Vanilla_TD/ccmod.json
+    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/Vanilla_TD/GameConstants_Mod.xml
 
 You should now see the new mod in the mods list of Tiberian Dawn Remastered.
 
 #### Red Alert
 
-Copy _RedAlert.dll_ to the _Data_ directory. Next create a JSON file (a text file) `ccmod.json` in the mod directory and add the following content:
-
-```json
-{
-    "name": "Vanilla",
-    "description": "",
-    "author": "",
-    "load_order": 1,
-    "version_high": 1,
-    "version_low": 0,
-    "game_type": "RA"
-}
-```
+Copy the _Vanilla_RA_ directory to the _Red\_Alert_ directory.
 
 The directory structure should look like this:
 
-    My Documents/CnCRemastered/CnCRemastered/Mods/Red_Alert/Vanilla/Data/RedAlert.dll
-    My Documents/CnCRemastered/CnCRemastered/Mods/Red_Alert/Vanilla/ccmod.json
+    My Documents/CnCRemastered/CnCRemastered/Mods/Red_Alert/Vanilla_RA/Data/RedAlert.dll
+    My Documents/CnCRemastered/CnCRemastered/Mods/Red_Alert/Vanilla_RA/ccmod.json
 
-You should now see the new mod in the mods list of Tiberian Dawn Remastered.
+You should now see the new mod in the mods list of Red Alert Remastered.

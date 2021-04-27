@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<GameConstants>
+    <GameConstantsClass>
+        <CNCTDSupportMegamaps network="client" overwrite="true"> true </CNCTDSupportMegamaps>
+    </GameConstantsClass>
+</GameConstants>
