@@ -64,6 +64,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/straw.h"
+#include "common/pipe.h"
 
 #pragma warning(disable : 4302) // Truncation from pointer to TARGET
 
@@ -101,14 +103,14 @@ bool CellClass::Should_Save(void) const
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool CellClass::Load(FileClass& file)
+bool CellClass::Load(Straw& file)
 {
     TriggerClass* trig;
 
     /*
     -------------------------- Load the object data --------------------------
     */
-    if (file.Read(this, sizeof(*this)) != sizeof(*this)) {
+    if (file.Get(this, sizeof(*this)) != sizeof(*this)) {
         return false;
     }
 
@@ -116,7 +118,7 @@ bool CellClass::Load(FileClass& file)
     ------------------------ Load the trigger pointer ------------------------
     */
     if (IsTrigger) {
-        if (file.Read(&trig, sizeof(trig)) != sizeof(trig))
+        if (file.Get(&trig, sizeof(trig)) != sizeof(trig))
             return (false);
         CellTriggers[Cell_Number()] = trig;
     }
@@ -136,16 +138,14 @@ bool CellClass::Load(FileClass& file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool CellClass::Save(FileClass& file)
+bool CellClass::Save(Pipe& file) const
 {
-    if (file.Write(this, sizeof(*this)) != sizeof(*this)) {
-        return false;
-    }
+    file.Put(this, sizeof(*this));
 
     if (IsTrigger) {
         TriggerClass* trig;
         trig = CellTriggers[Cell_Number()];
-        if (file.Write(&trig, sizeof(trig)) != sizeof(trig))
+        if (file.Put(&trig, sizeof(trig)) != sizeof(trig))
             return (false);
     }
 
@@ -307,7 +307,7 @@ void CellClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool MouseClass::Load(FileClass& file)
+bool MouseClass::Load(Straw& file)
 {
     unsigned count;
     CELL cell = 0;
@@ -323,7 +323,7 @@ bool MouseClass::Load(FileClass& file)
     disk will be over-written when initialization occurs.  This code must
     go in the most-derived Map class.
     ------------------------------------------------------------------------*/
-    if (file.Read(&Theater, sizeof(Theater)) != sizeof(Theater))
+    if (file.Get(&Theater, sizeof(Theater)) != sizeof(Theater))
         return (false);
 
     /*
@@ -356,10 +356,10 @@ bool MouseClass::Load(FileClass& file)
     Free_Cells();
 
     /*
-    ** Read the entire map object in.  Only read in sizeof(MouseClass), so if we're
+    ** Get the entire map object in.  Only read in sizeof(MouseClass), so if we're
     ** in editor mode, none of the map editor object is read in.
     */
-    if (file.Read(this, sizeof(*this)) != sizeof(*this)) {
+    if (file.Get(this, sizeof(*this)) != sizeof(*this)) {
         return (false);
     }
     new (this) MouseClass(NoInitClass());
@@ -375,17 +375,17 @@ bool MouseClass::Load(FileClass& file)
     Init_Cells();
 
     /*
-    --------------------------- Read # cells saved ---------------------------
+    --------------------------- Get # cells saved ---------------------------
     */
-    if (file.Read(&count, sizeof(count)) != sizeof(count)) {
+    if (file.Get(&count, sizeof(count)) != sizeof(count)) {
         return (false);
     }
 
     /*
-    ------------------------------- Read cells -------------------------------
+    ------------------------------- Get cells -------------------------------
     */
     for (index = 0; index < (int)count; index++) {
-        if (file.Read(&cell, sizeof(cell)) != sizeof(cell))
+        if (file.Get(&cell, sizeof(cell)) != sizeof(cell))
             return (false);
 
         if (!(*this)[cell].Load(file))
@@ -407,57 +407,48 @@ bool MouseClass::Load(FileClass& file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool MouseClass::Save(FileClass& file)
+bool MouseClass::Save(Pipe& file)
 {
-    unsigned count;
-    int pos;
-
     /*
     -------------------------- Save Theater >first< --------------------------
     */
-    if (file.Write(&Theater, sizeof(Theater)) != sizeof(Theater))
-        return (false);
+    TheaterType theater = Theater;
+    file.Put(&theater, sizeof(theater));
 
-    if (file.Write(this, sizeof(*this)) != sizeof(*this))
-        return (false);
-
-    /*
-    ---------------------- Record current file position ----------------------
-    */
-    pos = file.Seek(0, SEEK_CUR);
+    file.Put(this, sizeof(*this));
 
     /*
-    ---------------------- write out placeholder bytes -----------------------
+    **	Count how many cells will be saved.
     */
-    if (file.Write(&count, sizeof(count)) != sizeof(count))
-        return (false);
-
-    /*
-    ------------------------ Save cells that need it -------------------------
-    */
-    count = 0;
+    unsigned count = 0;
+    CellClass const* cellptr = &(*this)[(CELL)0];
     for (CELL cell = 0; cell < MAP_CELL_TOTAL; cell++) {
-
-        if ((*this)[cell].Should_Save()) {
-            if (file.Write(&cell, sizeof(cell)) != sizeof(cell))
-                return (false);
-
+        if (cellptr->Should_Save()) {
             count++;
-
-            if (!(*this)[cell].Save(file))
-                return (false);
         }
+        cellptr++;
     }
 
     /*
-    -------------------------- Save # cells written --------------------------
+    **	write out count of the cells.
     */
-    file.Seek(pos, SEEK_SET);
+    file.Put(&count, sizeof(count));
 
-    if (file.Write(&count, sizeof(count)) != sizeof(count))
+    /*
+    **	Save cells that need it
+    */
+    cellptr = &(*this)[(CELL)0];
+    for (CELL cell = 0; cell < MAP_CELL_TOTAL; cell++) {
+        if (cellptr->Should_Save()) {
+            file.Put(&cell, sizeof(cell));
+            cellptr->Save(file);
+            count--;
+        }
+        cellptr++;
+    }
+
+    if (count != 0)
         return (false);
-
-    file.Seek(0, SEEK_END);
 
     return (true);
 }

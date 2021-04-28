@@ -33,6 +33,9 @@
 #ifndef BASE_H
 #define BASE_H
 
+class Straw;
+class Pipe;
+
 /****************************************************************************
 ** This class defines one "node" in the pre-built base list.  Each node
 ** contains a type of building to build, and the COORD to build it at.
@@ -82,8 +85,8 @@ public:
     {
         return "Base";
     }
-    bool Load(FileClass& file);
-    bool Save(FileClass& file);
+    bool Load(Straw& file);
+    bool Save(Pipe& file) const;
     virtual void Code_Pointers(void){};
     virtual void Decode_Pointers(void){};
 
