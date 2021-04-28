@@ -35,21 +35,23 @@
 #ifndef RULES_H
 #define RULES_H
 
+#include "common/fixed.h"
+
 class DifficultyClass
 {
 public:
     DifficultyClass(void);
 
-    float FirepowerBias;
-    float GroundspeedBias;
-    float AirspeedBias;
-    float ArmorBias;
-    float ROFBias;
-    float CostBias;
-    float BuildSpeedBias;
+    fixed FirepowerBias;
+    fixed GroundspeedBias;
+    fixed AirspeedBias;
+    fixed ArmorBias;
+    fixed ROFBias;
+    fixed CostBias;
+    fixed BuildSpeedBias;
 
-    float RepairDelay;
-    float BuildDelay;
+    fixed RepairDelay;
+    fixed BuildDelay;
 
     unsigned IsBuildSlowdown : 1;
     unsigned IsWallDestroyer : 1;
@@ -62,41 +64,40 @@ public:
     RulesClass(void);
 
     /*
-    **	The computer is limited in the size of the base it can build. It is limited to the
-    **	size of the largest human opponent base plus this surplus count.
-    */
-    int BaseSizeAdd;
-
-    /*
-    **	If the power surplus is less than this amount, then the computer will
-    **	build power plants.
-    */
-    int PowerSurplus;
-
-    /*
     **	This specifies the average number of minutes between each computer attack.
     */
-    int AttackInterval;
+    fixed AttackInterval;
 
     /*
     **	This specifies the average minutes delay before the computer will begin
     **	its first attack upon the player. The duration is also modified by the
     **	difficulty level.
     */
-    int AttackDelay;
+    fixed AttackDelay;
 
     /*
     **	If the power ratio falls below this percentage, then a power emergency is
     **	in effect. At such times, the computer might decide to sell off some
     **	power hungry buildings in order to alleviate the situation.
     */
-    unsigned short PowerEmergencyFraction;
+    fixed PowerEmergencyFraction;
+
+    /*
+    **	This specifies the percentage of the base (by building quantity) that should
+    **	be composed of airstrips.
+    */
+    fixed AirstripRatio;
+
+    /*
+    **	Limit the number of airstrips to this amount.
+    */
+    int AirstripLimit;
 
     /*
     **	This specifies the percentage of the base (by building quantity) that should
     **	be composed of helipads.
     */
-    unsigned short HelipadRatio;
+    fixed HelipadRatio;
 
     /*
     **	Limit the number of helipads to this amount.
@@ -107,7 +108,7 @@ public:
     **	This specifies the percentage of the base (by building quantity) that should
     **	be composed of Tesla Coils.
     */
-    unsigned short TeslaRatio;
+    fixed TeslaRatio;
 
     /*
     **	Limit tesla coil production to this maximum.
@@ -118,7 +119,7 @@ public:
     **	This specifies the percentage of the base (by building quantity) that should
     **	be composed of anti-aircraft defense.
     */
-    unsigned short AARatio;
+    fixed AARatio;
 
     /*
     **	Limit anti-aircraft building quantity to this amount.
@@ -129,7 +130,7 @@ public:
     **	This specifies the percentage of the base (by building quantity) that should
     **	be composed of defensive structures.
     */
-    unsigned short DefenseRatio;
+    fixed DefenseRatio;
 
     /*
     **	This is the limit to the number of defensive building that can be built.
@@ -140,7 +141,7 @@ public:
     **	This specifies the percentage of the base (by building quantity) that should
     **	be composed of war factories.
     */
-    unsigned short WarRatio;
+    fixed WarRatio;
 
     /*
     **	War factories are limited to this quantity for the computer controlled player.
@@ -151,7 +152,7 @@ public:
     **	This specifies the percentage of the base (by building quantity) that should
     **	be composed of infantry producing structures.
     */
-    unsigned short BarracksRatio;
+    fixed BarracksRatio;
 
     /*
     **	No more than this many barracks can be built.
@@ -167,18 +168,19 @@ public:
     **	This specifies the percentage of the base (by building quantity) that should
     **	be composed of refineries.
     */
-    unsigned short RefineryRatio;
+    fixed RefineryRatio;
 
     /*
-    **	This specifies the percentage of the base (by building quantity) that should
-    **	be composed of airstrips.
+    **	The computer is limited in the size of the base it can build. It is limited to the
+    **	size of the largest human opponent base plus this surplus count.
     */
-    unsigned short AirstripRatio;
+    int BaseSizeAdd;
 
     /*
-    **	Limit the number of airstrips to this amount.
+    **	If the power surplus is less than this amount, then the computer will
+    **	build power plants.
     */
-    int AirstripLimit;
+    int PowerSurplus;
 
     /*
     **	This is the maximum number of IQ settings available. The human player is

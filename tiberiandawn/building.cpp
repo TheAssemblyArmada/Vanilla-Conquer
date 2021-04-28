@@ -1064,7 +1064,7 @@ void BuildingClass::AI(void)
     **	Obelisk charging logic.
     */
     if (*this == STRUCT_OBELISK && BState != BSTATE_CONSTRUCTION) {
-        if (Target_Legal(TarCom) && House->Power_Fraction() >= 0x0100) {
+        if (Target_Legal(TarCom) && House->Power_Fraction() >= 1) {
             if (!IsCharged) {
                 if (IsCharging) {
                     if (stagechange) {
@@ -3497,7 +3497,7 @@ FireErrorType BuildingClass::Can_Fire(TARGET target, int which) const
         /*
         **	Advanced guard towers need power to fire.
         */
-        if (*this == STRUCT_ATOWER && House->Power_Fraction() < 0x0100) {
+        if (*this == STRUCT_ATOWER && House->Power_Fraction() < 1) {
             return (FIRE_BUSY);
         }
 
@@ -4681,8 +4681,10 @@ int BuildingClass::Mission_Repair(void)
                     Contact_With_Whom()->Assign_Mission(MISSION_GUARD);
                     return (1);
                 } else {
-                    int time = Bound(Fixed_To_Cardinal(TICKS_PER_SECOND, House->Power_Fraction()), 0, TICKS_PER_SECOND);
-                    time = (TICKS_PER_SECOND * 3) - time;
+                    fixed pfrac = Saturate(House->Power_Fraction(), 1);
+                    if (pfrac < fixed::_1_2)
+                        pfrac = fixed::_1_2;
+                    int time = Inverse(pfrac) * TICKS_PER_MINUTE;
                     IsReadyToCommence = false;
                     return (time);
                 }
