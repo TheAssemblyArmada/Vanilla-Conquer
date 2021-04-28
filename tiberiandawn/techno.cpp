@@ -321,16 +321,16 @@ int TechnoTypeClass::Time_To_Build(HousesType house) const
     /*
     **	Adjust the time to build based on the power output of the owning house.
     */
-    int power = hptr->Power_Fraction();
-    int inv_scale(256);
-    if (power == 0x000) {
-        inv_scale = 64;
-    } else if (power < 0x080) {
-        inv_scale = 103;
-    } else if (power < 0x0100) {
-        inv_scale = 171;
+    fixed power = hptr->Power_Fraction();
+    fixed scale(1);
+    if (power == 0) {
+        scale = fixed(4, 1);
+    } else if (power < fixed::_1_2) {
+        scale = fixed(5, 2);
+    } else if (power < 1) {
+        scale = fixed(3, 2);
     }
-    time = (time * 256) / inv_scale;
+    time *= scale;
 
     return (time);
 }
@@ -436,7 +436,7 @@ int TechnoTypeClass::Repair_Step(void) const
 void TechnoClass::Debug_Dump(MonoClass* mono) const
 {
     mono->Set_Cursor(0, 0);
-    mono->Printf("(%04X)p=%d,d=%d", House->Power_Fraction(), House->Power, House->Drain);
+    mono->Printf("(%s)p=%d,d=%d", House->Power_Fraction().As_ASCII(), House->Power, House->Drain);
     //	mono->Set_Cursor(0,0);mono->Printf("(%d)", House->Blockage);
     mono->Text_Print("X", 16 + (IsALoaner ? 2 : 0), 11);
     mono->Text_Print("X", 16 + (IsLocked ? 2 : 0), 9);

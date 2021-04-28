@@ -1321,7 +1321,7 @@ void DriveClass::AI(void)
         if ((Class->Speed == SPEED_FLOAT || Class->Speed == SPEED_HOVER || Class->Speed == SPEED_TRACK
              || (Class->Speed == SPEED_WHEEL && !Special.IsThreePoint))
             && PrimaryFacing.Is_Rotating()) {
-            if (PrimaryFacing.Rotation_Adjust((int)(Class->ROT * House->GroundspeedBias))) {
+            if (PrimaryFacing.Rotation_Adjust((int)Class->ROT * House->GroundspeedBias)) {
                 Mark(MARK_CHANGE);
             }
             if (!IsRotating) {

@@ -86,24 +86,26 @@ DifficultyClass::DifficultyClass(void)
  *=============================================================================================*/
 RulesClass::RulesClass(void)
     : AttackInterval(3)
-    , BaseSizeAdd(3)
-    , PowerSurplus(50)
     , AttackDelay(5)
-    , PowerEmergencyFraction(0x00C0)
-    , HelipadRatio(0x1E)
+    , PowerEmergencyFraction(3, 4)
+    , AirstripRatio(".12")
+    , AirstripLimit(5)
+    , HelipadRatio(".12")
     , HelipadLimit(5)
-    , AARatio(0x0024)
+    , TeslaRatio(".16")
+    , TeslaLimit(10)
+    , AARatio(".14")
     , AALimit(10)
-    , DefenseRatio(0x0066)
+    , DefenseRatio(".5")
     , DefenseLimit(40)
-    , WarRatio(0x0019)
+    , WarRatio(".1")
     , WarLimit(2)
-    , BarracksRatio(0x0028)
+    , BarracksRatio(".16")
     , BarracksLimit(2)
     , RefineryLimit(4)
-    , RefineryRatio(0x0028)
-    , AirstripRatio(0x001E)
-    , AirstripLimit(5)
+    , RefineryRatio(".16")
+    , BaseSizeAdd(3)
+    , PowerSurplus(50)
     , MaxIQ(5)
     , IQSuperWeapons(4)
     , IQProduction(5)
@@ -117,47 +119,47 @@ RulesClass::RulesClass(void)
     , IQSellBack(2)
     , InfantryReserve(3000)
     , InfantryBaseMult(1)
-    , IsComputerParanoid(true)
+    , IsComputerParanoid(false)
     , IsCompEasyBonus(false)
     , IsFineDifficulty(false)
     , AllowSuperWeapons(true)
 {
 #ifndef REMASTER_BUILD
-    Diff[DIFF_EASY].FirepowerBias = 1.2;
-    Diff[DIFF_EASY].GroundspeedBias = 1.2;
-    Diff[DIFF_EASY].AirspeedBias = 1.2;
-    Diff[DIFF_EASY].ArmorBias = 0.3;
-    Diff[DIFF_EASY].ROFBias = 0.8;
-    Diff[DIFF_EASY].CostBias = 0.8;
-    Diff[DIFF_EASY].BuildSpeedBias = 0.6;
-    Diff[DIFF_EASY].RepairDelay = 0.001;
-    Diff[DIFF_EASY].BuildDelay = 0.001;
+    Diff[DIFF_EASY].FirepowerBias = "1.2";
+    Diff[DIFF_EASY].GroundspeedBias = "1.2";
+    Diff[DIFF_EASY].AirspeedBias = "1.2";
+    Diff[DIFF_EASY].ArmorBias = "0.3";
+    Diff[DIFF_EASY].ROFBias = "0.8";
+    Diff[DIFF_EASY].CostBias = "0.8";
+    Diff[DIFF_EASY].BuildSpeedBias = "0.6";
+    Diff[DIFF_EASY].RepairDelay = "0.001";
+    Diff[DIFF_EASY].BuildDelay = "0.001";
     Diff[DIFF_EASY].IsBuildSlowdown = false;
     Diff[DIFF_EASY].IsWallDestroyer = true;
     Diff[DIFF_EASY].IsContentScan = true;
 
-    Diff[DIFF_NORMAL].FirepowerBias = 1.0;
-    Diff[DIFF_NORMAL].GroundspeedBias = 1.0;
-    Diff[DIFF_NORMAL].AirspeedBias = 1.0;
-    Diff[DIFF_NORMAL].ArmorBias = 1.0;
-    Diff[DIFF_NORMAL].ROFBias = 1.0;
-    Diff[DIFF_NORMAL].CostBias = 1.0;
-    Diff[DIFF_NORMAL].BuildSpeedBias = 1.0;
-    Diff[DIFF_NORMAL].RepairDelay = 0.02;
-    Diff[DIFF_NORMAL].BuildDelay = 0.03;
+    Diff[DIFF_NORMAL].FirepowerBias = 1;
+    Diff[DIFF_NORMAL].GroundspeedBias = 1;
+    Diff[DIFF_NORMAL].AirspeedBias = 1;
+    Diff[DIFF_NORMAL].ArmorBias = 1;
+    Diff[DIFF_NORMAL].ROFBias = 1;
+    Diff[DIFF_NORMAL].CostBias = 1;
+    Diff[DIFF_NORMAL].BuildSpeedBias = 1;
+    Diff[DIFF_NORMAL].RepairDelay = "0.02";
+    Diff[DIFF_NORMAL].BuildDelay = "0.03";
     Diff[DIFF_NORMAL].IsBuildSlowdown = true;
     Diff[DIFF_NORMAL].IsWallDestroyer = true;
     Diff[DIFF_NORMAL].IsContentScan = true;
 
-    Diff[DIFF_HARD].FirepowerBias = 0.9;
-    Diff[DIFF_HARD].GroundspeedBias = 0.9;
-    Diff[DIFF_HARD].AirspeedBias = 0.9;
-    Diff[DIFF_HARD].ArmorBias = 1.05;
-    Diff[DIFF_HARD].ROFBias = 1.05;
-    Diff[DIFF_HARD].CostBias = 1.0;
-    Diff[DIFF_HARD].BuildSpeedBias = 1.0;
-    Diff[DIFF_HARD].RepairDelay = 0.05;
-    Diff[DIFF_HARD].BuildDelay = 0.1;
+    Diff[DIFF_HARD].FirepowerBias = "0.9";
+    Diff[DIFF_HARD].GroundspeedBias = "0.9";
+    Diff[DIFF_HARD].AirspeedBias = "0.9";
+    Diff[DIFF_HARD].ArmorBias = "1.05";
+    Diff[DIFF_HARD].ROFBias = "1.05";
+    Diff[DIFF_HARD].CostBias = 1;
+    Diff[DIFF_HARD].BuildSpeedBias = 1;
+    Diff[DIFF_HARD].RepairDelay = "0.05";
+    Diff[DIFF_HARD].BuildDelay = "0.1";
     Diff[DIFF_HARD].IsBuildSlowdown = true;
     Diff[DIFF_HARD].IsWallDestroyer = true;
     Diff[DIFF_HARD].IsContentScan = true;
