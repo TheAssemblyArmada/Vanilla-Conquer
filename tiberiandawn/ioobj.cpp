@@ -144,9 +144,9 @@
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool TeamTypeClass::Load(FileClass& file)
+bool TeamTypeClass::Load(Straw& file)
 {
-    if (file.Read(this, sizeof(*this)) != sizeof(*this)) {
+    if (file.Get(this, sizeof(*this)) != sizeof(*this)) {
         return false;
     }
     ::new (this) TeamTypeClass(NoInitClass());
@@ -164,9 +164,9 @@ bool TeamTypeClass::Load(FileClass& file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool TeamTypeClass::Save(FileClass& file)
+bool TeamTypeClass::Save(Pipe& file)
 {
-    return (file.Write(this, sizeof(*this) == sizeof(*this)));
+    return (file.Put(this, sizeof(*this) == sizeof(*this)));
 }
 
 /***********************************************************************************************
@@ -1161,7 +1161,7 @@ void FactoryClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool LayerClass::Load(FileClass& file)
+bool LayerClass::Load(Straw& file)
 {
     int count;
     int i;
@@ -1170,7 +1170,7 @@ bool LayerClass::Load(FileClass& file)
     /*
     ---------------------- Read # elements in the layer ----------------------
     */
-    if (file.Read(&count, sizeof(count)) != sizeof(count)) {
+    if (file.Get(&count, sizeof(count)) != sizeof(count)) {
         return (false);
     }
 
@@ -1183,7 +1183,7 @@ bool LayerClass::Load(FileClass& file)
     ----------------------- Read in all array elements -----------------------
     */
     for (i = 0; i < count; i++) {
-        if (file.Read(&ptr, sizeof(ObjectClass*)) != sizeof(ObjectClass*)) {
+        if (file.Get(&ptr, sizeof(ObjectClass*)) != sizeof(ObjectClass*)) {
             return (false);
         }
         Add(ptr);
@@ -1204,26 +1204,20 @@ bool LayerClass::Load(FileClass& file)
  * HISTORY:                                                                                    *
  *   09/19/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool LayerClass::Save(FileClass& file)
+bool LayerClass::Save(Pipe& file) const
 {
-    int count;
-    int i;
-    ObjectClass* ptr;
+    /*
+    **	Save # array elements
+    */
+    int count = Count();
+    file.Put(&count, sizeof(count));
 
     /*
-    ------------------------- Save # array elements --------------------------
+    **	Save all elements
     */
-    count = Count();
-    if (file.Write(&count, sizeof(count)) != sizeof(count))
-        return (false);
-
-    /*
-    --------------------------- Save all elements ----------------------------
-    */
-    for (i = 0; i < count; i++) {
-        ptr = (*this)[i];
-        if (file.Write(&ptr, sizeof(ObjectClass*)) != sizeof(ObjectClass*))
-            return (false);
+    for (int index = 0; index < count; index++) {
+        ObjectClass* ptr = (*this)[index];
+        file.Put(&ptr, sizeof(ObjectClass*));
     }
 
     return (true);

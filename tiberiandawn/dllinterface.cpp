@@ -33,6 +33,8 @@
 #include "defines.h" // VOC_COUNT, VOX_COUNT
 #include "sidebarglyphx.h"
 #include "common/irandom.h"
+#include "common/pipe.h"
+#include "common/straw.h"
 
 /*
 ** Externs
@@ -365,8 +367,8 @@ public:
     static void Set_Special_Key_Flags(unsigned char special_key_flags);
     static void Clear_Special_Key_Flags();
 
-    static bool Load(FileClass& file);
-    static bool Save(FileClass& file);
+    static bool Load(Straw& file);
+    static bool Save(Pipe& file);
     static void Code_Pointers(void);
     static void Decode_Pointers(void);
 
@@ -7408,12 +7410,12 @@ bool DLL_Export_Get_Input_Key_State(KeyNumType key)
     return DLLExportClass::Get_Input_Key_State(key);
 }
 
-bool DLLSave(FileClass& file)
+bool DLLSave(Pipe& file)
 {
     return DLLExportClass::Save(file);
 }
 
-bool DLLLoad(FileClass& file)
+bool DLLLoad(Straw& file)
 {
     return DLLExportClass::Load(file);
 }
@@ -7429,90 +7431,90 @@ bool DLLLoad(FileClass& file)
  *
  * History: 9/10/2019 10:24AM - ST
  **************************************************************************************************/
-bool DLLExportClass::Save(FileClass& file)
+bool DLLExportClass::Save(Pipe& file)
 {
     /*
     ** Version first
     */
     unsigned int version = CNC_DLL_API_VERSION;
-    if (file.Write(&version, sizeof(version)) != sizeof(version)) {
+    if (file.Put(&version, sizeof(version)) != sizeof(version)) {
         return false;
     }
 
-    if (file.Write(MultiplayerStartPositions, sizeof(MultiplayerStartPositions)) != sizeof(MultiplayerStartPositions)) {
+    if (file.Put(MultiplayerStartPositions, sizeof(MultiplayerStartPositions)) != sizeof(MultiplayerStartPositions)) {
         return false;
     }
 
-    if (file.Write(GlyphxPlayerIDs, sizeof(GlyphxPlayerIDs)) != sizeof(GlyphxPlayerIDs)) {
+    if (file.Put(GlyphxPlayerIDs, sizeof(GlyphxPlayerIDs)) != sizeof(GlyphxPlayerIDs)) {
         return false;
     }
 
-    if (file.Write(&GlyphXClientSidebarWidthInLeptons, sizeof(GlyphXClientSidebarWidthInLeptons))
+    if (file.Put(&GlyphXClientSidebarWidthInLeptons, sizeof(GlyphXClientSidebarWidthInLeptons))
         != sizeof(GlyphXClientSidebarWidthInLeptons)) {
         return false;
     }
 
-    if (file.Write(MPlayerIsHuman, sizeof(MPlayerIsHuman)) != sizeof(MPlayerIsHuman)) {
+    if (file.Put(MPlayerIsHuman, sizeof(MPlayerIsHuman)) != sizeof(MPlayerIsHuman)) {
         return false;
     }
 
-    if (file.Write(MultiplayerStartPositions, sizeof(MultiplayerStartPositions)) != sizeof(MultiplayerStartPositions)) {
+    if (file.Put(MultiplayerStartPositions, sizeof(MultiplayerStartPositions)) != sizeof(MultiplayerStartPositions)) {
         return false;
     }
 
-    if (file.Write(PlacementType, sizeof(PlacementType)) != sizeof(PlacementType)) {
+    if (file.Put(PlacementType, sizeof(PlacementType)) != sizeof(PlacementType)) {
         return false;
     }
 
-    if (file.Write(&MPlayerCount, sizeof(MPlayerCount)) != sizeof(MPlayerCount)) {
+    if (file.Put(&MPlayerCount, sizeof(MPlayerCount)) != sizeof(MPlayerCount)) {
         return false;
     }
 
-    if (file.Write(&MPlayerBases, sizeof(MPlayerBases)) != sizeof(MPlayerBases)) {
+    if (file.Put(&MPlayerBases, sizeof(MPlayerBases)) != sizeof(MPlayerBases)) {
         return false;
     }
 
-    if (file.Write(&MPlayerCredits, sizeof(MPlayerCredits)) != sizeof(MPlayerCredits)) {
+    if (file.Put(&MPlayerCredits, sizeof(MPlayerCredits)) != sizeof(MPlayerCredits)) {
         return false;
     }
 
-    if (file.Write(&MPlayerTiberium, sizeof(MPlayerTiberium)) != sizeof(MPlayerTiberium)) {
+    if (file.Put(&MPlayerTiberium, sizeof(MPlayerTiberium)) != sizeof(MPlayerTiberium)) {
         return false;
     }
 
-    if (file.Write(&MPlayerGoodies, sizeof(MPlayerGoodies)) != sizeof(MPlayerGoodies)) {
+    if (file.Put(&MPlayerGoodies, sizeof(MPlayerGoodies)) != sizeof(MPlayerGoodies)) {
         return false;
     }
 
-    if (file.Write(&MPlayerGhosts, sizeof(MPlayerGhosts)) != sizeof(MPlayerGhosts)) {
+    if (file.Put(&MPlayerGhosts, sizeof(MPlayerGhosts)) != sizeof(MPlayerGhosts)) {
         return false;
     }
 
-    if (file.Write(&MPlayerSolo, sizeof(MPlayerSolo)) != sizeof(MPlayerSolo)) {
+    if (file.Put(&MPlayerSolo, sizeof(MPlayerSolo)) != sizeof(MPlayerSolo)) {
         return false;
     }
 
-    if (file.Write(&MPlayerUnitCount, sizeof(MPlayerUnitCount)) != sizeof(MPlayerUnitCount)) {
+    if (file.Put(&MPlayerUnitCount, sizeof(MPlayerUnitCount)) != sizeof(MPlayerUnitCount)) {
         return false;
     }
 
-    if (file.Write(&MPlayerLocalID, sizeof(MPlayerLocalID)) != sizeof(MPlayerLocalID)) {
+    if (file.Put(&MPlayerLocalID, sizeof(MPlayerLocalID)) != sizeof(MPlayerLocalID)) {
         return false;
     }
 
-    if (file.Write(MPlayerHouses, sizeof(MPlayerHouses)) != sizeof(MPlayerHouses)) {
+    if (file.Put(MPlayerHouses, sizeof(MPlayerHouses)) != sizeof(MPlayerHouses)) {
         return false;
     }
 
-    if (file.Write(MPlayerNames, sizeof(MPlayerNames)) != sizeof(MPlayerNames)) {
+    if (file.Put(MPlayerNames, sizeof(MPlayerNames)) != sizeof(MPlayerNames)) {
         return false;
     }
 
-    if (file.Write(MPlayerID, sizeof(MPlayerID)) != sizeof(MPlayerID)) {
+    if (file.Put(MPlayerID, sizeof(MPlayerID)) != sizeof(MPlayerID)) {
         return false;
     }
 
-    if (file.Write(MPlayerIsHuman, sizeof(MPlayerIsHuman)) != sizeof(MPlayerIsHuman)) {
+    if (file.Put(MPlayerIsHuman, sizeof(MPlayerIsHuman)) != sizeof(MPlayerIsHuman)) {
         return false;
     }
 
@@ -7520,7 +7522,7 @@ bool DLLExportClass::Save(FileClass& file)
         Sidebar_Glyphx_Save(file, &MultiplayerSidebars[i]);
     }
 
-    if (file.Write(&Special, sizeof(Special)) != sizeof(Special)) {
+    if (file.Put(&Special, sizeof(Special)) != sizeof(Special)) {
         return false;
     }
 
@@ -7528,7 +7530,7 @@ bool DLLExportClass::Save(FileClass& file)
     ** Special case for Rule.AllowSuperWeapons - store negated value so it defaults to enabled
     */
     bool not_allow_super_weapons = !Rule.AllowSuperWeapons;
-    if (file.Write(&not_allow_super_weapons, sizeof(not_allow_super_weapons)) != sizeof(not_allow_super_weapons)) {
+    if (file.Put(&not_allow_super_weapons, sizeof(not_allow_super_weapons)) != sizeof(not_allow_super_weapons)) {
         return false;
     }
 
@@ -7538,7 +7540,7 @@ bool DLLExportClass::Save(FileClass& file)
     unsigned char padding[4095];
     memset(padding, 0, sizeof(padding));
 
-    if (file.Write(padding, sizeof(padding)) != sizeof(padding)) {
+    if (file.Put(padding, sizeof(padding)) != sizeof(padding)) {
         return false;
     }
 
@@ -7556,88 +7558,88 @@ bool DLLExportClass::Save(FileClass& file)
  *
  * History: 9/10/2019 10:24AM - ST
  **************************************************************************************************/
-bool DLLExportClass::Load(FileClass& file)
+bool DLLExportClass::Load(Straw& file)
 {
     unsigned int version = 0;
 
-    if (file.Read(&version, sizeof(version)) != sizeof(version)) {
+    if (file.Get(&version, sizeof(version)) != sizeof(version)) {
         return false;
     }
 
-    if (file.Read(MultiplayerStartPositions, sizeof(MultiplayerStartPositions)) != sizeof(MultiplayerStartPositions)) {
+    if (file.Get(MultiplayerStartPositions, sizeof(MultiplayerStartPositions)) != sizeof(MultiplayerStartPositions)) {
         return false;
     }
 
-    if (file.Read(GlyphxPlayerIDs, sizeof(GlyphxPlayerIDs)) != sizeof(GlyphxPlayerIDs)) {
+    if (file.Get(GlyphxPlayerIDs, sizeof(GlyphxPlayerIDs)) != sizeof(GlyphxPlayerIDs)) {
         return false;
     }
 
-    if (file.Read(&GlyphXClientSidebarWidthInLeptons, sizeof(GlyphXClientSidebarWidthInLeptons))
+    if (file.Get(&GlyphXClientSidebarWidthInLeptons, sizeof(GlyphXClientSidebarWidthInLeptons))
         != sizeof(GlyphXClientSidebarWidthInLeptons)) {
         return false;
     }
 
-    if (file.Read(MPlayerIsHuman, sizeof(MPlayerIsHuman)) != sizeof(MPlayerIsHuman)) {
+    if (file.Get(MPlayerIsHuman, sizeof(MPlayerIsHuman)) != sizeof(MPlayerIsHuman)) {
         return false;
     }
 
-    if (file.Read(MultiplayerStartPositions, sizeof(MultiplayerStartPositions)) != sizeof(MultiplayerStartPositions)) {
+    if (file.Get(MultiplayerStartPositions, sizeof(MultiplayerStartPositions)) != sizeof(MultiplayerStartPositions)) {
         return false;
     }
 
-    if (file.Read(PlacementType, sizeof(PlacementType)) != sizeof(PlacementType)) {
+    if (file.Get(PlacementType, sizeof(PlacementType)) != sizeof(PlacementType)) {
         return false;
     }
 
-    if (file.Read(&MPlayerCount, sizeof(MPlayerCount)) != sizeof(MPlayerCount)) {
+    if (file.Get(&MPlayerCount, sizeof(MPlayerCount)) != sizeof(MPlayerCount)) {
         return false;
     }
 
-    if (file.Read(&MPlayerBases, sizeof(MPlayerBases)) != sizeof(MPlayerBases)) {
+    if (file.Get(&MPlayerBases, sizeof(MPlayerBases)) != sizeof(MPlayerBases)) {
         return false;
     }
 
-    if (file.Read(&MPlayerCredits, sizeof(MPlayerCredits)) != sizeof(MPlayerCredits)) {
+    if (file.Get(&MPlayerCredits, sizeof(MPlayerCredits)) != sizeof(MPlayerCredits)) {
         return false;
     }
 
-    if (file.Read(&MPlayerTiberium, sizeof(MPlayerTiberium)) != sizeof(MPlayerTiberium)) {
+    if (file.Get(&MPlayerTiberium, sizeof(MPlayerTiberium)) != sizeof(MPlayerTiberium)) {
         return false;
     }
 
-    if (file.Read(&MPlayerGoodies, sizeof(MPlayerGoodies)) != sizeof(MPlayerGoodies)) {
+    if (file.Get(&MPlayerGoodies, sizeof(MPlayerGoodies)) != sizeof(MPlayerGoodies)) {
         return false;
     }
 
-    if (file.Read(&MPlayerGhosts, sizeof(MPlayerGhosts)) != sizeof(MPlayerGhosts)) {
+    if (file.Get(&MPlayerGhosts, sizeof(MPlayerGhosts)) != sizeof(MPlayerGhosts)) {
         return false;
     }
 
-    if (file.Read(&MPlayerSolo, sizeof(MPlayerSolo)) != sizeof(MPlayerSolo)) {
+    if (file.Get(&MPlayerSolo, sizeof(MPlayerSolo)) != sizeof(MPlayerSolo)) {
         return false;
     }
 
-    if (file.Read(&MPlayerUnitCount, sizeof(MPlayerUnitCount)) != sizeof(MPlayerUnitCount)) {
+    if (file.Get(&MPlayerUnitCount, sizeof(MPlayerUnitCount)) != sizeof(MPlayerUnitCount)) {
         return false;
     }
 
-    if (file.Read(&MPlayerLocalID, sizeof(MPlayerLocalID)) != sizeof(MPlayerLocalID)) {
+    if (file.Get(&MPlayerLocalID, sizeof(MPlayerLocalID)) != sizeof(MPlayerLocalID)) {
         return false;
     }
 
-    if (file.Read(MPlayerHouses, sizeof(MPlayerHouses)) != sizeof(MPlayerHouses)) {
+    if (file.Get(MPlayerHouses, sizeof(MPlayerHouses)) != sizeof(MPlayerHouses)) {
         return false;
     }
 
-    if (file.Read(MPlayerNames, sizeof(MPlayerNames)) != sizeof(MPlayerNames)) {
+    if (file.Get(MPlayerNames, sizeof(MPlayerNames)) != sizeof(MPlayerNames)) {
         return false;
     }
 
-    if (file.Read(MPlayerID, sizeof(MPlayerID)) != sizeof(MPlayerID)) {
+    if (file.Get(MPlayerID, sizeof(MPlayerID)) != sizeof(MPlayerID)) {
         return false;
     }
 
-    if (file.Read(MPlayerIsHuman, sizeof(MPlayerIsHuman)) != sizeof(MPlayerIsHuman)) {
+    if (file.Get(MPlayerIsHuman, sizeof(MPlayerIsHuman)) != sizeof(MPlayerIsHuman)) {
         return false;
     }
 
@@ -7645,7 +7647,7 @@ bool DLLExportClass::Load(FileClass& file)
         Sidebar_Glyphx_Load(file, &MultiplayerSidebars[i]);
     }
 
-    if (file.Read(&Special, sizeof(Special)) != sizeof(Special)) {
+    if (file.Get(&Special, sizeof(Special)) != sizeof(Special)) {
         return false;
     }
 
@@ -7653,14 +7655,14 @@ bool DLLExportClass::Load(FileClass& file)
     ** Special case for Rule.AllowSuperWeapons - store negated value so it defaults to enabled
     */
     bool not_allow_super_weapons = false;
-    if (file.Read(&not_allow_super_weapons, sizeof(not_allow_super_weapons)) != sizeof(not_allow_super_weapons)) {
+    if (file.Get(&not_allow_super_weapons, sizeof(not_allow_super_weapons)) != sizeof(not_allow_super_weapons)) {
         return false;
     }
     Rule.AllowSuperWeapons = !not_allow_super_weapons;
 
     unsigned char padding[4095];
 
-    if (file.Read(padding, sizeof(padding)) != sizeof(padding)) {
+    if (file.Get(padding, sizeof(padding)) != sizeof(padding)) {
         return false;
     }
 

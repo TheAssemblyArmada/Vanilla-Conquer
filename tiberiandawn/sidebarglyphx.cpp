@@ -33,6 +33,8 @@
 
 #include "function.h"
 #include "sidebarglyphx.h"
+#include "common/pipe.h"
+#include "common/straw.h"
 
 /*
 **  ST - 3/14/2019 10:49AM
@@ -667,11 +669,11 @@ void SidebarGlyphxClass::Decode_Pointers(void)
  * HISTORY:                                                                                    *
  *   9/26/2019 10:57AM ST : Created.                                                           *
  *=============================================================================================*/
-bool SidebarGlyphxClass::Load(FileClass& file)
+bool SidebarGlyphxClass::Load(Straw& file)
 {
     ::new (this) SidebarGlyphxClass();
 
-    if (file.Read(this, sizeof(*this)) != sizeof(*this)) {
+    if (file.Get(this, sizeof(*this)) != sizeof(*this)) {
         return false;
     }
 
@@ -693,9 +695,9 @@ bool SidebarGlyphxClass::Load(FileClass& file)
  * HISTORY:                                                                                    *
  *   9/26/2019 10:57AM ST : Created.                                                           *
  *=============================================================================================*/
-bool SidebarGlyphxClass::Save(FileClass& file)
+bool SidebarGlyphxClass::Save(Pipe& file)
 {
-    return (file.Write(this, sizeof(*this)) == sizeof(*this));
+    return (file.Put(this, sizeof(*this)) == sizeof(*this));
 }
 
 extern SidebarGlyphxClass* Get_Current_Context_Sidebar(HouseClass* player_ptr);
@@ -762,7 +764,7 @@ bool Sidebar_Glyphx_Factory_Link(int factory, RTTIType type, int id, HouseClass*
     return false;
 }
 
-bool Sidebar_Glyphx_Save(FileClass& file, SidebarGlyphxClass* sidebar)
+bool Sidebar_Glyphx_Save(Pipe& file, SidebarGlyphxClass* sidebar)
 {
     if (sidebar) {
         return sidebar->Save(file);
@@ -770,7 +772,7 @@ bool Sidebar_Glyphx_Save(FileClass& file, SidebarGlyphxClass* sidebar)
     return false;
 }
 
-bool Sidebar_Glyphx_Load(FileClass& file, SidebarGlyphxClass* sidebar)
+bool Sidebar_Glyphx_Load(Straw& file, SidebarGlyphxClass* sidebar)
 {
     if (sidebar) {
         return sidebar->Load(file);

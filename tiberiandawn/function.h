@@ -247,6 +247,8 @@ inline CELL Coord_YCell(COORDINATE coord)
 #include "ipxaddr.h"
 #include "common/miscasm.h"
 #include "common/face.h"
+#include "common/pipe.h"
+#include "common/straw.h"
 /****************************************************************************
 **	This is a "node", used for the lists of available games & players.  The
 **	'Game' structure is used for games; the 'Player' structure for players.
@@ -627,8 +629,8 @@ int Create_Air_Reinforcement(HouseClass* house,
 /*
 **	SAVELOAD.CPP
 */
-bool Load_Misc_Values(FileClass& file);
-bool Save_Misc_Values(FileClass& file);
+bool Load_Misc_Values(Straw& file);
+bool Save_Misc_Values(Pipe& file);
 bool Get_Savefile_Info(int id, char* buf, unsigned* scenp, HousesType* housep);
 bool Load_Game(int id);
 bool Load_Game(const char* file_name);
