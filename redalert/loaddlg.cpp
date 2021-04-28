@@ -47,6 +47,7 @@
 #include "loaddlg.h"
 #include "common/file.h"
 #include "common/framelimit.h"
+#include "common/paths.h"
 
 /***********************************************************************************************
  * LoadOptionsClass::LoadOptionsClass -- class constructor                                     *
@@ -641,10 +642,13 @@ void LoadOptionsClass::Fill_List(ListClass* list)
 {
     FileEntryClass* fdata; // for adding entries to 'Files'
     char descr[DESCRIP_MAX + 32];
+    char scan_path[_MAX_PATH];
+    char sep[2] = {0};
     unsigned scenario; // scenario #
     HousesType house;  // house
     Find_File_Data* ff = nullptr;
     int id;
+    bool found;
 
     /*
     ** Make sure the list is empty
@@ -664,12 +668,12 @@ void LoadOptionsClass::Fill_List(ListClass* list)
     /*
     ** Find all savegame files
     */
-    bool rc = Find_First("SAVEGAME.*", 0, &ff);
+    sep[0] = PathsClass::SEP;
+    snprintf(scan_path, sizeof(scan_path), "%s%s%s", Paths.User_Path(), sep, "SAVEGAME.*");
 
-    while (rc) {
-
+    found = Find_First(scan_path, 0, &ff);
+    while (found) {
         if (stricmp(ff->GetName(), NET_SAVE_FILE_NAME) != 0) {
-
             /*
             ** Extract the game ID from the filename
             */
@@ -704,9 +708,12 @@ void LoadOptionsClass::Fill_List(ListClass* list)
         /*
         ** Find the next file
         */
-        rc = Find_Next(ff);
+        found = Find_Next(ff);
     }
-    Find_Close(ff);
+
+    if (ff) {
+        Find_Close(ff);
+    }
 
     /*
     ** If saving a game, determine a unique file ID for the empty slot
