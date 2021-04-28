@@ -367,7 +367,7 @@ bool Save_Game(const char* file_name, const char* descr)
     /*
     **	Open the file
     */
-    BufferIOFileClass file(file_name);
+    CDFileClass file(file_name);
 
     FilePipe fpipe(&file);
 #ifdef REMASTER_BUILD
@@ -518,7 +518,7 @@ bool Load_Game(const char* file_name)
     /*
     **	Open the file
     */
-    RawFileClass file(file_name);
+    CDFileClass file(file_name);
     if (!file.Is_Available()) {
         return (false);
     }
@@ -1438,7 +1438,7 @@ bool Get_Savefile_Info(int id, char* buf, unsigned* scenp, HousesType* housep)
     **	Generate the filename to load
     */
     sprintf(name, "SAVEGAME.%03d", id);
-    BufferIOFileClass file(name);
+    CDFileClass file(name);
 
     FileStraw straw(file);
 
