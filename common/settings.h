@@ -16,6 +16,7 @@ public:
     {
         bool RawInput;
         int Sensitivity;
+        int ControllerPointerSpeed;
     } Mouse;
 
     struct

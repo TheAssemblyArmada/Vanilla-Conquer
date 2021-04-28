@@ -69,6 +69,8 @@ void Toggle_Video_Fullscreen();
 void Reset_Video_Mode();
 unsigned Get_Free_Video_Memory();
 void Wait_Blit();
+void Get_Game_Resolution(int& w, int& h);
+void Set_Video_Mouse(int x, int y);
 
 /*
 ** Set desired cursor image in game palette.
