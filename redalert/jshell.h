@@ -35,6 +35,7 @@
 #ifndef JSHELL_H
 #define JSHELL_H
 
+#include <common/macros.h>
 #include <assert.h>
 
 struct NoInitClass;
@@ -111,12 +112,6 @@ template <class T> inline T Bound(T original, T minval, T maxval)
 int Bound(signed int, signed int, signed int);
 unsigned Bound(unsigned, unsigned, unsigned);
 long Bound(long, long, long);
-
-/*
-**	This macro serves as a general way to determine the number of elements
-**	within an array.
-*/
-#define ARRAY_SIZE(x) int(sizeof(x) / sizeof(x[0]))
 
 template <class T> void Bubble_Sort(T* array, int count)
 {

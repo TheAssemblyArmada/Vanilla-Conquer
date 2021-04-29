@@ -35,6 +35,7 @@
 #ifndef MP_H
 #define MP_H
 
+#include "macros.h"
 #include "straw.h"
 #include <stdlib.h>
 #include <stdint.h>
@@ -50,9 +51,6 @@ extern uint16_t primeTable[3511];
 #define SEMI_MASK           ((uint16_t)~0)
 #define MAX_BIT_PRECISION   2048
 #define MAX_UNIT_PRECISION  (MAX_BIT_PRECISION / UNITSIZE)
-#ifndef ARRAY_SIZE
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
-#endif
 
 int XMP_Significance(const digit* r, int precision);
 void XMP_Inc(digit* r, int precision);
