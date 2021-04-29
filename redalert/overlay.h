@@ -60,6 +60,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     OverlayClass(OverlayType type, CELL pos = -1, HousesType = HOUSE_NONE);
     OverlayClass(NoInitClass const& x)
         : ObjectClass(x)

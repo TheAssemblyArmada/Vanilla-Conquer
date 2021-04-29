@@ -70,6 +70,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     BulletClass(BulletType id, TARGET target, TechnoClass* Payback, int strength, WarheadType warhead, int speed);
 #ifdef FIXIT_MULTI_SAVE
     BulletClass(NoInitClass const& x)

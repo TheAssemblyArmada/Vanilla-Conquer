@@ -56,6 +56,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     SmudgeClass(SmudgeType type, COORDINATE pos = UINT_MAX, HousesType house = HOUSE_NONE);
     SmudgeClass(void)
         : Class(0){};

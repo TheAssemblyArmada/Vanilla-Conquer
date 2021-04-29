@@ -55,6 +55,9 @@ public:
         return (ptr);
     };
     void operator delete(void* pointer);
+    static void operator delete(void*, void*)
+    {
+    }
 
     char const* Name(void) const
     {

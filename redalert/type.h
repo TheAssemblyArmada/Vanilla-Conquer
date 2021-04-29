@@ -181,6 +181,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
 
     static HousesType From_Name(char const* name);
     static HouseTypeClass& As_Reference(HousesType house);
@@ -820,6 +823,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
 
     static void Init_Heap(void);
     static BuildingTypeClass& As_Reference(StructType type);
@@ -1032,6 +1038,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
 
     static void Init_Heap(void);
     static UnitType From_Name(char const* name);
@@ -1139,6 +1148,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
 
     static void Init_Heap(void);
     static VesselType From_Name(char const* name);
@@ -1295,6 +1307,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
 
     static void Init_Heap(void);
     static InfantryType From_Name(char const* name);
@@ -1398,6 +1413,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
 
     static void Init_Heap(void);
     static AircraftType From_Name(char const* name);
@@ -1582,6 +1600,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
 
     static void Init_Heap(void);
     static BulletTypeClass& As_Reference(BulletType type);
@@ -1651,6 +1672,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
 
     static void Init_Heap(void);
     static TerrainType From_Name(char const* name);
@@ -1711,6 +1735,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
 
     static void Init_Heap(void);
     static TemplateType From_Name(char const* name);
@@ -1937,6 +1964,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
 
     static AnimTypeClass& As_Reference(AnimType type);
     static void Init(TheaterType theater);
@@ -2054,6 +2084,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
 
     static void Init_Heap(void);
     static OverlayType From_Name(char const* name);
@@ -2127,6 +2160,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
 
     static void Init_Heap(void);
     static SmudgeType From_Name(char const* name);

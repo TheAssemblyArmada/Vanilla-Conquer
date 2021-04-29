@@ -60,6 +60,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     TerrainClass(TerrainType id, CELL cell);
     TerrainClass(NoInitClass const& x)
         : ObjectClass(x)

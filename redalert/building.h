@@ -216,6 +216,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     BuildingClass(StructType type, HousesType house);
 #ifdef FIXIT_MULTI_SAVE
     BuildingClass(NoInitClass const& x)

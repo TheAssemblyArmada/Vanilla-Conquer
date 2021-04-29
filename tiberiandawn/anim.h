@@ -51,6 +51,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     AnimClass(void)
         : Class(0)
     {
