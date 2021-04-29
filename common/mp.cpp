@@ -1643,7 +1643,7 @@ void XMP_Decode_ASCII(char const* str, digit* mpn, int precision)
     */
     if (!str)
         return;
-    int i = strlen(str);
+    int i = (int)strlen(str);
     if (i == 0)
         return;
 

@@ -738,7 +738,7 @@ bool MixFileClass<T>::Offset(char const* filename, void** realptr, MixFileClass*
     char filename_upper[_MAX_PATH];
     strcpy(filename_upper, filename);
     strupr(filename_upper);
-    int32_t crc = Calculate_CRC(strupr(filename_upper), strlen(filename_upper));
+    int32_t crc = Calculate_CRC(strupr(filename_upper), int(strlen(filename_upper)));
     SubBlock key;
     key.CRC = crc;
 

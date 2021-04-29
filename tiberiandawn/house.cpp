@@ -3583,7 +3583,7 @@ TechnoTypeClass const* HouseClass::Suggest_New_Object(RTTIType objecttype) const
                     TeamTypeClass const* team = tptr->Class;
 
                     if ((/*team->IsReinforcable || */ !tptr->IsFullStrength) && team->House == Class->House) {
-                        for (int subindex = 0; subindex < team->ClassCount; subindex++) {
+                        for (unsigned subindex = 0; subindex < team->ClassCount; subindex++) {
                             if (team->Class[subindex]->What_Am_I() == RTTI_UNITTYPE) {
                                 counter[((UnitTypeClass const*)(team->Class[subindex]))->Type] = 1;
                                 //									counter[((UnitTypeClass const *)(team->Class[subindex]))->Type] +=
@@ -3603,7 +3603,7 @@ TechnoTypeClass const* HouseClass::Suggest_New_Object(RTTIType objecttype) const
                 TeamTypeClass const* team = TeamTypes.Ptr(index);
                 if (team) {
                     if (team->House == Class->House && team->IsPrebuilt && (!team->IsAutocreate || IsAlerted)) {
-                        for (int subindex = 0; subindex < team->ClassCount; subindex++) {
+                        for (unsigned subindex = 0; subindex < team->ClassCount; subindex++) {
                             if (team->Class[subindex]->What_Am_I() == RTTI_UNITTYPE) {
                                 int subtype = ((UnitTypeClass const*)(team->Class[subindex]))->Type;
                                 counter[subtype] = MAX(counter[subtype], (int)team->DesiredNum[subindex]);
@@ -3684,7 +3684,7 @@ TechnoTypeClass const* HouseClass::Suggest_New_Object(RTTIType objecttype) const
                     TeamTypeClass const* team = tptr->Class;
 
                     if ((team->IsReinforcable || !tptr->IsFullStrength) && team->House == Class->House) {
-                        for (int subindex = 0; subindex < team->ClassCount; subindex++) {
+                        for (unsigned subindex = 0; subindex < team->ClassCount; subindex++) {
                             if (team->Class[subindex]->What_Am_I() == RTTI_INFANTRYTYPE) {
                                 counter[((InfantryTypeClass const*)(team->Class[subindex]))->Type] +=
                                     team->DesiredNum[subindex] + 1;
@@ -3703,7 +3703,7 @@ TechnoTypeClass const* HouseClass::Suggest_New_Object(RTTIType objecttype) const
                 TeamTypeClass const* team = TeamTypes.Ptr(index);
                 if (team) {
                     if (team->House == Class->House && team->IsPrebuilt && (!team->IsAutocreate || IsAlerted)) {
-                        for (int subindex = 0; subindex < team->ClassCount; subindex++) {
+                        for (unsigned subindex = 0; subindex < team->ClassCount; subindex++) {
                             if (team->Class[subindex]->What_Am_I() == RTTI_INFANTRYTYPE) {
                                 int subtype = ((InfantryTypeClass const*)(team->Class[subindex]))->Type;
                                 //									counter[subtype] = 1;
@@ -6590,7 +6590,7 @@ int HouseClass::AI_Unit(void)
             if (((team->IsReinforcable && !tptr->IsFullStrength)
                  || (!tptr->IsForcedActive && !tptr->IsHasBeen && !tptr->IsAltered))
                 && team->House == Class->House) {
-                for (int subindex = 0; subindex < team->ClassCount; subindex++) {
+                for (unsigned subindex = 0; subindex < team->ClassCount; subindex++) {
                     // TechnoTypeClass const * memtype = team->Members[subindex].Class;
                     TechnoTypeClass const* memtype = team->Class[subindex];
                     if (memtype->What_Am_I() == RTTI_UNITTYPE) {
@@ -6609,7 +6609,7 @@ int HouseClass::AI_Unit(void)
     for (index = 0; index < TeamTypes.Count(); index++) {
         TeamTypeClass const* team = TeamTypes.Ptr(index);
         if (team != NULL && team->House == Class->House && team->IsPrebuilt && (!team->IsAutocreate || IsAlerted)) {
-            for (int subindex = 0; subindex < team->ClassCount; subindex++) {
+            for (unsigned subindex = 0; subindex < team->ClassCount; subindex++) {
                 // TechnoTypeClass const * memtype = team->Members[subindex].Class;
                 TechnoTypeClass const* memtype = team->Class[subindex];
 

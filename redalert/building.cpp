@@ -3181,7 +3181,7 @@ bool BuildingClass::Toggle_Primary(void)
         // if ((HouseClass *)House == PlayerPtr) {
         // 	Speak(VOX_PRIMARY_SELECTED);
         // }
-        if ((HouseClass*)House->IsHuman) {
+        if (House->IsHuman) {
             Speak(VOX_PRIMARY_SELECTED, House);
         }
     }

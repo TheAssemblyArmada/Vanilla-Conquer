@@ -2360,7 +2360,7 @@ void CC_Texture_Fill(void const* shapefile, int shapenum, int xpos, int ypos, in
 {
     unsigned char* shape_pointer;
     // unsigned char	*shape_save;
-    unsigned long shape_size;
+    uintptr_t shape_size;
     // int x,y;
 
     if (shapefile && shapenum != -1) {

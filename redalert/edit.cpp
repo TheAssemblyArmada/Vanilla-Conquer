@@ -144,7 +144,7 @@ void EditClass::Set_Text(char* text, int max_len)
 {
     String = text;
     MaxLength = max_len - 1;
-    Length = strlen(String);
+    Length = int(strlen(String));
     Flag_To_Redraw();
 }
 
@@ -449,7 +449,7 @@ void EditClass::Set_Focus(void)
 {
     Length = 0;
     if (String) {
-        Length = strlen(String);
+        Length = int(strlen(String));
     }
     ControlClass::Set_Focus();
 }

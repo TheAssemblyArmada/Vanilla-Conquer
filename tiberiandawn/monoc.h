@@ -35,6 +35,8 @@
 #ifndef MONOC_H
 #define MONOC_H
 
+#include <stdint.h>
+
 class MonoClass
 {
     /*
@@ -171,7 +173,7 @@ private:
     void Scroll(int lines);
     void Store_Cell(CellType& cell, int x, int y)
     {
-        *(CellType*)((long)MonoSegment + Offset(x, y)) = cell;
+        *(CellType*)((intptr_t)MonoSegment + Offset(x, y)) = cell;
     };
 
     /*

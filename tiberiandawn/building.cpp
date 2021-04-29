@@ -2133,8 +2133,6 @@ void BuildingClass::Assign_Target(TARGET target)
  *=============================================================================================*/
 void BuildingClass::Init(void)
 {
-    BuildingClass* ptr;
-
     Buildings.Free_All();
 }
 
@@ -3551,7 +3549,7 @@ bool BuildingClass::Toggle_Primary(void)
         // if (House == PlayerPtr) {
         // 	Speak(VOX_PRIMARY_SELECTED);
         // }
-        if ((HouseClass*)House->IsHuman) {
+        if (House->IsHuman) {
             Speak(VOX_PRIMARY_SELECTED, House);
         }
     }

@@ -848,8 +848,6 @@ TARGET InfantryClass::As_Target(void) const
  *=============================================================================================*/
 void InfantryClass::Init(void)
 {
-    InfantryClass* ptr;
-
     Infantry.Free_All();
 }
 
