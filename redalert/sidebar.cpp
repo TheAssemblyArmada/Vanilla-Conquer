@@ -1075,11 +1075,11 @@ SidebarClass::StripClass::StripClass(InitClass const&)
     , Slid(0)
     , BuildableCount(0)
 {
-    for (BuildType& Buildable : Buildables) {
-        Buildable.BuildableID = 0;
-        Buildable.BuildableType = RTTI_NONE;
-        Buildable.Factory = -1;
-        Buildable.BuildableViaCapture = false; // Added for new sidebar functionality. ST - 9/24/2019 3:10PM
+    for (int index = 0; index < MAX_BUILDABLES; index++) {
+        Buildables[index].BuildableID = 0;
+        Buildables[index].BuildableType = RTTI_NONE;
+        Buildables[index].Factory = -1;
+        Buildables[index].BuildableViaCapture = false; // Added for new sidebar functionality. ST - 9/24/2019 3:10PM
     }
 }
 
@@ -1163,11 +1163,11 @@ void SidebarClass::StripClass::Init_Clear(void)
     /*
     ** Since we're resetting the strips, clear out all the buildables & factory pointers.
     */
-    for (BuildType& Buildable : Buildables) {
-        Buildable.BuildableID = 0;
-        Buildable.BuildableType = RTTI_NONE;
-        Buildable.Factory = -1;
-        Buildable.BuildableViaCapture = false; // Added for new sidebar functionality. ST - 9/24/2019 3:10PM
+    for (int index = 0; index < MAX_BUILDABLES; index++) {
+        Buildables[index].BuildableID = 0;
+        Buildables[index].BuildableType = RTTI_NONE;
+        Buildables[index].Factory = -1;
+        Buildables[index].BuildableViaCapture = false; // Added for new sidebar functionality. ST - 9/24/2019 3:10PM
     }
 }
 

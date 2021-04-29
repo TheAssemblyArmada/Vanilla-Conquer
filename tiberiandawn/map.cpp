@@ -1872,13 +1872,13 @@ ObjectClass* MapClass::Close_Object(COORDINATE coord) const
     */
     static int _offsets[] = {
         0, -1, 1, -MAP_CELL_W, MAP_CELL_W, MAP_CELL_W - 1, MAP_CELL_W + 1, -(MAP_CELL_W - 1), -(MAP_CELL_W + 1)};
-    for (int _offset : _offsets) {
+    for (int index = 0; index < (sizeof(_offsets) / sizeof(_offsets[0])); index++) {
 
         /*
         **	Examine the cell for close object. Make sure that the cell actually is a
         **	legal one.
         */
-        CELL newcell = cell + _offset;
+        CELL newcell = cell + _offsets[index];
         if (In_Radar(newcell)) {
 
             /*

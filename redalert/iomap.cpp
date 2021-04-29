@@ -131,11 +131,11 @@ void CellClass::Code_Pointers(void)
         OccupierPtr = (ObjectClass*)OccupierPtr->As_Target();
     }
 
-    for (ObjectClass* ptr : Overlapper) {
-        if (ptr != NULL && ptr->IsActive) {
-            ptr = (ObjectClass*)ptr->As_Target();
+    for (int index = 0; index < ARRAY_SIZE(Overlapper); index++) {
+        if (Overlapper[index] != NULL && Overlapper[index]->IsActive) {
+            Overlapper[index] = (ObjectClass*)Overlapper[index]->As_Target();
         } else {
-            ptr = NULL;
+            Overlapper[index] = NULL;
         }
     }
 
@@ -168,10 +168,10 @@ void CellClass::Decode_Pointers(void)
         assert(OccupierPtr != NULL);
     }
 
-    for (ObjectClass* index : Overlapper) {
-        if (index != NULL) {
-            index = As_Object((TARGET)index, false);
-            assert(index != NULL);
+    for (int index = 0; index < ARRAY_SIZE(Overlapper); index++) {
+        if (Overlapper[index] != NULL) {
+            Overlapper[index] = As_Object((TARGET)Overlapper[index], false);
+            assert(Overlapper[index] != NULL);
         }
     }
 

@@ -263,9 +263,9 @@ BuildingClass* BaseClass::Get_Building(int index) const
 
     obj[0] = Map[cell].Cell_Building();
     int count = 1;
-    for (ObjectClass* xindex : Map[cell].Overlapper) {
-        if (xindex != NULL) {
-            obj[count++] = xindex;
+    for (int xindex = 0; xindex < ARRAY_SIZE(Map[cell].Overlapper); xindex++) {
+        if (Map[cell].Overlapper[xindex] != NULL) {
+            obj[count++] = Map[cell].Overlapper[xindex];
         }
     }
 

@@ -375,11 +375,11 @@ bool Init_Game(int, char*[])
     Session.GamesPlayed = 0;
     Session.NumScores = 0;
     Session.CurGame = 0;
-    for (MPlayerScoreType& i : Session.Score) {
-        i.Name[0] = '\0';
-        i.Wins = 0;
-        for (int& Kill : i.Kills) {
-            Kill = -1; // -1 = this player didn't play this round
+    for (int i = 0; i < MAX_MULTI_NAMES; i++) {
+        Session.Score[i].Name[0] = '\0';
+        Session.Score[i].Wins = 0;
+        for (int j = 0; j < MAX_MULTI_GAMES; j++) {
+            Session.Score[i].Kills[j] = -1; // -1 = this player didn't play this round
         }
     }
 
@@ -2937,10 +2937,10 @@ void Free_Heaps(void)
     **	into a custom holding tank only as large as the largest speech file to
     **	be played.
     */
-    for (auto& ptr : SpeechBuffer) {
-        if (ptr) {
-            delete[] ptr;
-            ptr = NULL;
+    for (int index = 0; index < ARRAY_SIZE(SpeechBuffer); index++) {
+        if (SpeechBuffer[index]) {
+            delete[] SpeechBuffer[index];
+            SpeechBuffer[index] = NULL;
         }
     }
 

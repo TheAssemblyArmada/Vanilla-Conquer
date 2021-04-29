@@ -173,8 +173,8 @@ ScenarioClass::ScenarioClass(void)
 #endif
     FadeTimer(0)
 {
-    for (short& index : Waypoint) {
-        index = -1;
+    for (int index = 0; index < ARRAY_SIZE(Waypoint); index++) {
+        Waypoint[index] = -1;
     }
     strcpy(Description, "");
     strcpy(ScenarioName, "");
@@ -822,8 +822,8 @@ void Clear_Scenario(void)
 
     CurrentObject.Clear_All();
 
-    for (short& index : Scen.Waypoint) {
-        index = -1;
+    for (int index = 0; index < WAYPT_COUNT; index++) {
+        Scen.Waypoint[index] = -1;
     }
 
 #ifdef FIXIT_VERSION_3 //	For endgame auto-sonar pulse.
@@ -2612,8 +2612,8 @@ bool Read_Scenario_INI(char* fname, bool)
         long start_x = 0;
         long start_y = 0;
         Map.Compute_Start_Pos(start_x, start_y);
-        for (short& View : Scen.Views) {
-            View = XY_Cell(start_x, start_y);
+        for (int i = 0; i < ARRAY_SIZE(Scen.Views); ++i) {
+            Scen.Views[i] = XY_Cell(start_x, start_y);
         }
         Scen.Waypoint[98] = XY_Cell(start_x, start_y);
         COORDINATE pos = Cell_Coord(XY_Cell(start_x, start_y));

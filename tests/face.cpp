@@ -5,7 +5,7 @@
 
 int test_facings()
 {
-    struct Test_data
+    struct test_data
     {
         int l;
         int t;
@@ -17,7 +17,7 @@ int test_facings()
 
     int ret = 0;
 
-    static const Test_data test_data[] = {
+    struct test_data test_data[] = {
         {0, 0, 0, 0, 255, 32},
         {5, 5, 20, 20, 95, 96},
         {-5, -5, 20, 20, 95, 96},
@@ -35,31 +35,33 @@ int test_facings()
         {9, 50, 50, 50, 63, 64},
     };
 
-    for (const Test_data& test : test_data) {
-        int out256 = Desired_Facing256(test.l, test.t, test.r, test.b);
-        int out8 = Desired_Facing8(test.l, test.t, test.r, test.b);
+    for (int i = 0; i < sizeof(test_data) / sizeof(test_data[0]); i++) {
+        struct test_data* test = &test_data[i];
 
-        if (out256 != test.out256) {
+        int out256 = Desired_Facing256(test->l, test->t, test->r, test->b);
+        int out8 = Desired_Facing8(test->l, test->t, test->r, test->b);
+
+        if (out256 != test->out256) {
             fprintf(stderr,
                     "Desired_Facing256(%d, %d, %d, %d) -> %d, expected %d\n",
-                    test.l,
-                    test.t,
-                    test.r,
-                    test.b,
+                    test->l,
+                    test->t,
+                    test->r,
+                    test->b,
                     out256,
-                    test.out256);
+                    test->out256);
             ret = 1;
         }
 
-        if (out8 != test.out8) {
+        if (out8 != test->out8) {
             fprintf(stderr,
                     "Desired_Facing8(%d, %d, %d, %d) -> %d, expected %d\n",
-                    test.l,
-                    test.t,
-                    test.r,
-                    test.b,
+                    test->l,
+                    test->t,
+                    test->r,
+                    test->b,
                     out8,
-                    test.out8);
+                    test->out8);
             ret = 1;
         }
     }

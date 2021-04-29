@@ -368,10 +368,10 @@ bool FootClass::Basic_Path(void)
             static int _faceadjust[8] = {0, 1, -1, 2, -2, 3, -3, 4};
             FacingType f2 = (FacingType)(((unsigned)::Direction(cell, Coord_Cell(Coord))) >> 5);
 
-            for (int index : _faceadjust) {
+            for (unsigned index = 0; index < (sizeof(_faceadjust) / sizeof(_faceadjust[0])); index++) {
                 CELL cell2;
 
-                cell2 = Adjacent_Cell(cell, (FacingType)((f2 + index) & 0x7));
+                cell2 = Adjacent_Cell(cell, (FacingType)((f2 + _faceadjust[index]) & 0x7));
                 if (Can_Enter_Cell(cell2, FACING_NONE) <= MOVE_CLOAK) {
                     cell = cell2;
                     break;
@@ -923,8 +923,8 @@ void FootClass::Approach_Target(void)
             for (int range = maxrange; range > 0x0080; range -= 0x0100) {
                 static int _angles[] = {0, 8, -8, 16, -16, 24, -24, 32, -32, 48, -48, 64, -64};
 
-                for (int _angle : _angles) {
-                    trycoord = Coord_Move(tcoord, (DirType)(dir + _angle), range);
+                for (int index = 0; index < (sizeof(_angles) / sizeof(_angles[0])); index++) {
+                    trycoord = Coord_Move(tcoord, (DirType)(dir + _angles[index]), range);
 
                     if (::Distance(trycoord, tcoord) < range) {
                         trycell = Coord_Cell(trycoord);
