@@ -416,6 +416,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     HouseClass(void)
         : Class(0){};
     HouseClass(HousesType house);

@@ -53,6 +53,9 @@ public:
         return (ptr);
     };
     void operator delete(void* pointer);
+    static void operator delete(void*, void*)
+    {
+    }
 
     void Code_Pointers(void)
     {

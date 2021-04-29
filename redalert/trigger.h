@@ -98,6 +98,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
 
     /*
     **	If this trigger object is active, then this flag will be true. Trigger

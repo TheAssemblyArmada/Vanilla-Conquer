@@ -131,6 +131,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     UnitClass(UnitType classid, HousesType house);
     UnitClass(NoInitClass const& x)
         : DriveClass(x)

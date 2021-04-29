@@ -62,6 +62,9 @@ public:
         return (ptr);
     };
     static void operator delete(void*);
+    static void operator delete(void*, void*)
+    {
+    }
     operator AircraftType(void) const
     {
         return Class->Type;

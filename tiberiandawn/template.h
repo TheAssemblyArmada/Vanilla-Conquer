@@ -55,6 +55,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     TemplateClass(void);
     TemplateClass(NoInitClass const& x)
         : ObjectClass(x)

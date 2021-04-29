@@ -84,6 +84,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     operator VesselType(void) const
     {
         return Class->Type;

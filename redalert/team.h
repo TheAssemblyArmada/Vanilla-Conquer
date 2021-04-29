@@ -204,6 +204,9 @@ public:
         , Member(x){};
     virtual ~TeamClass(void);
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     static void* operator new(size_t size);
     static void* operator new(size_t, void* ptr)
     {
