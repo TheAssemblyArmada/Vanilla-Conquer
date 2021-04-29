@@ -107,9 +107,9 @@ Uint32 SettingsPixelFormat()
         c = toupper(c);
     }
 
-    for (auto& format : formats) {
-        if (str.compare(format.name) == 0) {
-            return format.format;
+    for (int i = 0; i < ARRAY_SIZE(formats); i++) {
+        if (str.compare(formats[i].name) == 0) {
+            return formats[i].format;
         }
     }
 

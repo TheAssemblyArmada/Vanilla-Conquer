@@ -732,8 +732,8 @@ void PowerClass::Decode_Pointers(void)
  *=============================================================================================*/
 void SidebarClass::Code_Pointers(void)
 {
-    for (auto& i : Column) {
-        i.Code_Pointers();
+    for (int i = 0; i < COLUMNS; i++) {
+        Column[i].Code_Pointers();
     }
 
     PowerClass::Code_Pointers();
@@ -759,8 +759,8 @@ void SidebarClass::Code_Pointers(void)
  *=============================================================================================*/
 void SidebarClass::Decode_Pointers(void)
 {
-    for (auto& i : Column) {
-        i.Decode_Pointers();
+    for (int i = 0; i < COLUMNS; i++) {
+        Column[i].Decode_Pointers();
     }
 
     PowerClass::Decode_Pointers();

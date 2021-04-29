@@ -722,8 +722,8 @@ void Speak_AI(void)
 			**	speech buffers.
 			*/
             void const* speech = NULL;
-            for (VoxType& index : SpeechRecord) {
-                if (index == SpeakQueue)
+            for (int index = 0; index < ARRAY_SIZE(SpeechRecord); index++) {
+                if (SpeechRecord[index] == SpeakQueue)
                     break;
             }
 

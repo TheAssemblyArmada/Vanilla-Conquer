@@ -275,8 +275,8 @@ int VQA_StartAudio(VQAHandle* handle)
     audio->field_B0 = 0;
     audio->field_B4 = 0;
 
-    for (unsigned int AudioBuffer : audio->AudioBuffers) {
-        Queue_Audio(AudioBuffer);
+    for (unsigned i = 0; i < OPENAL_BUFFER_COUNT; ++i) {
+        Queue_Audio(audio->AudioBuffers[i]);
     }
 
     alSourcef(audio->OpenALSource, AL_GAIN, config->Volume / 256.0f);

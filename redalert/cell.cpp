@@ -132,8 +132,8 @@ CellClass::CellClass(void)
         Zones[zone] = 0;
     }
     Flag.Composite = 0;
-    for (ObjectClass* index : Overlapper) {
-        index = 0;
+    for (int index = 0; index < ARRAY_SIZE(Overlapper); index++) {
+        Overlapper[index] = 0;
     }
 }
 
@@ -407,11 +407,12 @@ void CellClass::Redraw_Objects(bool forced)
         /*
         **	Flag any overlapping object in this cell to be redrawn.
         */
-        for (ObjectClass* ptr : Overlapper) {
-            if (ptr) {
-                assert(ptr->IsActive);
-                if (ptr->Is_Techno() && ((TechnoClass*)ptr)->Visual_Character() != VISUAL_NORMAL) {
-                    ptr->Mark(MARK_CHANGE);
+        for (int index = 0; index < ARRAY_SIZE(Overlapper); index++) {
+            if (Overlapper[index]) {
+                assert(Overlapper[index]->IsActive);
+                if (Overlapper[index]->Is_Techno()
+                    && ((TechnoClass*)Overlapper[index])->Visual_Character() != VISUAL_NORMAL) {
+                    Overlapper[index]->Mark(MARK_CHANGE);
                 }
             }
         }
@@ -816,9 +817,9 @@ void CellClass::Overlap_Up(ObjectClass* object)
     assert((unsigned)Cell_Number() <= MAP_CELL_TOTAL);
     assert(object != NULL && object->IsActive);
 
-    for (ObjectClass* ptr : Overlapper) {
-        if (ptr == object) {
-            ptr = 0;
+    for (int index = 0; index < ARRAY_SIZE(Overlapper); index++) {
+        if (Overlapper[index] == object) {
+            Overlapper[index] = 0;
             break;
         }
     }
@@ -1300,8 +1301,8 @@ void CellClass::Draw_It(int x, int y, bool objects) const
             object->IsToDisplay = true;
             object = object->Next;
         }
-        for (ObjectClass* ptr : Overlapper) {
-            object = ptr;
+        for (int index = 0; index < ARRAY_SIZE(Overlapper); index++) {
+            object = Overlapper[index];
             if (object != NULL && object->IsActive) {
                 object->IsToDisplay = true;
                 optr.Add(object);
@@ -1631,8 +1632,8 @@ void CellClass::Wall_Update(void)
 
     static FacingType _offsets[5] = {FACING_N, FACING_E, FACING_S, FACING_W, FACING_NONE};
 
-    for (FacingType& _offset : _offsets) {
-        CellClass* newcell = Adjacent_Cell(_offset);
+    for (unsigned index = 0; index < (sizeof(_offsets) / sizeof(_offsets[0])); index++) {
+        CellClass* newcell = Adjacent_Cell(_offsets[index]);
 
         if (newcell && newcell->Overlay != OVERLAY_NONE && OverlayTypeClass::As_Reference(newcell->Overlay).IsWall) {
             int icon = 0;

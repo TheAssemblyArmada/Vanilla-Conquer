@@ -542,8 +542,8 @@ unsigned long Seek_File(int handle, long offset, int starting)
 
 void WWDOS_Shutdown(void)
 {
-    for (CCFileClass& Handle : Handles) {
-        Handle.Set_Name(NULL);
+    for (int index = 0; index < 10; index++) {
+        Handles[index].Set_Name(NULL);
     }
 }
 

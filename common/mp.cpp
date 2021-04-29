@@ -2203,8 +2203,8 @@ bool XMP_Small_Divisors_Test(const digit* candidate, int precision)
 {
     digit quotient[MAX_UNIT_PRECISION];
 
-    for (unsigned short i : primeTable) {
-        if (XMP_Unsigned_Div_Int(quotient, candidate, i, precision) == 0)
+    for (unsigned i = 0; i < ARRAY_SIZE(primeTable); i++) {
+        if (XMP_Unsigned_Div_Int(quotient, candidate, primeTable[i], precision) == 0)
             return (false);
     }
     return (true);

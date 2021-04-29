@@ -401,11 +401,11 @@ BuildingClass* BaseClass::Get_Building(int index)
     obj[3] = Map[cell].Overlapper[2];
 
     bldg = NULL;
-    for (ObjectClass* ptr : obj) {
-        if (ptr && ptr->Coord == Nodes[index].Coord && ptr->What_Am_I() == RTTI_BUILDING
-            && ((BuildingClass*)ptr)->Class->Type == Nodes[index].Type) {
+    for (int i = 0; i < 4; i++) {
+        if (obj[i] && obj[i]->Coord == Nodes[index].Coord && obj[i]->What_Am_I() == RTTI_BUILDING
+            && ((BuildingClass*)obj[i])->Class->Type == Nodes[index].Type) {
 
-            bldg = (BuildingClass*)ptr;
+            bldg = (BuildingClass*)obj[i];
             break;
         }
     }

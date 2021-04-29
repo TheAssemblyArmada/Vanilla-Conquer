@@ -3055,8 +3055,9 @@ void BuildingTypeClass::One_Time(void)
     /*
     **	Install all the special animation sequences for the different building types.
     */
-    for (auto _anim : _anims) {
-        As_Reference(_anim.Class).Init_Anim(_anim.Stage, _anim.Start, _anim.Length, _anim.Rate);
+    for (unsigned index = 0; index < (sizeof(_anims) / sizeof(_anims[0])); index++) {
+        As_Reference(_anims[index].Class)
+            .Init_Anim(_anims[index].Stage, _anims[index].Start, _anims[index].Length, _anims[index].Rate);
     }
 }
 
