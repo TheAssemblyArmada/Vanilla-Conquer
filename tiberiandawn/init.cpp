@@ -1783,7 +1783,7 @@ bool Parse_Command_Line(int argc, char* argv[])
         long code = 0;
 
         char arg_string[512];
-        int str_len = strlen(argv[index]);
+        int str_len = (int)strlen(argv[index]);
         char* src = argv[index];
         char* dest = arg_string;
         for (int i = 0; i < str_len; i++) {
@@ -2539,7 +2539,7 @@ long Obfuscate(char const* string)
     */
     strncpy(buffer, string, sizeof(buffer));
     buffer[sizeof(buffer) - 1] = '\0';
-    int length = strlen(buffer);
+    int length = (int)strlen(buffer);
 
     /*
     **	Only upper case letters are significant.

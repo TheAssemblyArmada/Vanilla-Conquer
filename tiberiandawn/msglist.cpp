@@ -465,7 +465,7 @@ TextLabelClass* MessageListClass::Add_Edit(int color, TextPrintType style, char*
     /*------------------------------------------------------------------------
     Initialize the buffer positions; add a new label to the label list.
     ------------------------------------------------------------------------*/
-    EditCurPos = EditInitPos = strlen(to);
+    EditCurPos = EditInitPos = int(strlen(to));
     EditLabel = Add_Message(to, color, style, -1, 0, 0);
     Width = width;
 

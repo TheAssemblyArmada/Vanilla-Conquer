@@ -104,8 +104,6 @@ int OverlayClass::Validate(void) const
  *=============================================================================================*/
 void OverlayClass::Init(void)
 {
-    OverlayClass* ptr;
-
     Overlays.Free_All();
 }
 

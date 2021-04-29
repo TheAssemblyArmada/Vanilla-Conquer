@@ -2723,7 +2723,7 @@ COORDINATE DisplayClass::Pixel_To_Coord(int x, int y)
     */
     // Possibly ignore the view constraints if we aren't using the internal renderer. ST - 4/17/2019 9:06AM
     // if (x < TacLeptonWidth && y < TacLeptonHeight) {
-    if (IgnoreViewConstraints || ((unsigned)x < TacLeptonWidth && (unsigned)y < TacLeptonHeight)) {
+    if (IgnoreViewConstraints || ((unsigned)x < (unsigned)TacLeptonWidth && (unsigned)y < (unsigned)TacLeptonHeight)) {
         return (Coord_Add(TacticalCoord, XY_Coord(x, y)));
     }
     return (0);
