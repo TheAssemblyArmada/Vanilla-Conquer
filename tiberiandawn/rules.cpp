@@ -35,6 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "ccini.h"
 
 /***********************************************************************************************
  * DifficultyClass::DifficultyClass -- Default constructor for difficulty class object.        *
@@ -164,4 +165,336 @@ RulesClass::RulesClass(void)
     Diff[DIFF_HARD].IsWallDestroyer = true;
     Diff[DIFF_HARD].IsContentScan = true;
 #endif
+}
+
+/***********************************************************************************************
+ * Difficulty_Get -- Fetch the difficulty bias values.                                         *
+ *                                                                                             *
+ *    This will fetch the difficulty bias values for the section specified.                    *
+ *                                                                                             *
+ * INPUT:   ini   -- Reference the INI database to fetch the values from.                      *
+ *                                                                                             *
+ *          diff  -- Reference to the difficulty class object to fill in with the values.      *
+ *                                                                                             *
+ *          section  -- The section identifier to lift the values from.                        *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/11/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+static void Difficulty_Get(CCINIClass& ini, DifficultyClass& diff, char const* section)
+{
+    if (ini.Is_Present(section)) {
+        diff.FirepowerBias = ini.Get_Fixed(section, "FirePower", diff.FirepowerBias);
+        diff.GroundspeedBias = ini.Get_Fixed(section, "Groundspeed", diff.GroundspeedBias);
+        diff.AirspeedBias = ini.Get_Fixed(section, "Airspeed", diff.AirspeedBias);
+        diff.ArmorBias = ini.Get_Fixed(section, "Armor", diff.ArmorBias);
+        diff.ROFBias = ini.Get_Fixed(section, "ROF", diff.ROFBias);
+        diff.CostBias = ini.Get_Fixed(section, "Cost", diff.CostBias);
+        diff.RepairDelay = ini.Get_Fixed(section, "RepairDelay", diff.RepairDelay);
+        diff.BuildDelay = ini.Get_Fixed(section, "BuildDelay", diff.BuildDelay);
+        diff.IsBuildSlowdown = ini.Get_Bool(section, "BuildSlowdown", diff.IsBuildSlowdown);
+        diff.BuildSpeedBias = ini.Get_Fixed(section, "BuildTime", diff.BuildSpeedBias);
+        diff.IsWallDestroyer = ini.Get_Bool(section, "DestroyWalls", diff.IsWallDestroyer);
+        diff.IsContentScan = ini.Get_Bool(section, "ContentScan", diff.IsContentScan);
+    }
+}
+
+/***********************************************************************************************
+ * Difficulty_Put -- Fetch the difficulty bias values.                                         *
+ *                                                                                             *
+ *    This will fetch the difficulty bias values for the section specified.                    *
+ *                                                                                             *
+ * INPUT:   ini   -- Reference the INI database to fetch the values from.                      *
+ *                                                                                             *
+ *          diff  -- Reference to the difficulty class object to fill in with the values.      *
+ *                                                                                             *
+ *          section  -- The section identifier to lift the values from.                        *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/11/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+static void Difficulty_Put(CCINIClass& ini, DifficultyClass& diff, char const* section)
+{
+    ini.Put_Fixed(section, "FirePower", diff.FirepowerBias);
+    ini.Put_Fixed(section, "Groundspeed", diff.GroundspeedBias);
+    ini.Put_Fixed(section, "Airspeed", diff.AirspeedBias);
+    ini.Put_Fixed(section, "Armor", diff.ArmorBias);
+    ini.Put_Fixed(section, "ROF", diff.ROFBias);
+    ini.Put_Fixed(section, "Cost", diff.CostBias);
+    ini.Put_Fixed(section, "RepairDelay", diff.RepairDelay);
+    ini.Put_Fixed(section, "BuildDelay", diff.BuildDelay);
+    ini.Put_Bool(section, "BuildSlowdown", diff.IsBuildSlowdown);
+    ini.Put_Fixed(section, "BuildTime", diff.BuildSpeedBias);
+    ini.Put_Bool(section, "DestroyWalls", diff.IsWallDestroyer);
+    ini.Put_Bool(section, "ContentScan", diff.IsContentScan);
+}
+
+/***********************************************************************************************
+ * RulesClass::Process -- Fetch the bulk of the rule data from the control file.               *
+ *                                                                                             *
+ *    This routine will fetch the rule data from the control file.                             *
+ *                                                                                             *
+ * INPUT:   file  -- Reference to the rule file to process.                                    *
+ *                                                                                             *
+ * OUTPUT:  bool; Was the rule file processed?                                                 *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/17/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+bool RulesClass::Process(CCINIClass& ini)
+{
+    AI(ini);
+    IQ(ini);
+    Difficulty(ini);
+
+    return (true);
+}
+
+/***********************************************************************************************
+ * RulesClass::Process -- Fetch the bulk of the rule data from the control file.               *
+ *                                                                                             *
+ *    This routine will fetch the rule data from the control file.                             *
+ *                                                                                             *
+ * INPUT:   file  -- Reference to the rule file to process.                                    *
+ *                                                                                             *
+ * OUTPUT:  bool; Was the rule file processed?                                                 *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   06/17/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+bool RulesClass::Export(CCINIClass& ini)
+{
+    Export_AI(ini);
+    Export_IQ(ini);
+    Export_Difficulty(ini);
+
+    return (true);
+}
+
+/***********************************************************************************************
+ * RulesClass::AI -- Processes the AI control constants from the database.                     *
+ *                                                                                             *
+ *    This will examine the database specified and set the AI override values accordingly.     *
+ *                                                                                             *
+ * INPUT:   ini   -- Reference to the INI database that holds the AI overrides.                *
+ *                                                                                             *
+ * OUTPUT:  bool; Was the AI section found and processed?                                      *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/08/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+bool RulesClass::AI(CCINIClass& ini)
+{
+    static const char AI[] = "AI";
+
+    if (ini.Is_Present(AI)) {
+        AttackInterval = ini.Get_Fixed(AI, "AttackInterval", AttackInterval);
+        AttackDelay = ini.Get_Fixed(AI, "AttackDelay", AttackDelay);
+        InfantryReserve = ini.Get_Int(AI, "InfantryReserve", InfantryReserve);
+        InfantryBaseMult = ini.Get_Int(AI, "InfantryBaseMult", InfantryBaseMult);
+        PowerSurplus = ini.Get_Int(AI, "PowerSurplus", PowerSurplus);
+        BaseSizeAdd = ini.Get_Int(AI, "BaseSizeAdd", BaseSizeAdd);
+        RefineryRatio = ini.Get_Fixed(AI, "RefineryRatio", RefineryRatio);
+        RefineryLimit = ini.Get_Int(AI, "RefineryLimit", RefineryLimit);
+        BarracksRatio = ini.Get_Fixed(AI, "BarracksRatio", BarracksRatio);
+        BarracksLimit = ini.Get_Int(AI, "BarracksLimit", BarracksLimit);
+        WarRatio = ini.Get_Fixed(AI, "WarRatio", WarRatio);
+        WarLimit = ini.Get_Int(AI, "WarLimit", WarLimit);
+        DefenseRatio = ini.Get_Fixed(AI, "DefenseRatio", DefenseRatio);
+        DefenseLimit = ini.Get_Int(AI, "DefenseLimit", DefenseLimit);
+        AARatio = ini.Get_Fixed(AI, "AARatio", AARatio);
+        AALimit = ini.Get_Int(AI, "AALimit", AALimit);
+        TeslaRatio = ini.Get_Fixed(AI, "ObeliskRatio", TeslaRatio);
+        TeslaLimit = ini.Get_Int(AI, "ObeliskLimit", TeslaLimit);
+        HelipadRatio = ini.Get_Fixed(AI, "HelipadRatio", HelipadRatio);
+        HelipadLimit = ini.Get_Int(AI, "HelipadLimit", HelipadLimit);
+        AirstripRatio = ini.Get_Fixed(AI, "AirstripRatio", AirstripRatio);
+        AirstripLimit = ini.Get_Int(AI, "AirstripLimit", AirstripLimit);
+        IsCompEasyBonus = ini.Get_Bool(AI, "CompEasyBonus", IsCompEasyBonus);
+        IsComputerParanoid = ini.Get_Bool(AI, "Paranoid", IsComputerParanoid);
+        PowerEmergencyFraction = ini.Get_Fixed(AI, "PowerEmergency", PowerEmergencyFraction);
+        return (true);
+    }
+    return (false);
+}
+
+/***********************************************************************************************
+ * RulesClass::Export_AI -- Processes the AI control constants to the database.                *
+ *                                                                                             *
+ *    This will examine the database specified and set the AI override values accordingly.     *
+ *                                                                                             *
+ * INPUT:   ini   -- Reference to the INI database that holds the AI overrides.                *
+ *                                                                                             *
+ * OUTPUT:  bool; Was the AI section found and processed?                                      *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/08/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+bool RulesClass::Export_AI(CCINIClass& ini)
+{
+    static const char AI[] = "AI";
+
+    ini.Put_Fixed(AI, "AttackInterval", AttackInterval);
+    ini.Put_Fixed(AI, "AttackDelay", AttackDelay);
+    ini.Put_Int(AI, "InfantryReserve", InfantryReserve);
+    ini.Put_Int(AI, "InfantryBaseMult", InfantryBaseMult);
+    ini.Put_Int(AI, "PowerSurplus", PowerSurplus);
+    ini.Put_Int(AI, "BaseSizeAdd", BaseSizeAdd);
+    ini.Put_Fixed(AI, "RefineryRatio", RefineryRatio);
+    ini.Put_Int(AI, "RefineryLimit", RefineryLimit);
+    ini.Put_Fixed(AI, "BarracksRatio", BarracksRatio);
+    ini.Put_Int(AI, "BarracksLimit", BarracksLimit);
+    ini.Put_Fixed(AI, "WarRatio", WarRatio);
+    ini.Put_Int(AI, "WarLimit", WarLimit);
+    ini.Put_Fixed(AI, "DefenseRatio", DefenseRatio);
+    ini.Put_Int(AI, "DefenseLimit", DefenseLimit);
+    ini.Put_Fixed(AI, "AARatio", AARatio);
+    ini.Put_Int(AI, "AALimit", AALimit);
+    ini.Put_Fixed(AI, "ObeliskRatio", TeslaRatio);
+    ini.Put_Int(AI, "ObeliskLimit", TeslaLimit);
+    ini.Put_Fixed(AI, "HelipadRatio", HelipadRatio);
+    ini.Put_Int(AI, "HelipadLimit", HelipadLimit);
+    ini.Put_Fixed(AI, "AirstripRatio", AirstripRatio);
+    ini.Put_Int(AI, "AirstripLimit", AirstripLimit);
+    ini.Put_Bool(AI, "CompEasyBonus", IsCompEasyBonus);
+    ini.Put_Bool(AI, "Paranoid", IsComputerParanoid);
+    ini.Put_Fixed(AI, "PowerEmergency", PowerEmergencyFraction);
+    return (true);
+}
+
+/***********************************************************************************************
+ * RulesClass::IQ -- Fetches the IQ control values from the INI database.                      *
+ *                                                                                             *
+ *    This will scan the database specified and retrieve the IQ control values from it. These  *
+ *    IQ control values are what gives the IQ rating meaning. It fundimentally controls how    *
+ *    the computer behaves.                                                                    *
+ *                                                                                             *
+ * INPUT:   ini   -- Reference to the INI database to read the IQ controls from.               *
+ *                                                                                             *
+ * OUTPUT:  bool; Was the IQ section found and processed?                                      *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+bool RulesClass::IQ(CCINIClass& ini)
+{
+    static const char IQCONTROL[] = "IQ";
+
+    if (ini.Is_Present(IQCONTROL)) {
+        MaxIQ = ini.Get_Int(IQCONTROL, "MaxIQLevels", MaxIQ);
+        IQSuperWeapons = ini.Get_Int(IQCONTROL, "SuperWeapons", IQSuperWeapons);
+        IQProduction = ini.Get_Int(IQCONTROL, "Production", IQProduction);
+        IQGuardArea = ini.Get_Int(IQCONTROL, "GuardArea", IQGuardArea);
+        IQRepairSell = ini.Get_Int(IQCONTROL, "RepairSell", IQRepairSell);
+        IQCrush = ini.Get_Int(IQCONTROL, "AutoCrush", IQCrush);
+        IQScatter = ini.Get_Int(IQCONTROL, "Scatter", IQScatter);
+        IQContentScan = ini.Get_Int(IQCONTROL, "ContentScan", IQContentScan);
+        IQAircraft = ini.Get_Int(IQCONTROL, "Aircraft", IQAircraft);
+        IQHarvester = ini.Get_Int(IQCONTROL, "Harvester", IQHarvester);
+        IQSellBack = ini.Get_Int(IQCONTROL, "SellBack", IQSellBack);
+
+        return (true);
+    }
+    return (false);
+}
+
+/***********************************************************************************************
+ * RulesClass::Export_IQ -- Exports the IQ control values from the INI database.               *
+ *                                                                                             *
+ *    This will scan the database specified and retrieve the IQ control values from it. These  *
+ *    IQ control values are what gives the IQ rating meaning. It fundimentally controls how    *
+ *    the computer behaves.                                                                    *
+ *                                                                                             *
+ * INPUT:   ini   -- Reference to the INI database to read the IQ controls from.               *
+ *                                                                                             *
+ * OUTPUT:  bool; Was the IQ section found and processed?                                      *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+bool RulesClass::Export_IQ(CCINIClass& ini)
+{
+    static const char IQCONTROL[] = "IQ";
+
+    ini.Put_Int(IQCONTROL, "MaxIQLevels", MaxIQ);
+    ini.Put_Int(IQCONTROL, "SuperWeapons", IQSuperWeapons);
+    ini.Put_Int(IQCONTROL, "Production", IQProduction);
+    ini.Put_Int(IQCONTROL, "GuardArea", IQGuardArea);
+    ini.Put_Int(IQCONTROL, "RepairSell", IQRepairSell);
+    ini.Put_Int(IQCONTROL, "AutoCrush", IQCrush);
+    ini.Put_Int(IQCONTROL, "Scatter", IQScatter);
+    ini.Put_Int(IQCONTROL, "ContentScan", IQContentScan);
+    ini.Put_Int(IQCONTROL, "Aircraft", IQAircraft);
+    ini.Put_Int(IQCONTROL, "Harvester", IQHarvester);
+    ini.Put_Int(IQCONTROL, "SellBack", IQSellBack);
+
+    return (true);
+}
+
+/***********************************************************************************************
+ * RulesClass::Difficulty -- Fetch the various difficulty group settings.                      *
+ *                                                                                             *
+ *    This routine is used to fetch the various group settings for the difficulty levels.      *
+ *                                                                                             *
+ * INPUT:   ini   -- Reference to the INI database that has the difficulty setting values.     *
+ *                                                                                             *
+ * OUTPUT:  bool; Was the difficulty section found and processed.                              *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   09/10/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+bool RulesClass::Difficulty(CCINIClass& ini)
+{
+#ifndef REMASTER_BUILD
+    Difficulty_Get(ini, Diff[DIFF_EASY], "Easy");
+    Difficulty_Get(ini, Diff[DIFF_NORMAL], "Normal");
+    Difficulty_Get(ini, Diff[DIFF_HARD], "Difficult");
+#endif
+    return (true);
+}
+
+/***********************************************************************************************
+ * RulesClass::Export_Difficulty -- Export the various difficulty group settings.              *
+ *                                                                                             *
+ *    This routine is used to fetch the various group settings for the difficulty levels.      *
+ *                                                                                             *
+ * INPUT:   ini   -- Reference to the INI database that has the difficulty setting values.     *
+ *                                                                                             *
+ * OUTPUT:  bool; Was the difficulty section found and processed.                              *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   09/10/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+bool RulesClass::Export_Difficulty(CCINIClass& ini)
+{
+#ifndef REMASTER_BUILD
+    Difficulty_Put(ini, Diff[DIFF_EASY], "Easy");
+    Difficulty_Put(ini, Diff[DIFF_NORMAL], "Normal");
+    Difficulty_Put(ini, Diff[DIFF_HARD], "Difficult");
+#endif
+    return (true);
 }

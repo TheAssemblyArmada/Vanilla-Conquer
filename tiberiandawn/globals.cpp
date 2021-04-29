@@ -283,6 +283,12 @@ long TutorFlags[2];
 SpecialClass Special;
 
 /***************************************************************************
+**	This holds the rules database. The rules database won't change during the
+**	program's run, but may need to be referenced intermitently.
+*/
+CCINIClass RuleINI;
+
+/***************************************************************************
 **	General rules that control the game.
 */
 RulesClass Rule;

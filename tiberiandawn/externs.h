@@ -1,4 +1,5 @@
 //
+//
 // Copyright 2020 Electronic Arts Inc.
 //
 // TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
@@ -50,6 +51,7 @@
 #include "infantry.h"
 #include "jshell.h"
 #include "common/vqaconfig.h"
+#include "ccini.h"
 
 #ifdef REMASTER_BUILD
 #ifdef MEGAMAPS
@@ -153,6 +155,7 @@ extern MFCD* MoviesMix;
 extern MFCD* GeneralMix;
 extern ThemeClass Theme;
 extern SpecialClass Special;
+extern CCINIClass RuleINI;
 extern RulesClass Rule;
 extern WWKeyboardClass* Keyboard;
 
