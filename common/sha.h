@@ -89,7 +89,7 @@ private:
     **	multiple sequential requests.
     */
     bool IsCached;
-    SHADigest FinalResult;
+    mutable SHADigest FinalResult;
 
     enum
     {
