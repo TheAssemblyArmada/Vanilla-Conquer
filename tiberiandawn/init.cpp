@@ -494,6 +494,14 @@ bool Init_Game(int, char*[])
     new MFCD("SOUNDS.MIX"); // Cached.
 
     /*
+    **	Find and process any rules for this game.
+    */
+    CCFileClass rulesIniFile("RULES.INI");
+    if (RuleINI.Load(rulesIniFile, false)) {
+        Rule.Process(RuleINI);
+    }
+
+    /*
     **	Initialize the animation system.
     */
     CCDebugString("C&C95 - About to initialise the animation system\n");
@@ -645,6 +653,15 @@ bool Init_Game(int, char*[])
     ** dialogs are invoked.  (GameSpeed must be synchronized between systems.)
     */
     Options.Load_Settings();
+
+    /*
+    **	Dump a default copy of rules.ini.
+    */
+    if (!rulesIniFile.Is_Available()) {
+        Rule.Export(RuleINI);
+        CDFileClass ini_export("RULES.INI");
+        RuleINI.Save(ini_export, false);
+    }
 
     return (true);
 }

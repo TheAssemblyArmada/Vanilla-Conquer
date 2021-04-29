@@ -37,6 +37,8 @@
 
 #include "common/fixed.h"
 
+class CCINIClass;
+
 class DifficultyClass
 {
 public:
@@ -62,6 +64,15 @@ class RulesClass
 {
 public:
     RulesClass(void);
+
+    bool Process(CCINIClass& file);
+    bool AI(CCINIClass& ini);
+    bool IQ(CCINIClass& ini);
+    bool Difficulty(CCINIClass& ini);
+    bool Export(CCINIClass& file);
+    bool Export_AI(CCINIClass& ini);
+    bool Export_IQ(CCINIClass& ini);
+    bool Export_Difficulty(CCINIClass& ini);
 
     /*
     **	This specifies the average number of minutes between each computer attack.
