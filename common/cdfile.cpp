@@ -508,7 +508,7 @@ int CDFileClass::Open(char const* filename, int rights)
         return (BufferIOFileClass::Open(rights));
     }
 
-    if ((rights | WRITE)) {
+    if ((rights & WRITE)) {
         std::string write_path = Paths.User_Path();
         write_path += PathsClass::SEP;
         write_path += filename;
