@@ -66,10 +66,12 @@ public:
     RulesClass(void);
 
     bool Process(CCINIClass& file);
+    bool General(CCINIClass& ini);
     bool AI(CCINIClass& ini);
     bool IQ(CCINIClass& ini);
     bool Difficulty(CCINIClass& ini);
     bool Export(CCINIClass& file);
+    bool Export_General(CCINIClass& ini);
     bool Export_AI(CCINIClass& ini);
     bool Export_IQ(CCINIClass& ini);
     bool Export_Difficulty(CCINIClass& ini);
@@ -284,6 +286,50 @@ public:
     bool IsFineDifficulty;
 
     /*
+    **	If this flag is true, then the construction yard can undeploy back into an MCV.
+    */
+    bool IsMCVDeploy;
+
+    /*
+    **	Can the helipad (and airfield) be purchased separately from the associated
+    **	aircraft.
+    */
+    bool IsSeparate;
+
+    /*
+    **	Give target cursor for trees? Doing this will make targetting of trees easier.
+    */
+    bool IsTreeTarget;
+
+    /*
+    **	If Tiberium is allowed to grow, then this flag will be true.
+    */
+    bool IsTGrowth;
+
+    /*
+    **	If Tiberium is allowed to spread, then this flag will be true.
+    */
+    bool IsTSpread;
+
+    /*
+    **	Should civilan buildings and civilians display their true name rather than
+    **	the generic "Civilian Building" and "Civilain"?
+    */
+    bool IsNamed;
+
+    /*
+    **	Should the player controlled buildings and units automatically return fire when
+    **	fired upon?
+    */
+    bool IsSmartDefense;
+
+    /*
+    **	Should player controlled units try to scatter more easily in order to
+    **	avoid damage or threats?
+    */
+    bool IsScatter;
+
+    /*
     **	Are superweapons allowed?
     */
     bool AllowSuperWeapons;
@@ -294,5 +340,7 @@ public:
     */
     DifficultyClass Diff[DIFF_COUNT];
 };
+
+bool Is_MCV_Deploy();
 
 #endif

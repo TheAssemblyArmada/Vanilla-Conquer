@@ -4406,6 +4406,7 @@ static int Net_Fake_New_Dialog(void)
     ........................................................................*/
     Special.IsTGrowth = MPlayerTiberium;
     Special.IsTSpread = MPlayerTiberium;
+    Rule.IsTSpread = Special.IsTSpread;
     transmit = 0;
 
     /*........................................................................

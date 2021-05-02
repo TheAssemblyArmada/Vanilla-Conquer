@@ -4535,7 +4535,7 @@ int BuildingTypeClass::Full_Name(void) const
     if (::Scenario == 3 && Type == STRUCT_MISSION) {
         return (TXT_PRISON);
     }
-    if (!IsNominal || Special.IsNamed || IsWall || Debug_Map || Type == STRUCT_V23 || Type == STRUCT_V30
+    if (!IsNominal || Rule.IsNamed || IsWall || Debug_Map || Type == STRUCT_V23 || Type == STRUCT_V30
         || Type == STRUCT_MISSION || Type == STRUCT_BIO_LAB) {
         return (TechnoTypeClass::Full_Name());
     }
@@ -4567,7 +4567,7 @@ int BuildingTypeClass::Raw_Cost(void) const
 
 int BuildingTypeClass::Cost_Of(void) const
 {
-    if (Special.IsSeparate && Type == STRUCT_HELIPAD) {
+    if (Rule.IsSeparate && Type == STRUCT_HELIPAD) {
         return (Raw_Cost());
     }
 

@@ -924,7 +924,7 @@ void BuildingClass::AI(void)
             **	the loop.
             */
             if (Fetch_Stage() == ctrl->Start + ctrl->Count - 1
-                || (Special.IsMCVDeploy && *this == STRUCT_CONST && Mission == MISSION_DECONSTRUCTION
+                || (Is_MCV_Deploy() && *this == STRUCT_CONST && Mission == MISSION_DECONSTRUCTION
                     && Fetch_Stage() == (42 - 19))) {
                 IsReadyToCommence = true;
             }
@@ -1672,7 +1672,7 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
             if (*this != STRUCT_SAM && !House->Is_Ally(source) && Class->Primary != WEAPON_NONE
                 && (!Target_Legal(TarCom) || !In_Range(TarCom))) {
 
-                if (source->What_Am_I() != RTTI_AIRCRAFT && (!House->IsHuman || Special.IsSmartDefense)) {
+                if (source->What_Am_I() != RTTI_AIRCRAFT && (!House->IsHuman || Rule.IsSmartDefense)) {
                     Assign_Target(source->As_Target());
                 } else {
 
@@ -3160,7 +3160,7 @@ ActionType BuildingClass::What_Action(CELL cell) const
     Validate();
     ActionType action = TechnoClass::What_Action(cell);
 
-    if (action == ACTION_MOVE && (*this != STRUCT_CONST || !Special.IsMCVDeploy)) {
+    if (action == ACTION_MOVE && (*this != STRUCT_CONST || !Is_MCV_Deploy())) {
         action = ACTION_NONE;
     }
 
@@ -4079,7 +4079,7 @@ int BuildingClass::Mission_Deconstruction(void)
             **	members leaving is equal to the unrecovered cost of the building
             **	divided by 100 (the typical cost of a minigunner infantryman).
             */
-            if (!Target_Legal(ArchiveTarget) || !Special.IsMCVDeploy || *this != STRUCT_CONST) {
+            if (!Target_Legal(ArchiveTarget) || !Is_MCV_Deploy() || *this != STRUCT_CONST) {
                 int divisor = 200;
                 if (IsCaptured)
                     divisor *= 2;
@@ -4169,7 +4169,7 @@ int BuildingClass::Mission_Deconstruction(void)
             **	Construction yards that deconstruct, really just revert back
             **	to an MCV.
             */
-            if (Target_Legal(ArchiveTarget) && Special.IsMCVDeploy && *this == STRUCT_CONST && House->IsHuman) {
+            if (Target_Legal(ArchiveTarget) && Is_MCV_Deploy() && *this == STRUCT_CONST && House->IsHuman) {
                 ScenarioInit++;
                 UnitClass* unit = new UnitClass(UNIT_MCV, House->Class->House);
                 ScenarioInit--;
@@ -4495,10 +4495,10 @@ int BuildingClass::Mission_Harvest(void)
             /*
             **	Force any bib squaters to scatter.
             */
-            bool old = Special.IsScatter;
-            Special.IsScatter = true;
+            bool old = Rule.IsScatter;
+            Rule.IsScatter = true;
             Map[Adjacent_Cell(Coord_Cell(Center_Coord()), DIR_SW)].Incoming(0, true);
-            Special.IsScatter = old;
+            Rule.IsScatter = old;
 
             FootClass* techno = Attached_Object();
             if (techno) {
@@ -5444,7 +5444,7 @@ CELL BuildingClass::Find_Exit_Cell(TechnoClass const* techno) const
 bool BuildingClass::Can_Player_Move(void) const
 {
     Validate();
-    return (*this == STRUCT_CONST && (Mission == MISSION_GUARD) && Special.IsMCVDeploy);
+    return (*this == STRUCT_CONST && (Mission == MISSION_GUARD) && Is_MCV_Deploy());
 }
 
 /***********************************************************************************************

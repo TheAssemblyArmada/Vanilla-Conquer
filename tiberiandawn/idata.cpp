@@ -2002,7 +2002,7 @@ BuildingClass* InfantryTypeClass::Who_Can_Build_Me(bool intheory, bool legal, Ho
  *=============================================================================================*/
 int InfantryTypeClass::Full_Name(void) const
 {
-    if (Debug_Map || !IsNominal || Special.IsNamed || Type == INFANTRY_C10 || Type == INFANTRY_DELPHI
+    if (Debug_Map || !IsNominal || Rule.IsNamed || Type == INFANTRY_C10 || Type == INFANTRY_DELPHI
         || Type == INFANTRY_MOEBIUS) {
         return (TechnoTypeClass::Full_Name());
     }

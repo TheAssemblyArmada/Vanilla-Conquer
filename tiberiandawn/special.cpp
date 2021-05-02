@@ -79,11 +79,11 @@ void Special_Dialog(void)
             bool value = false;
             switch (_options[index].Description) {
             case TXT_SEPARATE_HELIPAD:
-                value = Special.IsSeparate;
+                value = Rule.IsSeparate;
                 break;
 
             case TXT_SHOW_NAMES:
-                value = Special.IsNamed;
+                value = Rule.IsNamed;
                 break;
 
             case TXT_DEFENDER_ADVANTAGE:
@@ -95,15 +95,15 @@ void Special_Dialog(void)
                 break;
 
             case TXT_TREE_TARGET:
-                value = Special.IsTreeTarget;
+                value = Rule.IsTreeTarget;
                 break;
 
             case TXT_MCV_DEPLOY:
-                value = Special.IsMCVDeploy;
+                value = Rule.IsMCVDeploy;
                 break;
 
             case TXT_SMART_DEFENCE:
-                value = Special.IsSmartDefense;
+                value = Rule.IsSmartDefense;
                 break;
 
             case TXT_THREE_POINT:
@@ -127,7 +127,7 @@ void Special_Dialog(void)
                 break;
 
             case TXT_SCATTER:
-                value = Special.IsScatter;
+                value = Rule.IsScatter;
                 break;
             }
 

@@ -716,7 +716,7 @@ void InfantryClass::Per_Cell_Process(bool center)
     if (center && Mission == MISSION_SABOTAGE) {
         BuildingClass* building = cellptr->Cell_Building();
         if (building && building->As_Target() == NavCom) {
-            int temp = Special.IsScatter;
+            int temp = Rule.IsScatter;
 
             building->IsGoingToBlow = true;
             building->Clicked_As_Target(PlayerPtr->Class->House,
@@ -724,12 +724,12 @@ void InfantryClass::Per_Cell_Process(bool center)
             building->Clicked_As_Target(building->Owner(), 20);
             building->CountDown.Set(20);
             building->WhomToRepay = As_Target();
-            Special.IsScatter = true;
+            Rule.IsScatter = true;
             NavCom = TARGET_NONE;
             Do_Uncloak();
             Arm = Rearm_Delay(true);
             Scatter(building->Center_Coord(), true); // RUN AWAY!
-            Special.IsScatter = temp;
+            Rule.IsScatter = temp;
             return;
         }
     }
@@ -2102,7 +2102,7 @@ void InfantryClass::Scatter(COORDINATE threat, bool forced, bool nokidding)
     **	For human players, don't scatter the infantry, if the special
     **	flag has not been enabled that allows infantry scatter.
     */
-    if (!Special.IsScatter && !nokidding && House->IsHuman && !forced && !Team)
+    if (!Rule.IsScatter && !nokidding && House->IsHuman && !forced && !Team)
         return;
 
     if (forced || Class->IsFraidyCat /*|| !(Random_Pick(1, 4) == 1)*/) {

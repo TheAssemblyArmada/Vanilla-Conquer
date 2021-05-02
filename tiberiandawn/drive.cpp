@@ -239,7 +239,7 @@ void DriveClass::Overrun_Square(CELL cell, bool threaten)
                 /*
                 **	Scattering is controlled by the game difficulty level.
                 */
-                if (((GameToPlay == GAME_NORMAL && PlayerPtr->Difficulty == DIFF_HARD) || Special.IsScatter
+                if (((GameToPlay == GAME_NORMAL && PlayerPtr->Difficulty == DIFF_HARD) || Rule.IsScatter
                      || Scenario > 8)
                     && !(GameToPlay == GAME_NORMAL && PlayerPtr->Difficulty == DIFF_EASY)) {
                     cellptr->Incoming(0, true);
@@ -708,10 +708,10 @@ bool DriveClass::While_Moving(void)
 
                         case MOVE_TEMP:
                             if (*this == UNIT_HARVESTER || !House->IsHuman) {
-                                bool old = Special.IsScatter;
-                                Special.IsScatter = true;
+                                bool old = Rule.IsScatter;
+                                Rule.IsScatter = true;
                                 Map[Coord_Cell(c)].Incoming(0, true);
-                                Special.IsScatter = old;
+                                Rule.IsScatter = old;
                             }
                             break;
                         }
@@ -975,10 +975,10 @@ bool DriveClass::Start_Of_Move(void)
                         CellClass* cellptr = &Map[cell];
                         TechnoClass* blockage = cellptr->Cell_Techno();
                         if (blockage && House->Is_Ally(blockage)) {
-                            bool old = Special.IsScatter;
-                            Special.IsScatter = true;
+                            bool old = Rule.IsScatter;
+                            Rule.IsScatter = true;
                             cellptr->Incoming(0, true);
-                            Special.IsScatter = old;
+                            Rule.IsScatter = old;
                         }
                     }
                 }
@@ -1009,10 +1009,10 @@ bool DriveClass::Start_Of_Move(void)
                 CellClass* cellptr = &Map[cell];
                 TechnoClass* blockage = cellptr->Cell_Techno();
                 if (blockage && House->Is_Ally(blockage)) {
-                    bool old = Special.IsScatter;
-                    Special.IsScatter = true;
+                    bool old = Rule.IsScatter;
+                    Rule.IsScatter = true;
                     cellptr->Incoming(0, true);
-                    Special.IsScatter = old;
+                    Rule.IsScatter = old;
                 }
             }
         }
@@ -1079,10 +1079,10 @@ bool DriveClass::Start_Of_Move(void)
             **	get out of the way.
             */
             if (cando == MOVE_TEMP) {
-                bool old = Special.IsScatter;
-                Special.IsScatter = true;
+                bool old = Rule.IsScatter;
+                Rule.IsScatter = true;
                 Map[destcell].Incoming(0, true);
-                Special.IsScatter = old;
+                Rule.IsScatter = old;
             }
 
             /*
@@ -1210,10 +1210,10 @@ bool DriveClass::Start_Of_Move(void)
                         **	get out of the way.
                         */
                         if (cando == MOVE_TEMP) {
-                            bool old = Special.IsScatter;
-                            Special.IsScatter = true;
+                            bool old = Rule.IsScatter;
+                            Rule.IsScatter = true;
                             Map[destcell].Incoming(0, true);
-                            Special.IsScatter = old;
+                            Rule.IsScatter = old;
                         }
 
                         /*
