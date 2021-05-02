@@ -874,7 +874,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Set_Multiplayer_Data(int scena
     Special.IsMCVDeploy = game_options.IsMCVDeploy;
     Special.UseMCVDeploy = true;
 
-    MPSuperWeaponDisable = !game_options.EnableSuperweapons; // Are superweapons available
+    Rule.AllowSuperWeapons = game_options.EnableSuperweapons; // Are superweapons available
 
     // Session.Options.AIPlayers = WWGetPrivateProfileInt("Options", "AI", 0, buffer);		//Number of AI players
 
@@ -8581,7 +8581,7 @@ bool DLLExportClass::Save(Pipe& pipe)
     /*
     ** Special case for MPSuperWeaponDisable - store negated value so it defaults to enabled
     */
-    bool not_allow_super_weapons = !MPSuperWeaponDisable;
+    bool not_allow_super_weapons = !Rule.AllowSuperWeapons;
     pipe.Put(&not_allow_super_weapons, sizeof(not_allow_super_weapons));
 
     /*
@@ -8683,7 +8683,7 @@ bool DLLExportClass::Load(Straw& file)
     if (file.Get(&not_allow_super_weapons, sizeof(not_allow_super_weapons)) != sizeof(not_allow_super_weapons)) {
         return false;
     }
-    MPSuperWeaponDisable = !not_allow_super_weapons;
+    Rule.AllowSuperWeapons = !not_allow_super_weapons;
 
     unsigned char padding[4095];
 

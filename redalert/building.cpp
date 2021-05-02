@@ -5268,7 +5268,7 @@ bool BuildingClass::Can_Player_Move(void) const
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
-    return (*this == STRUCT_CONST && (Mission == MISSION_GUARD) && Special.IsMCVDeploy);
+    return (*this == STRUCT_CONST && (Mission == MISSION_GUARD) && Is_MCV_Deploy());
 }
 
 /***********************************************************************************************

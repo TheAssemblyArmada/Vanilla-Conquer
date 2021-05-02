@@ -2183,8 +2183,6 @@ long CellClass::Tiberium_Adjust(bool pregame)
     return (0);
 }
 
-extern bool MPSuperWeaponDisable;
-
 /***********************************************************************************************
  * CellClass::Goodie_Check -- Performs crate discovery logic.                                  *
  *                                                                                             *
@@ -2319,7 +2317,7 @@ bool CellClass::Goodie_Check(FootClass* object)
             case CRATE_SONAR:
                 if (Session.Type != GAME_NORMAL) {
 #ifdef REMASTER_BUILD
-                    if (MPSuperWeaponDisable) {
+                    if (!Rule.AllowSuperWeapons) {
                         powerup = CRATE_MONEY;
                     }
 #endif
