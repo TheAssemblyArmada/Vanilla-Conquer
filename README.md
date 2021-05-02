@@ -75,7 +75,7 @@ Binary releases of the latest commit are available from [here](https://github.co
 
 Copy the Vanilla executable (`vanillatd.exe` or `vanillara.exe`) to your legacy game directory, on Windows also copy `SDL2.dll` and `OpenAL32.dll`.
 
-For Tiberian Dawn the final freeware Gold CD release ([GDI](https://www.fileplanet.com/archive/p-63497/Command-Conquer-Gold), [NOD](https://www.fileplanet.com/archive/p-8778/Command-Conquer-Gold)) works fine.
+For Tiberian Dawn the final freeware Gold CD release ([GDI](https://www.moddb.com/games/cc-gold/downloads/command-conquer-gold-free-game-gdi-iso), [NOD](https://www.moddb.com/games/cc-gold/downloads/command-conquer-gold-free-game-nod-iso)) works fine.
 
 For Red Alert the freeware [CD release](https://web.archive.org/web/20080901183216/http://www.ea.com/redalert/news-detail.jsp?id=62) works fine as well.
 The official [Red Alert demo](https://www.moddb.com/games/cc-red-alert/downloads/command-conquer-red-alert-demo) is also fully playable.
