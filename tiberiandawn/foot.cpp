@@ -1175,7 +1175,7 @@ ResultType FootClass::Take_Damage(int& damage, int distance, WarheadType warhead
                 && (source->What_Am_I() != RTTI_AIRCRAFT
                     || BulletTypeClass::As_Reference(Weapons[Techno_Type_Class()->Primary].Fires).IsAntiAircraft)
                 && (!Target_Legal(TarCom)
-                    || ((!House->IsHuman || Special.IsSmartDefense) && (!tweap || !In_Range(TarCom))))
+                    || ((!House->IsHuman || Rule.IsSmartDefense) && (!tweap || !In_Range(TarCom))))
                 &&
                 //				!Target_Legal(NavCom) &&
                 (Mission == MISSION_AMBUSH || Mission == MISSION_GUARD || Mission == MISSION_RESCUE
@@ -1208,7 +1208,7 @@ ResultType FootClass::Take_Damage(int& damage, int distance, WarheadType warhead
                         **	Simple retaliation cannot occur because the source of the damage
                         **	is too far away. If scatter logic is enabled, then scatter now.
                         */
-                        if (Special.IsScatter) {
+                        if (Rule.IsScatter) {
                             Scatter(0, true);
                         }
                     }
@@ -1218,7 +1218,7 @@ ResultType FootClass::Take_Damage(int& damage, int distance, WarheadType warhead
                 /*
                 **	If this object isn't doing anything important, then scatter.
                 */
-                if (!IsDriving && !Target_Legal(TarCom) && !Target_Legal(NavCom) && Special.IsScatter
+                if (!IsDriving && !Target_Legal(TarCom) && !Target_Legal(NavCom) && Rule.IsScatter
                     && What_Am_I() != RTTI_AIRCRAFT) {
                     Scatter(0, true);
                 }
