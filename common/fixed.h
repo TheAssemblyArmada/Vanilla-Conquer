@@ -66,6 +66,8 @@
 class fixed
 {
     static constexpr unsigned int PRECISION = 1 << 16;
+    friend class Pipe;
+    friend class Straw;
 
 public:
     // The default constructor must not touch the data members in any way.
