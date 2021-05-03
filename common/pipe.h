@@ -35,24 +35,10 @@
 #ifndef PIPE_H
 #define PIPE_H
 
+#include "endianness.h"
+#include "fixed.h"
 #include <stddef.h>
-
-/*
-**	The "bool" integral type was defined by the C++ committee in
-**	November of '94. Until the compiler supports this, use the following
-**	definition.
-*/
-#ifndef __BORLANDC__
-#ifndef TRUE_FALSE_DEFINED
-#define TRUE_FALSE_DEFINED
-enum
-{
-    false = 0,
-    true = 1
-};
-typedef int bool;
-#endif
-#endif
+#include <stdint.h>
 
 /*
 **	A "push through" pipe interface abstract class used for such purposes as compression
@@ -82,6 +68,64 @@ public:
         Put_To(&pipe);
     }
     virtual int Put(void const* source, int slen);
+
+    /*
+    **	Write fixed width data to the stream.
+    */
+    void Put(int8_t val)
+    {
+        uint8_t data = val;
+        Put(&data, sizeof(data));
+    }
+
+    void Put(uint8_t val)
+    {
+        uint8_t data = val;
+        Put(&data, sizeof(data));
+    }
+
+    void Put(int16_t val)
+    {
+        uint16_t data = htole16(val);
+        Put(&data, sizeof(data));
+    }
+
+    void Put(uint16_t val)
+    {
+        uint16_t data = htole16(val);
+        Put(&data, sizeof(data));
+    }
+
+    void Put(int32_t val)
+    {
+        uint32_t data = htole32(val);
+        Put(&data, sizeof(data));
+    }
+
+    void Put(uint32_t val)
+    {
+        uint32_t data = htole32(val);
+        Put(&data, sizeof(data));
+    }
+
+    void Put(int64_t val)
+    {
+        uint64_t data = htole64(val);
+        Put(&data, sizeof(data));
+    }
+
+    void Put(uint64_t val)
+    {
+        uint64_t data = htole64(val);
+        Put(&data, sizeof(data));
+    }
+
+    void Put(const fixed& val)
+    {
+        uint32_t data = htole32(val.Data.Raw);
+        static_assert(sizeof(data) == sizeof(val.Data.Raw), "Fixed point data does not match written data size.");
+        Put(&data, sizeof(data));
+    }
 
     /*
     **	Pointer to the next pipe segment in the chain.
