@@ -94,22 +94,25 @@ jobs:
         
     - name: Configure Vanilla Conquer
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=cmake/${{ steps.vars.outputs.arc_path }}-mingw-w64-toolchain.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DSDL2=ON -DSDL2_ROOT_DIR=/tmp/SDL2-2.0.12 -DSDL2_INCLUDE_DIR=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/include/SDL2 -DSDL2_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/lib/libSDL2.dll.a -DSDL2_SDLMAIN_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/lib/libSDL2main.a -DSDL2_RUNTIME_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/bin/SDL2.dll -DOPENAL=ON -DOPENAL_ROOT=/tmp/openal-soft-1.21.0-bin -DOPENAL_INCLUDE_DIR=/tmp/openal-soft-1.21.0-bin/include/AL -DOPENAL_LIBRARY=/tmp/openal-soft-1.21.0-bin/libs/${{ steps.vars.outputs.oal_path }}/libOpenAL32.dll.a -DOPENAL_RUNTIME_LIBRARY=/tmp/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DNETWORKING=OFF -DImageMagick_convert_EXECUTABLE=/usr/bin/convert -DImageMagick_convert_FOUND=TRUE -B build
+        cmake -DCMAKE_TOOLCHAIN_FILE=cmake/${{ steps.vars.outputs.arc_path }}-mingw-w64-toolchain.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DSDL2=ON -DSDL2_ROOT_DIR=/tmp/SDL2-2.0.12 -DSDL2_INCLUDE_DIR=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/include/SDL2 -DSDL2_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/lib/libSDL2.dll.a -DSDL2_SDLMAIN_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/lib/libSDL2main.a -DSDL2_RUNTIME_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/bin/SDL2.dll -DOPENAL=ON -DOPENAL_ROOT=/tmp/openal-soft-1.21.0-bin -DOPENAL_INCLUDE_DIR=/tmp/openal-soft-1.21.0-bin/include/AL -DOPENAL_LIBRARY=/tmp/openal-soft-1.21.0-bin/libs/${{ steps.vars.outputs.oal_path }}/libOpenAL32.dll.a -DOPENAL_RUNTIME_LIBRARY=/tmp/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll -DBUILD_TOOLS=ON -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DNETWORKING=OFF -DImageMagick_convert_EXECUTABLE=/usr/bin/convert -DImageMagick_convert_FOUND=TRUE -B build
 
     - name: Build Vanilla Conquer
       run: |
         cmake --build build -- -j 4
         cp ./build/vanillatd.exe ./build/vanillatd.dbg
         cp ./build/vanillara.exe ./build/vanillara.dbg
+        cp ./build/stringtool.exe ./build/stringtool.dbg
         ${{ steps.vars.outputs.arc_path }}-w64-mingw32-strip --strip-all ./build/vanillatd.exe
         ${{ steps.vars.outputs.arc_path }}-w64-mingw32-strip --strip-all ./build/vanillara.exe
+        ${{ steps.vars.outputs.arc_path }}-w64-mingw32-strip --strip-all ./build/stringtool.exe
         ${{ steps.vars.outputs.arc_path }}-w64-mingw32-objcopy --add-gnu-debuglink=./build/vanillatd.dbg ./build/vanillatd.exe
         ${{ steps.vars.outputs.arc_path }}-w64-mingw32-objcopy --add-gnu-debuglink=./build/vanillara.dbg ./build/vanillara.exe
+        ${{ steps.vars.outputs.arc_path }}-w64-mingw32-objcopy --add-gnu-debuglink=./build/stringtool.dbg ./build/stringtool.exe
 
     - name: Create archives
       run: |
         mkdir artifact
-        7z a artifact/vanilla-conquer-win-gcc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd.exe ./build/vanillara.exe /tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/bin/SDL2.dll /tmp/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll
+        7z a artifact/vanilla-conquer-win-gcc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd.exe ./build/vanillara.exe ./build/stringtool.exe /tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/bin/SDL2.dll /tmp/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll
         7z a artifact/vanilla-conquer-win-gcc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dbg ./build/vanillara.dbg
 
     - name: Upload artifact

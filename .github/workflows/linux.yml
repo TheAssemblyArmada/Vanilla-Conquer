@@ -56,7 +56,7 @@ jobs:
           CC: ${{ steps.vars.outputs.cc }}
           CXX: ${{ steps.vars.outputs.cxx }}
       run: |
-        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DBUILD_TESTS=ON -B build
+        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DBUILD_TOOLS=ON -DBUILD_TESTS=ON -B build
 
     - name: Check formatting
       if: ${{ matrix.platform }} == clang
@@ -69,10 +69,13 @@ jobs:
         cmake --build build -- -j 4
         cp ./build/vanillatd ./build/vanillatd.dbg
         cp ./build/vanillara ./build/vanillara.dbg
+        cp ./build/stringtool ./build/stringtool.dbg
         strip --strip-all ./build/vanillatd
         strip --strip-all ./build/vanillara
+        strip --strip-all ./build/stringtool
         objcopy --add-gnu-debuglink=./build/vanillatd.dbg ./build/vanillatd
         objcopy --add-gnu-debuglink=./build/vanillara.dbg ./build/vanillara
+        objcopy --add-gnu-debuglink=./build/stringtool.dbg ./build/stringtool
 
     - name: Run unit tests
       run: |
@@ -82,8 +85,8 @@ jobs:
     - name: Create archives
       run: |
         mkdir artifact
-        7z a artifact/vanilla-conquer-linux-${{ matrix.platform }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd ./build/vanillara
-        7z a artifact/vanilla-conquer-linux-${{ matrix.platform }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dbg ./build/vanillara.dbg
+        7z a artifact/vanilla-conquer-linux-${{ matrix.platform }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd ./build/vanillara ./build/stringtool
+        7z a artifact/vanilla-conquer-linux-${{ matrix.platform }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dbg ./build/vanillara.dbg ./build/stringtool.dbg
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
