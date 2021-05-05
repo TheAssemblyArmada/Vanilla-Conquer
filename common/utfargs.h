@@ -61,7 +61,7 @@ private:
 
                 cur_arg_u_len = argv_w[i] != NULL ? conv_len : conv_len + 1;
                 cur_arg_u += cur_arg_u_len;
-                lpCmdLine_len -= cur_arg_u_len;
+                lpCmdLine_len -= (int)cur_arg_u_len;
             }
 
             argv_u[i] = NULL;
