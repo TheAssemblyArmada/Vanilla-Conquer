@@ -97,6 +97,14 @@ public:
     T Fetch_Index(int id) const;
 
     /*
+    **	Fetch an ordered element from the table.
+    */
+    T Fetch_Entry(int pos) const
+    {
+        return IndexTable[pos].Data;
+    };
+
+    /*
     **	Clear out the index table to null (empty) state.
     */
     void Clear(void);
