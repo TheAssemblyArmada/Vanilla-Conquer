@@ -69,6 +69,7 @@ set(COMMON_SRC
     pk.cpp
     pkpipe.cpp
     pkstraw.cpp
+    ramfile.cpp
     random.cpp
     rand.cpp
     rawfile.cpp
