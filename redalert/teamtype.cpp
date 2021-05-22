@@ -63,6 +63,7 @@
 #include "checkbox.h"
 #include "drop.h"
 #include "textbtn.h"
+#include "framelimit.h"
 #endif
 
 TeamMissionClass TeamMissions[TMISSION_COUNT] = {
@@ -1495,6 +1496,8 @@ bool TeamTypeClass::Edit(void)
         if (input & KN_BUTTON) {
             lastbutton = (input & ~KN_BUTTON);
         }
+
+        Frame_Limiter();
     }
 
     return (!cancel);
