@@ -48,6 +48,11 @@ bool Read_Private_Config_Struct(FileClass& file, NewConfigType* config);
 void Print_Error_End_Exit(char* string);
 void Print_Error_Exit(char* string);
 
+#ifdef SDL2_BUILD
+#define SDL_MAIN_HANDLED
+#include <SDL.h>
+#endif
+
 #ifdef _WIN32
 #include <direct.h>
 #include "common/utf.h"
@@ -576,7 +581,11 @@ void Emergency_Exit(int code)
     /*
     ** Post a message to our message handler to tell it to clean up.
     */
-#ifdef _WIN32
+#ifdef SDL2_BUILD
+    SDL_Event sdlevent;
+    sdlevent.type = SDL_QUIT;
+    SDL_PushEvent(&sdlevent);
+#elif defined _WIN32
     PostMessage(MainWindow, WM_DESTROY, 0, 0);
 #endif
 
