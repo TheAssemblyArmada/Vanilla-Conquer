@@ -86,7 +86,9 @@ int MapEditClass::Select_Object(void)
     /*
     ......................... Get object at that x,y .........................
     */
-    object = Cell_Object(cell, x, y);
+    if ((unsigned)cell < MAP_CELL_TOTAL) {
+        object = Cell_Object(cell, x, y);
+    }
 
     /*
     ----------------- If no object, unselect the current one -----------------

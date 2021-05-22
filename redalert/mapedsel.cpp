@@ -88,9 +88,11 @@ int MapEditClass::Select_Object(void)
     y = (y - TacPixelY) % ICON_PIXEL_H;
 
     /*
-    **	Get object at that x,y
+    **	Get object at that x,y if cell is within map.
     */
-    object = Cell_Object(cell, x, y);
+    if ((unsigned)cell < MAP_CELL_TOTAL) {
+        object = Cell_Object(cell, x, y);
+    }
 
     /*
     **	If no object, unselect the current one
