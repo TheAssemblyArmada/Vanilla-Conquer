@@ -173,6 +173,13 @@ void MapEditClass::Select_Next(void)
     int tcell_y; // cell-y of TacticalCell
 
     /*
+    ** Can't select next if we don't have any selected.
+    */
+    if (CurrentObject.Count() <= 0) {
+        return;
+    }
+
+    /*
     **	Get next object on the map
     */
     obj = Map.Next_Object(CurrentObject[0]);
