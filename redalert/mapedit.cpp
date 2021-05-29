@@ -150,7 +150,7 @@ void MapEditClass::One_Time(void)
     **	The map: a single large "button"
     */
     MapArea =
-        new ControlClass(MAP_AREA, 0, 8, 640 - 8, 400 - 8, GadgetClass::LEFTPRESS | GadgetClass::LEFTRELEASE, false);
+        new ControlClass(MAP_AREA, 0, 16, 640 - 16, 400 - 16, GadgetClass::LEFTPRESS | GadgetClass::LEFTRELEASE, false);
 
     /*
     **	House buttons
