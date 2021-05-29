@@ -1345,6 +1345,10 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
         input = KN_NONE;
         break;
 
+    case (KN_LMOUSE):
+        input = KN_NONE;
+        break;
+
     default:
         break;
     }
