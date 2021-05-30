@@ -1392,8 +1392,11 @@ void UnitClass::Enter_Idle_Mode(bool initial)
 #endif
         } else {
 
-            if (Mission == MISSION_NONE || Mission == MISSION_GUARD || Mission == MISSION_GUARD_AREA
-                || MissionControl[Mission].IsParalyzed || MissionControl[Mission].IsZombie) {
+            if (Mission == MISSION_GUARD || Mission == MISSION_GUARD_AREA) {
+                return;
+            }
+
+            if (Mission != MISSION_NONE && (MissionControl[Mission].IsParalyzed || MissionControl[Mission].IsZombie)) {
                 return;
             }
 
