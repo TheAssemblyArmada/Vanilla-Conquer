@@ -1836,8 +1836,11 @@ void InfantryClass::Enter_Idle_Mode(bool)
             }
         } else {
 
-            if (Mission == MISSION_NONE || Mission == MISSION_GUARD || Mission == MISSION_GUARD_AREA
-                || MissionControl[Mission].IsZombie || MissionControl[Mission].IsParalyzed) {
+            if (Mission == MISSION_GUARD || Mission == MISSION_GUARD_AREA) {
+                return;
+            }
+
+            if (Mission != MISSION_NONE && (MissionControl[Mission].IsParalyzed || MissionControl[Mission].IsZombie)) {
                 return;
             }
 
