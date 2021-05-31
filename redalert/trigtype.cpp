@@ -54,6 +54,7 @@
 #ifdef SCENARIO_EDITOR
 #include "drop.h"
 #include "textbtn.h"
+#include "common/framelimit.h"
 #endif
 
 /***********************************************************************************************
@@ -1921,6 +1922,8 @@ bool TriggerTypeClass::Edit(void)
             }
             break;
         }
+
+        Frame_Limiter();
     }
     return (false);
 }
