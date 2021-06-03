@@ -46,3 +46,14 @@ int CrateDensity;
 
 ProtocolClass* ListenerProtocol;
 ListenerClass* Listener;
+
+DynamicVectorClass<ReliableProtocolClass*> ReliableProtocols;
+DynamicVectorClass<ReliableCommClass*> ReliableComms;
+DynamicVectorClass<ReliableProtocolClass*> AdminProtocols;
+DynamicVectorClass<ReliableCommClass*> AdminComms;
+
+DynamicVectorClass<SolePlayerClass*> SolePlayers;
+
+#ifdef _WIN32
+HINSTANCE hWSockInstance;
+#endif

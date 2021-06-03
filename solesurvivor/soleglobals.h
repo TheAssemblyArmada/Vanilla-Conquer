@@ -14,6 +14,7 @@
 #define SOLEGLOBALS_H
 
 #include "common/timer.h"
+#include "common/vector.h"
 #include "function.h"
 
 extern bool LogTeams;
@@ -53,5 +54,19 @@ class ProtocolClass;
 class ListenerClass;
 extern ProtocolClass* ListenerProtocol;
 extern ListenerClass* Listener;
+
+class ReliableProtocolClass;
+class ReliableCommClass;
+extern DynamicVectorClass<ReliableProtocolClass*> ReliableProtocols;
+extern DynamicVectorClass<ReliableCommClass*> ReliableComms;
+extern DynamicVectorClass<ReliableProtocolClass*> AdminProtocols;
+extern DynamicVectorClass<ReliableCommClass*> AdminComms;
+
+class SolePlayerClass;
+extern DynamicVectorClass<SolePlayerClass*> SolePlayers;
+
+#ifdef _WIN32
+extern HINSTANCE hWSockInstance;
+#endif
 
 #endif
