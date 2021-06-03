@@ -113,6 +113,7 @@ set(SOLE_SRC
     smudge.cpp
     soleglobals.cpp
     solehelp.cpp
+    solepackets.cpp
     soleparams.cpp
     solerandom.cpp
     solewdt.cpp
