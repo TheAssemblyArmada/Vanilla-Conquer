@@ -12,6 +12,9 @@
 #ifndef SOLEPACKETS_H
 #define SOLEPACKETS_H
 
+#include "soleparams.h"
+#include <stdint.h>
+
 enum PacketType
 {
     PACKET_0,
@@ -48,6 +51,49 @@ enum PacketType
     PACKET_SERVER_PASSWORD,
     PACKET_COUNT,
 };
+
+#pragma pack(push, 1)
+struct GenericPacket
+{
+    uint16_t PacketLength;
+    uint8_t SomeID;
+};
+
+struct ConnectionPacket
+{
+    uint16_t PacketLength;
+    uint8_t PacketType;
+    char PlayerName[12];
+    uint8_t Side;
+    uint8_t ChosenRTTI;
+    int32_t ChosenType;
+    int32_t field_15;
+    int32_t field_19;
+    int32_t VersionNumber;
+};
+
+struct GameOptionsPacket
+{
+    uint16_t PacketLength;
+    uint8_t PacketType;
+    uint8_t PlayerHouse;
+    uint8_t Side;
+    int32_t dword5;
+    uint8_t Scenario;
+    int32_t dwordA;
+    uint32_t Bitfield1;
+    uint8_t BuildLevel;
+    uint8_t MPlayerUnitCount;
+    uint32_t Special;
+    GameParamStruct GameParams;
+    int32_t TimerVal;
+    uint32_t Bitfield2;
+    int32_t TeamScores[4];
+    uint8_t Damages[25];
+    uint8_t RateOfFires[25];
+    int32_t Ranges[25];
+};
+#pragma pack(pop)
 
 extern int PacketLength[PACKET_COUNT];
 

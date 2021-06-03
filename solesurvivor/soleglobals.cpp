@@ -20,6 +20,7 @@ bool somestate_591BCC;
 bool UseAltArt;
 
 HousesType Side;
+HousesType SolePlayerHouse;
 RTTIType ChosenRTTI;
 int ChosenType;
 int Steel;
@@ -27,6 +28,15 @@ int Green;
 int Orange;
 int TeamScores[4];
 char TeamMessages[10][80];
+int GameOption_577AEC;
+int GameOption_577AF0;
+int GameOption_577B00;
+int CurrentVoiceTheme = 1;
+unsigned GameOptionsBitfield;
+bool GameOption_577B08;
+bool GameOption_577B0C;
+bool SoleEnhancedDefense;
+bool DebugLogTeams;
 
 int ClientFPS;
 int LastServerAIFrame;
@@ -40,9 +50,13 @@ int RecievedUDP;
 CountDownTimerClass CountDownTimerClass_590454;
 CountDownTimerClass TransmisionStatsTimer;
 CountDownTimerClass ServerCountDownTimerClass_5721D4;
+char SoleHost[40];
 
 int Density = 200;
 int CrateDensity;
+
+DynamicVectorClass<char*> SoleScenarioNames;
+DynamicVectorClass<int> SoleScenarioFileNumbers;
 
 ProtocolClass* ListenerProtocol;
 ListenerClass* Listener;

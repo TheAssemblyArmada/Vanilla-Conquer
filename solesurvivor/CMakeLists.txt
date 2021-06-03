@@ -111,6 +111,7 @@ set(SOLE_SRC
     sidebar.cpp
     slider.cpp
     smudge.cpp
+    soleclient.cpp
     soleglobals.cpp
     solehelp.cpp
     solepackets.cpp

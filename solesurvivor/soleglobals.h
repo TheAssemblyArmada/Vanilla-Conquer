@@ -26,6 +26,7 @@ extern bool somestate_591BCC;
 extern bool UseAltArt;
 
 extern HousesType Side;
+extern HousesType SolePlayerHouse;
 extern RTTIType ChosenRTTI;
 extern int ChosenType;
 extern int Steel;
@@ -33,6 +34,15 @@ extern int Green;
 extern int Orange;
 extern int TeamScores[4];
 extern char TeamMessages[10][80];
+extern int GameOption_577AEC;
+extern int GameOption_577AF0;
+extern int GameOption_577B00;
+extern int CurrentVoiceTheme;
+extern unsigned GameOptionsBitfield;
+extern bool GameOption_577B08;
+extern bool GameOption_577B0C;
+extern bool SoleEnhancedDefense;
+extern bool DebugLogTeams;
 
 extern int ClientFPS;
 extern int LastServerAIFrame;
@@ -46,9 +56,13 @@ extern int RecievedUDP;
 extern CountDownTimerClass CountDownTimerClass_590454;
 extern CountDownTimerClass TransmisionStatsTimer;
 extern CountDownTimerClass ServerCountDownTimerClass_5721D4;
+extern char SoleHost[40];
 
 extern int Density;
 extern int CrateDensity;
+
+extern DynamicVectorClass<char*> SoleScenarioNames;
+extern DynamicVectorClass<int> SoleScenarioFileNumbers;
 
 class ProtocolClass;
 class ListenerClass;

@@ -9,42 +9,13 @@
 // distributed with this program. You should have received a copy of the
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
-#include "solepackets.h"
 
-static_assert(sizeof(ConnectionPacket) == 33, "Connection packet not expected size.");
-static_assert(sizeof(GameOptionsPacket) == 422, "Game Options packet not expected size.");
+#ifndef SOLECLIENT_H
+#define SOLECLIENT_H
 
-int PacketLength[PACKET_COUNT] = {
-    3,
-    sizeof(ConnectionPacket),
-    4,
-    207,
-    sizeof(GameOptionsPacket),
-    204,
-    7,
-    7,
-    207,
-    4,
-    174,
-    191,
-    202,
-    202,
-    204,
-    204,
-    202,
-    202,
-    204,
-    200,
-    204,
-    202,
-    204,
-    204,
-    196,
-    202,
-    4,
-    4,
-    11,
-    89,
-    11,
-    7,
-};
+int Get_Map();
+bool Connect_To_Host(const char* address);
+void Client_Remote_Disconnect();
+bool Wait_For_WDT_Connection();
+
+#endif

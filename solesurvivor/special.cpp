@@ -412,3 +412,70 @@ int Fetch_Difficulty(void)
 
     return (slider.Get_Value() * (Rule.IsFineDifficulty ? 1 : 2));
 }
+
+unsigned SpecialClass::Pack_Bools()
+{
+    unsigned ret = 0;
+    ret |= IsScrollMod << 0;
+    ret |= IsGross << 1;
+    ret |= IsEasy << 2;
+    ret |= IsDifficult << 3;
+    ret |= IsSpeedBuild << 4;
+    ret |= IsDefenderAdvantage << 5;
+    ret |= IsVisibleTarget << 6;
+    ret |= IsVariation << 7;
+    ret |= IsJurassic << 8;
+    ret |= IsJuvenile << 9;
+    ret |= IsSmartDefense << 10;
+    ret |= IsTreeTarget << 11;
+    ret |= IsMCVDeploy << 12;
+    ret |= IsVisceroids << 13;
+    ret |= IsMonoEnabled << 14;
+    ret |= IsInert << 15;
+    ret |= IsShowPath << 16;
+    ret |= IsThreePoint << 17;
+    ret |= IsTGrowth << 18;
+    ret |= IsTSpread << 19;
+    ret |= IsTFast << 20;
+    ret |= IsRoad << 21;
+    ret |= IsScatter << 22;
+    ret |= IsCaptureTheFlag << 23;
+    ret |= IsNamed << 24;
+    ret |= IsFromInstall << 25;
+    ret |= IsSeparate << 26;
+    ret |= IsEarlyWin << 27;
+
+    return ret;
+}
+
+void SpecialClass::Unpack_Bools(unsigned special)
+{
+    IsScrollMod = (special & (1 << 0)) != 0;
+    IsGross = (special & (1 << 1)) != 0;
+    IsEasy = (special & (1 << 2)) != 0;
+    IsDifficult = (special & (1 << 3)) != 0;
+    IsSpeedBuild = (special & (1 << 4)) != 0;
+    IsDefenderAdvantage = (special & (1 << 5)) != 0;
+    IsVisibleTarget = (special & (1 << 6)) != 0;
+    IsVariation = (special & (1 << 7)) != 0;
+    IsJurassic = (special & (1 << 8)) != 0;
+    IsJuvenile = (special & (1 << 9)) != 0;
+    IsSmartDefense = (special & (1 << 10)) != 0;
+    IsTreeTarget = (special & (1 << 11)) != 0;
+    IsMCVDeploy = (special & (1 << 12)) != 0;
+    IsVisceroids = (special & (1 << 13)) != 0;
+    IsMonoEnabled = (special & (1 << 14)) != 0;
+    IsInert = (special & (1 << 15)) != 0;
+    IsShowPath = (special & (1 << 16)) != 0;
+    IsThreePoint = (special & (1 << 17)) != 0;
+    IsTGrowth = (special & (1 << 18)) != 0;
+    IsTSpread = (special & (1 << 19)) != 0;
+    IsTFast = (special & (1 << 20)) != 0;
+    IsRoad = (special & (1 << 21)) != 0;
+    IsScatter = (special & (1 << 22)) != 0;
+    IsCaptureTheFlag = (special & (1 << 23)) != 0;
+    IsNamed = (special & (1 << 24)) != 0;
+    IsFromInstall = (special & (1 << 25)) != 0;
+    IsSeparate = (special & (1 << 26)) != 0;
+    IsEarlyWin = (special & (1 << 27)) != 0;
+}

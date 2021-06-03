@@ -73,6 +73,9 @@ public:
         ModernBalance = false;
     }
 
+    unsigned Pack_Bools();
+    void Unpack_Bools(unsigned special);
+
     /*
     **	Is the game flagged for easy mode?
     */

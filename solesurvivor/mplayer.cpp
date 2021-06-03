@@ -46,6 +46,7 @@
 #include "common/ini.h"
 #include "common/framelimit.h"
 #include "common/ini.h"
+#include "soleglobals.h"
 
 static void Garble_Message(char* buf);
 
@@ -525,48 +526,13 @@ void Read_MultiPlayer_Settings(void)
     CDFileClass file(CONFIG_FILE_NAME);
     if (ini.Load(file)) {
 
-        //	Get the player's last-used Handle
-        ini.Get_String("MultiPlayer", "Handle", "Noname", MPlayerName, sizeof(MPlayerName));
-
-        //	Get the player's last-used Color
-        MPlayerPrefColor = (PlayerColorType)ini.Get_Int("MultiPlayer", "Color", 0);
-
-        MPlayerHouse = (HousesType)ini.Get_Int("MultiPlayer", "Side", HOUSE_GOOD);
-
-        TrapCheckHeap = ini.Get_Int("MultiPlayer", "CheckHeap", 0);
-
-        //	Read special recording playback values, to help find sync bugs
-        TrapFrame = ini.Get_Int("SyncBug", "Frame", 0x7fffffff);
-
-        ini.Get_String("SyncBug", "Type", "NONE", buf, 80);
-
-        if (!stricmp(buf, "AIRCRAFT"))
-            TrapObjType = RTTI_AIRCRAFT;
-        else if (!stricmp(buf, "ANIM"))
-            TrapObjType = RTTI_ANIM;
-        else if (!stricmp(buf, "BUILDING"))
-            TrapObjType = RTTI_BUILDING;
-        else if (!stricmp(buf, "BULLET"))
-            TrapObjType = RTTI_BULLET;
-        else if (!stricmp(buf, "INFANTRY"))
-            TrapObjType = RTTI_INFANTRY;
-        else if (!stricmp(buf, "UNIT"))
-            TrapObjType = RTTI_UNIT;
-        else {
-            TrapObjType = RTTI_NONE;
+        if (OfflineMode) {
+            //	Get the player's last-used Handle
+            ini.Get_String("MultiPlayer", "Handle", "Player", MPlayerName, sizeof(MPlayerName));
         }
 
-        ini.Get_String("SyncBug", "Coord", "0", buf, 80);
-        sscanf(buf, "%x", &TrapCoord);
-
-        ini.Get_String("SyncBug", "this", "0", buf, 80);
-        sscanf(buf, "%p", &TrapThis);
-
-        ini.Get_String("SyncBug", "Cell", "0", buf, 80);
-        cell = atoi(buf);
-        if (cell) {
-            TrapCell = &(Map[cell]);
-        }
+        GameOption_577AEC = 0;
+        CurrentVoiceTheme = ini.Get_Int("MultiPlayer", "VoiceTheme", 0);
     }
 #endif
 }

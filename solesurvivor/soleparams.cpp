@@ -24,7 +24,6 @@ GameParamStruct GameParams;
 
 void Read_Server_INI_Params(GameParamStruct* params)
 {
-    // TODO convert ini parsing to use proper ini class from RA.
     if (GameToPlay == GAME_SERVER && !OfflineMode) {
         CCFileClass file("SERVER.INI");
         INIClass ini;

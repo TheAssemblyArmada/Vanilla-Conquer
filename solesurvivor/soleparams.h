@@ -15,6 +15,7 @@
 
 #include <stdint.h>
 
+#pragma pack(push, 1)
 struct GameParamStruct
 {
     uint32_t TimeLimit;
@@ -58,6 +59,7 @@ struct GameParamStruct
     uint32_t IsAutoTeaming;
     uint32_t SuperInvuln;
 };
+#pragma pack(pop)
 
 extern GameParamStruct GameParams;
 
