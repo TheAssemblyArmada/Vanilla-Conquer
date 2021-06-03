@@ -457,6 +457,43 @@ SendQueueType* CommBufferClass::Get_Send(int index)
 
 } /* end of Get_Send */
 
+void CommBufferClass::Grow_Send(int len)
+{
+    int new_length = len + MaxSend;
+    SendQueueType* new_queue = new SendQueueType[new_length];
+    int* new_index = new int[new_length];
+
+    for (int i = 0; i < MaxSend; ++i) {
+        memcpy(&new_queue[i], &SendQueue[i], sizeof(SendQueueType));
+        new_index[i] = SendIndex[i];
+    }
+
+    for (int j = MaxSend; j < new_length; ++j) {
+        new_queue[j].Buffer = new char[MaxPacketSize];
+
+        if (MaxExtraSize <= 0) {
+            new_queue[j].ExtraBuffer = nullptr;
+        } else {
+            new_queue[j].ExtraBuffer = new char[MaxExtraSize];
+        }
+
+        new_queue[j].IsActive = false;
+        new_queue[j].IsACK = false;
+        new_queue[j].FirstTime = 0;
+        new_queue[j].LastTime = 0;
+        new_queue[j].SendCount = 0;
+        new_queue[j].BufLen = 0;
+        new_queue[j].ExtraLen = 0;
+        new_index[j] = 0;
+    }
+
+    delete[] SendQueue;
+    delete[] SendIndex;
+    MaxSend = new_length;
+    SendQueue = new_queue;
+    SendIndex = new_index;
+}
+
 /***************************************************************************
  * CommBufferClass::Queue_Receive -- queues a received message					*
  *                                                                         *
@@ -638,6 +675,50 @@ ReceiveQueueType* CommBufferClass::Get_Receive(int index)
     }
 
 } /* end of Get_Receive */
+
+void CommBufferClass::Grow_Receive(int len)
+{
+    int new_length = len + MaxReceive;
+    ReceiveQueueType* new_queue = new ReceiveQueueType[new_length];
+    int* new_index = new int[new_length];
+
+    /*
+    ** Copy existing contents to newly provisioned buffers.
+    */
+    for (int i = 0; i < MaxReceive; ++i) {
+        memcpy(&new_queue[i], &ReceiveQueue[i], sizeof(ReceiveQueueType));
+        new_index[i] = ReceiveIndex[i];
+    }
+
+    /*
+    ** Initialise newly created entries.
+    */
+    for (int j = MaxReceive; j < new_length; ++j) {
+        new_queue[j].Buffer = new char[MaxPacketSize];
+
+        if (MaxExtraSize <= 0) {
+            new_queue[j].ExtraBuffer = nullptr;
+        } else {
+            new_queue[j].ExtraBuffer = new char[MaxExtraSize];
+        }
+
+        new_queue[j].IsActive = false;
+        new_queue[j].IsRead = false;
+        new_queue[j].IsACK = false;
+        new_queue[j].BufLen = 0;
+        new_queue[j].ExtraLen = 0;
+        new_index[j] = 0;
+    }
+
+    /*
+    ** Swap to using new buffers.
+    */
+    delete[] ReceiveQueue;
+    delete[] ReceiveIndex;
+    MaxReceive = new_length;
+    ReceiveQueue = new_queue;
+    ReceiveIndex = new_index;
+}
 
 /***************************************************************************
  * CommBufferClass::Add_Delay -- adds a new delay value for response time  *

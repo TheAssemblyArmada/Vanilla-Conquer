@@ -116,6 +116,7 @@ public:
     {
         return (SendTotal);
     }
+    void Grow_Send(int len);
 
     /*
     ....................... Receive Queue routines ........................
@@ -135,6 +136,7 @@ public:
     {
         return (ReceiveTotal);
     }
+    void Grow_Receive(int len);
 
     /*
     ....................... Response time routines ........................
