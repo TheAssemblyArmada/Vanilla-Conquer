@@ -18,6 +18,8 @@
 #include "common/debugstring.h"
 #include "common/internet.h"
 #include "soleglobals.h"
+#include "soleplayer.h"
+#include "reliable.h"
 
 #ifdef _WIN32
 #define SSWM_LISTENER_MSG (WM_USER + 0x65)
@@ -243,4 +245,38 @@ int Init_Listener()
     return 1;
 }
 
-void Deinit_Listener() {}
+void Deinit_Listener()
+{
+    if (Listener != nullptr) {
+        Listener->Stop_Listening();
+        delete Listener;
+        Listener = nullptr;
+        delete ListenerProtocol;
+        ListenerProtocol = nullptr;
+    }
+
+    for (int i = 0; i < SolePlayers.Count(); ++i) {
+        if (ReliableComms[i] != nullptr) {
+            ReliableComms[i]->Disconnect();
+        }
+
+        delete SolePlayers[i];
+        delete ReliableComms[i];
+        delete ReliableProtocols[i];
+    }
+
+    for (int i = 0; i < AdminComms.Count(); ++i) {
+        if (AdminComms[i] != nullptr) {
+            AdminComms[i]->Disconnect();
+        }
+
+        delete AdminComms[i];
+        delete AdminProtocols[i];
+    }
+
+    SolePlayers.Clear();
+    ReliableComms.Clear();
+    ReliableProtocols.Clear();
+    AdminComms.Clear();
+    AdminProtocols.Clear();
+}
