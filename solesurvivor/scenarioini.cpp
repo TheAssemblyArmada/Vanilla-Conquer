@@ -110,8 +110,8 @@ void Set_Scenario_Name(char* buf, int scenario, ScenarioPlayerType player, Scena
     **	Multi player scenario.
     */
     default:
-        c_player = HouseTypeClass::As_Reference(HOUSE_MULTI1).Prefix;
-        //			c_player = 'M';
+        //c_player = HouseTypeClass::As_Reference(HOUSE_MULTI1).Prefix;
+        c_player = 'S';
         break;
     }
 

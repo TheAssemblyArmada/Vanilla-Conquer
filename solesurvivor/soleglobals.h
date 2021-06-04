@@ -61,9 +61,6 @@ extern char SoleHost[40];
 extern int Density;
 extern int CrateDensity;
 
-extern DynamicVectorClass<char*> SoleScenarioNames;
-extern DynamicVectorClass<int> SoleScenarioFileNumbers;
-
 class ProtocolClass;
 class ListenerClass;
 extern ProtocolClass* ListenerProtocol;

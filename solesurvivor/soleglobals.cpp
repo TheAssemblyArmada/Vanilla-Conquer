@@ -10,6 +10,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 #include "soleglobals.h"
+#include "common/sockets.h"
 
 bool LogTeams;
 bool OfflineMode;
@@ -55,9 +56,6 @@ char SoleHost[40];
 int Density = 200;
 int CrateDensity;
 
-DynamicVectorClass<char*> SoleScenarioNames;
-DynamicVectorClass<int> SoleScenarioFileNumbers;
-
 ProtocolClass* ListenerProtocol;
 ListenerClass* Listener;
 
@@ -69,5 +67,20 @@ DynamicVectorClass<ReliableCommClass*> AdminComms;
 DynamicVectorClass<SolePlayerClass*> SolePlayers;
 
 #ifdef _WIN32
-HINSTANCE hWSockInstance;
+HINSTANCE hWSockInstance = GetModuleHandleA(nullptr);
 #endif
+
+// Global class to ensure winsock is started and cleaned up correctly.
+class SocketStartupGlobal
+{
+public:
+    SocketStartupGlobal()
+    {
+        socket_startup();
+    }
+
+    ~SocketStartupGlobal()
+    {
+        socket_cleanup();
+    }
+} SocketStartup;

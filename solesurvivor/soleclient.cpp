@@ -33,12 +33,12 @@ int Get_Map()
     char name_buf[80];
 
     if (strlen(_string_to_check) > 0) {
-        for (int i = 0; i < SoleScenarioNames.Count(); ++i) {
-            strcpy(name_buf, SoleScenarioNames[i]);
+        for (int i = 0; i < MPlayerScenarios.Count(); ++i) {
+            strcpy(name_buf, MPlayerScenarios[i]);
             strupr(name_buf);
 
             if (strstr(name_buf, _string_to_check)) {
-                return SoleScenarioFileNumbers[i];
+                return MPlayerFilenum[i];
             }
         }
     }
@@ -51,16 +51,16 @@ int Get_Map()
     int old_index = _rand_map_index;
 
     if (random_maps) {
-        _rand_map_index = rand() + Random_Picky(0, SoleScenarioFileNumbers.Count() - 1, __FILE__, __LINE__) + time(0);
+        _rand_map_index = rand() + Random_Picky(0, MPlayerFilenum.Count() - 1, __FILE__, __LINE__) + time(0);
     } else {
         ++_rand_map_index;
     }
 
-    _rand_map_index %= SoleScenarioFileNumbers.Count();
+    _rand_map_index %= MPlayerFilenum.Count();
 
     if (_rand_map_index == old_index) {
         ++_rand_map_index;
-        _rand_map_index %= SoleScenarioFileNumbers.Count();
+        _rand_map_index %= MPlayerFilenum.Count();
     }
 
     return _rand_map_index;
@@ -288,8 +288,8 @@ bool Wait_For_WDT_Connection()
 
                     ScenarioIdx = -1;
 
-                    for (int i = 0; i < SoleScenarioFileNumbers.Count(); ++i) {
-                        if (packet->Scenario == SoleScenarioFileNumbers[i]) {
+                    for (int i = 0; i < MPlayerFilenum.Count(); ++i) {
+                        if (packet->Scenario == MPlayerFilenum[i]) {
                             ScenarioIdx = i;
                         }
                     }
