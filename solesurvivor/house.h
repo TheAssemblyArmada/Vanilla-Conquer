@@ -82,6 +82,12 @@ public:
     HousesType ActLike;
 
     /*
+    ** Some Sole Survivor additions here
+    */
+    CountDownTimerClass ServerAITimer;
+    int LivesSpent;
+
+    /*
     **	Is this player active?  Usually that answer is true, but for civilians, it
     **	might possibly be false.
     */
@@ -407,6 +413,12 @@ public:
     ** Start location (waypoint index) passed in from GlyphX
     */
     int StartLocationOverride;
+
+    /*
+    ** Sole Survivor additions from here on out.
+    */
+
+    int TeamNumber;
 
     /*---------------------------------------------------------------------
     **	Constructors, Destructors, and overloaded operators.

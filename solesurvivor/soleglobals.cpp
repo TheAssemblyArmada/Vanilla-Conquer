@@ -66,6 +66,8 @@ DynamicVectorClass<ReliableCommClass*> AdminComms;
 
 DynamicVectorClass<SolePlayerClass*> SolePlayers;
 
+DynamicVectorClass<NewDeletePacket*> NewDeletePackets;
+
 #ifdef _WIN32
 HINSTANCE hWSockInstance = GetModuleHandleA(nullptr);
 #endif

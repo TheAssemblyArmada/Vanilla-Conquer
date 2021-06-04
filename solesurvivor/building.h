@@ -313,6 +313,28 @@ public:
     */
     int Validate(void) const;
 
+    static void Set_Allow_New(bool allowed)
+    {
+        AllowNew = allowed;
+    }
+
+    static bool Allow_New()
+    {
+        return AllowNew;
+    }
+
+    static void Set_Allow_Delete(bool allowed)
+    {
+        AllowDelete = allowed;
+    }
+
+    virtual bool Allow_Delete()
+    {
+        return AllowDelete;
+    }
+
+    virtual void Destruct();
+
 private:
     void Drop_Debris(TARGET source = TARGET_NONE);
     virtual BulletClass* Fire_At(TARGET target, int which);
@@ -324,6 +346,9 @@ private:
     unsigned char SaveLoadPadding[32];
 
     static COORDINATE const CenterOffset[BSIZE_COUNT];
+
+    static bool AllowNew;
+    static bool AllowDelete;
 };
 
 #endif

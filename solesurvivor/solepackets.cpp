@@ -26,7 +26,7 @@ int PacketLength[PACKET_COUNT] = {
     207,
     4,
     174,
-    191,
+    191, // Should be sizeof(NewDeletePacket)? Code handling it in original is odd.
     202,
     202,
     204,

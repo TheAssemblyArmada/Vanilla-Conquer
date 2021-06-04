@@ -152,6 +152,19 @@ public:
     virtual void AI(void){};
 
     /*
+    ** Two Sole Survivor additions.
+    */
+    virtual bool Allow_Delete()
+    {
+        return true;
+    }
+
+    virtual void Destruct()
+    {
+        IsActive = false;
+    }
+
+    /*
     ** Workaround for difference between watcom and VC destructor behavior
     */
     void Delete_This(void);

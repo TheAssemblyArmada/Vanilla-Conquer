@@ -76,6 +76,10 @@ extern DynamicVectorClass<ReliableCommClass*> AdminComms;
 class SolePlayerClass;
 extern DynamicVectorClass<SolePlayerClass*> SolePlayers;
 
+struct NewDeletePacket;
+extern DynamicVectorClass<NewDeletePacket*> NewDeletePackets;
+
+
 #ifdef _WIN32
 extern HINSTANCE hWSockInstance;
 #endif

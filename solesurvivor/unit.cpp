@@ -96,6 +96,9 @@
 #include "function.h"
 #include "ccini.h"
 
+bool UnitClass::AllowNew = true;
+bool UnitClass::AllowDelete = true;
+
 /***********************************************************************************************
  * UnitClass::Validate -- validates unit pointer.															  *
  *                                                                                             *
@@ -126,6 +129,39 @@ int UnitClass::Validate(void) const
 #else
 #define Validate()
 #endif
+
+void UnitClass::Destruct()
+{
+    if (GameActive) {
+        if (Class != nullptr) {
+            while (Is_Something_Attached()) {
+                FootClass *obj = Detach_Object();
+
+                if (obj->Allow_Delete()) {
+                    delete obj;
+                } else {
+                    obj->Destruct();
+                }
+            }
+
+            Limbo();
+        }
+    }
+
+    if (GameActive) {
+        if (Team != nullptr) {
+            Team->Remove(this);
+        }
+    }
+
+    if (GameActive) {
+        if (House != nullptr) {
+            --House->CurUnits;
+        }
+    }
+
+    IsActive = false;
+}
 
 /***********************************************************************************************
  * Recoil_Adjust -- Adjust pixel values in direction specified.                                *
@@ -1065,10 +1101,22 @@ ResultType UnitClass::Take_Damage(int& damage, int distance, WarheadType warhead
  *=============================================================================================*/
 void* UnitClass::operator new(size_t)
 {
+    if (!AllowNew) {
+        return nullptr;
+    }
+
     void* ptr = (UnitClass*)Units.Allocate();
     if (ptr) {
         ((UnitClass*)ptr)->Set_Active();
     }
+
+    if (GameToPlay == GAME_SERVER) {
+        NewDeletePacket* packet = new NewDeletePacket;
+        packet->ToDelete = false;
+        packet->Target = Build_Target(KIND_UNIT, Units.ID((UnitClass*)ptr));
+        NewDeletePackets.Add(packet);
+    }
+
     return (ptr);
 }
 
@@ -1090,7 +1138,17 @@ void* UnitClass::operator new(size_t)
  *=============================================================================================*/
 void UnitClass::operator delete(void* ptr)
 {
+    if (!AllowDelete) {
+        return;
+    }
+
     if (ptr) {
+        if (GameToPlay == GAME_SERVER) {
+            NewDeletePacket* packet = new NewDeletePacket;
+            packet->ToDelete = true;
+            packet->Target = Build_Target(KIND_UNIT, Units.ID((UnitClass*)ptr));
+            NewDeletePackets.Add(packet);
+        }
         ((UnitClass*)ptr)->IsActive = false;
     }
     Units.Free((UnitClass*)ptr);
@@ -3356,6 +3414,9 @@ MoveType UnitClass::Can_Enter_Cell(CELL cell, FacingType) const
  *=============================================================================================*/
 void UnitClass::Init(void)
 {
+    AllowNew = true;
+    AllowDelete = true;
+
     Units.Free_All();
 }
 

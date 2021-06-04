@@ -40,6 +40,8 @@
 #include "cargo.h"
 #include "mission.h"
 #include "target.h"
+#include "soleglobals.h"
+#include "solepackets.h"
 
 /****************************************************************************
 **	For each instance of a unit (vehicle) in the game, there is one of
@@ -207,6 +209,28 @@ public:
     */
     int Validate(void) const;
 
+    static void Set_Allow_New(bool allowed)
+    {
+        AllowNew = allowed;
+    }
+
+    bool Allow_New()
+    {
+        return AllowNew;
+    }
+
+    static void Set_Allow_Delete(bool allowed)
+    {
+        AllowDelete = allowed;
+    }
+
+    virtual bool Allow_Delete()
+    {
+        return AllowDelete;
+    }
+
+    virtual void Destruct();
+
 private:
     /*
     ** Timer to prevent Harvesters from collecting too often
@@ -223,6 +247,9 @@ private:
     *save/load
     */
     unsigned char SaveLoadPadding[28];
+
+    static bool AllowNew;
+    static bool AllowDelete;
 };
 
 #endif

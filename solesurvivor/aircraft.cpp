@@ -90,6 +90,9 @@
 #include "function.h"
 #include "ccini.h"
 
+bool AircraftClass::AllowNew = true;
+bool AircraftClass::AllowDelete = true;
+
 /***********************************************************************************************
  * AircraftClass::Validate -- validates aircraft pointer													  *
  *                                                                                             *
@@ -120,6 +123,39 @@ int AircraftClass::Validate(void) const
 #else
 #define Validate()
 #endif
+
+void AircraftClass::Destruct()
+{
+    if (GameActive) {
+        if (Class != nullptr) {
+            while (Is_Something_Attached()) {
+                FootClass* obj = Detach_Object();
+
+                if (obj->Allow_Delete()) {
+                    delete obj;
+                } else {
+                    obj->Destruct();
+                }
+            }
+
+            Limbo();
+        }
+    }
+
+    if (GameActive) {
+        if (Team != nullptr) {
+            Team->Remove(this);
+        }
+    }
+
+    if (GameActive) {
+        if (House != nullptr) {
+            --House->CurUnits;
+        }
+    }
+
+    IsActive = false;
+}
 
 /***********************************************************************************************
  * AircraftClass::As_Target -- Returns aircraft as a target number.                            *
@@ -160,10 +196,22 @@ TARGET AircraftClass::As_Target(void) const
  *=============================================================================================*/
 void* AircraftClass::operator new(size_t)
 {
+    if (!AllowNew) {
+        return nullptr;
+    }
+
     void* ptr = Aircraft.Allocate();
     if (ptr) {
         ((AircraftClass*)ptr)->Set_Active();
     }
+
+    if (GameToPlay == GAME_SERVER) {
+        NewDeletePacket* packet = new NewDeletePacket;
+        packet->ToDelete = false;
+        packet->Target = Build_Target(KIND_AIRCRAFT, Aircraft.ID((AircraftClass*)ptr));
+        NewDeletePackets.Add(packet);
+    }
+
     return (ptr);
 }
 
@@ -183,7 +231,17 @@ void* AircraftClass::operator new(size_t)
  *=============================================================================================*/
 void AircraftClass::operator delete(void* ptr)
 {
+    if (!AllowDelete) {
+        return;
+    }
+
     if (ptr) {
+        if (GameToPlay == GAME_SERVER) {
+            NewDeletePacket* packet = new NewDeletePacket;
+            packet->ToDelete = true;
+            packet->Target = Build_Target(KIND_AIRCRAFT, Aircraft.ID((AircraftClass*)ptr));
+            NewDeletePackets.Add(packet);
+        }
         ((AircraftClass*)ptr)->IsActive = false;
     }
     Aircraft.Free((AircraftClass*)ptr);
@@ -1022,6 +1080,9 @@ short const* AircraftClass::Overlap_List(void) const
  *=============================================================================================*/
 void AircraftClass::Init(void)
 {
+    AllowNew = true;
+    AllowDelete = true;
+
     Aircraft.Free_All();
 }
 

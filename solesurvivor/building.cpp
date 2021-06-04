@@ -97,10 +97,14 @@
 #include "function.h"
 #include "ccini.h"
 
+bool BuildingClass::AllowNew = true;
+bool BuildingClass::AllowDelete = true;
+
 /*
 ** New sidebar for GlyphX multiplayer. ST - 3/26/2019 12:24PM
 */
 #include "sidebarglyphx.h"
+#include "building.h"
 
 enum SAMState
 {
@@ -162,6 +166,17 @@ int BuildingClass::Validate(void) const
 #else
 #define Validate()
 #endif
+
+void BuildingClass::Destruct()
+{
+    if (GameActive) {
+        if (Class != nullptr) {
+            Limbo();
+        }
+    }
+
+    IsActive = false;
+}
 
 /***********************************************************************************************
  * BuildingClass::Receive_Message -- Handle an incoming message to the building.               *
@@ -1769,10 +1784,22 @@ void BuildingClass::Look(bool)
  *=============================================================================================*/
 void* BuildingClass::operator new(size_t)
 {
+    if (!AllowNew) {
+        return nullptr;
+    }
+
     void* ptr = Buildings.Allocate();
     if (ptr) {
         ((BuildingClass*)ptr)->Set_Active();
     }
+
+    if (GameToPlay == GAME_SERVER) {
+        NewDeletePacket* packet = new NewDeletePacket;
+        packet->ToDelete = false;
+        packet->Target = Build_Target(KIND_BUILDING, Buildings.ID((BuildingClass*)ptr));
+        NewDeletePackets.Add(packet);
+    }
+
     return (ptr);
 }
 
@@ -1794,7 +1821,17 @@ void* BuildingClass::operator new(size_t)
  *=============================================================================================*/
 void BuildingClass::operator delete(void* ptr)
 {
+    if (!AllowDelete) {
+        return;
+    }
+
     if (ptr) {
+        if (GameToPlay == GAME_SERVER) {
+            NewDeletePacket* packet = new NewDeletePacket;
+            packet->ToDelete = true;
+            packet->Target = Build_Target(KIND_BUILDING, Buildings.ID((BuildingClass*)ptr));
+            NewDeletePackets.Add(packet);
+        }
         ((BuildingClass*)ptr)->IsActive = false;
     }
     Buildings.Free((BuildingClass*)ptr);
@@ -2133,6 +2170,9 @@ void BuildingClass::Assign_Target(TARGET target)
  *=============================================================================================*/
 void BuildingClass::Init(void)
 {
+    AllowNew = true;
+    AllowDelete = true;
+
     Buildings.Free_All();
 }
 

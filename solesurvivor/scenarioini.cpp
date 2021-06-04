@@ -47,6 +47,7 @@
 
 #include "function.h"
 #include "common/irandom.h"
+#include "soleglobals.h"
 #include "ccini.h"
 
 /************************************* Prototypes *********************************************/
@@ -401,7 +402,44 @@ bool Read_Scenario_Ini(char* root, bool fresh)
         // Assign_Houses();
         GlyphX_Assign_Houses();
 #else
-        Assign_Houses();
+        if (GameToPlay == GAME_CLIENT) {
+            UnitClass::Set_Allow_New(false);
+            InfantryClass::Set_Allow_New(false);
+            BuildingClass::Set_Allow_New(false);
+            AircraftClass::Set_Allow_New(0);
+            UnitClass::Set_Allow_Delete(false);
+            InfantryClass::Set_Allow_Delete(false);
+            BuildingClass::Set_Allow_Delete(false);
+            AircraftClass::Set_Allow_Delete(0);
+            PlayerPtr = HouseClass::As_Pointer(SolePlayerHouse);
+            PlayerPtr->IsHuman = true;
+            PlayerPtr->ActLike = Side;
+
+            if (Side == HOUSE_SOLE_TEAM1 || Side == HOUSE_SOLE_TEAM2 || Side == HOUSE_SOLE_TEAM3
+                || Side == HOUSE_SOLE_TEAM4) {
+                PlayerPtr->TeamNumber = Side - 5;
+            } else {
+                PlayerPtr->TeamNumber = -1;
+            }
+
+            if (Side == HOUSE_GOOD || Side == HOUSE_BAD) {
+                if (PlayerPtr->IsHuman == true) {
+                    PlayerPtr->Init_Data(REMAP_GOLD, Side, 0);
+                } else {
+                    PlayerPtr->Init_Data(REMAP_LTBLUE, Side, 0);
+                }
+            }
+            HouseClass::As_Pointer(HOUSE_GOOD)->Init_Data(REMAP_LTBLUE, HOUSE_GOOD, 10000);
+            HouseClass::As_Pointer(HOUSE_BAD)->Init_Data(REMAP_LTBLUE, HOUSE_BAD, 10000);
+        } else if (GameToPlay == GAME_SERVER) {
+            PlayerPtr = HouseClass::As_Pointer(HOUSE_SOLE_ADMIN);
+            PlayerPtr->IsHuman = true;
+            strcpy(PlayerPtr->Name, "Server");
+            HouseClass::As_Pointer(HOUSE_GOOD)->Init_Data(REMAP_LTBLUE, HOUSE_GOOD, 10000);
+            HouseClass::As_Pointer(HOUSE_BAD)->Init_Data(REMAP_LTBLUE, HOUSE_BAD, 10000);
+        } else {
+            Assign_Houses();
+        }
 #endif
     }
 

@@ -13,6 +13,7 @@
 #define SOLEPACKETS_H
 
 #include "soleparams.h"
+#include "function.h"
 #include <stdint.h>
 
 enum PacketType
@@ -93,6 +94,22 @@ struct GameOptionsPacket
     uint8_t RateOfFires[25];
     int32_t Ranges[25];
 };
+
+struct NewDeletePacket
+{
+    bool ToDelete;
+    int32_t Target;
+    uint32_t Coord;
+    uint8_t Owner;
+    uint8_t Mission;
+    uint8_t Type;
+    uint8_t Strength;
+    uint8_t Speed;
+    uint8_t Damage;
+    uint8_t RateOfFire;
+    uint8_t Range;
+};
+
 #pragma pack(pop)
 
 extern int PacketLength[PACKET_COUNT];

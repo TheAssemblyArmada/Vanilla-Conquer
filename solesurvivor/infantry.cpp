@@ -81,6 +81,9 @@
 #include "function.h"
 #include "ccini.h"
 
+bool InfantryClass::AllowNew = true;
+bool InfantryClass::AllowDelete = true;
+
 int const InfantryClass::HumanShape[32] = {0, 0, 7, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 5, 5, 4,
                                            4, 4, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 0};
 
@@ -159,6 +162,29 @@ int InfantryClass::Validate(void) const
 #else
 #define Validate()
 #endif
+
+void InfantryClass::Destruct()
+{
+    if (GameActive) {
+        if (Class != nullptr) {
+            Limbo();
+        }
+    }
+
+    if (GameActive) {
+        if (Team != nullptr) {
+            Team->Remove(this);
+        }
+    }
+
+    if (GameActive) {
+        if (House != nullptr) {
+            --House->CurUnits;
+        }
+    }
+
+    IsActive = false;
+}
 
 #ifdef CHEAT_KEYS
 /***********************************************************************************************
@@ -324,10 +350,22 @@ InfantryClass::~InfantryClass(void)
  *=============================================================================================*/
 void* InfantryClass::operator new(size_t)
 {
+    if (!AllowNew) {
+        return nullptr;
+    }
+
     void* ptr = Infantry.Allocate();
     if (ptr) {
         ((InfantryClass*)ptr)->Set_Active();
     }
+
+    if (GameToPlay == GAME_SERVER) {
+        NewDeletePacket* packet = new NewDeletePacket;
+        packet->ToDelete = false;
+        packet->Target = Build_Target(KIND_INFANTRY, Infantry.ID((InfantryClass*)ptr));
+        NewDeletePackets.Add(packet);
+    }
+
     return (ptr);
 }
 
@@ -347,7 +385,17 @@ void* InfantryClass::operator new(size_t)
  *=============================================================================================*/
 void InfantryClass::operator delete(void* ptr)
 {
+    if (!AllowDelete) {
+        return;
+    }
+
     if (ptr) {
+        if (GameToPlay == GAME_SERVER) {
+            NewDeletePacket* packet = new NewDeletePacket;
+            packet->ToDelete = true;
+            packet->Target = Build_Target(KIND_INFANTRY, Infantry.ID((InfantryClass*)ptr));
+            NewDeletePackets.Add(packet);
+        }
         ((InfantryClass*)ptr)->IsActive = false;
     }
     Infantry.Free((InfantryClass*)ptr);
@@ -848,6 +896,9 @@ TARGET InfantryClass::As_Target(void) const
  *=============================================================================================*/
 void InfantryClass::Init(void)
 {
+    AllowNew = true;
+    AllowDelete = true;
+
     Infantry.Free_All();
 }
 
