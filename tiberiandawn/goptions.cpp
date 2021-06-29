@@ -60,6 +60,7 @@ void GameOptionsClass::Adjust_Variables_For_Resolution(void)
     Border1Len = 72 * factor;
     Border2Len = 16 * factor;
     ButtonResumeY = (OptionHeight - (15 * factor));
+    TitlePicture = (char*)(factor == 1 ? "TITLE.CPS" : "HTITLE.PCX");
 }
 /***********************************************************************************************
  * OptionsClass::Process -- Handles all the options graphic interface.                         *

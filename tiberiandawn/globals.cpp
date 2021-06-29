@@ -952,3 +952,6 @@ bool ConnectionLost;
 TheaterType LastTheater = THEATER_NONE;
 
 bool RunningAsDLL = false;
+
+/* Holds the title filename. On 320x200, set to TITLE.CPS, else HTITLE.PCX. */
+char* TitlePicture = NULL;

@@ -191,7 +191,7 @@ bool Expansion_Dialog(void)
             /*
             **	Load the background picture.
             */
-            Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+            Load_Title_Screen(TitlePicture, &HidPage, Palette);
             Blit_Hid_Page_To_Seen_Buff();
 
             Dialog_Box(option_x, option_y, option_width, option_height);
@@ -374,7 +374,7 @@ bool Bonus_Dialog(void)
             /*
             **	Load the background picture.
             */
-            Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+            Load_Title_Screen(TitlePicture, &HidPage, Palette);
             Blit_Hid_Page_To_Seen_Buff();
 
             Dialog_Box(option_x, option_y, option_width, option_height);
