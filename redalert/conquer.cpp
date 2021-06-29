@@ -100,6 +100,12 @@ TcpipManagerClass Winsock;
 MPG_RESPONSE far __stdcall MpegCallback(MPG_CMD cmd, LPVOID data, LPVOID user);
 #endif
 
+/* Dummy function for Interpolate_2X_Scale in `common` database. */
+int Get_Resolution_Factor(void)
+{
+    return 1;
+}
+
 #define SHAPE_TRANS 0x40
 
 void* Get_Shape_Header_Data(void* ptr);
