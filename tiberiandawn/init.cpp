@@ -174,8 +174,21 @@ bool Init_Game(int, char*[])
 #else
     int temp = RequiredCD;
     RequiredCD = -2;
-    new MFCD("CCLOCAL.MIX"); // Cached.
-    MFCD::Cache("CCLOCAL.MIX");
+
+    /*
+    ** On low resolution mode, we want to load the DOS version fonts present in LOCAL.MIX.
+    ** Load it first and and find the fonts there. Else, on high resolution, use
+    ** Windows CCLOCAL.MIX
+    */
+
+    MFCD* local_mix = NULL;
+    if (Get_Resolution_Factor()) {
+        new MFCD("CCLOCAL.MIX"); // Cached.
+        MFCD::Cache("CCLOCAL.MIX");
+    } else {
+        local_mix = new MFCD("LOCAL.MIX"); // Cached.
+        MFCD::Cache("LOCAL.MIX");
+    }
     CCDebugString("C&C95 - About to register UPDATE.MIX\n");
     new MFCD("UPDATE.MIX"); // Cached.
     new MFCD("UPDATA.MIX"); // Cached.
@@ -191,9 +204,6 @@ bool Init_Game(int, char*[])
 
 #endif
     CCDebugString("C&C95 - About to load fonts\n");
-    Green12FontPtr = Load_Alloc_Data(CCFileClass("12GREEN.FNT"));
-    Green12GradFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
-    MapFontPtr = Load_Alloc_Data(CCFileClass("8FAT.FNT"));
     Font8Ptr = MFCD::Retrieve(FONT8);
     FontPtr = (char*)Font8Ptr;
     Set_Font(FontPtr);
@@ -201,7 +211,6 @@ bool Init_Game(int, char*[])
     //	Font6Ptr = MFCD::Retrieve(FONT6);
     Font6Ptr = Load_Alloc_Data(CCFileClass("6POINT.FNT"));
     // ScoreFontPtr = MFCD::Retrieve("12GRNGRD.FNT");	//GRAD12FN");	//("SCOREFNT.FNT");
-    ScoreFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
     FontLEDPtr = MFCD::Retrieve("LED.FNT");
     VCRFontPtr = MFCD::Retrieve("VCR.FNT");
     //	GradFont6Ptr = MFCD::Retrieve("GRAD6FNT.FNT");
@@ -211,6 +220,25 @@ bool Init_Game(int, char*[])
     OriginalPalette = new (MEM_CLEAR | MEM_REAL) unsigned char[768];
     WhitePalette = new (MEM_CLEAR | MEM_REAL) unsigned char[768];
     memset(WhitePalette, 63, 768);
+
+    /* FIXME: If LOCAL.MIX is loaded, the game tries to find mission.ini from
+    ** it and crash, as it is not present there. Furthermore, an old version of
+    ** conquer.eng is there, and loading it glitches out the Covert Operations
+    ** strings. There is also fonts which is only present on the Windows version
+    ** and they require loading for now. Therefore, just unload LOCAL.MIX and
+    ** and load CCLOCAL.MIX from Windows.
+    */
+    if (local_mix) {
+        delete local_mix;
+
+        new MFCD("CCLOCAL.MIX"); // Cached.
+        MFCD::Cache("CCLOCAL.MIX");
+    }
+
+    MapFontPtr = Load_Alloc_Data(CCFileClass("8FAT.FNT"));
+    Green12FontPtr = Load_Alloc_Data(CCFileClass("12GREEN.FNT"));
+    Green12GradFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
+    ScoreFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
 
     CCDebugString("C&C95 - About to set palette\n");
     memset(BlackPalette, 0x01, 768);
