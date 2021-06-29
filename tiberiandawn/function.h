@@ -1067,3 +1067,6 @@ void GlyphX_Debug_Print(const char* debug_text);
 ** Achievement event. ST - 11/11/2019 11:39AM
 */
 void On_Achievement_Event(const HouseClass* player_ptr, const char* achievement_type, const char* achievement_reason);
+
+/* Holds the title filename. On 320x200, set to TITLE.CPS, else HTITLE.PCX. */
+extern char* TitlePicture;

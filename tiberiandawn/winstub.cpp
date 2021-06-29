@@ -530,10 +530,22 @@ void Memory_Error_Handler(void)
 #include "filepcx.h"
 void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned char* palette)
 {
-
     GraphicBufferClass* load_buffer;
+    const char* ext = strrchr(name, '.');
 
-    load_buffer = Read_PCX_File(name, (char*)palette, NULL, 0);
+    if (!strcasecmp(ext, ".PCX"))
+        load_buffer = Read_PCX_File(name, (char*)palette, NULL, 0); // Load 640x400 title
+    else if (!strcasecmp(ext, ".CPS")) {
+        /* CPS files are hardcoded to 320x200. */
+        const int width = 320;
+        const int height = 200;
+
+        load_buffer = new GraphicBufferClass(width, height, NULL, width * (height + 4));
+        Load_Uncompress(name, *load_buffer, *load_buffer, palette);
+    } else {
+        /* Invalid title screen. */
+        DBG_ERROR("Title screen file %s do not have PCX or CPS extension", name);
+    }
 
     if (load_buffer) {
         load_buffer->Blit(*video_page);

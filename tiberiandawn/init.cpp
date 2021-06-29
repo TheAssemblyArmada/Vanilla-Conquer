@@ -488,7 +488,7 @@ bool Init_Game(int, char*[])
     memset(CurrentPalette, 0x01, 768);
 
     if (!Special.IsFromInstall) {
-        Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+        Load_Title_Screen(TitlePicture, &HidPage, Palette);
         Blit_Hid_Page_To_Seen_Buff();
     }
 
@@ -814,7 +814,7 @@ bool Select_Game(bool fade)
                 **	Display the title page; fade it in if this is the first time
                 **	through the loop, and the 'fade' flag is true
                 */
-                Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+                Load_Title_Screen(TitlePicture, &HidPage, Palette);
                 memcpy(GamePalette, Palette, 768);
                 Blit_Hid_Page_To_Seen_Buff();
 

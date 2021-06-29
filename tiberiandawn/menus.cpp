@@ -816,7 +816,7 @@ int Main_Menu(unsigned long timeout)
             /*
             **	Load the background picture.
             */
-            Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+            Load_Title_Screen(TitlePicture, &HidPage, Palette);
             Blit_Hid_Page_To_Seen_Buff();
 
             /*
