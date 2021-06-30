@@ -165,6 +165,7 @@ void PowerClass::Draw_It(bool complete)
 {
     static int _modtable[] = {0, -1, 0, 1, 0, -1, -2, -1, 0, 1, 2, 1, 0};
     int power_color;
+    int factor = Get_Resolution_Factor();
 
     if (complete || IsToRedraw) {
         //		PowX = TacPixelX + TacWidth*ICON_PIXEL_W;	// X position of upper left corner of power bar.
@@ -198,8 +199,31 @@ void PowerClass::Draw_It(bool complete)
                 /*
                 ** Draw the unfilled section
                 */
-                CC_Draw_Shape(PowerBarShape, 0, PowX, PowY, WINDOW_CUSTOM, SHAPE_WIN_REL);
-                CC_Draw_Shape(PowerBarShape, 1, PowX, PowY + 100, WINDOW_CUSTOM, SHAPE_WIN_REL);
+                if (factor) {
+
+                    CC_Draw_Shape(PowerBarShape, 0, PowX, PowY, WINDOW_CUSTOM, SHAPE_WIN_REL);
+                    CC_Draw_Shape(PowerBarShape, 1, PowX, PowY + 100, WINDOW_CUSTOM, SHAPE_WIN_REL);
+                } else {
+                    /* Draw MS-DOS power gauge. */
+                    int top_y = PowY + 1;
+                    int x0 = PowX;
+                    int x1 = x0 + 7;
+                    int y0 = PowY + 1;
+                    int y1 = bottom;
+
+                    LogicPage->Fill_Rect(x0, y0, x1, y1, LTGREY);               //Inside power bar
+                    LogicPage->Draw_Line(x0, y0, x0, y1, WHITE);                //Left line
+                    LogicPage->Draw_Line(x0 + 1, y0, x0 + 1, y1, GREY);         //Left shadow line
+                    LogicPage->Draw_Line(x0, y0, x1 - 1, y0, WHITE);            //Upper line
+                    LogicPage->Draw_Line(x0 + 1, y0 + 1, x1 - 1, y0 + 1, GREY); //Upper shadow line
+                    LogicPage->Draw_Line(x1 - 1, y0, x1 - 1, y1, WHITE);        //Right line
+                    LogicPage->Draw_Line(x1, y0, x1, y1, GREY);                 //Right shadow line
+                    LogicPage->Draw_Line(x0, y1, x1 - 1, y1, WHITE);            //bottom line
+
+                    for (int y = y0 + 4; y < y1 - 1; y += 5) {
+                        LogicPage->Draw_Line(x0 + 2, y, x0 + 4, y, GREY); //Draw power meter
+                    }
+                }
 
                 /*
                 ** Set up the clip region for the filled section
@@ -211,37 +235,41 @@ void PowerClass::Draw_It(bool complete)
                 ** What color is the filled section?
                 */
                 if (power_height) {
-                    power_color = 0; // green
+                    power_color = (factor) ? 0 : GREEN; // green
 
                     if (PlayerPtr->Drain > PlayerPtr->Power) {
-                        power_color = 2;
+                        power_color = (factor) ? 2 : YELLOW;
                     }
                     if (PlayerPtr->Drain > (PlayerPtr->Power * 2)) {
-                        power_color = 4;
+                        power_color = (factor) ? 4 : RED;
                     }
 
                     /*
                     ** Draw the filled section
                     */
-                    CC_Draw_Shape(PowerBarShape,
-                                  2 + power_color,
-                                  PowX,
-                                  PowY - WindowList[WINDOW_CUSTOM][WINDOWY],
-                                  WINDOW_CUSTOM,
-                                  SHAPE_WIN_REL);
+                    if (Get_Resolution_Factor()) {
+                        CC_Draw_Shape(PowerBarShape,
+                                      2 + power_color,
+                                      PowX,
+                                      PowY - WindowList[WINDOW_CUSTOM][WINDOWY],
+                                      WINDOW_CUSTOM,
+                                      SHAPE_WIN_REL);
 
-                    CC_Draw_Shape(PowerBarShape,
-                                  3 + power_color,
-                                  PowX,
-                                  PowY - WindowList[WINDOW_CUSTOM][WINDOWY] + 100,
-                                  WINDOW_CUSTOM,
-                                  SHAPE_WIN_REL);
+                        CC_Draw_Shape(PowerBarShape,
+                                      3 + power_color,
+                                      PowX,
+                                      PowY - WindowList[WINDOW_CUSTOM][WINDOWY] + 100,
+                                      WINDOW_CUSTOM,
+                                      SHAPE_WIN_REL);
+                    } else {
+                        LogicPage->Fill_Rect(PowX + 2, bottom - power_height + 1, PowX + 5, bottom - 1, power_color);
+                    }
                 }
 
                 /*
                 **	Draw the power drain threshold marker.
                 */
-                CC_Draw_Shape(PowerShape, 0, PowX, bottom - drain_height + 1, WINDOW_MAIN, SHAPE_NORMAL);
+                CC_Draw_Shape(PowerShape, 0, PowX, bottom - drain_height, WINDOW_MAIN, SHAPE_NORMAL);
             }
             LogicPage->Unlock();
         }
