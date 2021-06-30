@@ -752,22 +752,25 @@ void SidebarClass::Draw_It(bool complete)
             */
             // CC_Draw_Shape(SidebarShape1, (int)complete, SideX, 158, WINDOW_MAIN, SHAPE_WIN_REL);
             // CC_Draw_Shape(SidebarShape2, (int)complete, SideX, 158+118, WINDOW_MAIN, SHAPE_WIN_REL);
-            LogicPage->Draw_Line(SideX, 157, SeenBuff.Get_Width() - 1, 157, 0);
-            CC_Draw_Shape(SidebarShape1, 0, SideX, 158, WINDOW_MAIN, SHAPE_WIN_REL);
-            CC_Draw_Shape(SidebarShape2, 0, SideX, 158 + 118, WINDOW_MAIN, SHAPE_WIN_REL);
 
             if (Get_Resolution_Factor() == 0) {
                 if (complete) {
                     LogicPage->Fill_Rect(
                         SideX + Map.PowWidth, SideY, SideX + SideWidth - 1, SideY + SideHeight - 1, LTGREY);
                 }
-                LogicPage->Fill_Rect(SideX, SideY, SideX + SideWidth - 1, SideY + TopHeight - 1, LTGREY);
+                // Draw rectangle covering "Repair", "Sell", and "Map Buttons"
+                LogicPage->Fill_Rect(SideX, SideY - 1, SideX + SideWidth, SideY + TopHeight, LTGREY);
+
                 Draw_Box(SideX + Map.PowWidth,
                          SideY + TopHeight,
                          SideWidth - Map.PowWidth,
                          SideHeight - TopHeight,
                          BOXSTYLE_RAISED,
                          false);
+            } else {
+                LogicPage->Draw_Line(SideX, 157, SeenBuff.Get_Width() - 1, 157, 0);
+                CC_Draw_Shape(SidebarShape1, 0, SideX, 158, WINDOW_MAIN, SHAPE_WIN_REL);
+                CC_Draw_Shape(SidebarShape2, 0, SideX, 158 + 118, WINDOW_MAIN, SHAPE_WIN_REL);
             }
 
             //  Repair.Draw_Me(true);
