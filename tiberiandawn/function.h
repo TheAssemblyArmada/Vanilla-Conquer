@@ -376,7 +376,7 @@ void Dump_Heap_Pointers(void);
 unsigned long Disk_Space_Available(void);
 
 void Validate_Error(char* name);
-void const* Hires_Retrieve(char* name);
+void const* Hires_Retrieve(const char* name);
 int Get_Resolution_Factor(void);
 
 void Shake_The_Screen(int shakes, HousesType house = HOUSE_NONE);

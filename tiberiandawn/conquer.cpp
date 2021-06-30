@@ -3785,7 +3785,7 @@ static void Do_Record_Playback(void)
  * HISTORY:                                                                *
  *   01/25/1996     : Created.                                             *
  *=========================================================================*/
-void const* Hires_Retrieve(char* name)
+void const* Hires_Retrieve(const char* name)
 {
     char filename[30];
 
