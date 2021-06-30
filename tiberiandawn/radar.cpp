@@ -273,7 +273,7 @@ bool RadarClass::Radar_Activate(int control)
 
     case 2:
         if (GameToPlay == GAME_NORMAL) {
-            Map.Zoom.Disable();
+            Map.Zoom->Disable();
         }
         IsRadarActive = false;
         IsRadarActivating = false;
@@ -282,7 +282,7 @@ bool RadarClass::Radar_Activate(int control)
 
     case 3:
         if (GameToPlay == GAME_NORMAL) {
-            Map.Zoom.Enable();
+            Map.Zoom->Enable();
         }
         IsRadarActive = true;
         IsRadarActivating = false;
@@ -994,6 +994,10 @@ bool RadarClass::Map_Cell(CELL cell, HouseClass* house, bool and_for_allies)
 
 void RadarClass::Cursor_Cell(CELL cell, int value)
 {
+    /* Radar seem to crash on some clicks because it get cell = -1 */
+    if (cell < 0)
+        return;
+
     int temp = (*this)[cell].IsRadarCursor;
 
     /*

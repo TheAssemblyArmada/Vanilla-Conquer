@@ -107,10 +107,11 @@ typedef enum ButtonNumberType
 /*
 ** Sidebar buttons
 */
+
 SidebarClass::SBGadgetClass SidebarClass::Background;
-ShapeButtonClass SidebarClass::Repair;
-ShapeButtonClass SidebarClass::Upgrade;
-ShapeButtonClass SidebarClass::Zoom;
+ToggleClass* SidebarClass::Repair = NULL;
+ToggleClass* SidebarClass::Upgrade = NULL;
+ToggleClass* SidebarClass::Zoom = NULL;
 ShapeButtonClass SidebarClass::StripClass::UpButton[COLUMNS];
 ShapeButtonClass SidebarClass::StripClass::DownButton[COLUMNS];
 SidebarClass::StripClass::SelectClass SidebarClass::StripClass::SelectButton[COLUMNS][MAX_VISIBLE];
@@ -264,9 +265,41 @@ void SidebarClass::Init_Clear(void)
  *=============================================================================================*/
 void SidebarClass::Init_IO(void)
 {
+#if (FRENCH)
+    const char* repair_shp = "REPAIRF.SHP";
+    const char* sell_shp = "SELLF.SHP";
+    const char* map_shp = "MAPF.SHP";
+#else
+#if (GERMAN)
+    const char* repair_shp = "REPAIRG.SHP";
+    const char* sell_shp = "SELLG.SHP";
+    const char* map_shp = "MAPG.SHP";
+#else
+    const char* repair_shp = "REPAIR.SHP";
+    const char* sell_shp = "SELL.SHP";
+    const char* map_shp = "MAP.SHP";
+#endif
+#endif
+
     void* oldfont;
     int oldx;
     PowerClass::Init_IO();
+
+    if (Get_Resolution_Factor()) {
+        if (!Repair)
+            Repair = new ShapeButtonClass();
+        if (!Upgrade)
+            Upgrade = new ShapeButtonClass();
+        if (!Zoom)
+            Zoom = new ShapeButtonClass();
+    } else {
+        if (!Repair)
+            Repair = new TextButtonClass();
+        if (!Upgrade)
+            Upgrade = new TextButtonClass();
+        if (!Zoom)
+            Zoom = new TextButtonClass();
+    }
 
     /*
     ** Add the sidebar's buttons only if we're not in editor mode.
@@ -285,9 +318,9 @@ void SidebarClass::Init_IO(void)
         int maxwidth = String_Pixel_Width(Text_String(TXT_REPAIR_BUTTON)) + 8;
         maxwidth = MAX((unsigned)maxwidth, String_Pixel_Width(Text_String(TXT_BUTTON_SELL)) + 8);
         maxwidth = MAX((unsigned)maxwidth, String_Pixel_Width(Text_String(TXT_MAP)) + 8);
-        Repair.Width = maxwidth;
-        Upgrade.Width = maxwidth;
-        Zoom.Width = maxwidth;
+        Repair->Width = maxwidth;
+        Upgrade->Width = maxwidth;
+        Zoom->Width = maxwidth;
         //		Repair.Width = String_Pixel_Width(Text_String(TXT_REPAIR_BUTTON)) + 8;
         //		Upgrade.Width = String_Pixel_Width(Text_String(TXT_BUTTON_SELL)) + 8;
         //		Zoom.Width = String_Pixel_Width(Text_String(TXT_MAP)) + 8;
@@ -295,61 +328,76 @@ void SidebarClass::Init_IO(void)
         ** find the spacing between buttons by getting remaining width
         ** and dividing it between the buttons.
         */
-        int buttonspacing = (SideBarWidth - (Repair.Width + Upgrade.Width + Zoom.Width)) / 4;
+        int buttonspacing = (SideBarWidth - (Repair->Width + Upgrade->Width + Zoom->Width)) / 4;
 
-        Repair.IsSticky = true;
-        Repair.ID = BUTTON_REPAIR;
-        Repair.X = 484;
-        Repair.Y = 160;
-        Repair.IsPressed = false;
-        Repair.IsToggleType = true;
-        Repair.ReflectButtonState = true;
-#if (FRENCH)
-        Repair.Set_Shape(Hires_Retrieve("REPAIRF.SHP"));
-#else
-#if (GERMAN)
-        Repair.Set_Shape(Hires_Retrieve("REPAIRG.SHP"));
-#else
-        Repair.Set_Shape(Hires_Retrieve("REPAIR.SHP"));
-#endif
-#endif
+        if (Get_Resolution_Factor()) {
+            ShapeButtonClass* SBCRepair = (ShapeButtonClass*)Repair;
+            ShapeButtonClass* SBCUpgrade = (ShapeButtonClass*)Upgrade;
+            ShapeButtonClass* SBCZoom = (ShapeButtonClass*)Zoom;
 
-        Upgrade.IsSticky = true;
-        Upgrade.ID = BUTTON_UPGRADE;
-        Upgrade.X = 480 + 57;
-        Upgrade.Y = 160;
-        Upgrade.IsPressed = false;
-        Upgrade.IsToggleType = true;
-        Upgrade.ReflectButtonState = true;
-#if (FRENCH)
-        Upgrade.Set_Shape(Hires_Retrieve("SELLF.SHP"));
-#else
-#if (GERMAN)
-        Upgrade.Set_Shape(Hires_Retrieve("SELLG.SHP"));
-#else
-        Upgrade.Set_Shape(Hires_Retrieve("SELL.SHP"));
-#endif
-#endif
+            Repair->X = 484;
+            Repair->Y = 160;
+            SBCRepair->ReflectButtonState = true;
+            SBCRepair->Set_Shape(Hires_Retrieve(repair_shp));
 
-        Zoom.IsSticky = true;
-        Zoom.ID = BUTTON_ZOOM;
-        Zoom.X = 480 + 110;
-        Zoom.Y = 160;
-        Zoom.IsPressed = false;
-#if (FRENCH)
-        Zoom.Set_Shape(Hires_Retrieve("MAPF.SHP"));
-#else
-#if (GERMAN)
-        Zoom.Set_Shape(Hires_Retrieve("MAPG.SHP"));
-#else
-        Zoom.Set_Shape(Hires_Retrieve("MAP.SHP"));
-#endif
-#endif
+            Upgrade->X = 480 + 57;
+            Upgrade->Y = 160;
+            SBCUpgrade->ReflectButtonState = true;
+            SBCUpgrade->Set_Shape(Hires_Retrieve(sell_shp));
+
+            Zoom->X = 480 + 110;
+            Zoom->Y = 160;
+            SBCZoom->Set_Shape(Hires_Retrieve(map_shp));
+        } else {
+            TextButtonClass* TBCRepair = (TextButtonClass*)Repair;
+            TextButtonClass* TBCUpgrade = (TextButtonClass*)Upgrade;
+            TextButtonClass* TBCZoom = (TextButtonClass*)Zoom;
+
+            TBCRepair->Set_Text("Repair");
+            TBCRepair->Set_Style(TPF_6POINT | TPF_NOSHADOW | TPF_CENTER);
+
+            TBCUpgrade->Set_Text("Sell");
+            TBCUpgrade->Set_Style(TPF_6POINT | TPF_NOSHADOW | TPF_CENTER);
+
+            TBCZoom->Set_Text("Map");
+            TBCZoom->Set_Style(TPF_6POINT | TPF_NOSHADOW | TPF_CENTER);
+
+            /* Hardcode button positions for now. */
+
+            Repair->X = 482 / 2;
+            Repair->Y = 160 / 2;
+            Repair->Width = String_Pixel_Width("Repair") + 2;
+            Repair->Height = String_Pixel_Width("R") + 3;
+
+            Upgrade->X = (484 + 65) / 2 + 2;
+            Upgrade->Y = 160 / 2;
+            Upgrade->Width = String_Pixel_Width("Sell") + 3;
+            Upgrade->Height = String_Pixel_Width("S") + 3;
+
+            Zoom->X = (480 + 110) / 2 + 5;
+            Zoom->Y = 160 / 2;
+            Zoom->Width = String_Pixel_Width("Map") + 1;
+            Zoom->Height = String_Pixel_Width("S") + 3;
+        }
+
+        Repair->IsSticky = true;
+        Repair->ID = BUTTON_REPAIR;
+        Repair->IsPressed = false;
+        Repair->IsToggleType = true;
+
+        Upgrade->IsSticky = true;
+        Upgrade->ID = BUTTON_UPGRADE;
+        Upgrade->IsPressed = false;
+        Upgrade->IsToggleType = true;
+
+        Zoom->IsSticky = true;
+        Zoom->ID = BUTTON_ZOOM;
+        Zoom->IsPressed = false;
 
         if (IsRadarActive || GameToPlay != GAME_NORMAL) {
-            Zoom.Enable();
+            Zoom->Enable();
         } else {
-            Zoom.Disable();
+            Zoom->Disable();
         }
 
         Set_Font(oldfont);
@@ -708,23 +756,24 @@ void SidebarClass::Draw_It(bool complete)
             CC_Draw_Shape(SidebarShape1, 0, SideX, 158, WINDOW_MAIN, SHAPE_WIN_REL);
             CC_Draw_Shape(SidebarShape2, 0, SideX, 158 + 118, WINDOW_MAIN, SHAPE_WIN_REL);
 
-#if (0)
-            if (complete) {
-                LogicPage->Fill_Rect(
-                    SideX + Map.PowWidth, SideY, SideX + SideWidth - 1, SideY + SideHeight - 1, LTGREY);
+            if (Get_Resolution_Factor() == 0) {
+                if (complete) {
+                    LogicPage->Fill_Rect(
+                        SideX + Map.PowWidth, SideY, SideX + SideWidth - 1, SideY + SideHeight - 1, LTGREY);
+                }
+                LogicPage->Fill_Rect(SideX, SideY, SideX + SideWidth - 1, SideY + TopHeight - 1, LTGREY);
+                Draw_Box(SideX + Map.PowWidth,
+                         SideY + TopHeight,
+                         SideWidth - Map.PowWidth,
+                         SideHeight - TopHeight,
+                         BOXSTYLE_RAISED,
+                         false);
             }
-            LogicPage->Fill_Rect(SideX, SideY, SideX + SideWidth - 1, SideY + TopHeight - 1, LTGREY);
-            Draw_Box(SideX + Map.PowWidth,
-                     SideY + TopHeight,
-                     SideWidth - Map.PowWidth,
-                     SideHeight - TopHeight,
-                     BOXSTYLE_RAISED,
-                     false);
-#endif //(0)                                                                                                           \
-       // Repair.Draw_Me(true);                                                                                        \
-       // Upgrade.Draw_Me(true);                                                                                       \
-       // Zoom.Draw_Me(true);                                                                                          \
-    //	} else {                                                                                                        \
+
+            //  Repair.Draw_Me(true);
+            //  Upgrade.Draw_Me(true);
+            //  Zoom.Draw_Me(true);
+            //	} else {                                                                                                        \
     //		if (IsToRedraw || complete) {                                                                                  \
     //			LogicPage->Fill_Rect(TacPixelX + Lepton_To_Pixel(TacLeptonWidth), SIDE_Y, 319, SIDE_Y+TOP_HEIGHT,             \
     //BLACK);                                                                                                          \
@@ -739,9 +788,9 @@ void SidebarClass::Draw_It(bool complete)
     if (IsSidebarActive) {
         Column[0].Draw_It(complete);
         Column[1].Draw_It(complete);
-        Repair.Draw_Me(true);
-        Upgrade.Draw_Me(true);
-        Zoom.Draw_Me(true);
+        Repair->Draw_Me(true);
+        Upgrade->Draw_Me(true);
+        Zoom->Draw_Me(true);
     }
 
     IsToRedraw = false;
@@ -864,12 +913,12 @@ void SidebarClass::AI(KeyNumType& input, int x, int y)
         }
     }
 
-    if ((!IsRepairMode) && Repair.IsOn) {
-        Repair.Turn_Off();
+    if ((!IsRepairMode) && Repair->IsOn) {
+        Repair->Turn_Off();
     }
 
-    if ((!IsSellMode) && Upgrade.IsOn) {
-        Upgrade.Turn_Off();
+    if ((!IsSellMode) && Upgrade->IsOn) {
+        Upgrade->Turn_Off();
     }
 
     PowerClass::AI(input, x, y);
@@ -984,12 +1033,12 @@ bool SidebarClass::Activate(int control)
             Set_View_Dimensions(0, Map.Get_Tab_Height(), SeenBuff.Get_Width() - sidewidth);
             IsToRedraw = true;
             Help_Text(TXT_NONE);
-            Repair.Zap();
-            Add_A_Button(Repair);
-            Upgrade.Zap();
-            Add_A_Button(Upgrade);
-            Zoom.Zap();
-            Add_A_Button(Zoom);
+            Repair->Zap();
+            Add_A_Button(*Repair);
+            Upgrade->Zap();
+            Add_A_Button(*Upgrade);
+            Zoom->Zap();
+            Add_A_Button(*Zoom);
             Column[0].Activate();
             Column[1].Activate();
             Background.Zap();
@@ -1001,9 +1050,9 @@ bool SidebarClass::Activate(int control)
         } else {
             Help_Text(TXT_NONE);
             Set_View_Dimensions(0, Map.Get_Tab_Height());
-            Remove_A_Button(Repair);
-            Remove_A_Button(Upgrade);
-            Remove_A_Button(Zoom);
+            Remove_A_Button(*Repair);
+            Remove_A_Button(*Upgrade);
+            Remove_A_Button(*Zoom);
             Remove_A_Button(Background);
             Column[0].Deactivate();
             Column[1].Deactivate();
@@ -2575,5 +2624,21 @@ void SidebarClass::Zoom_Mode_Control(void)
         if (GameToPlay != GAME_NORMAL) {
             Player_Names(Is_Player_Names() == 0);
         }
+    }
+}
+
+SidebarClass::~SidebarClass()
+{
+    if (Repair) {
+        delete Repair;
+        Repair = NULL;
+    }
+    if (Upgrade) {
+        delete Upgrade;
+        Upgrade = NULL;
+    }
+    if (Zoom) {
+        delete Zoom;
+        Zoom = NULL;
     }
 }
