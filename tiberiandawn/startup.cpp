@@ -292,6 +292,14 @@ int main(int argc, char** argv)
 
         CCDebugString("C&C95 - Creating main window.\n");
 
+#ifndef REMASTER_BUILD
+        /* If DOSMode is enabled, adjust resolution accordingly. */
+        if (Settings.Video.DOSMode) {
+            ScreenWidth = 320;
+            ScreenHeight = 200;
+        }
+#endif
+
 #if defined(_WIN32) && !defined(SDL2_BUILD)
         Create_Main_Window(ProgramInstance, ScreenWidth, ScreenHeight);
 #endif
@@ -304,8 +312,9 @@ int main(int argc, char** argv)
 
         bool video_success = false;
         CCDebugString("C&C95 - Setting video mode.\n");
+
         /*
-        ** Set 640x400 video mode.
+        ** Set video mode.
         */
 #ifdef REMASTER_BUILD
         video_success = true;
