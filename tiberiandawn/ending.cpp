@@ -119,6 +119,7 @@ void Nod_Ending(void)
 #endif // NOT_FOR_WIN95
     int oldfontxspacing = FontXSpacing;
     void const* oldfont;
+    int factor = Get_Resolution_Factor() + 1;
 
     Score.Presentation();
 
@@ -185,13 +186,13 @@ void Nod_Ending(void)
                 if ((key & 0x10FF) == KN_LMOUSE && !(key & KN_RLSE_BIT)) {
                     int mousex = Keyboard->MouseQX;
                     int mousey = Keyboard->MouseQY;
-                    if (mousey >= 22 * 2 && mousey <= 177 * 2) {
+                    if (mousey >= 22 * factor && mousey <= 177 * factor) {
                         done++;
-                        if (mousex < 160 * 2 && mousey < 100 * 2)
+                        if (mousex < 160 * factor && mousey < 100 * factor)
                             selection = 2;
-                        if (mousex < 160 * 2 && mousey >= 100 * 2)
+                        if (mousex < 160 * factor && mousey >= 100 * factor)
                             selection = 3;
-                        if (mousex >= 160 * 2 && mousey >= 100 * 2)
+                        if (mousex >= 160 * factor && mousey >= 100 * factor)
                             selection = 4;
                     }
                 }
