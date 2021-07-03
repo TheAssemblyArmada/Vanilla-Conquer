@@ -331,7 +331,7 @@ bool Init_Game(int, char*[])
         strcat(scan_path, "SC*.MIX");
         found = Find_First(scan_path, 0, &ffd);
         while (found) {
-            char* ptr = strdup(ffd->GetName());
+            char* ptr = (char*)ffd->GetName();
             new MFCD(ptr);
             MFCD::Cache(ptr);
             found = Find_Next(ffd);
@@ -344,7 +344,7 @@ bool Init_Game(int, char*[])
         strcat(scan_path, "SS*.MIX");
         found = Find_First(scan_path, 0, &ffd);
         while (found) {
-            char* ptr = strdup(ffd->GetName());
+            char* ptr = (char*)ffd->GetName();
             new MFCD(ptr);
             MFCD::Cache(ptr);
             found = Find_Next(ffd);
