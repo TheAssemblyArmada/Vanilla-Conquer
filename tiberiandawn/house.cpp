@@ -356,6 +356,16 @@ HouseClass::HouseClass(HousesType house)
     , IonCannon(ION_CANNON_GONE_TIME, VOX_ION_READY, VOX_ION_CHARGING, VOX_ION_CHARGING, VOX_NO_POWER)
     , AirStrike(AIR_CANNON_GONE_TIME, VOX_AIRSTRIKE_READY, VOX_NONE, VOX_NOT_READY, VOX_NOT_READY)
     , NukeStrike(NUKE_GONE_TIME, VOX_NUKE_AVAILABLE, VOX_NONE, VOX_NOT_READY, VOX_NO_POWER)
+    , AircraftTotals()
+    , InfantryTotals()
+    , UnitTotals()
+    , BuildingTotals()
+    , DestroyedAircraft()
+    , DestroyedInfantry()
+    , DestroyedUnits()
+    , DestroyedBuildings()
+    , CapturedBuildings()
+    , TotalCrates()
 {
 
     for (HousesType i = HOUSE_FIRST; i < HOUSE_COUNT; i++) {
@@ -513,11 +523,6 @@ HouseClass::HouseClass(HousesType house)
     Assign_Handicap(DIFF_NORMAL);
 
 #endif
-}
-
-HouseClass::~HouseClass(void)
-{
-    Free_Unit_Trackers();
 }
 
 /***********************************************************************************************
@@ -4845,83 +4850,18 @@ void HouseClass::Check_Pertinent_Structures(void)
  *=============================================================================================*/
 void HouseClass::Init_Unit_Trackers(void)
 {
-    AircraftTotals = new UnitTrackerClass((int)AIRCRAFT_COUNT);
-    InfantryTotals = new UnitTrackerClass((int)INFANTRY_COUNT);
-    UnitTotals = new UnitTrackerClass((int)UNIT_COUNT);
-    BuildingTotals = new UnitTrackerClass((int)STRUCT_COUNT);
+    AircraftTotals.Init();
+    InfantryTotals.Init();
+    UnitTotals.Init();
+    BuildingTotals.Init();
 
-    DestroyedAircraft = new UnitTrackerClass((int)AIRCRAFT_COUNT);
-    DestroyedInfantry = new UnitTrackerClass((int)INFANTRY_COUNT);
-    DestroyedUnits = new UnitTrackerClass((int)UNIT_COUNT);
-    DestroyedBuildings = new UnitTrackerClass((int)STRUCT_COUNT);
+    DestroyedAircraft.Init();
+    DestroyedInfantry.Init();
+    DestroyedUnits.Init();
+    DestroyedBuildings.Init();
 
-    CapturedBuildings = new UnitTrackerClass((int)STRUCT_COUNT);
-    TotalCrates = new UnitTrackerClass(TOTAL_CRATE_TYPES); // 15 crate types
-}
-
-/***********************************************************************************************
- * HouseClass::Free_Unit_Trackers -- Free the unit trackers for the house                      *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/23/2020 11:06PM ST : Created.                                                           *
- *=============================================================================================*/
-void HouseClass::Free_Unit_Trackers(void)
-{
-    if (AircraftTotals) {
-        delete AircraftTotals;
-        AircraftTotals = NULL;
-    }
-
-    if (InfantryTotals) {
-        delete InfantryTotals;
-        InfantryTotals = NULL;
-    }
-
-    if (UnitTotals) {
-        delete UnitTotals;
-        UnitTotals = NULL;
-    }
-
-    if (BuildingTotals) {
-        delete BuildingTotals;
-        BuildingTotals = NULL;
-    }
-
-    if (DestroyedAircraft) {
-        delete DestroyedAircraft;
-        DestroyedAircraft = NULL;
-    }
-
-    if (DestroyedInfantry) {
-        delete DestroyedInfantry;
-        DestroyedInfantry = NULL;
-    }
-
-    if (DestroyedUnits) {
-        delete DestroyedUnits;
-        DestroyedUnits = NULL;
-    }
-
-    if (DestroyedBuildings) {
-        delete DestroyedBuildings;
-        DestroyedBuildings = NULL;
-    }
-
-    if (CapturedBuildings) {
-        delete CapturedBuildings;
-        CapturedBuildings = NULL;
-    }
-
-    if (TotalCrates) {
-        delete TotalCrates;
-        TotalCrates = NULL;
-    }
+    CapturedBuildings.Init();
+    TotalCrates.Init(); // 15 crate types
 }
 
 #ifdef USE_RA_AI

@@ -263,7 +263,7 @@ InfantryClass::InfantryClass(InfantryType classid, HousesType house)
     ** Keep count of the number of units created. Dont track civilians.
     */
     if (!Class->IsCivilian && GameToPlay == GAME_INTERNET) {
-        House->InfantryTotals->Increment_Unit_Total((int)classid);
+        House->InfantryTotals.Increment_Unit_Total((int)classid);
     }
 
 #ifdef USE_RA_AI

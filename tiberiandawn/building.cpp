@@ -1868,7 +1868,7 @@ BuildingClass::BuildingClass(StructType type, HousesType house)
     }
 
     if (GameToPlay == GAME_INTERNET) {
-        House->BuildingTotals->Increment_Unit_Total((int)type);
+        House->BuildingTotals.Increment_Unit_Total((int)type);
     }
 
 #ifdef USE_RA_AI
@@ -3612,7 +3612,7 @@ bool BuildingClass::Captured(HouseClass* newowner)
         ** Add this building to the list of buildings captured this game. For internet stats purposes
         */
         if (GameToPlay == GAME_INTERNET) {
-            newowner->CapturedBuildings->Increment_Unit_Total(Class->Type);
+            newowner->CapturedBuildings.Increment_Unit_Total(Class->Type);
         }
 
         House->Adjust_Power(-Power_Output());
