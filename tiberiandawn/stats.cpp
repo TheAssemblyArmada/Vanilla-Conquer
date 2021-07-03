@@ -454,36 +454,36 @@ void Send_Statistics_Packet(void)
                 field_player_planes_bought[3] = '1' + (char)house;
                 field_player_buildings_bought[3] = '1' + (char)house;
 
-                player->InfantryTotals->To_Network_Format();
-                player->UnitTotals->To_Network_Format();
-                player->AircraftTotals->To_Network_Format();
-                player->BuildingTotals->To_Network_Format();
+                player->InfantryTotals.To_Network_Format();
+                player->UnitTotals.To_Network_Format();
+                player->AircraftTotals.To_Network_Format();
+                player->BuildingTotals.To_Network_Format();
 
                 stats.Add_Field(field_player_infantry_bought,
-                                (void*)player->InfantryTotals->Get_All_Totals(),
-                                player->InfantryTotals->Get_Unit_Count() * 4);
+                                (void*)player->InfantryTotals.Get_All_Totals(),
+                                player->InfantryTotals.Get_Unit_Count() * 4);
                 stats.Add_Field(field_player_units_bought,
-                                (void*)player->UnitTotals->Get_All_Totals(),
-                                player->UnitTotals->Get_Unit_Count() * 4);
+                                (void*)player->UnitTotals.Get_All_Totals(),
+                                player->UnitTotals.Get_Unit_Count() * 4);
                 stats.Add_Field(field_player_planes_bought,
-                                (void*)player->AircraftTotals->Get_All_Totals(),
-                                player->AircraftTotals->Get_Unit_Count() * 4);
+                                (void*)player->AircraftTotals.Get_All_Totals(),
+                                player->AircraftTotals.Get_Unit_Count() * 4);
                 stats.Add_Field(field_player_buildings_bought,
-                                (void*)player->BuildingTotals->Get_All_Totals(),
-                                player->BuildingTotals->Get_Unit_Count() * 4);
+                                (void*)player->BuildingTotals.Get_All_Totals(),
+                                player->BuildingTotals.Get_Unit_Count() * 4);
 
-                player->InfantryTotals->To_PC_Format();
-                player->UnitTotals->To_PC_Format();
-                player->AircraftTotals->To_PC_Format();
-                player->BuildingTotals->To_PC_Format();
+                player->InfantryTotals.To_PC_Format();
+                player->UnitTotals.To_PC_Format();
+                player->AircraftTotals.To_PC_Format();
+                player->BuildingTotals.To_PC_Format();
 
                 /*
                 ** Clear out the counts and use the space to count up the current number of units/buildings
                 */
-                player->InfantryTotals->Clear_Unit_Total();
-                player->AircraftTotals->Clear_Unit_Total();
-                player->UnitTotals->Clear_Unit_Total();
-                player->BuildingTotals->Clear_Unit_Total();
+                player->InfantryTotals.Clear_Unit_Total();
+                player->AircraftTotals.Clear_Unit_Total();
+                player->UnitTotals.Clear_Unit_Total();
+                player->BuildingTotals.Clear_Unit_Total();
 
                 /*
                 ** Number of units remaining to player
@@ -491,96 +491,96 @@ void Send_Statistics_Packet(void)
                 for (index = 0; index < Units.Count(); index++) {
                     UnitClass const* unit = Units.Ptr(index);
                     if (unit->House == player) {
-                        player->UnitTotals->Increment_Unit_Total(unit->Class->Type);
+                        player->UnitTotals.Increment_Unit_Total(unit->Class->Type);
                     }
                 }
 
                 for (index = 0; index < Infantry.Count(); index++) {
                     InfantryClass const* infantry = Infantry.Ptr(index);
                     if (infantry->House == player && !infantry->Class->IsCivilian) {
-                        player->InfantryTotals->Increment_Unit_Total(infantry->Class->Type);
+                        player->InfantryTotals.Increment_Unit_Total(infantry->Class->Type);
                     }
                 }
 
                 for (index = 0; index < Aircraft.Count(); index++) {
                     AircraftClass const* aircraft = Aircraft.Ptr(index);
                     if (aircraft->House == player && aircraft->Class->Type != AIRCRAFT_CARGO) {
-                        player->AircraftTotals->Increment_Unit_Total(aircraft->Class->Type);
+                        player->AircraftTotals.Increment_Unit_Total(aircraft->Class->Type);
                     }
                 }
 
                 for (index = 0; index < Buildings.Count(); index++) {
                     BuildingClass const* building = Buildings.Ptr(index);
                     if (building->House == player) {
-                        player->BuildingTotals->Increment_Unit_Total(building->Class->Type);
+                        player->BuildingTotals.Increment_Unit_Total(building->Class->Type);
                     }
                 }
 
-                player->InfantryTotals->To_Network_Format();
-                player->UnitTotals->To_Network_Format();
-                player->AircraftTotals->To_Network_Format();
-                player->BuildingTotals->To_Network_Format();
+                player->InfantryTotals.To_Network_Format();
+                player->UnitTotals.To_Network_Format();
+                player->AircraftTotals.To_Network_Format();
+                player->BuildingTotals.To_Network_Format();
 
                 field_player_infantry_left[3] = '1' + (char)house;
                 field_player_units_left[3] = '1' + (char)house;
                 field_player_planes_left[3] = '1' + (char)house;
                 field_player_buildings_left[3] = '1' + (char)house;
                 stats.Add_Field(field_player_infantry_left,
-                                (void*)player->InfantryTotals->Get_All_Totals(),
-                                player->InfantryTotals->Get_Unit_Count() * 4);
+                                (void*)player->InfantryTotals.Get_All_Totals(),
+                                player->InfantryTotals.Get_Unit_Count() * 4);
                 stats.Add_Field(field_player_units_left,
-                                (void*)player->UnitTotals->Get_All_Totals(),
-                                player->UnitTotals->Get_Unit_Count() * 4);
+                                (void*)player->UnitTotals.Get_All_Totals(),
+                                player->UnitTotals.Get_Unit_Count() * 4);
                 stats.Add_Field(field_player_planes_left,
-                                (void*)player->AircraftTotals->Get_All_Totals(),
-                                player->AircraftTotals->Get_Unit_Count() * 4);
+                                (void*)player->AircraftTotals.Get_All_Totals(),
+                                player->AircraftTotals.Get_Unit_Count() * 4);
                 stats.Add_Field(field_player_buildings_left,
-                                (void*)player->BuildingTotals->Get_All_Totals(),
-                                player->BuildingTotals->Get_Unit_Count() * 4);
+                                (void*)player->BuildingTotals.Get_All_Totals(),
+                                player->BuildingTotals.Get_Unit_Count() * 4);
 
                 /*
                 ** Number of enemy units/buildings of each type destroyed.
                 */
 
-                player->DestroyedInfantry->To_Network_Format();
-                player->DestroyedUnits->To_Network_Format();
-                player->DestroyedAircraft->To_Network_Format();
-                player->DestroyedBuildings->To_Network_Format();
+                player->DestroyedInfantry.To_Network_Format();
+                player->DestroyedUnits.To_Network_Format();
+                player->DestroyedAircraft.To_Network_Format();
+                player->DestroyedBuildings.To_Network_Format();
 
                 field_player_infantry_killed[3] = '1' + (char)house;
                 field_player_units_killed[3] = '1' + (char)house;
                 field_player_planes_killed[3] = '1' + (char)house;
                 field_player_buildings_killed[3] = '1' + (char)house;
                 stats.Add_Field(field_player_infantry_killed,
-                                (void*)player->DestroyedInfantry->Get_All_Totals(),
-                                player->DestroyedInfantry->Get_Unit_Count() * 4);
+                                (void*)player->DestroyedInfantry.Get_All_Totals(),
+                                player->DestroyedInfantry.Get_Unit_Count() * 4);
                 stats.Add_Field(field_player_units_killed,
-                                (void*)player->DestroyedUnits->Get_All_Totals(),
-                                player->DestroyedUnits->Get_Unit_Count() * 4);
+                                (void*)player->DestroyedUnits.Get_All_Totals(),
+                                player->DestroyedUnits.Get_Unit_Count() * 4);
                 stats.Add_Field(field_player_planes_killed,
-                                (void*)player->DestroyedAircraft->Get_All_Totals(),
-                                player->DestroyedAircraft->Get_Unit_Count() * 4);
+                                (void*)player->DestroyedAircraft.Get_All_Totals(),
+                                player->DestroyedAircraft.Get_Unit_Count() * 4);
                 stats.Add_Field(field_player_buildings_killed,
-                                (void*)player->DestroyedBuildings->Get_All_Totals(),
+                                (void*)player->DestroyedBuildings.Get_All_Totals(),
                                 player->DestroyedBuildings->Get_Unit_Count() * 4);
 
                 /*
                 ** Number and type of enemy buildings captured
                 */
                 field_player_buildings_captured[3] = '1' + (char)house;
-                player->CapturedBuildings->To_Network_Format();
+                player->CapturedBuildings.To_Network_Format();
                 stats.Add_Field(field_player_buildings_captured,
-                                (void*)player->CapturedBuildings->Get_All_Totals(),
-                                player->CapturedBuildings->Get_Unit_Count() * 4);
+                                (void*)player->CapturedBuildings.Get_All_Totals(),
+                                player->CapturedBuildings.Get_Unit_Count() * 4);
 
                 /*
                 ** Number of crates discovered and their contents
                 */
                 field_player_crates_found[3] = '1' + (char)house;
-                player->TotalCrates->To_Network_Format();
+                player->TotalCrates.To_Network_Format();
                 stats.Add_Field(field_player_crates_found,
-                                (void*)player->TotalCrates->Get_All_Totals(),
-                                player->TotalCrates->Get_Unit_Count() * 4);
+                                (void*)player->TotalCrates.Get_All_Totals(),
+                                player->TotalCrates.Get_Unit_Count() * 4);
 
                 /*
                 ** Amount of tiberium turned into credits

@@ -3265,7 +3265,7 @@ bool BuildingClass::Captured(HouseClass* newowner)
         ** Add this building to the list of buildings captured this game. For internet stats purposes.
         */
         if (Session.Type == GAME_INTERNET) {
-            newowner->CapturedBuildings->Increment_Unit_Total(Class->Type);
+            newowner->CapturedBuildings.Increment_Unit_Total(Class->Type);
         }
 
         House->Adjust_Power(-Power_Output());

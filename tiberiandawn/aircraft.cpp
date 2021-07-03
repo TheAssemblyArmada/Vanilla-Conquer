@@ -241,7 +241,7 @@ AircraftClass::AircraftClass(AircraftType classid, HousesType house)
     ** automatically, not bought.
     */
     if (classid != AIRCRAFT_CARGO && GameToPlay == GAME_INTERNET) {
-        House->AircraftTotals->Increment_Unit_Total((int)classid);
+        House->AircraftTotals.Increment_Unit_Total((int)classid);
     }
 
 #ifdef USE_RA_AI

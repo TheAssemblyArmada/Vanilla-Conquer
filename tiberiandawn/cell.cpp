@@ -2106,7 +2106,7 @@ bool CellClass::Goodie_Check(FootClass* object, bool check_steel)
             ** Keep track of the number of each type of crate found
             */
             if (GameToPlay == GAME_INTERNET) {
-                object->House->TotalCrates->Increment_Unit_Total(what);
+                object->House->TotalCrates.Increment_Unit_Total(what);
             }
 
             /*
