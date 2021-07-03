@@ -3112,7 +3112,7 @@ static void Create_Units(bool official)
 
     bool taken[MAX_STORED_WAYPOINTS];
     CELL waypts[MAX_STORED_WAYPOINTS];
-    assert(Rule.MaxPlayers < ARRAY_SIZE(waypts));
+    assert(Rule.MaxPlayers <= ARRAY_SIZE(waypts));
     int num_waypts = 0;
 
     /*
