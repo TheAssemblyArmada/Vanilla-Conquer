@@ -1130,8 +1130,8 @@ void Map_Selection(void)
     Theme.Queue_Song(THEME_NONE);
     Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, NULL);
     delete europe;
-    delete progresspalette;
-    delete grey2palette;
+    delete[] progresspalette;
+    delete[] grey2palette;
     delete TextPrintBuffer;
     TextPrintBuffer = NULL;
     BlitList.Clear();
