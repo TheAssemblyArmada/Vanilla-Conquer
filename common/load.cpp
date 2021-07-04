@@ -166,7 +166,7 @@ void* Load_Alloc_Data(const FileClass& file)
     void* ptr = 0;
     long size = const_cast<FileClass&>(file).Size();
 
-    ptr = new char[size];
+    ptr = malloc(size);
     if (ptr) {
         const_cast<FileClass&>(file).Read(ptr, size);
     }
