@@ -1244,12 +1244,12 @@ bool DriveClass::Start_Of_Move(void)
                             return (true);
                         }
                     } else {
-                        memcpy(&Path[0], &Path[2], CONQUER_PATH_MAX - 2);
+                        memmove(&Path[0], &Path[2], CONQUER_PATH_MAX - 2);
                         Path[CONQUER_PATH_MAX - 2] = FACING_NONE;
                         IsPlanningToLook = true;
                     }
                 } else {
-                    memcpy(&Path[0], &Path[1], CONQUER_PATH_MAX - 1);
+                    memmove(&Path[0], &Path[1], CONQUER_PATH_MAX - 1);
                 }
                 Path[CONQUER_PATH_MAX - 1] = FACING_NONE;
             }
