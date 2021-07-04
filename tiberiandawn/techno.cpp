@@ -3918,7 +3918,7 @@ void TechnoClass::Base_Is_Attacked(TechnoClass const* enemy)
                         defender[lp] = (FootClass*)infantry;
                         continue;
                     }
-                    if (value[count] < newweakest) {
+                    if (count < 6 && value[count] < newweakest) {
                         newweakest = value[lp];
                     }
                 }
@@ -3980,7 +3980,7 @@ void TechnoClass::Base_Is_Attacked(TechnoClass const* enemy)
                         defender[lp] = (FootClass*)unit;
                         continue;
                     }
-                    if (value[count] < newweakest) {
+                    if (count < 6 && value[count] < newweakest) {
                         newweakest = value[lp];
                     }
                 }
