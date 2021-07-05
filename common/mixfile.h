@@ -207,7 +207,7 @@ template <class T> MixFileClass<T>::~MixFileClass(void)
         free((char*)Filename);
     }
     if (Data != NULL && IsAllocated) {
-        delete[] Data;
+        delete[] static_cast<char*>(Data);
         IsAllocated = false;
     }
     Data = NULL;
