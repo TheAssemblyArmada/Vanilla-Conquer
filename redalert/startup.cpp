@@ -183,7 +183,7 @@ int main(int argc, char* argv[])
     **	Remember the current working directory and drive.
     */
     Paths.Init("vanillara", CONFIG_FILE_NAME, "REDALERT.MIX", args.ArgV[0]);
-    vc_chdir(Paths.Program_Path());
+    vc_chdir(Paths.Data_Path());
     CDFileClass::Refresh_Search_Drives();
 
     if (Parse_Command_Line(args.ArgC, args.ArgV)) {
