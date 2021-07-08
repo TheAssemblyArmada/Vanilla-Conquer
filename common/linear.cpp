@@ -190,7 +190,7 @@ bool Linear_Scale_To_Linear(void* thisptr,
                 int xrat = 0;
 
                 for (int j = 0; j < dst_x1; ++j) {
-                    char tmp = s[xrat >> 16];
+                    unsigned char tmp = s[xrat >> 16];
 
                     if (tmp != 0) {
                         *d = (remap)[tmp];
@@ -207,7 +207,7 @@ bool Linear_Scale_To_Linear(void* thisptr,
                 int xrat = 0;
 
                 for (int j = 0; j < dst_x1; ++j) {
-                    char tmp = s[xrat >> 16];
+                    unsigned char tmp = s[xrat >> 16];
 
                     if (tmp != 0) {
                         *d = tmp;
