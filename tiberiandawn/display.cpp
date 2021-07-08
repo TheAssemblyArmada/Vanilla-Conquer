@@ -541,7 +541,7 @@ void DisplayClass::Init_Theater(TheaterType theater)
  *=============================================================================================*/
 short const* DisplayClass::Text_Overlap_List(char const* text, int x, int y, int lines)
 {
-    static short _list[30];
+    static short _list[50];
 
     if (text) {
         short* ptr = &_list[0];
