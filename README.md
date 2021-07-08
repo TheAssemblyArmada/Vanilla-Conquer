@@ -5,7 +5,15 @@ The main focus of Vanilla Conquer is to keep the default out-of-box experience f
 
 Current project goals are tracked as [GitHub issues with the goal label](https://github.com/Vanilla-Conquer/Vanilla-Conquer/issues?q=is%3Aissue+is%3Aopen+label%3Agoal).
 
-Developers hang around [The Assembly Armada Discord server](https://discord.gg/UnWK2Tw) if you feel like chatting.
+## Chat with us
+
+There are rooms on multiple platforms for discussion:
+
+- [The Assembly Armada](https://discord.gg/UnWK2Tw) on [Discord](https://discord.gg)
+- [#vanilla-conquer:vi.fi](https://matrix.to/#/#vanilla-conquer:vi.fi) on [Matrix](https://matrix.org)
+- [#vanilla-conquer](https://web.libera.chat/?channel=#vanilla-conquer) on [Libera.Chat](https://libera.chat]) IRC network
+
+All of these rooms are bridged together so people can choose their preferred service. Please be nice to each other.
 
 ## Building
 
