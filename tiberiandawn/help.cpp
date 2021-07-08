@@ -50,7 +50,7 @@
 **	data segment. It will be filled in by the Set_Text() function.
 */
 // short const HelpClass::OverlapList[30] = {  // Can't be const - it's expected to be written to. ST - 2/7/2019 5:16PM
-short HelpClass::OverlapList[30] = {REFRESH_EOL};
+short HelpClass::OverlapList[50] = {REFRESH_EOL};
 
 char const* HelpClass::HelpText;
 
