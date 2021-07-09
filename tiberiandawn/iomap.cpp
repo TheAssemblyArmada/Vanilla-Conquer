@@ -178,16 +178,12 @@ void CellClass::Code_Pointers(void)
         OccupierPtr = (ObjectClass*)OccupierPtr->As_Target();
     }
 
-    if (Overlapper[0]) {
-        Overlapper[0] = (ObjectClass*)Overlapper[0]->As_Target();
-    }
-
-    if (Overlapper[1]) {
-        Overlapper[1] = (ObjectClass*)Overlapper[1]->As_Target();
-    }
-
-    if (Overlapper[2]) {
-        Overlapper[2] = (ObjectClass*)Overlapper[2]->As_Target();
+    for (int index = 0; index < ARRAY_SIZE(Overlapper); index++) {
+        if (Overlapper[index] != NULL && Overlapper[index]->IsActive) {
+            Overlapper[index] = (ObjectClass*)Overlapper[index]->As_Target();
+        } else {
+            Overlapper[index] = NULL;
+        }
     }
 
     /*

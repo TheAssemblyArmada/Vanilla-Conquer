@@ -515,7 +515,7 @@ void RadarClass::Render_Terrain(CELL cell, int x, int y, int size)
     */
     for (lp = 0; lp < 3; lp++) {
         obj = Map[cell].Overlapper[lp];
-        if (obj && obj->What_Am_I() == RTTI_TERRAIN)
+        if (obj && obj->IsActive && obj->What_Am_I() == RTTI_TERRAIN)
             list[listidx++] = (TerrainClass*)obj;
     }
 
