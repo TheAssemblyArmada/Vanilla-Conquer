@@ -1005,6 +1005,12 @@ void TechnoClass::Draw_It(int x, int y, WindowNumberType window)
 {
     Clear_Redraw_Flag();
 
+#ifdef REMASTER_BUILD
+    WindowNumberType line_frame_cmp = WINDOW_VIRTUAL;
+#else
+    WindowNumberType line_frame_cmp = WINDOW_TACTICAL;
+#endif
+
     const bool show_health_bar = (Strength > 0) && !Is_Cloaked(PlayerPtr)
                                  && (Is_Selected_By_Player()
                                      || ((Special.HealthBarDisplayMode == SpecialClass::HB_DAMAGED)
@@ -1033,7 +1039,7 @@ void TechnoClass::Draw_It(int x, int y, WindowNumberType window)
             CC_Draw_Line(
                 Lines[i][0], Lines[i][1], Lines[i][2], Lines[i][3], (unsigned char)Lines[i][4], LineFrame, window);
         }
-        if (window == WINDOW_VIRTUAL) {
+        if (window == line_frame_cmp) {
             LineFrame++;
         }
     }
