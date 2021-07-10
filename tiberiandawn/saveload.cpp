@@ -496,8 +496,13 @@ bool Load_Game(const char* file_name)
 
     /*
     ** Fixup remap tables. ST - 2/28/2020 1:50PM
+    ** Only fixup remap of multiplayer houses. On non-remaster renderer, remapping
+    ** Nod breaks Nod radar color because it gets remapped to its primary color,
+    ** which is LTBLUE where it is supposed to be RED. Since only multiplayer colors
+    ** can change colors, this fix only makes sense on multiplayer houses
+    ** - mrparrot 07/12/2021
     */
-    for (HousesType house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
+    for (HousesType house = HOUSE_MULTI1; house < MPlayerCount + MPlayerGhosts; house++) {
         HouseClass* hptr = HouseClass::As_Pointer(house);
         if (hptr && hptr->IsActive) {
             hptr->Init_Data(hptr->RemapColor, hptr->ActLike, hptr->Credits);
