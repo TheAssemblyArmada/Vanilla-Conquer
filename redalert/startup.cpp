@@ -157,19 +157,94 @@ BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserve
 #ifdef REMASTER_BUILD
 // int PASCAL WinMain(HINSTANCE, HINSTANCE, char *, int )
 // PG int PASCAL WinMain ( HINSTANCE instance , HINSTANCE , char * command_line , int command_show )
+int main(int, char*[]);
+
 int DLL_Startup(const char* command_line_in)
 {
+    /* Construct argc and argv from command_line_in. Remaster build requires
+    ** that first argument is a full path to DLL, not executable. Furthermore, it
+    ** seems to override the argv to include extra parameters which the DLL
+    ** expects. Getting the argc and argv from executable will result in
+    ** a crash trying to read the font files. */
+
     RunningAsDLL = true;
-    int command_show = SW_HIDE;
     HINSTANCE instance = ProgramInstance;
     char command_line[1024];
-    strcpy(command_line, command_line_in);
     int argc = 0;
-    char** argv = nullptr;
-#else
+    unsigned command_scan;
+    char command_char;
+    char* argv[20];
+    char path_to_exe[280];
+
+    strcpy(command_line, command_line_in);
+    ProgramInstance = instance;
+
+    /*
+    ** Get the full path to the .DLL
+    */
+    DWORD readed = GetModuleFileNameA(instance, &path_to_exe[0], 280);
+    if (readed >= 280 - 1) {
+        MessageBoxA(NULL, "Path to remaster is too large.", "Command & Conquer", MB_ICONEXCLAMATION | MB_OK);
+        return -1;
+    }
+
+    /*
+    ** First argument is supposed to be a pointer to the .EXE that is running
+    ** - False. Must be a pointer to the DLL - giulianob 07/11/2021
+    **
+    */
+    argc = 1;                  // Set argument count to 1
+    argv[0] = &path_to_exe[0]; // Set 1st command line argument to point to full path
+
+    /*
+    ** Get pointers to command line arguments just like if we were in DOS
+    **
+    ** The command line we get is cr/zero? terminated.
+    **
+    */
+
+    command_scan = 0;
+
+    /* This certainly can be improved, but worse than this is not working :)*/
+
+    do {
+        /*
+        ** Scan for non-space character on command line
+        */
+        do {
+            command_char = *(command_line + command_scan++);
+        } while (command_char == ' ');
+
+        if (command_char != 0 && command_char != 13) {
+            argv[argc++] = command_line + command_scan - 1;
+
+            /*
+            ** Scan for space character on command line
+            */
+            bool in_quotes = false;
+            do {
+                command_char = *(command_line + command_scan++);
+                if (command_char == '"') {
+                    in_quotes = !in_quotes;
+                }
+            } while ((in_quotes || command_char != ' ') && command_char != 0 && command_char != 13);
+
+            *(command_line + command_scan - 1) = 0;
+        }
+
+    } while (command_char != 0 && command_char != 13 && argc < 20);
+
+    if (argc >= 20) {
+        MessageBoxA(NULL, "Too many arguments on command line.", "Command & Conquer", MB_ICONEXCLAMATION | MB_OK);
+        return -1;
+    }
+
+    return main(argc, argv);
+}
+#endif //REMASTER_BUILD
+
 int main(int argc, char* argv[])
 {
-#endif // _WIN32
     UtfArgs args(argc, argv);
     WWDebugString("RA95 - Starting up.\n");
 
@@ -222,7 +297,9 @@ int main(int argc, char* argv[])
         Read_Setup_Options(&cfile);
 
 #if defined(_WIN32) && !defined(SDL2_BUILD)
-        Create_Main_Window(instance, command_show, ScreenWidth, ScreenHeight);
+        /* WinMain seems to pass command_show to Create_Main_Window, but since we
+        ** are not using WinMain anymore, we simply pass 0 to it. */
+        Create_Main_Window(ProgramInstance, 0, ScreenWidth, ScreenHeight);
 #endif
         SoundOn = Audio_Init(16, false, 11025 * 2, false);
 

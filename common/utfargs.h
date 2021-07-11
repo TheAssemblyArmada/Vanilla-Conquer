@@ -19,8 +19,10 @@ public:
         : ArgC(argc)
         , ArgV(argv)
     {
+#ifndef REMASTER_BUILD
 #ifdef _WIN32
         ArgV = CommandLineToArgvU(GetCommandLineW(), &ArgC);
+#endif
 #endif
     }
 
@@ -28,6 +30,7 @@ public:
     char** ArgV;
 
 private:
+#ifndef REMASTER_BUILD
 #ifdef _WIN32
     // Taken from https://github.com/thpatch/win32_utf8/blob/master/src/shell32_dll.c
     // Get the command line as UTF-8 as it would be on other platforms.
@@ -71,6 +74,7 @@ private:
 
         return argv_u;
     }
+#endif
 #endif
 };
 
