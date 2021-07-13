@@ -361,7 +361,8 @@ void ScoreClass::Presentation(void)
     struct Fame hallfame[NUMFAMENAMES];
     void* oldfont;
     int oldfontxspacing = FontXSpacing;
-    int house = (PlayerPtr->Class->House == HOUSE_USSR || PlayerPtr->Class->House == HOUSE_UKRAINE); // 0 or 1
+    int house = (PlayerPtr->Class->House == HOUSE_USSR || PlayerPtr->Class->House == HOUSE_UKRAINE
+                 || PlayerPtr->Class->House == HOUSE_BAD); // 0  for allies, 1 for soviet
     char inter_pal[15];
     sprintf(inter_pal, "SCORPAL1.PAL");
 
@@ -457,7 +458,12 @@ void ScoreClass::Presentation(void)
     int leadership = 0;
     for (int index = 0; index < Logic.Count(); index++) {
         ObjectClass* object = Logic[index];
-        HousesType owner = object->Owner();
+        if (object->Owner() == HOUSE_NONE) {
+            continue;
+        }
+        // for the player we get his actual house, for other houses we get their ActLike value (country
+        HousesType owner = object->Owner() == PlayerPtr->Class.Raw() ? object->Owner()
+                                                                     : HouseClass::As_Pointer(object->Owner())->ActLike;
         if ((house) && (owner == HOUSE_USSR || owner == HOUSE_BAD || owner == HOUSE_UKRAINE)) {
             leadership++;
         } else {
@@ -470,6 +476,8 @@ void ScoreClass::Presentation(void)
 
     for (HousesType hous = HOUSE_SPAIN; hous <= HOUSE_BAD; hous++) {
         HouseClass* hows = HouseClass::As_Pointer(hous);
+        // for the player we get his actual house, for other houses we get their ActLike value (country
+        hows = hows == PlayerPtr ? hows : HouseClass::As_Pointer(hows->ActLike);
         if (hous == HOUSE_USSR || hous == HOUSE_BAD || hous == HOUSE_UKRAINE) {
             NKilled += hows->UnitsLost;
             NBKilled += hows->BuildingsLost;

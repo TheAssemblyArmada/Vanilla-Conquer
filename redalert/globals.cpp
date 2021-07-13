@@ -713,3 +713,5 @@ bool bAutoSonarPulse = false;
 // ST - 5/14/2019
 bool RunningAsDLL = false;
 bool RunningFromEditor = false;
+
+char* ColorNames[8] = {"Yellow", "LtBlue", "Red", "Green", "Orange", "Grey", "Blue", "Brown"};
