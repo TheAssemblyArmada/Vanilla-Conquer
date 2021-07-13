@@ -91,7 +91,7 @@ void ScrollClass::AI(KeyNumType& input, int x, int y)
     /*
 	**	If rubber band mode is in progress, then don't allow scrolling of the tactical map.
 	*/
-    if (!IsRubberBand /*&& !IsTentative*/) {
+    if (!IsRubberBand  && !IsScrollCoasting /*&& !IsTentative*/) {
 
         /*
 		**	Special check to not scroll within the special no-scroll regions.
