@@ -2105,9 +2105,11 @@ bool CellClass::Goodie_Check(FootClass* object, bool check_steel)
             /*
             ** Keep track of the number of each type of crate found
             */
+#ifdef REMASTER_BUILD
             if (GameToPlay == GAME_INTERNET) {
-                object->House->TotalCrates->Increment_Unit_Total(what);
+                object->House->TotalCrates.Increment_Unit_Total(what);
             }
+#endif
 
             /*
             **	Update the crate count and when all the crates have been discovered, flag

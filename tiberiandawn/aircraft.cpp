@@ -240,9 +240,11 @@ AircraftClass::AircraftClass(AircraftType classid, HousesType house)
     ** Keep count of the number of units created. Dont track cargo planes as they are created
     ** automatically, not bought.
     */
+#ifdef REMASTER_BUILD
     if (classid != AIRCRAFT_CARGO && GameToPlay == GAME_INTERNET) {
-        House->AircraftTotals->Increment_Unit_Total((int)classid);
+        House->AircraftTotals.Increment_Unit_Total((int)classid);
     }
+#endif
 
 #ifdef USE_RA_AI
     //

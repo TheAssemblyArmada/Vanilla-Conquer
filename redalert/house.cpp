@@ -631,18 +631,20 @@ HouseClass::HouseClass(HousesType house)
     , Tiberium(0)
     , Credits(0)
     , Capacity(0)
-    , AircraftTotals(NULL)
-    , InfantryTotals(NULL)
-    , UnitTotals(NULL)
-    , BuildingTotals(NULL)
-    , VesselTotals(NULL)
-    , DestroyedAircraft(NULL)
-    , DestroyedInfantry(NULL)
-    , DestroyedUnits(NULL)
-    , DestroyedBuildings(NULL)
-    , DestroyedVessels(NULL)
-    , CapturedBuildings(NULL)
-    , TotalCrates(NULL)
+#ifdef REMASTER_BUILD
+    , AircraftTotals()
+    , InfantryTotals()
+    , UnitTotals()
+    , BuildingTotals()
+    , VesselTotals()
+    , DestroyedAircraft()
+    , DestroyedInfantry()
+    , DestroyedUnits()
+    , DestroyedBuildings()
+    , DestroyedVessels()
+    , CapturedBuildings()
+    , TotalCrates()
+#endif
     , AircraftFactories(0)
     , InfantryFactories(0)
     , UnitFactories(0)
@@ -766,8 +768,6 @@ HouseClass::HouseClass(HousesType house)
 HouseClass::~HouseClass(void)
 {
     Class = 0;
-
-    Free_Unit_Trackers();
 }
 
 /***********************************************************************************************
@@ -6733,9 +6733,11 @@ void HouseClass::Tracking_Add(TechnoClass const* techno)
         building = ((BuildingTypeClass const&)techno->Class_Of()).Type;
         BQuantity[building]++;
         BScan |= (1L << building);
+#ifdef REMASTER_BUILD
         if (Session.Type == GAME_INTERNET) {
-            BuildingTotals->Increment_Unit_Total(techno->Class_Of().ID);
+            BuildingTotals.Increment_Unit_Total(techno->Class_Of().ID);
         }
+#endif
         break;
 
     case RTTI_AIRCRAFT:
@@ -6743,9 +6745,11 @@ void HouseClass::Tracking_Add(TechnoClass const* techno)
         aircraft = ((AircraftTypeClass const&)techno->Class_Of()).Type;
         AQuantity[aircraft]++;
         AScan |= (1L << aircraft);
+#ifdef REMASTER_BUILD
         if (Session.Type == GAME_INTERNET) {
-            AircraftTotals->Increment_Unit_Total(techno->Class_Of().ID);
+            AircraftTotals.Increment_Unit_Total(techno->Class_Of().ID);
         }
+#endif
         break;
 
     case RTTI_INFANTRY:
@@ -6760,9 +6764,11 @@ void HouseClass::Tracking_Add(TechnoClass const* techno)
 #else
             IQuantity[infantry]++;
 #endif
+#ifdef REMASTER_BUILD
             if (!((InfantryTypeClass const&)techno->Class_Of()).IsCivilian && Session.Type == GAME_INTERNET) {
-                InfantryTotals->Increment_Unit_Total(techno->Class_Of().ID);
+                InfantryTotals.Increment_Unit_Total(techno->Class_Of().ID);
             }
+#endif
             IScan |= (1L << infantry);
         }
         break;
@@ -6779,9 +6785,11 @@ void HouseClass::Tracking_Add(TechnoClass const* techno)
         UQuantity[unit]++;
 #endif
         UScan |= (1L << unit);
+#ifdef REMASTER_BUILD
         if (Session.Type == GAME_INTERNET) {
-            UnitTotals->Increment_Unit_Total(techno->Class_Of().ID);
+            UnitTotals.Increment_Unit_Total(techno->Class_Of().ID);
         }
+#endif
         break;
 
     case RTTI_VESSEL:
@@ -6796,9 +6804,11 @@ void HouseClass::Tracking_Add(TechnoClass const* techno)
         VQuantity[vessel]++;
 #endif
         VScan |= (1L << vessel);
+#ifdef REMASTER_BUILD
         if (Session.Type == GAME_INTERNET) {
-            VesselTotals->Increment_Unit_Total(techno->Class_Of().ID);
+            VesselTotals.Increment_Unit_Total(techno->Class_Of().ID);
         }
+#endif
         break;
 
     default:
@@ -8190,111 +8200,20 @@ void HouseClass::Check_Pertinent_Structures(void)
  *=============================================================================================*/
 void HouseClass::Init_Unit_Trackers(void)
 {
-    if (Session.Type == GAME_INTERNET || Session.Type == GAME_GLYPHX_MULTIPLAYER) {
-        AircraftTotals = new UnitTrackerClass((int)AIRCRAFT_COUNT);
-        InfantryTotals = new UnitTrackerClass((int)INFANTRY_COUNT);
-        UnitTotals = new UnitTrackerClass((int)UNIT_COUNT);
-        BuildingTotals = new UnitTrackerClass((int)STRUCT_COUNT);
-        VesselTotals = new UnitTrackerClass((int)VESSEL_COUNT);
+#ifdef REMASTER_BUILD
+    AircraftTotals.Init();
+    InfantryTotals.Init();
+    UnitTotals.Init();
+    BuildingTotals.Init();
+    VesselTotals.Init();
 
-        DestroyedAircraft = new UnitTrackerClass((int)AIRCRAFT_COUNT);
-        DestroyedInfantry = new UnitTrackerClass((int)INFANTRY_COUNT);
-        DestroyedUnits = new UnitTrackerClass((int)UNIT_COUNT);
-        DestroyedBuildings = new UnitTrackerClass((int)STRUCT_COUNT);
-        DestroyedVessels = new UnitTrackerClass((int)VESSEL_COUNT);
+    DestroyedAircraft.Init();
+    DestroyedInfantry.Init();
+    DestroyedUnits.Init();
+    DestroyedBuildings.Init();
+    DestroyedVessels.Init();
 
-        CapturedBuildings = new UnitTrackerClass((int)STRUCT_COUNT);
-        TotalCrates = new UnitTrackerClass(CRATE_COUNT);
-    } else {
-
-        AircraftTotals = NULL;
-        InfantryTotals = NULL;
-        UnitTotals = NULL;
-        BuildingTotals = NULL;
-        VesselTotals = NULL;
-
-        DestroyedAircraft = NULL;
-        DestroyedInfantry = NULL;
-        DestroyedUnits = NULL;
-        DestroyedBuildings = NULL;
-        DestroyedVessels = NULL;
-
-        CapturedBuildings = NULL;
-        TotalCrates = NULL;
-    }
-}
-
-/***********************************************************************************************
- * HouseClass::Free_Unit_Trackers -- Free the unit trackers for the house                      *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   4/23/2020 11:06PM ST : Created.                                                           *
- *=============================================================================================*/
-void HouseClass::Free_Unit_Trackers(void)
-{
-    if (AircraftTotals) {
-        delete AircraftTotals;
-        AircraftTotals = NULL;
-    }
-
-    if (InfantryTotals) {
-        delete InfantryTotals;
-        InfantryTotals = NULL;
-    }
-
-    if (UnitTotals) {
-        delete UnitTotals;
-        UnitTotals = NULL;
-    }
-
-    if (BuildingTotals) {
-        delete BuildingTotals;
-        BuildingTotals = NULL;
-    }
-
-    if (VesselTotals) {
-        delete VesselTotals;
-        VesselTotals = NULL;
-    }
-
-    if (DestroyedAircraft) {
-        delete DestroyedAircraft;
-        DestroyedAircraft = NULL;
-    }
-
-    if (DestroyedInfantry) {
-        delete DestroyedInfantry;
-        DestroyedInfantry = NULL;
-    }
-
-    if (DestroyedUnits) {
-        delete DestroyedUnits;
-        DestroyedUnits = NULL;
-    }
-
-    if (DestroyedBuildings) {
-        delete DestroyedBuildings;
-        DestroyedBuildings = NULL;
-    }
-
-    if (DestroyedVessels) {
-        delete DestroyedVessels;
-        DestroyedVessels = NULL;
-    }
-
-    if (CapturedBuildings) {
-        delete CapturedBuildings;
-        CapturedBuildings = NULL;
-    }
-
-    if (TotalCrates) {
-        delete TotalCrates;
-        TotalCrates = NULL;
-    }
+    CapturedBuildings.Init();
+    TotalCrates.Init();
+#endif
 }

@@ -3264,9 +3264,11 @@ bool BuildingClass::Captured(HouseClass* newowner)
         /*
         ** Add this building to the list of buildings captured this game. For internet stats purposes.
         */
+#ifdef REMASTER_BUILD
         if (Session.Type == GAME_INTERNET) {
-            newowner->CapturedBuildings->Increment_Unit_Total(Class->Type);
+            newowner->CapturedBuildings.Increment_Unit_Total(Class->Type);
         }
+#endif
 
         House->Adjust_Power(-Power_Output());
         LastStrength = 0;

@@ -1166,12 +1166,14 @@ UnitClass::UnitClass(UnitType classid, HousesType house)
     if (Class->IsAnimating)
         Set_Rate(Options.Normalize_Delay(3));
 
-    /*
+        /*
     ** Keep count of the number of units created.
     */
+#ifdef REMASTER_BUILD
     if (GameToPlay == GAME_INTERNET) {
-        House->UnitTotals->Increment_Unit_Total((int)classid);
+        House->UnitTotals.Increment_Unit_Total((int)classid);
     }
+#endif
 
 #ifdef USE_RA_AI
     //
