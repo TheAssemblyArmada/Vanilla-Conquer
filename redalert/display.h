@@ -92,6 +92,10 @@ public:
     short const* CursorSize;
     short CursorShapeSave[256]; // For save/load
     bool ProximityCheck;        // Is proximity check ok?
+    
+    // Current object the mouse is hovering over, used for healthbar on hover functionality
+    // Needs to be saved to detect no longer hovering (and thus redrawing the unit without health bar)
+    ObjectClass* HoverObject;
 
     /*
     ** This holds the building type that is about to be placed upon the map.
