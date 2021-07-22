@@ -268,4 +268,29 @@ if(BUILD_VANILLARA)
     if(WIN32 AND NOT MSVC)
         set_target_properties(VanillaRA PROPERTIES LINK_FLAGS "-mwindows")
     endif()
+
+    # Handle some linux distributions using the linux standard base "games" folder instead of "bin"
+    if(USE_LSB_GAMES)
+        set(VANILLARA_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/games)
+    else()
+        set(VANILLARA_INSTALL_DIR ${CMAKE_INSTALL_BINDIR})
+    endif()
+
+    # Install the main game binary
+    install(TARGETS VanillaRA
+        RUNTIME DESTINATION ${VANILLARA_INSTALL_DIR}
+        COMPONENT VanillaRA
+    )
+
+    # Optionally install the windows debugging info as well.
+    if(MSVC)
+        install(FILES $<TARGET_PDB_FILE:VanillaRA> DESTINATION ${VANILLARA_INSTALL_DIR} OPTIONAL COMPONENT VanillaRADebug)
+    endif()
+
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+        # Install desktop entry
+        install(FILES ${CMAKE_SOURCE_DIR}/resources/vanillara.desktop DESTINATION share/applications COMPONENT VanillaRA)
+        # Install icon
+        install(FILES ${CMAKE_SOURCE_DIR}/resources/vanillara_icon.svg DESTINATION share/icons/hicolor/scalable/apps COMPONENT VanillaRA RENAME vanillara.svg)
+    endif()
 endif()

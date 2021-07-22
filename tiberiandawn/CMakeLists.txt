@@ -230,4 +230,29 @@ if(BUILD_VANILLATD)
     if(WIN32 AND NOT MSVC)
         set_target_properties(VanillaTD PROPERTIES LINK_FLAGS "-mwindows")
     endif()
+
+    # Handle some linux distributions using the linux standard base "games" folder instead of "bin"
+    if(USE_LSB_GAMES)
+        set(VANILLATD_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/games)
+    else()
+        set(VANILLATD_INSTALL_DIR ${CMAKE_INSTALL_BINDIR})
+    endif()
+    
+    # Install the main game binary
+    install(TARGETS VanillaTD
+        RUNTIME DESTINATION ${VANILLATD_INSTALL_DIR}
+        COMPONENT VanillaTD
+    )
+
+    # Optionally install the windows debugging info as well.
+    if(MSVC)
+        install(FILES $<TARGET_PDB_FILE:VanillaTD> DESTINATION ${VANILLATD_INSTALL_DIR} OPTIONAL COMPONENT VanillaTDDebug)
+    endif()
+
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+        # Install desktop entry
+        install(FILES ${CMAKE_SOURCE_DIR}/resources/vanillatd.desktop DESTINATION share/applications COMPONENT VanillaTD)
+        # Install icon
+        install(FILES ${CMAKE_SOURCE_DIR}/resources/vanillatd_icon.svg DESTINATION share/icons/hicolor/scalable/apps COMPONENT VanillaTD RENAME vanillatd.svg)
+    endif()
 endif()

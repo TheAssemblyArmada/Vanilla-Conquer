@@ -6,7 +6,7 @@ on:
 
 jobs:
   remaster_gcc:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
       with:
@@ -54,7 +54,7 @@ jobs:
         path: artifact
         
   vanilla_win_gcc:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         platform: [x86, amd64]
@@ -85,7 +85,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update -qq > /dev/null
-        sudo apt-get install -qq -y mingw-w64 imagemagick > /dev/null
+        sudo apt-get install -qq -y mingw-w64 imagemagick nsis > /dev/null
         wget -q https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz
         wget -q https://www.openal-soft.org/openal-binaries/openal-soft-1.21.0-bin.zip
         tar -xf SDL2-devel-2.0.12-mingw.tar.gz -C /tmp
@@ -97,6 +97,7 @@ jobs:
         cmake -DCMAKE_TOOLCHAIN_FILE=cmake/${{ steps.vars.outputs.arc_path }}-mingw-w64-toolchain.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DSDL2=ON -DSDL2_ROOT_DIR=/tmp/SDL2-2.0.12 -DSDL2_INCLUDE_DIR=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/include/SDL2 -DSDL2_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/lib/libSDL2.dll.a -DSDL2_SDLMAIN_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/lib/libSDL2main.a -DSDL2_RUNTIME_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/bin/SDL2.dll -DOPENAL=ON -DOPENAL_ROOT=/tmp/openal-soft-1.21.0-bin -DOPENAL_INCLUDE_DIR=/tmp/openal-soft-1.21.0-bin/include/AL -DOPENAL_LIBRARY=/tmp/openal-soft-1.21.0-bin/libs/${{ steps.vars.outputs.oal_path }}/libOpenAL32.dll.a -DOPENAL_RUNTIME_LIBRARY=/tmp/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DNETWORKING=OFF -DImageMagick_convert_EXECUTABLE=/usr/bin/convert -DImageMagick_convert_FOUND=TRUE -B build
 
     - name: Build Vanilla Conquer
+      continue-on-error: true
       run: |
         cmake --build build -- -j 4
         cp ./build/vanillatd.exe ./build/vanillatd.dbg
@@ -105,13 +106,17 @@ jobs:
         ${{ steps.vars.outputs.arc_path }}-w64-mingw32-strip --strip-all ./build/vanillara.exe
         ${{ steps.vars.outputs.arc_path }}-w64-mingw32-objcopy --add-gnu-debuglink=./build/vanillatd.dbg ./build/vanillatd.exe
         ${{ steps.vars.outputs.arc_path }}-w64-mingw32-objcopy --add-gnu-debuglink=./build/vanillara.dbg ./build/vanillara.exe
+        cd build
+        cpack
 
     - name: Create archives
       run: |
+        cat build/_CPack_Packages/win32/NSIS/NSISOutput.log
         mkdir artifact
         7z a artifact/vanilla-conquer-win-gcc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd.exe ./build/vanillara.exe /tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/bin/SDL2.dll /tmp/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll
         7z a artifact/vanilla-conquer-win-gcc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dbg ./build/vanillara.dbg
-
+        cp ./build/vanilla-conquer-installer.exe artifact/vanilla-conquer-win-gcc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}.exe
+        
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
