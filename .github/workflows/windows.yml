@@ -123,11 +123,13 @@ jobs:
         
     - name: Configure Vanilla Conquer
       run: |
-        cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_TOOLS=ON -DBUILD_TESTS=ON -DSDL2=ON "-DSDL2_ROOT_DIR=$($Env:TEMP)\SDL2-2.0.12" -DOPENAL=ON "-DOPENAL_ROOT=C:\Program Files (x86)\OpenAL 1.1 SDK" -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DNETWORKING=ON "-DImageMagick_convert_EXECUTABLE=C:\Program Files\ImageMagick-7.0.10-Q16-HDRI\magick.exe" -DImageMagick_convert_FOUND=TRUE -B build
+        cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_TOOLS=ON -DBUILD_TESTS=ON -DSDL2=ON "-DSDL2_ROOT_DIR=$($Env:TEMP)\SDL2-2.0.12" -DOPENAL=ON "-DOPENAL_ROOT=C:\Program Files (x86)\OpenAL 1.1 SDK" "-DOPENAL_RUNTIME_LIBRARY=$($Env:TEMP)/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll" -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DNETWORKING=ON "-DImageMagick_convert_EXECUTABLE=C:\Program Files\ImageMagick-7.0.10-Q16-HDRI\magick.exe" -DImageMagick_convert_FOUND=TRUE -B build
 
     - name: Build Vanilla Conquer
       run: |
         cmake --build build --config RelWithDebInfo
+        cd build
+        cpack
 
     - name: Run unit tests
       run: |
@@ -141,6 +143,7 @@ jobs:
         mkdir artifact
         7z a artifact/vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd.exe ./build/vanillara.exe ./build/vanillamix.exe $TEMP/SDL2-2.0.12/lib/${{ steps.vars.outputs.sdl_path }}/SDL2.dll $TEMP/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll
         7z a artifact/vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.pdb ./build/vanillara.pdb ./build/vanillamix.pdb
+        cp ./build/vanilla-conquer-installer.exe artifact/vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}.exe
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2
