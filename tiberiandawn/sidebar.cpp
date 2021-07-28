@@ -916,11 +916,11 @@ void SidebarClass::AI(KeyNumType& input, int x, int y)
         }
     }
 
-    if ((!IsRepairMode) && Repair->IsOn) {
+    if ((!IsRepairMode) && Repair && Repair->IsOn) {
         Repair->Turn_Off();
     }
 
-    if ((!IsSellMode) && Upgrade->IsOn) {
+    if ((!IsSellMode) && Upgrade && Upgrade->IsOn) {
         Upgrade->Turn_Off();
     }
 
