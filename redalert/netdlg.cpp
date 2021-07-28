@@ -6112,7 +6112,7 @@ static JoinEventType Get_NewGame_Responses(ColorListClass* playerlist, int* colo
 unsigned long Compute_Name_CRC(char* name)
 {
     char buf[80];
-    unsigned long crc = 0L;
+    unsigned int crc = 0;
     int i;
 
     strcpy(buf, name);

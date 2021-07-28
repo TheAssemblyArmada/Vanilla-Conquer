@@ -94,9 +94,9 @@ bool bReconnectDialogCancelled;
 //	CRC[] is a record of our last 32 game CRC's.
 // ColorNames is for debug output in Print_CRCs
 //---------------------------------------------------------------------------
-static unsigned long GameCRC;
-static unsigned long CRC[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static unsigned int GameCRC;
+static unsigned int CRC[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static char* ColorNames[8] = {"Yellow", "LtBlue", "Red", "Green", "Orange", "Grey", "Blue", "Brown"};
 
 //...........................................................................
@@ -201,7 +201,7 @@ static void Queue_Playback(void);
 // Debugging:
 //...........................................................................
 static void Compute_Game_CRC(void);
-void Add_CRC(unsigned long* crc, unsigned long val);
+void Add_CRC(unsigned int* crc, unsigned int val);
 static void Print_CRCs(EventClass* ev);
 static void Init_Queue_Mono(ConnManClass* net);
 static void Update_Queue_Mono(ConnManClass* net, int flow_index);
@@ -3685,10 +3685,11 @@ static void Compute_Game_CRC(void)
  * HISTORY:                                                                *
  *   05/09/1995 BRR : Created.                                             *
  *=========================================================================*/
-void Add_CRC(unsigned long* crc, unsigned long val)
+void Add_CRC(unsigned int* crc, unsigned int val)
 {
     int hibit;
 
+    /* FIXME: Perhaps this should be updated to match 32-bits? */
     if ((*crc) & 0x80000000) {
         hibit = 1;
     } else {

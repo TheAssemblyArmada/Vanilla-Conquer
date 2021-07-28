@@ -474,7 +474,7 @@ bool Queue_Mission(TargetClass whom,
 bool Queue_Options(void);
 bool Queue_Exit(void);
 void Queue_AI(void);
-void Add_CRC(unsigned long* crc, unsigned long val);
+void Add_CRC(unsigned int* crc, unsigned int val);
 
 /*
 **	REINF.CPP
