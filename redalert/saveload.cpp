@@ -1389,7 +1389,7 @@ void Decode_All_Pointers(void)
     for (int index = 0; index < SelectedObjectsType::COUNT; index++) {
         DynamicVectorClass<ObjectClass*>& selection = CurrentObject.Raw(index);
         for (int j = 0; j < selection.Count(); j++) {
-            selection[j] = As_Object((TARGET)selection[j]);
+            selection[j] = As_Object(TARGET_SAFE_CAST(selection[j]));
             assert(selection[j] != NULL);
         }
     }
