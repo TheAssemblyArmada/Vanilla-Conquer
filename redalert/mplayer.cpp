@@ -599,28 +599,26 @@ int Surrender_Dialog(int text)
     //------------------------------------------------------------------------
     //	Dialog & button dimensions
     //------------------------------------------------------------------------
-    enum
-    {
-        D_DIALOG_W = 240 * RESFACTOR,                      // dialog width
-        D_DIALOG_H = 63 * RESFACTOR,                       // dialog height
-        D_DIALOG_X = ((320 * RESFACTOR - D_DIALOG_W) / 2), // centered x-coord
-        D_DIALOG_Y = ((200 * RESFACTOR - D_DIALOG_H) / 2), // centered y-coord
-        D_DIALOG_CX = D_DIALOG_X + (D_DIALOG_W / 2),       // coord of x-center
 
-        D_TXT6_H = 7 * RESFACTOR,     // ht of 6-pt text
-        D_MARGIN = 5 * RESFACTOR,     // margin width/height
-        D_TOPMARGIN = 20 * RESFACTOR, // top margin
+    int D_DIALOG_W = 240 * RESFACTOR;                      // dialog width
+    int D_DIALOG_H = 63 * RESFACTOR;                       // dialog height
+    int D_DIALOG_X = ((320 * RESFACTOR - D_DIALOG_W) / 2); // centered x-coord
+    int D_DIALOG_Y = ((200 * RESFACTOR - D_DIALOG_H) / 2); // centered y-coord
+    int D_DIALOG_CX = D_DIALOG_X + (D_DIALOG_W / 2);       // coord of x-center
 
-        D_OK_W = 45 * RESFACTOR,                                  // OK width
-        D_OK_H = 9 * RESFACTOR,                                   // OK height
-        D_OK_X = D_DIALOG_CX - D_OK_W - 5 * RESFACTOR,            // OK x
-        D_OK_Y = D_DIALOG_Y + D_DIALOG_H - D_OK_H - D_MARGIN * 2, // OK y
+    int D_TXT6_H = 7 * RESFACTOR;     // ht of 6-pt text
+    int D_MARGIN = 5 * RESFACTOR;     // margin width/height
+    int D_TOPMARGIN = 20 * RESFACTOR; // top margin
 
-        D_CANCEL_W = 45 * RESFACTOR,                                      // Cancel width
-        D_CANCEL_H = 9 * RESFACTOR,                                       // Cancel height
-        D_CANCEL_X = D_DIALOG_CX + 5 * RESFACTOR,                         // Cancel x
-        D_CANCEL_Y = D_DIALOG_Y + D_DIALOG_H - D_CANCEL_H - D_MARGIN * 2, // Cancel y
-    };
+    int D_OK_W = 45 * RESFACTOR;                                  // OK width
+    int D_OK_H = 9 * RESFACTOR;                                   // OK height
+    int D_OK_X = D_DIALOG_CX - D_OK_W - 5 * RESFACTOR;            // OK x
+    int D_OK_Y = D_DIALOG_Y + D_DIALOG_H - D_OK_H - D_MARGIN * 2; // OK y
+
+    int D_CANCEL_W = 45 * RESFACTOR;                                      // Cancel width
+    int D_CANCEL_H = 9 * RESFACTOR;                                       // Cancel height
+    int D_CANCEL_X = D_DIALOG_CX + 5 * RESFACTOR;                         // Cancel x
+    int D_CANCEL_Y = D_DIALOG_Y + D_DIALOG_H - D_CANCEL_H - D_MARGIN * 2; // Cancel y
 
     //------------------------------------------------------------------------
     //	Button enumerations
@@ -804,28 +802,26 @@ int Abort_Dialog(void)
     //------------------------------------------------------------------------
     //	Dialog & button dimensions
     //------------------------------------------------------------------------
-    enum
-    {
-        D_DIALOG_W = 170 * RESFACTOR,                      // dialog width
-        D_DIALOG_H = 63 * RESFACTOR,                       // dialog height
-        D_DIALOG_X = ((320 * RESFACTOR - D_DIALOG_W) / 2), // centered x-coord
-        D_DIALOG_Y = ((200 * RESFACTOR - D_DIALOG_H) / 2), // centered y-coord
-        D_DIALOG_CX = D_DIALOG_X + (D_DIALOG_W / 2),       // coord of x-center
 
-        D_TXT6_H = 7 * RESFACTOR,     // ht of 6-pt text
-        D_MARGIN = 5 * RESFACTOR,     // margin width/height
-        D_TOPMARGIN = 20 * RESFACTOR, // top margin
+    int D_DIALOG_W = 170 * RESFACTOR;                      // dialog width
+    int D_DIALOG_H = 63 * RESFACTOR;                       // dialog height
+    int D_DIALOG_X = ((320 * RESFACTOR - D_DIALOG_W) / 2); // centered x-coord
+    int D_DIALOG_Y = ((200 * RESFACTOR - D_DIALOG_H) / 2); // centered y-coord
+    int D_DIALOG_CX = D_DIALOG_X + (D_DIALOG_W / 2);       // coord of x-center
 
-        D_YES_W = 45 * RESFACTOR,                                   // YES width
-        D_YES_H = 9 * RESFACTOR,                                    // YES height
-        D_YES_X = D_DIALOG_CX - D_YES_W - 5 * RESFACTOR,            // YES x
-        D_YES_Y = D_DIALOG_Y + D_DIALOG_H - D_YES_H - D_MARGIN * 2, // YES y
+    int D_TXT6_H = 7 * RESFACTOR;     // ht of 6-pt text
+    int D_MARGIN = 5 * RESFACTOR;     // margin width/height
+    int D_TOPMARGIN = 20 * RESFACTOR; // top margin
 
-        D_NO_W = 45 * RESFACTOR,                                  // Cancel width
-        D_NO_H = 9 * RESFACTOR,                                   // Cancel height
-        D_NO_X = D_DIALOG_CX + 5 * RESFACTOR,                     // Cancel x
-        D_NO_Y = D_DIALOG_Y + D_DIALOG_H - D_NO_H - D_MARGIN * 2, // Cancel y
-    };
+    int D_YES_W = 45 * RESFACTOR;                                   // YES width
+    int D_YES_H = 9 * RESFACTOR;                                    // YES height
+    int D_YES_X = D_DIALOG_CX - D_YES_W - 5 * RESFACTOR;            // YES x
+    int D_YES_Y = D_DIALOG_Y + D_DIALOG_H - D_YES_H - D_MARGIN * 2; // YES y
+
+    int D_NO_W = 45 * RESFACTOR;                                  // Cancel width
+    int D_NO_H = 9 * RESFACTOR;                                   // Cancel height
+    int D_NO_X = D_DIALOG_CX + 5 * RESFACTOR;                     // Cancel x
+    int D_NO_Y = D_DIALOG_Y + D_DIALOG_H - D_NO_H - D_MARGIN * 2; // Cancel y
 
     //------------------------------------------------------------------------
     //	Button enumerations

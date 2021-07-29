@@ -191,7 +191,7 @@
 ** This is the multiplier factor to convert low resution coordinates
 **	into their actual resolution counterparts.
 */
-#define RESFACTOR 2
+extern int RESFACTOR;
 
 #define SIDEBAR_WID 80
 

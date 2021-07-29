@@ -1667,23 +1667,20 @@ int MapEditClass::Load_Scenario(void)
         /*
         **	Dialog & button dimensions
         */
-        enum
-        {
-            D_DIALOG_W = 320 * RESFACTOR,
-            D_DIALOG_H = 200 * RESFACTOR,
-            D_DIALOG_X = ((320 * RESFACTOR - D_DIALOG_W) / 2),
-            D_DIALOG_Y = ((200 * RESFACTOR - D_DIALOG_H) / 2),
+        int D_DIALOG_W = 320 * RESFACTOR;
+        int D_DIALOG_H = 200 * RESFACTOR;
+        int D_DIALOG_X = ((320 * RESFACTOR - D_DIALOG_W) / 2);
+        int D_DIALOG_Y = ((200 * RESFACTOR - D_DIALOG_H) / 2);
 
-            D_OK_W = 45,
-            D_OK_H = 9,
-            D_OK_X = D_DIALOG_X + 15 * RESFACTOR,
-            D_OK_Y = D_DIALOG_Y + D_DIALOG_H - 15 * RESFACTOR,
+        int D_OK_W = 45;
+        int D_OK_H = 9;
+        int D_OK_X = D_DIALOG_X + 15 * RESFACTOR;
+        int D_OK_Y = D_DIALOG_Y + D_DIALOG_H - 15 * RESFACTOR;
 
-            D_CANCEL_W = 45,
-            D_CANCEL_H = 9,
-            D_CANCEL_X = D_DIALOG_X + D_DIALOG_W - (D_CANCEL_W + 15 * RESFACTOR),
-            D_CANCEL_Y = D_DIALOG_Y + D_DIALOG_H - 15 * RESFACTOR
-        };
+        int D_CANCEL_W = 45;
+        int D_CANCEL_H = 9;
+        int D_CANCEL_X = D_DIALOG_X + D_DIALOG_W - (D_CANCEL_W + 15 * RESFACTOR);
+        int D_CANCEL_Y = D_DIALOG_Y + D_DIALOG_H - 15 * RESFACTOR;
 
         /*
         **	Button enumerations:
