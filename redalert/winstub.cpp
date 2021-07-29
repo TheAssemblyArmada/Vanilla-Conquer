@@ -692,17 +692,3 @@ void Memory_Error_Handler(void)
 
     exit(1);
 }
-
-#include "filepcx.h"
-void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned char* palette)
-{
-
-    GraphicBufferClass* load_buffer;
-
-    load_buffer = Read_PCX_File(name, (char*)palette, NULL, 0);
-
-    if (load_buffer) {
-        load_buffer->Blit(*video_page);
-        delete load_buffer;
-    }
-}

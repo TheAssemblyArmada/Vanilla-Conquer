@@ -34,12 +34,6 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
-/* Windows version of strncasecmp*/
-#ifdef _MSC_VER /* MinGW provides strncasecmp. */
-#define strncasecmp _strnicmp
-#define strcasecmp  _stricmp
-#endif
-
 //#define PETROGLYPH_EXAMPLE_MOD
 
 /**********************************************************************

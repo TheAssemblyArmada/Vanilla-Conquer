@@ -93,6 +93,7 @@ set(COMMON_SRC
     winasm.cpp
     windows.cpp
     winhide.cpp
+    winstub.cpp
     wsa.cpp
     xordelta.cpp
     xpipe.cpp
