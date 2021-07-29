@@ -58,6 +58,7 @@
 #define WWMEM_H
 
 #include "common/wwlib32.h"
+#include "common/winstub.h"
 #include "bench.h"
 #include "compat.h"
 #include "fixed.h"
@@ -636,11 +637,6 @@ char const* Version_Name(void);
 */
 WeaponType Weapon_From_Name(char const* name);
 ArmorType Armor_From_Name(char const* name);
-
-/*
-** Winstub.cpp
-*/
-void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned char* palette);
 
 /*
 ** Egos.CPP

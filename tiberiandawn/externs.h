@@ -51,6 +51,7 @@
 #include "infantry.h"
 #include "jshell.h"
 #include "common/vqaconfig.h"
+#include "common/winstub.h"
 #include "ccini.h"
 
 #ifdef REMASTER_BUILD
@@ -420,7 +421,6 @@ extern bool InMainLoop; // True if in game state rather than menu state
 #define GlyphX_Debug_Print(x) DBG_LOG(x)
 #endif
 extern void* PacketLater;
-void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned char* palette);
 
 extern unsigned int IsTheaterShape;
 
