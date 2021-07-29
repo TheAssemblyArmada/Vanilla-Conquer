@@ -38,17 +38,18 @@
 
 void GDI_Ending(void)
 {
-#ifdef DEMO
-    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-    Load_Title_Screen("DEMOPIC.PCX", &HidPage, Palette);
-    Blit_Hid_Page_To_Seen_Buff();
-    Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-    Keyboard->Clear();
-    Get_Key_Num();
-    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-    VisiblePage.Clear();
+    if (Is_Demo()) {
+        Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
+        Load_Title_Screen("DEMOPIC.CPS", &HidPage, Palette);
+        Blit_Hid_Page_To_Seen_Buff();
+        Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
+        Keyboard->Clear();
+        Keyboard->Get();
+        Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
+        VisiblePage.Clear();
+        return;
+    }
 
-#else
     if (TempleIoned) {
         Play_Movie("GDIFINB");
     } else {
@@ -92,7 +93,6 @@ void GDI_Ending(void)
     Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
 
     Play_Movie("CC2TEASE");
-#endif
 }
 
 #ifndef DEMO

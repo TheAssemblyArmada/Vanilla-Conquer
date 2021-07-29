@@ -362,23 +362,21 @@ void Main_Game(int argc, char* argv[])
 #endif // DEMO
     }
 
-#ifdef DEMO
-    Hide_Mouse();
-    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, NULL);
-    Load_Title_Screen("DEMOPIC.PCX", &HidPage, Palette);
-    Blit_Hid_Page_To_Seen_Buff();
-    Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, NULL);
-    Clear_KeyBuffer();
-    Get_Key();
-    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, NULL);
-//		Show_Mouse();
-#else
+    if (Is_Demo()) {
+        Hide_Mouse();
+        Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, NULL);
+        Load_Title_Screen("DEMOPIC.CPS", &HidPage, Palette);
+        Blit_Hid_Page_To_Seen_Buff();
+        Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, NULL);
+        Keyboard->Clear();
+        Keyboard->Get();
+        Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, NULL);
+    }
 
     /*
     **	Free the scenario description buffers
     */
     Free_Scenario_Descriptions();
-#endif
 
 #ifndef NOMEMCHECK
     Uninit_Game();
@@ -1935,8 +1933,6 @@ int Load_Interpolated_Palettes(char const* filename, bool add)
     PalettesRead = false;
     CCFileClass file(filename);
 
-    //	RawFileClass	*palette_file;
-
     if (!add) {
         for (i = 0; i < ARRAY_SIZE(InterpolatedPalettes); i++) {
             InterpolatedPalettes[i] = NULL;
@@ -1949,25 +1945,24 @@ int Load_Interpolated_Palettes(char const* filename, bool add)
         }
     }
 
-    //	palette_file = new RawFileClass (filename);
-    //	if (file.Is_Available()){
+    if (file.Is_Available()) {
+        file.Open(READ);
+        file.Read(&num_palettes, 4);
 
-    file.Open(READ);
-    file.Read(&num_palettes, 4);
+        for (i = 0; i < num_palettes; i++) {
+            InterpolatedPalettes[i + start_palette] = (unsigned char*)malloc(65536);
+            memset(InterpolatedPalettes[i + start_palette], 0, 65536);
+            for (int y = 0; y < 256; y++) {
+                file.Read(InterpolatedPalettes[i + start_palette] + y * 256, y + 1);
+            }
 
-    for (i = 0; i < num_palettes; i++) {
-        InterpolatedPalettes[i + start_palette] = (unsigned char*)malloc(65536);
-        memset(InterpolatedPalettes[i + start_palette], 0, 65536);
-        for (int y = 0; y < 256; y++) {
-            file.Read(InterpolatedPalettes[i + start_palette] + y * 256, y + 1);
+            Rebuild_Interpolated_Palette(InterpolatedPalettes[i + start_palette]);
         }
 
-        Rebuild_Interpolated_Palette(InterpolatedPalettes[i + start_palette]);
+        PalettesRead = true;
+        file.Close();
     }
 
-    PalettesRead = true;
-    file.Close();
-    //	}
     PaletteCounter = 0;
     return (num_palettes);
 }
@@ -3360,6 +3355,13 @@ static void Reinit_Secondary_Mixfiles()
 {
     static bool in_progress = false;
 
+    /*
+    ** Demo loads only once and this would unload DEMOM.MIX.
+    */
+    if (Is_Demo()) {
+        return;
+    }
+
     if (GeneralMix != nullptr && !in_progress) {
         in_progress = true;
 
@@ -3872,4 +3874,28 @@ void Shake_The_Screen(int shakes, HousesType house)
     HidPage.Blit(SeenBuff);
     Show_Mouse();
 #endif
+}
+
+/***********************************************************************************************
+ * Is_Demo -- Function to determine if we are running with demo files                          *
+ *                                                                                             *
+ * INPUT:    Nothing                                                                           *
+ *                                                                                             *
+ * OUTPUT:   true if we seem to have demo files                                                *
+ *                                                                                             *
+ * WARNINGS: None                                                                              *
+ *                                                                                             *
+ *=============================================================================================*/
+bool Is_Demo(void)
+{
+    static bool bAlreadyChecked = false;
+    static bool bDemo = false;
+
+    if (!bAlreadyChecked) {
+        CCFileClass file("DEMO.MIX");
+        bDemo = file.Is_Available();
+        bAlreadyChecked = true;
+    }
+
+    return bDemo;
 }
