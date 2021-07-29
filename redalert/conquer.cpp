@@ -94,6 +94,8 @@
 MPG_RESPONSE far __stdcall MpegCallback(MPG_CMD cmd, LPVOID data, LPVOID user);
 #endif
 
+int RESFACTOR = 2;
+
 /* Dummy function for Interpolate_2X_Scale in `common` database. */
 int Get_Resolution_Factor(void)
 {
