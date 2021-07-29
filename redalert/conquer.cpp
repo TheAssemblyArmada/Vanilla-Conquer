@@ -2525,7 +2525,7 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
 void Play_Movie(VQType name, ThemeType theme, bool clrscrn, bool immediate)
 {
     if (name != VQ_NONE) {
-        if (name == VQ_REDINTRO) {
+        if (name == VQ_REDINTRO && RESFACTOR != 1) {
             IsVQ640 = true;
         }
         Play_Movie(VQName[name], theme, clrscrn, immediate);
