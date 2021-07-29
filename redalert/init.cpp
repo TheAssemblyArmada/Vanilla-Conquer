@@ -1923,7 +1923,9 @@ void Init_Random(void)
  *=============================================================================================*/
 void Load_Title_Page(bool visible)
 {
-    Load_Title_Screen("TITLE.PCX", &HidPage, (unsigned char*)CCPalette.Get_Data());
+    const char* titlepict = RESFACTOR == 1 ? "TITLE.CPS" : "TITLE.PCX";
+
+    Load_Title_Screen((char*)titlepict, &HidPage, (unsigned char*)CCPalette.Get_Data());
     if (visible) {
         HidPage.Blit(SeenPage);
     }

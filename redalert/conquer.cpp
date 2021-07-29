@@ -99,7 +99,7 @@ int RESFACTOR = 2;
 /* Dummy function for Interpolate_2X_Scale in `common` database. */
 int Get_Resolution_Factor(void)
 {
-    return 1;
+    return RESFACTOR - 1;
 }
 
 #define SHAPE_TRANS 0x40
