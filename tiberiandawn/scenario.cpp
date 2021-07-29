@@ -75,78 +75,75 @@ bool Start_Scenario(char* root, bool briefing)
     }
     CCDebugString("C&C95 - Scenario read OK.\n");
 
-#ifdef DEMO
-
-    if (briefing) {
-        Play_Movie(BriefMovie);
-        Play_Movie(ActionMovie, TransitTheme);
-    }
-    Theme.Queue_Song(THEME_AOI);
-
-#else
-
-    /*
-    ** Install some hacks around the movie playing to account for the choose-
-    ** sides introduction.  We don't want an intro movie on scenario 1, and
-    ** we don't want a briefing movie on GDI scenario 1.
-    */
-    if (Scenario < 20 && (!Special.IsJurassic || !AreThingiesEnabled)) {
-        if (Scenario != 1 || Whom == HOUSE_GOOD) {
-            Play_Movie(IntroMovie);
+    if (Is_Demo()) {
+        if (briefing) {
+            Play_Movie(BriefMovie);
+            Play_Movie(ActionMovie, TransitTheme);
         }
+        Theme.Queue_Song(THEME_AOI);
+    } else {
+        /*
+        ** Install some hacks around the movie playing to account for the choose-
+        ** sides introduction.  We don't want an intro movie on scenario 1, and
+        ** we don't want a briefing movie on GDI scenario 1.
+        */
+        if (Scenario < 20 && (!Special.IsJurassic || !AreThingiesEnabled)) {
+            if (Scenario != 1 || Whom == HOUSE_GOOD) {
+                Play_Movie(IntroMovie);
+            }
 #ifndef REMASTER_BUILD
-        if (Scenario > 1 || Whom == HOUSE_BAD) {
+            if (Scenario > 1 || Whom == HOUSE_BAD) {
+                if (briefing) {
+                    PreserveVQAScreen = (Scenario == 1);
+                    Play_Movie(BriefMovie);
+                }
+            }
+#else
             if (briefing) {
                 PreserveVQAScreen = (Scenario == 1);
                 Play_Movie(BriefMovie);
             }
-        }
-#else
-        if (briefing) {
-            PreserveVQAScreen = (Scenario == 1);
-            Play_Movie(BriefMovie);
-        }
 #endif
-        Play_Movie(ActionMovie, TransitTheme);
-        if (TransitTheme == THEME_NONE) {
-            Theme.Queue_Song(THEME_AOI);
-        }
-    } else {
-        Play_Movie(BriefMovie);
-        Play_Movie(ActionMovie, TransitTheme);
-
-#ifdef NEWMENU
-
-        char buffer[25];
-        sprintf(buffer, "%s.VQA", BriefMovie);
-        CCFileClass file(buffer);
-
-        if (GameToPlay == GAME_NORMAL && !file.Is_Available()) {
-            VisiblePage.Clear();
-            Set_Palette(GamePalette);
-            //			Show_Mouse();
-            /*
-            ** Show the mission briefing. Pretend we are inside the main loop so the palette
-            ** will be correct on the textured buttons.
-            */
-            bool oldinmain = InMainLoop;
-            InMainLoop = true;
-
-            // TO_FIX - Covert ops missions want to pop up a dialog box. ST - 9/6/2019 1:48PM
-#ifndef REMASTER_BUILD
-            Restate_Mission(ScenarioName, TXT_OK, TXT_NONE);
-#endif
-
-            InMainLoop = oldinmain;
-            //			Hide_Mouse();
+            Play_Movie(ActionMovie, TransitTheme);
             if (TransitTheme == THEME_NONE) {
                 Theme.Queue_Song(THEME_AOI);
             }
-        }
+        } else {
+            Play_Movie(BriefMovie);
+            Play_Movie(ActionMovie, TransitTheme);
+
+#ifdef NEWMENU
+
+            char buffer[25];
+            sprintf(buffer, "%s.VQA", BriefMovie);
+            CCFileClass file(buffer);
+
+            if (GameToPlay == GAME_NORMAL && !file.Is_Available()) {
+                VisiblePage.Clear();
+                Set_Palette(GamePalette);
+                //			Show_Mouse();
+                /*
+                ** Show the mission briefing. Pretend we are inside the main loop so the palette
+                ** will be correct on the textured buttons.
+                */
+                bool oldinmain = InMainLoop;
+                InMainLoop = true;
+
+                // TO_FIX - Covert ops missions want to pop up a dialog box. ST - 9/6/2019 1:48PM
+#ifndef REMASTER_BUILD
+                Restate_Mission(ScenarioName, TXT_OK, TXT_NONE);
+#endif
+
+                InMainLoop = oldinmain;
+                //			Hide_Mouse();
+                if (TransitTheme == THEME_NONE) {
+                    Theme.Queue_Song(THEME_AOI);
+                }
+            }
 
 #endif
+        }
     }
-#endif
 
     /*
     ** Set the options values, since the palette has been initialized by Read_Scenario
@@ -440,9 +437,9 @@ void Do_Win(void)
         }
     }
 
-#ifndef DEMO
-    Play_Movie(WinMovie);
-#endif
+    if (!Is_Demo()) {
+        Play_Movie(WinMovie);
+    }
 
     Keyboard->Clear();
 
@@ -450,88 +447,81 @@ void Do_Win(void)
     **	Do the ending screens only if not playing back a recorded game.
     */
     if (!PlaybackGame) {
+        if (Is_Demo()) {
+            switch (Scenario) {
+            case 1:
+                Score.Presentation();
+                Scenario = 10;
+                break;
 
-#ifdef DEMO
+            case 10:
+                Score.Presentation();
+                Scenario = 6;
+                break;
 
-        switch (Scenario) {
-        case 1:
-            Score.Presentation();
-            Scenario = 10;
-            break;
-
-        case 10:
-            Score.Presentation();
-            Scenario = 6;
-            break;
-
-        default:
-            Score.Presentation();
-            GDI_Ending();
-            GameActive = false;
-            Show_Mouse();
-            return;
-            //				Prog_End();
-            //				exit(0);
-            //				break;
-        }
-
-#else
-
+            default:
+                Score.Presentation();
+                GDI_Ending();
+                GameActive = false;
+                Show_Mouse();
+                return;
+            }
+        } else {
 #ifdef NEWMENU
-        if (Scenario >= 20) {
-            Keyboard->Clear();
-            Score.Presentation();
-            GameActive = false;
-            Show_Mouse();
-            return;
-        }
+            if (Scenario >= 20) {
+                Keyboard->Clear();
+                Score.Presentation();
+                GameActive = false;
+                Show_Mouse();
+                return;
+            }
 #endif
 
-        if (PlayerPtr->Class->House == HOUSE_BAD && Scenario == 13) {
-            Nod_Ending();
-            // Prog_End();
-            // exit(0);
-            SeenBuff.Clear();
-            Show_Mouse();
-            GameActive = false;
-            return;
-        }
-        if (PlayerPtr->Class->House == HOUSE_GOOD && Scenario == 15) {
-            GDI_Ending();
-            // Prog_End();
-            // exit(0);
-            SeenBuff.Clear();
-            Show_Mouse();
-            GameActive = false;
-            return;
-        }
-
-        if ((Special.IsJurassic && AreThingiesEnabled) && Scenario == 5) {
-            Prog_End("Do_Win - Last Jurassic mission complete");
-            if (!RunningAsDLL) {
-                exit(0);
+            if (PlayerPtr->Class->House == HOUSE_BAD && Scenario == 13) {
+                Nod_Ending();
+                // Prog_End();
+                // exit(0);
+                SeenBuff.Clear();
+                Show_Mouse();
+                GameActive = false;
+                return;
             }
-            return;
-        }
+            if (PlayerPtr->Class->House == HOUSE_GOOD && Scenario == 15) {
+                GDI_Ending();
+                // Prog_End();
+                // exit(0);
+                SeenBuff.Clear();
+                Show_Mouse();
+                GameActive = false;
+                return;
+            }
 
-        if (!Special.IsJurassic || !AreThingiesEnabled) {
+            if ((Special.IsJurassic && AreThingiesEnabled) && Scenario == 5) {
+                Prog_End("Do_Win - Last Jurassic mission complete");
+                if (!RunningAsDLL) {
+                    exit(0);
+                }
+                return;
+            }
+
+            if (!Special.IsJurassic || !AreThingiesEnabled) {
+                Keyboard->Clear();
+                InterpolationPaletteChanged = true;
+                InterpolationPalette = Palette;
+                Score.Presentation();
+
+                /*
+                **	Skip scenario #7 if the airfield was blown up.
+                */
+                if (Scenario == 6 && PlayerPtr->Class->House == HOUSE_GOOD && SabotagedType == STRUCT_AIRSTRIP) {
+                    Scenario++;
+                }
+
+                Map_Selection();
+            }
+            Scenario++;
             Keyboard->Clear();
-            InterpolationPaletteChanged = true;
-            InterpolationPalette = Palette;
-            Score.Presentation();
-
-            /*
-            **	Skip scenario #7 if the airfield was blown up.
-            */
-            if (Scenario == 6 && PlayerPtr->Class->House == HOUSE_GOOD && SabotagedType == STRUCT_AIRSTRIP) {
-                Scenario++;
-            }
-
-            Map_Selection();
         }
-        Scenario++;
-#endif
-        Keyboard->Clear();
     }
 
     CarryOverMoney = PlayerPtr->Credits;

@@ -386,6 +386,7 @@ void const* Hires_Retrieve(const char* name);
 int Get_Resolution_Factor(void);
 
 void Shake_The_Screen(int shakes, HousesType house = HOUSE_NONE);
+bool Is_Demo(void);
 
 /*
 ** INTERPAL.CPP
