@@ -44,6 +44,7 @@
 
 #include "palette.h"
 #include "timer.h"
+#include "framelimit.h"
 
 #include <string.h>
 
@@ -177,6 +178,7 @@ void Fade_Palette_To(void* palette1, unsigned int delay, void (*callback)())
         .................. Wait for time increment to elapse ..................
         */
         if (changed) {
+            Frame_Limiter();
             while (WinTickCount.Time() < (int)timer) {
                 /*
                 ................. Update callback while waiting .................
