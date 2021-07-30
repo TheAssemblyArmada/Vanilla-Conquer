@@ -1900,8 +1900,9 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                 production = false;
             }
 
-            remapper = 0;
-
+            if (Get_Resolution_Factor()) {
+                remapper = 0;
+            }
             /*
             **	Now that the shape of the object at the current working slot has been found,
             **	draw it and any graphic overlays as necessary.
