@@ -1001,8 +1001,9 @@ bool SidebarClass::Activate(int control)
     int sidewidth = SeenBuff.Get_Width() - sidex;
     int sideheight = SeenBuff.Get_Height() - sidey;
 
-    if (PlaybackGame)
+    if (AllowAttract) {
         return (old);
+    }
 
     /*
     **	Determine the new state of the sidebar.
