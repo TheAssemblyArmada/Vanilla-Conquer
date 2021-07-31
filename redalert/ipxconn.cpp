@@ -57,7 +57,7 @@
 #ifdef _WIN32
 #include "common/tcpip.h"
 #else // _WIN32
-#include "fakesock.h"
+#include "common/fakesock.h"
 #endif // _WIN32
 #endif // WINSOCK_IPX
 

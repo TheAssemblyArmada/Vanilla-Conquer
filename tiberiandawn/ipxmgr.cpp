@@ -289,7 +289,13 @@ int IPXManagerClass::Init()
     int i;
 
     if (GameToPlay != GAME_INTERNET) {
-
+#ifdef WINSOCK_IPX
+        /* Construct UDP Interface Class definitevly. */
+        if (!PacketTransport) {
+            PacketTransport = new UDPInterfaceClass();
+            PacketTransport->Init();
+        }
+#endif
         //------------------------------------------------------------------------
         //	Error if IPX not installed
         //------------------------------------------------------------------------
