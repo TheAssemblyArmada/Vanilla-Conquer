@@ -13,7 +13,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\ipxmgr.h_v   1.10   16 Oct 1995 16:47:34   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/IPXMGR.H 1     3/03/97 10:24a Joe_bostic $ */
 /***************************************************************************
  **   C O N F I D E N T I A L --- W E S T W O O D    S T U D I O S        **
  ***************************************************************************
@@ -133,7 +133,7 @@ This is Virgin Interactive Entertainment's registered socket ID.
 This is the maximum number of IPX connections supported.  Just change this
 value to support more.
 ---------------------------------------------------------------------------*/
-#define CONNECT_MAX 6
+#define CONNECT_MAX 7
 
 /*---------------------------------------------------------------------------
 These routines report the location & length of the real-mode routine, as
@@ -174,13 +174,14 @@ public:
     These routines control creation of the "Connections" (data queues) for
     each remote system.
     .....................................................................*/
-    bool Create_Connection(int id, char* name, IPXAddressClass* address);
-    bool Delete_Connection(int id);
+    int Create_Connection(int id, char* name, IPXAddressClass* address);
+    int Delete_Connection(int id);
     virtual int Num_Connections(void);
     virtual int Connection_ID(int index);
     char* Connection_Name(int id);
     IPXAddressClass* Connection_Address(int id);
     virtual int Connection_Index(int id);
+    void Set_Connection_Parms(int index, int id, char* name);
 
     /*.....................................................................
     This is how the application sends & receives messages.
@@ -387,4 +388,5 @@ private:
 };
 
 #endif
+
 /*************************** end of ipxmgr.h *******************************/
