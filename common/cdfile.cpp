@@ -419,6 +419,54 @@ char const* CDFileClass::Set_Name(char const* filename)
     return (File_Name());
 }
 
+int CDFileClass::Is_Available(int forced)
+{
+    std::string filename = RawFileClass::File_Name();
+
+    if (IsDisabled || !First || PathsClass::Is_Absolute(filename.c_str())) {
+        return BufferIOFileClass::Is_Available(forced);
+    }
+
+    /*
+    **	Attempt to find the file first. Check the current directory. If not found there, then
+    **	search all the path specifications available. If it still can't be found, then just
+    **	fall into the normal raw file filename setting system.
+    */
+    SearchDriveType* srch = First;
+
+    while (srch) {
+        /*
+        **	Build a pathname to search for.
+        */
+        std::string path = srch->Path;
+        path += PathsClass::SEP;
+        path += filename;
+
+        /*
+        **	Check to see if the file could be found. The low level Is_Available logic will
+        **	prompt if necessary when the CD-ROM drive has been removed. In all other cases,
+        **	it will return false and the search process will continue.
+        */
+        BufferIOFileClass::Set_Name(path.c_str());
+        if (BufferIOFileClass::Is_Available()) {
+            return true;
+        }
+
+        /*
+        **	It wasn't found, so try the next path entry.
+        */
+        srch = (SearchDriveType*)srch->Next;
+    }
+
+    /*
+    **	At this point, all path searching has failed. Just set the file name to the
+    **	original and return its availability.
+    */
+    BufferIOFileClass::Set_Name(filename.c_str());
+
+    return BufferIOFileClass::Is_Available(forced);
+}
+
 /***********************************************************************************************
  * CDFileClass::Open -- Opens the file wherever it can be found.                               *
  *                                                                                             *
