@@ -92,6 +92,7 @@
 #include "function.h"
 #include <time.h>
 #include "common/tcpip.h"
+#include "framelimit.h"
 #define SHOW_MONO 0
 
 // ST = 12/17/2018 5:44PM
@@ -1831,6 +1832,7 @@ static int Net_Join_Dialog(void)
         so Call_Back() doesn't intercept global messages from me!
         ---------------------------------------------------------------------*/
         Call_Back();
+        Frame_Limiter();
     }
 
     /*------------------------------------------------------------------------
@@ -3755,6 +3757,7 @@ static int Net_New_Dialog(void)
         so Call_Back() doesn't intercept global messages from me!
         ---------------------------------------------------------------------*/
         Call_Back();
+        Frame_Limiter();
 
     } /* end of while */
 
@@ -4690,6 +4693,7 @@ static int Net_Fake_New_Dialog(void)
         so Call_Back() doesn't intercept global messages from me!
         ---------------------------------------------------------------------*/
         Call_Back();
+        Frame_Limiter();
 
     } /* end of while */
 
@@ -5356,6 +5360,7 @@ static int Net_Fake_Join_Dialog(void)
         so Call_Back() doesn't intercept global messages from me!
         ---------------------------------------------------------------------*/
         Call_Back();
+        Frame_Limiter();
     }
 
     /*------------------------------------------------------------------------
