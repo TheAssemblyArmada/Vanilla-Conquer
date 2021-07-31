@@ -337,8 +337,10 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     /*
     ** Init gamepad.
     */
-    SDL_Init(SDL_INIT_GAMECONTROLLER);
-    Keyboard->Open_Controller();
+    if(Settings.Mouse.ControllerEnabled) {
+        SDL_Init(SDL_INIT_GAMECONTROLLER);
+        Keyboard->Open_Controller();
+    }
 
     return true;
 }

@@ -580,7 +580,7 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
                 break;
             }
 
-            if (Settings.Mouse.RawInput) {
+            if (Settings.Mouse.RawInput || Is_Gamepad_Active()) {
                 Get_Video_Mouse(x, y);
             } else {
                 float scale_x = 1.0f, scale_y = 1.0f;
@@ -656,6 +656,7 @@ void WWKeyboardClass::Open_Controller()
     for (int i = 0; i < SDL_NumJoysticks(); ++i) {
         if (SDL_IsGameController(i)) {
             GameController = SDL_GameControllerOpen(i);
+            //Settings.Mouse.RawInput = false;
         }
     }
 

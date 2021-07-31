@@ -16,6 +16,7 @@ public:
     {
         bool RawInput;
         int Sensitivity;
+        bool ControllerEnabled;
         int ControllerPointerSpeed;
     } Mouse;
 
