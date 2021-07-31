@@ -267,6 +267,7 @@ typedef struct NodeNameTag
         {
             HousesType House;
             unsigned char Color;
+            HousesType ID;
         } Player;
     };
 } NodeNameType;

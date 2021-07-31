@@ -132,6 +132,8 @@ set(TIBDAWN_SRC
     unit.cpp
     visudlg.cpp
     winstub.cpp
+    wsproto.cpp
+    wspudp.cpp
 )
 
 if(CMAKE_CONFIGURATION_TYPES)
@@ -222,6 +224,9 @@ if(BUILD_VANILLATD)
     set_target_properties(VanillaTD PROPERTIES OUTPUT_NAME vanillatd)
     if(MAP_EDITORTD)
         target_compile_definitions(VanillaTD PUBLIC INTERNAL_VERSION)
+    endif()
+    if(NETWORKING)
+        target_compile_definitions(VanillaTD PUBLIC WINSOCK_IPX)
     endif()
     # Control if we auto generate a console and which "main" function we link using MSVC.
     if(MSVC)
