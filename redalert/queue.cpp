@@ -3466,7 +3466,7 @@ static void Queue_Playback(void)
     //------------------------------------------------------------------------
     if (Keyboard->Check()) {
         key = Keyboard->Get();
-        if (key == KA_ESC || Session.Attract) {
+        if (key == KN_ESC || Session.Attract) {
             GameActive = false;
             return;
         }

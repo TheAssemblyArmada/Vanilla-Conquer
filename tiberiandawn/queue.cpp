@@ -3127,7 +3127,7 @@ static void Queue_Playback(void)
         // If the user hit ESC, end the recording.  If this is an Attract-mode
         // recording, end it no matter what the user does (any key or mouse).
         //
-        if (key == KA_ESC || AllowAttract) {
+        if (key == KN_ESC || AllowAttract) {
             GameActive = false;
             return;
         }
