@@ -3488,7 +3488,7 @@ static void Queue_Playback(void)
     //------------------------------------------------------------------------
     Compute_Game_CRC();
     CRC[Frame & 0x001f] = GameCRC;
-
+#if 0 // This whole block is potentially the cause of playback desyncs, so wall it off for now.
     //------------------------------------------------------------------------
     // If we've reached the CRC print frame, do so & exit
     //------------------------------------------------------------------------
@@ -3517,7 +3517,7 @@ static void Queue_Playback(void)
             return;
         }
     }
-
+#endif
     //------------------------------------------------------------------------
     //	Read the DoList from disk
     //------------------------------------------------------------------------
@@ -3659,8 +3659,9 @@ static void Compute_Game_CRC(void)
     //------------------------------------------------------------------------
     //	A random #
     //------------------------------------------------------------------------
-    //	Add_CRC(&GameCRC, Scen.RandomNumber.Seed);
-    Add_CRC(&GameCRC, Scen.RandomNumber);
+    // Capture the current internal value, don't roll the random, otherwise playbacks desync.
+    Add_CRC(&GameCRC, Scen.RandomNumber.Seed);
+    // Add_CRC(&GameCRC, Scen.RandomNumber);
 
 } /* end of Compute_Game_CRC */
 

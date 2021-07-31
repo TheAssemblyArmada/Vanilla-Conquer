@@ -3150,6 +3150,7 @@ static void Queue_Playback(void)
     Compute_Game_CRC();
     CRC[Frame & 0x001f] = GameCRC;
 
+#if 0 // This stuff applies to network games, lets keep it out for now for simplicity.
     //------------------------------------------------------------------------
     //	Don't read anything the first time through (since the Queue_AI_Network
     //	routine didn't write anything the first time through); do this after the
@@ -3169,7 +3170,7 @@ static void Queue_Playback(void)
             return;
         }
     }
-
+#endif
     //------------------------------------------------------------------------
     //	Read the DoList from disk
     //------------------------------------------------------------------------
@@ -3287,7 +3288,9 @@ static void Compute_Game_CRC(void)
     //------------------------------------------------------------------------
     //	A random #
     //------------------------------------------------------------------------
-    Add_CRC(&GameCRC, rand());
+    // This should just store the current value, not roll it as well. Otherwise
+    // we get a mismatch on playback.
+    // Add_CRC(&GameCRC, rand());
 
 } /* end of Compute_Game_CRC */
 
