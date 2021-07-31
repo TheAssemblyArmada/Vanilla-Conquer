@@ -160,11 +160,6 @@ SidebarClass::SidebarClass(void)
     */
     new (&Column[0]) StripClass(InitClass());
     new (&Column[1]) StripClass(InitClass());
-
-    Column[0].X = COLUMN_ONE_X * RESFACTOR;
-    Column[0].Y = COLUMN_ONE_Y * RESFACTOR;
-    Column[1].X = COLUMN_TWO_X * RESFACTOR;
-    Column[1].Y = COLUMN_TWO_Y * RESFACTOR;
 }
 
 /***********************************************************************************************
@@ -236,10 +231,10 @@ void SidebarClass::One_Time(void)
     **	Set up the coordinates for the sidebar strips. These coordinates are for
     **	the upper left corner.
     */
-    //	Column[0].X = COLUMN_ONE_X * RESFACTOR;
-    //	Column[0].Y = COLUMN_ONE_Y * RESFACTOR;
-    //	Column[1].X = COLUMN_TWO_X * RESFACTOR;
-    //	Column[1].Y = COLUMN_TWO_Y * RESFACTOR;
+    Column[0].X = COLUMN_ONE_X * RESFACTOR;
+    Column[0].Y = COLUMN_ONE_Y * RESFACTOR;
+    Column[1].X = COLUMN_TWO_X * RESFACTOR;
+    Column[1].Y = COLUMN_TWO_Y * RESFACTOR;
     Column[0].One_Time(0);
     Column[1].One_Time(1);
 
