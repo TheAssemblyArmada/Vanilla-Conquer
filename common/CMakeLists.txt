@@ -111,6 +111,7 @@ set(COMMONR_SRC
     framelimit.cpp
     gbuffer.cpp
     interpal.cpp
+    ipxaddr.cpp
     soundio_null.cpp
     tcpip_null.cpp
     video_null.cpp
@@ -122,6 +123,7 @@ set(COMMONV_SRC
     framelimit.cpp
     gbuffer.cpp
     interpal.cpp
+    ipxaddr.cpp
     tcpip.cpp
     tcpip_null.cpp
     unvqbuff.cpp

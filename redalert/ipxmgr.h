@@ -118,7 +118,7 @@
 */
 #include "ipxconn.h"
 #include "ipxgconn.h"
-#include "ipxaddr.h"
+#include "common/ipxaddr.h"
 #include "connmgr.h"
 
 /*
