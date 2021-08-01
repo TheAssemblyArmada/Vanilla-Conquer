@@ -35,6 +35,7 @@
 #define WSPUDP_H
 
 #include "wsproto.h"
+#include "sockets.h"
 
 /*
 ** Class to allow access to UDP specific portions of the Winsock interface.

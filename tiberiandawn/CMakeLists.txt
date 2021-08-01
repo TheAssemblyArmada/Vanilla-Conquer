@@ -132,8 +132,6 @@ set(TIBDAWN_SRC
     unit.cpp
     visudlg.cpp
     winstub.cpp
-    wsproto.cpp
-    wspudp.cpp
 )
 
 if(CMAKE_CONFIGURATION_TYPES)

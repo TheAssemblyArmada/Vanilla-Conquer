@@ -164,8 +164,6 @@ set(REDALERT_SRC
     wolapiob.cpp
     woledit.cpp
     wolstrng.cpp
-    wsproto.cpp
-    wspudp.cpp
 )
 
 if(CMAKE_CONFIGURATION_TYPES)

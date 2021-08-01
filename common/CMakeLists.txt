@@ -131,6 +131,8 @@ set(COMMONV_SRC
     vqapalette.cpp
     vqatask.cpp
     vqaver.cpp
+    wsproto.cpp
+    wspudp.cpp
     wwkeyboard.cpp
     wwmouse.cpp
 )
@@ -185,5 +187,8 @@ if(BUILD_VANILLATD OR BUILD_VANILLARA)
     endif()
     if(SDL2)
         target_compile_definitions(commonv PUBLIC SDL2_BUILD)
+    endif()
+    if(NETWORKING)
+        target_compile_definitions(commonv PUBLIC WINSOCK_IPX NETWORKING)
     endif()
 endif()
