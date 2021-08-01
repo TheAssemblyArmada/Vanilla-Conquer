@@ -34,13 +34,18 @@
 #ifndef WSPROTO_H
 #define WSPROTO_H
 
+#include "vector.h"
+#include "ipxaddr.h"
+
 class WinsockInterfaceClass;
 extern WinsockInterfaceClass* PacketTransport; // The object for interfacing with Winsock
 
 /*
 ** Include compatability sockets header file.
 */
-#include "common/sockets.h"
+#include "sockets.h"
+
+#include <string.h>
 
 #include <string.h>
 

@@ -52,10 +52,13 @@
  * WIC::Set_Socket_Options -- Sets default socket options for Winsock buffer sizes             *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
 #include "wsproto.h"
+#include "debugstring.h"
+#include "wwkeyboard.h"
+extern WWKeyboardClass* Keyboard;
 
 #include <stdio.h>
+#include <assert.h>
 
 WinsockInterfaceClass* PacketTransport = nullptr; // The object for interfacing with Winsock
 
