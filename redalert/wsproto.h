@@ -40,9 +40,9 @@ extern WinsockInterfaceClass* PacketTransport; // The object for interfacing wit
 /*
 ** Include compatability sockets header file.
 */
-#ifdef NETWORKING
 #include "common/sockets.h"
-#endif
+
+#include <string.h>
 
 /*
 ** Misc defines

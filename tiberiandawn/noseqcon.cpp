@@ -72,7 +72,7 @@ NonSequencedConnClass::NonSequencedConnClass(int numsend,
                                              unsigned long retry_delta,
                                              unsigned long max_retries,
                                              unsigned long timeout)
-    : ConnectionClass(0, 0, maxlen, magicnum, retry_delta, max_retries, timeout)
+    : ConnectionClass(160, 160, maxlen, magicnum, retry_delta, max_retries, timeout)
 {
     /*------------------------------------------------------------------------
     Allocate the packet Queue.  This will store incoming packets (which will
