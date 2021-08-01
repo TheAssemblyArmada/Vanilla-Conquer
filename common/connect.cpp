@@ -42,10 +42,10 @@
  *   ConnectionClass::Command_Name -- returns name for a packet command		*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
 #include <stdio.h>
 //#include <mem.h>
 #include <sys/timeb.h>
+#include <string.h>
 #include "connect.h"
 
 //#include "WolDebug.h"

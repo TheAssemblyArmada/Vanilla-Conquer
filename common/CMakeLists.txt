@@ -26,6 +26,7 @@ set(COMMON_SRC
     crc.cpp
     crew.cpp
     cstraw.cpp
+    connect.cpp
     debugstring.cpp
     delay.cpp
     dipthong.cpp

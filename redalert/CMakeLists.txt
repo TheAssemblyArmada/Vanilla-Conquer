@@ -24,7 +24,6 @@ set(REDALERT_SRC
     colrlist.cpp
     combat.cpp
     confdlg.cpp
-    connect.cpp
     conquer.cpp
     const.cpp
     coord.cpp
