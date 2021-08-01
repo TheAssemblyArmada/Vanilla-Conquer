@@ -42,9 +42,8 @@
  *   IPXAddressClass::operator!= -- overloaded comparison operator         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
 #include <stdio.h>
-//#include <mem.h>
+#include <string.h>
 #include "ipxaddr.h"
 
 #ifdef WINSOCK_IPX

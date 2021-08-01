@@ -45,7 +45,7 @@
 ********************************* Includes **********************************
 */
 #include "connect.h"
-#include "ipxaddr.h"
+#include "common/ipxaddr.h"
 
 /*
 ***************************** Class Declaration *****************************

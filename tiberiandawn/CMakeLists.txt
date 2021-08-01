@@ -60,7 +60,6 @@ set(TIBDAWN_SRC
     ioobj.cpp
     ipx.cpp
     ipx95.cpp
-    ipxaddr.cpp
     ipxconn.cpp
     ipxgconn.cpp
     ipxmgr.cpp
