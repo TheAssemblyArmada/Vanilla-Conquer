@@ -269,6 +269,7 @@ public:
     virtual void Response_Select(void);
     virtual void Response_Move(void);
     virtual void Response_Attack(void);
+    virtual void Response_Sabotage(void);
     virtual void
     Player_Assign_Mission(MissionType order, TARGET target = TARGET_NONE, TARGET destination = TARGET_NONE);
 

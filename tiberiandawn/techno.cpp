@@ -2528,7 +2528,9 @@ BulletClass* TechnoClass::Fire_At(TARGET target, int which)
 void TechnoClass::Player_Assign_Mission(MissionType mission, TARGET target, TARGET destination)
 {
     if (AllowVoice) {
-        if (mission == MISSION_ATTACK) {
+        if (mission == MISSION_SABOTAGE) {
+            Response_Sabotage();
+        } else if (mission == MISSION_ATTACK) {
             Response_Attack();
         } else {
             Response_Move();
@@ -4233,6 +4235,10 @@ void TechnoClass::Response_Move(void)
  *   07/29/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
 void TechnoClass::Response_Attack(void)
+{
+}
+
+void TechnoClass::Response_Sabotage(void)
 {
 }
 

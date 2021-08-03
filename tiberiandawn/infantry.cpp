@@ -2698,6 +2698,14 @@ void InfantryClass::Response_Attack(void)
     }
 }
 
+void InfantryClass::Response_Sabotage(void)
+{
+    Validate();
+    if (*this == INFANTRY_RAMBO && AllowVoice) {
+        Sound_Effect(VOC_RAMBO_PRESENT, 0, Infantry.ID(this) + 1);
+    }
+}
+
 /***********************************************************************************************
  * InfantryClass::Fire_Coord -- Calculates the origin point for projectiles fired.             *
  *                                                                                             *
@@ -2842,7 +2850,7 @@ int InfantryClass::Rearm_Delay(bool second) const
 void InfantryClass::Assign_Mission(MissionType order)
 {
     Validate();
-    if (order == MISSION_SABOTAGE) {
+    if (order == MISSION_SABOTAGE && PlayerPtr->Class->House != Owner()) {
         Sound_Effect(VOC_RAMBO_PRESENT, Coord);
     }
 
