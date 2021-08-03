@@ -171,6 +171,7 @@ public:
     virtual void Response_Select(void);
     virtual void Response_Move(void);
     virtual void Response_Attack(void);
+    virtual void Response_Sabotage(void);
     virtual void Active_Click_With(ActionType action, ObjectClass* object);
 
     /*
