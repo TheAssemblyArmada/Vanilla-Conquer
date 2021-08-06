@@ -98,7 +98,7 @@ static DIR *__internal_opendir(wchar_t *wname, int size)
         *rep++ = L'\\';
     }
 
-    memcpy(wname + extra_prefix + size - 1, suffix, sizeof(wchar_t) * extra_prefix);
+    memcpy(wname + extra_prefix + size - 1, suffix, sizeof(wchar_t) * extra_suffix);
     wname[size + extra_prefix + extra_suffix - 1] = 0;
 
     if (memcmp(wname + extra_prefix, L"\\\\?\\", sizeof(wchar_t) * extra_prefix) == 0) {
@@ -184,6 +184,15 @@ static wchar_t *__get_buffer()
     return name;
 }
 
+static int __internal_absolutepath(const char* path)
+{
+    if (strlen(path) < 2) {
+        return 0;
+    }
+
+    return path && (path[1] == ':' || (path[0] == '\\' && path[1] == '\\'));
+}
+
 DIR *opendir(const char *name)
 {
     DIR *dirp = NULL;
@@ -193,7 +202,28 @@ DIR *opendir(const char *name)
         __seterrno(ENOMEM);
         return NULL;
     }
-    size = MultiByteToWideChar(CP_UTF8, 0, name, -1, wname + 4, NTFS_MAX_PATH);
+    /* Relative paths must be converted to absolute paths for long paths*/
+    if (__internal_absolutepath(name)) {
+        size = MultiByteToWideChar(CP_UTF8, 0, name, -1, wname + 4, NTFS_MAX_PATH);
+    } else {
+        wchar_t* full;
+        size = MultiByteToWideChar(CP_UTF8, 0, name, -1, wname, NTFS_MAX_PATH);
+        full = _wfullpath(NULL, wname, 0);
+        if (!full) {
+            free(wname);
+            __seterrno(ENOENT);
+            return NULL;
+        }
+        size = wcslen(full) + 1;
+        memcpy(wname, L"\\\\?\\", sizeof(wchar_t) * 5);
+        if (size > NTFS_MAX_PATH) {
+            free(wname);
+            free(full);
+            __seterrno(ENOENT);
+            return NULL;
+        }
+        wcscat(wname, full);
+    }
     if (0 == size) {
         free(wname);
         return NULL;
