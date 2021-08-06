@@ -134,6 +134,9 @@ static void Update_HWCursor_Settings()
     */
     float ar = (float)hwcursor.GameW / hwcursor.GameH;
     if (Settings.Video.Boxing) {
+        if (Settings.Video.CorrectAspectRatio) {
+            ar = 4.0 / 3.0;
+        }
         render_dst.w = win_w;
         render_dst.h = render_dst.w / ar;
         if (render_dst.h > win_h) {

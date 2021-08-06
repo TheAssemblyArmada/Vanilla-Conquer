@@ -26,6 +26,7 @@ public:
         int WindowHeight;
         bool Windowed;
         bool Boxing;
+        bool CorrectAspectRatio;
         int Width;
         int Height;
         int FrameLimit;
