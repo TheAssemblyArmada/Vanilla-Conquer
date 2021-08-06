@@ -338,7 +338,14 @@ int Create_Mix(const char* outfile,
         struct dirent* dirp;
         struct stat st;
 
-        if ((dp = opendir(search_dir)) != nullptr) {
+#ifdef _WIN32
+        // Windows needs a full path
+        char* full_search_dir = _fullpath(NULL, search_dir, PATH_MAX);
+#else
+        const char* full_search_dir = search_dir;
+#endif
+
+        if (full_search_dir != nullptr && (dp = opendir(full_search_dir)) != nullptr) {
             while ((dirp = readdir(dp)) != nullptr) {
                 std::string fullpath = std::string(search_dir) + PathsClass::SEP;
                 fullpath += dirp->d_name;
