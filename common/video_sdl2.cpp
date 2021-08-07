@@ -333,10 +333,12 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     /*
     ** Set requested scaling algorithm.
     */
-    if (!SDL_SetHintWithPriority(SDL_HINT_RENDER_SCALE_QUALITY, Settings.Video.Scaler.c_str(), SDL_HINT_OVERRIDE)) {
-        DBG_WARN("  scaler '%s' is unsupported");
-    } else {
-        DBG_INFO("  scaler set to '%s'", Settings.Video.Scaler.c_str());
+    if (Settings.Video.Scaler != "sharp-linear") {
+        if (!SDL_SetHintWithPriority(SDL_HINT_RENDER_SCALE_QUALITY, Settings.Video.Scaler.c_str(), SDL_HINT_OVERRIDE)) {
+            DBG_WARN("  scaler '%s' is unsupported");
+        } else {
+            DBG_INFO("  scaler set to '%s'", Settings.Video.Scaler.c_str());
+        }
     }
 
     if (palette == nullptr) {
@@ -722,12 +724,37 @@ public:
         : flags(flags)
         , windowSurface(nullptr)
         , texture(nullptr)
+        , prescaledTexture(nullptr)
     {
         surface = SDL_CreateRGBSurface(0, w, h, 8, 0, 0, 0, 0);
         SDL_SetSurfacePalette(surface, palette);
 
         if (flags & GBC_VISIBLE) {
             windowSurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(pixel_format), pixel_format);
+
+            if (Settings.Video.Scaler == "sharp-linear") {
+                SDL_Rect viewport;
+                SDL_RenderGetViewport(renderer, &viewport);
+
+                /*
+                ** Calculate one integer scale larger than viewport resolution
+                */
+                int scaleFactor = 1;
+                if (viewport.w > viewport.h) {
+                    scaleFactor = (viewport.w / w) + 1;
+                } else {
+                    scaleFactor = (viewport.h / h) + 1;
+                }
+
+                SDL_SetHintWithPriority(SDL_HINT_RENDER_SCALE_QUALITY, "best", SDL_HINT_OVERRIDE);
+                prescaledTexture = SDL_CreateTexture(renderer,
+                                                     windowSurface->format->format,
+                                                     SDL_TEXTUREACCESS_TARGET,
+                                                     w * scaleFactor,
+                                                     h * scaleFactor);
+                SDL_SetHintWithPriority(SDL_HINT_RENDER_SCALE_QUALITY, "nearest", SDL_HINT_OVERRIDE);
+            }
+
             texture = SDL_CreateTexture(renderer, windowSurface->format->format, SDL_TEXTUREACCESS_STREAMING, w, h);
             frontSurface = this;
         }
@@ -740,6 +767,10 @@ public:
         }
 
         SDL_FreeSurface(surface);
+
+        if (prescaledTexture) {
+            SDL_DestroyTexture(prescaledTexture);
+        }
 
         if (texture) {
             SDL_DestroyTexture(texture);
@@ -837,8 +868,24 @@ public:
         }
 
         SDL_UpdateTexture(texture, NULL, windowSurface->pixels, windowSurface->pitch);
-        SDL_RenderClear(renderer);
-        SDL_RenderCopy(renderer, texture, NULL, &render_dst);
+
+        if (prescaledTexture) {
+            /*
+            ** Nearest-neighbor integer scale up to a render target before a final linear scale.
+            */
+            SDL_SetRenderTarget(renderer, prescaledTexture);
+            SDL_RenderClear(renderer);
+            SDL_RenderCopy(renderer, texture, NULL, NULL);
+
+            SDL_SetRenderTarget(renderer, NULL);
+            SDL_RenderClear(renderer);
+            SDL_RenderCopy(renderer, prescaledTexture, NULL, &render_dst);
+        } else {
+            SDL_SetRenderTarget(renderer, NULL);
+            SDL_RenderClear(renderer);
+            SDL_RenderCopy(renderer, texture, NULL, &render_dst);
+        }
+
         SDL_RenderPresent(renderer);
     }
 
@@ -846,6 +893,7 @@ private:
     SDL_Surface* surface;
     SDL_Surface* windowSurface;
     SDL_Texture* texture;
+    SDL_Texture* prescaledTexture;
     GBC_Enum flags;
 };
 
