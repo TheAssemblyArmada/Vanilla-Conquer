@@ -134,9 +134,24 @@ static void Update_HWCursor_Settings()
     */
     float ar = (float)hwcursor.GameW / hwcursor.GameH;
     if (Settings.Video.Boxing) {
-        if (Settings.Video.CorrectAspectRatio) {
-            ar = 4.0 / 3.0;
+        size_t colonPos = Settings.Video.BoxingAspectRatio.find(":");
+        std::string arW;
+        std::string arH;
+
+        /*
+        ** If we don't have a valid string for aspect ratio, default back to 4:3.
+        */
+        if (colonPos == std::string::npos) {
+            arW = "4";
+            arH = "3";
+        } else {
+            size_t arLen = Settings.Video.BoxingAspectRatio.length();
+            arW = Settings.Video.BoxingAspectRatio.substr(0, colonPos);
+            arH = Settings.Video.BoxingAspectRatio.substr(colonPos + 1, arLen - colonPos);
         }
+
+        ar = std::stof(arW) / std::stof(arH);
+
         render_dst.w = win_w;
         render_dst.h = render_dst.w / ar;
         if (render_dst.h > win_h) {
