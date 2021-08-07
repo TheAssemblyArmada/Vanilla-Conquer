@@ -134,9 +134,21 @@ static void Update_HWCursor_Settings()
     */
     float ar = (float)hwcursor.GameW / hwcursor.GameH;
     if (Settings.Video.Boxing) {
-        if (Settings.Video.CorrectAspectRatio) {
-            ar = 4.0 / 3.0;
+        try {
+            size_t colonPos = Settings.Video.BoxingAspectRatio.find(":");
+
+            if (colonPos == std::string::npos) {
+                throw "No colon";
+            }
+
+            size_t arLen = Settings.Video.BoxingAspectRatio.length();
+            std::string arW = Settings.Video.BoxingAspectRatio.substr(0, colonPos);
+            std::string arH = Settings.Video.BoxingAspectRatio.substr(colonPos + 1, arLen - colonPos);
+            ar = std::stof(arW) / std::stof(arH);
+        } catch (...) {
+            DBG_ERROR("Aspect ratio '%s' is invalid", Settings.Video.BoxingAspectRatio.c_str());
         }
+
         render_dst.w = win_w;
         render_dst.h = render_dst.w / ar;
         if (render_dst.h > win_h) {
