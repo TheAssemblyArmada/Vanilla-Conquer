@@ -362,22 +362,20 @@ void SidebarClass::Init_IO(void)
             TBCZoom->Set_Text("Map");
             TBCZoom->Set_Style(TPF_6POINT | TPF_NOSHADOW | TPF_CENTER);
 
-            /* Hardcode button positions for now. */
+            Repair->X = 242;
+            Repair->Y = 80;
+            Repair->Width = 32;
+            Repair->Height = 9;
 
-            Repair->X = 482 / 2;
-            Repair->Y = 160 / 2;
-            Repair->Width = String_Pixel_Width("Repair") + 2;
-            Repair->Height = String_Pixel_Width("R") + 3;
+            Upgrade->X = Repair->X + Repair->Width + 2;
+            Upgrade->Y = Repair->Y;
+            Upgrade->Width = 20;
+            Upgrade->Height = Repair->Height;
 
-            Upgrade->X = (484 + 65) / 2 + 2;
-            Upgrade->Y = 160 / 2;
-            Upgrade->Width = String_Pixel_Width("Sell") + 3;
-            Upgrade->Height = String_Pixel_Width("S") + 3;
-
-            Zoom->X = (480 + 110) / 2 + 5;
-            Zoom->Y = 160 / 2;
-            Zoom->Width = String_Pixel_Width("Map") + 1;
-            Zoom->Height = String_Pixel_Width("S") + 3;
+            Zoom->X = Upgrade->X + Upgrade->Width + 2;
+            Zoom->Y = Upgrade->Y;
+            Zoom->Width = 20;
+            Zoom->Height = Upgrade->Height;
         }
 
         Repair->IsSticky = true;
