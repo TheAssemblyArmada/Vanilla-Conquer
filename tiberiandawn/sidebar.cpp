@@ -1740,6 +1740,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
 {
     if (IsToRedraw || complete) {
         IsToRedraw = false;
+        int factor = Get_Resolution_Factor();
 
         if (RunningAsDLL) {
             return;
@@ -1751,7 +1752,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
         /*
         ** New sidebar needs to be drawn not filled
         */
-        if (BuildableCount < MAX_VISIBLE) {
+        if (factor > 0 && BuildableCount < MAX_VISIBLE) {
             CC_Draw_Shape(LogoShapes, ID, X + 3, Y - 1, WINDOW_MAIN, SHAPE_WIN_REL | SHAPE_NORMAL, 0);
         }
 
@@ -1908,8 +1909,8 @@ void SidebarClass::StripClass::Draw_It(bool complete)
             **
             ** Don't draw blank shapes over the new 640x400 sidebar art - ST 5/1/96 6:01PM
             */
-            if (shapenum != SB_BLANK || shapefile != LogoShapes) {
-                IsTheaterShape = true; // This shape is theater specific
+            if (factor == 0 || shapenum != SB_BLANK || shapefile != LogoShapes) {
+                IsTheaterShape = (bool)factor; // This shape is theater specific
                 CC_Draw_Shape(shapefile,
                               shapenum,
                               x - WindowList[WINDOW_SIDEBAR][WINDOWX] + LeftEdgeOffset,
