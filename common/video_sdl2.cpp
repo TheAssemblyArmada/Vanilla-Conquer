@@ -333,13 +333,10 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     /*
     ** Set requested scaling algorithm.
     */
-    if (Settings.Video.Scaler == "sharp-linear") {
-        DBG_INFO("  scaler set to 'sharp-linear'");
-    } else {
+    DBG_INFO("  scaler set to '%s'", Settings.Video.Scaler.c_str());
+    if (Settings.Video.Scaler != "sharp-linear") {
         if (!SDL_SetHintWithPriority(SDL_HINT_RENDER_SCALE_QUALITY, Settings.Video.Scaler.c_str(), SDL_HINT_OVERRIDE)) {
-            DBG_WARN("  scaler '%s' is unsupported");
-        } else {
-            DBG_INFO("  scaler set to '%s'", Settings.Video.Scaler.c_str());
+            DBG_WARN("  scaler '%s' is unsupported", Settings.Video.Scaler.c_str());
         }
     }
 
