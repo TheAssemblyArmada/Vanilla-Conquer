@@ -364,25 +364,6 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     return true;
 }
 
-void Toggle_Video_Fullscreen()
-{
-    Settings.Video.Windowed = !Settings.Video.Windowed;
-
-    if (!Settings.Video.Windowed) {
-        if (Settings.Video.Width == 0 || Settings.Video.Height == 0) {
-            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-        } else {
-            SDL_SetWindowSize(window, Settings.Video.Width, Settings.Video.Height);
-            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-        }
-    } else {
-        SDL_SetWindowFullscreen(window, 0);
-        SDL_SetWindowSize(window, Settings.Video.WindowWidth, Settings.Video.WindowHeight);
-    }
-
-    Update_HWCursor_Settings();
-}
-
 void Get_Video_Scale(float& x, float& y)
 {
     x = hwcursor.ScaleX;
@@ -732,26 +713,7 @@ public:
             windowSurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(pixel_format), pixel_format);
 
             if (Settings.Video.Scaler == "sharp-linear") {
-                SDL_Rect viewport;
-                SDL_RenderGetViewport(renderer, &viewport);
-
-                /*
-                ** Calculate one integer scale larger than viewport resolution
-                */
-                int scaleFactor = 1;
-                if (viewport.w > viewport.h) {
-                    scaleFactor = (viewport.w / w) + 1;
-                } else {
-                    scaleFactor = (viewport.h / h) + 1;
-                }
-
-                SDL_SetHintWithPriority(SDL_HINT_RENDER_SCALE_QUALITY, "best", SDL_HINT_OVERRIDE);
-                prescaledTexture = SDL_CreateTexture(renderer,
-                                                     windowSurface->format->format,
-                                                     SDL_TEXTUREACCESS_TARGET,
-                                                     w * scaleFactor,
-                                                     h * scaleFactor);
-                SDL_SetHintWithPriority(SDL_HINT_RENDER_SCALE_QUALITY, "nearest", SDL_HINT_OVERRIDE);
+                this->RecalculateRenderTarget();
             }
 
             texture = SDL_CreateTexture(renderer, windowSurface->format->format, SDL_TEXTUREACCESS_STREAMING, w, h);
@@ -888,6 +850,36 @@ public:
         SDL_RenderPresent(renderer);
     }
 
+    void RecalculateRenderTarget()
+    {
+        if (prescaledTexture) {
+            SDL_DestroyTexture(prescaledTexture);
+            SDL_RenderClear(renderer);
+            SDL_RenderPresent(renderer);
+        }
+
+        int w = surface->w;
+        int h = surface->h;
+
+        SDL_Rect viewport;
+        SDL_RenderGetViewport(renderer, &viewport);
+
+        /*
+        ** Calculate one integer scale larger than viewport resolution
+        */
+        int scaleFactor = 1;
+        if (viewport.w > viewport.h) {
+            scaleFactor = (viewport.w / w) + 1;
+        } else {
+            scaleFactor = (viewport.h / h) + 1;
+        }
+
+        SDL_SetHintWithPriority(SDL_HINT_RENDER_SCALE_QUALITY, "best", SDL_HINT_OVERRIDE);
+        prescaledTexture = SDL_CreateTexture(
+            renderer, windowSurface->format->format, SDL_TEXTUREACCESS_TARGET, w * scaleFactor, h * scaleFactor);
+        SDL_SetHintWithPriority(SDL_HINT_RENDER_SCALE_QUALITY, "nearest", SDL_HINT_OVERRIDE);
+    }
+
 private:
     SDL_Surface* surface;
     SDL_Surface* windowSurface;
@@ -901,6 +893,29 @@ void Video_Render_Frame()
     if (frontSurface) {
         frontSurface->RenderSurface();
     }
+}
+
+void Toggle_Video_Fullscreen()
+{
+    Settings.Video.Windowed = !Settings.Video.Windowed;
+
+    if (!Settings.Video.Windowed) {
+        if (Settings.Video.Width == 0 || Settings.Video.Height == 0) {
+            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        } else {
+            SDL_SetWindowSize(window, Settings.Video.Width, Settings.Video.Height);
+            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+        }
+    } else {
+        SDL_SetWindowFullscreen(window, 0);
+        SDL_SetWindowSize(window, Settings.Video.WindowWidth, Settings.Video.WindowHeight);
+    }
+
+    if (frontSurface && Settings.Video.Scaler == "sharp-linear") {
+        frontSurface->RecalculateRenderTarget();
+    }
+
+    Update_HWCursor_Settings();
 }
 
 /*
