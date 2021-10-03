@@ -653,7 +653,7 @@ void ScoreClass::Presentation(void)
     /*
     ** Load the background for the score screen
     */
-    anim = Open_Animation(ScreenNames[house], NULL, 0L, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), Palette);
+    anim = Open_Animation(ScreenNames[house], NULL, 0L, (WSAOpenType)(WSA_OPEN_FROM_DISK | WSA_OPEN_TO_PAGE), Palette);
 
     unsigned minutes = (unsigned)((ElapsedTime / TIMER_MINUTE)) + 1;
 
@@ -1613,6 +1613,11 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
     */
     PseudoSeenBuff->Blit(SysMemPage);
 
+#ifdef _NDS
+    // Nintendo DS doesn't have a keyboard, so we hack something for the user.
+    strcpy(str, Scen.ScenarioName);
+#endif
+
     do {
         Call_Back();
         Animate_Score_Objs();
@@ -1681,7 +1686,7 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
         }
 
         Frame_Limiter();
-    } while (key != KN_RETURN && key != KN_KEYPAD_RETURN);
+    } while (key != KN_RETURN && key != KN_KEYPAD_RETURN && key != VK_LBUTTON && key != VK_ESCAPE);
 }
 
 void Animate_Cursor(int pos, int ypos)
@@ -2032,7 +2037,7 @@ void Multi_Score_Presentation(void)
 
     Set_Palette(BlackPalette);
 
-    anim = Open_Animation("MLTIPLYR.WSA", NULL, 0L, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), Palette);
+    anim = Open_Animation("MLTIPLYR.WSA", NULL, 0L, (WSAOpenType)(WSA_OPEN_FROM_DISK | WSA_OPEN_TO_PAGE), Palette);
     Hide_Mouse();
 
     /*

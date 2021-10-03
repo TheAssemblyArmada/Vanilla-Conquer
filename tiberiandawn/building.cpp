@@ -1878,11 +1878,11 @@ BuildingClass::BuildingClass(StructType type, HousesType house)
         ActLike = HOUSE_GOOD;
         IsCaptured = true;
     }
-
+#ifndef _NDS
     if (GameToPlay == GAME_INTERNET) {
         House->BuildingTotals.Increment_Unit_Total((int)type);
     }
-
+#endif
 #ifdef USE_RA_AI
     //
     // Added for RA AI in TD. ST - 7/26/2019 9:12AM

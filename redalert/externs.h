@@ -361,7 +361,7 @@ extern GroundType Ground[LAND_COUNT];
 **	Constant externs (data is not modified during game play).
 */
 extern char const* Missions[MISSION_COUNT];
-extern char const Keys[];
+extern char const WWKeys[];
 extern char const* const VQName[VQ_COUNT];
 extern int CrateData[CRATE_COUNT];
 extern char const* const CrateNames[CRATE_COUNT];

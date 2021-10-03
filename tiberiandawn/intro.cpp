@@ -224,7 +224,8 @@ void Choose_Side(void)
                         speechhandle = Play_Sample(speechg);
                         speechplaying = true;
                         speech = speechg;
-                    } else if ((WWKeyboard->MouseQX > 160 * scale_factor) && (WWKeyboard->MouseQX < 300 * scale_factor)) {
+                    } else if ((WWKeyboard->MouseQX > 160 * scale_factor)
+                               && (WWKeyboard->MouseQX < 300 * scale_factor)) {
                         // Chose Nod
                         selection = 1;
                         endframe = 14;

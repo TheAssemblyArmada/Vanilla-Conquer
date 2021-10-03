@@ -424,6 +424,10 @@ extern TheaterType LastTheater;
 
 extern bool ShareAllyVisibility;
 
+#ifdef _NDS
+void DS_Pause(const char*, ...);
+#endif
+
 // OmniBlade - Moves from tcpip.cpp as part of networking cleanup.
 extern bool Server; // Is this player acting as client or server
 

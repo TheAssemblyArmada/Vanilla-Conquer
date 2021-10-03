@@ -68,7 +68,10 @@ typedef enum MenuIndexType
 inline int Get_IconSet_MapWidth(void const* data)
 {
     if (data) {
-        return (((IControl_Type*)data)->MapWidth);
+        char const* bdata = (char const*)data;
+        uint16_t w;
+        memcpy(&w, bdata + offsetof(IControl_Type, MapWidth), sizeof(w));
+        return (int)w;
     }
     return (0);
 }
@@ -76,7 +79,10 @@ inline int Get_IconSet_MapWidth(void const* data)
 inline int Get_IconSet_MapHeight(void const* data)
 {
     if (data) {
-        return (((IControl_Type*)data)->MapHeight);
+        char const* bdata = (char const*)data;
+        uint16_t h;
+        memcpy(&h, bdata + offsetof(IControl_Type, MapHeight), sizeof(h));
+        return (int)h;
     }
     return (0);
 }
@@ -105,11 +111,17 @@ public:
     };
     unsigned char* Control_Map(void)
     {
-        return ((unsigned char*)this + ColorMap);
+        char* t = (char*)this;
+        int32_t color_map;
+        memcpy(&color_map, t + offsetof(IconsetClass, ColorMap), sizeof(int32_t));
+        return ((unsigned char*)this + color_map);
     };
     unsigned char const* Control_Map(void) const
     {
-        return ((unsigned char const*)this + ColorMap);
+        char* t = (char*)this;
+        int32_t color_map;
+        memcpy(&color_map, t + offsetof(IconsetClass, ColorMap), sizeof(int32_t));
+        return ((unsigned char const*)this + color_map);
     };
     int Icon_Count(void) const
     {

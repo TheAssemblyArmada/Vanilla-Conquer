@@ -3176,9 +3176,11 @@ void TechnoClass::Record_The_Kill(TechnoClass* source)
             House->BuildingsLost++;
         }
         if (source) {
+#ifndef _NDS
             if (GameToPlay == GAME_INTERNET) {
                 source->House->DestroyedBuildings.Increment_Unit_Total(((BuildingClass*)this)->Class->Type);
             }
+#endif
             source->House->BuildingsKilled[Owner()]++;
         }
 
@@ -3194,9 +3196,11 @@ void TechnoClass::Record_The_Kill(TechnoClass* source)
     case RTTI_AIRCRAFT:
         House->UnitsLost++;
         if (source) {
+#ifndef _NDS
             if (GameToPlay == GAME_INTERNET) {
                 source->House->DestroyedAircraft.Increment_Unit_Total(((AircraftClass*)this)->Class->Type);
             }
+#endif
             source->House->UnitsKilled[Owner()]++;
         }
         /*
@@ -3211,9 +3215,11 @@ void TechnoClass::Record_The_Kill(TechnoClass* source)
     case RTTI_INFANTRY:
         House->UnitsLost++;
         if (source) {
+#ifndef _NDS
             if (GameToPlay == GAME_INTERNET) {
                 source->House->DestroyedInfantry.Increment_Unit_Total(((InfantryClass*)this)->Class->Type);
             }
+#endif
             source->House->UnitsKilled[Owner()]++;
         }
         /*
@@ -3228,9 +3234,11 @@ void TechnoClass::Record_The_Kill(TechnoClass* source)
     case RTTI_UNIT:
         House->UnitsLost++;
         if (source) {
+#ifndef _NDS
             if (GameToPlay == GAME_INTERNET) {
                 source->House->DestroyedUnits.Increment_Unit_Total(((UnitClass*)this)->Class->Type);
             }
+#endif
             source->House->UnitsKilled[Owner()]++;
         }
 

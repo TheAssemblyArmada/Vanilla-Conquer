@@ -82,6 +82,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "wwstd.h"
 
 /*
 ** New sidebar for GlyphX multiplayer. ST - 8/7/2019 10:10AM
@@ -1350,7 +1351,7 @@ void InfantryClass::AI(void)
  * HISTORY:                                                                                    *
  *   09/01/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-MoveType InfantryClass::Can_Enter_Cell(CELL cell, FacingType) const
+MoveType OPTIMIZE_AGGRESSIVELY InfantryClass::Can_Enter_Cell(CELL cell, FacingType) const
 {
     assert(Infantry.ID(this) == ID);
     assert(IsActive);

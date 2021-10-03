@@ -357,6 +357,7 @@ void ScoreClass::Presentation(void)
     Disable_Uncompressed_Shapes();
 #endif // FIXIT
     PseudoSeenBuff = new GraphicBufferClass(320, 200, (void*)NULL);
+
     int i;
     void const* yellowptr;
     void const* redptr;
@@ -385,11 +386,8 @@ void ScoreClass::Presentation(void)
     void const* sfx4 = MFCD::Retrieve("SFX4.AUD");
     Beepy6 = MFCD::Retrieve("BEEPY6.AUD");
 
-    void* anim = Open_Animation(AnimNames[house],
-                                NULL,
-                                0L,
-                                (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE),
-                                (unsigned char*)ScorePalette.Get_Data());
+    void* anim = Open_Animation(
+        AnimNames[house], NULL, 0L, (WSAOpenType)(WSA_OPEN_FROM_DISK), (unsigned char*)ScorePalette.Get_Data());
     unsigned minutes = (unsigned)((ElapsedTime / (int)TIMER_MINUTE)) + 1;
 
     // Load up the shapes for the Nod score screen
@@ -1275,12 +1273,17 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
     */
     HidPage.Blit(HidPage, 0, 100 * RESFACTOR, 0, 0, 100 * RESFACTOR, 100 * RESFACTOR);
 
+#ifdef _NDS
+    // Nintendo DS doesn't have a keyboard, so we hack something for the user.
+    strcpy(str, Scen.ScenarioName);
+#endif
+
     do {
         Call_Back();
         Animate_Score_Objs();
         Animate_Cursor(index, ypos);
         if (WWKeyboard->Check()) {
-            key = WWKeyboard->To_ASCII(WWKeyboard->Get()) & 0xFF;
+            key = WWKeyboard->Get();
             Call_Back();
 
             if (index == MAX_FAMENAME_LENGTH - 2) {
@@ -1367,7 +1370,8 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
         }
 
         Frame_Limiter();
-    } while (key != KA_RETURN); //	} while(key != KN_RETURN && key!=KN_KEYPAD_RETURN);
+    } while (key != KA_RETURN && key != VK_LBUTTON
+             && key != VK_ESCAPE); //	} while(key != KN_RETURN && key!=KN_KEYPAD_RETURN);
 }
 
 void Animate_Cursor(int pos, int ypos)

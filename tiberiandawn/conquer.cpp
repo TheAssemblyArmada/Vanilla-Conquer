@@ -97,6 +97,12 @@ extern void Send_Statistics_Packet(void);
 extern char* __nheapbeg;
 bool InMainLoop = false;
 
+/* Function used by common lib to get which game is running.  */
+game_t Get_Running_Game(void)
+{
+    return GAME_TD;
+}
+
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 #endif
@@ -136,6 +142,11 @@ void Main_Game(int argc, char* argv[])
     if (!Init_Game(argc, argv)) {
         return;
     }
+
+    // Disable Uncompressed shapes so that the buffer allocation is moved
+    // to when we are in game.  This way we can avoid allocating too much
+    // memory to it.
+    Disable_Uncompressed_Shapes();
 
     CCDebugString("C&C95 - Game initialisation complete.\n");
     /*
@@ -183,6 +194,7 @@ void Main_Game(int argc, char* argv[])
 
         InMainLoop = true;
         Set_Video_Cursor_Clip(true);
+        Enable_Uncompressed_Shapes();
 
 #ifdef SCENARIO_EDITOR
         /*
@@ -302,6 +314,8 @@ void Main_Game(int argc, char* argv[])
             }
         }
 #endif
+
+        Disable_Uncompressed_Shapes();
         Set_Video_Cursor_Clip(false);
         InMainLoop = false;
 
@@ -2638,6 +2652,7 @@ void CC_Draw_Line(int x, int y, int x1, int y1, unsigned char color, int frame, 
  * HISTORY:                                                                                    *
  *   02/21/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
+
 //#pragma off(unreferenced)
 void CC_Draw_Shape(void const* shapefile,
                    int shapenum,
@@ -2943,7 +2958,7 @@ int VQ_Call_Back(unsigned char*, int)
     Interpolate_2X_Scale(&SysMemPage, &SeenBuff, NULL, Settings.Video.InterpolationMode);
     Frame_Limiter();
 
-    if ((BreakoutAllowed || Debug_Flag) && key == KN_ESC) {
+    if ((BreakoutAllowed || Debug_Flag) && (key == KN_ESC || key == VK_LBUTTON)) {
         WWKeyboard->Clear();
         Brokeout = true;
         return (true);

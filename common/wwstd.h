@@ -216,6 +216,21 @@ typedef enum : unsigned short
     COLOR_PADDING = 0x1000
 } ColorType;
 
+typedef enum : unsigned char
+{
+    GAME_TD,
+    GAME_RA,
+} game_t;
+
+/* Function used by common lib to get which game is running.  */
+game_t Get_Running_Game(void);
+
+#ifdef _NDS
+#define OPTIMIZE_AGGRESSIVELY __attribute__((optimize("Ofast"))) __attribute__((hot)) __attribute__((target("arm")))
+#else
+#define OPTIMIZE_AGGRESSIVELY
+#endif
+
 /*
 ** Define some Windows specific values that are used throghout the games
 */
@@ -257,13 +272,14 @@ inline static void _splitpath(const char* path, char* drive, char* dir, char* fn
         }
     }
 }
-
+#ifndef _NDS
 inline static char* strupr(char* str)
 {
     for (int i = 0; i < strlen(str); i++)
         str[i] = toupper(str[i]);
     return str;
 }
+#endif
 
 inline static void strrev(char* str)
 {

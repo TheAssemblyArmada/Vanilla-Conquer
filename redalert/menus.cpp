@@ -953,8 +953,12 @@ int Main_Menu(unsigned int)
             if (Is_Counterstrike_Installed() == true) {
 #endif
                 if ((WWKeyboard->Down(KN_LSHIFT) || WWKeyboard->Down(KN_RSHIFT))
-                    && Coordinates_In_Region(
-                        WWKeyboard->MouseQX, WWKeyboard->MouseQY, 260 * RESFACTOR, 0, 320 * RESFACTOR, 50 * RESFACTOR)) {
+                    && Coordinates_In_Region(WWKeyboard->MouseQX,
+                                             WWKeyboard->MouseQY,
+                                             260 * RESFACTOR,
+                                             0,
+                                             320 * RESFACTOR,
+                                             50 * RESFACTOR)) {
                     AntsEnabled = true;
                     process = false;
 #ifdef FIXIT_VERSION_3

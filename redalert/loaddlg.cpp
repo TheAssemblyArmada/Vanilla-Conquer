@@ -240,6 +240,11 @@ int LoadOptionsClass::Process(void)
                       -1,
                       EditClass::ALPHANUMERIC);
 
+#ifdef _NDS
+    // Nintendo DS doesn't have a keyboard, so we hack a name for the user.
+    strcpy(game_descr, Scen.ScenarioName);
+#endif
+
     /*
     ** Initialize.
     */
@@ -467,6 +472,11 @@ int LoadOptionsClass::Process(void)
             }
 
             game_num = Files[game_idx]->Num;
+#ifdef _NDS
+            // Append game_num to the file so we can have multiple saves of the
+            // same mission.
+            snprintf(game_descr, 40, "%s_%03d", Scen.ScenarioName, game_num);
+#endif
             if (!Save_Game(game_num, game_descr)) {
                 WWMessageBox().Process(TXT_ERROR_SAVING_GAME);
             } else {
@@ -499,7 +509,7 @@ int LoadOptionsClass::Process(void)
             game_idx = listbtn.Current_Index();
             game_num = Files[game_idx]->Num;
             if (WWMessageBox().Process(TXT_DELETE_FILE_QUERY, TXT_YES, TXT_NO) == 0) {
-                sprintf(fname, "SAVEGAME.%03d", game_num);
+                sprintf(fname, "savegame.%03d", game_num);
                 Delete_File(fname);
                 Clear_List(&listbtn);
                 Fill_List(&listbtn);
@@ -664,7 +674,7 @@ void LoadOptionsClass::Fill_List(ListClass* list)
     /*
     ** Find all savegame files
     */
-    bool rc = Find_First("SAVEGAME.*", 0, &ff);
+    bool rc = Find_First("savegame.*", 0, &ff);
 
     while (rc) {
 

@@ -230,10 +230,23 @@ if(BUILD_VANILLATD)
         )
     endif()
 
-    target_compile_definitions(VanillaTD PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS} MEGAMAPS)
+    if (NDS)
+        target_compile_definitions(VanillaTD PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS})
+    else()
+        target_compile_definitions(VanillaTD PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS} MEGAMAPS)
+    endif()
     target_include_directories(VanillaTD PUBLIC ${CMAKE_SOURCE_DIR} .)
     target_link_libraries(VanillaTD commonv ${VANILLA_LIBS} ${STATIC_LIBS})
     set_target_properties(VanillaTD PROPERTIES OUTPUT_NAME vanillatd)
+    if (NDS)
+        # Generate Nintendo DS ROM
+        add_custom_command(TARGET VanillaTD
+                POST_BUILD
+                COMMAND ${NDSTOOL} ARGS -c ../vanillatd.nds -9 ../vanillatd -7 ../arm7.elf -b ${CMAKE_SOURCE_DIR}/resources/vanillatd_icon_ds.bmp "VanillaTD\;Vanilla\ Conquer\;Tiberian\ Dawn"
+                DEPENDS arm7.elf)
+    endif()
+
+
     if(MAP_EDITORTD)
         target_compile_definitions(VanillaTD PUBLIC INTERNAL_VERSION)
     endif()

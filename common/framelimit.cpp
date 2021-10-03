@@ -11,14 +11,14 @@
 
 extern WWMouseClass* WWMouse;
 
-#ifdef SDL2_BUILD
+#if defined(SDL2_BUILD)
 void Video_Render_Frame();
 #endif
 
 void Frame_Limiter(FrameLimitFlags flags)
 {
     static auto frame_start = std::chrono::steady_clock::now();
-#ifdef SDL2_BUILD
+#if defined(SDL2_BUILD)
     static auto render_avg = 0;
 
     auto render_start = std::chrono::steady_clock::now();

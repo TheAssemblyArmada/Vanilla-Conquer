@@ -32,6 +32,7 @@
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include "lcw.h"
+#include "wwstd.h"
 #include <string.h>
 
 /***************************************************************************
@@ -67,7 +68,7 @@
  * HISTORY:                                                                *
  *    03/20/1995 IML : Created.                                            *
  *=========================================================================*/
-int LCW_Uncompress(void const* source, void* dest, unsigned length)
+int OPTIMIZE_AGGRESSIVELY LCW_Uncompress(void const* source, void* dest, unsigned length)
 {
     unsigned char *source_ptr, *dest_ptr, *copy_ptr, *dest_end, op_code;
     unsigned count;

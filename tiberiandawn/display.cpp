@@ -243,8 +243,13 @@ void DisplayClass::One_Time(void)
                 Mem_Copy(FadingShade, RemapTables[hindex][fade], 256);
                 break;
             }
-            Mem_Copy(
-                &RemapTables[hindex][fade][((int)hindex + 11) * 16], &RemapTables[hindex][fade][(0 + 11) * 16], 16);
+            /* mparrot 2021-10-09: There is a buffer overflow if
+               hindex == HOUSE_COUNT - 1.  It seems harmless in PC, but causes
+               a crash in other systems.  Find a proper fix for it.  */
+            if (hindex < HOUSE_COUNT - 1) {
+                Mem_Copy(
+                    &RemapTables[hindex][fade][((int)hindex + 11) * 16], &RemapTables[hindex][fade][(0 + 11) * 16], 16);
+            }
         }
     }
 }

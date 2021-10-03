@@ -874,7 +874,6 @@ int RawFileClass::Raw_Seek(int pos, int dir)
     if (!Is_Open()) {
         Error(EBADF, false, Filename);
     } else {
-
         clearerr(Handle);
 
         /*
@@ -892,6 +891,7 @@ int RawFileClass::Raw_Seek(int pos, int dir)
 
         pos = ftell(Handle);
     }
+
     /*
     **	Return with the new position of the file. This will range between zero and the number of
     **	bytes the file contains.

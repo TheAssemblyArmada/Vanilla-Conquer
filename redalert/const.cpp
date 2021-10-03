@@ -706,10 +706,10 @@ unsigned char const RemapEmber[256] = {
 //#endif
 //	"\n";
 
-char const Keys[] = "[PublicKey]\n"
-                    "1=AihRvNoIbTn85FZRYNZRcT+i6KpU+maCsEqr3Q5q+LDB5tH7Tz2qQ38V\n"
+char const WWKeys[] = "[PublicKey]\n"
+                      "1=AihRvNoIbTn85FZRYNZRcT+i6KpU+maCsEqr3Q5q+LDB5tH7Tz2qQ38V\n"
 #ifdef CHEAT_KEYS
-                    "[PrivateKey]\n"
-                    "1=AigKVje8mROcR8QixnxUEF5b29Curkq01DNDWCdOG99XBqH79OaCiTCB\n"
+                      "[PrivateKey]\n"
+                      "1=AigKVje8mROcR8QixnxUEF5b29Curkq01DNDWCdOG99XBqH79OaCiTCB\n"
 #endif
-                    "\n";
+                      "\n";

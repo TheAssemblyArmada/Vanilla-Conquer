@@ -225,14 +225,14 @@ const char* XlatNames[] = {
 
 #endif
 
-#define OPTION_WIDTH 560
+#define OPTION_WIDTH (280 * RESFACTOR)
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-#define OPTION_HEIGHT 332
+#define OPTION_HEIGHT (170 * RESFACTOR)
 #else
-#define OPTION_HEIGHT 300
+#define OPTION_HEIGHT (150 * RESFACTOR)
 #endif
-#define OPTION_X ((640 - OPTION_WIDTH) / 2)
-#define OPTION_Y (400 - OPTION_HEIGHT) / 2
+#define OPTION_X ((320 * RESFACTOR) - OPTION_WIDTH) / 2
+#define OPTION_Y ((200 * RESFACTOR) - OPTION_HEIGHT) / 2
 
 struct EObjectClass
 {
@@ -312,6 +312,7 @@ private:
 void EListClass::Draw_Entry(int index, int x, int y, int width, int selected)
 {
     char buffer[128];
+    bool dosmod = (RESFACTOR == 1) ? true : false;
     RemapControlType* scheme = GadgetClass::Get_Color_Scheme();
 
     int text = TXT_NONE;
@@ -333,7 +334,8 @@ void EListClass::Draw_Entry(int index, int x, int y, int width, int selected)
         }
     }
 
-    Conquer_Clip_Text_Print(buffer, x + 100, y, scheme, TBLACK, flags & ~(TPF_CENTER), width, Tabs);
+    int x_bias = (dosmod) ? 25 : 100;
+    Conquer_Clip_Text_Print(buffer, x + x_bias, y, scheme, TBLACK, flags & ~(TPF_CENTER), width, Tabs);
 }
 
 #ifdef FIXIT_VERSION_3

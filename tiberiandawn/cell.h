@@ -145,12 +145,12 @@ public:
     /*
     **	Per-player view of whether a cell is mapped. One bit for each house type. ST - 3/5/2019 3:00PM
     */
-    unsigned int IsMappedByPlayerMask;
+    unsigned int IsMappedByPlayerMask : HOUSE_COUNT;
 
     /*
     **	Per-player view of whether a cell is visible. One bit for each house type. ST - 3/5/2019 3:00PM
     */
-    unsigned int IsVisibleByPlayerMask;
+    unsigned int IsVisibleByPlayerMask : HOUSE_COUNT;
 
     /*
     **	This array of bit flags is used to indicate which sub positions

@@ -10,6 +10,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 #include "xordelta.h"
+#include "wwstd.h"
 #include <stdbool.h>
 
 #define XOR_SMALL 127
@@ -17,7 +18,7 @@
 #define XOR_LARGE 16383
 #define XOR_MAX   32767
 
-void Apply_XOR_Delta(void* dst, const void* src)
+void OPTIMIZE_AGGRESSIVELY Apply_XOR_Delta(void* dst, const void* src)
 {
     unsigned char* putp = (unsigned char*)(dst);
     const unsigned char* getp = (const unsigned char*)(src);

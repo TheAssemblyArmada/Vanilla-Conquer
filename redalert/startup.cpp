@@ -331,6 +331,9 @@ int main(int argc, char* argv[])
         Read_Setup_Options(&cfile);
 
 #ifndef REMASTER_BUILD
+#ifdef _NDS
+        Settings.Video.DOSMode = true;
+#endif
         /* If DOSMode is enabled, adjust resolution accordingly. */
         if (Settings.Video.DOSMode) {
             RESFACTOR = 1;

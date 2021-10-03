@@ -374,6 +374,9 @@ void Go_Editor(bool flag);
 char* CC_Get_Shape_Filename(void const* shapeptr);
 void CC_Add_Shape_To_Global(void const* shapeptr, char* filename, char code);
 
+void Disable_Uncompressed_Shapes(void);
+void Enable_Uncompressed_Shapes(void);
+
 void Bubba_Print(char* format, ...);
 
 void Heap_Dump_Check(const char* string);

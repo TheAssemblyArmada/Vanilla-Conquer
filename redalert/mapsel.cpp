@@ -144,8 +144,7 @@ char const* Map_Selection(void)
     //	Options.Set_Score_Volume(fixed(4, 10));
     Theme.Queue_Song(THEME_MAP);
 
-    void* anim = Open_Animation(
-        _filename, NULL, 0L, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), (unsigned char*)&mappalette);
+    void* anim = Open_Animation(_filename, NULL, 0L, (WSAOpenType)(WSA_OPEN_FROM_DISK), (unsigned char*)&mappalette);
 
     WWKeyboard->Clear();
     SeenPage.Clear();
@@ -267,7 +266,6 @@ char const* Map_Selection(void)
     Theme.Fade_Out();
     delete pseudoseenbuff;
     //	Options.Set_Score_Volume(oldvolume);
-
     //	Scen.ScenVar = (ScenarioVarType)selection;
     // Mono_Printf("Chose variant %d  \n", selection);
     return (scenarioname);

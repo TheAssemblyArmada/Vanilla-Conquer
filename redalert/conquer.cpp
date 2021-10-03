@@ -101,6 +101,12 @@ int Get_Resolution_Factor(void)
     return RESFACTOR - 1;
 }
 
+/* Function used by common lib to get which game is running.  */
+game_t Get_Running_Game(void)
+{
+    return GAME_RA;
+}
+
 #define SHAPE_TRANS 0x40
 
 void* Get_Shape_Header_Data(void* ptr);
@@ -129,8 +135,6 @@ void Keyboard_Process(KeyNumType& input);
 static void Message_Input(KeyNumType& input);
 void Color_Cycle(void);
 bool Map_Edit_Loop(void);
-
-bool UseOldShapeDraw = false;
 
 #ifdef CHEAT_KEYS
 void Dump_Heap_Pointers(void);
@@ -3055,11 +3059,13 @@ void CC_Draw_Shape(void const* shapefile,
         fadingdata = DisplayClass::FadingShade;
     }
 
+#ifdef ENABLE_SHAPE_ROTATION
     static unsigned char* _xbuffer = 0;
 
     if (!_xbuffer) {
         _xbuffer = new unsigned char[SHAPE_BUFFER_SIZE];
     }
+#endif
 
     if (shapefile != NULL && shapenum != -1) {
 
@@ -3105,6 +3111,8 @@ void CC_Draw_Shape(void const* shapefile,
             unsigned char* buffer = (unsigned char*)shape_pointer; // Get_Shape_Header_Data((void*)shape_pointer);
 
             UseOldShapeDraw = false;
+
+#ifdef ENABLE_SHAPE_ROTATION
             /*
             **	Rotation handler.
             */
@@ -3125,6 +3133,10 @@ void CC_Draw_Shape(void const* shapefile,
                 gb.Scale_Rotate(bm, pt, 0x0100, (256 - (rotation - 64)));
                 buffer = _xbuffer;
             }
+#else
+            /* If rotation is disabled then force to always be north.  */
+            rotation = DIR_N;
+#endif //ENABLE_SHAPE_ROTATION
 
             /*
             **	Special shadow drawing code (used for aircraft and bullets).
@@ -3374,7 +3386,7 @@ int VQ_Call_Back(unsigned char*, int)
 #endif
     Frame_Limiter();
 
-    if ((BreakoutAllowed || Debug_Flag) && key == KN_ESC) {
+    if ((BreakoutAllowed || Debug_Flag) && (key == KN_ESC || key == VK_LBUTTON)) {
         WWKeyboard->Clear();
         Brokeout = true;
         return (true);

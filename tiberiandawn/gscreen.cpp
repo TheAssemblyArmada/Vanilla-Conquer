@@ -455,8 +455,12 @@ extern bool CanVblankSync;
  *   02/14/1994 JLB : Created.                                                                 *
  *   05/01/1994 JLB : Converted to member function.                                            *
  *=============================================================================================*/
+
+void DS_Blit_Display(GraphicViewPortClass& HidPage, GraphicViewPortClass& SeenPage);
+
 void GScreenClass::Blit_Display(void)
 {
+#ifndef _NDS
 #if (0)
     if (HidPage.Get_IsDirectDraw() && (Options.GameSpeed > 1 || Options.ScrollRate == 6 && CanVblankSync)) {
         WWMouse->Draw_Mouse(&HidPage);
@@ -479,4 +483,7 @@ void GScreenClass::Blit_Display(void)
 #if (0)
     }
 #endif //(0)
+#else
+    DS_Blit_Display(HidPage, SeenBuff);
+#endif
 }

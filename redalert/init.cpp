@@ -2731,7 +2731,7 @@ static void Init_Bulk_Data(void)
  *=============================================================================================*/
 static void Init_Keys(void)
 {
-    RAMFileClass file((void*)Keys, strlen(Keys));
+    RAMFileClass file((void*)WWKeys, strlen(WWKeys));
     INIClass ini;
     ini.Load(file);
 
