@@ -220,6 +220,14 @@ if(BUILD_VANILLATD)
     target_include_directories(VanillaTD PUBLIC ${CMAKE_SOURCE_DIR} .)
     target_link_libraries(VanillaTD commonv ${VANILLA_LIBS} ${STATIC_LIBS})
     set_target_properties(VanillaTD PROPERTIES OUTPUT_NAME vanillatd)
+    if (NDS)
+        # Generate Nintendo DS ROM
+        add_custom_command(TARGET VanillaTD
+                POST_BUILD
+                COMMAND ${NDSTOOL} ARGS -c ../vanillatd.nds -9 ../vanillatd -b ${DEVKITPRO}/libnds/icon.bmp "VanillaTD")
+    endif()
+
+
     if(MAP_EDITORTD)
         target_compile_definitions(VanillaTD PUBLIC INTERNAL_VERSION)
     endif()

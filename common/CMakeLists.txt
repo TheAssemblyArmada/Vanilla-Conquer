@@ -53,7 +53,6 @@ set(COMMON_SRC
     lcw.cpp
     lcwpipe.cpp
     lcwstraw.cpp
-    linear.cpp
     link.cpp
     load.cpp
     memrev.cpp
@@ -103,12 +102,13 @@ set(COMMON_SRC
 
 if (WIN32)
     list(APPEND COMMON_SRC file_win.cpp paths_win.cpp)
+elseif (NDS)
+    list(APPEND COMMON_SRC fnmatch.cpp file_posix.cpp paths_nds.cpp)
 else()
     list(APPEND COMMON_SRC file_posix.cpp paths_posix.cpp)
 endif()
 
 set(COMMONR_SRC
-    framelimit.cpp
     gbuffer.cpp
     interpal.cpp
     soundio_null.cpp
@@ -119,7 +119,6 @@ set(COMMONR_SRC
 )
 
 set(COMMONV_SRC
-    framelimit.cpp
     gbuffer.cpp
     interpal.cpp
     tcpip.cpp
@@ -135,11 +134,24 @@ set(COMMONV_SRC
     wwmouse.cpp
 )
 
+# Functions optimized for the Nintendo DS
+if (NDS)
+    list(APPEND COMMON_SRC linear_nds.cpp)
+    list(APPEND COMMONR_SRC framelimit_nds.cpp)
+    list(APPEND COMMONV_SRC framelimit_nds.cpp)
+else()
+    list(APPEND COMMON_SRC linear.cpp)
+    list(APPEND COMMONR_SRC framelimit.cpp)
+    list(APPEND COMMONV_SRC framelimit.cpp)
+endif()
+
 if(DSOUND)
     list(APPEND COMMONV_SRC soundio.cpp vqaaudio_dsound.cpp)
     list(APPEND VANILLA_LIBS dsound)
 elseif(OPENAL)
     list(APPEND COMMONV_SRC soundio_openal.cpp vqaaudio_openal.cpp)
+elseif(NDS)
+    list(APPEND COMMONV_SRC soundio_nds.cpp vqaaudio_null.cpp)
 else()
     list(APPEND COMMONV_SRC soundio_null.cpp vqaaudio_null.cpp)
 endif()
@@ -149,6 +161,8 @@ if(DDRAW)
     list(APPEND VANILLA_LIBS ddraw)
 elseif(SDL2)
     list(APPEND COMMONV_SRC video_sdl2.cpp)
+elseif(NDS)
+    list(APPEND COMMONV_SRC video_nds.cpp)
 else()
     list(APPEND COMMONV_SRC video_null.cpp)
 endif()

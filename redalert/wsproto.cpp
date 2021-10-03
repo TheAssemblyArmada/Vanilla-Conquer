@@ -379,7 +379,7 @@ int WinsockInterfaceClass::Read(void* buffer, int& buffer_len, void* address, in
     /*
     ** Call the message loop in case there are any outstanding winsock READ messages.
     */
-    Keyboard->Check();
+    WWKeyboard->Check();
 
     /*
     ** If there are no available packets then return 0
@@ -463,7 +463,7 @@ void WinsockInterfaceClass::WriteTo(void* buffer, int buffer_len, void* address)
     /*
     ** Make sure the message loop gets called.
     */
-    Keyboard->Check();
+    WWKeyboard->Check();
 }
 
 /***********************************************************************************************
@@ -515,7 +515,7 @@ void WinsockInterfaceClass::Broadcast(void* buffer, int buffer_len)
     /*
     ** Make sure the message loop gets called.
     */
-    Keyboard->Check();
+    WWKeyboard->Check();
 }
 
 /***********************************************************************************************

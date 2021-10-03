@@ -97,9 +97,14 @@ void* Set_Font(void const* fontptr)
         /*
         **	Inform the system about the new font.
         */
+        unsigned short fontwidthblock;
+        unsigned short fontinfoblock;
 
-        FontWidthBlockPtr = (char*)fontptr + *(unsigned short*)((char*)fontptr + FONTWIDTHBLOCK);
-        char const* blockptr = (char*)fontptr + *(unsigned short*)((char*)fontptr + FONTINFOBLOCK);
+        memcpy(&fontwidthblock, (char*)fontptr + FONTWIDTHBLOCK, sizeof(short));
+        memcpy(&fontinfoblock, (char*)fontptr + FONTINFOBLOCK, sizeof(short));
+
+        FontWidthBlockPtr = (char*)fontptr + fontwidthblock;
+        char const* blockptr = (char*)fontptr + fontinfoblock;
         FontHeight = *(blockptr + FONTINFOMAXHEIGHT);
         FontWidth = *(blockptr + FONTINFOMAXWIDTH);
     }
@@ -404,8 +409,11 @@ long Buffer_Print(void* thisptr, const char* string, int x, int y, int fground, 
                 // Prepare variables for drawing
                 x += FontXSpacing + char_width;
                 int next_line = pitch - char_width;
-                const unsigned char* char_data = reinterpret_cast<const unsigned char*>(FontPtr) + datalist[char_num];
-                int char_lle = linelist[char_num];
+                unsigned short dlist;
+                memcpy(&dlist, datalist + char_num, sizeof(unsigned short));
+                const unsigned char* char_data = reinterpret_cast<const unsigned char*>(FontPtr) + dlist;
+                short char_lle;
+                memcpy(&char_lle, linelist + char_num, sizeof(short));
                 int char_ypos = char_lle & 0xFF;
                 int char_lines = char_lle >> 8;
                 int char_height = fntheight - (char_ypos + char_lines);

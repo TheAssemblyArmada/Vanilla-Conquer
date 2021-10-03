@@ -44,9 +44,18 @@
 #ifdef _WIN32
 #include <windows.h>
 #else
+#ifndef _NDS
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#endif /* _NDS */
+#endif /* _WIN32 */
+
+/* Define dummy structs for systems that do not support sockets.  */
+#ifdef _NDS
+struct in_addr
+{
+};
 #endif
 
 extern bool Server;

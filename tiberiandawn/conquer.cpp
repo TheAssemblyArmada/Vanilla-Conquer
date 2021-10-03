@@ -161,7 +161,7 @@ void Main_Game(int argc, char* argv[])
         **	told the map to draw itself.
         */
         Fade_Palette_To(GamePalette, FADE_PALETTE_MEDIUM, NULL);
-        Keyboard->Clear();
+        WWKeyboard->Clear();
 
         /*
         ** Only show the mouse if we're not playing back a recording.
@@ -368,8 +368,8 @@ void Main_Game(int argc, char* argv[])
         Load_Title_Screen("DEMOPIC.CPS", &HidPage, Palette);
         Blit_Hid_Page_To_Seen_Buff();
         Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, NULL);
-        Keyboard->Clear();
-        Keyboard->Get();
+        WWKeyboard->Clear();
+        WWKeyboard->Get();
         Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, NULL);
     }
 
@@ -2066,7 +2066,7 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn)
             memset(BlackPalette, 0x00, 768);
         }
         PreserveVQAScreen = 0;
-        Keyboard->Clear();
+        WWKeyboard->Clear();
 
         VQAHandle* vqa = NULL;
 
@@ -2367,7 +2367,7 @@ void CC_Texture_Fill(void const* shapefile, int shapenum, int xpos, int ypos, in
         shape_size = Build_Frame(shapefile, shapenum, _ShapeBuffer);
         if (Get_Last_Frame_Length() > _ShapeBufferSize) {
             Mono_Printf("Attempt to use shape buffer for size %d buffer is only size %d", shape_size, _ShapeBufferSize);
-            Keyboard->Get();
+            WWKeyboard->Get();
         }
 
         if (shape_size) {
@@ -2520,6 +2520,7 @@ void CC_Draw_Line(int x, int y, int x1, int y1, unsigned char color, int frame, 
  * HISTORY:                                                                                    *
  *   02/21/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
+
 //#pragma off(unreferenced)
 void CC_Draw_Shape(void const* shapefile,
                    int shapenum,
@@ -2543,7 +2544,7 @@ void CC_Draw_Shape(void const* shapefile,
         shape_size = Build_Frame(shapefile, shapenum, _ShapeBuffer);
         if (Get_Last_Frame_Length() > _ShapeBufferSize) {
             Mono_Printf("Attempt to use shape buffer for size %d buffer is only size %d", shape_size, _ShapeBufferSize);
-            Keyboard->Get();
+            WWKeyboard->Get();
         }
 
         if (shape_size) {
@@ -2815,9 +2816,9 @@ long VQ_Call_Back(unsigned char*, long)
 {
 #ifndef REMASTER_BUILD
     int key = 0;
-    if (Keyboard->Check()) {
-        key = Keyboard->Get();
-        Keyboard->Clear();
+    if (WWKeyboard->Check()) {
+        key = WWKeyboard->Get();
+        WWKeyboard->Clear();
     }
 
     Check_VQ_Palette_Set();
@@ -2826,7 +2827,7 @@ long VQ_Call_Back(unsigned char*, long)
     Frame_Limiter();
 
     if ((BreakoutAllowed || Debug_Flag) && key == KN_ESC) {
-        Keyboard->Clear();
+        WWKeyboard->Clear();
         Brokeout = true;
         return (true);
     }
@@ -2834,7 +2835,7 @@ long VQ_Call_Back(unsigned char*, long)
     if (!GameInFocus) {
         VQA_PauseAudio();
         while (!GameInFocus) {
-            Keyboard->Check();
+            WWKeyboard->Check();
             Check_For_Focus_Loss();
         }
     }

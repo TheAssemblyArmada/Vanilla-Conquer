@@ -162,7 +162,7 @@ bool WOL_Options_Dialog(WolapiObject* pWO, bool bCalledFromGame)
     /*
     **	Main Processing Loop.
     */
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     bool display = true;
     bool process = true;
     while (process) {

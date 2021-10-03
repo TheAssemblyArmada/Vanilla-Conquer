@@ -158,7 +158,7 @@ extern ThemeClass Theme;
 extern SpecialClass Special;
 extern CCINIClass RuleINI;
 extern RulesClass Rule;
-extern WWKeyboardClass* Keyboard;
+extern WWKeyboardClass* WWKeyboard;
 
 /*
 **	Game object allocation and tracking classes.
@@ -428,5 +428,7 @@ extern void Reset_Theater_Shapes(void);
 extern TheaterType LastTheater;
 
 extern bool ShareAllyVisibility;
+
+void pause(const char*, ...);
 
 #endif

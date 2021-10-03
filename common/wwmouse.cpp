@@ -321,7 +321,7 @@ void WWMouseClass::Low_Show_Mouse(int x, int y)
     State--;
 
 // ST - 1/3/2019 10:50AM
-#if !defined(REMASTER_BUILD) && !defined(SDL2_BUILD)
+#if !defined(REMASTER_BUILD) && !defined(SDL2_BUILD) && !defined(_NDS)
 
     //
     //	If the mouse is completely visible then draw it at its current
@@ -449,7 +449,7 @@ void WWMouseClass::Conditional_Show_Mouse(void)
 
 void WWMouseClass::Draw_Mouse(GraphicViewPortClass* scr)
 {
-#if defined(REMASTER_BUILD) || defined(SDL2_BUILD)
+#if defined(REMASTER_BUILD) || defined(SDL2_BUILD) || defined(_NDS)
     scr;
     return;
 // ST - 1/3/2019 10:50AM
@@ -510,7 +510,7 @@ void WWMouseClass::Draw_Mouse(GraphicViewPortClass* scr)
 
 void WWMouseClass::Erase_Mouse(GraphicViewPortClass* scr, int forced)
 {
-#if defined(REMASTER_BUILD) || defined(SDL2_BUILD)
+#if defined(REMASTER_BUILD) || defined(SDL2_BUILD) || defined(_NDS)
     // ST - 1/3/2019 10:50AM
     scr;
     forced;
@@ -617,7 +617,7 @@ int WWMouseClass::Get_Mouse_Y(void)
  *=============================================================================================*/
 void WWMouseClass::Get_Mouse_XY(int& x, int& y)
 {
-#if defined(SDL2_BUILD)
+#if defined(SDL2_BUILD) || defined(_NDS)
     Get_Video_Mouse(x, y);
 #elif defined(_WIN32)
     POINT pt;
@@ -851,7 +851,7 @@ void* WWMouseClass::Set_Mouse_Cursor(int hotspotx, int hotspoty, Cursor* cursor)
     result = PrevCursor;
     PrevCursor = cursor;
 
-#ifdef SDL2_BUILD
+#if defined(SDL2_BUILD) || defined(_NDS)
     Set_Video_Cursor(MouseCursor, CursorWidth, CursorHeight, MouseXHot, MouseYHot);
 #endif
 

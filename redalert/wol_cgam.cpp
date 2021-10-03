@@ -213,7 +213,7 @@ CREATEGAMEINFO WOL_CreateGame_Dialog(WolapiObject* pWO)
     /*
     **	Main Processing Loop.
     */
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     bool display = true;
     bool process = true;
     while (process) {

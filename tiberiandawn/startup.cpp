@@ -235,7 +235,7 @@ int main(int argc, char** argv)
 
         CCFileClass cfile("CONQUER.INI");
 
-        Keyboard = new WWKeyboardClass();
+        WWKeyboard = new WWKeyboardClass();
 
 #ifdef JAPANESE
         //////////////////////////////////////if(!ForceEnglish) KBLanguage = 1;
@@ -477,7 +477,7 @@ int main(int argc, char** argv)
 #elif defined(_WIN32)
         PostMessageA(MainWindow, WM_DESTROY, 0, 0);
         do {
-            Keyboard->Check();
+            WWKeyboard->Check();
         } while (ReadyToQuit == 1);
 #endif
 
@@ -551,7 +551,7 @@ void Prog_End(const char* why, bool fatal) // Added why and fatal parameters. ST
 void Print_Error_End_Exit(char* string)
 {
     printf("%s\n", string);
-    Keyboard->Get();
+    WWKeyboard->Get();
     Prog_End();
     printf("%s\n", string);
     if (!RunningAsDLL) {
@@ -597,7 +597,6 @@ void Read_Setup_Options(RawFileClass* config_file)
     */
     VideoBackBufferAllowed = ini.Get_Bool("Options", "VideoBackBuffer", true);
     AllowHardwareBlitFills = ini.Get_Bool("Options", "HardwareFills", true);
-
     /*
     ** See if an alternative socket number has been specified
     */

@@ -91,6 +91,8 @@ void CreditClass::Graphic_Logic(bool forced)
         **	Play a sound effect when the money display changes, but only if a sound
         **	effect was requested.
         */
+#ifndef _NDS
+        // This sound effect gets weird on DS.
         if (IsAudible) {
             if (IsUp) {
                 Sound_Effect(VOC_UP, VOL_1);
@@ -98,7 +100,7 @@ void CreditClass::Graphic_Logic(bool forced)
                 Sound_Effect(VOC_DOWN, VOL_1);
             }
         }
-
+#endif
         /*
         **	Display the new current value.
         */

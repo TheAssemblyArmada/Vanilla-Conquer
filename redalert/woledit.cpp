@@ -99,7 +99,7 @@ int WOLEditClass::Action(unsigned flags, KeyNumType& key)
         } else {
 #ifdef WIN32
 
-            KeyASCIIType ascii = (KeyASCIIType)(Keyboard->To_ASCII(key) & 0xff);
+            KeyASCIIType ascii = (KeyASCIIType)(WWKeyboard->To_ASCII(key) & 0xff);
 
             //
             // Allow numeric keypad presses to map to ascii numbers
@@ -121,7 +121,7 @@ int WOLEditClass::Action(unsigned flags, KeyNumType& key)
                     || key == KN_BACKSPACE) {
 
                     if ((!(flags & LEFTRELEASE)) && (!(flags & RIGHTRELEASE))) {
-                        if (Handle_Key(Keyboard->To_ASCII(key))) {
+                        if (Handle_Key(WWKeyboard->To_ASCII(key))) {
                             flags &= ~KEYBOARD;
                             key = KN_NONE;
                         }
@@ -137,7 +137,7 @@ int WOLEditClass::Action(unsigned flags, KeyNumType& key)
         }
 
 #else  // WIN32
-            if (Handle_Key(Keyboard->To_ASCII(key))) {
+            if (Handle_Key(WWKeyboard->To_ASCII(key))) {
                 flags &= ~KEYBOARD;
                 key = KN_NONE;
             }

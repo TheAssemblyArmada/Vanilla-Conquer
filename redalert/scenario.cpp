@@ -929,7 +929,7 @@ void Do_Win(void)
     Play_Movie(Scen.WinMovie3);
     Play_Movie(Scen.WinMovie4);
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     SaveTanya = IsTanyaDead;
     Scen.CarryOverTimer = Scen.MissionTimer;
@@ -943,7 +943,7 @@ void Do_Win(void)
         **	If the score presentation should be performed, then do
         **	so now.
         */
-        Keyboard->Clear();
+        WWKeyboard->Clear();
         if (!Scen.IsSkipScore) {
             Score.Presentation();
         }
@@ -1005,7 +1005,7 @@ void Do_Win(void)
             Scen.Set_Scenario_Name(Map_Selection());
         }
 
-        Keyboard->Clear();
+        WWKeyboard->Clear();
     }
 
     Scen.CarryOverMoney = PlayerPtr->Credits;
@@ -1203,7 +1203,7 @@ void Do_Lose(void)
     Show_Mouse();
     if (!Session.Play && !WWMessageBox().Process(TXT_TO_REPLAY, TXT_YES, TXT_NO)) {
         Hide_Mouse();
-        Keyboard->Clear();
+        WWKeyboard->Clear();
         Start_Scenario(Scen.ScenarioName, false);
 
         /*
@@ -1310,7 +1310,7 @@ void Do_Restart(void)
     WWMessageBox().Process(TXT_RESTARTING, TXT_NONE);
 
     Map.Set_Default_Mouse(MOUSE_NORMAL);
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     Start_Scenario(Scen.ScenarioName, false);
 
     /*
@@ -1327,7 +1327,7 @@ void Do_Restart(void)
     while (timer > 0) {
         Call_Back();
     }
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     Map.Render();
 }
@@ -1590,7 +1590,7 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
 
     int bufindex = 0;
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     Set_Font_Palette(_scorepal);
     int xprint = x + 20;
@@ -1627,13 +1627,13 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
             cd = 5;
             do {
                 Call_Back();
-            } while (!Keyboard->Check() && cd);
+            } while (!WWKeyboard->Check() && cd);
         }
         Frame_Limiter();
     } while (buffer[++bufindex]);
 
     Show_Mouse();
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     if (buttonlist) {
         process = true;
@@ -1739,13 +1739,13 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
             **	Check 'input' to see if it's the 1st char of button text
             */
             default:
-                if (b1char == toupper(Keyboard->To_ASCII((KeyNumType)(input & 0xFF)))) {
+                if (b1char == toupper(WWKeyboard->To_ASCII((KeyNumType)(input & 0xFF)))) {
                     selection = BUTTON_1;
                     pressed = true;
-                } else if (b2txt != NULL && b2char == toupper(Keyboard->To_ASCII((KeyNumType)(input & 0xFF)))) {
+                } else if (b2txt != NULL && b2char == toupper(WWKeyboard->To_ASCII((KeyNumType)(input & 0xFF)))) {
                     selection = BUTTON_2;
                     pressed = true;
-                } else if (b3txt != NULL && b3char == toupper(Keyboard->To_ASCII((KeyNumType)(input & 0xFF)))) {
+                } else if (b3txt != NULL && b3char == toupper(WWKeyboard->To_ASCII((KeyNumType)(input & 0xFF)))) {
                     selection = BUTTON_3;
                     pressed = true;
                 }
@@ -1778,7 +1778,7 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
 
     } else {
 
-        Keyboard->Clear();
+        WWKeyboard->Clear();
     }
 
     if (retval == (morebutton - 1) && strlen(msg) > BUFFSIZE - 1) {
@@ -1942,7 +1942,7 @@ void ScenarioClass::Set_Scenario_Name(int scenario, ScenarioPlayerType player, S
     ** generate the filename
     */
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98                                                                             \
-                  // Mono_Printf("In set_scenario_name, scenario # = %d\n",scenario);Keyboard->Get();Keyboard->Get();
+                  // Mono_Printf("In set_scenario_name, scenario # = %d\n",scenario);WWKeyboard->Get();WWKeyboard->Get();
     if (scenario < 100) {
         sprintf(ScenarioName, "SC%c%02d%c%c.INI", c_player, scenario, c_dir, c_var);
     } else {

@@ -270,7 +270,7 @@ int LoadOptionsClass::Process(void)
     /*
     ** Main Processing Loop.
     */
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     bool firsttime = true;
     bool display = true;
     bool process = true;
@@ -420,7 +420,7 @@ int LoadOptionsClass::Process(void)
                 while (timer > 0) {
                     Call_Back();
                 }
-                Keyboard->Clear();
+                WWKeyboard->Clear();
 
                 if (!rc) {
                     WWMessageBox().Process(TXT_ERROR_LOADING_GAME);
@@ -486,7 +486,7 @@ int LoadOptionsClass::Process(void)
                 while (timer > 0) {
                     Call_Back();
                 }
-                Keyboard->Clear();
+                WWKeyboard->Clear();
             }
             process = false;
             break;

@@ -389,7 +389,7 @@ bool RulesClass::General(CCINIClass& ini)
         QuakeInfantryDamage = ini.Get_Int(AFTERMATH, "QuakeInfantryDamage", QuakeInfantryDamage);
         QuakeDelay = ini.Get_Int(AFTERMATH, "QuakeDelay", QuakeDelay);
         ChronoTankDuration = ini.Get_Fixed(AFTERMATH, "ChronoTankDuration", ChronoTankDuration);
-// Mono_Set_Cursor(0,0);Mono_Printf("Chrono duration: %08x \n",ChronoTankDuration);Keyboard->Get();Keyboard->Get();
+// Mono_Set_Cursor(0,0);Mono_Printf("Chrono duration: %08x \n",ChronoTankDuration);WWKeyboard->Get();WWKeyboard->Get();
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
         CarrierLaunchDelay = ini.Get_Int(AFTERMATH, "CarrierLaunchDelay", 120);
 #endif

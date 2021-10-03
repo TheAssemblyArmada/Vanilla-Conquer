@@ -1025,17 +1025,21 @@ static unsigned long Get_Resident_Frame_Offset(char* file_buffer, int frame)
 
     // If there is a frame 0, the calculate its size.
     lptr = (uint32_t*)file_buffer;
+    uint32_t x1, x0;
+    memcpy(&x0, lptr, sizeof(uint32_t));
+    memcpy(&x1, lptr + 1, sizeof(uint32_t));
 
-    if (*lptr) {
-        frame0_size = lptr[1] - *lptr;
+    if (x0) {
+        frame0_size = x1 - x0;
     } else {
         frame0_size = 0;
     }
 
     // Return the offset into RAM for the frame.
     lptr += frame;
-    if (*lptr)
-        return (*lptr - (frame0_size + WSA_FILE_HEADER_SIZE));
+    memcpy(&x0, lptr, sizeof(uint32_t));
+    if (x0)
+        return (x0 - (frame0_size + WSA_FILE_HEADER_SIZE));
     else
         return (0L);
 }

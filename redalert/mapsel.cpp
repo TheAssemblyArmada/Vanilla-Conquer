@@ -146,7 +146,7 @@ char const* Map_Selection(void)
     void* anim = Open_Animation(
         _filename, NULL, 0L, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), (unsigned char*)&mappalette);
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     SeenPage.Clear();
     mappalette.Set(FADE_PALETTE_FAST, Call_Back);
 
@@ -182,7 +182,7 @@ char const* Map_Selection(void)
     Call_Back();
     Close_Animation(anim);
     Show_Mouse();
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     bool done = false;
     MouseType shape = MOUSE_NORMAL;
@@ -210,8 +210,8 @@ char const* Map_Selection(void)
             timer = delay;
             Set_Mouse_Cursor(xspot, yspot, Extract_Shape(MouseClass::MouseShapes, start + frame));
         }
-        if (Keyboard->Check()) {
-            if ((Keyboard->Get() & 0x10FF) == KN_LMOUSE) {
+        if (WWKeyboard->Check()) {
+            if ((WWKeyboard->Get() & 0x10FF) == KN_LMOUSE) {
                 if (choice != -1) {
                     done = true;
                     selection = choice;
@@ -231,7 +231,7 @@ char const* Map_Selection(void)
     Set_Mouse(MOUSE_NORMAL, start, count, delay, xspot, yspot);
     Set_Mouse_Cursor(xspot, yspot, Extract_Shape(MouseClass::MouseShapes, start));
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     //	BlackPalette.Set(FADE_PALETTE_SLOW, Call_Back);
     //	SeenPage.Clear();
 

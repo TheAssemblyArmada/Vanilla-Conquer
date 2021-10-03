@@ -772,10 +772,10 @@ int Com_Scenario_Dialog(bool skirmish)
         User clicks on a color button
         ------------------------------------------------------------------*/
         case KN_LMOUSE:
-            if (Keyboard->MouseQX > cbox_x[0] && Keyboard->MouseQX < (cbox_x[MAX_MPLAYER_COLORS - 1] + d_color_w)
-                && Keyboard->MouseQY > d_color_y && Keyboard->MouseQY < (d_color_y + d_color_h)) {
+            if (WWKeyboard->MouseQX > cbox_x[0] && WWKeyboard->MouseQX < (cbox_x[MAX_MPLAYER_COLORS - 1] + d_color_w)
+                && WWKeyboard->MouseQY > d_color_y && WWKeyboard->MouseQY < (d_color_y + d_color_h)) {
 
-                Session.PrefColor = (PlayerColorType)((Keyboard->MouseQX - cbox_x[0]) / d_color_w);
+                Session.PrefColor = (PlayerColorType)((WWKeyboard->MouseQX - cbox_x[0]) / d_color_w);
                 Session.ColorIdx = Session.PrefColor;
                 if (display < REDRAW_COLORS)
                     display = REDRAW_COLORS;

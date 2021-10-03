@@ -55,7 +55,7 @@
 #include "tcpip.h"
 #include "misc.h"
 #include "wwkeyboard.h"
-extern WWKeyboardClass* Keyboard;
+extern WWKeyboardClass* WWKeyboard;
 
 #include "endianness.h"
 #include <algorithm>
@@ -333,7 +333,7 @@ int TcpipManagerClass::Read(void* buffer, int buffer_len)
     ** Make sure the message loop gets called because all the Winsock notifications
     ** are done via messages.
     */
-    Keyboard->Check();
+    WWKeyboard->Check();
 
     /*
     ** Copy any outstanding incoming data to the buffer provided
@@ -394,7 +394,7 @@ void TcpipManagerClass::Write(void* buffer, int buffer_len)
     ** Make sure the message loop gets called because all the Winsock notifications
     ** are done via messages.
     */
-    Keyboard->Check();
+    WWKeyboard->Check();
 }
 
 /***********************************************************************************************

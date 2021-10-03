@@ -243,8 +243,13 @@ void DisplayClass::One_Time(void)
                 Mem_Copy(FadingShade, RemapTables[hindex][fade], 256);
                 break;
             }
-            Mem_Copy(
-                &RemapTables[hindex][fade][((int)hindex + 11) * 16], &RemapTables[hindex][fade][(0 + 11) * 16], 16);
+            /* mparrot 2021-10-09: There is a buffer overflow if
+               hindex == HOUSE_COUNT - 1.  It seems harmless in PC, but causes
+               a crash in other systems.  Find a proper fix for it.  */
+            if (hindex < HOUSE_COUNT - 1) {
+                Mem_Copy(
+                    &RemapTables[hindex][fade][((int)hindex + 11) * 16], &RemapTables[hindex][fade][(0 + 11) * 16], 16);
+            }
         }
     }
 }
@@ -3230,8 +3235,8 @@ int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType& key)
     */
     bool edge = false;
     if (flags & (LEFTPRESS | LEFTRELEASE | RIGHTPRESS | RIGHTRELEASE)) {
-        x = Keyboard->MouseQX;
-        y = Keyboard->MouseQY;
+        x = WWKeyboard->MouseQX;
+        y = WWKeyboard->MouseQY;
     } else {
         x = Get_Mouse_X();
         y = Get_Mouse_Y();
@@ -3420,8 +3425,8 @@ int DisplayClass::TacticalClass::Selection_At_Mouse(unsigned flags, KeyNumType& 
     int x, y; // Sub cell pixel coordinates.
     bool edge = false;
     if (flags & (LEFTPRESS | LEFTRELEASE | RIGHTPRESS | RIGHTRELEASE)) {
-        x = Keyboard->MouseQX;
-        y = Keyboard->MouseQY;
+        x = WWKeyboard->MouseQX;
+        y = WWKeyboard->MouseQY;
     } else {
         x = Get_Mouse_X();
         y = Get_Mouse_Y();
@@ -3494,8 +3499,8 @@ int DisplayClass::TacticalClass::Command_Object(unsigned flags, KeyNumType& key)
     int x, y; // Sub cell pixel coordinates.
     bool edge = false;
     if (flags & (LEFTPRESS | LEFTRELEASE | RIGHTPRESS | RIGHTRELEASE)) {
-        x = Keyboard->MouseQX;
-        y = Keyboard->MouseQY;
+        x = WWKeyboard->MouseQX;
+        y = WWKeyboard->MouseQY;
     } else {
         x = Get_Mouse_X();
         y = Get_Mouse_Y();

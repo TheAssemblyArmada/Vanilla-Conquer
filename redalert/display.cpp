@@ -2793,7 +2793,7 @@ bool DisplayClass::Good_Reinforcement_Cell(CELL outcell, CELL incell, SpeedType 
     /*
     **	All tests have passed, return with success code.
     */
-    // Mono_Printf("<%04X>\n", incell);Keyboard->Get();
+    // Mono_Printf("<%04X>\n", incell);WWKeyboard->Get();
     return (true);
 }
 
@@ -3071,8 +3071,8 @@ int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType& key)
     **	events must use the current mouse position globals.
     */
     if (flags & (LEFTPRESS | LEFTRELEASE | RIGHTPRESS | RIGHTRELEASE)) {
-        x = Keyboard->MouseQX;
-        y = Keyboard->MouseQY;
+        x = WWKeyboard->MouseQX;
+        y = WWKeyboard->MouseQY;
     } else {
         x = Get_Mouse_X();
         y = Get_Mouse_Y();
@@ -3295,8 +3295,8 @@ int DisplayClass::TacticalClass::Selection_At_Mouse(unsigned flags, KeyNumType& 
     int x, y; // Sub cell pixel coordinates.
     bool edge = false;
     if (flags & (LEFTPRESS | LEFTRELEASE | RIGHTPRESS | RIGHTRELEASE)) {
-        x = Keyboard->MouseQX;
-        y = Keyboard->MouseQY;
+        x = WWKeyboard->MouseQX;
+        y = WWKeyboard->MouseQY;
     } else {
         x = Get_Mouse_X();
         y = Get_Mouse_Y();
@@ -3369,8 +3369,8 @@ int DisplayClass::TacticalClass::Command_Object(unsigned flags, KeyNumType& key)
     int x, y; // Sub cell pixel coordinates.
     bool edge = false;
     if (flags & (LEFTPRESS | LEFTRELEASE | RIGHTPRESS | RIGHTRELEASE)) {
-        x = Keyboard->MouseQX;
-        y = Keyboard->MouseQY;
+        x = WWKeyboard->MouseQX;
+        y = WWKeyboard->MouseQY;
     } else {
         x = Get_Mouse_X();
         y = Get_Mouse_Y();

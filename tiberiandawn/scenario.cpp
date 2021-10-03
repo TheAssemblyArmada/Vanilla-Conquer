@@ -441,7 +441,7 @@ void Do_Win(void)
         Play_Movie(WinMovie);
     }
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     /*
     **	Do the ending screens only if not playing back a recorded game.
@@ -469,7 +469,7 @@ void Do_Win(void)
         } else {
 #ifdef NEWMENU
             if (Scenario >= 20) {
-                Keyboard->Clear();
+                WWKeyboard->Clear();
                 Score.Presentation();
                 GameActive = false;
                 Show_Mouse();
@@ -505,7 +505,7 @@ void Do_Win(void)
             }
 
             if (!Special.IsJurassic || !AreThingiesEnabled) {
-                Keyboard->Clear();
+                WWKeyboard->Clear();
                 InterpolationPaletteChanged = true;
                 InterpolationPalette = Palette;
                 Score.Presentation();
@@ -520,7 +520,7 @@ void Do_Win(void)
                 Map_Selection();
             }
             Scenario++;
-            Keyboard->Clear();
+            WWKeyboard->Clear();
         }
     }
 
@@ -653,7 +653,7 @@ void Do_Lose(void)
     Show_Mouse();
     if (!PlaybackGame && !WWMessageBox().Process(TXT_TO_REPLAY, TXT_YES, TXT_NO)) {
         Hide_Mouse();
-        Keyboard->Clear();
+        WWKeyboard->Clear();
         Start_Scenario(ScenarioName, false);
         Map.Render();
     } else {
@@ -689,11 +689,11 @@ void Do_Restart(void)
         Show_Mouse();
     WWMessageBox().Process(TXT_RESTARTING, TXT_NONE);
     Map.Set_Default_Mouse(MOUSE_NORMAL);
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     Start_Scenario(ScenarioName, false);
     if (hidden)
         Hide_Mouse();
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     Map.Render();
 }
 

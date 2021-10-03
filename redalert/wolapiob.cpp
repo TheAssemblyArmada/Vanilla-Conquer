@@ -636,7 +636,7 @@ HRESULT WolapiObject::GetChatServer()
     }
     //	debugprint( "RequestServerList wait finished\n" );
     if (bCancel) {
-        Keyboard->Clear();
+        WWKeyboard->Clear();
         return USERCANCELLED;
     }
     if (pChatSink->pServer)
@@ -715,7 +715,7 @@ HRESULT WolapiObject::AttemptLogin(const char* szName, const char* szPass, bool 
         //        Sleep( PUMPSLEEPDURATION );	//	Can't do because we want to Call_Back()
     }
     if (bCancel) {
-        Keyboard->Clear();
+        WWKeyboard->Clear();
         return USERCANCELLED;
     }
     if (pChatSink->bRequestConnectionWait)

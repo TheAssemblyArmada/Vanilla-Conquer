@@ -387,10 +387,10 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
             */
             default:
 #ifdef NEVER
-                if (b1char == toupper(Keyboard->To_ASCII((KeyNumType)(input & 0xFF)))) {
+                if (b1char == toupper(WWKeyboard->To_ASCII((KeyNumType)(input & 0xFF)))) {
                     selection = BUTTON_1;
                     pressed = true;
-                } else if (b2txt != NULL && b2char == toupper(Keyboard->To_ASCII((KeyNumType)(input & 0xFF)))) {
+                } else if (b2txt != NULL && b2char == toupper(WWKeyboard->To_ASCII((KeyNumType)(input & 0xFF)))) {
                     selection = BUTTON_2;
                     pressed = true;
                 }
@@ -434,7 +434,7 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
         while (timer.Time() > 0) {
             Call_Back();
         }
-        Keyboard->Clear();
+        WWKeyboard->Clear();
     }
 
     /*

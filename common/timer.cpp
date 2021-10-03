@@ -39,10 +39,12 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "timer.h"
-
+#ifdef _NDS
+#include <nds.h>
+#else
 #include <chrono>
-
 using namespace std::chrono;
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////// Global Data /////////////////////////////////////
@@ -299,7 +301,18 @@ unsigned int WinTimerClass::Get_User_Tick_Count()
 
 unsigned long long WinTimerClass::Now()
 {
+#ifdef _NDS
+    static unsigned long long ticks = 0;
+    const unsigned timer_speed = BUS_CLOCK / 1024;
+
+    if (ticks == 0)
+        timerStart(0, ClockDivider_1024, 0, NULL);
+
+    ticks += timerElapsed(0);
+    return (ticks * 1000) / timer_speed;
+#else
     return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+#endif
 }
 
 long SystemTimerClass::operator()() const

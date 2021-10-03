@@ -35,6 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "crc.h"
+#include <string.h>
 
 /***********************************************************************************************
  * CRCEngine::operator() -- Submits one byte of data to the CRC engine.                        *
@@ -108,7 +109,9 @@ int32_t CRCEngine::operator()(void const* buffer, size_t length)
         int32_t const* longptr = (int32_t const*)dataptr;
         int longcount = bytes_left / sizeof(int32_t); // Whole 'long' elements remaining.
         while (longcount--) {
-            CRC = lrotl(CRC, 1) + *longptr++;
+            int32_t l;
+            memcpy(&l, longptr++, sizeof(int32_t));
+            CRC = lrotl(CRC, 1) + l;
             bytes_left -= sizeof(int32_t);
         }
 

@@ -2933,8 +2933,8 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
 
     case SPC_IRON_CURTAIN:
         if (SuperWeapon[SPC_IRON_CURTAIN].Is_Ready()) {
-            int x = Keyboard->MouseQX - Map.TacPixelX;
-            int y = Keyboard->MouseQY - Map.TacPixelY;
+            int x = WWKeyboard->MouseQX - Map.TacPixelX;
+            int y = WWKeyboard->MouseQY - Map.TacPixelY;
             TechnoClass* tech = Map[cell].Cell_Techno(x, y);
             if (tech) {
                 switch (tech->What_Am_I()) {
@@ -2968,8 +2968,8 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
 
     case SPC_CHRONOSPHERE:
         if (SuperWeapon[SPC_CHRONOSPHERE].Is_Ready()) {
-            int x = Keyboard->MouseQX - Map.TacPixelX;
-            int y = Keyboard->MouseQY - Map.TacPixelY;
+            int x = WWKeyboard->MouseQX - Map.TacPixelX;
+            int y = WWKeyboard->MouseQY - Map.TacPixelY;
             TechnoClass* tech = Map[cell].Cell_Techno(x, y);
             if (tech && Is_Ally(tech)) {
                 if (tech->What_Am_I() == RTTI_UNIT || tech->What_Am_I() == RTTI_INFANTRY ||

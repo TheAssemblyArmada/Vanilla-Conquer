@@ -267,7 +267,7 @@ int main(int argc, char* argv[])
 
         CCFileClass cfile(CONFIG_FILE_NAME);
 
-        Keyboard = new WWKeyboardClass();
+        WWKeyboard = new WWKeyboardClass();
 
         /*
         ** If there is loads of memory then use uncompressed shapes
@@ -473,7 +473,7 @@ int main(int argc, char* argv[])
         ** Wait until the message handler has dealt with the message
         */
         do {
-            Keyboard->Check();
+            WWKeyboard->Check();
         } while (ReadyToQuit == 1);
 #endif
 
@@ -670,7 +670,7 @@ void Emergency_Exit(int code)
     ** Wait until the message handler has dealt with the message
     */
     do {
-        Keyboard->Check();
+        WWKeyboard->Check();
     } while (ReadyToQuit == 3);
 
     exit(code);

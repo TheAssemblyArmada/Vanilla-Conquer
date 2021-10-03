@@ -59,6 +59,9 @@
 #include <SDL.h>
 #include "sdl_keymap.h"
 #endif
+#ifdef _NDS
+#include <nds.h>
+#endif
 #include "settings.h"
 
 #define ARRAY_SIZE(x) int(sizeof(x) / sizeof(x[0]))
@@ -609,6 +612,58 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
             }
             TranslateMessage(&msg);
             DispatchMessageA(&msg);
+        }
+    }
+#elif defined(_NDS)
+    if (!Is_Buffer_Full()) {
+        static uint32_t keys_old = 0;
+
+        int x = 0, y = 0;
+        unsigned short mkey = 0;
+        bool down = false;
+        bool up = false;
+
+        /* Calling keysDown() and keysUp() slows down the game too much.
+           Use keysHeld as it query data directly from the ARM7 chip.  */
+
+        uint32_t keys_current = keysCurrent();
+        uint32_t keys_down = keys_current & ~keys_old;
+        uint32_t keys_up = (keys_current ^ keys_old) & (~keys_current);
+        keys_old = keys_current;
+
+        // Mouse update is in video_nds.cpp.  We use a vblank interrupt
+        // handler for that so the cursor still moves smooth on low framerate.
+
+        if (keys_down & KEY_B) {
+            Get_Video_Mouse(x, y);
+            mkey = VK_LBUTTON;
+            down = true;
+        } else if (keys_down & KEY_Y) {
+            Get_Video_Mouse(x, y);
+            mkey = VK_RBUTTON;
+            down = true;
+        } else if (keys_down & KEY_X) {
+            Put_Key_Message(DVK_ENTER, false);
+        }
+
+        if (down) {
+            Put_Mouse_Message(mkey, x, y, false);
+        }
+
+        if (keys_up & KEY_B) {
+            Get_Video_Mouse(x, y);
+            mkey = VK_LBUTTON;
+            up = true;
+        } else if (keys_up & KEY_Y) {
+            Get_Video_Mouse(x, y);
+            mkey = VK_RBUTTON;
+            up = true;
+        } else if (keys_down & KEY_X) {
+            Put_Key_Message(DVK_ENTER, true);
+        }
+
+        if (up) {
+            Put_Mouse_Message(mkey, x, y, true);
         }
     }
 #endif

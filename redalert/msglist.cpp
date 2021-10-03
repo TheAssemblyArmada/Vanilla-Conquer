@@ -997,7 +997,7 @@ int MessageListClass::Input(KeyNumType& input)
     //------------------------------------------------------------------------
     if (IsEdit) {
 
-        ascii = (KeyASCIIType)(Keyboard->To_ASCII(input) & 0x00ff);
+        ascii = (KeyASCIIType)(WWKeyboard->To_ASCII(input) & 0x00ff);
 
         /*
         ** Allow numeric keypad presses to map to ascii numbers
@@ -1014,7 +1014,7 @@ int MessageListClass::Input(KeyNumType& input)
                 || (input & 0xff) == (KN_RETURN & 0xff) || (input & 0xff) == (KN_BACKSPACE & 0xff)
                 || (input & 0xff) == (KN_ESC & 0xff)) {
 
-                // ascii = (KeyASCIIType)(Keyboard->To_ASCII(input));
+                // ascii = (KeyASCIIType)(WWKeyboard->To_ASCII(input));
             } else {
                 input = KN_NONE;
                 return (0);

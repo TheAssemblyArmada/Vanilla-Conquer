@@ -54,6 +54,10 @@ if(NOT MSVC)
         set(CMAKE_CXX_FLAGS_DEBUG "-gstabs3")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
         set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
+    elseif(NDS)
+        # -g is useless in DS, as there is no debugger capable of parsing ELF
+        # objects.
+        set(CMAKE_CXX_FLAGS_DEBUG "-O2")
     else()
         set(CMAKE_CXX_FLAGS_DEBUG "-g3")
     endif()

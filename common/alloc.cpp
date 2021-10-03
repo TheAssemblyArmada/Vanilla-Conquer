@@ -41,6 +41,7 @@
 #include <stdlib.h>
 
 #include "wwmem.h"
+#include "debugstring.h"
 
 unsigned long Largest_Mem_Block(void);
 
@@ -96,7 +97,6 @@ void* Alloc(size_t bytes_to_alloc, MemoryFlagType flags)
 #endif // MEM_CHECK
 
     mem_ptr = malloc(bytes_to_alloc);
-
     if (!mem_ptr && Memory_Error) {
         Memory_Error();
     }
