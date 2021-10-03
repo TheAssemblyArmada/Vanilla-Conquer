@@ -52,7 +52,7 @@ This will build Vanilla Conquer executables in the build directory. If you are b
 
 - GNU C++ Compiler (g++) or Clang
 - CMake
-- SDL2
+- SDL1 or SDL2
 - OpenAL
 
 On Debian/Ubuntu you can install the build requirements as follows:
@@ -60,6 +60,8 @@ On Debian/Ubuntu you can install the build requirements as follows:
 ```
 sudo apt-get update
 sudo apt-get install g++ cmake libsdl2-dev libopenal-dev
+or
+sudo apt-get install g++ cmake libsdl1.2-dev libopenal-dev
 ```
 
 #### Building
