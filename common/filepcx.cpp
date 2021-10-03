@@ -100,6 +100,8 @@ GraphicBufferClass* Read_PCX_File(char* name, char* palette, void* Buff, long Si
     if (header.id != 10 && header.version != 5 && header.pixelsize != 8)
         return NULL;
 
+    header.width = le16toh(header.width);
+    header.height = le16toh(header.height);
     width = header.width - header.x + 1;
     height = header.height - header.y + 1;
 
@@ -119,6 +121,7 @@ GraphicBufferClass* Read_PCX_File(char* name, char* palette, void* Buff, long Si
     buffer = (char*)pic->Get_Buffer();
     file_ptr = pool;
     file_handle.Read(pool, POOL_SIZE);
+    header.byte_per_line = le16toh(header.byte_per_line);
 
     if (header.byte_per_line != width) {
 

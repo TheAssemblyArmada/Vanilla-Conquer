@@ -14,6 +14,11 @@
 #include <time.h>
 #endif
 
+#ifdef AMIGA
+extern "C" {
+int nanosleep (const struct timespec  *rqtp, struct timespec *rmtp);
+}
+#endif
 /**
  * Yield the current thread for at least ms milliseconds.
  */

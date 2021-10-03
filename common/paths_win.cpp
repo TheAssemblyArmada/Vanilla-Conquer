@@ -98,8 +98,11 @@ const char* PathsClass::Data_Path()
             Program_Path();
         }
 
+#ifdef AMIGA
+        DataPath = "";
+#else
         DataPath = ProgramPath.substr(0, ProgramPath.find_last_of("\\/")) + SEP + "share";
-
+#endif
         if (!Suffix.empty()) {
             DataPath += SEP + Suffix;
         }

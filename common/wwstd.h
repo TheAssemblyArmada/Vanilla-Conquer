@@ -257,14 +257,14 @@ inline static void _splitpath(const char* path, char* drive, char* dir, char* fn
         }
     }
 }
-
+#if 0//ndef AMIGA
 inline static char* strupr(char* str)
 {
     for (int i = 0; i < strlen(str); i++)
         str[i] = toupper(str[i]);
     return str;
 }
-
+#endif
 inline static void strrev(char* str)
 {
     int len = strlen(str);

@@ -304,11 +304,11 @@ unsigned long Uncompress_Data(void const* src, void* dst)
     */
     uncomp_size = ((CompHeaderType*)src)->Size;
 #if (AMIGA)
-    uncomp_size = Reverse_Long(uncomp_size);
+    uncomp_size = bswap32(uncomp_size);
 #endif
     skip = ((CompHeaderType*)src)->Skip;
 #if (AMIGA)
-    skip = Reverse_Word(skip);
+    skip = bswap16(skip);
 #endif
     method = (CompressionType)((CompHeaderType*)src)->Method;
     src = Add_Long_To_Pointer((void*)src, (long)sizeof(CompHeaderType) + (long)skip);

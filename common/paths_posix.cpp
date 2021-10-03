@@ -14,7 +14,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#ifndef AMIGA
 #include <dlfcn.h>
+#endif
 #include <pwd.h>
 #include <stdexcept>
 #include <sys/stat.h>
@@ -66,8 +68,11 @@ namespace
 
                 std::vector<char> buffer;
                 buffer.resize(bufsize);
+#if !defined (AMIGA)                
                 int error_code = getpwuid_r(uid, &pwd, buffer.data(), buffer.size(), &pw);
-
+#else
+                int error_code = 1;
+#endif
                 if (error_code) {
                     DBG_ERROR("Unable to get passwd entry for uid %d, error was %d.", uid, error_code);
                     return _path;
@@ -260,3 +265,12 @@ std::string PathsClass::Argv_Path(const char* cmd_arg)
     }
     return ret;
 }
+#ifdef AMIGA    
+extern "C" {
+    char *realpath(const char *_path, char *resolved_path)
+	{
+		return "";
+	}
+}
+#endif
+

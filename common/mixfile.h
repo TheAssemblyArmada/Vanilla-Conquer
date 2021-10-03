@@ -319,8 +319,8 @@ MixFileClass<T, TCRC>::MixFileClass(char const* filename)
         straw->Get(((char*)&fileheader) + sizeof(alternate), sizeof(fileheader) - sizeof(alternate));
     }
 
-    Count = fileheader.count;
-    DataSize = fileheader.size;
+    Count = le16toh(fileheader.count);
+    DataSize = le32toh(fileheader.size);
 
     /*
     **	Load up the offset control array. If RAM is exhausted, then the mixfile is invalid.
@@ -440,8 +440,8 @@ MixFileClass<T, TCRC>::MixFileClass(char const* filename, PKey const* key)
         straw->Get(((char*)&fileheader) + sizeof(alternate), sizeof(fileheader) - sizeof(alternate));
     }
 
-    Count = fileheader.count;
-    DataSize = fileheader.size;
+    Count = le16toh(fileheader.count);
+    DataSize = le32toh(fileheader.size);
     // BGMono_Printf("Mixfileclass %s DataSize: %08x   \n",filename,DataSize);Get_Key();
     /*
     **	Load up the offset control array. If RAM is exhausted, then the mixfile is invalid.
@@ -694,9 +694,9 @@ template <class T, class TCRC> void MixFileClass<T, TCRC>::Free(void)
 
 inline int compfunc(void const* ptr1, void const* ptr2)
 {
-    if (*(int32_t const*)ptr1 < *(int32_t const*)ptr2)
+    if ((*(int32_t const*)ptr1) < le32toh(*(int32_t const*)ptr2))
         return (-1);
-    if (*(int32_t const*)ptr1 > *(int32_t const*)ptr2)
+    if ((*(int32_t const*)ptr1) > le32toh(*(int32_t const*)ptr2))
         return (1);
     return (0);
 }
@@ -779,13 +779,13 @@ bool MixFileClass<T, TCRC>::Offset(int hash, void** realptr, MixFileClass** mixf
             if (mixfile != NULL)
                 *mixfile = ptr;
             if (size != NULL)
-                *size = block->Size;
+                *size = le32toh(block->Size);
             if (realptr != NULL)
                 *realptr = NULL;
             if (offset != NULL)
-                *offset = block->Offset;
+                *offset = le32toh(block->Offset);
             if (realptr != NULL && ptr->Data != NULL) {
-                *realptr = (char*)ptr->Data + block->Offset;
+                *realptr = (char*)ptr->Data + le32toh(block->Offset);
             }
             if (ptr->Data == NULL && offset != NULL) {
                 *offset += ptr->DataStart;

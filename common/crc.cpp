@@ -35,7 +35,9 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "crc.h"
+#include "endianness.h"
 
+#include <stdio.h>
 /***********************************************************************************************
  * CRCEngine::operator() -- Submits one byte of data to the CRC engine.                        *
  *                                                                                             *
@@ -108,7 +110,7 @@ int32_t CRCEngine::operator()(void const* buffer, size_t length)
         int32_t const* longptr = (int32_t const*)dataptr;
         int longcount = bytes_left / sizeof(int32_t); // Whole 'long' elements remaining.
         while (longcount--) {
-            CRC = lrotl(CRC, 1) + *longptr++;
+            CRC = lrotl(CRC, 1) + le32toh(*longptr++);
             bytes_left -= sizeof(int32_t);
         }
 

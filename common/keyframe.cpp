@@ -40,6 +40,7 @@
 #include "memflag.h"
 #include "keyframe.h"
 
+#include <stdio.h>
 #include <string.h>
 
 #define SUBFRAMEOFFS 7 // 3 1/2 frame offsets loaded (2 offsets/frame)

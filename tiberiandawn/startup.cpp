@@ -472,7 +472,7 @@ int main(int argc, char** argv)
         CCDebugString("C&C95 - About to exit.\n");
         ReadyToQuit = 1;
 
-#if defined(SDL2_BUILD)
+#if defined(SDL_BUILD)
         Reset_Video_Mode();
 #elif defined(_WIN32)
         PostMessageA(MainWindow, WM_DESTROY, 0, 0);

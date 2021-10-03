@@ -839,7 +839,7 @@ bool Select_Game(bool fade)
                 }
 
                 Set_Logic_Page(SeenBuff);
-
+#ifndef AMIGA
                 Fancy_Text_Print("%s",
                                  SeenBuff.Get_Width() - 1,
                                  SeenBuff.Get_Height() - 10,
@@ -847,7 +847,7 @@ bool Select_Game(bool fade)
                                  TBLACK,
                                  TPF_6POINT | TPF_FULLSHADOW | TPF_RIGHT,
                                  VersionText);
-
+#endif
                 display = false;
                 Show_Mouse();
             } else {
