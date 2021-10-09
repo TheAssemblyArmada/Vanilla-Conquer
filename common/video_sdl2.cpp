@@ -379,7 +379,7 @@ void Set_Video_Cursor_Clip(bool clipped)
 
         if (Settings.Video.Windowed) {
             SDL_SetWindowGrab(window, hwcursor.Clip ? SDL_TRUE : SDL_FALSE);
-            relative = SDL_SetRelativeMouseMode(Settings.Mouse.RawInput && hwcursor.Clip ? SDL_TRUE : SDL_FALSE);
+            relative = SDL_SetRelativeMouseMode(Settings.Mouse.ControllerEnabled || (Settings.Mouse.RawInput && hwcursor.Clip) ? SDL_TRUE : SDL_FALSE);
 
             /*
             ** When grabbing with raw input, move in-game cursor where the real cursor was and vice versa.
