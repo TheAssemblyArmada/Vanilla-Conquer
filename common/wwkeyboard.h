@@ -799,7 +799,6 @@ private:
 #ifdef SDL2_BUILD
     void Handle_Controller_Axis_Event(const SDL_ControllerAxisEvent& motion);
     void Handle_Controller_Button_Event(const SDL_ControllerButtonEvent& button);
-    void Handle_Touch_Event(const SDL_TouchFingerEvent& event);
     void Process_Controller_Axis_Motion();
 
     // used to convert user-friendly pointer speed values into more useable ones
@@ -822,8 +821,6 @@ private:
     int16_t ControllerRightXAxis = 0;
     int16_t ControllerRightYAxis = 0;
     uint32_t LastControllerTime = 0;
-    float EmulatedPointerPosX = 0;
-    float EmulatedPointerPosY = 0;
     float ControllerSpeedBoost = 1;
     bool AnalogScrollActive = false;
     ScrollDirType ScrollDirection = SDIR_NONE;

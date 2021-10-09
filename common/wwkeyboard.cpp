@@ -554,14 +554,7 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
             }
             break;
         case SDL_MOUSEMOTION:
-            Move_Video_Mouse(event.motion.xrel, event.motion.yrel);
-            if (Is_Gamepad_Active()) {
-                int mousePosX;
-                int mousePosY;
-                Get_Video_Mouse(mousePosX, mousePosY);
-                EmulatedPointerPosX = mousePosX;
-                EmulatedPointerPosY = mousePosY;
-            }
+            Move_Video_Mouse(static_cast<float>(event.motion.xrel), static_cast<float>(event.motion.yrel));
             break;
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP: {
@@ -656,15 +649,8 @@ void WWKeyboardClass::Open_Controller()
     for (int i = 0; i < SDL_NumJoysticks(); ++i) {
         if (SDL_IsGameController(i)) {
             GameController = SDL_GameControllerOpen(i);
-            //Settings.Mouse.RawInput = false;
         }
     }
-
-    int mousePosX;
-    int mousePosY;
-    Get_Video_Mouse(mousePosX, mousePosY);
-    EmulatedPointerPosX = mousePosX;
-    EmulatedPointerPosY = mousePosY;
 }
 
 void WWKeyboardClass::Close_Controller()
@@ -685,26 +671,12 @@ void WWKeyboardClass::Process_Controller_Axis_Motion()
         const int16_t xSign = (ControllerLeftXAxis > 0) - (ControllerLeftXAxis < 0);
         const int16_t ySign = (ControllerLeftYAxis > 0) - (ControllerLeftYAxis < 0);
 
-        EmulatedPointerPosX += pow(std::abs(ControllerLeftXAxis), CONTROLLER_AXIS_SPEEDUP) * xSign * deltaTime
+        float movX = pow(std::abs(ControllerLeftXAxis), CONTROLLER_AXIS_SPEEDUP) * xSign * deltaTime
                                * Settings.Mouse.ControllerPointerSpeed / CONTROLLER_SPEED_MOD * ControllerSpeedBoost;
-        EmulatedPointerPosY += pow(std::abs(ControllerLeftYAxis), CONTROLLER_AXIS_SPEEDUP) * ySign * deltaTime
+        float movY = pow(std::abs(ControllerLeftYAxis), CONTROLLER_AXIS_SPEEDUP) * ySign * deltaTime
                                * Settings.Mouse.ControllerPointerSpeed / CONTROLLER_SPEED_MOD * ControllerSpeedBoost;
 
-        int width;
-        int height;
-        Get_Game_Resolution(width, height);
-
-        if (EmulatedPointerPosX < 0)
-            EmulatedPointerPosX = 0;
-        else if (EmulatedPointerPosX >= width)
-            EmulatedPointerPosX = width - 1;
-
-        if (EmulatedPointerPosY < 0)
-            EmulatedPointerPosY = 0;
-        else if (EmulatedPointerPosY >= height)
-            EmulatedPointerPosY = height - 1;
-
-        Set_Video_Mouse(EmulatedPointerPosX, EmulatedPointerPosY);
+        Move_Video_Mouse(movX, movY);
     }
 }
 

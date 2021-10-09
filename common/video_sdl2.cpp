@@ -406,9 +406,9 @@ void Set_Video_Cursor_Clip(bool clipped)
     }
 }
 
-void Move_Video_Mouse(int xrel, int yrel)
+void Move_Video_Mouse(float xrel, float yrel)
 {
-    if (hwcursor.Clip || !Settings.Video.Windowed) {
+    if (Keyboard->Is_Gamepad_Active() || hwcursor.Clip || !Settings.Video.Windowed) {
         hwcursor.X += xrel * (Settings.Mouse.Sensitivity / 100.0f);
         hwcursor.Y += yrel * (Settings.Mouse.Sensitivity / 100.0f);
     }
@@ -438,18 +438,6 @@ void Get_Video_Mouse(int& x, int& y)
         x /= scale_x;
         y /= scale_y;
     }
-}
-
-void Get_Game_Resolution(int& w, int& h)
-{
-    w = hwcursor.GameW;
-    h = hwcursor.GameH;
-}
-
-void Set_Video_Mouse(int x, int y)
-{
-    hwcursor.X = x;
-    hwcursor.Y = y;
 }
 
 /***********************************************************************************************

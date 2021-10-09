@@ -66,7 +66,7 @@ void SettingsClass::Load(INIClass& ini)
     /*
     ** Boxing and raw input require software cursor.
     */
-    if (Video.Boxing || Mouse.RawInput) {
+    if (Video.Boxing || Mouse.RawInput || Mouse.ControllerEnabled) {
         Video.HardwareCursor = false;
     }
 }
