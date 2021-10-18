@@ -1597,6 +1597,14 @@ bool Parse_Command_Line(int argc, char* argv[])
                     break;
 
                 /*
+                **	Print lots of debug stuff about events & packets
+                */
+                case 'P':
+                    Debug_Print_Events = true;
+                    break;
+#endif
+
+                /*
                 **	"Record" a multi-player game
                 */
                 case 'X':
@@ -1609,14 +1617,6 @@ bool Parse_Command_Line(int argc, char* argv[])
                 case 'Y':
                     Session.Play = 1;
                     break;
-
-                /*
-                **	Print lots of debug stuff about events & packets
-                */
-                case 'P':
-                    Debug_Print_Events = true;
-                    break;
-#endif
 
                 /*
                 **	Quiet mode override control.
