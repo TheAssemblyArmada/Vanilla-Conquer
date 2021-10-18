@@ -2078,6 +2078,7 @@ bool Parse_Command_Line(int argc, char* argv[])
                     SuperRecord = 1;
                     break;
 
+#endif
                 /*
                 **	"Record" a multi-player game
                 */
@@ -2091,7 +2092,6 @@ bool Parse_Command_Line(int argc, char* argv[])
                 case 'Y':
                     PlaybackGame = 1;
                     break;
-#endif
 
 #ifdef ONHOLD
                 /*
