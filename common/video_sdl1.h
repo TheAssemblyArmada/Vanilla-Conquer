@@ -104,4 +104,4 @@ static inline SDL_Palette* SDL_AllocPalette(int ncolors)
     return palette;
 }
 
-#endif
+#endif // VIDEO_SDL1_H
