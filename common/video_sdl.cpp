@@ -131,13 +131,13 @@ static void Update_HWCursor_Settings()
     /*
     ** Update mouse scaling settings.
     */
-#ifdef SDL2_BUILD	
     int win_w, win_h;
+#ifdef SDL2_BUILD
     SDL_GetRendererOutputSize(renderer, &win_w, &win_h);
 #else
-	int win_w = 640;
-    int win_h = 400;
-#endif	
+    win_w = Settings.Video.Width;
+    win_h = Settings.Video.Height;
+#endif
     hwcursor.ScaleX = win_w / (float)hwcursor.GameW;
     hwcursor.ScaleY = win_h / (float)hwcursor.GameH;
 
@@ -229,7 +229,7 @@ SurfaceMonitorClass& AllSurfaces = AllSurfacesDummy; // List of all direct draw 
 bool Set_Video_Mode(int w, int h, int bits_per_pixel)
 {
 #ifdef SDL2_BUILD
-    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     SDL_ShowCursor(SDL_DISABLE);
 #endif
     int win_w = w;
@@ -237,6 +237,8 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     int win_flags = 0;
 #ifdef SDL2_BUILD
     Uint32 requested_pixel_format = SettingsPixelFormat();
+#else
+	win_flags = SDL_HWSURFACE;
 #endif
     if (!Settings.Video.Windowed) {
         /*
@@ -260,8 +262,8 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     }
 
 #ifndef SDL2_BUILD
-    	window = SDL_SetVideoMode(w, h, 16/*bits_per_pixel*/, SDL_HWSURFACE);
-		SDL_WM_SetCaption("Vanilla Conquer", NULL);
+    window = SDL_SetVideoMode(w, h, bits_per_pixel, win_flags);
+    SDL_WM_SetCaption("Vanilla Conquer", NULL);
 #else
     window =
         SDL_CreateWindow("Vanilla Conquer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, win_w, win_h, win_flags);
@@ -519,7 +521,7 @@ void Reset_Video_Mode(void)
     SDL_FreeSurface(windowSurface);
     windowSurface = nullptr;
 #endif
-	
+
     SDL_FreePalette(palette);
     palette = nullptr;
 
@@ -555,21 +557,21 @@ static void Update_HWCursor()
         /*
         ** Real HW cursor needs to be scaled up. Emulated can use original cursor data.
         */
-#ifdef SDL2_BUILD        
+#ifdef SDL2_BUILD
         if (Settings.Video.HardwareCursor) {
             hwcursor.Surface = SDL_CreateRGBSurfaceWithFormat(0, scaled_w, scaled_h, 8, SDL_PIXELFORMAT_INDEX8);
-        } else 
-#endif      
-        {            
+        } else
+#endif
+        {
             hwcursor.Surface =
                 SDL_CreateRGBSurfaceFrom(hwcursor.Raw, hwcursor.W, hwcursor.H, 8, hwcursor.W, 0, 0, 0, 0);
         }
-#ifdef SDL2_BUILD   		
+#ifdef SDL2_BUILD
         SDL_SetSurfacePalette(hwcursor.Surface, palette);
         SDL_SetColorKey(hwcursor.Surface, SDL_TRUE, 0);
-#else	   
-		SDL_SetColorKey(hwcursor.Surface, SDL_SRCCOLORKEY, 0);
-#endif		
+#else
+        SDL_SetColorKey(hwcursor.Surface, SDL_SRCCOLORKEY, 0);
+#endif
     }
 
     /*
@@ -594,10 +596,10 @@ static void Update_HWCursor()
         /*
         ** Queue new cursor to be set during frame flip.
         */
-#ifdef SDL2_BUILD	
+#ifdef SDL2_BUILD
         hwcursor.Pending =
             SDL_CreateColorCursor(hwcursor.Surface, hwcursor.HotX * hwcursor.ScaleX, hwcursor.HotY * hwcursor.ScaleY);
-#endif			
+#endif
     }
 }
 
@@ -688,18 +690,18 @@ void Set_DD_Palette(void* rpalette)
         colors[i].r = (unsigned char)rcolors[i * 3] << 2;
         colors[i].g = (unsigned char)rcolors[i * 3 + 1] << 2;
         colors[i].b = (unsigned char)rcolors[i * 3 + 2] << 2;
-#ifdef SDL2_BUILD			
+#ifdef SDL2_BUILD
         colors[i].a = 0xFF;
-#endif	   
+#endif
     }
 
     /*
     ** First color is transparent. This needs to be set so that hardware cursor has transparent
     ** surroundings when converting from 8-bit to 32-bit.
     */
-#ifdef SDL2_BUILD		
+#ifdef SDL2_BUILD
     colors[0].a = 0;
-#endif	
+#endif
 
     SDL_SetPaletteColors(palette, colors, 0, 256);
 
@@ -760,19 +762,19 @@ public:
     VideoSurfaceSDL(int w, int h, GBC_Enum flags)
         : flags(flags)
         , windowSurface(nullptr)
-#ifdef SDL2_BUILD			
+#ifdef SDL2_BUILD
         , texture(nullptr)
-#endif	   
+#endif
     {
         surface = SDL_CreateRGBSurface(0, w, h, 8, 0, 0, 0, 0);
         SDL_SetSurfacePalette(surface, palette);
 
         if (flags & GBC_VISIBLE) {
-#ifdef SDL2_BUILD				
+#ifdef SDL2_BUILD
             windowSurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(pixel_format), pixel_format);
             texture = SDL_CreateTexture(renderer, windowSurface->format->format, SDL_TEXTUREACCESS_STREAMING, w, h);
 #else
-			windowSurface = SDL_CreateRGBSurface(0, w, h, 16, 0,0,0,0);
+            windowSurface = SDL_CreateRGBSurface(0, w, h, 16, 0, 0, 0, 0);
 #endif
             frontSurface = this;
         }
@@ -785,7 +787,7 @@ public:
         }
 
         SDL_FreeSurface(surface);
-#ifdef SDL2_BUILD	
+#ifdef SDL2_BUILD
         if (texture) {
             SDL_DestroyTexture(texture);
         }
@@ -885,18 +887,18 @@ public:
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, texture, NULL, &render_dst);
         SDL_RenderPresent(renderer);
-#else	
-		SDL_BlitSurface(surface, NULL, window, NULL);
+#else
+        SDL_BlitSurface(surface, NULL, window, NULL);
         SDL_Flip(window);
-#endif		
+#endif
     }
 
 private:
     SDL_Surface* surface;
     SDL_Surface* windowSurface;
-#ifdef SDL2_BUILD	
+#ifdef SDL2_BUILD
     SDL_Texture* texture;
-#endif	
+#endif
     GBC_Enum flags;
 };
 
