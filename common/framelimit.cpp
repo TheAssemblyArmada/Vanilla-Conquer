@@ -11,14 +11,14 @@
 
 extern WWMouseClass* WWMouse;
 
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
 void Video_Render_Frame();
 #endif
 
 void Frame_Limiter(bool force_render)
 {
     static auto frame_start = std::chrono::steady_clock::now();
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
     static auto render_avg = 0;
 
     auto render_start = std::chrono::steady_clock::now();
@@ -39,7 +39,7 @@ void Frame_Limiter(bool force_render)
 #endif
 
     if (Settings.Video.FrameLimit > 0) {
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
         auto frame_end = render_end;
 #else
         auto frame_end = std::chrono::steady_clock::now();

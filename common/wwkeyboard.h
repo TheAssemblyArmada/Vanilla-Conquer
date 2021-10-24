@@ -49,7 +49,111 @@ typedef enum
     WWKEY_BTN_BIT = 0x8000,
 } WWKey_Type;
 
-#ifdef SDL2_BUILD
+#ifdef SDL1_BUILD
+#include <SDL_keysym.h>
+#define VK_NONE SDLK_UNKNOWN
+#define VK_LBUTTON 0x01
+#define VK_RBUTTON 0x02
+#define VK_MBUTTON 0x03
+#define VK_BACK     SDLK_BACKSPACE
+#define VK_TAB      SDLK_TAB
+#define VK_CLEAR    SDLK_CLEAR
+#define VK_RETURN   SDLK_RETURN
+#define VK_SHIFT    SDLK_LSHIFT
+#define VK_CONTROL  SDLK_LCTRL
+#define VK_MENU     SDLK_LALT
+#define VK_PAUSE    SDLK_PAUSE
+#define VK_CAPITAL  SDLK_CAPSLOCK
+#define VK_ESCAPE   SDLK_ESCAPE
+#define VK_SPACE    SDLK_SPACE
+#define VK_PRIOR    SDLK_PAGEUP
+#define VK_NEXT     SDLK_PAGEDOWN
+#define VK_END      SDLK_END
+#define VK_HOME     SDLK_HOME
+#define VK_LEFT     SDLK_LEFT
+#define VK_UP       SDLK_UP
+#define VK_RIGHT    SDLK_RIGHT
+#define VK_DOWN     SDLK_DOWN
+#define VK_SELECT   SDLK_UNKNOWN //SELECT
+#define VK_PRINT    SDLK_PRINT
+#define VK_INSERT   SDLK_INSERT
+#define VK_DELETE   SDLK_DELETE
+#define VK_NUMPAD0  SDLK_KP0
+#define VK_NUMPAD1  SDLK_KP1
+#define VK_NUMPAD2  SDLK_KP2
+#define VK_NUMPAD3  SDLK_KP3
+#define VK_NUMPAD4  SDLK_KP4
+#define VK_NUMPAD5  SDLK_KP5
+#define VK_NUMPAD6  SDLK_KP6
+#define VK_NUMPAD7  SDLK_KP7
+#define VK_NUMPAD8  SDLK_KP8
+#define VK_NUMPAD9  SDLK_KP9
+#define VK_MULTIPLY SDLK_KP_MULTIPLY
+#define VK_ADD      SDLK_KP_PLUS
+#define VK_SUBTRACT SDLK_KP_MINUS
+#define VK_DIVIDE   SDLK_KP_DIVIDE
+#define VK_0        SDLK_0
+#define VK_1        SDLK_1
+#define VK_2        SDLK_2
+#define VK_3        SDLK_3
+#define VK_4        SDLK_4
+#define VK_5        SDLK_5
+#define VK_6        SDLK_6
+#define VK_7        SDLK_7
+#define VK_8        SDLK_8
+#define VK_9        SDLK_9
+#define VK_A        SDLK_a
+#define VK_B        SDLK_b
+#define VK_C        SDLK_c
+#define VK_D        SDLK_d
+#define VK_E        SDLK_e
+#define VK_F        SDLK_f
+#define VK_G        SDLK_g
+#define VK_H        SDLK_h
+#define VK_I        SDLK_i
+#define VK_J        SDLK_j
+#define VK_K        SDLK_k
+#define VK_L        SDLK_l
+#define VK_M        SDLK_m
+#define VK_N        SDLK_n
+#define VK_O        SDLK_o
+#define VK_P        SDLK_p
+#define VK_Q        SDLK_q
+#define VK_R        SDLK_r
+#define VK_S        SDLK_s
+#define VK_T        SDLK_t
+#define VK_U        SDLK_u
+#define VK_V        SDLK_v
+#define VK_W        SDLK_w
+#define VK_X        SDLK_x
+#define VK_Y        SDLK_y
+#define VK_Z        SDLK_z
+#define VK_F1       SDLK_F1
+#define VK_F2       SDLK_F2
+#define VK_F3       SDLK_F3
+#define VK_F4       SDLK_F4
+#define VK_F5       SDLK_F5
+#define VK_F6       SDLK_F6
+#define VK_F7       SDLK_F7
+#define VK_F8       SDLK_F8
+#define VK_F9       SDLK_F9
+#define VK_F10      SDLK_F10
+#define VK_F11      SDLK_F11
+#define VK_F12      SDLK_F12
+#define VK_NUMLOCK  SDLK_NUMLOCK
+#define VK_SCROLL   SDLK_SCROLLOCK
+#define VK_NONE_BA  SDLK_SEMICOLON
+#define VK_NONE_BB  SDLK_EQUALS
+#define VK_NONE_BC  SDLK_COMMA
+#define VK_NONE_BD  SDLK_MINUS
+#define VK_NONE_BE  SDLK_PERIOD
+#define VK_NONE_BF  SDLK_SLASH
+#define VK_NONE_C0  SDLK_UNKNOWN //GRAVE
+#define VK_NONE_DB  SDLK_LEFTBRACKET
+#define VK_NONE_DC  SDLK_BACKSLASH
+#define VK_NONE_DD  SDLK_RIGHTBRACKET
+#define VK_NONE_DE  SDLK_UNKNOWN //APOSTROPHE
+#elif defined (SDL2_BUILD)
 
 #include <SDL_scancode.h>
 
