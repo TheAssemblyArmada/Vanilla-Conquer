@@ -28,7 +28,7 @@ The following components are needed to build Vanilla Conquer executables:
  - [MSVC v142 C++ x86/x64 build tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
  - Windows 10 SDK
  - CMake (installable from MSVC build tools)
- - [SDL2 development libraries, Visual C++](https://libsdl.org/download-2.0.php)
+ - [SDL1 or SDL2 development libraries, Visual C++](https://libsdl.org/download-2.0.php)
  - [OpenAL Core SDK](https://www.openal.org/downloads/)
 
 Extract SDL2 and OpenAL somewhere you know. If you are building only Remastered dlls you can skip installing SDL2 and OpenAL.
@@ -52,7 +52,7 @@ This will build Vanilla Conquer executables in the build directory. If you are b
 
 - GNU C++ Compiler (g++) or Clang
 - CMake
-- SDL2
+- SDL1 or SDL2
 - OpenAL
 
 On Debian/Ubuntu you can install the build requirements as follows:
@@ -60,6 +60,8 @@ On Debian/Ubuntu you can install the build requirements as follows:
 ```
 sudo apt-get update
 sudo apt-get install g++ cmake libsdl2-dev libopenal-dev
+or
+sudo apt-get install g++ cmake libsdl1.2-dev libopenal-dev
 ```
 
 #### Building
