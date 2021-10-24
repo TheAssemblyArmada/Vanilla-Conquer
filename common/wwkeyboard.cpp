@@ -57,7 +57,7 @@
 #include <string.h>
 #include <cmath>
 #include <cstdlib>
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
 #include <SDL.h>
 #include "sdl_keymap.h"
 #endif
@@ -317,7 +317,7 @@ KeyASCIIType WWKeyboardClass::To_ASCII(unsigned short key)
     int result = 1;
     int scancode = 0;
 
-#if defined(SDL2_BUILD)
+#if defined(SDL_BUILD)
     key &= 0xFF; // drop all mods
 
     if (key > ARRAY_SIZE(sdl_keymap) / 2 - 1) {
@@ -535,7 +535,7 @@ void Process_Network();
 
 void WWKeyboardClass::Fill_Buffer_From_System(void)
 {
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
 #ifdef NETWORKING
     Process_Network();
 #endif
@@ -558,9 +558,12 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
             Put_Key_Message(event.key.keysym.scancode, false);
             break;
         case SDL_KEYUP:
+#ifdef SDL2_BUILD
             if (event.key.keysym.scancode == SDL_SCANCODE_RETURN && Down(VK_MENU)) {
                 Toggle_Video_Fullscreen();
-            } else {
+            } else 
+#endif			
+			{
                 Put_Key_Message(event.key.keysym.scancode, true);
             }
             break;
@@ -595,6 +598,7 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
 
             Put_Mouse_Message(key, x, y, event.type == SDL_MOUSEBUTTONDOWN ? false : true);
         } break;
+#ifdef SDL2_BUILD
         case SDL_WINDOWEVENT:
             switch (event.window.event) {
             case SDL_WINDOWEVENT_EXPOSED:
@@ -630,6 +634,7 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
         case SDL_CONTROLLERBUTTONUP:
             Handle_Controller_Button_Event(event.cbutton);
             break;
+#endif
         }
     }
     if (Is_Gamepad_Active()) {

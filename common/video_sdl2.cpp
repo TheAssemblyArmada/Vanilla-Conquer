@@ -48,8 +48,14 @@
 #include <SDL.h>
 
 extern WWKeyboardClass* Keyboard;
+#ifndef SDL2_BUILD
+#include "video_sdl1.h"
+static SDL_Surface* window;
+static SDL_Surface* windowSurface;
+#else
 static SDL_Window* window;
 static SDL_Renderer* renderer;
+#endif
 static SDL_Palette* palette;
 static Uint32 pixel_format;
 static SDL_Rect render_dst;
@@ -74,6 +80,7 @@ static struct
 } hwcursor;
 
 #define ARRAY_SIZE(x) int(sizeof(x) / sizeof(x[0]))
+#ifdef SDL2_BUILD
 #define MAKEFORMAT(f)                                                                                                  \
     {                                                                                                                  \
         SDL_PIXELFORMAT_##f, #f                                                                                        \
@@ -116,7 +123,7 @@ Uint32 SettingsPixelFormat()
 
     return SDL_PIXELFORMAT_UNKNOWN;
 }
-
+#endif
 static void Update_HWCursor();
 
 static void Update_HWCursor_Settings()
@@ -124,8 +131,13 @@ static void Update_HWCursor_Settings()
     /*
     ** Update mouse scaling settings.
     */
+#ifdef SDL2_BUILD	
     int win_w, win_h;
     SDL_GetRendererOutputSize(renderer, &win_w, &win_h);
+#else
+	int win_w = 640;
+    int win_h = 400;
+#endif	
     hwcursor.ScaleX = win_w / (float)hwcursor.GameW;
     hwcursor.ScaleY = win_h / (float)hwcursor.GameH;
 
@@ -216,14 +228,16 @@ SurfaceMonitorClass& AllSurfaces = AllSurfacesDummy; // List of all direct draw 
  *=============================================================================================*/
 bool Set_Video_Mode(int w, int h, int bits_per_pixel)
 {
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+#ifdef SDL2_BUILD
+    SDL_Init(SDL_INIT_VIDEO);
     SDL_ShowCursor(SDL_DISABLE);
-
+#endif
     int win_w = w;
     int win_h = h;
     int win_flags = 0;
+#ifdef SDL2_BUILD
     Uint32 requested_pixel_format = SettingsPixelFormat();
-
+#endif
     if (!Settings.Video.Windowed) {
         /*
         ** Native fullscreen if no proper width and height set.
@@ -245,6 +259,10 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
         Settings.Video.WindowHeight = win_h;
     }
 
+#ifndef SDL2_BUILD
+    	window = SDL_SetVideoMode(w, h, 16/*bits_per_pixel*/, SDL_HWSURFACE);
+		SDL_WM_SetCaption("Vanilla Conquer", NULL);
+#else
     window =
         SDL_CreateWindow("Vanilla Conquer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, win_w, win_h, win_flags);
     if (window == nullptr) {
@@ -338,7 +356,7 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     } else {
         DBG_INFO("  scaler set to '%s'", Settings.Video.Scaler.c_str());
     }
-
+#endif
     if (palette == nullptr) {
         palette = SDL_AllocPalette(256);
     }
@@ -366,7 +384,7 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
 void Toggle_Video_Fullscreen()
 {
     Settings.Video.Windowed = !Settings.Video.Windowed;
-
+#ifdef SDL2_BUILD
     if (!Settings.Video.Windowed) {
         if (Settings.Video.Width == 0 || Settings.Video.Height == 0) {
             SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
@@ -378,7 +396,7 @@ void Toggle_Video_Fullscreen()
         SDL_SetWindowFullscreen(window, 0);
         SDL_SetWindowSize(window, Settings.Video.WindowWidth, Settings.Video.WindowHeight);
     }
-
+#endif
     Update_HWCursor_Settings();
 }
 
@@ -391,6 +409,9 @@ void Get_Video_Scale(float& x, float& y)
 void Set_Video_Cursor_Clip(bool clipped)
 {
     hwcursor.Clip = clipped;
+#ifdef SDL2_BUILD
+    SDL_ShowCursor(0);
+    SDL_WM_GrabInput(SDL_GRAB_ON);
 
     if (window) {
         int relative;
@@ -423,6 +444,7 @@ void Set_Video_Cursor_Clip(bool clipped)
             Settings.Mouse.RawInput = false;
         }
     }
+#endif
 }
 
 void Move_Video_Mouse(float xrel, float yrel)
@@ -487,17 +509,22 @@ void Reset_Video_Mode(void)
         SDL_FreeSurface(hwcursor.Surface);
         hwcursor.Surface = nullptr;
     }
-
+#ifdef SDL2_BUILD
     SDL_DestroyRenderer(renderer);
     renderer = nullptr;
 
+    SDL_DestroyWindow(window);
+    window = nullptr;
+#else
+    SDL_FreeSurface(windowSurface);
+    windowSurface = nullptr;
+#endif
+	
     SDL_FreePalette(palette);
     palette = nullptr;
 
-    SDL_DestroyWindow(window);
-    window = nullptr;
-
     Keyboard->Close_Controller();
+
 }
 
 static void Update_HWCursor()
@@ -528,15 +555,21 @@ static void Update_HWCursor()
         /*
         ** Real HW cursor needs to be scaled up. Emulated can use original cursor data.
         */
+#ifdef SDL2_BUILD        
         if (Settings.Video.HardwareCursor) {
             hwcursor.Surface = SDL_CreateRGBSurfaceWithFormat(0, scaled_w, scaled_h, 8, SDL_PIXELFORMAT_INDEX8);
-        } else {
+        } else 
+#endif      
+        {            
             hwcursor.Surface =
                 SDL_CreateRGBSurfaceFrom(hwcursor.Raw, hwcursor.W, hwcursor.H, 8, hwcursor.W, 0, 0, 0, 0);
         }
-
+#ifdef SDL2_BUILD   		
         SDL_SetSurfacePalette(hwcursor.Surface, palette);
         SDL_SetColorKey(hwcursor.Surface, SDL_TRUE, 0);
+#else	   
+		SDL_SetColorKey(hwcursor.Surface, SDL_SRCCOLORKEY, 0);
+#endif		
     }
 
     /*
@@ -561,8 +594,10 @@ static void Update_HWCursor()
         /*
         ** Queue new cursor to be set during frame flip.
         */
+#ifdef SDL2_BUILD	
         hwcursor.Pending =
             SDL_CreateColorCursor(hwcursor.Surface, hwcursor.HotX * hwcursor.ScaleX, hwcursor.HotY * hwcursor.ScaleY);
+#endif			
     }
 }
 
@@ -653,14 +688,18 @@ void Set_DD_Palette(void* rpalette)
         colors[i].r = (unsigned char)rcolors[i * 3] << 2;
         colors[i].g = (unsigned char)rcolors[i * 3 + 1] << 2;
         colors[i].b = (unsigned char)rcolors[i * 3 + 2] << 2;
+#ifdef SDL2_BUILD			
         colors[i].a = 0xFF;
+#endif	   
     }
 
     /*
     ** First color is transparent. This needs to be set so that hardware cursor has transparent
     ** surroundings when converting from 8-bit to 32-bit.
     */
+#ifdef SDL2_BUILD		
     colors[0].a = 0;
+#endif	
 
     SDL_SetPaletteColors(palette, colors, 0, 256);
 
@@ -712,39 +751,45 @@ SurfaceMonitorClass::SurfaceMonitorClass()
 /*
 ** VideoSurfaceDDraw
 */
-class VideoSurfaceSDL2;
-static VideoSurfaceSDL2* frontSurface = nullptr;
+class VideoSurfaceSDL;
+static VideoSurfaceSDL* frontSurface = nullptr;
 
-class VideoSurfaceSDL2 : public VideoSurface
+class VideoSurfaceSDL : public VideoSurface
 {
 public:
-    VideoSurfaceSDL2(int w, int h, GBC_Enum flags)
+    VideoSurfaceSDL(int w, int h, GBC_Enum flags)
         : flags(flags)
         , windowSurface(nullptr)
+#ifdef SDL2_BUILD			
         , texture(nullptr)
+#endif	   
     {
         surface = SDL_CreateRGBSurface(0, w, h, 8, 0, 0, 0, 0);
         SDL_SetSurfacePalette(surface, palette);
 
         if (flags & GBC_VISIBLE) {
+#ifdef SDL2_BUILD				
             windowSurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(pixel_format), pixel_format);
             texture = SDL_CreateTexture(renderer, windowSurface->format->format, SDL_TEXTUREACCESS_STREAMING, w, h);
+#else
+			windowSurface = SDL_CreateRGBSurface(0, w, h, 16, 0,0,0,0);
+#endif
             frontSurface = this;
         }
     }
 
-    virtual ~VideoSurfaceSDL2()
+    virtual ~VideoSurfaceSDL()
     {
         if (frontSurface == this) {
             frontSurface = nullptr;
         }
 
         SDL_FreeSurface(surface);
-
+#ifdef SDL2_BUILD	
         if (texture) {
             SDL_DestroyTexture(texture);
         }
-
+#endif
         if (windowSurface) {
             SDL_FreeSurface(windowSurface);
         }
@@ -785,7 +830,7 @@ public:
 
     virtual void Blt(const Rect& destRect, VideoSurface* src, const Rect& srcRect, bool mask)
     {
-        SDL_BlitSurface(((VideoSurfaceSDL2*)src)->surface, (SDL_Rect*)(&srcRect), surface, (SDL_Rect*)&destRect);
+        SDL_BlitSurface(((VideoSurfaceSDL*)src)->surface, (SDL_Rect*)(&srcRect), surface, (SDL_Rect*)&destRect);
     }
 
     virtual void FillRect(const Rect& rect, unsigned char color)
@@ -799,7 +844,7 @@ public:
         int pitch;
 
         SDL_BlitSurface(surface, NULL, windowSurface, NULL);
-
+#ifdef SDL2_BUILD
         if (Settings.Video.HardwareCursor) {
             /*
             ** Swap cursor before a frame is drawn. This reduces flickering when it's done only once per frame.
@@ -840,12 +885,18 @@ public:
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, texture, NULL, &render_dst);
         SDL_RenderPresent(renderer);
+#else	
+		SDL_BlitSurface(surface, NULL, window, NULL);
+        SDL_Flip(window);
+#endif		
     }
 
 private:
     SDL_Surface* surface;
     SDL_Surface* windowSurface;
+#ifdef SDL2_BUILD	
     SDL_Texture* texture;
+#endif	
     GBC_Enum flags;
 };
 
@@ -876,5 +927,5 @@ Video& Video::Shared()
 
 VideoSurface* Video::CreateSurface(int w, int h, GBC_Enum flags)
 {
-    return new VideoSurfaceSDL2(w, h, flags);
+    return new VideoSurfaceSDL(w, h, flags);
 }

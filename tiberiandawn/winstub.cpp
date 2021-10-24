@@ -71,7 +71,7 @@ ThemeType OldTheme = THEME_NONE;
 
 void Focus_Loss(void)
 {
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
     GameInFocus = false;
     Theme.Suspend();
     VQA_PauseAudio();
@@ -88,14 +88,14 @@ void Focus_Loss(void)
 
 void Focus_Restore(void)
 {
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
     GameInFocus = true;
     VQA_ResumeAudio();
 #endif
     Map.Flag_To_Redraw(true);
     Start_Primary_Sound_Buffer(true);
 
-#ifndef SDL2_BUILD
+#ifndef SDL_BUILD
     VisiblePage.Clear();
     HiddenPage.Clear();
 #endif
@@ -118,7 +118,7 @@ void Focus_Restore(void)
 
 void Check_For_Focus_Loss(void)
 {
-#if defined(SDL2_BUILD)
+#if defined(SDL_BUILD)
     Keyboard->Check();
 #elif !defined(REMASTER_BUILD) && defined(_WIN32)
     static BOOL focus_last_time = 1;
