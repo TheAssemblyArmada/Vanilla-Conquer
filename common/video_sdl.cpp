@@ -219,7 +219,7 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
 #ifdef SDL2_BUILD
     Uint32 requested_pixel_format = SettingsPixelFormat();
 #else
-	win_flags = SDL_HWSURFACE;
+    win_flags = SDL_HWSURFACE;
 #endif
     if (!Settings.Video.Windowed) {
         /*
