@@ -550,9 +550,9 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
 #ifdef SDL2_BUILD
             if (event.key.keysym.scancode == SDL_SCANCODE_RETURN && Down(VK_MENU)) {
                 Toggle_Video_Fullscreen();
-            } else 
-#endif			
-			{
+            } else
+#endif
+            {
                 Put_Key_Message(event.key.keysym.scancode, true);
             }
             break;
@@ -587,7 +587,7 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
 
             Put_Mouse_Message(key, x, y, event.type == SDL_MOUSEBUTTONDOWN ? false : true);
         } break;
-#ifdef SDL2_BUILD		
+#ifdef SDL2_BUILD
         case SDL_WINDOWEVENT:
             switch (event.window.event) {
             case SDL_WINDOWEVENT_EXPOSED:
@@ -602,7 +602,7 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
                 break;
             }
             break;
-#endif			
+#endif
         }
     }
 #elif defined(_WIN32)
