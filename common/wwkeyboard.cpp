@@ -561,9 +561,9 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
 #ifdef SDL2_BUILD
             if (event.key.keysym.scancode == SDL_SCANCODE_RETURN && Down(VK_MENU)) {
                 Toggle_Video_Fullscreen();
-            } else 
-#endif			
-			{
+            } else
+#endif
+            {
                 Put_Key_Message(event.key.keysym.scancode, true);
             }
             break;
