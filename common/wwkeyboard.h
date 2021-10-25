@@ -51,10 +51,10 @@ typedef enum
 
 #ifdef SDL1_BUILD
 #include <SDL_keysym.h>
-#define VK_NONE SDLK_UNKNOWN
-#define VK_LBUTTON 0x01
-#define VK_RBUTTON 0x02
-#define VK_MBUTTON 0x03
+#define VK_NONE     SDLK_UNKNOWN
+#define VK_LBUTTON  0x01
+#define VK_RBUTTON  0x02
+#define VK_MBUTTON  0x03
 #define VK_BACK     SDLK_BACKSPACE
 #define VK_TAB      SDLK_TAB
 #define VK_CLEAR    SDLK_CLEAR
@@ -153,7 +153,8 @@ typedef enum
 #define VK_NONE_DC  SDLK_BACKSLASH
 #define VK_NONE_DD  SDLK_RIGHTBRACKET
 #define VK_NONE_DE  SDLK_UNKNOWN //APOSTROPHE
-#elif defined (SDL2_BUILD)
+
+#elif defined(SDL2_BUILD)
 
 #include <SDL_scancode.h>
 
