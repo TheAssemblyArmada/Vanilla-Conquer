@@ -385,9 +385,6 @@ void Set_Video_Cursor_Clip(bool clipped)
 {
     hwcursor.Clip = clipped;
 #ifdef SDL2_BUILD
-    SDL_ShowCursor(0);
-    SDL_WM_GrabInput(SDL_GRAB_ON);
-
     if (window) {
         int relative;
 
