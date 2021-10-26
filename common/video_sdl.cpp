@@ -209,9 +209,12 @@ SurfaceMonitorClass& AllSurfaces = AllSurfacesDummy; // List of all direct draw 
  *=============================================================================================*/
 bool Set_Video_Mode(int w, int h, int bits_per_pixel)
 {
+    SDL_Init(SDL_INIT_VIDEO
 #ifdef SDL2_BUILD
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+             | SDL_INIT_EVENTS);
     SDL_ShowCursor(SDL_DISABLE);
+#else
+    );
 #endif
     int win_w = w;
     int win_h = h;
@@ -243,7 +246,9 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     }
 
 #ifndef SDL2_BUILD
-    window = SDL_SetVideoMode(w, h, bits_per_pixel, win_flags);
+    const SDL_VideoInfo* video_info = SDL_GetVideoInfo();
+
+    window = SDL_SetVideoMode(w, h, video_info->vfmt->BitsPerPixel, win_flags);
     SDL_WM_SetCaption("Vanilla Conquer", NULL);
 #else
     window =
