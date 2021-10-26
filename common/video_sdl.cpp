@@ -416,10 +416,10 @@ void Get_Video_Scale(float& x, float& y)
 void Set_Video_Cursor_Clip(bool clipped)
 {
     hwcursor.Clip = clipped;
-#ifdef SDL2_BUILD
+
     if (window) {
         int relative;
-
+#ifdef SDL2_BUILD
         if (Settings.Video.Windowed) {
             SDL_SetWindowGrab(window, hwcursor.Clip ? SDL_TRUE : SDL_FALSE);
             relative = SDL_SetRelativeMouseMode(
@@ -442,13 +442,14 @@ void Set_Video_Cursor_Clip(bool clipped)
             SDL_SetWindowGrab(window, SDL_TRUE);
             relative = SDL_SetRelativeMouseMode(Settings.Mouse.RawInput ? SDL_TRUE : SDL_FALSE);
         }
-
+#else
+        relative = -1;
+#endif
         if (relative < 0) {
             DBG_ERROR("Raw input not supported, disabling.");
             Settings.Mouse.RawInput = false;
         }
     }
-#endif
 }
 
 void Move_Video_Mouse(float xrel, float yrel)
