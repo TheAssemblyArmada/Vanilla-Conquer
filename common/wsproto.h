@@ -66,7 +66,7 @@ extern WinsockInterfaceClass* PacketTransport; // The object for interfacing wit
 /*
 ** Define events for Winsock callbacks
 */
-#if defined _WIN32 && !defined SDL2_BUILD
+#if defined _WIN32 && !defined SDL_BUILD
 #define WM_IPXASYNCEVENT (WM_USER + 115) // IPX socket Async event
 #define WM_UDPASYNCEVENT (WM_USER + 116) // UDP socket Async event
 #else

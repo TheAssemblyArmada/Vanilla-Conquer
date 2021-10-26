@@ -122,9 +122,9 @@ if(NETWORKING)
 endif()
 
 if(SDL1)
-    find_package(SDL1 REQUIRED)
-    list(APPEND VANILLA_LIBS ${SDL1_LIBRARY})
-    include_directories(${SDL1_INCLUDE_DIR})
+    find_package(SDL REQUIRED)
+    list(APPEND VANILLA_LIBS ${SDL_LIBRARY})
+    include_directories(${SDL_INCLUDE_DIR})
     add_definitions(-DSDL_BUILD -DSDL1_BUILD)
 
     # winuser.h defines VK_ macros but it can be prevented
