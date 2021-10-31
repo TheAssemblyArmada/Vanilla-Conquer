@@ -11,6 +11,19 @@ bool GameInFocus;
 int ScreenWidth;
 int WindowList[9][9];
 extern "C" char* _ShapeBuffer = 0;
+void* Keyboard;
+
+void Process_Network()
+{
+}
+
+void Focus_Restore()
+{
+}
+
+void Focus_Loss()
+{
+}
 
 int Open_File(char const*, int)
 {
