@@ -337,7 +337,7 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     /*
     ** Init gamepad.
     */
-    if(Settings.Mouse.ControllerEnabled) {
+    if (Settings.Mouse.ControllerEnabled) {
         SDL_Init(SDL_INIT_GAMECONTROLLER);
         Keyboard->Open_Controller();
     }
@@ -379,7 +379,8 @@ void Set_Video_Cursor_Clip(bool clipped)
 
         if (Settings.Video.Windowed) {
             SDL_SetWindowGrab(window, hwcursor.Clip ? SDL_TRUE : SDL_FALSE);
-            relative = SDL_SetRelativeMouseMode(Settings.Mouse.ControllerEnabled || (Settings.Mouse.RawInput && hwcursor.Clip) ? SDL_TRUE : SDL_FALSE);
+            relative = SDL_SetRelativeMouseMode(
+                Settings.Mouse.ControllerEnabled || (Settings.Mouse.RawInput && hwcursor.Clip) ? SDL_TRUE : SDL_FALSE);
 
             /*
             ** When grabbing with raw input, move in-game cursor where the real cursor was and vice versa.
