@@ -169,8 +169,6 @@ bool Init_Game(int, char*[])
     */
     CCDebugString("C&C95 - About to register CCLOCAL.MIX\n");
 
-    MFCD* local_mix = NULL;
-
     if (Is_Demo()) {
         CCDebugString("C&C95 - Detected running as demo, about to register DEMOL.MIX\n");
         RequiredCD = -2;
@@ -190,7 +188,7 @@ bool Init_Game(int, char*[])
             new MFCD("CCLOCAL.MIX"); // Cached.
             MFCD::Cache("CCLOCAL.MIX");
         } else {
-            local_mix = new MFCD("LOCAL.MIX"); // Cached.
+            new MFCD("LOCAL.MIX"); // Cached.
             MFCD::Cache("LOCAL.MIX");
         }
         CCDebugString("C&C95 - About to register UPDATE.MIX\n");
@@ -224,20 +222,6 @@ bool Init_Game(int, char*[])
     OriginalPalette = new (MEM_CLEAR | MEM_REAL) unsigned char[768];
     WhitePalette = new (MEM_CLEAR | MEM_REAL) unsigned char[768];
     memset(WhitePalette, 63, 768);
-
-    /* FIXME: If LOCAL.MIX is loaded, the game tries to find mission.ini from
-    ** it and crash, as it is not present there. Furthermore, an old version of
-    ** conquer.eng is there, and loading it glitches out the Covert Operations
-    ** strings. There is also fonts which is only present on the Windows version
-    ** and they require loading for now. Therefore, just unload LOCAL.MIX and
-    ** and load CCLOCAL.MIX from Windows.
-    */
-    if (local_mix) {
-        delete local_mix;
-
-        new MFCD("CCLOCAL.MIX"); // Cached.
-        MFCD::Cache("CCLOCAL.MIX");
-    }
 
     if (Get_Resolution_Factor()) {
         MapFontPtr = Load_Alloc_Data(CCFileClass("8FAT.FNT"));

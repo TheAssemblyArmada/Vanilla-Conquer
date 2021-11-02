@@ -548,21 +548,21 @@ void Map_Selection(void)
     ** Load the spinning-globe anim
     */
     if (house == HOUSE_GOOD) {
-        // anim     = Open_Animation("EARTH_E.WSA", NULL,0,(WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE),Palette);
-        anim = Open_Animation("HEARTH_E.WSA", NULL, 0, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), Palette);
-        // progress = Open_Animation(lastscenario ? "BOSNIA.WSA" : "EUROPE.WSA",NULL,0,(WSAOpenType)(WSA_OPEN_FROM_MEM |
-        // WSA_OPEN_TO_PAGE),progresspalette);
+        const char* const earth_e = (factor == 1) ? "EARTH_E.WSA" : "HEARTH_E.WSA";
+        const char* const bosnia = (factor == 1) ? "BOSNIA.WSA" : "HBOSNIA.WSA";
+
+        anim = Open_Animation(earth_e, NULL, 0, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), Palette);
         progress = Open_Animation(lastscenario ? "HBOSNIA.WSA" : "EUROPE.WSA",
                                   NULL,
                                   0,
                                   (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE),
                                   progresspalette);
     } else {
-        // anim     = Open_Animation("EARTH_A.WSA", NULL,0,(WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE),Palette);
-        anim = Open_Animation("HEARTH_A.WSA", NULL, 0, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), Palette);
-        // progress = Open_Animation(lastscenario ? "S_AFRICA.WSA" : "AFRICA.WSA",NULL,0,(WSAOpenType)(WSA_OPEN_FROM_MEM
-        // | WSA_OPEN_TO_PAGE),progresspalette);
-        progress = Open_Animation(lastscenario ? "HSAFRICA.WSA" : "AFRICA.WSA",
+        const char* const earth_a = (factor == 1) ? "EARTH_A.WSA" : "HEARTH_A.WSA";
+        const char* const safrica = (factor == 1) ? "SAFRICA.WSA" : "HSAFRICA.WSA";
+
+        anim = Open_Animation(earth_a, NULL, 0, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), Palette);
+        progress = Open_Animation(lastscenario ? safrica : "AFRICA.WSA",
                                   NULL,
                                   0,
                                   (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE),
