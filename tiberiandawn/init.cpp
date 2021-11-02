@@ -229,7 +229,7 @@ bool Init_Game(int, char*[])
         Green12GradFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
         ScoreFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
     } else {
-        MapFontPtr = Font3Ptr;
+        MapFontPtr = Font6Ptr; // Fixes ingame helpbox
         Green12FontPtr = Font3Ptr;
         Green12GradFontPtr = GradFont6Ptr;
         ScoreFontPtr = GradFont6Ptr;
