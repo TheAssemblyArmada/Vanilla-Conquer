@@ -55,6 +55,7 @@
 #include "video.h"
 #include "miscasm.h"
 #include <string.h>
+#include <cmath>
 #ifdef SDL2_BUILD
 #include <SDL.h>
 #include "sdl_keymap.h"
