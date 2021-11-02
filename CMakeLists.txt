@@ -79,12 +79,6 @@ set(REMASTER_LIBS "")
 find_package(ClangFormat)
 include(ClangFormat)
 
-if(BUILD_TESTS)
-    # Tests need to respect some options so need to occur after the options are set.
-    enable_testing()
-    add_subdirectory(tests)
-endif()
-
 if(NOT BUILD_VANILLATD AND MAP_EDITORTD)
     message(WARNING "Internal scenario editor requires a Tiberian Dawn executable to be built, but it was not enabled.")
     set(BUILD_VANILLATD TRUE)
@@ -117,6 +111,12 @@ if(OPENAL)
     find_package(OpenAL REQUIRED)
     list(APPEND VANILLA_LIBS OpenAL::OpenAL)
     set(DSOUND OFF)
+endif()
+
+if(BUILD_TESTS)
+    # Tests need to respect some options so need to occur after the options are set.
+    enable_testing()
+    add_subdirectory(tests)
 endif()
 
 add_subdirectory(common)
