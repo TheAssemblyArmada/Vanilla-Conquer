@@ -39,6 +39,7 @@
 #include <stdint.h>
 
 #ifdef SDL2_BUILD
+#define SDL_MAIN_HANDLED
 #include <SDL.h>
 #endif
 
@@ -802,9 +803,9 @@ private:
     void Process_Controller_Axis_Motion();
 
     // used to convert user-friendly pointer speed values into more useable ones
-    const double CONTROLLER_SPEED_MOD = 2000000.0;
+    const float CONTROLLER_SPEED_MOD = 2000000.0f;
     // bigger value correndsponds to faster pointer movement speed with bigger stick axis values
-    const double CONTROLLER_AXIS_SPEEDUP = 1.03;
+    const float CONTROLLER_AXIS_SPEEDUP = 1.03f;
     // speedup value while the trigger is pressed
     const int CONTROLLER_TRIGGER_SPEEDUP = 2;
 

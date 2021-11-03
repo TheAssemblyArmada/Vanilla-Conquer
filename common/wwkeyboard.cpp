@@ -665,7 +665,7 @@ void WWKeyboardClass::Close_Controller()
 void WWKeyboardClass::Process_Controller_Axis_Motion()
 {
     const uint32_t currentTime = SDL_GetTicks();
-    const double deltaTime = currentTime - LastControllerTime;
+    const float deltaTime = currentTime - LastControllerTime;
     LastControllerTime = currentTime;
 
     if (ControllerLeftXAxis != 0 || ControllerLeftYAxis != 0) {
