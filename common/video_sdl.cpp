@@ -263,8 +263,7 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
 
 #ifndef SDL2_BUILD
     const SDL_VideoInfo* video_info = SDL_GetVideoInfo();
-
-    window = SDL_SetVideoMode(w, h, video_info->vfmt->BitsPerPixel, win_flags);
+    window = SDL_SetVideoMode(win_w, win_h, video_info->vfmt->BitsPerPixel, win_flags);
     SDL_WM_SetCaption("Vanilla Conquer", NULL);
 #else
     window =
@@ -518,8 +517,10 @@ void Reset_Video_Mode(void)
     SDL_DestroyWindow(window);
     window = nullptr;
 #else
-    SDL_FreeSurface(windowSurface);
-    windowSurface = nullptr;
+    if (window) {
+        SDL_FreeSurface(window);
+        window = nullptr;
+    }
 #endif
 
     SDL_FreePalette(palette);
@@ -846,7 +847,7 @@ public:
         int pitch;
 
         SDL_BlitSurface(surface, NULL, windowSurface, NULL);
-#ifdef SDL2_BUILD
+
         if (Settings.Video.HardwareCursor) {
             /*
             ** Swap cursor before a frame is drawn. This reduces flickering when it's done only once per frame.
@@ -882,7 +883,7 @@ public:
 
             SDL_BlitSurface(hwcursor.Surface, nullptr, windowSurface, &dst);
         }
-
+#ifdef SDL2_BUILD
         SDL_UpdateTexture(texture, NULL, windowSurface->pixels, windowSurface->pitch);
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, texture, NULL, &render_dst);
