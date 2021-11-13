@@ -723,22 +723,23 @@ void WWKeyboardClass::Handle_Controller_Axis_Event(const SDL_ControllerAxisEvent
         directionY = ControllerRightYAxis > 0 ? SDIR_S : SDIR_N;
     }
 
-    if (directionX == SDIR_E && directionY == SDIR_N)
+    if (directionX == SDIR_E && directionY == SDIR_N) {
         ScrollDirection = SDIR_NE;
-    else if (directionX == SDIR_E && directionY == SDIR_S)
+    } else if (directionX == SDIR_E && directionY == SDIR_S) {
         ScrollDirection = SDIR_SE;
-    else if (directionX == SDIR_W && directionY == SDIR_N)
+    } else if (directionX == SDIR_W && directionY == SDIR_N) {
         ScrollDirection = SDIR_NW;
-    else if (directionX == SDIR_W && directionY == SDIR_S)
+    } else if (directionX == SDIR_W && directionY == SDIR_S) {
         ScrollDirection = SDIR_SW;
-    else if (directionX == SDIR_E)
+    } else if (directionX == SDIR_E) {
         ScrollDirection = SDIR_E;
-    else if (directionX == SDIR_W)
+    } else if (directionX == SDIR_W) {
         ScrollDirection = SDIR_W;
-    else if (directionY == SDIR_S)
+    } else if (directionY == SDIR_S) {
         ScrollDirection = SDIR_S;
-    else if (directionY == SDIR_N)
+    } else if (directionY == SDIR_N) {
         ScrollDirection = SDIR_N;
+    }
 }
 
 void WWKeyboardClass::Handle_Controller_Button_Event(const SDL_ControllerButtonEvent& button)

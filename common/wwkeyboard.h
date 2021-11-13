@@ -803,11 +803,11 @@ private:
     void Process_Controller_Axis_Motion();
 
     // used to convert user-friendly pointer speed values into more useable ones
-    const float CONTROLLER_SPEED_MOD = 2000000.0f;
+    static constexpr float CONTROLLER_SPEED_MOD = 2000000.0f;
     // bigger value correndsponds to faster pointer movement speed with bigger stick axis values
-    const float CONTROLLER_AXIS_SPEEDUP = 1.03f;
+    static constexpr float CONTROLLER_AXIS_SPEEDUP = 1.03f;
     // speedup value while the trigger is pressed
-    const int CONTROLLER_TRIGGER_SPEEDUP = 2;
+    static constexpr int CONTROLLER_TRIGGER_SPEEDUP = 2;
 
     enum
     {
