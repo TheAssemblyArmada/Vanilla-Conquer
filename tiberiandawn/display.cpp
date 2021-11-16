@@ -4364,11 +4364,15 @@ bool DisplayClass::Is_Spot_Free(COORDINATE coord) const
  * HISTORY:                                                                                    *
  *   08/22/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-COORDINATE DisplayClass::Center_Map(void)
+COORDINATE DisplayClass::Center_Map(COORDINATE center)
 {
+    int x = 0;
+    //	unsigned x = 0;
+    int y = 0;
+    //	unsigned y = 0;
+    bool centerit = false;
+
     if (CurrentObject.Count()) {
-        unsigned x = 0;
-        unsigned y = 0;
 
         for (int index = 0; index < CurrentObject.Count(); index++) {
             COORDINATE coord = CurrentObject[index]->Center_Coord();
@@ -4379,9 +4383,29 @@ COORDINATE DisplayClass::Center_Map(void)
 
         x /= CurrentObject.Count();
         y /= CurrentObject.Count();
-        Set_Tactical_Position(XY_Coord(x - (TacLeptonWidth / 2), y - (TacLeptonHeight / 2)));
+        centerit = true;
+    }
 
-        return XY_Coord(x, y);
+    if (center != 0L) {
+        x = Coord_X(center);
+        y = Coord_Y(center);
+        centerit = true;
+    }
+
+    if (centerit) {
+        center = XY_Coord(x, y);
+
+        x = x - (int)TacLeptonWidth / 2;
+        if (x < Cell_To_Lepton(MapCellX))
+            x = Cell_To_Lepton(MapCellX);
+
+        y = y - (int)TacLeptonHeight / 2;
+        if (y < Cell_To_Lepton(MapCellY))
+            y = Cell_To_Lepton(MapCellY);
+
+        Set_Tactical_Position(XY_Coord(x, y));
+
+        return center;
     }
 
     return 0;
