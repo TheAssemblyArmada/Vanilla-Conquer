@@ -2577,9 +2577,9 @@ ActionType TechnoClass::What_Action(ObjectClass* object) const
         bool ctrldown = DLL_Export_Get_Input_Key_State(KN_LCTRL);
         bool shiftdown = DLL_Export_Get_Input_Key_State(KN_LSHIFT);
 #else
-        bool altdown = (Keyboard->Down(KN_LALT) || Keyboard->Down(KN_RALT));
-        bool ctrldown = (Keyboard->Down(KN_LCTRL) || Keyboard->Down(KN_RCTRL));
-        bool shiftdown = (Keyboard->Down(KN_LSHIFT) || Keyboard->Down(KN_RSHIFT));
+        bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
+        bool ctrldown = (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
+        bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
 #endif
         /*
         **	Special guard area mission is possible if both the control and the
@@ -2618,7 +2618,6 @@ ActionType TechnoClass::What_Action(ObjectClass* object) const
         /*
         **	If firing is possible and legal, then return this action potential.
         */
-        bool control = Keyboard->Down(KN_LCTRL) || Keyboard->Down(KN_RCTRL);
         // Changed for multiplayer. ST - 3/13/2019 5:52PM
         if (Is_Owned_By_Player() && (ctrldown || !House->Is_Ally(object))
             && (ctrldown || object->Class_Of().IsLegalTarget
@@ -2695,9 +2694,9 @@ ActionType TechnoClass::What_Action(CELL cell) const
     bool ctrldown = DLL_Export_Get_Input_Key_State(KN_LCTRL);
     bool shiftdown = DLL_Export_Get_Input_Key_State(KN_LSHIFT);
 #else
-    bool ctrldown = Keyboard->Down(KN_LCTRL) || Keyboard->Down(KN_RCTRL);
-    bool shiftdown = Keyboard->Down(KN_LSHIFT) || Keyboard->Down(KN_RSHIFT);
-    bool altdown = (Keyboard->Down(KN_LALT) || Keyboard->Down(KN_RALT));
+    bool altdown = Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2);
+    bool ctrldown = Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2);
+    bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
 #endif
     /*
     **	Disable recognizing the <CTRL> key forced fire option when dealing with buildings.

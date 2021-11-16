@@ -92,6 +92,59 @@ public:
     unsigned IsDeathAnnounce : 1; // Announce enemy deaths?
     unsigned IsFreeScroll : 1;    // Allow free direction scrolling?
 
+    /*
+    **	These are the hotkeys used for keyboard control.
+    */
+    KeyNumType KeyForceMove1;
+    KeyNumType KeyForceMove2;
+    KeyNumType KeyForceAttack1;
+    KeyNumType KeyForceAttack2;
+    KeyNumType KeySelect1;
+    KeyNumType KeySelect2;
+    KeyNumType KeyScatter;
+    KeyNumType KeyStop;
+    KeyNumType KeyGuard;
+    KeyNumType KeyNext;
+    KeyNumType KeyPrevious;
+    KeyNumType KeyFormation;
+    KeyNumType KeyHome1;
+    KeyNumType KeyHome2;
+    KeyNumType KeyBase;
+    KeyNumType KeyResign;
+    KeyNumType KeyAlliance;
+    KeyNumType KeyBookmark1;
+    KeyNumType KeyBookmark2;
+    KeyNumType KeyBookmark3;
+    KeyNumType KeyBookmark4;
+    KeyNumType KeySelectView;
+    KeyNumType KeyRepair;
+    KeyNumType KeyRepairOn;
+    KeyNumType KeyRepairOff;
+    KeyNumType KeySell;
+    KeyNumType KeySellOn;
+    KeyNumType KeySellOff;
+    KeyNumType KeyMap;
+    KeyNumType KeySidebarUp;
+    KeyNumType KeySidebarDown;
+    KeyNumType KeyOption1;
+    KeyNumType KeyOption2;
+    KeyNumType KeyScrollLeft;
+    KeyNumType KeyScrollRight;
+    KeyNumType KeyScrollUp;
+    KeyNumType KeyScrollDown;
+    KeyNumType KeyQueueMove1;
+    KeyNumType KeyQueueMove2;
+    KeyNumType KeyTeam1;
+    KeyNumType KeyTeam2;
+    KeyNumType KeyTeam3;
+    KeyNumType KeyTeam4;
+    KeyNumType KeyTeam5;
+    KeyNumType KeyTeam6;
+    KeyNumType KeyTeam7;
+    KeyNumType KeyTeam8;
+    KeyNumType KeyTeam9;
+    KeyNumType KeyTeam10;
+
 protected:
     void Adjust_Palette(void* oldpal,
                         void* newpal,
@@ -101,6 +154,8 @@ protected:
                         unsigned char contrast) const;
 
 private:
+private:
+    static char const* const HotkeyName;
 };
 
 #endif
