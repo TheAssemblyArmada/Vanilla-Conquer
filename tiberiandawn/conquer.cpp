@@ -448,8 +448,8 @@ void Keyboard_Process(KeyNumType& input)
     }
 #endif
 
-    //#ifdef CHEAT_KEYS
-    if (/*Debug_Playtest && */ input == (KN_W | KN_ALT_BIT)) {
+#ifdef CHEAT_KEYS
+    if (Debug_Playtest && input == (KN_W | KN_ALT_BIT)) {
         PlayerPtr->Blockage = false;
         PlayerPtr->Flag_To_Win();
     }
@@ -462,7 +462,7 @@ void Keyboard_Process(KeyNumType& input)
             Special_Dialog();
         }
     }
-    //#endif
+#endif
 
     /*
     **	If the options key(s) were pressed, then bring up the options screen.
