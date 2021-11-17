@@ -86,7 +86,7 @@ bool Map_Edit_Loop(void);
 void Trap_Object(void);
 
 #ifdef CHEAT_KEYS
-void Heap_Dump_Check(char* string);
+void Heap_Dump_Check(const char* string);
 void Dump_Heap_Pointers(void);
 void Error_In_Heap_Pointers(char* string);
 #endif
@@ -3028,7 +3028,7 @@ void Handle_View(int view, int action)
 }
 
 #ifdef CHEAT_KEYS
-void Heap_Dump_Check(char* string)
+void Heap_Dump_Check(const char* string)
 {
 #if 0
 	struct _heapinfo h_info;
@@ -3634,7 +3634,7 @@ unsigned long Disk_Space_Available(void)
  * HISTORY:                                                                                    *
  *   08/15/1995 BRR : Created.                                                                 *
  *=============================================================================================*/
-void Validate_Error(char* name)
+void Validate_Error(const char* name)
 {
     GlyphX_Debug_Print("Validate_Error");
     GlyphX_Debug_Print(name);

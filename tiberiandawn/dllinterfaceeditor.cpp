@@ -135,7 +135,7 @@ void CNC_Editor_Load_Mix_Files()
  * CNC_Editor_Setup_Content_Directory
  * Sets up where the system should load map data from.
  **************************************************************************************************/
-void CNC_Editor_Setup_Content_Directory(char* cncdata_directory, char* cd_directory)
+void CNC_Editor_Setup_Content_Directory(char* cncdata_directory, const char* cd_directory)
 {
     char content_directory[_MAX_PATH];
 
