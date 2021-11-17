@@ -221,8 +221,8 @@ void Send_Statistics_Packet(void)
     static char field_player_crates_found[5] = {"CRA?"};
     static char field_player_harvested[5] = {"HRV?"};
 
-    static char* houses[] = {"SPA", "GRE", "USS", "ENG", "ITA", "GER", "FRA", "TKY", "GUD", "BAD",
-                             "CIV", "JP ", "M01", "M02", "M03", "M04", "M05", "M06", "M07", "M08"};
+    static const char* houses[] = {"SPA", "GRE", "USS", "ENG", "ITA", "GER", "FRA", "TKY", "GUD", "BAD",
+                                   "CIV", "JP ", "M01", "M02", "M03", "M04", "M05", "M06", "M07", "M08"};
 
     if (!PacketLater) {
 

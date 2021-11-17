@@ -602,6 +602,7 @@ bool Any_Locked()
 
 void Assert_Failure(const char* expression, int line, const char* file)
 {
+    static char filename[11] = "ASSERT.TXT";
     char assertbuf[256];
     char timebuff[512];
 #ifdef _WIN32
@@ -632,9 +633,9 @@ void Assert_Failure(const char* expression, int line, const char* file)
             time.wSecond,
             assertbuf);
 
-    HMMIO handle = mmioOpen("ASSERT.TXT", NULL, MMIO_WRITE);
+    HMMIO handle = mmioOpenA(filename, NULL, MMIO_WRITE);
     if (!handle) {
-        handle = mmioOpen("ASSERT.TXT", NULL, MMIO_CREATE | MMIO_WRITE);
+        handle = mmioOpenA(filename, NULL, MMIO_CREATE | MMIO_WRITE);
         // mmioClose(handle, 0);
         // handle = mmioOpen("ASSERT.TXT", NULL, MMIO_WRITE);
     }

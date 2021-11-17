@@ -124,7 +124,7 @@ unsigned long Get_Animation_Size(void const* handle);
  * HISTORY:                                                                *
  *   05/24/1994 SKB : Created.                                             *
  *=========================================================================*/
-inline void* Open_Animation(char* file_name, WSAOpenType user_flags, unsigned char* palette = nullptr)
+inline void* Open_Animation(const char* file_name, WSAOpenType user_flags, unsigned char* palette = nullptr)
 {
     return (Open_Animation(file_name, nullptr, 0L, user_flags, palette));
 }
