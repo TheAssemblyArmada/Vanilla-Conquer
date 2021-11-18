@@ -75,6 +75,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "settings.h"
 
 /*
 **	Define "_RETRIEVE" if the palette morphing tables are part of the loaded data. If this
@@ -847,12 +848,12 @@ void SidebarClass::AI(KeyNumType& input, int x, int y)
 
     if (IsSidebarActive && !Debug_Map) {
 
-        if (input == KN_DOWN) {
+        if (input == KN_DOWN || Settings.Options.MouseWheelScrolling && input == KN_MOUSEWHEEL_DOWN) {
             redraw |= Column[0].Scroll(false);
             redraw |= Column[1].Scroll(false);
             input = KN_NONE;
         }
-        if (input == KN_UP) {
+        if (input == KN_UP || (Settings.Options.MouseWheelScrolling && input == KN_MOUSEWHEEL_UP)) {
             redraw |= Column[0].Scroll(true);
             redraw |= Column[1].Scroll(true);
             input = KN_NONE;
