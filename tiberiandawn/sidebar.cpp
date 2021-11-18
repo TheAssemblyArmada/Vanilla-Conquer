@@ -75,6 +75,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "settings.h"
 
 /*
 **	Define "_RETRIEVE" if the palette morphing tables are part of the loaded data. If this
@@ -714,8 +715,24 @@ bool SidebarClass::Add(RTTIType type, int id, bool via_capture)
  *=============================================================================================*/
 bool SidebarClass::Scroll(bool up, int column)
 {
+    if (column == -1) {
+        bool scr = false;
+        scr |= Column[0].Scroll(up);
+        scr |= Column[1].Scroll(up);
+        if (!scr) {
+            Sound_Effect(VOC_SCOLD);
+        }
+        if (scr) {
+            IsToRedraw = true;
+            Flag_To_Redraw(false);
+            return (true);
+        }
+        return (false);
+    }
+
     if (Column[column].Scroll(up)) {
-        IsToRedraw = true;
+        // No need to redraw the whole sidebar juts because we scrolled a strip is there? ST - 10/15/96 7:29PM
+        // IsToRedraw = true;
         Flag_To_Redraw(false);
         return (true);
     }
@@ -842,20 +859,6 @@ void SidebarClass::AI(KeyNumType& input, int x, int y)
     if (!Debug_Map) {
         Column[0].AI(input, x, y);
         Column[1].AI(input, x, y);
-    }
-
-    if (IsSidebarActive && !Debug_Map) {
-
-        if (input == KN_DOWN) {
-            redraw |= Column[0].Scroll(false);
-            redraw |= Column[1].Scroll(false);
-            input = KN_NONE;
-        }
-        if (input == KN_UP) {
-            redraw |= Column[0].Scroll(true);
-            redraw |= Column[1].Scroll(true);
-            input = KN_NONE;
-        }
     }
 
     if (IsSidebarActive) {
