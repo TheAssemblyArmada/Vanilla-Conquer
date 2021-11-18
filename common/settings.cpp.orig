@@ -11,7 +11,6 @@ SettingsClass::SettingsClass()
     */
     Mouse.RawInput = true;
     Mouse.Sensitivity = 100;
-    Options.MouseWheelScrolling = true;
 
     /*
     ** Video settings
@@ -23,12 +22,17 @@ SettingsClass::SettingsClass()
     Video.Height = 0;
     Video.Boxing = true;
     Video.FrameLimit = 120;
+<<<<<<< HEAD
     Video.InterpolationMode = 2;
     Video.HardwareCursor = false;
     Video.DOSMode = false;
     Video.Scaler = "nearest";
     Video.Driver = "default";
     Video.PixelFormat = "default";
+=======
+
+    Options.MouseWheelScrolling = true;
+>>>>>>> 9b7ca8f (Fix mousewheel handling and check for mousewheel in hotkey handling code for sidebar scrolling code, also add SettingsClass setting to disable mousewheel scrolling (using same keyword as CnCNet patches))
 }
 
 void SettingsClass::Load(INIClass& ini)
@@ -38,7 +42,6 @@ void SettingsClass::Load(INIClass& ini)
     */
     Mouse.RawInput = ini.Get_Bool("Mouse", "RawInput", Mouse.RawInput);
     Mouse.Sensitivity = ini.Get_Int("Mouse", "Sensitivity", Mouse.Sensitivity);
-    Options.MouseWheelScrolling = ini.Get_Bool("Options", "MouseWheelScrolling", Options.MouseWheelScrolling);
 
     /*
     ** Video settings
@@ -50,6 +53,7 @@ void SettingsClass::Load(INIClass& ini)
     Video.Width = ini.Get_Int("Video", "Width", Video.Width);
     Video.Height = ini.Get_Int("Video", "Height", Video.Height);
     Video.FrameLimit = ini.Get_Int("Video", "FrameLimit", Video.FrameLimit);
+<<<<<<< HEAD
     Video.HardwareCursor = ini.Get_Bool("Video", "HardwareCursor", Video.HardwareCursor);
     Video.DOSMode = ini.Get_Bool("Video", "DOSMode", Video.DOSMode);
     Video.Scaler = ini.Get_String("Video", "Scaler", Video.Scaler);
@@ -67,6 +71,10 @@ void SettingsClass::Load(INIClass& ini)
     if (Video.Boxing || Mouse.RawInput) {
         Video.HardwareCursor = false;
     }
+=======
+
+    Options.MouseWheelScrolling = ini.Get_Bool("Options", "MouseWheelScrolling", Video.FrameLimit);
+>>>>>>> 9b7ca8f (Fix mousewheel handling and check for mousewheel in hotkey handling code for sidebar scrolling code, also add SettingsClass setting to disable mousewheel scrolling (using same keyword as CnCNet patches))
 }
 
 void SettingsClass::Save(INIClass& ini)
@@ -76,7 +84,6 @@ void SettingsClass::Save(INIClass& ini)
     */
     ini.Put_Bool("Mouse", "RawInput", Mouse.RawInput);
     ini.Put_Int("Mouse", "Sensitivity", Mouse.Sensitivity);
-    ini.Put_Bool("Options", "MouseWheelScrolling", Options.MouseWheelScrolling);
 
     /*
     ** Video settings
@@ -88,6 +95,7 @@ void SettingsClass::Save(INIClass& ini)
     ini.Put_Int("Video", "Width", Video.Width);
     ini.Put_Int("Video", "Height", Video.Height);
     ini.Put_Int("Video", "FrameLimit", Video.FrameLimit);
+<<<<<<< HEAD
     ini.Put_Bool("Video", "HardwareCursor", Video.HardwareCursor);
     ini.Put_Bool("Video", "DOSMode", Video.DOSMode);
     ini.Put_String("Video", "Scaler", Video.Scaler);
@@ -98,4 +106,8 @@ void SettingsClass::Save(INIClass& ini)
     ** VQA and WSA interpolation mode 0 = scanlines, 1 = vertical doubling, 2 = linear
     */
     ini.Put_Int("Video", "InterpolationMode", Video.InterpolationMode);
+=======
+
+    ini.Put_Bool("Options", "MouseWheelScrolling", Video.FrameLimit);
+>>>>>>> 9b7ca8f (Fix mousewheel handling and check for mousewheel in hotkey handling code for sidebar scrolling code, also add SettingsClass setting to disable mousewheel scrolling (using same keyword as CnCNet patches))
 }
