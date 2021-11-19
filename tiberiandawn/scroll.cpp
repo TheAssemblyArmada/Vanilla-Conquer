@@ -102,6 +102,14 @@ void ScrollClass::AI(KeyNumType& input, int x, int y)
             noscroll = true;
         }
 
+#ifdef SDL2_BUILD
+        if (Keyboard->Is_Analog_Scroll_Active()) {
+            unsigned char scrollDirection = Keyboard->Get_Scroll_Direction();
+            int scrollDistance = (7 - Options.ScrollRate) * 20;
+            Scroll_Map((DirType)scrollDirection, scrollDistance, true);
+        }
+#endif
+
         if (!noscroll) {
 
             /*

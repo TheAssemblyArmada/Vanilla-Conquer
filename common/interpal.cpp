@@ -301,7 +301,7 @@ void Interpolate_2X_Scale(GraphicBufferClass* source,
         mode = -1;
 
     /* There is no need to create an interpolation palette if we are not interpolating.  */
-    if (mode == -1) {
+    if (mode != -1) {
 
         /*
         **If a palette table exists on disk then read it in otherwise create it

@@ -4104,6 +4104,12 @@ int BuildingClass::Mission_Deconstruction(void)
                     if (infantry) {
                         ScenarioInit++;
                         COORDINATE coord = Coord_Add(Center_Coord(), XYP_COORD(0, -12));
+
+                        /* extra check to prevent building crew for Obelisk or AGT spawning
+                           one cell above building foundation */
+                        if (*this == STRUCT_ATOWER || *this == STRUCT_OBELISK) {
+                            coord = Map[coord].Adjacent_Cell(FACING_S)->Cell_Coord();
+                        }
                         coord = Map[Coord_Cell(coord)].Closest_Free_Spot(coord, false);
 
                         if (infantry->Unlimbo(coord, DIR_N)) {
