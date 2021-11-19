@@ -1,5 +1,6 @@
 #include "common/drawbuff.h"
 #include "common/gbuffer.h"
+#include "common/wwkeyboard.h"
 
 #include <stdint.h>
 #include <string.h>
@@ -10,6 +11,19 @@ bool GameInFocus;
 int ScreenWidth;
 int WindowList[9][9];
 char* _ShapeBuffer = 0;
+WWKeyboardClass* Keyboard;
+
+void Process_Network()
+{
+}
+
+void Focus_Restore()
+{
+}
+
+void Focus_Loss()
+{
+}
 
 int Open_File(char const*, int)
 {

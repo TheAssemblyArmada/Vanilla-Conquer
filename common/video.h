@@ -63,7 +63,7 @@ extern SurfaceMonitorClass& AllSurfaces; // List of all surfaces
 bool Set_Video_Mode(int w, int h, int bits_per_pixel);
 void Get_Video_Scale(float& x, float& y);
 void Set_Video_Cursor_Clip(bool clipped);
-void Move_Video_Mouse(int xrel, int yrel);
+void Move_Video_Mouse(float xrel, float yrel);
 void Get_Video_Mouse(int& x, int& y);
 void Toggle_Video_Fullscreen();
 void Reset_Video_Mode();
