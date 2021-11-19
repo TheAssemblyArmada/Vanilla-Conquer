@@ -2429,22 +2429,31 @@ BulletClass* TechnoClass::Fire_At(TARGET target, int which)
         ** For multiplayer games, only reveal the unit if the target is the
         ** local player.
         */
-#if (0)
+#ifndef REMASTER_BUILD
         if ((!IsOwnedByPlayer && !IsDiscoveredByPlayer) || !Map[Coord_Cell(Center_Coord())].IsMapped) {
             if (GameToPlay == GAME_NORMAL) {
-                Map.Sight_From(Coord_Cell(Center_Coord()), 1, false);
+                Map.Sight_From(PlayerPtr, Coord_Cell(Center_Coord()), 1, false);
             } else {
                 ObjectClass* obj = As_Object(target);
                 if (obj) {
                     HousesType tgt_owner = obj->Owner();
 
                     if (PlayerPtr->Class->House == tgt_owner) {
-                        Map.Sight_From(Coord_Cell(Center_Coord()), 1, false);
+                        Map.Sight_From(PlayerPtr, Coord_Cell(Center_Coord()), 1, false);
                     }
                 }
             }
         }
 #else
+        // If a projectile was fired from a unit that is hidden in the darkness,
+        //reveal that unit and a little area around it.
+        if (GameToPlay == GAME_NORMAL) {
+            if ((!IsOwnedByPlayer && !IsDiscoveredByPlayer)
+                || (!Map[Center_Coord()].IsMapped && (What_Am_I() != RTTI_AIRCRAFT || !IsOwnedByPlayer))) {
+                Map.Sight_From(PlayerPtr, Coord_Cell(Center_Coord()), 1, false);
+            }
+        }
+
         /*
         ** Now need to reveal for any player (only humans in normal node) that is the target. ST - 3/13/2019 5:43PM
         */
