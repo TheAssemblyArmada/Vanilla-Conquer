@@ -2728,16 +2728,7 @@ static void Init_Bulk_Data(void)
     INIClass ini;
     CCFileClass tutorialIniFile("TUTORIAL.INI");
     ini.Load(tutorialIniFile);
-    for (int index = 0; index < ARRAY_SIZE(TutorialText); index++) {
-        TutorialText[index] = NULL;
-
-        char buffer[128];
-        char num[10];
-        sprintf(num, "%d", index);
-        if (ini.Get_String("Tutorial", num, "", buffer, sizeof(buffer))) {
-            TutorialText[index] = strdup(buffer);
-        }
-    }
+    Load_Tutorial_Text(ini, TutorialText);
 
     /*
     **	Perform one-time game system initializations.

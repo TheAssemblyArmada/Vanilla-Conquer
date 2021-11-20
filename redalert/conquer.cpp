@@ -4847,3 +4847,32 @@ bool Force_Scenario_Available(const char* szName)
     return true;
 }
 #endif
+
+void Load_Tutorial_Text(INIClass &ini, DynamicVectorClass<const char*> &TutorialText)
+{
+    for (int i = 0; i < TutorialText.Count(); i++) {
+        free((void*)TutorialText[i]);
+    }
+
+    TutorialText.Clear();
+
+    // Because of special reading logic entries can overwrite older ones because
+    // the entry name is used as id and the first id starts at 1 and not zero
+    // in conquer.ini 
+    int entries = ini.Entry_Count("Tutorial") + 1;
+    
+    // Add all the empty entries as NULL strings
+    for (int i = 0; i < entries; i++) {
+        TutorialText.Add(NULL);
+    }
+    
+    // Now set the entries based on ID
+    for (int index = 0; index < entries; index++) {
+        char buffer[256];
+        char num[10];
+        sprintf(num, "%d", index);
+        if (ini.Get_String("Tutorial", num, "", buffer, sizeof(buffer))) {
+            TutorialText[index] = (strdup(buffer));
+        }
+    }
+}
