@@ -1,6 +1,6 @@
 #ifndef FRAMELIMIT_H
 #define FRAMELIMIT_H
 
-void Frame_Limiter(bool force_render = true);
+void Frame_Limiter(bool force_render = true, bool no_block = false);
 
 #endif /* FRAMELIMIT_H */
