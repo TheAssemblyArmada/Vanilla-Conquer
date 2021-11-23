@@ -447,8 +447,7 @@ int CDFileClass::Is_Available(int forced)
         **	prompt if necessary when the CD-ROM drive has been removed. In all other cases,
         **	it will return false and the search process will continue.
         */
-        BufferIOFileClass::Set_Name(path.c_str());
-        if (BufferIOFileClass::Is_Available()) {
+        if (RawFileClass(path.c_str()).Is_Available()) {
             return true;
         }
 
@@ -462,7 +461,6 @@ int CDFileClass::Is_Available(int forced)
     **	At this point, all path searching has failed. Just set the file name to the
     **	original and return its availability.
     */
-    BufferIOFileClass::Set_Name(filename.c_str());
 
     return BufferIOFileClass::Is_Available(forced);
 }
