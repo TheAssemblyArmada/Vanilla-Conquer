@@ -225,7 +225,7 @@ int main(int argc, char** argv)
     /*
     **	Remember the current working directory and drive.
     */
-    Paths.Init("vanillass", "CONQUER.INI", "CONQUER.MIX", args.ArgV[0]);
+    Paths.Init("vanillass", "CONQUER.INI", "SOLE.MIX", args.ArgV[0]);
     vc_chdir(Paths.Data_Path());
     CDFileClass::Refresh_Search_Drives();
 
