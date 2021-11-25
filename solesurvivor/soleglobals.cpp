@@ -19,6 +19,7 @@ bool ClientAICalled;
 bool server_534780 = true; // Seems to be related to if some server logic is processed.
 bool somestate_591BCC;
 bool UseAltArt;
+CELL FlagHomes[4];
 
 HousesType Side;
 HousesType SolePlayerHouse;

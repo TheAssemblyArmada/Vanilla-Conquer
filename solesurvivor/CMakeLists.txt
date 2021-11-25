@@ -112,6 +112,7 @@ set(SOLE_SRC
     slider.cpp
     smudge.cpp
     soleclient.cpp
+    solectf.cpp
     soleglobals.cpp
     solehelp.cpp
     solepackets.cpp

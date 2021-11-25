@@ -24,6 +24,7 @@ extern bool ClientAICalled;
 extern bool server_534780; // Possibly indicates server is remote?
 extern bool somestate_591BCC;
 extern bool UseAltArt;
+extern CELL FlagHomes[4];
 
 extern HousesType Side;
 extern HousesType SolePlayerHouse;

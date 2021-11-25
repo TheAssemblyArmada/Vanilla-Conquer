@@ -45,6 +45,7 @@
 #include "common/gitinfo.h"
 #include "listener.h"
 #include "soleclient.h"
+#include "solectf.h"
 #include "soleglobals.h"
 #include "solehelp.h"
 #include "soleparams.h"
@@ -1077,7 +1078,7 @@ bool Select_Game(bool fade)
 
     constexpr int SpeedScale = 256;
 
-    // Destroy_Server_Vector();
+    Destroy_Server_Vector();
     ClientFPS = 30;
     LastServerAIFrame = 0;
     CountDownTimerClass_590454.Set(120, 1);
@@ -1114,7 +1115,7 @@ bool Select_Game(bool fade)
     if (!OfflineMode && (somestate_591BCC || PlayerPtr->Class->House == HOUSE_MULTI2)) {
         Debug_Unshroud = true;
         Map.Activate(1);
-        // Add_WDT_Radar();
+        Add_WDT_Radar();
 
         if (Debug_Map) {
             Map.Activate(0);
@@ -1123,7 +1124,7 @@ bool Select_Game(bool fade)
 
     if (GameParams.FreeRadarForAll && !WDTRadarAdded) {
         Map.Activate(1);
-        // Add_WDT_Radar();
+        Add_WDT_Radar();
 
         if (Debug_Map) {
             Map.Activate(0);
@@ -1133,7 +1134,7 @@ bool Select_Game(bool fade)
     }
 
     if (GameToPlay == GAME_SERVER && (GameParams.CaptureTheFlag || GameParams.Football)) {
-        // house_server_47A5F8();
+        Init_Flag_Homes();
     }
 
     ClientAICalled = false;

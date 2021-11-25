@@ -718,3 +718,42 @@ int Unit_Choice_Dialog(bool names)
 
     return false;
 }
+
+void Add_WDT_Radar()
+{
+    DBG_INFO("Add_WDT_Radar\n");
+
+    if (!WDTRadarAdded) {
+        Map.Radar_Activate(1);
+
+        if (Map.Is_Zoomed()) {
+            Map.Zoom_Mode(Coord_Cell(Map.TacticalCoord));
+        }
+
+        Map.Activate(0);
+        WDTRadarAdded = true;
+        Map.Activate(1);
+    }
+}
+
+void Remove_WDT_Radar()
+{
+    DBG_INFO("Remove_WDT_Radar\n");
+
+    if (WDTRadarAdded) {
+        Map.Radar_Activate(0);
+
+        if (Map.IsSidebarActive) {
+            Map.Activate(0);
+            WDTRadarAdded = false;
+            Map.Activate(1);
+        } else {
+            WDTRadarAdded = false;
+        }
+    }
+}
+
+void Destroy_Server_Vector()
+{
+    DBG_WARN("Destroy_Server_Vector not implemented yet.\n");
+}

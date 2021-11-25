@@ -9,12 +9,9 @@
 // distributed with this program. You should have received a copy of the
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
-#ifndef SOLEWDT_H
-#define SOLEWDT_H
+#ifndef SOLECTF_H
+#define SOLECTF_H
 
-int Unit_Choice_Dialog(bool names = false);
-void Add_WDT_Radar();
-void Remove_WDT_Radar();
-void Destroy_Server_Vector();
+bool Init_Flag_Homes();
 
 #endif
