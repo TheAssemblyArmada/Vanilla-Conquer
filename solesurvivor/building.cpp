@@ -1794,7 +1794,7 @@ void* BuildingClass::operator new(size_t)
     }
 
     if (GameToPlay == GAME_SERVER) {
-        NewDeletePacket* packet = new NewDeletePacket;
+        NewDeleteData* packet = new NewDeleteData;
         packet->ToDelete = false;
         packet->Target = Build_Target(KIND_BUILDING, Buildings.ID((BuildingClass*)ptr));
         NewDeletePackets.Add(packet);
@@ -1827,7 +1827,7 @@ void BuildingClass::operator delete(void* ptr)
 
     if (ptr) {
         if (GameToPlay == GAME_SERVER) {
-            NewDeletePacket* packet = new NewDeletePacket;
+            NewDeleteData* packet = new NewDeleteData;
             packet->ToDelete = true;
             packet->Target = Build_Target(KIND_BUILDING, Buildings.ID((BuildingClass*)ptr));
             NewDeletePackets.Add(packet);

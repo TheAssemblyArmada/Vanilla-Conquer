@@ -13,9 +13,19 @@
 
 static_assert(sizeof(ConnectionPacket) == 33, "Connection packet not expected size.");
 static_assert(sizeof(GameOptionsPacket) == 422, "Game Options packet not expected size.");
+static_assert(sizeof(NewDeletePacket) == 191, "New/Delete packet not expected size.");
+static_assert(sizeof(HealthPacket) == 202, "Health packet not expected size.");
+static_assert(sizeof(TeamPacket) == 202, "Team packet not expected size.");
+static_assert(sizeof(CrushPacket) == 204, "Crush packet not expected size.");
+static_assert(sizeof(CapturePacket) == 204, "Capture packet not expected size.");
+static_assert(sizeof(CargoPacket) == 202, "Cargo packet not expected size.");
+static_assert(sizeof(FlagPacket) == 202, "Flag packet not expected size.");
+static_assert(sizeof(CTFPacket) == 204, "CTF packet not expected size.");
+static_assert(sizeof(MovementPacket) == 200, "Movement packet not expected size.");
+static_assert(sizeof(TargetPacket) == 204, "Target packet not expected size.");
 
 int PacketLength[PACKET_COUNT] = {
-    3,
+    sizeof(GenericPacket),
     sizeof(ConnectionPacket),
     4,
     207,
@@ -26,16 +36,16 @@ int PacketLength[PACKET_COUNT] = {
     207,
     4,
     174,
-    191, // Should be sizeof(NewDeletePacket)? Code handling it in original is odd.
-    202,
-    202,
-    204,
-    204,
-    202,
-    202,
-    204,
-    200,
-    204,
+    sizeof(NewDeletePacket),
+    sizeof(HealthPacket),
+    sizeof(TeamPacket),
+    sizeof(CrushPacket),
+    sizeof(CapturePacket),
+    sizeof(CargoPacket),
+    sizeof(FlagPacket),
+    sizeof(CTFPacket),
+    sizeof(MovementPacket),
+    sizeof(TargetPacket),
     202,
     204,
     204,

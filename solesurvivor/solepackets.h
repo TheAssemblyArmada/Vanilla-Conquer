@@ -32,7 +32,7 @@ enum PacketType
     PACKET_NEW_DELETE_OBJ,
     PACKET_HEALTH,
     PACKET_TEAM,
-    PACKET_E,
+    PACKET_CRUSH,
     PACKET_CAPTURE,
     PACKET_CARGO,
     PACKET_FLAG,
@@ -57,7 +57,7 @@ enum PacketType
 struct GenericPacket
 {
     uint16_t PacketLength;
-    uint8_t SomeID;
+    uint8_t PacketType;
 };
 
 struct ConnectionPacket
@@ -95,11 +95,11 @@ struct GameOptionsPacket
     int32_t Ranges[25];
 };
 
-struct NewDeletePacket
+struct NewDeleteData
 {
     bool ToDelete;
-    int32_t Target;
-    uint32_t Coord;
+    TARGET Target;
+    COORDINATE Coord;
     uint8_t Owner;
     uint8_t Mission;
     uint8_t Type;
@@ -108,6 +108,145 @@ struct NewDeletePacket
     uint8_t Damage;
     uint8_t RateOfFire;
     uint8_t Range;
+};
+
+struct NewDeletePacket
+{
+    uint16_t PacketLength;
+    uint8_t PacketType;
+    uint8_t DataCount;
+    NewDeleteData Data[11];
+};
+
+struct HealthData
+{
+    TARGET Target;
+    int16_t Strength;
+};
+
+struct HealthPacket
+{
+    uint16_t PacketLength;
+    uint8_t PacketType;
+    uint8_t DataCount;
+    HealthData Data[33];
+};
+
+struct TeamData
+{
+    TARGET Target;
+    TARGET Source;
+    WarheadType Warhead;
+};
+
+struct TeamPacket
+{
+    uint16_t PacketLength;
+    uint8_t PacketType;
+    uint8_t DataCount;
+    TeamData Data[22];
+};
+
+struct CrushData
+{
+    TARGET Target;
+    TARGET Source;
+};
+
+struct CrushPacket
+{
+    uint16_t PacketLength;
+    uint8_t PacketType;
+    uint8_t DataCount;
+    CrushData Data[25];
+};
+
+struct CaptureData
+{
+    TARGET Target;
+    HousesType House;
+};
+
+struct CapturePacket
+{
+    uint16_t PacketLength;
+    uint8_t PacketType;
+    uint8_t DataCount;
+    CaptureData Data[40];
+};
+
+struct CargoData
+{
+    TARGET Cargo;
+    TARGET Transport;
+    bool Embarking;
+};
+
+struct CargoPacket
+{
+    uint16_t PacketLength;
+    uint8_t PacketType;
+    uint8_t DataCount;
+    CargoData Data[22];
+};
+
+struct FlagData
+{
+    uint8_t House;
+    TARGET Location;
+    bool Attaching;
+};
+
+struct FlagPacket
+{
+    uint16_t PacketLength;
+    uint8_t PacketType;
+    uint8_t DataCount;
+    FlagData Data[33];
+};
+
+struct CTFData
+{
+    uint8_t Type;
+    CELL Cell;
+    uint8_t Unk;
+};
+
+struct CTFPacket
+{
+    uint16_t PacketLength;
+    uint8_t PacketType;
+    uint8_t DataCount;
+    CTFData Data[50];
+};
+
+struct MovementData
+{
+    TARGET Target;
+    CELL Destination;
+    FacingType Facing;
+};
+
+struct MovementPacket
+{
+    uint16_t PacketLength;
+    uint8_t PacketType;
+    uint8_t DataCount;
+    MovementData Data[28];
+};
+
+struct TargetData
+{
+    TARGET Object;
+    TARGET TarCom;
+};
+
+struct TargetPacket
+{
+    uint16_t PacketLength;
+    uint8_t PacketType;
+    uint8_t DataCount;
+    TargetData Data[25];
 };
 
 #pragma pack(pop)

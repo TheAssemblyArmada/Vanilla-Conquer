@@ -206,7 +206,7 @@ void* AircraftClass::operator new(size_t)
     }
 
     if (GameToPlay == GAME_SERVER) {
-        NewDeletePacket* packet = new NewDeletePacket;
+        NewDeleteData* packet = new NewDeleteData;
         packet->ToDelete = false;
         packet->Target = Build_Target(KIND_AIRCRAFT, Aircraft.ID((AircraftClass*)ptr));
         NewDeletePackets.Add(packet);
@@ -237,7 +237,7 @@ void AircraftClass::operator delete(void* ptr)
 
     if (ptr) {
         if (GameToPlay == GAME_SERVER) {
-            NewDeletePacket* packet = new NewDeletePacket;
+            NewDeleteData* packet = new NewDeleteData;
             packet->ToDelete = true;
             packet->Target = Build_Target(KIND_AIRCRAFT, Aircraft.ID((AircraftClass*)ptr));
             NewDeletePackets.Add(packet);

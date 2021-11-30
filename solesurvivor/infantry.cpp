@@ -360,7 +360,7 @@ void* InfantryClass::operator new(size_t)
     }
 
     if (GameToPlay == GAME_SERVER) {
-        NewDeletePacket* packet = new NewDeletePacket;
+        NewDeleteData* packet = new NewDeleteData;
         packet->ToDelete = false;
         packet->Target = Build_Target(KIND_INFANTRY, Infantry.ID((InfantryClass*)ptr));
         NewDeletePackets.Add(packet);
@@ -391,7 +391,7 @@ void InfantryClass::operator delete(void* ptr)
 
     if (ptr) {
         if (GameToPlay == GAME_SERVER) {
-            NewDeletePacket* packet = new NewDeletePacket;
+            NewDeleteData* packet = new NewDeleteData;
             packet->ToDelete = true;
             packet->Target = Build_Target(KIND_INFANTRY, Infantry.ID((InfantryClass*)ptr));
             NewDeletePackets.Add(packet);

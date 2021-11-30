@@ -1111,7 +1111,7 @@ void* UnitClass::operator new(size_t)
     }
 
     if (GameToPlay == GAME_SERVER) {
-        NewDeletePacket* packet = new NewDeletePacket;
+        NewDeleteData* packet = new NewDeleteData;
         packet->ToDelete = false;
         packet->Target = Build_Target(KIND_UNIT, Units.ID((UnitClass*)ptr));
         NewDeletePackets.Add(packet);
@@ -1144,7 +1144,7 @@ void UnitClass::operator delete(void* ptr)
 
     if (ptr) {
         if (GameToPlay == GAME_SERVER) {
-            NewDeletePacket* packet = new NewDeletePacket;
+            NewDeleteData* packet = new NewDeleteData;
             packet->ToDelete = true;
             packet->Target = Build_Target(KIND_UNIT, Units.ID((UnitClass*)ptr));
             NewDeletePackets.Add(packet);

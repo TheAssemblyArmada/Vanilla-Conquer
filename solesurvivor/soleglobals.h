@@ -77,8 +77,8 @@ extern DynamicVectorClass<ReliableCommClass*> AdminComms;
 class SolePlayerClass;
 extern DynamicVectorClass<SolePlayerClass*> SolePlayers;
 
-struct NewDeletePacket;
-extern DynamicVectorClass<NewDeletePacket*> NewDeletePackets;
+struct NewDeleteData;
+extern DynamicVectorClass<NewDeleteData*> NewDeletePackets;
 
 
 #ifdef _WIN32
