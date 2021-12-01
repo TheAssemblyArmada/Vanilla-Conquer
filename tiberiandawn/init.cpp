@@ -45,6 +45,7 @@
 #include "common/gitinfo.h"
 #include "common/tcpip.h"
 #include "common/vqaconfig.h"
+#include "common/wspudp.h"
 #include <time.h>
 
 /****************************************
@@ -1131,24 +1132,20 @@ bool Select_Game(bool fade)
                 **	Network (IPX): start a new network game.
                 */
                 case GAME_IPX:
+                    DBG_LOG("C&C - Game type is IPX.\n");
                     /*
                     ** Init network system & remote-connect
                     */
-                    if (Init_Network() && Remote_Connect()) {
-#if (0)
-                        char seed[80];
-                        sprintf(seed, "Seed: %08x\n", Seed);
-                        CCDebugString(seed);
+#ifdef NETWORKING
+                    if (PacketTransport)
+                        delete PacketTransport;
 
-                        sprintf(seed, "rand: %04x\n", rand());
-                        CCDebugString(seed);
-
-                        sprintf(seed, "rand: %04x\n", rand());
-                        CCDebugString(seed);
-
-                        sprintf(seed, "rand: %04x\n", rand());
-                        CCDebugString(seed);
+                    PacketTransport = new UDPInterfaceClass;
+                    assert(PacketTransport != NULL);
 #endif
+
+                    DBG_LOG("C&C - About to call Init_Network.\n");
+                    if (GameToPlay == GAME_IPX && Init_Network() && Remote_Connect()) {
                         Options.ScoreVolume = 0;
                         ScenPlayer = SCEN_PLAYER_MPLAYER;
                         ScenDir = SCEN_DIR_EAST;
@@ -1158,6 +1155,10 @@ bool Select_Game(bool fade)
                         GameToPlay = GAME_NORMAL;
                         display = true;
                         selection = SEL_NONE;
+#ifdef NETWORKING
+                        delete PacketTransport;
+                        PacketTransport = NULL;
+#endif
                     }
                     break;
                 }
