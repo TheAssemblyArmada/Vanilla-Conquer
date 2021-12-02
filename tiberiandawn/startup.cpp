@@ -294,7 +294,7 @@ int main(int argc, char** argv)
 
 #ifndef REMASTER_BUILD
         /* If DOSMode is enabled, adjust resolution accordingly. */
-        if (Settings.Video.DOSMode || Is_Demo()) {
+        if (Settings.Video.DOSMode || Is_Demo() || Is_DOS_Files()) {
             ScreenWidth = 320;
             ScreenHeight = 200;
         }

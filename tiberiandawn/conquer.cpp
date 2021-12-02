@@ -3899,3 +3899,28 @@ bool Is_Demo(void)
 
     return bDemo;
 }
+
+/***********************************************************************************************
+ * Is_DOS_Files -- Function to determine if we are running with DOS files                      *
+ *                                                                                             *
+ * INPUT:    Nothing                                                                           *
+ *                                                                                             *
+ * OUTPUT:   true if we seem to have DOS files                                                 *
+ *                                                                                             *
+ * WARNINGS: None                                                                              *
+ *                                                                                             *
+ *=============================================================================================*/
+bool Is_DOS_Files(void)
+{
+    static bool already_checked = false;
+    static bool is_dos = false;
+
+    if (!already_checked) {
+        CCFileClass local("LOCAL.MIX");
+        CCFileClass cclocal("CCLOCAL.MIX");
+        is_dos = local.Is_Available() && !cclocal.Is_Available();
+        already_checked = true;
+    }
+
+    return is_dos;
+}
