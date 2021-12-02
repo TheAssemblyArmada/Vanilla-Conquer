@@ -182,7 +182,7 @@ unsigned char const ScoreRemapFBall[256] = {
 
 TextBlitClass BlitList;
 
-char* ScreenNames[2] = {"S-GDIIN2.WSA", "SCRSCN1.WSA"};
+const char* ScreenNames[2] = {"S-GDIIN2.WSA", "SCRSCN1.WSA"};
 
 extern bool StreamLowImpact;
 
@@ -1557,7 +1557,7 @@ void ScoreClass::Print_Minutes(int minutes)
  * HISTORY:                                                                                    *
  *   04/07/1995 BWG : Created.                                                                 *
  *=============================================================================================*/
-void ScoreClass::Count_Up_Print(char* str, int percent, int max, int xpos, int ypos)
+void ScoreClass::Count_Up_Print(const char* str, int percent, int max, int xpos, int ypos)
 {
     char destbuf[64];
     int width;
@@ -1679,6 +1679,8 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
                 }
             }
         }
+
+        Frame_Limiter();
     } while (key != KN_RETURN && key != KN_KEYPAD_RETURN);
 }
 

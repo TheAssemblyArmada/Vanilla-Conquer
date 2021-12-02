@@ -87,6 +87,7 @@ MissionType MapEditClass::MapEditMissions[NUM_EDIT_MISSIONS] = {
 extern int UnknownKey; // in menus.cpp
 
 char MapEditClass::HealthBuf[20];
+char MapEditClass::BaseText[6] = "Base:";
 
 /***************************************************************************
  * MapEditClass::MapEditClass -- class constructor                         *
@@ -220,7 +221,7 @@ void MapEditClass::One_Time(void)
     */
     BaseGauge = new GaugeClass(POPUP_BASEPERCENT, POPUP_BASE_X, POPUP_BASE_Y, POPUP_BASE_W, POPUP_BASE_H);
     BaseLabel = new TextLabelClass(
-        "Base:", POPUP_BASE_X - 3, POPUP_BASE_Y, GadgetClass::Get_Color_Scheme(), TPF_RIGHT | TPF_NOSHADOW | TPF_EFNT);
+        BaseText, POPUP_BASE_X - 3, POPUP_BASE_Y, GadgetClass::Get_Color_Scheme(), TPF_RIGHT | TPF_NOSHADOW | TPF_EFNT);
     BaseGauge->Set_Maximum(100);
     BaseGauge->Set_Value(Scen.Percent);
 }

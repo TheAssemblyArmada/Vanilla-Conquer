@@ -1196,8 +1196,13 @@ typedef enum PlayerColorType : char
     PCOLOR_RED,
     PCOLOR_GREEN,
     PCOLOR_ORANGE,
+#ifdef REMASTER_BUILD
     PCOLOR_BLUE, // This is actually the red scheme used in the dialogs
     PCOLOR_GREY,
+#else
+    PCOLOR_GREY,
+    PCOLOR_BLUE,
+#endif
     PCOLOR_BROWN,
     PCOLOR_TYPE,
     PCOLOR_REALLY_BLUE,

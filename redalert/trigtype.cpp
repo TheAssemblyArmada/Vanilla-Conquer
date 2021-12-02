@@ -1216,7 +1216,7 @@ bool TriggerTypeClass::Edit(void)
     **	TriggerTypeClass definition.
     */
     char perstext[DESC_SIZE] = "";
-    static char* _perstext[3] = {"Volatile", "Semi-persistent", "Persistent"};
+    static const char* _perstext[3] = {"Volatile", "Semi-persistent", "Persistent"};
     DropListClass persbtn(BUTTON_PERSISTANCE,
                           perstext,
                           sizeof(perstext),

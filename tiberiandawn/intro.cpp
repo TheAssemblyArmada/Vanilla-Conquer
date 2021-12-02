@@ -43,7 +43,7 @@
 long MixFileHandler(VQAHandle* vqa, long action, void* buffer, long nbytes);
 
 #ifndef REMASTER_BUILD
-VQAHandle* Open_Movie(char* name)
+VQAHandle* Open_Movie(const char* name)
 {
     if (!Debug_Quiet && Get_Digi_Handle() != -1) {
         AnimControl.OptionFlags |= VQAOPTF_AUDIO;

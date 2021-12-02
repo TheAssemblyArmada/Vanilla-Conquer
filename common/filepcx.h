@@ -70,7 +70,7 @@ typedef struct
 
 class GraphicBufferClass;
 
-GraphicBufferClass* Read_PCX_File(char* name, char* palette = NULL, void* buff = NULL, long size = 0);
+GraphicBufferClass* Read_PCX_File(const char* name, char* palette = NULL, void* buff = NULL, long size = 0);
 int Write_PCX_File(char* name, GraphicViewPortClass& pic, unsigned char* palette);
 
 #endif

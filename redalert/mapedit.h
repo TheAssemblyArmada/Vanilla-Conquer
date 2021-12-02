@@ -343,6 +343,7 @@ private:
     GaugeClass* BaseGauge;
     TextLabelClass* BaseLabel;
     static MissionType MapEditMissions[NUM_EDIT_MISSIONS];
+    static char BaseText[6];
 };
 
 #endif

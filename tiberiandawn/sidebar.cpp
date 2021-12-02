@@ -1127,7 +1127,7 @@ SidebarClass::StripClass::StripClass(InitClass const&)
  *=============================================================================================*/
 void SidebarClass::StripClass::One_Time(int)
 {
-    static char* _file[3] = {"ION", "ATOM", "BOMB"};
+    static const char* _file[3] = {"ION", "ATOM", "BOMB"};
     int factor = Get_Resolution_Factor();
 
     ObjectWidth = OBJECT_WIDTH << factor;
@@ -1268,7 +1268,7 @@ void SidebarClass::StripClass::Init_Theater(TheaterType theater)
 {
     // if (theater != LastTheater) {
 
-    static char* _file[3] = {"ION", "ATOM", "BOMB"};
+    static const char* _file[3] = {"ION", "ATOM", "BOMB"};
     int factor = Get_Resolution_Factor();
     char fullname[_MAX_FNAME + _MAX_EXT];
     char buffer[_MAX_FNAME];

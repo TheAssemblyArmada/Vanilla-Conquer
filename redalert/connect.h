@@ -214,7 +214,7 @@ public:
     {
         return (MaxPacketLen);
     }
-    static char* Command_Name(int command);
+    static const char* Command_Name(int command);
 
     /*.....................................................................
     The packet "queue"; this non-sequenced version isn't really much of
@@ -299,7 +299,7 @@ protected:
     /*.....................................................................
     Names of all packet commands
     .....................................................................*/
-    static char* Commands[PACKET_COUNT];
+    static const char* Commands[PACKET_COUNT];
 };
 
 #endif
