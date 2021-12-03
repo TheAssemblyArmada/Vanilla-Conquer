@@ -755,9 +755,10 @@ void SidebarClass::Draw_It(bool complete)
                 if (complete) {
                     LogicPage->Fill_Rect(
                         SideX + Map.PowWidth, SideY, SideX + SideWidth - 1, SideY + SideHeight - 1, LTGREY);
+
+                    // Draw rectangle covering "Repair", "Sell", and "Map Buttons"
+                    LogicPage->Fill_Rect(SideX, SideY - 1, SideX + SideWidth, SideY + TopHeight - 1, LTGREY);
                 }
-                // Draw rectangle covering "Repair", "Sell", and "Map Buttons"
-                LogicPage->Fill_Rect(SideX, SideY - 1, SideX + SideWidth, SideY + TopHeight, LTGREY);
 
                 Draw_Box(SideX + Map.PowWidth,
                          SideY + TopHeight,
