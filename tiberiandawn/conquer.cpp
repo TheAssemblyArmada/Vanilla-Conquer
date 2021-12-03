@@ -86,7 +86,7 @@ bool Map_Edit_Loop(void);
 void Trap_Object(void);
 
 #ifdef CHEAT_KEYS
-void Heap_Dump_Check(char* string);
+void Heap_Dump_Check(const char* string);
 void Dump_Heap_Pointers(void);
 void Error_In_Heap_Pointers(char* string);
 #endif
@@ -3130,7 +3130,7 @@ void Handle_View(int view, int action)
 }
 
 #ifdef CHEAT_KEYS
-void Heap_Dump_Check(char* string)
+void Heap_Dump_Check(const char* string)
 {
 #if 0
 	struct _heapinfo h_info;
@@ -3659,7 +3659,7 @@ bool Force_CD_Available(int cd)
     static char _palette[768];
     static char _hold[256];
     static void* font;
-    static char* _volid[] = {"GDI", "NOD", "COVERT"};
+    static const char* _volid[] = {"GDI", "NOD", "COVERT"};
 
     int drive;
 
@@ -3736,7 +3736,7 @@ unsigned long Disk_Space_Available(void)
  * HISTORY:                                                                                    *
  *   08/15/1995 BRR : Created.                                                                 *
  *=============================================================================================*/
-void Validate_Error(char* name)
+void Validate_Error(const char* name)
 {
     GlyphX_Debug_Print("Validate_Error");
     GlyphX_Debug_Print(name);
@@ -4000,4 +4000,29 @@ bool Is_Demo(void)
     }
 
     return bDemo;
+}
+
+/***********************************************************************************************
+ * Is_DOS_Files -- Function to determine if we are running with DOS files                      *
+ *                                                                                             *
+ * INPUT:    Nothing                                                                           *
+ *                                                                                             *
+ * OUTPUT:   true if we seem to have DOS files                                                 *
+ *                                                                                             *
+ * WARNINGS: None                                                                              *
+ *                                                                                             *
+ *=============================================================================================*/
+bool Is_DOS_Files(void)
+{
+    static bool already_checked = false;
+    static bool is_dos = false;
+
+    if (!already_checked) {
+        CCFileClass local("LOCAL.MIX");
+        CCFileClass cclocal("CCLOCAL.MIX");
+        is_dos = local.Is_Available() && !cclocal.Is_Available();
+        already_checked = true;
+    }
+
+    return is_dos;
 }

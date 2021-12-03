@@ -41,13 +41,16 @@
  * TMC::Message_Handler -- Message handler function for Winsock related messages               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
 #include "internet.h"
+#include "endianness.h"
+#include "debugstring.h"
 #include "wspudp.h"
-#include "common/endianness.h"
+#include "wwkeyboard.h"
+extern WWKeyboardClass* Keyboard;
 
 #include <assert.h>
 #include <stdio.h>
+#include <assert.h>
 
 #ifndef _WIN32
 #include <ifaddrs.h>
@@ -213,7 +216,7 @@ bool UDPInterfaceClass::Open_Socket(SOCKET)
     */
     char hostname[128];
     gethostname(hostname, 128);
-    WWDebugString(hostname);
+    DBG_LOG(hostname);
     struct hostent* host_info = gethostbyname(hostname);
 
     /*

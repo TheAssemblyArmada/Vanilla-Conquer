@@ -143,7 +143,8 @@ public:
     //.....................................................................
     // Message-editing support routines
     //.....................................................................
-    TextLabelClass* Add_Edit(PlayerColorType color, TextPrintType style, char* to, char cursor = 0, int width = 640);
+    TextLabelClass*
+    Add_Edit(PlayerColorType color, TextPrintType style, const char* to, char cursor = 0, int width = 640);
     void Remove_Edit(void);
     char* Get_Edit_Buf(void);
     char* Get_Overflow_Buf(void)

@@ -41,7 +41,7 @@
  *    7/5/96 11:30AM ST : Created                                                              *
  *=============================================================================================*/
 
-void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned char* palette)
+void Load_Title_Screen(const char* name, GraphicViewPortClass* video_page, unsigned char* palette)
 {
     GraphicBufferClass* load_buffer;
     const char* ext = strrchr(name, '.');

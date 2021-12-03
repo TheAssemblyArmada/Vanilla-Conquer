@@ -88,7 +88,7 @@ unsigned int WinW = 40;
 unsigned int Window = 0;
 
 int MoreOn = true;
-char* TXT_MoreText = "--More--";
+const char* TXT_MoreText = "--More--";
 void (*Window_More_Ptr)(char const*, int, int, int) = Standard_More_Prompt;
 
 extern GraphicViewPortClass* LogicPage;

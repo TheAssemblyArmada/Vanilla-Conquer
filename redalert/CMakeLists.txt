@@ -24,7 +24,6 @@ set(REDALERT_SRC
     colrlist.cpp
     combat.cpp
     confdlg.cpp
-    connect.cpp
     conquer.cpp
     const.cpp
     coord.cpp
@@ -71,7 +70,6 @@ set(REDALERT_SRC
     ioobj.cpp
     ipx.cpp
     ipx95.cpp
-    ipxaddr.cpp
     ipxconn.cpp
     ipxgconn.cpp
     ipxmgr.cpp
@@ -164,8 +162,6 @@ set(REDALERT_SRC
     wolapiob.cpp
     woledit.cpp
     wolstrng.cpp
-    wsproto.cpp
-    wspudp.cpp
 )
 
 if(CMAKE_CONFIGURATION_TYPES)

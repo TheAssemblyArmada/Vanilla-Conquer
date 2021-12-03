@@ -19,7 +19,6 @@ set(TIBDAWN_SRC
     colrlist.cpp
     combat.cpp
     confdlg.cpp
-    connect.cpp
     conquer.cpp
     const.cpp
     coord.cpp
@@ -60,7 +59,6 @@ set(TIBDAWN_SRC
     ioobj.cpp
     ipx.cpp
     ipx95.cpp
-    ipxaddr.cpp
     ipxconn.cpp
     ipxgconn.cpp
     ipxmgr.cpp
@@ -222,6 +220,9 @@ if(BUILD_VANILLATD)
     set_target_properties(VanillaTD PROPERTIES OUTPUT_NAME vanillatd)
     if(MAP_EDITORTD)
         target_compile_definitions(VanillaTD PUBLIC INTERNAL_VERSION)
+    endif()
+    if(NETWORKING)
+        target_compile_definitions(VanillaTD PUBLIC WINSOCK_IPX)
     endif()
     # Control if we auto generate a console and which "main" function we link using MSVC.
     if(MSVC)

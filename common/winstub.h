@@ -29,6 +29,6 @@
 class GraphicViewPortClass;
 
 /* Load Title Screen. Supports PCX and CPS files as file argument. */
-void Load_Title_Screen(char* name, GraphicViewPortClass*, unsigned char*);
+void Load_Title_Screen(const char* name, GraphicViewPortClass*, unsigned char*);
 
 #endif // COMMON_WINSTUB_H

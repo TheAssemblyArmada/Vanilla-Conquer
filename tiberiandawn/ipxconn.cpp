@@ -13,7 +13,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\ipxconn.cpv   1.9   16 Oct 1995 16:50:52   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/IPXCONN.CPP 1     3/03/97 10:24a Joe_bostic $ */
 /***************************************************************************
  **   C O N F I D E N T I A L --- W E S T W O O D    S T U D I O S        **
  ***************************************************************************
@@ -44,8 +44,22 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include <stdio.h>
+#include <string.h>
+#include "ipxconn.h"
+
+#ifdef WINSOCK_IPX
+#include "wsproto.h"
+
+#else
+
 #include "ipx95.h"
+#ifdef _WIN32
 #include "common/tcpip.h"
+#else // _WIN32
+#include "common/fakesock.h"
+#endif // _WIN32
+#endif // WINSOCK_IPX
 
 /*
 ********************************* Globals ***********************************
@@ -69,12 +83,13 @@ int IPXConnClass::PacketLen;
  *                                                                         *
  * INPUT:                                                                  *
  *		numsend			desired # of entries for the send queue					*
- *		numreceive		desired # of entries for the recieve queue				*
+ *		numreceive		desired # of entries for the receive queue				*
  *		maxlen			max length of an application packet							*
  *		magicnum			the packet "magic number" for this connection			*
  *		address			address of destination (NULL = no address)				*
  *		id					connection's unique numerical ID								*
  *		name				connection's name													*
+ *		extralen			max size of app-specific extra bytes (optional)			*
  *                                                                         *
  * OUTPUT:                                                                 *
  *		none.																						*
@@ -91,14 +106,16 @@ IPXConnClass::IPXConnClass(int numsend,
                            unsigned short magicnum,
                            IPXAddressClass* address,
                            int id,
-                           char* name)
-    : NonSequencedConnClass(numsend,
-                            numreceive,
-                            maxlen,
-                            magicnum,
-                            2,  // retry delta
-                            -1, // max retries
-                            60) // timeout
+                           const char* name,
+                           int extralen)
+    : ConnectionClass(numsend,
+                      numreceive,
+                      maxlen,
+                      magicnum,
+                      2,        // retry delta
+                      -1,       // max retries
+                      60,       // timeout
+                      extralen) // (currently, this is only used by the Global Channel)
 {
     NetNumType net;
     NetNodeType node;
@@ -111,6 +128,11 @@ IPXConnClass::IPXConnClass(int numsend,
     ID = id;
     strcpy(Name, name);
 
+#ifdef WINSOCK_IPX
+    Address.Get_Address(net, node);
+    memcpy(ImmediateAddress, node, 6);
+    Immed_Set = 0;
+#else
     if (!Winsock.Get_Connected()) {
         /*------------------------------------------------------------------------
         If our Address field is an actual address (ie NULL wasn't passed to the
@@ -120,19 +142,21 @@ IPXConnClass::IPXConnClass(int numsend,
         ------------------------------------------------------------------------*/
         if (!Address.Is_Broadcast() && Configured == 1) {
             Address.Get_Address(net, node);
+
             /*.....................................................................
-            If the user is logged in & has a valid Novell Connection Number, get the
-            bridge address the "official" way
+            If the user is logged in & has a valid Novell Connection Number, get
+            the bridge address the "official" way
             .....................................................................*/
             if (ConnectionNum != 0) {
-                if (IPX_Get_Local_Target(net, node, Socket, ImmediateAddress) != 0)
+                if (IPX_Get_Local_Target(net, node, Socket, ImmediateAddress) != 0) {
                     memcpy(ImmediateAddress, node, 6);
-            } else {
-
-                /*.....................................................................
-                Otherwise, use the destination node address as the ImmediateAddress, and
-                just hope there's no network bridge in the path.
-                .....................................................................*/
+                }
+            }
+            /*.....................................................................
+            Otherwise, use the destination node address as the ImmediateAddress,
+            and just hope there's no network bridge in the path.
+            .....................................................................*/
+            else {
                 memcpy(ImmediateAddress, node, 6);
             }
 
@@ -142,7 +166,7 @@ IPXConnClass::IPXConnClass(int numsend,
             Immed_Set = 0;
         }
     }
-
+#endif // WINSOCK_IPX
 } /* end of IPXConnClass */
 
 /***************************************************************************
@@ -165,8 +189,9 @@ void IPXConnClass::Init(void)
     /*------------------------------------------------------------------------
     Invoke the parent's Init routine
     ------------------------------------------------------------------------*/
-    NonSequencedConnClass::Init();
-}
+    ConnectionClass::Init();
+
+} /* end of Init */
 
 /***************************************************************************
  * IPXConnClass::Configure -- One-time initialization routine					*
@@ -248,11 +273,27 @@ void IPXConnClass::Configure(unsigned short socket,
  * HISTORY:                                                                *
  *   12/16/1994 BR : Created.                                              *
  *=========================================================================*/
-bool IPXConnClass::Start_Listening(void)
+int IPXConnClass::Start_Listening(void)
 {
+#ifdef WINSOCK_IPX
+    /*
+    ** Open the socket.
+    */
+    if (!Open_Socket(Socket))
+        return (false);
 
-#ifndef NOT_FOR_WIN95
+    /*
+    ** start listening on the socket.
+    */
+    if (PacketTransport->Start_Listening()) {
+        Listening = 1;
+        return (true);
+    } else {
+        Close_Socket(Socket);
+        return (false);
+    }
 
+#else
     if (Winsock.Get_Connected())
         return (true);
 
@@ -266,69 +307,10 @@ bool IPXConnClass::Start_Listening(void)
         Listening = 1;
         return (true);
     } else {
-        return (false);
-    }
-
-#else
-
-    void* hdr_ptr;
-    unsigned long hdr_val;
-    void* buf_ptr;
-    unsigned long buf_val;
-    int rc;
-
-    /*------------------------------------------------------------------------
-    Don't do a thing unless we've been configured, and we're not listening.
-    ------------------------------------------------------------------------*/
-    if (Configured == 0 || Listening == 1)
-        return (false);
-
-    /*------------------------------------------------------------------------
-    Open the Socket
-    ------------------------------------------------------------------------*/
-    if (!Open_Socket(Socket))
-        return (false);
-
-    /*------------------------------------------------------------------------
-    Clear the ECB & header
-    ------------------------------------------------------------------------*/
-    memset(ListenECB, 0, sizeof(ECBType));
-    memset(ListenHeader, 0, sizeof(IPXHeaderType));
-
-    /*------------------------------------------------------------------------
-    Convert protected-mode ptrs to real-mode ptrs
-    ------------------------------------------------------------------------*/
-    hdr_val = (unsigned long)ListenHeader;
-    hdr_ptr = (void*)(((hdr_val & 0xffff0) << 12) | (hdr_val & 0x000f));
-
-    buf_val = (unsigned long)ListenBuf;
-    buf_ptr = (void*)(((buf_val & 0xffff0) << 12) | (buf_val & 0x000f));
-
-    /*------------------------------------------------------------------------
-    Fill in the ECB
-    ------------------------------------------------------------------------*/
-    ListenECB->SocketNumber = Socket;
-    ListenECB->PacketCount = 2;
-    ListenECB->Packet[0].Address = hdr_ptr;
-    ListenECB->Packet[0].Length = sizeof(IPXHeaderType);
-    ListenECB->Packet[1].Address = buf_ptr;
-    ListenECB->Packet[1].Length = (unsigned short)PacketLen;
-
-    ((long&)ListenECB->Event_Service_Routine) = Handler;
-
-    /*------------------------------------------------------------------------
-    Command IPX to listen
-    ------------------------------------------------------------------------*/
-    rc = IPX_Listen_For_Packet(ListenECB);
-    if (rc != 0) {
         Close_Socket(Socket);
         return (false);
-    } else {
-        Listening = 1;
-        return (true);
     }
-
-#endif // NOT_FOR_WIN95
+#endif // WINSOCK_IPX
 } /* end of Start_Listening */
 
 /***************************************************************************
@@ -346,15 +328,22 @@ bool IPXConnClass::Start_Listening(void)
  * HISTORY:                                                                *
  *   12/16/1994 BR : Created.                                              *
  *=========================================================================*/
-bool IPXConnClass::Stop_Listening(void)
+int IPXConnClass::Stop_Listening(void)
 {
+#ifdef WINSOCK_IPX
+    if (PacketTransport)
+        PacketTransport->Stop_Listening();
+    Listening = 0;
+
+    //	All done.
+    return (1);
+#else
     /*------------------------------------------------------------------------
     Don't do anything unless we're already Listening.
     ------------------------------------------------------------------------*/
-    if (Listening == 0)
-        return (false);
-
-#ifndef NOT_FOR_WIN95
+    if (Listening == 0) {
+        return (0);
+    }
 
     if (Winsock.Get_Connected()) {
         Listening = 0;
@@ -364,22 +353,13 @@ bool IPXConnClass::Stop_Listening(void)
         Close_Socket(Socket);
     }
 
-#else // NOT_FOR_WIN95
-
-    /*------------------------------------------------------------------------
-    Shut IPX down.
-    ------------------------------------------------------------------------*/
-    IPX_Cancel_Event(ListenECB);
-    Close_Socket(Socket);
-
-#endif // NOT_FOR_WIN95
-
     Listening = 0;
 
     /*------------------------------------------------------------------------
     All done.
     ------------------------------------------------------------------------*/
-    return (true);
+    return (1);
+#endif // WINSOCK_IPX
 
 } /* end of Stop_Listening */
 
@@ -387,7 +367,10 @@ bool IPXConnClass::Stop_Listening(void)
  * IPXConnClass::Send -- sends a packet; invoked by SequencedConnection		*
  *                                                                         *
  * INPUT:                                                                  *
- *		socket		desired socket ID number											*
+ *		buf			buffer to send															*
+ *		buflen		length of buffer to send											*
+ *		extrabuf		(not used by this class)											*
+ *		extralen		(not used by this class)											*
  *                                                                         *
  * OUTPUT:                                                                 *
  *		1 = OK, 0 = error																		*
@@ -398,7 +381,7 @@ bool IPXConnClass::Stop_Listening(void)
  * HISTORY:                                                                *
  *   12/16/1994 BR : Created.                                              *
  *=========================================================================*/
-int IPXConnClass::Send(char* buf, int buflen)
+int IPXConnClass::Send(char* buf, int buflen, void*, int)
 {
     /*------------------------------------------------------------------------
     Invoke our own Send_To routine, filling in our Address as the destination.
@@ -429,7 +412,13 @@ int IPXConnClass::Send(char* buf, int buflen)
 int IPXConnClass::Open_Socket(unsigned short socket)
 {
     int rc;
+#ifdef WINSOCK_IPX
+    rc = PacketTransport->Open_Socket(socket);
 
+    SocketOpen = rc;
+    return (rc);
+
+#else  // WINSOCK_IPX
     if (Winsock.Get_Connected()) {
         SocketOpen = 1;
         return (true);
@@ -444,25 +433,30 @@ int IPXConnClass::Open_Socket(unsigned short socket)
     ------------------------------------------------------------------------*/
     rc = IPX_Open_Socket(socket);
     if (rc) {
-        /*
-        ................. If already open, close & reopen it ..................
-        */
+
+        /*.....................................................................
+        If already open, close & reopen it
+        .....................................................................*/
         if (rc == IPXERR_SOCKET_ERROR) {
+            DBG_LOG("Error -- Specified socket is already open");
             IPX_Close_Socket(socket);
             rc = IPX_Open_Socket(socket);
-            /*
-            .................. Still can't open: return error ..................
-            */
-            if (rc) {
-                return (false);
-            }
+        }
+
+        /*..................................................................
+        Still can't open: return error
+        ..................................................................*/
+        if (rc) {
+            return (0);
         }
     }
 
     SocketOpen = 1;
 
-    return (true);
-}
+    return (1);
+#endif // WINSOCK_IPX
+
+} /* end of Open_Socket */
 
 /***************************************************************************
  * IPXConnClass::Close_Socket -- closes the socket 								*
@@ -481,20 +475,28 @@ int IPXConnClass::Open_Socket(unsigned short socket)
  *=========================================================================*/
 void IPXConnClass::Close_Socket(unsigned short socket)
 {
+#ifdef WINSOCK_IPX
+    socket = socket;
+    PacketTransport->Close_Socket();
+    SocketOpen = 0;
+#else  // WINSOCK_IPX
     if (Winsock.Get_Connected()) {
         SocketOpen = 0;
         return;
     }
+
     /*------------------------------------------------------------------------
     Never, ever, ever, under any circumstances whatsoever, close a socket
-    that isn't open.  You'll regret it forever (or until at least until you're
-    through rebooting, which, if you're on a Pentium is the same thing).
+    that isn't open.  You'll regret it forever (or until at least until
+    you're through rebooting, which, if you're on a Pentium is the same
+    thing).
     ------------------------------------------------------------------------*/
-    if (SocketOpen == 1)
+    if (SocketOpen == 1) {
         IPX_Close_Socket(socket);
+    }
 
     SocketOpen = 0;
-
+#endif // WINSOCK_IPX
 } /* end of Close_Socket */
 
 /***************************************************************************
@@ -525,74 +527,37 @@ void IPXConnClass::Close_Socket(unsigned short socket)
  * HISTORY:                                                                *
  *   12/16/1994 BR : Created.                                              *
  *=========================================================================*/
-//#pragma off (unreferenced)
 int IPXConnClass::Send_To(char* buf, int buflen, IPXAddressClass* address, NetNodeType immed)
 {
+#ifdef WINSOCK_IPX
 
-    // void *hdr_ptr;
-    // void *buf_ptr;
-    // unsigned long hdr_val;
-    // unsigned long buf_val;
+    immed = immed;
+    assert(immed == NULL);
+    PacketTransport->WriteTo((void*)buf, buflen, (void*)address);
+    return (true);
+
+#else // WINSOCK_IPX
     NetNumType net;
     NetNodeType node;
     int rc;
 
-    // unsigned short target_mask;
-
     unsigned char send_address[6];
 
     if (Winsock.Get_Connected()) {
-
-#ifdef VIRTUAL_SUBNET_SERVER
-        if (immed) {
-            memcpy(send_address, immed, 6);
-        } else {
-            address->Get_Address(net, node);
-            memcpy(send_address, node, 6);
-        }
-        /*
-        ** Use first two bytes of ipx address as target mask
-        */
-        unsigned short* maskptr = (unsigned short*)&send_address[0];
-        target_mask = *maskptr;
-
-        char* tempsend = new char[buflen + sizeof(target_mask)];
-
-        *(unsigned short*)tempsend = hton16(target_mask);
-        memcpy(tempsend + 2, buf, buflen);
-#if (0)
-        char tempbuf[256];
-        CommHeaderType* packet = (CommHeaderType*)(&tempsend[2]);
-        static char pcode[4][18] = {
-            "PACKET_DATA_ACK",   // this is a data packet requiring an ACK
-            "PACKET_DATA_NOACK", // this is a data packet not requiring an ACK
-            "PACKET_ACK",        // this is an ACK for a packet
-            "PACKET_COUNT"       // for computational purposes
-        };
-
-        sprintf(tempbuf,
-                "Sending unicast packet type %d, ID=%d, code=%s, length=%d\n",
-                tempsend[sizeof(CommHeaderType) + 2],
-                packet->PacketID,
-                pcode[packet->Code],
-                buflen + sizeof(target_mask));
-        CCDebugString(tempbuf);
-#endif //(0)
-
-        Winsock.Write((void*)tempsend, buflen + sizeof(target_mask));
-        delete[] tempsend;
-#else  // VIRTUAL_SUBNET_SERVER
         Winsock.Write((void*)buf, buflen);
-#endif // VIRTUAL_SUBNET_SERVER
-
         return (true);
     }
 
     if (immed) {
         memcpy(send_address, immed, 6);
-        // memcpy(node, immed, 6);
-        // memset (net, 0, sizeof(net) );
+#ifdef FIXIT_DESTNET
+        // fixes DESTNET
         address->Get_Address(net, node);
+#else
+        // breaks DESTNET
+        memcpy(node, immed, 6);
+        memset(net, 0, sizeof(net));
+#endif
     } else {
         address->Get_Address(net, node);
         /*.....................................................................
@@ -615,8 +580,9 @@ int IPXConnClass::Send_To(char* buf, int buflen, IPXAddressClass* address, NetNo
 
     return (
         IPX_Send_Packet95(&send_address[0], (unsigned char*)buf, buflen, (unsigned char*)net, (unsigned char*)node));
-}
-//#pragma on (unreferenced)
+#endif // WINSOCK_IPX
+
+} /* end of Send_To */
 
 /***************************************************************************
  * IPXConnClass::Broadcast -- broadcasts the given packet						*
@@ -635,39 +601,18 @@ int IPXConnClass::Send_To(char* buf, int buflen, IPXAddressClass* address, NetNo
  *=========================================================================*/
 int IPXConnClass::Broadcast(char* buf, int buflen)
 {
+#ifdef WINSOCK_IPX
+    PacketTransport->Broadcast(buf, buflen);
+    return (true);
 
+#else  // WINSOCK_IPX
     if (Winsock.Get_Connected()) {
-#ifdef VIRTUAL_SUBNET_SERVER
-        char* tempsend = new char[buflen + sizeof(unsigned short)];
-        memcpy(tempsend + 2, buf, buflen);
-        *tempsend = 0;
-        *(tempsend + 1) = 0;
-#if (0)
-        char tempbuf[256];
-        CommHeaderType* packet = (CommHeaderType*)(&tempsend[2]);
-        static char pcode[4][18] = {
-            "PACKET_DATA_ACK",   // this is a data packet requiring an ACK
-            "PACKET_DATA_NOACK", // this is a data packet not requiring an ACK
-            "PACKET_ACK",        // this is an ACK for a packet
-            "PACKET_COUNT"       // for computational purposes
-        };
-
-        sprintf(tempbuf,
-                "Sending multicast packet type %d, ID=%d, code=%s, length=%d\n",
-                tempsend[sizeof(CommHeaderType) + 2],
-                packet->PacketID,
-                pcode[packet->Code],
-                buflen + sizeof(unsigned short));
-        CCDebugString(tempbuf);
-#endif //(0)
-
-        Winsock.Write((void*)tempsend, buflen + sizeof(unsigned short));
-        delete[] tempsend;
-#else  // VIRTUAL_SUBNET_SERVER
         Winsock.Write((void*)buf, buflen);
-#endif // VIRTUAL_SUBNET_SERVER
         return (true);
     } else {
         return (IPX_Broadcast_Packet95((unsigned char*)buf, buflen));
     }
-}
+#endif // WINSOCK_IPX
+} /* end of Broadcast */
+
+/************************** end of ipxconn.cpp *****************************/

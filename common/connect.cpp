@@ -42,10 +42,10 @@
  *   ConnectionClass::Command_Name -- returns name for a packet command		*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
 #include <stdio.h>
 //#include <mem.h>
 #include <sys/timeb.h>
+#include <string.h>
 #include "connect.h"
 
 //#include "WolDebug.h"
@@ -53,7 +53,7 @@
 /*
 ********************************* Globals ***********************************
 */
-char* ConnectionClass::Commands[PACKET_COUNT] = {"ADATA", "NDATA", "ACK"};
+const char* ConnectionClass::Commands[PACKET_COUNT] = {"ADATA", "NDATA", "ACK"};
 
 /***************************************************************************
  * ConnectionClass::ConnectionClass -- class constructor                   *
@@ -750,11 +750,14 @@ unsigned int ConnectionClass::Time(void)
 
 #ifdef WWLIB32_H
 
+    /*TODO: Backport WW Timer to TD. */
+    bool TimerSystemOn = false;
+
     /*------------------------------------------------------------------------
     If the Westwood timer system has been activated, use TickCount's value
     ------------------------------------------------------------------------*/
     if (TimerSystemOn) {
-        return (TickCount); // Westwood Library time
+        //return (TickCount); // Westwood Library time
     }
     /*------------------------------------------------------------------------
     Otherwise, use the DOS timer
@@ -793,7 +796,7 @@ unsigned int ConnectionClass::Time(void)
  * HISTORY:                                                                *
  *   05/31/1995 BRR : Created.                                             *
  *=========================================================================*/
-char* ConnectionClass::Command_Name(int command)
+const char* ConnectionClass::Command_Name(int command)
 {
     if (command >= 0 && command < PACKET_COUNT) {
         return (Commands[command]);
