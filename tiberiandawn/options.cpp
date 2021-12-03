@@ -60,6 +60,12 @@
 #include "options.h"
 #include "common/ini.h"
 
+#ifdef SDL2_BUILD
+char const* const OptionsClass::HotkeyName = "SDLHotkeys";
+#else
+char const* const OptionsClass::HotkeyName = "WinHotkeys";
+#endif
+
 /***********************************************************************************************
  * OptionsClass::OptionsClass -- The default constructor for the options class.                *
  *                                                                                             *
@@ -76,6 +82,55 @@
  *   07/21/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
 OptionsClass::OptionsClass(void)
+    : KeyForceMove1(KN_LALT)
+    , KeyForceMove2(KN_RALT)
+    , KeyForceAttack1(KN_LCTRL)
+    , KeyForceAttack2(KN_RCTRL)
+    , KeySelect1(KN_LSHIFT)
+    , KeySelect2(KN_RSHIFT)
+    , KeyScatter(KN_X)
+    , KeyStop(KN_S)
+    , KeyGuard(KN_G)
+    , KeyNext(KN_N)
+    , KeyPrevious(KN_B)
+    , KeyFormation(KN_F)
+    , KeyHome1(KN_HOME)
+    , KeyHome2(KN_E_HOME)
+    , KeyBase(KN_H)
+    , KeyResign(KN_R)
+    , KeyAlliance(KN_A)
+    , KeyBookmark1(KN_F9)
+    , KeyBookmark2(KN_F10)
+    , KeyBookmark3(KN_F11)
+    , KeyBookmark4(KN_F12)
+    , KeySelectView(KN_E)
+    , KeyRepair(KN_T)
+    , KeyRepairOn(KN_NONE)
+    , KeyRepairOff(KN_NONE)
+    , KeySell(KN_Y)
+    , KeySellOn(KN_NONE)
+    , KeySellOff(KN_NONE)
+    , KeyMap(KN_U)
+    , KeySidebarUp(KN_UP)
+    , KeySidebarDown(KN_DOWN)
+    , KeyOption1(KN_ESC)
+    , KeyOption2(KN_SPACE)
+    , KeyScrollLeft(KN_NONE)
+    , KeyScrollRight(KN_NONE)
+    , KeyScrollUp(KN_NONE)
+    , KeyScrollDown(KN_NONE)
+    , KeyQueueMove1(KN_Q)
+    , KeyQueueMove2(KN_Q)
+    , KeyTeam1(KN_1)
+    , KeyTeam2(KN_2)
+    , KeyTeam3(KN_3)
+    , KeyTeam4(KN_4)
+    , KeyTeam5(KN_5)
+    , KeyTeam6(KN_6)
+    , KeyTeam7(KN_7)
+    , KeyTeam8(KN_8)
+    , KeyTeam9(KN_9)
+    , KeyTeam10(KN_0)
 {
     GameSpeed = TIMER_SECOND / TICKS_PER_SECOND;
     ScrollRate = TIMER_SECOND / TICKS_PER_SECOND;
@@ -508,27 +563,128 @@ void OptionsClass::Load_Settings(void)
     /*
     **	Read in the Options values
     */
-    GameSpeed = ini.Get_Int("Options", "GameSpeed", 4);
-    ScrollRate = ini.Get_Int("Options", "ScrollRate", 4);
-    Set_Brightness(ini.Get_Int("Options", "Brightness", 0x80));
-    Set_Sound_Volume(ini.Get_Int("Options", "Volume", 0xA0), false);
-    Set_Score_Volume(ini.Get_Int("Options", "ScoreVolume", 0xFF));
-    Set_Contrast(ini.Get_Int("Options", "Contrast", 0x80));
-    Set_Color(ini.Get_Int("Options", "Color", 0x80));
-    Set_Tint(ini.Get_Int("Options", "Tint", 0x80));
-    AutoScroll = ini.Get_Int("Options", "AutoScroll", 1);
-    Set_Repeat(ini.Get_Int("Options", "IsScoreRepeat", 0));
-    Set_Shuffle(ini.Get_Int("Options", "IsScoreShuffle", 0));
-    IsDeathAnnounce = ini.Get_Int("Options", "DeathAnnounce", 0);
-    IsFreeScroll = ini.Get_Int("Options", "FreeScrolling", 0);
-    SlowPalette = ini.Get_Int("Options", "SlowPalette", 1);
+    static char const* const OPTIONS = "Options";
+    GameSpeed = ini.Get_Int(OPTIONS, "GameSpeed", 4);
+    ScrollRate = ini.Get_Int(OPTIONS, "ScrollRate", 4);
+    Set_Brightness(ini.Get_Int(OPTIONS, "Brightness", 0x80));
+    Set_Sound_Volume(ini.Get_Int(OPTIONS, "Volume", 0xA0), false);
+    Set_Score_Volume(ini.Get_Int(OPTIONS, "ScoreVolume", 0xFF));
+    Set_Contrast(ini.Get_Int(OPTIONS, "Contrast", 0x80));
+    Set_Color(ini.Get_Int(OPTIONS, "Color", 0x80));
+    Set_Tint(ini.Get_Int(OPTIONS, "Tint", 0x80));
+    AutoScroll = ini.Get_Int(OPTIONS, "AutoScroll", 1);
+    Set_Repeat(ini.Get_Int(OPTIONS, "IsScoreRepeat", 0));
+    Set_Shuffle(ini.Get_Int(OPTIONS, "IsScoreShuffle", 0));
+    IsDeathAnnounce = ini.Get_Int(OPTIONS, "DeathAnnounce", 0);
+    IsFreeScroll = ini.Get_Int(OPTIONS, "FreeScrolling", 0);
+    SlowPalette = ini.Get_Int(OPTIONS, "SlowPalette", 1);
+
+    KeyForceMove1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceMove1", KeyForceMove1);
+    KeyForceMove2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceMove2", KeyForceMove2);
+    KeyForceAttack1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceAttack1", KeyForceAttack1);
+    KeyForceAttack2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyForceAttack2", KeyForceAttack2);
+    KeySelect1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeySelect1", KeySelect1);
+    KeySelect2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeySelect2", KeySelect2);
+    KeyScatter = (KeyNumType)ini.Get_Int(HotkeyName, "KeyScatter", KeyScatter);
+    KeyStop = (KeyNumType)ini.Get_Int(HotkeyName, "KeyStop", KeyStop);
+    KeyGuard = (KeyNumType)ini.Get_Int(HotkeyName, "KeyGuard", KeyGuard);
+    KeyNext = (KeyNumType)ini.Get_Int(HotkeyName, "KeyNext", KeyNext);
+    KeyPrevious = (KeyNumType)ini.Get_Int(HotkeyName, "KeyPrevious", KeyPrevious);
+    KeyFormation = (KeyNumType)ini.Get_Int(HotkeyName, "KeyFormation", KeyFormation);
+    KeyHome1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyHome1", KeyHome1);
+    KeyHome2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyHome2", KeyHome2);
+    KeyBase = (KeyNumType)ini.Get_Int(HotkeyName, "KeyBase", KeyBase);
+    KeyResign = (KeyNumType)ini.Get_Int(HotkeyName, "KeyResign", KeyResign);
+    KeyAlliance = (KeyNumType)ini.Get_Int(HotkeyName, "KeyAlliance", KeyAlliance);
+    KeyBookmark1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyBookmark1", KeyBookmark1);
+    KeyBookmark2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyBookmark2", KeyBookmark2);
+    KeyBookmark3 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyBookmark3", KeyBookmark3);
+    KeyBookmark4 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyBookmark4", KeyBookmark4);
+    KeySelectView = (KeyNumType)ini.Get_Int(HotkeyName, "KeySelectView", KeySelectView);
+    KeyRepair = (KeyNumType)ini.Get_Int(HotkeyName, "KeyRepairToggle", KeyRepair);
+    KeyRepairOn = (KeyNumType)ini.Get_Int(HotkeyName, "KeyRepairOn", KeyRepairOn);
+    KeyRepairOff = (KeyNumType)ini.Get_Int(HotkeyName, "KeyRepairOff", KeyRepairOff);
+    KeySell = (KeyNumType)ini.Get_Int(HotkeyName, "KeySellToggle", KeySell);
+    KeySellOn = (KeyNumType)ini.Get_Int(HotkeyName, "KeySellOn", KeySellOn);
+    KeySellOff = (KeyNumType)ini.Get_Int(HotkeyName, "KeySellOff", KeySellOff);
+    KeyMap = (KeyNumType)ini.Get_Int(HotkeyName, "KeyMapToggle", KeyMap);
+    KeySidebarUp = (KeyNumType)ini.Get_Int(HotkeyName, "KeySidebarUp", KeySidebarUp);
+    KeySidebarDown = (KeyNumType)ini.Get_Int(HotkeyName, "KeySidebarDown", KeySidebarDown);
+    KeyOption1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyOption1", KeyOption1);
+    KeyOption2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyOption2", KeyOption2);
+    KeyScrollLeft = (KeyNumType)ini.Get_Int(HotkeyName, "KeyScrollLeft", KeyScrollLeft);
+    KeyScrollRight = (KeyNumType)ini.Get_Int(HotkeyName, "KeyScrollRight", KeyScrollRight);
+    KeyScrollUp = (KeyNumType)ini.Get_Int(HotkeyName, "KeyScrollUp", KeyScrollUp);
+    KeyScrollDown = (KeyNumType)ini.Get_Int(HotkeyName, "KeyScrollDown", KeyScrollDown);
+    KeyQueueMove1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyQueueMove1", KeyQueueMove1);
+    KeyQueueMove2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyQueueMove2", KeyQueueMove2);
+    KeyTeam1 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam1", KeyTeam1);
+    KeyTeam2 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam2", KeyTeam2);
+    KeyTeam3 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam3", KeyTeam3);
+    KeyTeam4 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam4", KeyTeam4);
+    KeyTeam5 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam5", KeyTeam5);
+    KeyTeam6 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam6", KeyTeam6);
+    KeyTeam7 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam7", KeyTeam7);
+    KeyTeam8 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam8", KeyTeam8);
+    KeyTeam9 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam9", KeyTeam9);
+    KeyTeam10 = (KeyNumType)ini.Get_Int(HotkeyName, "KeyTeam10", KeyTeam10);
+
+    KeyForceMove1 = (KeyNumType)(KeyForceMove1 & ~WWKEY_VK_BIT);
+    KeyForceMove2 = (KeyNumType)(KeyForceMove2 & ~WWKEY_VK_BIT);
+    KeyForceAttack1 = (KeyNumType)(KeyForceAttack1 & ~WWKEY_VK_BIT);
+    KeyForceAttack2 = (KeyNumType)(KeyForceAttack2 & ~WWKEY_VK_BIT);
+    KeySelect1 = (KeyNumType)(KeySelect1 & ~WWKEY_VK_BIT);
+    KeySelect2 = (KeyNumType)(KeySelect2 & ~WWKEY_VK_BIT);
+    KeyScatter = (KeyNumType)(KeyScatter & ~WWKEY_VK_BIT);
+    KeyStop = (KeyNumType)(KeyStop & ~WWKEY_VK_BIT);
+    KeyGuard = (KeyNumType)(KeyGuard & ~WWKEY_VK_BIT);
+    KeyNext = (KeyNumType)(KeyNext & ~WWKEY_VK_BIT);
+    KeyPrevious = (KeyNumType)(KeyPrevious & ~WWKEY_VK_BIT);
+    KeyFormation = (KeyNumType)(KeyFormation & ~WWKEY_VK_BIT);
+    KeyHome1 = (KeyNumType)(KeyHome1 & ~WWKEY_VK_BIT);
+    KeyHome2 = (KeyNumType)(KeyHome2 & ~WWKEY_VK_BIT);
+    KeyBase = (KeyNumType)(KeyBase & ~WWKEY_VK_BIT);
+    KeyResign = (KeyNumType)(KeyResign & ~WWKEY_VK_BIT);
+    KeyAlliance = (KeyNumType)(KeyAlliance & ~WWKEY_VK_BIT);
+    KeyBookmark1 = (KeyNumType)(KeyBookmark1 & ~WWKEY_VK_BIT);
+    KeyBookmark2 = (KeyNumType)(KeyBookmark2 & ~WWKEY_VK_BIT);
+    KeyBookmark3 = (KeyNumType)(KeyBookmark3 & ~WWKEY_VK_BIT);
+    KeyBookmark4 = (KeyNumType)(KeyBookmark4 & ~WWKEY_VK_BIT);
+    KeySelectView = (KeyNumType)(KeySelectView & ~WWKEY_VK_BIT);
+    KeyRepair = (KeyNumType)(KeyRepair & ~WWKEY_VK_BIT);
+    KeyRepairOn = (KeyNumType)(KeyRepairOn & ~WWKEY_VK_BIT);
+    KeyRepairOff = (KeyNumType)(KeyRepairOff & ~WWKEY_VK_BIT);
+    KeySell = (KeyNumType)(KeySell & ~WWKEY_VK_BIT);
+    KeySellOn = (KeyNumType)(KeySellOn & ~WWKEY_VK_BIT);
+    KeySellOff = (KeyNumType)(KeySellOff & ~WWKEY_VK_BIT);
+    KeyMap = (KeyNumType)(KeyMap & ~WWKEY_VK_BIT);
+    KeySidebarUp = (KeyNumType)(KeySidebarUp & ~WWKEY_VK_BIT);
+    KeySidebarDown = (KeyNumType)(KeySidebarDown & ~WWKEY_VK_BIT);
+    KeyOption1 = (KeyNumType)(KeyOption1 & ~WWKEY_VK_BIT);
+    KeyOption2 = (KeyNumType)(KeyOption2 & ~WWKEY_VK_BIT);
+    KeyScrollLeft = (KeyNumType)(KeyScrollLeft & ~WWKEY_VK_BIT);
+    KeyScrollRight = (KeyNumType)(KeyScrollRight & ~WWKEY_VK_BIT);
+    KeyScrollUp = (KeyNumType)(KeyScrollUp & ~WWKEY_VK_BIT);
+    KeyScrollDown = (KeyNumType)(KeyScrollDown & ~WWKEY_VK_BIT);
+    KeyQueueMove1 = (KeyNumType)(KeyQueueMove1 & ~WWKEY_VK_BIT);
+    KeyQueueMove2 = (KeyNumType)(KeyQueueMove2 & ~WWKEY_VK_BIT);
+    KeyTeam1 = (KeyNumType)(KeyTeam1 & ~WWKEY_VK_BIT);
+    KeyTeam2 = (KeyNumType)(KeyTeam2 & ~WWKEY_VK_BIT);
+    KeyTeam3 = (KeyNumType)(KeyTeam3 & ~WWKEY_VK_BIT);
+    KeyTeam4 = (KeyNumType)(KeyTeam4 & ~WWKEY_VK_BIT);
+    KeyTeam5 = (KeyNumType)(KeyTeam5 & ~WWKEY_VK_BIT);
+    KeyTeam6 = (KeyNumType)(KeyTeam6 & ~WWKEY_VK_BIT);
+    KeyTeam7 = (KeyNumType)(KeyTeam7 & ~WWKEY_VK_BIT);
+    KeyTeam8 = (KeyNumType)(KeyTeam8 & ~WWKEY_VK_BIT);
+    KeyTeam9 = (KeyNumType)(KeyTeam9 & ~WWKEY_VK_BIT);
+    KeyTeam10 = (KeyNumType)(KeyTeam10 & ~WWKEY_VK_BIT);
 
     char workbuf[128];
 
     /*
     **	Check for and possible enable true object names.
     */
-    ini.Get_String("Options", "TrueNames", "", workbuf, sizeof(workbuf));
+    ini.Get_String(OPTIONS, "TrueNames", "", workbuf, sizeof(workbuf));
     if (Obfuscate(workbuf) == PARM_TRUENAME) {
         Special.IsNamed = true;
     }
@@ -536,7 +692,7 @@ void OptionsClass::Load_Settings(void)
     /*
     **	Enable 6 player games if special flag is detected.
     */
-    ini.Get_String("Options", "Players", "", workbuf, sizeof(workbuf));
+    ini.Get_String(OPTIONS, "Players", "", workbuf, sizeof(workbuf));
     if (Obfuscate(workbuf) == PARM_6PLAYER) {
         MPlayerMax = 6;
     }
@@ -544,7 +700,7 @@ void OptionsClass::Load_Settings(void)
     /*
     **	Enable three point turning logic as indicated.
     */
-    ini.Get_String("Options", "Rotation", "", workbuf, sizeof(workbuf));
+    ini.Get_String(OPTIONS, "Rotation", "", workbuf, sizeof(workbuf));
     if (Obfuscate(workbuf) == PARM_3POINT) {
         Special.IsThreePoint = true;
     }
@@ -552,7 +708,7 @@ void OptionsClass::Load_Settings(void)
     /*
     **	Allow purchase of the helipad separately from the helicopter.
     */
-    ini.Get_String("Options", "Helipad", "", workbuf, sizeof(workbuf));
+    ini.Get_String(OPTIONS, "Helipad", "", workbuf, sizeof(workbuf));
     if (Obfuscate(workbuf) == PARM_HELIPAD) {
         Special.IsSeparate = true;
     }
@@ -560,7 +716,7 @@ void OptionsClass::Load_Settings(void)
     /*
     **	Allow the MCV to undeploy rather than sell.
     */
-    ini.Get_String("Options", "MCV", "", workbuf, sizeof(workbuf));
+    ini.Get_String(OPTIONS, "MCV", "", workbuf, sizeof(workbuf));
     if (Obfuscate(workbuf) == PARM_MCV) {
         Special.IsMCVDeploy = true;
     }
@@ -568,7 +724,7 @@ void OptionsClass::Load_Settings(void)
     /*
     **	Allow disabling of building bibs so that tigher building packing can occur.
     */
-    ini.Get_String("Options", "Bibs", "", workbuf, sizeof(workbuf));
+    ini.Get_String(OPTIONS, "Bibs", "", workbuf, sizeof(workbuf));
     if (Obfuscate(workbuf) == PARM_BIB) {
         Special.IsRoad = true;
     }
@@ -576,7 +732,7 @@ void OptionsClass::Load_Settings(void)
     /*
     **	Allow targeting of trees without having to hold down the shift key.
     */
-    ini.Get_String("Options", "TreeTarget", "", workbuf, sizeof(workbuf));
+    ini.Get_String(OPTIONS, "TreeTarget", "", workbuf, sizeof(workbuf));
     if (Obfuscate(workbuf) == PARM_TREETARGET) {
         Special.IsTreeTarget = true;
     }
@@ -584,7 +740,7 @@ void OptionsClass::Load_Settings(void)
     /*
     **	Allow infantry to fire while moving. Attacker gets advantage with this flag.
     */
-    ini.Get_String("Options", "Combat", "", workbuf, sizeof(workbuf));
+    ini.Get_String(OPTIONS, "Combat", "", workbuf, sizeof(workbuf));
     if (Obfuscate(workbuf) == PARM_COMBAT) {
         Special.IsDefenderAdvantage = false;
     }
@@ -592,7 +748,7 @@ void OptionsClass::Load_Settings(void)
     /*
     **	Allow custom scores.
     */
-    ini.Get_String("Options", "Scores", "", workbuf, sizeof(workbuf));
+    ini.Get_String(OPTIONS, "Scores", "", workbuf, sizeof(workbuf));
     if (Obfuscate(workbuf) == PARM_SCORE) {
         Special.IsVariation = true;
     }
@@ -602,7 +758,7 @@ void OptionsClass::Load_Settings(void)
     **	will automatically return fire if they are fired upon. Infantry will run from an
     **	incoming explosive (grenade or napalm) or damage that can't be directly addressed.
     */
-    ini.Get_String("Options", "CombatIQ", "", workbuf, sizeof(workbuf));
+    ini.Get_String(OPTIONS, "CombatIQ", "", workbuf, sizeof(workbuf));
     if (Obfuscate(workbuf) == PARM_IQ) {
         Special.IsSmartDefense = true;
         Special.IsScatter = true;
@@ -611,7 +767,7 @@ void OptionsClass::Load_Settings(void)
     /*
     **	Enable the infantry squish marks when run over by a vehicle.
     */
-    ini.Get_String("Options", "Overrun", "", workbuf, sizeof(workbuf));
+    ini.Get_String(OPTIONS, "Overrun", "", workbuf, sizeof(workbuf));
     if (Obfuscate(workbuf) == PARM_SQUISH) {
         Special.IsGross = true;
     }
@@ -619,7 +775,7 @@ void OptionsClass::Load_Settings(void)
     /*
     **	Enable the human generated sound effects.
     */
-    ini.Get_String("Options", "Sounds", "", workbuf, sizeof(workbuf));
+    ini.Get_String(OPTIONS, "Sounds", "", workbuf, sizeof(workbuf));
     if (Obfuscate(workbuf) == PARM_HUMAN) {
         Special.IsJuvenile = true;
     }
@@ -627,7 +783,7 @@ void OptionsClass::Load_Settings(void)
     /*
     **	Scrolling is disabled over the tabs with this option.
     */
-    ini.Get_String("Options", "Scrolling", "", workbuf, sizeof(workbuf));
+    ini.Get_String(OPTIONS, "Scrolling", "", workbuf, sizeof(workbuf));
     if (Obfuscate(workbuf) == PARM_SCROLLING) {
         Special.IsScrollMod = true;
     }
@@ -660,19 +816,70 @@ void OptionsClass::Save_Settings(void)
     /*
     **	Save Options settings
     */
-    ini.Put_Int("Options", "GameSpeed", GameSpeed);
-    ini.Put_Int("Options", "ScrollRate", ScrollRate);
-    ini.Put_Int("Options", "Brightness", Brightness);
-    ini.Put_Int("Options", "Volume", Volume);
-    ini.Put_Int("Options", "ScoreVolume", ScoreVolume);
-    ini.Put_Int("Options", "Contrast", Contrast);
-    ini.Put_Int("Options", "Color", Color);
-    ini.Put_Int("Options", "Tint", Tint);
-    ini.Put_Int("Options", "AutoScroll", AutoScroll);
-    ini.Put_Int("Options", "IsScoreRepeat", IsScoreRepeat);
-    ini.Put_Int("Options", "IsScoreShuffle", IsScoreShuffle);
-    ini.Put_Int("Options", "DeathAnnounce", IsDeathAnnounce);
-    ini.Put_Int("Options", "FreeScrolling", IsFreeScroll);
+    static char const* const OPTIONS = "Options";
+    ini.Put_Int(OPTIONS, "GameSpeed", GameSpeed);
+    ini.Put_Int(OPTIONS, "ScrollRate", ScrollRate);
+    ini.Put_Int(OPTIONS, "Brightness", Brightness);
+    ini.Put_Int(OPTIONS, "Volume", Volume);
+    ini.Put_Int(OPTIONS, "ScoreVolume", ScoreVolume);
+    ini.Put_Int(OPTIONS, "Contrast", Contrast);
+    ini.Put_Int(OPTIONS, "Color", Color);
+    ini.Put_Int(OPTIONS, "Tint", Tint);
+    ini.Put_Int(OPTIONS, "AutoScroll", AutoScroll);
+    ini.Put_Int(OPTIONS, "IsScoreRepeat", IsScoreRepeat);
+    ini.Put_Int(OPTIONS, "IsScoreShuffle", IsScoreShuffle);
+    ini.Put_Int(OPTIONS, "DeathAnnounce", IsDeathAnnounce);
+    ini.Put_Int(OPTIONS, "FreeScrolling", IsFreeScroll);
+
+    ini.Put_Int(HotkeyName, "KeyForceMove1", KeyForceMove1);
+    ini.Put_Int(HotkeyName, "KeyForceMove2", KeyForceMove2);
+    ini.Put_Int(HotkeyName, "KeyForceAttack1", KeyForceAttack1);
+    ini.Put_Int(HotkeyName, "KeyForceAttack2", KeyForceAttack2);
+    ini.Put_Int(HotkeyName, "KeySelect1", KeySelect1);
+    ini.Put_Int(HotkeyName, "KeySelect2", KeySelect2);
+    ini.Put_Int(HotkeyName, "KeyScatter", KeyScatter);
+    ini.Put_Int(HotkeyName, "KeyStop", KeyStop);
+    ini.Put_Int(HotkeyName, "KeyGuard", KeyGuard);
+    ini.Put_Int(HotkeyName, "KeyNext", KeyNext);
+    ini.Put_Int(HotkeyName, "KeyPrevious", KeyPrevious);
+    ini.Put_Int(HotkeyName, "KeyFormation", KeyFormation);
+    ini.Put_Int(HotkeyName, "KeyHome1", KeyHome1);
+    ini.Put_Int(HotkeyName, "KeyHome2", KeyHome2);
+    ini.Put_Int(HotkeyName, "KeyBase", KeyBase);
+    ini.Put_Int(HotkeyName, "KeyResign", KeyResign);
+    ini.Put_Int(HotkeyName, "KeyAlliance", KeyAlliance);
+    ini.Put_Int(HotkeyName, "KeyBookmark1", KeyBookmark1);
+    ini.Put_Int(HotkeyName, "KeyBookmark2", KeyBookmark2);
+    ini.Put_Int(HotkeyName, "KeyBookmark3", KeyBookmark3);
+    ini.Put_Int(HotkeyName, "KeyBookmark4", KeyBookmark4);
+    ini.Put_Int(HotkeyName, "KeySelectView", KeySelectView);
+    ini.Put_Int(HotkeyName, "KeyRepairToggle", KeyRepair);
+    ini.Put_Int(HotkeyName, "KeyRepairOn", KeyRepairOn);
+    ini.Put_Int(HotkeyName, "KeyRepairOff", KeyRepairOff);
+    ini.Put_Int(HotkeyName, "KeySellToggle", KeySell);
+    ini.Put_Int(HotkeyName, "KeySellOn", KeySellOn);
+    ini.Put_Int(HotkeyName, "KeySellOff", KeySellOff);
+    ini.Put_Int(HotkeyName, "KeyMapToggle", KeyMap);
+    ini.Put_Int(HotkeyName, "KeySidebarUp", KeySidebarUp);
+    ini.Put_Int(HotkeyName, "KeySidebarDown", KeySidebarDown);
+    ini.Put_Int(HotkeyName, "KeyOption1", KeyOption1);
+    ini.Put_Int(HotkeyName, "KeyOption2", KeyOption2);
+    ini.Put_Int(HotkeyName, "KeyScrollLeft", KeyScrollLeft);
+    ini.Put_Int(HotkeyName, "KeyScrollRight", KeyScrollRight);
+    ini.Put_Int(HotkeyName, "KeyScrollUp", KeyScrollUp);
+    ini.Put_Int(HotkeyName, "KeyScrollDown", KeyScrollDown);
+    ini.Put_Int(HotkeyName, "KeyQueueMove1", KeyQueueMove1);
+    ini.Put_Int(HotkeyName, "KeyQueueMove2", KeyQueueMove2);
+    ini.Put_Int(HotkeyName, "KeyTeam1", KeyTeam1);
+    ini.Put_Int(HotkeyName, "KeyTeam2", KeyTeam2);
+    ini.Put_Int(HotkeyName, "KeyTeam3", KeyTeam3);
+    ini.Put_Int(HotkeyName, "KeyTeam4", KeyTeam4);
+    ini.Put_Int(HotkeyName, "KeyTeam5", KeyTeam5);
+    ini.Put_Int(HotkeyName, "KeyTeam6", KeyTeam6);
+    ini.Put_Int(HotkeyName, "KeyTeam7", KeyTeam7);
+    ini.Put_Int(HotkeyName, "KeyTeam8", KeyTeam8);
+    ini.Put_Int(HotkeyName, "KeyTeam9", KeyTeam9);
+    ini.Put_Int(HotkeyName, "KeyTeam10", KeyTeam10);
 
     /*
     **	Write the INI data out to a file.

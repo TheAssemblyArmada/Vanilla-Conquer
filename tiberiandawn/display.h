@@ -149,7 +149,7 @@ public:
     /*
     **	Added functionality.
     */
-    COORDINATE Center_Map(void);
+    COORDINATE Center_Map(COORDINATE center = 0L);
     virtual bool Map_Cell(CELL cell, HouseClass* house, bool and_for_allies);
 
     virtual CELL Click_Cell_Calc(int x, int y);
