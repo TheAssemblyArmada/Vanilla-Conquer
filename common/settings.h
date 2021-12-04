@@ -16,6 +16,8 @@ public:
     {
         bool RawInput;
         int Sensitivity;
+        bool ControllerEnabled;
+        int ControllerPointerSpeed;
     } Mouse;
 
     struct
@@ -29,6 +31,7 @@ public:
         int FrameLimit;
         int InterpolationMode;
         bool HardwareCursor;
+        bool DOSMode;
         std::string Scaler;
         std::string Driver;
         std::string PixelFormat;

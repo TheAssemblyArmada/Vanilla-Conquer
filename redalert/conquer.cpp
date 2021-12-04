@@ -70,17 +70,11 @@
 #include "keyframe.h"
 #include "language.h"
 
-#ifdef _WIN32
 #ifdef WINSOCK_IPX
 #include "wsproto.h"
 #else // WINSOCK_IPX
 #include "common/tcpip.h"
 #endif // WINSOCK_IPX
-#else
-#include <unistd.h>
-#include "fakesock.h"
-TcpipManagerClass Winsock;
-#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -99,6 +93,12 @@ TcpipManagerClass Winsock;
 #include "movie.h"
 MPG_RESPONSE far __stdcall MpegCallback(MPG_CMD cmd, LPVOID data, LPVOID user);
 #endif
+
+/* Dummy function for Interpolate_2X_Scale in `common` database. */
+int Get_Resolution_Factor(void)
+{
+    return 1;
+}
 
 #define SHAPE_TRANS 0x40
 
@@ -1163,40 +1163,13 @@ static void Message_Input(KeyNumType& input)
     **	Send a message
     */
     if ((rc == 3 || rc == 4) && Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
-#if (0)
+#ifndef REMASTER_BUILD
         /*
         **	Serial game: fill in a SerialPacketType & send it.
         **	(Note: The size of the SerialPacketType.Command must be the same as
         **	the EventClass.Type!)
         */
-        if (Session.Type == GAME_NULL_MODEM || Session.Type == GAME_MODEM) {
-            serial_packet = (SerialPacketType*)NullModem.BuildBuf;
-
-            serial_packet->Command = SERIAL_MESSAGE;
-            strcpy(serial_packet->Name, Session.Players[0]->Name);
-            serial_packet->ID = Session.ColorIdx;
-
-            if (rc == 3) {
-                strcpy(serial_packet->Message.Message, Session.Messages.Get_Edit_Buf());
-            } else {
-                strcpy(serial_packet->Message.Message, Session.Messages.Get_Overflow_Buf());
-                Session.Messages.Clear_Overflow_Buf();
-            }
-
-            /*
-            ** Send the message, and store this message in our LastMessage
-            ** buffer; the computer may send us a version of it later.
-            */
-            NullModem.Send_Message(NullModem.BuildBuf, sizeof(SerialPacketType), 1);
-
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-            char* ptr = &serial_packet->Message.Message[0];
-            if (!strncmp(ptr, "SECRET UNITS ON ", 15) && NewUnitsEnabled) {
-                Enable_Secret_Units();
-            }
-#endif
-            strcpy(Session.LastMessage, serial_packet->Message.Message);
-        } else if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+        if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
 #ifdef WOLAPI_INTEGRATION
             NetNumType blip;
             NetNodeType blop;
@@ -1240,7 +1213,7 @@ static void Message_Input(KeyNumType& input)
                         Enable_Secret_Units();
                     }
 #endif
-                    for (i = 0; i < Ipx.Num_Connections(); i++) {
+                    for (int i = 0; i < Ipx.Num_Connections(); i++) {
                         Ipx.Send_Global_Message(&Session.GPacket,
                                                 sizeof(GlobalPacketType),
                                                 1,
@@ -1411,7 +1384,7 @@ void Call_Back(void)
 
 void IPX_Call_Back(void)
 {
-#if (0) // PG
+#ifndef REMASTER_BUILD // PG
     Ipx.Service();
 
     /*

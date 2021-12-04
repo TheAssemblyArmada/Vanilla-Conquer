@@ -11,6 +11,8 @@ SettingsClass::SettingsClass()
     */
     Mouse.RawInput = true;
     Mouse.Sensitivity = 100;
+    Mouse.ControllerEnabled = false;
+    Mouse.ControllerPointerSpeed = 10;
 
     /*
     ** Video settings
@@ -24,6 +26,7 @@ SettingsClass::SettingsClass()
     Video.FrameLimit = 120;
     Video.InterpolationMode = 2;
     Video.HardwareCursor = false;
+    Video.DOSMode = false;
     Video.Scaler = "nearest";
     Video.Driver = "default";
     Video.PixelFormat = "default";
@@ -36,6 +39,8 @@ void SettingsClass::Load(INIClass& ini)
     */
     Mouse.RawInput = ini.Get_Bool("Mouse", "RawInput", Mouse.RawInput);
     Mouse.Sensitivity = ini.Get_Int("Mouse", "Sensitivity", Mouse.Sensitivity);
+    Mouse.ControllerEnabled = ini.Get_Bool("Mouse", "ControllerEnabled", Mouse.ControllerEnabled);
+    Mouse.ControllerPointerSpeed = ini.Get_Int("Mouse", "ControllerPointerSpeed", Mouse.ControllerPointerSpeed);
 
     /*
     ** Video settings
@@ -48,6 +53,7 @@ void SettingsClass::Load(INIClass& ini)
     Video.Height = ini.Get_Int("Video", "Height", Video.Height);
     Video.FrameLimit = ini.Get_Int("Video", "FrameLimit", Video.FrameLimit);
     Video.HardwareCursor = ini.Get_Bool("Video", "HardwareCursor", Video.HardwareCursor);
+    Video.DOSMode = ini.Get_Bool("Video", "DOSMode", Video.DOSMode);
     Video.Scaler = ini.Get_String("Video", "Scaler", Video.Scaler);
     Video.Driver = ini.Get_String("Video", "Driver", Video.Driver);
     Video.PixelFormat = ini.Get_String("Video", "PixelFormat", Video.PixelFormat);
@@ -60,7 +66,7 @@ void SettingsClass::Load(INIClass& ini)
     /*
     ** Boxing and raw input require software cursor.
     */
-    if (Video.Boxing || Mouse.RawInput) {
+    if (Video.Boxing || Mouse.RawInput || Mouse.ControllerEnabled) {
         Video.HardwareCursor = false;
     }
 }
@@ -72,6 +78,8 @@ void SettingsClass::Save(INIClass& ini)
     */
     ini.Put_Bool("Mouse", "RawInput", Mouse.RawInput);
     ini.Put_Int("Mouse", "Sensitivity", Mouse.Sensitivity);
+    ini.Put_Bool("Mouse", "ControllerEnabled", Mouse.ControllerEnabled);
+    ini.Put_Int("Mouse", "ControllerPointerSpeed", Mouse.ControllerPointerSpeed);
 
     /*
     ** Video settings
@@ -84,6 +92,7 @@ void SettingsClass::Save(INIClass& ini)
     ini.Put_Int("Video", "Height", Video.Height);
     ini.Put_Int("Video", "FrameLimit", Video.FrameLimit);
     ini.Put_Bool("Video", "HardwareCursor", Video.HardwareCursor);
+    ini.Put_Bool("Video", "DOSMode", Video.DOSMode);
     ini.Put_String("Video", "Scaler", Video.Scaler);
     ini.Put_String("Video", "Driver", Video.Driver);
     ini.Put_String("Video", "PixelFormat", Video.PixelFormat);

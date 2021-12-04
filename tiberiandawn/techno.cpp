@@ -321,16 +321,16 @@ int TechnoTypeClass::Time_To_Build(HousesType house) const
     /*
     **	Adjust the time to build based on the power output of the owning house.
     */
-    int power = hptr->Power_Fraction();
-    int inv_scale(256);
-    if (power == 0x000) {
-        inv_scale = 64;
-    } else if (power < 0x080) {
-        inv_scale = 103;
-    } else if (power < 0x0100) {
-        inv_scale = 171;
+    fixed power = hptr->Power_Fraction();
+    fixed scale(1);
+    if (power == 0) {
+        scale = fixed(4, 1);
+    } else if (power < fixed::_1_2) {
+        scale = fixed(5, 2);
+    } else if (power < 1) {
+        scale = fixed(3, 2);
     }
-    time = (time * 256) / inv_scale;
+    time *= scale;
 
     return (time);
 }
@@ -436,7 +436,7 @@ int TechnoTypeClass::Repair_Step(void) const
 void TechnoClass::Debug_Dump(MonoClass* mono) const
 {
     mono->Set_Cursor(0, 0);
-    mono->Printf("(%04X)p=%d,d=%d", House->Power_Fraction(), House->Power, House->Drain);
+    mono->Printf("(%s)p=%d,d=%d", House->Power_Fraction().As_ASCII(), House->Power, House->Drain);
     //	mono->Set_Cursor(0,0);mono->Printf("(%d)", House->Blockage);
     mono->Text_Print("X", 16 + (IsALoaner ? 2 : 0), 11);
     mono->Text_Print("X", 16 + (IsLocked ? 2 : 0), 9);
@@ -1005,6 +1005,12 @@ void TechnoClass::Draw_It(int x, int y, WindowNumberType window)
 {
     Clear_Redraw_Flag();
 
+#ifdef REMASTER_BUILD
+    WindowNumberType line_frame_cmp = WINDOW_VIRTUAL;
+#else
+    WindowNumberType line_frame_cmp = WINDOW_TACTICAL;
+#endif
+
     const bool show_health_bar = (Strength > 0) && !Is_Cloaked(PlayerPtr)
                                  && (Is_Selected_By_Player()
                                      || ((Special.HealthBarDisplayMode == SpecialClass::HB_DAMAGED)
@@ -1033,7 +1039,7 @@ void TechnoClass::Draw_It(int x, int y, WindowNumberType window)
             CC_Draw_Line(
                 Lines[i][0], Lines[i][1], Lines[i][2], Lines[i][3], (unsigned char)Lines[i][4], LineFrame, window);
         }
-        if (window == WINDOW_VIRTUAL) {
+        if (window == line_frame_cmp) {
             LineFrame++;
         }
     }
@@ -2423,22 +2429,31 @@ BulletClass* TechnoClass::Fire_At(TARGET target, int which)
         ** For multiplayer games, only reveal the unit if the target is the
         ** local player.
         */
-#if (0)
+#ifndef REMASTER_BUILD
         if ((!IsOwnedByPlayer && !IsDiscoveredByPlayer) || !Map[Coord_Cell(Center_Coord())].IsMapped) {
             if (GameToPlay == GAME_NORMAL) {
-                Map.Sight_From(Coord_Cell(Center_Coord()), 1, false);
+                Map.Sight_From(PlayerPtr, Coord_Cell(Center_Coord()), 1, false);
             } else {
                 ObjectClass* obj = As_Object(target);
                 if (obj) {
                     HousesType tgt_owner = obj->Owner();
 
                     if (PlayerPtr->Class->House == tgt_owner) {
-                        Map.Sight_From(Coord_Cell(Center_Coord()), 1, false);
+                        Map.Sight_From(PlayerPtr, Coord_Cell(Center_Coord()), 1, false);
                     }
                 }
             }
         }
 #else
+        // If a projectile was fired from a unit that is hidden in the darkness,
+        //reveal that unit and a little area around it.
+        if (GameToPlay == GAME_NORMAL) {
+            if ((!IsOwnedByPlayer && !IsDiscoveredByPlayer)
+                || (!Map[Center_Coord()].IsMapped && (What_Am_I() != RTTI_AIRCRAFT || !IsOwnedByPlayer))) {
+                Map.Sight_From(PlayerPtr, Coord_Cell(Center_Coord()), 1, false);
+            }
+        }
+
         /*
         ** Now need to reveal for any player (only humans in normal node) that is the target. ST - 3/13/2019 5:43PM
         */
@@ -2522,7 +2537,9 @@ BulletClass* TechnoClass::Fire_At(TARGET target, int which)
 void TechnoClass::Player_Assign_Mission(MissionType mission, TARGET target, TARGET destination)
 {
     if (AllowVoice) {
-        if (mission == MISSION_ATTACK) {
+        if (mission == MISSION_SABOTAGE) {
+            Response_Sabotage();
+        } else if (mission == MISSION_ATTACK) {
             Response_Attack();
         } else {
             Response_Move();
@@ -2569,9 +2586,9 @@ ActionType TechnoClass::What_Action(ObjectClass* object) const
         bool ctrldown = DLL_Export_Get_Input_Key_State(KN_LCTRL);
         bool shiftdown = DLL_Export_Get_Input_Key_State(KN_LSHIFT);
 #else
-        bool altdown = (Keyboard->Down(KN_LALT) || Keyboard->Down(KN_RALT));
-        bool ctrldown = (Keyboard->Down(KN_LCTRL) || Keyboard->Down(KN_RCTRL));
-        bool shiftdown = (Keyboard->Down(KN_LSHIFT) || Keyboard->Down(KN_RSHIFT));
+        bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
+        bool ctrldown = (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
+        bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
 #endif
         /*
         **	Special guard area mission is possible if both the control and the
@@ -2610,7 +2627,6 @@ ActionType TechnoClass::What_Action(ObjectClass* object) const
         /*
         **	If firing is possible and legal, then return this action potential.
         */
-        bool control = Keyboard->Down(KN_LCTRL) || Keyboard->Down(KN_RCTRL);
         // Changed for multiplayer. ST - 3/13/2019 5:52PM
         if (Is_Owned_By_Player() && (ctrldown || !House->Is_Ally(object))
             && (ctrldown || object->Class_Of().IsLegalTarget
@@ -2687,9 +2703,9 @@ ActionType TechnoClass::What_Action(CELL cell) const
     bool ctrldown = DLL_Export_Get_Input_Key_State(KN_LCTRL);
     bool shiftdown = DLL_Export_Get_Input_Key_State(KN_LSHIFT);
 #else
-    bool ctrldown = Keyboard->Down(KN_LCTRL) || Keyboard->Down(KN_RCTRL);
-    bool shiftdown = Keyboard->Down(KN_LSHIFT) || Keyboard->Down(KN_RSHIFT);
-    bool altdown = (Keyboard->Down(KN_LALT) || Keyboard->Down(KN_RALT));
+    bool altdown = Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2);
+    bool ctrldown = Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2);
+    bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
 #endif
     /*
     **	Disable recognizing the <CTRL> key forced fire option when dealing with buildings.
@@ -3912,7 +3928,7 @@ void TechnoClass::Base_Is_Attacked(TechnoClass const* enemy)
                         defender[lp] = (FootClass*)infantry;
                         continue;
                     }
-                    if (value[count] < newweakest) {
+                    if (count < 6 && value[count] < newweakest) {
                         newweakest = value[lp];
                     }
                 }
@@ -3974,7 +3990,7 @@ void TechnoClass::Base_Is_Attacked(TechnoClass const* enemy)
                         defender[lp] = (FootClass*)unit;
                         continue;
                     }
-                    if (value[count] < newweakest) {
+                    if (count < 6 && value[count] < newweakest) {
                         newweakest = value[lp];
                     }
                 }
@@ -4227,6 +4243,10 @@ void TechnoClass::Response_Move(void)
  *   07/29/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
 void TechnoClass::Response_Attack(void)
+{
+}
+
+void TechnoClass::Response_Sabotage(void)
 {
 }
 

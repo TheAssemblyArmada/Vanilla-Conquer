@@ -45,6 +45,7 @@
 #include "common/gitinfo.h"
 #include "common/tcpip.h"
 #include "common/vqaconfig.h"
+#include "common/wspudp.h"
 #include <time.h>
 
 /****************************************
@@ -168,32 +169,44 @@ bool Init_Game(int, char*[])
     **	be displayed.
     */
     CCDebugString("C&C95 - About to register CCLOCAL.MIX\n");
-#ifdef DEMO
-    new MFCD("DEMOL.MIX");
-    MFCD::Cache("DEMOL.MIX");
-#else
-    int temp = RequiredCD;
-    RequiredCD = -2;
-    new MFCD("CCLOCAL.MIX"); // Cached.
-    MFCD::Cache("CCLOCAL.MIX");
-    CCDebugString("C&C95 - About to register UPDATE.MIX\n");
-    new MFCD("UPDATE.MIX"); // Cached.
-    new MFCD("UPDATA.MIX"); // Cached.
-    CCDebugString("C&C95 - About to register UPDATEC.MIX\n");
-    new MFCD("UPDATEC.MIX"); // Cached.
-    MFCD::Cache("UPDATEC.MIX");
+
+    if (Is_Demo()) {
+        CCDebugString("C&C95 - Detected running as demo, about to register DEMOL.MIX\n");
+        RequiredCD = -2;
+        new MFCD("DEMOL.MIX");
+        MFCD::Cache("DEMOL.MIX");
+    } else {
+        int temp = RequiredCD;
+        RequiredCD = -2;
+
+        /*
+        ** On low resolution mode, we want to load the DOS version fonts present in LOCAL.MIX.
+        ** Load it first and and find the fonts there. Else, on high resolution, use
+        ** Windows CCLOCAL.MIX
+        */
+
+        if (Get_Resolution_Factor()) {
+            new MFCD("CCLOCAL.MIX"); // Cached.
+            MFCD::Cache("CCLOCAL.MIX");
+        } else {
+            new MFCD("LOCAL.MIX"); // Cached.
+            MFCD::Cache("LOCAL.MIX");
+        }
+        CCDebugString("C&C95 - About to register UPDATE.MIX\n");
+        new MFCD("UPDATE.MIX"); // Cached.
+        new MFCD("UPDATA.MIX"); // Cached.
+        CCDebugString("C&C95 - About to register UPDATEC.MIX\n");
+        new MFCD("UPDATEC.MIX"); // Cached.
+        MFCD::Cache("UPDATEC.MIX");
 #ifdef JAPANESE
-    CCDebugString("C&C95 - About to register LANGUAGE.MIX\n");
-    new MFCD("LANGUAGE.MIX");
+        CCDebugString("C&C95 - About to register LANGUAGE.MIX\n");
+        new MFCD("LANGUAGE.MIX");
 #endif // JAPANESE
 
-    RequiredCD = temp;
+        RequiredCD = temp;
+    }
 
-#endif
     CCDebugString("C&C95 - About to load fonts\n");
-    Green12FontPtr = Load_Alloc_Data(CCFileClass("12GREEN.FNT"));
-    Green12GradFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
-    MapFontPtr = Load_Alloc_Data(CCFileClass("8FAT.FNT"));
     Font8Ptr = MFCD::Retrieve(FONT8);
     FontPtr = (char*)Font8Ptr;
     Set_Font(FontPtr);
@@ -201,7 +214,6 @@ bool Init_Game(int, char*[])
     //	Font6Ptr = MFCD::Retrieve(FONT6);
     Font6Ptr = Load_Alloc_Data(CCFileClass("6POINT.FNT"));
     // ScoreFontPtr = MFCD::Retrieve("12GRNGRD.FNT");	//GRAD12FN");	//("SCOREFNT.FNT");
-    ScoreFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
     FontLEDPtr = MFCD::Retrieve("LED.FNT");
     VCRFontPtr = MFCD::Retrieve("VCR.FNT");
     //	GradFont6Ptr = MFCD::Retrieve("GRAD6FNT.FNT");
@@ -211,6 +223,18 @@ bool Init_Game(int, char*[])
     OriginalPalette = new (MEM_CLEAR | MEM_REAL) unsigned char[768];
     WhitePalette = new (MEM_CLEAR | MEM_REAL) unsigned char[768];
     memset(WhitePalette, 63, 768);
+
+    if (Get_Resolution_Factor()) {
+        MapFontPtr = Load_Alloc_Data(CCFileClass("8FAT.FNT"));
+        Green12FontPtr = Load_Alloc_Data(CCFileClass("12GREEN.FNT"));
+        Green12GradFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
+        ScoreFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
+    } else {
+        MapFontPtr = Font6Ptr; // Fixes ingame helpbox
+        Green12FontPtr = Font3Ptr;
+        Green12GradFontPtr = GradFont6Ptr;
+        ScoreFontPtr = GradFont6Ptr;
+    }
 
     CCDebugString("C&C95 - About to set palette\n");
     memset(BlackPalette, 0x01, 768);
@@ -289,14 +313,6 @@ bool Init_Game(int, char*[])
         exit(1);
     }
 
-#ifdef DEMO
-    /*
-    **	Add in any override path specified in the conquer.ini file.
-    */
-    if (strlen(OverridePath)) {
-        CCFileClass::Set_Search_Drives(OverridePath);
-    }
-#endif
     /*
     **	Initialize access to the CD-ROM and ensure that the CD is inserted. This can, and
     **	most likely will, result in a visible prompt.
@@ -331,7 +347,7 @@ bool Init_Game(int, char*[])
         strcat(scan_path, "SC*.MIX");
         found = Find_First(scan_path, 0, &ffd);
         while (found) {
-            char* ptr = strdup(ffd->GetName());
+            char* ptr = (char*)ffd->GetName();
             new MFCD(ptr);
             MFCD::Cache(ptr);
             found = Find_Next(ffd);
@@ -344,7 +360,7 @@ bool Init_Game(int, char*[])
         strcat(scan_path, "SS*.MIX");
         found = Find_First(scan_path, 0, &ffd);
         while (found) {
-            char* ptr = strdup(ffd->GetName());
+            char* ptr = (char*)ffd->GetName();
             new MFCD(ptr);
             MFCD::Cache(ptr);
             found = Find_Next(ffd);
@@ -381,78 +397,45 @@ bool Init_Game(int, char*[])
     /*
     **	Inform the file system of the various MIX files.
     */
-#ifdef DEMO
-    new MFCD("DEMO.MIX");
-    if (CCFileClass("DEMOM.MIX").Is_Available()) {
+    if (Is_Demo()) {
+        CCDebugString("C&C95 - About to register DEMO.MIX\n");
+        new MFCD("DEMO.MIX");
+        ScoresPresent = false;
+        if (CCFileClass("DEMOM.MIX").Is_Available()) {
+            CCDebugString("C&C95 - About to register DEMOM.MIX\n");
+            if (!MoviesMix)
+                MoviesMix = new MFCD("DEMOM.MIX");
+            ScoresPresent = true;
+            ThemeClass::Scan();
+        }
+    } else {
+        CCDebugString("C&C95 - About to register CONQUER.MIX\n");
+        new MFCD("CONQUER.MIX"); // Cached.
+        CCDebugString("C&C95 - About to register TRANSIT.MIX\n");
+        new MFCD("TRANSIT.MIX");
+
+        CCDebugString("C&C95 - About to register GENERAL.MIX\n");
+        if (!GeneralMix)
+            GeneralMix = new MFCD("GENERAL.MIX"); // Never cached.
+
+        //	if (CCFileClass("MOVIES.MIX").Is_Available()) {
+        CCDebugString("C&C95 - About to register MOVIES.MIX\n");
         if (!MoviesMix)
-            MoviesMix = new MFCD("DEMOM.MIX");
+            MoviesMix = new MFCD("MOVIES.MIX"); // Never cached.
+                                                //	}
+
+        /*
+        **	Register the score mixfile.
+        */
+        CCDebugString("C&C95 - About to register SCORES.MIX\n");
+        ScoresPresent = false;
+        //	if (CCFileClass("SCORES.MIX").Is_Available()) {
         ScoresPresent = true;
-        ThemeClass::Scan();
+        if (!ScoreMix) {
+            ScoreMix = new MFCD("SCORES.MIX");
+            ThemeClass::Scan();
+        }
     }
-
-#else
-    CCDebugString("C&C95 - About to register CONQUER.MIX\n");
-    new MFCD("CONQUER.MIX"); // Cached.
-    CCDebugString("C&C95 - About to register TRANSIT.MIX\n");
-    new MFCD("TRANSIT.MIX");
-
-    CCDebugString("C&C95 - About to register GENERAL.MIX\n");
-    if (!GeneralMix)
-        GeneralMix = new MFCD("GENERAL.MIX"); // Never cached.
-
-    //	if (CCFileClass("MOVIES.MIX").Is_Available()) {
-    CCDebugString("C&C95 - About to register MOVIES.MIX\n");
-    if (!MoviesMix)
-        MoviesMix = new MFCD("MOVIES.MIX"); // Never cached.
-                                            //	}
-
-#if (0)
-
-    /*
-    ** Extract a movie from a mixfile.
-    */
-    char* file_ptr = (char*)Alloc(32 * 1024 * 1024, MEM_NORMAL);
-    CCFileClass whatever("PINTLE.VQA");
-
-    int len = whatever.Size();
-
-    whatever.Open();
-
-    DWORD actual;
-    HANDLE sfile =
-        CreateFile("c:\\temp\\PINTLE.VQA", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
-    if (sfile != INVALID_HANDLE_VALUE) {
-        SetFilePointer(sfile, 0, NULL, FILE_END);
-
-        do {
-            whatever.Read(file_ptr, MIN(len, 1024 * 64));
-            WriteFile(sfile, file_ptr, MIN(len, 1024 * 64), &actual, NULL);
-            len -= MIN(len, 1024 * 64);
-        } while (len > 0);
-
-        CloseHandle(sfile);
-    }
-
-    whatever.Close();
-
-    Free(file_ptr);
-
-#endif //(0)
-
-    /*
-    **	Register the score mixfile.
-    */
-    CCDebugString("C&C95 - About to register SCORES.MIX\n");
-    ScoresPresent = false;
-    //	if (CCFileClass("SCORES.MIX").Is_Available()) {
-    ScoresPresent = true;
-    if (!ScoreMix) {
-        ScoreMix = new MFCD("SCORES.MIX");
-        ThemeClass::Scan();
-    }
-//	}
-#endif
 
     /*
     **	These are sound card specific, but the install program would have
@@ -464,6 +447,14 @@ bool Init_Game(int, char*[])
     }
     CCDebugString("C&C95 - About to register SOUNDS.MIX\n");
     new MFCD("SOUNDS.MIX"); // Cached.
+
+    /*
+    **	Find and process any rules for this game.
+    */
+    CCFileClass rulesIniFile("RULES.INI");
+    if (RuleINI.Load(rulesIniFile, false)) {
+        Rule.Process(RuleINI);
+    }
 
     /*
     **	Initialize the animation system.
@@ -488,7 +479,7 @@ bool Init_Game(int, char*[])
     memset(CurrentPalette, 0x01, 768);
 
     if (!Special.IsFromInstall) {
-        Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+        Load_Title_Screen(TitlePicture, &HidPage, Palette);
         Blit_Hid_Page_To_Seen_Buff();
     }
 
@@ -501,23 +492,23 @@ bool Init_Game(int, char*[])
     }
     Call_Back();
 
-#ifdef DEMO
-    MFCD::Cache("DEMO.MIX");
-    MFCD::Cache("SOUNDS.MIX");
-#else
-    /*
-    **	Cache the main game data. This operation can take a very long time.
-    */
-    MFCD::Cache("CONQUER.MIX");
-    if (SampleType != 0 && !Debug_Quiet) {
+    if (Is_Demo()) {
+        MFCD::Cache("DEMO.MIX");
         MFCD::Cache("SOUNDS.MIX");
-        if (Special.IsJuvenile) {
-            new MFCD("ZOUNDS.MIX"); // Cached.
-            MFCD::Cache("ZOUNDS.MIX");
+    } else {
+        /*
+        **	Cache the main game data. This operation can take a very long time.
+        */
+        MFCD::Cache("CONQUER.MIX");
+        if (SampleType != 0 && !Debug_Quiet) {
+            MFCD::Cache("SOUNDS.MIX");
+            if (Special.IsJuvenile) {
+                new MFCD("ZOUNDS.MIX"); // Cached.
+                MFCD::Cache("ZOUNDS.MIX");
+            }
         }
     }
     Call_Back();
-#endif
 
     //	malloc(2);
 
@@ -617,6 +608,15 @@ bool Init_Game(int, char*[])
     ** dialogs are invoked.  (GameSpeed must be synchronized between systems.)
     */
     Options.Load_Settings();
+
+    /*
+    **	Dump a default copy of rules.ini.
+    */
+    if (!rulesIniFile.Is_Available()) {
+        Rule.Export(RuleINI);
+        CDFileClass ini_export("RULES.INI");
+        RuleINI.Save(ini_export, false);
+    }
 
     return (true);
 }
@@ -814,7 +814,7 @@ bool Select_Game(bool fade)
                 **	Display the title page; fade it in if this is the first time
                 **	through the loop, and the 'fade' flag is true
                 */
-                Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+                Load_Title_Screen(TitlePicture, &HidPage, Palette);
                 memcpy(GamePalette, Palette, 768);
                 Blit_Hid_Page_To_Seen_Buff();
 
@@ -978,34 +978,29 @@ bool Select_Game(bool fade)
 
                 CarryOverMoney = 0;
 
-#ifdef DEMO
-                Hide_Mouse();
-                Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-                Load_Title_Screen("PREPICK.PCX", &HidPage, Palette);
-                Blit_Hid_Page_To_Seen_Buff();
-                Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-                Keyboard->Clear();
-                while (!Check_Key_Num()) {
-                    Call_Back();
+                if (Is_Demo()) {
+                    Hide_Mouse();
+                    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
+                    Load_Title_Screen("PREPICK.CPS", &HidPage, Palette);
+                    Blit_Hid_Page_To_Seen_Buff();
+                    Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
+                    Keyboard->Clear();
+                    Keyboard->Get();
+                    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
+                    Show_Mouse();
                 }
-                Get_Key_Num();
-                Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-                Show_Mouse();
 
                 Scenario = 1;
                 BuildLevel = 1;
-#else
-                Scenario = 1;
-                BuildLevel = 1;
-#endif
+
                 ScenPlayer = SCEN_PLAYER_GDI;
                 ScenDir = SCEN_DIR_EAST;
                 Whom = HOUSE_GOOD;
 
-#ifndef DEMO
-                Theme.Fade_Out();
-                Choose_Side();
-#endif
+                if (!Is_Demo()) {
+                    Theme.Fade_Out();
+                    Choose_Side();
+                }
 
                 /*
                 ** If user is playing special mode, do NOT change Whom; leave it set to
@@ -1041,24 +1036,6 @@ bool Select_Game(bool fade)
             **	network play.
             */
             case SEL_MULTIPLAYER_GAME:
-
-#ifdef DEMO
-                Hide_Mouse();
-                Set_Palette(BlackPalette);
-                Load_Title_Screen("DEMOPIC.PCX", &HidPage, Palette);
-                Blit_Hid_Page_To_Seen_Buff();
-                Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-                Keyboard->Clear();
-                while (!Check_Key()) {
-                    Call_Back();
-                }
-                Get_Key();
-                Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-                Show_Mouse();
-                display = true;
-                fade = true;
-                selection = SEL_NONE;
-#else
                 switch (GameToPlay) {
 
                 /*
@@ -1155,24 +1132,20 @@ bool Select_Game(bool fade)
                 **	Network (IPX): start a new network game.
                 */
                 case GAME_IPX:
+                    DBG_LOG("C&C - Game type is IPX.\n");
                     /*
                     ** Init network system & remote-connect
                     */
-                    if (Init_Network() && Remote_Connect()) {
-#if (0)
-                        char seed[80];
-                        sprintf(seed, "Seed: %08x\n", Seed);
-                        CCDebugString(seed);
+#ifdef NETWORKING
+                    if (PacketTransport)
+                        delete PacketTransport;
 
-                        sprintf(seed, "rand: %04x\n", rand());
-                        CCDebugString(seed);
-
-                        sprintf(seed, "rand: %04x\n", rand());
-                        CCDebugString(seed);
-
-                        sprintf(seed, "rand: %04x\n", rand());
-                        CCDebugString(seed);
+                    PacketTransport = new UDPInterfaceClass;
+                    assert(PacketTransport != NULL);
 #endif
+
+                    DBG_LOG("C&C - About to call Init_Network.\n");
+                    if (GameToPlay == GAME_IPX && Init_Network() && Remote_Connect()) {
                         Options.ScoreVolume = 0;
                         ScenPlayer = SCEN_PLAYER_MPLAYER;
                         ScenDir = SCEN_DIR_EAST;
@@ -1182,10 +1155,13 @@ bool Select_Game(bool fade)
                         GameToPlay = GAME_NORMAL;
                         display = true;
                         selection = SEL_NONE;
+#ifdef NETWORKING
+                        delete PacketTransport;
+                        PacketTransport = NULL;
+#endif
                     }
                     break;
                 }
-#endif
                 break;
 
             /*
@@ -1528,120 +1504,22 @@ static void Play_Intro(bool for_real)
 #else
     bool playright = !Keyboard->Down(KN_LCTRL) || !Keyboard->Down(KN_RCTRL);
     static int _counter = -1;
-    static char* _names[] = {
-#ifdef DEMO
-        "LOGO",
-
-#else
-
-        "INTRO2",
-        //#ifdef CHEAT_KEYS
-        "GDIEND1",
-        "GDIEND2",
-        "GDIFINA",
-        "GDIFINB",
-        "AIRSTRK",
-        "AKIRA",
-        "BANNER",
-        "BCANYON",
-        "BKGROUND",
-        "BOMBAWAY",
-        "BOMBFLEE",
-        "BURDET1",
-        "BURDET2",
-        "CC2TEASE",
-        "CONSYARD",
-        "DESFLEES",
-        "DESKILL",
-        "DESOLAT",
-        "DESSWEEP",
-        "FLAG",
-        "FLYY",
-        "FORESTKL",
-        "GAMEOVER",
-        "GDI1",
-        "GDI10",
-        "GDI11",
-        "GDI12",
-        "GDI13",
-        "GDI14",
-        "GDI15",
-        "GDI2",
-        "GDI3",
-        "GDI3LOSE",
-        "GDI4A",
-        "GDI4B",
-        "GDI5",
-        "GDI6",
-        "GDI7",
-        "GDI8A",
-        "GDI8B",
-        "GDI9",
-        "GDILOSE",
-        "GUNBOAT",
-        "HELLVALY",
-        "INSITES",
-        "KANEPRE",
-        "LANDING",
-        "LOGO",
-        "NAPALM",
-        "NITEJUMP",
-        "NOD1",
-        "NOD10A",
-        "NOD10B",
-        "NOD11",
-        "NOD12",
-        "NOD13",
-        "NOD1PRE",
-        "NOD2",
-        "NOD3",
-        "NOD4A",
-        "NOD4B",
-        "NOD5",
-        "NOD6",
-        "NOD7A",
-        "NOD7B",
-        "NOD8",
-        "NOD9",
-        "NODEND1",
-        "NODEND2",
-        "NODEND3",
-        "NODEND4",
-        "NODFINAL",
-        "NODFLEES",
-        "NODLOSE",
-        "NODSWEEP",
-        "NUKE",
-        "OBEL",
-        "PARATROP",
-        "PINTLE",
-        "PLANECRA",
-        "PODIUM",
-        "REFINT",
-        "RETRO",
-        "SABOTAGE",
-        "SAMDIE",
-        "SAMSITE",
-        "SEIGE",
-        "SETHPRE",
-        "SPYCRASH",
-        "STEALTH",
-        "SUNDIAL",
-        "TANKGO",
-        "TANKKILL",
-        "TBRINFO1",
-        "TBRINFO2",
-        "TBRINFO3",
-        "TIBERFX",
-        "TRTKIL_D",
-        "TURTKILL",
-        "VISOR",
-//#endif
-#endif
-        NULL};
+    static const char* _names[] = {
+        "INTRO2",   "GDIEND1",  "GDIEND2",  "GDIFINA",  "GDIFINB",  "AIRSTRK",  "AKIRA",    "BANNER",   "BCANYON",
+        "BKGROUND", "BOMBAWAY", "BOMBFLEE", "BURDET1",  "BURDET2",  "CC2TEASE", "CONSYARD", "DESFLEES", "DESKILL",
+        "DESOLAT",  "DESSWEEP", "FLAG",     "FLYY",     "FORESTKL", "GAMEOVER", "GDI1",     "GDI10",    "GDI11",
+        "GDI12",    "GDI13",    "GDI14",    "GDI15",    "GDI2",     "GDI3",     "GDI3LOSE", "GDI4A",    "GDI4B",
+        "GDI5",     "GDI6",     "GDI7",     "GDI8A",    "GDI8B",    "GDI9",     "GDILOSE",  "GUNBOAT",  "HELLVALY",
+        "INSITES",  "KANEPRE",  "LANDING",  "LOGO",     "NAPALM",   "NITEJUMP", "NOD1",     "NOD10A",   "NOD10B",
+        "NOD11",    "NOD12",    "NOD13",    "NOD1PRE",  "NOD2",     "NOD3",     "NOD4A",    "NOD4B",    "NOD5",
+        "NOD6",     "NOD7A",    "NOD7B",    "NOD8",     "NOD9",     "NODEND1",  "NODEND2",  "NODEND3",  "NODEND4",
+        "NODFINAL", "NODFLEES", "NODLOSE",  "NODSWEEP", "NUKE",     "OBEL",     "PARATROP", "PINTLE",   "PLANECRA",
+        "PODIUM",   "REFINT",   "RETRO",    "SABOTAGE", "SAMDIE",   "SAMSITE",  "SEIGE",    "SETHPRE",  "SPYCRASH",
+        "STEALTH",  "SUNDIAL",  "TANKGO",   "TANKKILL", "TBRINFO1", "TBRINFO2", "TBRINFO3", "TIBERFX",  "TRTKIL_D",
+        "TURTKILL", "VISOR",    NULL};
 
     Keyboard->Clear();
-    if (for_real) {
+    if (for_real || Is_Demo()) {
         Hide_Mouse();
         Play_Movie("LOGO", THEME_NONE, false);
         Show_Mouse();
@@ -1783,7 +1661,7 @@ bool Parse_Command_Line(int argc, char* argv[])
         long code = 0;
 
         char arg_string[512];
-        int str_len = strlen(argv[index]);
+        int str_len = (int)strlen(argv[index]);
         char* src = argv[index];
         char* dest = arg_string;
         for (int i = 0; i < str_len; i++) {
@@ -2185,6 +2063,7 @@ bool Parse_Command_Line(int argc, char* argv[])
                     SuperRecord = 1;
                     break;
 
+#endif
                 /*
                 **	"Record" a multi-player game
                 */
@@ -2198,7 +2077,6 @@ bool Parse_Command_Line(int argc, char* argv[])
                 case 'Y':
                     PlaybackGame = 1;
                     break;
-#endif
 
 #ifdef ONHOLD
                 /*
@@ -2355,16 +2233,25 @@ void Parse_INI_File(void)
  *=============================================================================================*/
 int Version_Number(void)
 {
+    const char* demo_text = Is_Demo() ? "DEMO " : "";
+
     // Only print the git tag version number if it starts with 'v'
     if (*GitTag == '\0' || GitUncommittedChanges || *GitTag != 'v') {
         snprintf(VersionText,
                  sizeof(VersionText),
-                 "r%d %s%s",
+                 "%sr%d %s%s",
+                 demo_text,
                  GitRevision,
                  (GitUncommittedChanges ? "~" : ""),
                  GitShortSHA1);
     } else {
-        snprintf(VersionText, sizeof(VersionText), "%s %s%s", GitTag, (GitUncommittedChanges ? "~" : ""), GitShortSHA1);
+        snprintf(VersionText,
+                 sizeof(VersionText),
+                 "%s%s %s%s",
+                 demo_text,
+                 GitTag,
+                 (GitUncommittedChanges ? "~" : ""),
+                 GitShortSHA1);
     }
 
     return (1);
@@ -2539,7 +2426,7 @@ long Obfuscate(char const* string)
     */
     strncpy(buffer, string, sizeof(buffer));
     buffer[sizeof(buffer) - 1] = '\0';
-    int length = strlen(buffer);
+    int length = (int)strlen(buffer);
 
     /*
     **	Only upper case letters are significant.

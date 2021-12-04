@@ -60,6 +60,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     TemplateClass(TemplateType type, CELL pos = -1);
     TemplateClass(NoInitClass const& x)
         : ObjectClass(x)

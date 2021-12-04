@@ -37,6 +37,7 @@
 #include "function.h"
 #include "common/ini.h"
 #include "common/paths.h"
+#include "common/utfargs.h"
 #include "settings.h"
 
 bool Read_Private_Config_Struct(FileClass& file, NewConfigType* config);
@@ -83,11 +84,7 @@ void Move_Point(short& x, short& y, register DirType dir, unsigned short distanc
 void Check_Use_Compressed_Shapes(void);
 extern void DLL_Shutdown(void);
 
-#ifdef _WIN32
-
-int main(int argc, char** argv);
-
-#ifdef REMASTER_BUILD
+#if defined REMASTER_BUILD && defined _WIN32
 BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserved)
 {
     lpvReserved;
@@ -114,45 +111,43 @@ BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserve
 
     return true;
 }
+#endif
+
+#ifdef REMASTER_BUILD
+int main(int, char*[]);
 
 int DLL_Startup(const char* command_line_in)
 {
+    /* Construct argc and argv from command_line_in. Remaster build requires
+    ** that first argument is a full path to DLL, not executable. Furthermore, it
+    ** seems to override the argv to include extra parameters which the DLL
+    ** expects. Getting the argc and argv from executable will result in
+    ** a crash trying to read the font files. */
+
     RunningAsDLL = true;
     HINSTANCE instance = ProgramInstance;
     char command_line[1024];
-    strcpy(command_line, command_line_in);
-#else // not remaster
-int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int command_show)
-{
-#endif
-    if (Ram_Free(MEM_NORMAL) < 5000000) {
-#ifdef GERMAN
-        printf("Zuwenig Hauptspeicher verf?gbar.\n");
-#else
-#ifdef FRENCH
-        printf("M‚moire vive (RAM) insuffisante.\n");
-#else
-        printf("Insufficient RAM available.\n");
-#endif
-#endif
-        return (EXIT_FAILURE);
-    }
-
-    int argc; // Command line argument count
+    int argc = 0;
     unsigned command_scan;
     char command_char;
-    char* argv[20]; // Pointers to command line arguments
+    char* argv[20];
     char path_to_exe[280];
 
+    strcpy(command_line, command_line_in);
     ProgramInstance = instance;
 
     /*
-    ** Get the full path to the .EXE
+    ** Get the full path to the .DLL
     */
-    GetModuleFileNameA(instance, &path_to_exe[0], 280);
+    DWORD readed = GetModuleFileNameA(instance, &path_to_exe[0], 280);
+    if (readed >= 280 - 1) {
+        MessageBoxA(NULL, "Path to remaster is too large.", "Command & Conquer", MB_ICONEXCLAMATION | MB_OK);
+        return -1;
+    }
 
     /*
     ** First argument is supposed to be a pointer to the .EXE that is running
+    ** - False. Must be a pointer to the DLL - giulianob 07/11/2021
     **
     */
     argc = 1;                  // Set argument count to 1
@@ -166,6 +161,8 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
     */
 
     command_scan = 0;
+
+    /* This certainly can be improved, but worse than this is not working :)*/
 
     do {
         /*
@@ -194,14 +191,32 @@ int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int comman
 
     } while (command_char != 0 && command_char != 13 && argc < 20);
 
+    if (argc >= 20) {
+        MessageBoxA(NULL, "Too many arguments on command line.", "Command & Conquer", MB_ICONEXCLAMATION | MB_OK);
+        return -1;
+    }
+
     return main(argc, argv);
 }
-
-#endif // _WIN32
+#endif // REMASTER_BUILD
 
 int main(int argc, char** argv)
 {
+    UtfArgs args(argc, argv);
     CCDebugString("C&C95 - Starting up.\n");
+
+    if (Ram_Free(MEM_NORMAL) < 5000000) {
+#ifdef GERMAN
+        printf("Zuwenig Hauptspeicher verf?gbar.\n");
+#else
+#ifdef FRENCH
+        printf("M‚moire vive (RAM) insuffisante.\n");
+#else
+        printf("Insufficient RAM available.\n");
+#endif
+#endif
+        return (EXIT_FAILURE);
+    }
 
 #ifdef JAPANESE
     ForceEnglish = false;
@@ -210,11 +225,11 @@ int main(int argc, char** argv)
     /*
     **	Remember the current working directory and drive.
     */
-    Paths.Init("vanillatd", "CONQUER.INI", "CONQUER.MIX", argv[0]);
-    vc_chdir(Paths.Program_Path());
+    Paths.Init("vanillatd", "CONQUER.INI", "CONQUER.MIX", args.ArgV[0]);
+    vc_chdir(Paths.Data_Path());
     CDFileClass::Refresh_Search_Drives();
 
-    if (Parse_Command_Line(argc, argv)) {
+    if (Parse_Command_Line(args.ArgC, args.ArgV)) {
 
         WinTimerClass::Init(60);
 
@@ -231,11 +246,11 @@ int main(int argc, char** argv)
         */
         Check_Use_Compressed_Shapes();
 
-#if 0
         /*
         ** If there is not enough disk space free, dont allow the product to run.
         */
         if (Disk_Space_Available() < INIT_FREE_DISK_SPACE) {
+#if (0) // PG
 #ifdef GERMAN
             char disk_space_message[512];
             sprintf(disk_space_message,
@@ -265,8 +280,8 @@ int main(int argc, char** argv)
             }
 
 #endif
-        }
 #endif
+        }
 
         Read_Private_Config_Struct(cfile, &NewConfig);
 
@@ -276,6 +291,14 @@ int main(int argc, char** argv)
         Read_Setup_Options(&cfile);
 
         CCDebugString("C&C95 - Creating main window.\n");
+
+#ifndef REMASTER_BUILD
+        /* If DOSMode is enabled, adjust resolution accordingly. */
+        if (Settings.Video.DOSMode || Is_Demo() || Is_DOS_Files()) {
+            ScreenWidth = 320;
+            ScreenHeight = 200;
+        }
+#endif
 
 #if defined(_WIN32) && !defined(SDL2_BUILD)
         Create_Main_Window(ProgramInstance, ScreenWidth, ScreenHeight);
@@ -289,8 +312,9 @@ int main(int argc, char** argv)
 
         bool video_success = false;
         CCDebugString("C&C95 - Setting video mode.\n");
+
         /*
-        ** Set 640x400 video mode.
+        ** Set video mode.
         */
 #ifdef REMASTER_BUILD
         video_success = true;
@@ -313,75 +337,69 @@ int main(int argc, char** argv)
 
         CCDebugString("C&C95 - Initialising video surfaces.\n");
 
-        if (ScreenWidth == 320) {
-            VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
-            ModeXBuff.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VISIBLE | GBC_VIDEOMEM));
-        } else {
-
 #ifdef REMASTER_BUILD
 
-            VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
-            HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
+        VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
+        HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
 
 #else
-            VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VISIBLE | GBC_VIDEOMEM));
+        VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VISIBLE | GBC_VIDEOMEM));
 
+        /*
+        ** Check that we really got a video memory page. Failure is fatal.
+        */
+        if (VisiblePage.IsAllocated()) {
             /*
-            ** Check that we really got a video memory page. Failure is fatal.
+            ** Aaaarrgghh!
             */
-            if (VisiblePage.IsAllocated()) {
-                /*
-                ** Aaaarrgghh!
-                */
-                CCDebugString("C&C95 - Unable to allocate primary surface.\n");
+            CCDebugString("C&C95 - Unable to allocate primary surface.\n");
 #ifdef _WIN32
-                MessageBoxA(MainWindow,
-                            Text_String(TXT_UNABLE_TO_ALLOCATE_PRIMARY_VIDEO_BUFFER),
-                            "Command & Conquer",
-                            MB_ICONEXCLAMATION | MB_OK);
+            MessageBoxA(MainWindow,
+                        Text_String(TXT_UNABLE_TO_ALLOCATE_PRIMARY_VIDEO_BUFFER),
+                        "Command & Conquer",
+                        MB_ICONEXCLAMATION | MB_OK);
 #endif
-                if (Palette)
-                    delete[] Palette;
-                return (EXIT_FAILURE);
-            }
+            if (Palette)
+                delete[] Palette;
+            return (EXIT_FAILURE);
+        }
+
+        /*
+        ** If we have enough left then put the hidpage in video memory unless...
+        **
+        ** If there is no blitter then we will get better performance with a system
+        ** memory hidpage
+        **
+        ** Use a system memory page if the user has specified it via the ccsetup program.
+        */
+        CCDebugString("C&C95 - Allocating back buffer ");
+        long video_memory = Get_Free_Video_Memory();
+        unsigned video_capabilities = Get_Video_Hardware_Capabilities();
+        if (video_memory < ScreenWidth * ScreenHeight || (!(video_capabilities & VIDEO_BLITTER))
+            || (video_capabilities & VIDEO_NO_HARDWARE_ASSIST) || !VideoBackBufferAllowed) {
+            CCDebugString("in system memory.\n");
+            HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
+        } else {
+            // HiddenPage.Init (ScreenWidth , ScreenHeight , NULL , 0 , (GBC_Enum)0);
+            CCDebugString("in video memory.\n");
+            HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)GBC_VIDEOMEM);
 
             /*
-            ** If we have enough left then put the hidpage in video memory unless...
-            **
-            ** If there is no blitter then we will get better performance with a system
-            ** memory hidpage
-            **
-            ** Use a system memory page if the user has specified it via the ccsetup program.
+            ** Make sure we really got a video memory hid page. If we didnt then things
+            ** will run very slowly.
             */
-            CCDebugString("C&C95 - Allocating back buffer ");
-            long video_memory = Get_Free_Video_Memory();
-            unsigned video_capabilities = Get_Video_Hardware_Capabilities();
-            if (video_memory < ScreenWidth * ScreenHeight || (!(video_capabilities & VIDEO_BLITTER))
-                || (video_capabilities & VIDEO_NO_HARDWARE_ASSIST) || !VideoBackBufferAllowed) {
-                CCDebugString("in system memory.\n");
+            if (HiddenPage.IsAllocated()) {
+                /*
+                ** Oh dear, big trub. This must be an IBM Aptiva or something similarly cruddy.
+                ** We must redo the Hidden Page as system memory.
+                */
+                HiddenPage.Un_Init();
                 HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
             } else {
-                // HiddenPage.Init (ScreenWidth , ScreenHeight , NULL , 0 , (GBC_Enum)0);
-                CCDebugString("in video memory.\n");
-                HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)GBC_VIDEOMEM);
-
-                /*
-                ** Make sure we really got a video memory hid page. If we didnt then things
-                ** will run very slowly.
-                */
-                if (HiddenPage.IsAllocated()) {
-                    /*
-                    ** Oh dear, big trub. This must be an IBM Aptiva or something similarly cruddy.
-                    ** We must redo the Hidden Page as system memory.
-                    */
-                    HiddenPage.Un_Init();
-                    HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
-                } else {
-                    VisiblePage.Attach_DD_Surface(&HiddenPage);
-                }
+                VisiblePage.Attach_DD_Surface(&HiddenPage);
             }
-#endif
         }
+#endif
 
         SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
         HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
@@ -478,14 +496,6 @@ int main(int argc, char** argv)
             Palette = NULL;
         }
     }
-
-    /*
-    **	Restore the current drive and directory.
-    */
-#ifdef NOT_FOR_WIN95
-    _dos_setdrive(olddrive, &drivecount);
-    chdir(oldpath);
-#endif // NOT_FOR_WIN95
 
     return (EXIT_SUCCESS);
 }

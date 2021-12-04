@@ -935,131 +935,16 @@ long MapClass::Overpass(void)
  *   11/14/1994 BR : Created.                                                                  *
  *   01/08/1995 JLB : Fixup any obsolete icons detected.                                       *
  *=============================================================================================*/
-#ifdef DEMO
-bool MapClass::Read_Binary(char const* root, unsigned long*)
-#else
 bool MapClass::Read_Binary(char const* root, uint32_t* crc)
-#endif
 {
-#ifdef MEGAMAPS
-    if (MapBinaryVersion == MAP_VERSION_MEGA) {
-        return Read_Binary_Big(root, crc);
-    }
-#endif
-
-    CCFileClass file;
     char fname[_MAX_FNAME + _MAX_EXT];
-    int i;
-    char* map;
-    void* rawmap;
-    void const* shape;
-    CellClass* cellptr = NULL;
 
     /*
     **	Filename = INI name with BIN extension.
     */
     sprintf(fname, "%s.BIN", root);
 
-    /*
-    **	Create object & open file.
-    */
-    file.Set_Name(fname);
-    if (!file.Is_Available()) {
-        return (false);
-    }
-    file.Open(READ);
-
-#ifdef MEGAMAPS
-    /*
-    **	Loop through all cells and set all to the clear tile.
-    */
-    for (i = 0; i < MAP_CELL_TOTAL; i++) {
-        //CCDebugString("Cell: %d:%d\n", Cell_X(i), Cell_Y(i));
-        cellptr = &Map[i];
-        cellptr->TType = (TemplateType)255;
-        cellptr->TIcon = 0;
-        cellptr->Recalc_Attributes();
-    }
-#endif
-
-    /*
-    **	We need to handle the orignal maps differently now as MAP_CELL_TOTAL is larger
-    **  and will break all maps made the old way. This new piece of code will offset the
-    **  cells of the smaller maps to be within the new MAP_CELL_TOTAL range.
-    */
-#ifdef MEGAMAPS
-    /*
-    **	Loop through all cells. The helper funtion will convert the old map binary cell
-    **  to a position in the new big map array.
-    */
-    for (i = 0; i < (MAP_CELL_TOTAL / 4); i++) {
-        CELL cell = Confine_Old_Cell(i);
-        cellptr = &Map[cell];
-#else
-    /*
-    **	Loop through all cells.
-    */
-    cellptr = &Map[0];
-    for (i = 0; i < MAP_CELL_TOTAL; i++) {
-#endif
-
-#pragma pack(push, 1)
-        struct
-        {
-            TemplateType TType;  // Template type.
-            unsigned char TIcon; // Template icon number.
-        } temp;
-#pragma pack(pop)
-
-        if (file.Read(&temp, sizeof(temp)) != sizeof(temp))
-            break;
-        if (temp.TType == (TemplateType)255) {
-            temp.TType = TEMPLATE_NONE;
-        }
-
-        /*
-        **	Verify that the template type actually contains the template number specified. If
-        **	an illegal icon was specified, then replace it with clear terrain.
-        */
-        if (temp.TType != TEMPLATE_CLEAR1 && temp.TType != TEMPLATE_NONE) {
-            TemplateTypeClass const& ttype = TemplateTypeClass::As_Reference(temp.TType);
-            shape = ttype.Get_Image_Data();
-            if (shape) {
-                rawmap = Get_Icon_Set_Map(shape);
-                if (rawmap) {
-                    map = (char*)rawmap;
-                    if ((temp.TIcon >= (ttype.Width * ttype.Height)) || (map[temp.TIcon] == -1)) {
-                        temp.TIcon = 0;
-                        temp.TType = TEMPLATE_NONE;
-                    }
-                }
-            }
-        }
-
-        cellptr->TType = temp.TType;
-        cellptr->TIcon = temp.TIcon;
-        cellptr->Recalc_Attributes();
-
-#ifndef DEMO
-        Add_CRC(crc, (uint32_t)cellptr->TType);
-        Add_CRC(crc, (uint32_t)cellptr->TIcon);
-#endif
-
-#ifndef MEGAMAPS
-        cellptr++;
-#endif
-    }
-
-    /*
-    **	Close the file.
-    */
-    file.Close();
-
-#ifdef MEGAMAPS
-    return (i == (MAP_CELL_TOTAL / 4));
-#else
-    return (i == MAP_CELL_TOTAL);
-#endif
+    return Read_Binary_File(fname, crc);
 }
 
 #ifdef MEGAMAPS
@@ -1080,20 +965,14 @@ bool MapClass::Read_Binary(char const* root, uint32_t* crc)
  *   11/14/1994 BR : Created.                                                                  *
  *   01/08/1995 JLB : Fixup any obsolete icons detected.                                       *
  *=============================================================================================*/
-bool MapClass::Read_Binary_Big(char const* root, uint32_t* crc)
+bool MapClass::Read_Binary_Big(char const* fname, uint32_t* crc)
 {
     CCFileClass file;
-    char fname[_MAX_FNAME + _MAX_EXT];
     int i;
     char* map;
     void* rawmap;
     void const* shape;
     CellClass* cellptr = NULL;
-
-    /*
-    **	Filename = INI name with BIN extension.
-    */
-    sprintf(fname, "%s.BIN", root);
 
     /*
     **	Create object & open file.
@@ -1202,6 +1081,13 @@ bool MapClass::Read_Binary_File(char const* fname, uint32_t* crc)
     char* map;
     void* rawmap;
     void const* shape;
+    CellClass* cellptr = NULL;
+
+#ifdef MEGAMAPS
+    if (MapBinaryVersion == MAP_VERSION_MEGA) {
+        return Read_Binary_Big(fname, crc);
+    }
+#endif
 
     /*
     **	Create object & open file.
@@ -1212,11 +1098,38 @@ bool MapClass::Read_Binary_File(char const* fname, uint32_t* crc)
     }
     file.Open(READ);
 
+#ifdef MEGAMAPS
+    /*
+    **	Loop through all cells and set all to the clear tile.
+    */
+    for (i = 0; i < MAP_CELL_TOTAL; i++) {
+        cellptr = &Map[i];
+        cellptr->TType = (TemplateType)255;
+        cellptr->TIcon = 0;
+        cellptr->Recalc_Attributes();
+    }
+#endif
+
+    /*
+    **	We need to handle the orignal maps differently now as MAP_CELL_TOTAL is larger
+    **  and will break all maps made the old way. This new piece of code will offset the
+    **  cells of the smaller maps to be within the new MAP_CELL_TOTAL range.
+    */
+#ifdef MEGAMAPS
+    /*
+    **	Loop through all cells. The helper funtion will convert the old map binary cell
+    **  to a position in the new big map array.
+    */
+    for (i = 0; i < (MAP_CELL_TOTAL / 4); i++) {
+        CELL cell = Confine_Old_Cell(i);
+        cellptr = &Map[cell];
+#else
     /*
     **	Loop through all cells.
     */
-    CellClass* cellptr = &Map[0];
+    cellptr = &Map[0];
     for (i = 0; i < MAP_CELL_TOTAL; i++) {
+#endif
 #pragma pack(push, 1)
         struct
         {
@@ -1258,7 +1171,9 @@ bool MapClass::Read_Binary_File(char const* fname, uint32_t* crc)
         Add_CRC(crc, (uint32_t)cellptr->TIcon);
 #endif
 
+#ifndef MEGAMAPS
         cellptr++;
+#endif
     }
 
     /*
@@ -1266,7 +1181,11 @@ bool MapClass::Read_Binary_File(char const* fname, uint32_t* crc)
     */
     file.Close();
 
+#ifdef MEGAMAPS
+    return (i == (MAP_CELL_TOTAL / 4));
+#else
     return (i == MAP_CELL_TOTAL);
+#endif
 }
 
 /***********************************************************************************************

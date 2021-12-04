@@ -34,11 +34,12 @@
 #ifndef SESSION_H
 #define SESSION_H
 
-#include "ipxaddr.h"
+#include "common/ipxaddr.h"
 #include "msglist.h"
 #include "connect.h"
 #include "version.h"
 #include "event.h"
+#include <stdint.h>
 
 //---------------------------------------------------------------------------
 // Forward declarations
@@ -528,7 +529,7 @@ public:
     //.....................................................................
     int Create_Connections(void);
     bool Am_I_Master(void);
-    unsigned long Compute_Unique_ID(void);
+    uint32_t Compute_Unique_ID(void);
 
     //.....................................................................
     // File I/O
@@ -648,8 +649,8 @@ public:
     static char Descriptions[100][40];
     static int CountMin[2];
     static int CountMax[2];
-    static char* GlobalPacketNames[];
-    static char* SerialPacketNames[];
+    static const char* GlobalPacketNames[];
+    static const char* SerialPacketNames[];
 
     //.....................................................................
     // For Recording & Playing back a file
@@ -688,8 +689,8 @@ public:
 
     DynamicVectorClass<PhoneEntryClass*> PhoneBook;
     DynamicVectorClass<char*> InitStrings;
-    static char* DialMethodCheck[DIAL_METHODS];
-    static char* CallWaitStrings[CALL_WAIT_STRINGS_NUM];
+    static const char* DialMethodCheck[DIAL_METHODS];
+    static const char* CallWaitStrings[CALL_WAIT_STRINGS_NUM];
 
     //.....................................................................
     // For finding Sync Bugs

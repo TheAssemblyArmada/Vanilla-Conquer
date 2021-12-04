@@ -73,7 +73,7 @@
         file_ptr = pool;                                                                                               \
     }
 
-GraphicBufferClass* Read_PCX_File(char* name, char* palette, void* Buff, long Size)
+GraphicBufferClass* Read_PCX_File(const char* name, char* palette, void* Buff, long Size)
 {
     unsigned i, j;
     unsigned rle;
@@ -309,5 +309,5 @@ void Write_Pcx_ScanLine(int file_handle, int scansize, unsigned char* ptr)
         }
     }
 
-    Write_File(file_handle, pool, (intptr_t)file_ptr - (intptr_t)pool);
+    Write_File(file_handle, pool, unsigned((intptr_t)file_ptr - (intptr_t)pool));
 }

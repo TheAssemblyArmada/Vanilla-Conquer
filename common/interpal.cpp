@@ -46,6 +46,7 @@
 void Show_Mouse();
 void Hide_Mouse();
 
+extern int Get_Resolution_Factor(void);
 extern GraphicViewPortClass SeenBuff;
 
 bool InterpolationPaletteChanged = false;
@@ -293,23 +294,34 @@ void Interpolate_2X_Scale(GraphicBufferClass* source,
     bool source_locked = false;
     bool dest_locked = false;
 
-    /*
-    **If a palette table exists on disk then read it in otherwise create it
-    */
-    if (InterpolationPaletteChanged) {
-        if (palette_file_name) {
-            Read_Interpolation_Palette(palette_file_name);
-        }
-        if (InterpolationPaletteChanged) {
-            Create_Palette_Interpolation_Table();
-        }
-    }
+    int scale_factor = Get_Resolution_Factor();
 
-    /*
-    ** Write the palette table to disk so we dont have to create it again next time
-    */
-    if (palette_file_name) {
-        Write_Interpolation_Palette(palette_file_name);
+    /* If there is no scaling factor, there is no need for any kind of interpolation. */
+    if (scale_factor == 0)
+        mode = -1;
+
+    /* There is no need to create an interpolation palette if we are not interpolating.  */
+    if (mode != -1) {
+
+        /*
+        **If a palette table exists on disk then read it in otherwise create it
+        */
+
+        if (InterpolationPaletteChanged) {
+            if (palette_file_name) {
+                Read_Interpolation_Palette(palette_file_name);
+            }
+            if (InterpolationPaletteChanged) {
+                Create_Palette_Interpolation_Table();
+            }
+        }
+
+        /*
+        ** Write the palette table to disk so we dont have to create it again next time
+        */
+        if (palette_file_name) {
+            Write_Interpolation_Palette(palette_file_name);
+        }
     }
     if (dest == &SeenBuff)
         Hide_Mouse();
@@ -349,13 +361,17 @@ void Interpolate_2X_Scale(GraphicBufferClass* source,
     // Get width of source and dest buffers.
     //
     src_width = source->Get_Width();
-    dest_width = 2 * (dest->Get_Width() + dest->Get_XAdd() + dest->Get_Pitch());
+    dest_width = (scale_factor + 1) * (dest->Get_Width() + dest->Get_XAdd() + dest->Get_Pitch());
     last_dest_ptr = dest_ptr;
 
     /*
     ** Call the appropriate assembly language copy routine
     */
     switch (mode) {
+    case -1:
+        memcpy(dest_ptr, src_ptr, src_width * source->Get_Height());
+        break;
+
     case 0:
         Asm_Interpolate(src_ptr, dest_ptr, source->Get_Height(), src_width, dest_width);
         break;

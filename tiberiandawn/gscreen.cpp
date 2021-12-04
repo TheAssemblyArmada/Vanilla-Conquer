@@ -477,32 +477,26 @@ extern bool CanVblankSync;
  *=============================================================================================*/
 void GScreenClass::Blit_Display(void)
 {
-    if (SeenBuff.Get_Width() != 320) {
 #if (0)
-        if (HidPage.Get_IsDirectDraw() && (Options.GameSpeed > 1 || Options.ScrollRate == 6 && CanVblankSync)) {
-            WWMouse->Draw_Mouse(&HidPage);
-            SeenBuff.Get_Graphic_Buffer()->Get_DD_Surface()->Flip(NULL, DDFLIP_WAIT);
-            SeenBuff.Blit(HidPage, 0, 0, 0, 0, SeenBuff.Get_Width(), SeenBuff.Get_Height(), false);
-#ifdef CHEAT_KEYS
-            Add_Current_Screen();
-#endif
-            // HidPage.Blit ( SeenBuff , 0 , 0 , 0 , 0 , HidPage.Get_Width() , HidPage.Get_Height() , (BOOL) FALSE );
-            WWMouse->Erase_Mouse(&HidPage, false);
-        } else {
-#else //(0)
+    if (HidPage.Get_IsDirectDraw() && (Options.GameSpeed > 1 || Options.ScrollRate == 6 && CanVblankSync)) {
         WWMouse->Draw_Mouse(&HidPage);
-        HidPage.Blit(SeenBuff, 0, 0, 0, 0, HidPage.Get_Width(), HidPage.Get_Height(), false);
+        SeenBuff.Get_Graphic_Buffer()->Get_DD_Surface()->Flip(NULL, DDFLIP_WAIT);
+        SeenBuff.Blit(HidPage, 0, 0, 0, 0, SeenBuff.Get_Width(), SeenBuff.Get_Height(), false);
 #ifdef CHEAT_KEYS
         Add_Current_Screen();
 #endif
+        // HidPage.Blit ( SeenBuff , 0 , 0 , 0 , 0 , HidPage.Get_Width() , HidPage.Get_Height() , (BOOL) FALSE );
         WWMouse->Erase_Mouse(&HidPage, false);
+    } else {
+#else //(0)
+    WWMouse->Draw_Mouse(&HidPage);
+    HidPage.Blit(SeenBuff, 0, 0, 0, 0, HidPage.Get_Width(), HidPage.Get_Height(), false);
+#ifdef CHEAT_KEYS
+    Add_Current_Screen();
+#endif
+    WWMouse->Erase_Mouse(&HidPage, false);
 #endif //(0)
 #if (0)
-        }
-#endif //(0)
-
-    } else {
-        // ST - 1/2/2019 5:26PM
-        // ModeX_Blit (&HiddenPage);
     }
+#endif //(0)
 }

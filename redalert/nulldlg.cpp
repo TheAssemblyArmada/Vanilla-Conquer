@@ -67,6 +67,84 @@ extern char const* EngMisStr[];
 
 #ifndef REMASTER_BUILD
 /***********************************************************************************************
+ * Find_Local_Scenario -- finds the file name of the scenario with matching attributes         *
+ *                                                                                             *
+ *                                                                                             *
+ *                                                                                             *
+ * INPUT:    ptr to Scenario description                                                       *
+ *           ptr to Scenario filename to fix up                                                *
+ *           length of file for trivial rejection of scenario files                            *
+ *           ptr to digest. Digests must match.                                                *
+ *                                                                                             *
+ *                                                                                             *
+ * OUTPUT:   true if scenario is available locally                                             *
+ *                                                                                             *
+ * WARNINGS: We need to reject files that don't match exactly because scenarios with the same  *
+ *           description can exist on both machines but have different contents. For example   *
+ *           there will be lots of scenarios called 'my map' and 'aaaaaa'.          			  *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *    8/23/96 12:36PM ST : Created                                                             *
+ *=============================================================================================*/
+bool Find_Local_Scenario(char* description, char* filename, unsigned int length, char* digest, bool official)
+{
+    char digest_buffer[32];
+    /*
+	** Scan through the scenario list looking for scenarios with matching descriptions.
+	*/
+    for (int index = 0; index < Session.Scenarios.Count(); index++) {
+        if (!strcmp(Session.Scenarios[index]->Description(), description)) {
+            CCFileClass file(Session.Scenarios[index]->Get_Filename());
+
+            /*
+			** Possible rejection on the basis of availability.
+			*/
+            if (file.Is_Available()) {
+                /*
+				** Possible rejection on the basis of size.
+				*/
+                if (file.Size() == length) {
+                    /*
+					** We don't know the digest for 'official' scenarios so assume its correct
+					*/
+                    if (!official) {
+                        /*
+						** Possible rejection on the basis of digest
+						*/
+                        INIClass ini;
+                        ini.Load(file);
+                        ini.Get_String(
+                            "Digest", "1", "No digest here mate. Nope.", digest_buffer, sizeof(digest_buffer));
+                    }
+#ifdef FIXIT_CSII //	checked - ajw 9/28/98. But don't know why this happens. Because of autodownload?
+                    /*
+					** If this is an aftermath scenario then ignore the digest and return success.
+					*/
+                    if (Is_Mission_Aftermath((char*)Session.Scenarios[index]->Get_Filename())) {
+                        strcpy(filename, Session.Scenarios[index]->Get_Filename());
+                        return (true);
+                    }
+#endif
+
+                    /*
+					** This must be the same scenario. Copy the name and return true.
+					*/
+                    if (official || !strcmp(digest, digest_buffer)) {
+                        strcpy(filename, Session.Scenarios[index]->Get_Filename());
+                        return (true);
+                    }
+                }
+            }
+        }
+    }
+
+    /*
+	** Couldnt find the scenario locally. Return failure.
+	*/
+    return (false);
+}
+
+/***********************************************************************************************
  * Com_Scenario_Dialog -- Serial game scenario selection dialog										  *
  *                                                                         						  *
  *                                                                         						  *

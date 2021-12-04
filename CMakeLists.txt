@@ -21,6 +21,7 @@ option(DDRAW "Enable DirectDraw video backend. (deprecated)" OFF)
 option(SDL2 "Enable SDL2 video backend." ON)
 option(OPENAL "Enable OpenAL audio backend." ON)
 option(BUILD_TESTS "Build unit tests." OFF)
+option(BUILD_TOOLS "Build modding utilities." OFF)
 option(BUILD_WITH_UBSAN "Build with undefined behavior sanitizer" OFF)
 option(BUILD_WITH_ASAN "Build with address sanitizer" OFF)
 
@@ -36,6 +37,7 @@ add_feature_info(DirectDraw DDRAW "DirectDraw video backend (deprecated)")
 add_feature_info(SDL2 SDL2 "SDL2 video backend")
 add_feature_info(OpenAL OPENAL "OpenAL audio backend")
 add_feature_info(Tests BUILD_TESTS "Unit tests")
+add_feature_info(Tools BUILD_TOOLS "Mod developer tools")
 
 if(NOT BUILD_VANILLATD AND NOT BUILD_VANILLARA)
     set(DSOUND OFF)
@@ -58,7 +60,9 @@ if(NOT MSVC)
         set(CMAKE_CXX_FLAGS_DEBUG "-g3")
     endif()
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fcheck-new -fsigned-char -fdata-sections -ffunction-sections -DNOMINMAX")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -Wwrite-strings -Werror=write-strings -fcheck-new -fsigned-char -fdata-sections -ffunction-sections -DNOMINMAX")
+else()
+    set(CMAKE_CXX_FLAGS "/Zc:strictStrings")
 endif()
 
 add_definitions(-DENGLISH -DTRUE_FALSE_DEFINED)
@@ -77,12 +81,6 @@ set(REMASTER_LIBS "")
 find_package(ClangFormat)
 include(ClangFormat)
 
-if(BUILD_TESTS)
-    # Tests need to respect some options so need to occur after the options are set.
-    enable_testing()
-    add_subdirectory(tests)
-endif()
-
 if(NOT BUILD_VANILLATD AND MAP_EDITORTD)
     message(WARNING "Internal scenario editor requires a Tiberian Dawn executable to be built, but it was not enabled.")
     set(BUILD_VANILLATD TRUE)
@@ -95,7 +93,9 @@ endif()
 
 if(NETWORKING)
     list(APPEND VANILLA_DEFS NETWORKING)
-    list(APPEND VANILLA_LIBS wsock32 ws2_32)
+    if(WIN32)
+        list(APPEND VANILLA_LIBS ws2_32)
+    endif()
 endif()
 
 if(SDL2)
@@ -115,9 +115,16 @@ if(OPENAL)
     set(DSOUND OFF)
 endif()
 
+if(BUILD_TESTS)
+    # Tests need to respect some options so need to occur after the options are set.
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
 add_subdirectory(common)
 add_subdirectory(tiberiandawn)
 add_subdirectory(redalert)
+add_subdirectory(tools)
 
 feature_summary(WHAT ENABLED_FEATURES DESCRIPTION "Enabled features:")
 feature_summary(WHAT DISABLED_FEATURES DESCRIPTION "Disabled features:")

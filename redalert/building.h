@@ -216,6 +216,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     BuildingClass(StructType type, HousesType house);
 #ifdef FIXIT_MULTI_SAVE
     BuildingClass(NoInitClass const& x)
@@ -363,7 +366,7 @@ public:
     */
     static void Read_INI(CCINIClass& ini);
     static void Write_INI(CCINIClass& ini);
-    static char* INI_Name(void)
+    static const char* INI_Name(void)
     {
         return "STRUCTURES";
     };

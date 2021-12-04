@@ -59,6 +59,13 @@
 #include "function.h"
 #include "ipx95.h"
 
+// temp until more work is done merging the networking code between games.
+#if 0 // Comment as wsproto implements another version for now -mrparrot
+void Process_Network()
+{
+}
+#endif
+
 /***************************************************************************
  * IPX_SPX_Installed -- checks for installation of IPX/SPX                 *
  *                                                                         *

@@ -82,7 +82,7 @@ public:
     */
     void Read_INI(CCINIClass& ini);
     void Write_INI(CCINIClass& ini);
-    static char* INI_Name(void)
+    static const char* INI_Name(void)
     {
         return "Base";
     }

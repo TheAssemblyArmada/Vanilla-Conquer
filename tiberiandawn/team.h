@@ -191,6 +191,9 @@ public:
         return (ptr);
     };
     static void* operator new(size_t size);
+    static void operator delete(void*, void*)
+    {
+    }
     static void Init(void);
     static void Suspend_Teams(int priority);
 

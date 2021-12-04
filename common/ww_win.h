@@ -85,7 +85,7 @@ extern unsigned int WinW;
 extern unsigned int Window;
 
 extern int MoreOn;
-extern char* TXT_MoreText;
+extern const char* TXT_MoreText;
 
 extern void (*Window_More_Ptr)(char const*, int, int, int);
 

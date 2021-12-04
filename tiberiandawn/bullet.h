@@ -72,6 +72,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     BulletClass(void);
     BulletClass(BulletType id);
     BulletClass(NoInitClass const& x)

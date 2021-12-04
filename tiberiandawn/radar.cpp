@@ -182,7 +182,7 @@ void RadarClass::Init_Clear(void)
     ** If we have a valid map lets make sure that we set it correctly
     */
     if (MapCellWidth || MapCellHeight) {
-        IsZoomed = false;
+        IsZoomed = true;
         Zoom_Mode(Coord_Cell(Map.TacticalCoord));
     }
 }
@@ -273,7 +273,7 @@ bool RadarClass::Radar_Activate(int control)
 
     case 2:
         if (GameToPlay == GAME_NORMAL) {
-            Map.Zoom.Disable();
+            Map.Zoom->Disable();
         }
         IsRadarActive = false;
         IsRadarActivating = false;
@@ -282,7 +282,7 @@ bool RadarClass::Radar_Activate(int control)
 
     case 3:
         if (GameToPlay == GAME_NORMAL) {
-            Map.Zoom.Enable();
+            Map.Zoom->Enable();
         }
         IsRadarActive = true;
         IsRadarActivating = false;
@@ -515,7 +515,7 @@ void RadarClass::Render_Terrain(CELL cell, int x, int y, int size)
     */
     for (lp = 0; lp < 3; lp++) {
         obj = Map[cell].Overlapper[lp];
-        if (obj && obj->What_Am_I() == RTTI_TERRAIN)
+        if (obj && obj->IsActive && obj->What_Am_I() == RTTI_TERRAIN)
             list[listidx++] = (TerrainClass*)obj;
     }
 
@@ -994,6 +994,10 @@ bool RadarClass::Map_Cell(CELL cell, HouseClass* house, bool and_for_allies)
 
 void RadarClass::Cursor_Cell(CELL cell, int value)
 {
+    /* Radar seem to crash on some clicks because it get cell = -1 */
+    if (cell < 0)
+        return;
+
     int temp = (*this)[cell].IsRadarCursor;
 
     /*

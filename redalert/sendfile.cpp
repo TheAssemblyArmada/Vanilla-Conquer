@@ -38,13 +38,14 @@
  *                                                                         				*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#if (0) // PG
+#ifndef REMASTER_BUILD
 #include "function.h"
-
+#include "textbtn.h"
+#include "gauge.h"
 //#include "WolDebug.h"
 
 #ifdef WINSOCK_IPX
-#include "WSProto.h"
+#include "wsproto.h"
 #else
 
 #ifdef _WIN32
@@ -86,11 +87,8 @@ bool Get_Scenario_File_From_Host(char* return_name, int gametype)
 
     unsigned int file_length;
 
-    SerialPacketType send_packet;
-    SerialPacketType receive_packet;
     GlobalPacketType net_send_packet;
     GlobalPacketType net_receive_packet;
-    unsigned int packet_len;
     unsigned short product_id;
 
     IPXAddressClass sender_address;
@@ -101,14 +99,13 @@ bool Get_Scenario_File_From_Host(char* return_name, int gametype)
     ** Send the scenario request using guaranteed delivery.
     */
     if (!gametype) {
-        memset((void*)&send_packet, 0, sizeof(send_packet));
-        send_packet.Command = SERIAL_REQ_SCENARIO;
-        NullModem.Send_Message(&send_packet, sizeof(send_packet), 1);
-    } else {
-        memset((void*)&net_send_packet, 0, sizeof(net_send_packet));
-        net_send_packet.Command = NET_REQ_SCENARIO;
-        Ipx.Send_Global_Message(&net_send_packet, sizeof(net_send_packet), 1, &(Session.HostAddress));
+        // Was Nullmodem related stuff.
+        return false;
     }
+
+    memset((void*)&net_send_packet, 0, sizeof(net_send_packet));
+    net_send_packet.Command = NET_REQ_SCENARIO;
+    Ipx.Send_Global_Message(&net_send_packet, sizeof(net_send_packet), 1, &(Session.HostAddress));
 
     // WWDebugString ("RA95 - Waiting for response from host\n");
 
@@ -116,41 +113,27 @@ bool Get_Scenario_File_From_Host(char* return_name, int gametype)
     ** Wait for host to respond with a file info packet
     */
     response_timer = RESPONSE_TIMEOUT;
-    if (!gametype) {
-        do {
-            NullModem.Service();
 
-            if (NullModem.Get_Message((void*)&receive_packet, (int*)&packet_len) > 0) {
-
-                if (receive_packet.Command == SERIAL_FILE_INFO) {
-                    strcpy(return_name, receive_packet.ScenarioInfo.ShortFileName);
-                    file_length = receive_packet.ScenarioInfo.FileLength;
-                    break;
-                }
-            }
-        } while (response_timer);
-    } else {
-        do {
-            Ipx.Service();
-            int receive_packet_length = sizeof(net_receive_packet);
-            if (Ipx.Get_Global_Message(&net_receive_packet, &receive_packet_length, &sender_address, &product_id)) {
+    do {
+        Ipx.Service();
+        int receive_packet_length = sizeof(net_receive_packet);
+        if (Ipx.Get_Global_Message(&net_receive_packet, &receive_packet_length, &sender_address, &product_id)) {
 
 // WWDebugString ("RA95 - Got packet from host\n");
 #ifdef WINSOCK_IPX
-                if (net_receive_packet.Command == NET_FILE_INFO && sender_address == Session.HostAddress) {
+            if (net_receive_packet.Command == NET_FILE_INFO && sender_address == Session.HostAddress) {
 #else  // WINSOCK_IPX
-                if (net_receive_packet.Command == NET_FILE_INFO
-                    && (Winsock.Get_Connected() || sender_address == Session.HostAddress)) {
+            if (net_receive_packet.Command == NET_FILE_INFO
+                && (Winsock.Get_Connected() || sender_address == Session.HostAddress)) {
 #endif // WINSOCK_IPX
-                    strcpy(return_name, net_receive_packet.ScenarioInfo.ShortFileName);
-                    file_length = net_receive_packet.ScenarioInfo.FileLength;
-                    // WWDebugString ("RA95 - Got file info packet from host\n");
-                    break;
-                }
+                strcpy(return_name, net_receive_packet.ScenarioInfo.ShortFileName);
+                file_length = net_receive_packet.ScenarioInfo.FileLength;
+                // WWDebugString ("RA95 - Got file info packet from host\n");
+                break;
             }
+        }
 
-        } while (response_timer);
-    }
+    } while (response_timer);
 
     // char rt[80];
     // sprintf (rt, "RA95 - response_timer = %d\n", response_timer );
@@ -189,7 +172,6 @@ bool Get_Scenario_File_From_Host(char* return_name, int gametype)
  *=============================================================================================*/
 bool Receive_Remote_File(char* file_name, unsigned int file_length, int gametype)
 {
-
     // WWDebugString ("RA95 - In Receive_Remote_File\n");
     unsigned short product_id;
     IPXAddressClass sender_address;
@@ -329,7 +311,7 @@ bool Receive_Remote_File(char* file_name, unsigned int file_length, int gametype
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = REDRAW_ALL;
         }
 
@@ -342,7 +324,7 @@ bool Receive_Remote_File(char* file_name, unsigned int file_length, int gametype
                 ** Redraw backgound & dialog box
                 */
                 Load_Title_Page(true);
-                Set_Palette(CCPalette);
+                CCPalette.Set();
 
                 Dialog_Box(d_dialog_x, d_dialog_y, d_dialog_w, d_dialog_h);
 
@@ -374,68 +356,42 @@ bool Receive_Remote_File(char* file_name, unsigned int file_length, int gametype
         }
 
         if (!gametype) {
-            NullModem.Service();
+            // Was null modem stuff.
+            return_code = false;
+            break;
+        }
 
-            if (NullModem.Get_Message((void*)&receive_packet, (int*)&packet_len) > 0) {
+        Ipx.Service();
 
-                if (receive_packet.Command == NET_FILE_CHUNK) {
-
-                    if (receive_packet.BlockNumber == last_received_block + 1) {
-
-                        save_file.Write(receive_packet.RawData, receive_packet.BlockLength);
-                        total_length += receive_packet.BlockLength;
-                        last_received_block++;
-
-                        update_time++;
-                        if (update_time > 7) {
-                            progress_meter.Set_Value((total_length * 100) / file_length);
-                            display = REDRAW_PROGRESS;
-                            update_time = 0;
-                            ;
-                        }
-
-                        if (total_length >= file_length) {
-                            process = false;
-                            return_code = true;
-                            progress_meter.Set_Value(100);
-                            progress_meter.Draw_Me(true);
-                        }
-                    }
-                }
-            }
-        } else {
-            Ipx.Service();
-
-            int receive_packet_len = sizeof(receive_packet);
-            if (Ipx.Get_Global_Message(&receive_packet, &receive_packet_len, &sender_address, &product_id)) {
+        int receive_packet_len = sizeof(receive_packet);
+        if (Ipx.Get_Global_Message(&receive_packet, &receive_packet_len, &sender_address, &product_id)) {
 
 #ifdef WINSOCK_IPX
-                if (receive_packet.Command == NET_FILE_CHUNK && sender_address == Session.HostAddress) {
+            if (receive_packet.Command == NET_FILE_CHUNK && sender_address == Session.HostAddress) {
 #else  // WINSOCK_IPX
-                if (receive_packet.Command == NET_FILE_CHUNK
-                    && (Winsock.Get_Connected() || sender_address == Session.HostAddress)) {
+            if (receive_packet.Command == NET_FILE_CHUNK
+                && (Winsock.Get_Connected() || sender_address == Session.HostAddress)) {
 #endif // WINSOCK_IPX
 
-                    if (receive_packet.BlockNumber == last_received_block + 1) {
+                if (receive_packet.BlockNumber == last_received_block + 1) {
 
-                        save_file.Write(receive_packet.RawData, receive_packet.BlockLength);
-                        total_length += receive_packet.BlockLength;
-                        last_received_block++;
+                    save_file.Write(receive_packet.RawData, receive_packet.BlockLength);
+                    total_length += receive_packet.BlockLength;
+                    last_received_block++;
 
-                        update_time++;
-                        if (update_time > 7) {
-                            progress_meter.Set_Value((total_length * 100) / file_length);
-                            display = REDRAW_PROGRESS;
-                            update_time = 0;
-                            ;
-                        }
+                    update_time++;
+                    if (update_time > 7) {
+                        progress_meter.Set_Value((total_length * 100) / file_length);
+                        display = REDRAW_PROGRESS;
+                        update_time = 0;
+                        ;
+                    }
 
-                        if (total_length >= file_length) {
-                            process = false;
-                            return_code = true;
-                            progress_meter.Set_Value(100);
-                            progress_meter.Draw_Me(true);
-                        }
+                    if (total_length >= file_length) {
+                        process = false;
+                        return_code = true;
+                        progress_meter.Set_Value(100);
+                        progress_meter.Draw_Me(true);
                     }
                 }
             }
@@ -597,7 +553,6 @@ bool Send_Remote_File(char* file_name, int gametype)
     void* read_ptr;
 
     RemoteFileTransferType send_packet;
-    SerialPacketType file_info;
     GlobalPacketType net_file_info;
 
     CCFileClass send_file(file_name);
@@ -615,56 +570,37 @@ bool Send_Remote_File(char* file_name, int gametype)
     ** Send the file info to the remote machine(s)
     */
     if (!gametype) {
-        file_info.Command = SERIAL_FILE_INFO;
-        strcpy(&file_info.ScenarioInfo.ShortFileName[0], file_name);
-#ifdef FIXIT_VERSION_3
-        //	If we're sending an official map, always send it to 'download.tmp'.
-        if (Is_Mission_Counterstrike(file_name) || Is_Mission_Aftermath(file_name)) {
-            strcpy(&file_info.ScenarioInfo.ShortFileName[0], "DOWNLOAD.TMP");
-        }
-#else
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-        // If we're sending an Aftermath map, always send it to 'download.tmp'.
-        if (Is_Mission_Aftermath(file_name)) {
-            strcpy(&file_info.ScenarioInfo.ShortFileName[0], "DOWNLOAD.TMP");
-        }
-#endif
-#endif
-        file_info.ScenarioInfo.FileLength = file_length;
-        NullModem.Send_Message(&file_info, sizeof(file_info), 1);
-        while (NullModem.Num_Send() > 0 && response_timer) {
-            NullModem.Service();
-        }
-    } else {
-        net_file_info.Command = NET_FILE_INFO;
-        strcpy(&net_file_info.ScenarioInfo.ShortFileName[0], file_name);
+        return false;
+    }
+
+    net_file_info.Command = NET_FILE_INFO;
+    strcpy(&net_file_info.ScenarioInfo.ShortFileName[0], file_name);
 //		debugprint( "Uploading '%s'\n", file_name );
 #ifdef FIXIT_VERSION_3
-        //	If we're sending an official map, always send it to 'download.tmp'.
-        if (Is_Mission_Counterstrike(file_name) || Is_Mission_Aftermath(file_name)) {
-            strcpy(&net_file_info.ScenarioInfo.ShortFileName[0], "DOWNLOAD.TMP");
-        }
+    //	If we're sending an official map, always send it to 'download.tmp'.
+    if (Is_Mission_Counterstrike(file_name) || Is_Mission_Aftermath(file_name)) {
+        strcpy(&net_file_info.ScenarioInfo.ShortFileName[0], "DOWNLOAD.TMP");
+    }
 #else
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-        // If we're sending an Aftermath map, always send it to 'download.tmp'.
-        if (Is_Mission_Aftermath(file_name)) {
-            strcpy(&file_info.ScenarioInfo.ShortFileName[0], "DOWNLOAD.TMP");
-            //	There was a bug here: s/b net_file_info. This means that players that don't have Aftermath could have
-            //been 	accumulating Aftermath maps all this time!!! (File wasn't getting renamed to "DOWNLOAD.TMP".)
-        }
+    // If we're sending an Aftermath map, always send it to 'download.tmp'.
+    if (Is_Mission_Aftermath(file_name)) {
+        strcpy(&file_info.ScenarioInfo.ShortFileName[0], "DOWNLOAD.TMP");
+        //	There was a bug here: s/b net_file_info. This means that players that don't have Aftermath could have
+        //been 	accumulating Aftermath maps all this time!!! (File wasn't getting renamed to "DOWNLOAD.TMP".)
+    }
 #endif
 #endif
-        //		debugprint( "ShortFileName is '%s'\n", net_file_info.ScenarioInfo.ShortFileName );
-        net_file_info.ScenarioInfo.FileLength = file_length;
+    //		debugprint( "ShortFileName is '%s'\n", net_file_info.ScenarioInfo.ShortFileName );
+    net_file_info.ScenarioInfo.FileLength = file_length;
 
-        for (int i = 0; i < Session.RequestCount; i++) {
-            Ipx.Send_Global_Message(
-                &net_file_info, sizeof(GlobalPacketType), 1, &(Session.Players[Session.ScenarioRequests[i]]->Address));
-        }
+    for (int i = 0; i < Session.RequestCount; i++) {
+        Ipx.Send_Global_Message(
+            &net_file_info, sizeof(GlobalPacketType), 1, &(Session.Players[Session.ScenarioRequests[i]]->Address));
+    }
 
-        while (Ipx.Global_Num_Send() > 0 && response_timer) {
-            Ipx.Service();
-        }
+    while (Ipx.Global_Num_Send() > 0 && response_timer) {
+        Ipx.Service();
     }
 
     max_chunk_size = MAX_SEND_FILE_PACKET_SIZE;
@@ -688,7 +624,7 @@ bool Send_Remote_File(char* file_name, int gametype)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = REDRAW_ALL;
         }
 
@@ -701,7 +637,7 @@ bool Send_Remote_File(char* file_name, int gametype)
                 ** Redraw backgound & dialog box
                 */
                 Load_Title_Page(true);
-                Set_Palette(CCPalette);
+                CCPalette.Set();
 
                 Dialog_Box(d_dialog_x, d_dialog_y, d_dialog_w, d_dialog_h);
 
@@ -732,85 +668,45 @@ bool Send_Remote_File(char* file_name, int gametype)
             display = REDRAW_NONE;
         }
 
-        if (!gametype) {
-            NullModem.Service();
+        Ipx.Service();
 
-            if (block_number < total_blocks) {
+        if (block_number < total_blocks) {
 
-                if (NullModem.Num_Send() < 2) {
+            if (Ipx.Global_Num_Send() == 0) {
 
-                    send_packet.Command = SERIAL_FILE_CHUNK;
-                    send_packet.BlockNumber = block_number;
-                    send_packet.BlockLength = MIN(file_length, max_chunk_size);
+                send_packet.Command = SERIAL_FILE_CHUNK;
+                send_packet.BlockNumber = block_number;
+                send_packet.BlockLength = MIN(file_length, max_chunk_size);
 
-                    file_length -= send_packet.BlockLength;
+                file_length -= send_packet.BlockLength;
 
-                    read_ptr = &send_packet.RawData[0];
+                read_ptr = &send_packet.RawData[0];
 
-                    if (send_file.Read(read_ptr, send_packet.BlockLength) == send_packet.BlockLength) {
-                        NullModem.Send_Message((void*)&send_packet, sizeof(send_packet), 1);
-                    }
-
-                    block_number++;
-
-                    update_time++;
-                    if (update_time > 7) {
-                        progress_meter.Set_Value((block_number * 100) / total_blocks);
-                        display = REDRAW_PROGRESS;
-                        update_time = 0;
-                        ;
+                if (send_file.Read(read_ptr, send_packet.BlockLength) == send_packet.BlockLength) {
+                    for (int i = 0; i < Session.RequestCount; i++) {
+                        Ipx.Send_Global_Message(&send_packet,
+                                                sizeof(send_packet),
+                                                1,
+                                                &(Session.Players[Session.ScenarioRequests[i]]->Address));
                     }
                 }
-            } else {
-                if (NullModem.Num_Send() == 0) {
-                    process = false;
-                    return_code = true;
-                    progress_meter.Set_Value(100);
-                    progress_meter.Draw_Me(true);
+
+                block_number++;
+
+                update_time++;
+                if (update_time > 7) {
+                    progress_meter.Set_Value((block_number * 100) / total_blocks);
+                    display = REDRAW_PROGRESS;
+                    update_time = 0;
+                    ;
                 }
             }
-
         } else {
-            Ipx.Service();
-
-            if (block_number < total_blocks) {
-
-                if (Ipx.Global_Num_Send() == 0) {
-
-                    send_packet.Command = SERIAL_FILE_CHUNK;
-                    send_packet.BlockNumber = block_number;
-                    send_packet.BlockLength = MIN(file_length, max_chunk_size);
-
-                    file_length -= send_packet.BlockLength;
-
-                    read_ptr = &send_packet.RawData[0];
-
-                    if (send_file.Read(read_ptr, send_packet.BlockLength) == send_packet.BlockLength) {
-                        for (int i = 0; i < Session.RequestCount; i++) {
-                            Ipx.Send_Global_Message(&send_packet,
-                                                    sizeof(send_packet),
-                                                    1,
-                                                    &(Session.Players[Session.ScenarioRequests[i]]->Address));
-                        }
-                    }
-
-                    block_number++;
-
-                    update_time++;
-                    if (update_time > 7) {
-                        progress_meter.Set_Value((block_number * 100) / total_blocks);
-                        display = REDRAW_PROGRESS;
-                        update_time = 0;
-                        ;
-                    }
-                }
-            } else {
-                if (Ipx.Global_Num_Send() == 0) {
-                    process = false;
-                    return_code = true;
-                    progress_meter.Set_Value(100);
-                    progress_meter.Draw_Me(true);
-                }
+            if (Ipx.Global_Num_Send() == 0) {
+                process = false;
+                return_code = true;
+                progress_meter.Set_Value(100);
+                progress_meter.Draw_Me(true);
             }
         }
 

@@ -232,7 +232,7 @@ int Com_Scenario_Dialog(void)
     void const* up_button;
     void const* down_button;
 
-    if (InMainLoop) {
+    if (InMainLoop || factor == 1) {
         up_button = Hires_Retrieve("BTN-UP.SHP");
         down_button = Hires_Retrieve("BTN-DN.SHP");
     } else {
@@ -423,7 +423,7 @@ int Com_Scenario_Dialog(void)
     srand((unsigned)time(NULL));
     Seed = rand();
 
-    Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+    Load_Title_Screen(TitlePicture, &HidPage, Palette);
     Blit_Hid_Page_To_Seen_Buff();
     Set_Palette(Palette);
 
@@ -943,7 +943,7 @@ int Com_Scenario_Dialog(void)
     Restore screen
     ------------------------------------------------------------------------*/
     Hide_Mouse();
-    Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+    Load_Title_Screen(TitlePicture, &HidPage, Palette);
     Blit_Hid_Page_To_Seen_Buff();
     Show_Mouse();
 

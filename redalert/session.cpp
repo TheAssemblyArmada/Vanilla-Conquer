@@ -90,21 +90,21 @@ char SessionClass::Descriptions[100][40];
 // These values are used purely for the Mono debug display.  They show the
 // names of the Global Channel packet types, and the event types.
 //---------------------------------------------------------------------------
-char* SessionClass::GlobalPacketNames[] = {"Game?",
-                                           "Game!",
-                                           "Player?",
-                                           "Player!",
-                                           "Join?",
-                                           "Join!",
-                                           "Reject",
-                                           "GameOptions",
-                                           "Sign Off",
-                                           "GO!",
-                                           "Message",
-                                           "Ping",
-                                           "Load"};
+const char* SessionClass::GlobalPacketNames[] = {"Game?",
+                                                 "Game!",
+                                                 "Player?",
+                                                 "Player!",
+                                                 "Join?",
+                                                 "Join!",
+                                                 "Reject",
+                                                 "GameOptions",
+                                                 "Sign Off",
+                                                 "GO!",
+                                                 "Message",
+                                                 "Ping",
+                                                 "Load"};
 
-char* SessionClass::SerialPacketNames[] = {
+const char* SessionClass::SerialPacketNames[] = {
     "CONNECT",
     "GAME_OPTIONS",
     "SIGN_OFF",
@@ -116,9 +116,12 @@ char* SessionClass::SerialPacketNames[] = {
     "LAST_COMMAND",
 };
 
-char* SessionClass::DialMethodCheck[DIAL_METHODS] = {"T", "P"};
+const char* SessionClass::DialMethodCheck[DIAL_METHODS] = {"T", "P"};
 
-char* SessionClass::CallWaitStrings[CALL_WAIT_STRINGS_NUM] = {"*70,", "70#,", "1170,", "CUSTOM -                "};
+const char* SessionClass::CallWaitStrings[CALL_WAIT_STRINGS_NUM] = {"*70,",
+                                                                    "70#,",
+                                                                    "1170,",
+                                                                    "CUSTOM -                "};
 
 /***************************************************************************
  * SessionClass::SessionClass -- Constructor                               *
@@ -293,7 +296,7 @@ void SessionClass::Init(void)
  *=========================================================================*/
 int SessionClass::Create_Connections(void)
 {
-#if (0) // PG
+#ifndef REMASTER_BUILD
     int i;
 
     if (Session.Type != GAME_IPX && Session.Type != GAME_INTERNET) {
@@ -1051,13 +1054,13 @@ void SessionClass::Trap_Object(void)
  * HISTORY:                                                                *
  *   12/07/1995 BRR : Created.                                             *
  *=========================================================================*/
-unsigned long SessionClass::Compute_Unique_ID(void)
+uint32_t SessionClass::Compute_Unique_ID(void)
 {
+#ifdef REMASTER_BUILD
     return 1; // PG
-#if (0)       // PG
+#else         // PG
     time_t tm;
-    unsigned long id;
-    struct diskfree_t dtable;
+    unsigned int id;
     char* path;
     int i;
 
@@ -1066,16 +1069,6 @@ unsigned long SessionClass::Compute_Unique_ID(void)
     //------------------------------------------------------------------------
     time(&tm);
     id = (unsigned long)tm;
-
-    //------------------------------------------------------------------------
-    // Now add in the free space on the hard drive
-    //------------------------------------------------------------------------
-    if (_dos_getdiskfree(3, &dtable) == 0) {
-        Add_CRC(&id, (unsigned long)dtable.avail_clusters);
-        Add_CRC(&id, (unsigned long)dtable.total_clusters);
-        Add_CRC(&id, (unsigned long)dtable.bytes_per_sector);
-        Add_CRC(&id, (unsigned long)dtable.sectors_per_cluster);
-    }
 
     //------------------------------------------------------------------------
     // Add in every byte in the user's path environment variable

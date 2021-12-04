@@ -364,7 +364,7 @@ TextLabelClass* MessageListClass::Add_Message(char const* name,
         //------------------------------------------------------------------------
         if (name) {
             sprintf(temp, "%s:", name);
-            mess_start = strlen(name) + 1;
+            mess_start = (int)strlen(name) + 1;
         } else {
             mess_start = 0;
         }
@@ -630,7 +630,7 @@ int MessageListClass::Concat_Message(char const* name, int id, char const* txt, 
 
         while (width >= Width - 8) {
 
-            max_chars = strlen(msg);
+            max_chars = (int)strlen(msg);
             if (max_chars < min_chars) {
                 max_chars = min_chars;
             }
@@ -654,8 +654,8 @@ int MessageListClass::Concat_Message(char const* name, int id, char const* txt, 
     // Trim from left to right to remove the minimum required text.
     //------------------------------------------------------------------------
     else {
-        min_chars = (strlen(msg) + strlen(txt)) - MaxChars;
-        max_chars = strlen(msg);
+        min_chars = (int)(strlen(msg) + strlen(txt)) - MaxChars;
+        max_chars = (int)strlen(msg);
         if (max_chars < min_chars) {
             max_chars = min_chars;
         }
@@ -737,7 +737,8 @@ bool MessageListClass::Has_Edit_Focus(void)
  * HISTORY:                                                                *
  *   05/22/1995 BRR : Created.                                             *
  *=========================================================================*/
-TextLabelClass* MessageListClass::Add_Edit(PlayerColorType color, TextPrintType style, char* to, char cursor, int width)
+TextLabelClass*
+MessageListClass::Add_Edit(PlayerColorType color, TextPrintType style, const char* to, char cursor, int width)
 {
     int i;
     TextLabelClass* txtlabel;
@@ -781,7 +782,7 @@ TextLabelClass* MessageListClass::Add_Edit(PlayerColorType color, TextPrintType 
     memset(EditBuf, 0, sizeof(EditBuf));
     strcpy(EditBuf, to);
     OverflowBuf[0] = 0;
-    EditCurPos = EditInitPos = strlen(to);
+    EditCurPos = EditInitPos = (int)strlen(to);
     EditLabel = new TextLabelClass(EditBuf, EditX, EditY, &ColorRemaps[color], style);
 
     Width = width;
@@ -1275,7 +1276,7 @@ int MessageListClass::Trim_Message(char* dest, char* src, int min_chars, int max
         return (0);
     }
 
-    len = strlen(src);
+    len = (int)strlen(src);
     if (max_chars > len) {
         max_chars = len;
     }

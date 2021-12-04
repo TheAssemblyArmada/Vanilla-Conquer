@@ -106,6 +106,7 @@
 #include "defines.h"
 #include "common/irandom.h"
 #include "ccini.h"
+#include "common/fixed.h"
 
 /***********************************************************************************************
  * HouseClass::Validate -- validates house pointer															  *
@@ -488,7 +489,7 @@ HouseClass::HouseClass(HousesType house)
     memset(IQuantity, '\0', sizeof(IQuantity));
     memset(AQuantity, '\0', sizeof(AQuantity));
 
-    Attack = 0;
+    Attack = Rule.AttackDelay * Random_Pick(TICKS_PER_MINUTE / 2, TICKS_PER_MINUTE * 2);
 
     Enemy = HOUSE_NONE;
 
@@ -1117,7 +1118,7 @@ void HouseClass::AI(void)
         **	When the power is below required, then the buildings will take damage over
         **	time.
         */
-        if (Power_Fraction() < 0x100) {
+        if (Power_Fraction() < 1) {
             for (int index = 0; index < Buildings.Count(); index++) {
                 BuildingClass& b = *Buildings.Ptr(index);
 
@@ -1183,7 +1184,7 @@ void HouseClass::AI(void)
                 SpeakMaxedDelay.Set(Options.Normalize_Delay(SPEAK_DELAY));
             }
         }
-        if (SpeakPowerDelay.Expired() && Power_Fraction() < 0x0100) {
+        if (SpeakPowerDelay.Expired() && Power_Fraction() < 1) {
             if (BScan & STRUCTF_CONST) {
                 Speak(VOX_LOW_POWER);
                 SpeakPowerDelay.Set(Options.Normalize_Delay(SPEAK_DELAY));
@@ -1247,7 +1248,7 @@ void HouseClass::AI(void)
             **	Turn the ion cannon suspension on or off depending on the available
             **	power. Note that one time ion cannon will not be affected by this.
             */
-            IonCannon.Suspend(Power_Fraction() < 0x0100);
+            IonCannon.Suspend(Power_Fraction() < 1);
 
             /*
             **	Process the ion cannon AI and if something changed that would affect
@@ -1275,7 +1276,7 @@ void HouseClass::AI(void)
         if ((GameToPlay == GAME_NORMAL || Rule.AllowSuperWeapons) && (ActiveBScan & STRUCTF_EYE)
             && (ActLike == HOUSE_GOOD || GameToPlay != GAME_NORMAL) && (IsHuman || GameToPlay != GAME_NORMAL)) {
 
-            IonCannon.Enable(false, this == PlayerPtr, Power_Fraction() < 0x0100);
+            IonCannon.Enable(false, this == PlayerPtr, Power_Fraction() < 1);
 
             /*
             **	Flag the sidebar to be redrawn if necessary.
@@ -1319,7 +1320,7 @@ void HouseClass::AI(void)
             **	Turn the nuke strike suspension on or off depending on the available
             **	power. Note that one time nuke strike will not be affected by this.
             */
-            NukeStrike.Suspend(Power_Fraction() < 0x0100);
+            NukeStrike.Suspend(Power_Fraction() < 1);
 
             /*
             **	Process the nuke strike AI and if something changed that would affect
@@ -1543,7 +1544,7 @@ void HouseClass::AI(void)
     if (PlayerPtr == this) {
         if (Map.Is_Radar_Active()) {
             if (BScan & (STRUCTF_RADAR | STRUCTF_EYE)) {
-                if (Power_Fraction() < 0x0100) {
+                if (Power_Fraction() < 1) {
                     Map.Radar_Activate(0);
                 }
             } else {
@@ -1551,7 +1552,7 @@ void HouseClass::AI(void)
             }
         } else {
             if (BScan & (STRUCTF_RADAR | STRUCTF_EYE)) {
-                if (Power_Fraction() >= 0x0100) {
+                if (Power_Fraction() >= 1) {
                     Map.Radar_Activate(1);
                 }
             } else {
@@ -3583,7 +3584,7 @@ TechnoTypeClass const* HouseClass::Suggest_New_Object(RTTIType objecttype) const
                     TeamTypeClass const* team = tptr->Class;
 
                     if ((/*team->IsReinforcable || */ !tptr->IsFullStrength) && team->House == Class->House) {
-                        for (int subindex = 0; subindex < team->ClassCount; subindex++) {
+                        for (unsigned subindex = 0; subindex < team->ClassCount; subindex++) {
                             if (team->Class[subindex]->What_Am_I() == RTTI_UNITTYPE) {
                                 counter[((UnitTypeClass const*)(team->Class[subindex]))->Type] = 1;
                                 //									counter[((UnitTypeClass const *)(team->Class[subindex]))->Type] +=
@@ -3603,7 +3604,7 @@ TechnoTypeClass const* HouseClass::Suggest_New_Object(RTTIType objecttype) const
                 TeamTypeClass const* team = TeamTypes.Ptr(index);
                 if (team) {
                     if (team->House == Class->House && team->IsPrebuilt && (!team->IsAutocreate || IsAlerted)) {
-                        for (int subindex = 0; subindex < team->ClassCount; subindex++) {
+                        for (unsigned subindex = 0; subindex < team->ClassCount; subindex++) {
                             if (team->Class[subindex]->What_Am_I() == RTTI_UNITTYPE) {
                                 int subtype = ((UnitTypeClass const*)(team->Class[subindex]))->Type;
                                 counter[subtype] = MAX(counter[subtype], (int)team->DesiredNum[subindex]);
@@ -3684,7 +3685,7 @@ TechnoTypeClass const* HouseClass::Suggest_New_Object(RTTIType objecttype) const
                     TeamTypeClass const* team = tptr->Class;
 
                     if ((team->IsReinforcable || !tptr->IsFullStrength) && team->House == Class->House) {
-                        for (int subindex = 0; subindex < team->ClassCount; subindex++) {
+                        for (unsigned subindex = 0; subindex < team->ClassCount; subindex++) {
                             if (team->Class[subindex]->What_Am_I() == RTTI_INFANTRYTYPE) {
                                 counter[((InfantryTypeClass const*)(team->Class[subindex]))->Type] +=
                                     team->DesiredNum[subindex] + 1;
@@ -3703,7 +3704,7 @@ TechnoTypeClass const* HouseClass::Suggest_New_Object(RTTIType objecttype) const
                 TeamTypeClass const* team = TeamTypes.Ptr(index);
                 if (team) {
                     if (team->House == Class->House && team->IsPrebuilt && (!team->IsAutocreate || IsAlerted)) {
-                        for (int subindex = 0; subindex < team->ClassCount; subindex++) {
+                        for (unsigned subindex = 0; subindex < team->ClassCount; subindex++) {
                             if (team->Class[subindex]->What_Am_I() == RTTI_INFANTRYTYPE) {
                                 int subtype = ((InfantryTypeClass const*)(team->Class[subindex]))->Type;
                                 //									counter[subtype] = 1;
@@ -4643,15 +4644,14 @@ void HouseClass::Init_Data(PlayerColorType color, HousesType house, int credits)
  * HISTORY:                                                                                    *
  *   07/22/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int HouseClass::Power_Fraction(void) const
+fixed HouseClass::Power_Fraction(void) const
 {
     Validate();
+    if (Power >= Drain || Drain == 0)
+        return (1);
+
     if (Power) {
-        if (Drain) {
-            return (Cardinal_To_Fixed(Drain, Power));
-        } else {
-            return (0x0100);
-        }
+        return (fixed(Power, Drain));
     }
     return (0);
 }
@@ -4955,27 +4955,6 @@ inline bool Percent_Chance(int percent)
 #define INFANTRY_RENOVATOR INFANTRY_E7
 
 TFixedIHeapClass<HouseClass::BuildChoiceClass> HouseClass::BuildChoice;
-
-/*
-** This is a replacement for the RA 'fixed' round up function. It takes the equivalent of a 'fixed' value, but returns
-*just the integer part
-** ST - 7/26/2019 11:13AM
-*/
-unsigned short Round_Up(unsigned short val)
-{
-    if ((val & 0xff) == 0) {
-        return val;
-    }
-    val &= 0xff00;
-    val += 0x0100;
-    val >>= 8;
-    return val;
-}
-
-unsigned short fixed(int val)
-{
-    return (unsigned short)val;
-}
 
 /***********************************************************************************************
  * HouseClass::Suggest_New_Building -- Examines the situation and suggests a building.         *
@@ -5619,20 +5598,19 @@ UrgencyType HouseClass::Check_Build_Power(void) const
 {
     // assert(Houses.ID(this) == ID);
 
-    // fixed frac = Power_Fraction();
-    int frac = Power_Fraction();
+    fixed frac = Power_Fraction();
 
     UrgencyType urgency = URGENCY_NONE;
 
     // if (frac < 1 && Can_Make_Money()) {
-    if (frac < 0x0100 && Can_Make_Money()) {
+    if (frac < 1 && Can_Make_Money()) {
         urgency = URGENCY_LOW;
 
         /*
         **	Very low power condition is considered a higher priority.
         */
         // if (frac < fixed::_3_4) urgency = URGENCY_MEDIUM;
-        if (frac < 0x00C0)
+        if (frac < fixed::_3_4)
             urgency = URGENCY_MEDIUM;
 
         /*
@@ -6590,7 +6568,7 @@ int HouseClass::AI_Unit(void)
             if (((team->IsReinforcable && !tptr->IsFullStrength)
                  || (!tptr->IsForcedActive && !tptr->IsHasBeen && !tptr->IsAltered))
                 && team->House == Class->House) {
-                for (int subindex = 0; subindex < team->ClassCount; subindex++) {
+                for (unsigned subindex = 0; subindex < team->ClassCount; subindex++) {
                     // TechnoTypeClass const * memtype = team->Members[subindex].Class;
                     TechnoTypeClass const* memtype = team->Class[subindex];
                     if (memtype->What_Am_I() == RTTI_UNITTYPE) {
@@ -6609,7 +6587,7 @@ int HouseClass::AI_Unit(void)
     for (index = 0; index < TeamTypes.Count(); index++) {
         TeamTypeClass const* team = TeamTypes.Ptr(index);
         if (team != NULL && team->House == Class->House && team->IsPrebuilt && (!team->IsAutocreate || IsAlerted)) {
-            for (int subindex = 0; subindex < team->ClassCount; subindex++) {
+            for (unsigned subindex = 0; subindex < team->ClassCount; subindex++) {
                 // TechnoTypeClass const * memtype = team->Members[subindex].Class;
                 TechnoTypeClass const* memtype = team->Class[subindex];
 

@@ -92,8 +92,16 @@
 //	Warning - Most disgusting cpp file of all time. ajw
 
 #include "function.h"
+#include "common/framelimit.h"
+#include "colrlist.h"
+#include "cheklist.h"
+#include "drop.h"
+#include "edit.h"
+#include "msgbox.h"
+#include "statbtn.h"
+#include "textbtn.h"
 
-// PG Stubs
+#ifdef REMASTER_BUILD // PG Stubs
 void Destroy_Connection(int, int)
 {
 }
@@ -120,8 +128,9 @@ bool Remote_Connect(void)
 void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned long timeval)
 {
 }
+#endif
 
-#ifdef _WIN32
+#ifdef NETWORK
 #ifdef WINSOCK_IPX
 #include "wsproto.h"
 #else // WINSOCK_IPX
@@ -1371,7 +1380,7 @@ char const* EngMisStr[] = {
     NULL};
 #endif
 
-#if (0) // PG
+#ifndef REMASTER_BUILD // PG
 /*
 ******************************** Prototypes *********************************
 */
@@ -2294,7 +2303,7 @@ static int Net_Join_Dialog(void)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = REDRAW_ALL;
         }
 
@@ -3060,8 +3069,8 @@ static int Net_Join_Dialog(void)
                     if (!check_file.Is_Available()) {
 
                         int current_drive = CCFileClass::Get_CD_Drive();
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-                        int index = Get_CD_Index(current_drive, 1 * 60);
+#ifdef FIXIT_CSII                       //	checked - ajw 9/28/98
+                        int index = -1; /* Get_CD_Index(current_drive, 1 * 60); */
                         bool needcd = false;
                         if (Is_Mission_Counterstrike(Session.ScenarioFileName)) {
                             if (index != 2 && index != 3) {
@@ -3466,7 +3475,7 @@ static int Net_Join_Dialog(void)
         //	so Call_Back() doesn't intercept global messages from me!
         //.....................................................................
         Call_Back();
-
+        Frame_Limiter();
     } // end of while
 
     //------------------------------------------------------------------------
@@ -4587,8 +4596,6 @@ static JoinEventType Get_Join_Responses(JoinStateType* joinstate,
  *=============================================================================================*/
 static int Net_New_Dialog(void)
 {
-    return 0; // PG
-#if (0)
     typedef enum
     {
         NUM_MESSAGES = 10
@@ -4989,7 +4996,7 @@ static int Net_New_Dialog(void)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = REDRAW_ALL;
         }
 
@@ -5287,7 +5294,6 @@ static int Net_New_Dialog(void)
                                                             Session.Options.UnitCount - SessionClass::CountMin[0]))
                         + SessionClass::CountMin[1];
                 } else {
-                    optionlist.Check_Item(3, false);
                     Session.Options.UnitCount =
                         Fixed_To_Cardinal(SessionClass::CountMax[0] - SessionClass::CountMin[0],
                                           Cardinal_To_Fixed(SessionClass::CountMax[1] - SessionClass::CountMin[1],
@@ -5313,7 +5319,7 @@ static int Net_New_Dialog(void)
             break;
 
         //..................................................................
-        //	OK: exit loop with TRUE status
+        //	OK: exit loop with true status
         //..................................................................
         case (BUTTON_LOAD | KN_BUTTON):
         case (BUTTON_OK | KN_BUTTON):
@@ -5332,8 +5338,8 @@ static int Net_New_Dialog(void)
             //...............................................................
             if (Session.Players.Count() > 1) {
                 //				if (Session.Players.Count() + Session.Options.AIPlayers > 1 ) {
-                rc = TRUE;
-                process = FALSE;
+                rc = true;
+                process = false;
             } else {
                 Session.Messages.Add_Message(NULL, 0, (char*)Text_String(TXT_ONLY_ONE), PCOLOR_BROWN, TPF_TEXT, 1200);
                 Sound_Effect(VOC_SYS_ERROR);
@@ -5630,6 +5636,7 @@ static int Net_New_Dialog(void)
         //	so Call_Back() doesn't intercept global messages from me!
         //.....................................................................
         Call_Back();
+        Frame_Limiter();
     }
 
     //------------------------------------------------------------------------
@@ -5787,7 +5794,6 @@ static int Net_New_Dialog(void)
     //	}
 
     return (rc);
-#endif
 } /* end of Net_New_Dialog */
 
 /***************************************************************************
@@ -6112,7 +6118,7 @@ static JoinEventType Get_NewGame_Responses(ColorListClass* playerlist, int* colo
 unsigned long Compute_Name_CRC(char* name)
 {
     char buf[80];
-    unsigned long crc = 0L;
+    unsigned int crc = 0;
     int i;
 
     strcpy(buf, name);
@@ -6168,7 +6174,7 @@ void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned long
     ** we need to redraw.
     */
     if (AllSurfaces.SurfacesRestored) {
-        AllSurfaces.SurfacesRestored = FALSE;
+        AllSurfaces.SurfacesRestored = false;
         fresh = true;
     }
 
@@ -7904,7 +7910,7 @@ void Log_Message(char* msg)
 
 #ifndef WOLAPI_INTEGRATION //	Rest of file ifdeffed out.
 
-extern bool Spawn_WChat(bool can_launch);
+// extern bool Spawn_WChat(bool can_launch);
 
 /***********************************************************************************************
  * Net_Fake_New_Dialog -- lets user start a new game                                           *
@@ -8148,7 +8154,7 @@ static int Net_Fake_New_Dialog(void)
                 focus_timer = 5 * 60;
             }
         } while (!GameInFocus);
-        AllSurfaces.SurfacesRestored = FALSE;
+        AllSurfaces.SurfacesRestored = false;
     }
 
     who = new NodeNameType;
@@ -8178,7 +8184,7 @@ static int Net_Fake_New_Dialog(void)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = REDRAW_ALL;
         }
 #endif
@@ -8257,9 +8263,9 @@ static int Net_Fake_New_Dialog(void)
             Session.GameName[0] = 0;
             process = false;
             rc = false;
-            Send_Data_To_DDE_Server("Hello", strlen("Hello"), DDEServerClass::DDE_CONNECTION_FAILED);
+            // Send_Data_To_DDE_Server("Hello", strlen("Hello"), DDEServerClass::DDE_CONNECTION_FAILED);
             GameStatisticsPacketSent = false;
-            Spawn_WChat(false);
+            // Spawn_WChat(false);
             break;
 
         //..................................................................
@@ -8295,8 +8301,8 @@ static int Net_Fake_New_Dialog(void)
                 //	If there are at least 2 players, go ahead & play; error otherwise
                 //...............................................................
                 if (Session.Solo || Session.Players.Count() > 1 || Session.Options.Ghosts) {
-                    rc = TRUE;
-                    process = FALSE;
+                    rc = true;
+                    process = false;
                 } else {
                     WWMessageBox().Process(TXT_ONLY_ONE, TXT_OOPS, NULL);
                     display = REDRAW_ALL;
@@ -8357,7 +8363,7 @@ static int Net_Fake_New_Dialog(void)
                         if (toupper(Session.ScenarioFileName[2]) == 'M') {
 
                             int current_drive = CCFileClass::Get_CD_Drive();
-                            int index = Get_CD_Index(current_drive, 1 * 60);
+                            int index = -1; /* Get_CD_Index(current_drive, 1 * 60); */
                             bool needcd = false;
                             if (Is_Mission_Counterstrike(Session.ScenarioFileName) && index != 2 && index != 3) {
                                 needcd = true;
@@ -8492,6 +8498,7 @@ static int Net_Fake_New_Dialog(void)
         //	so Call_Back() doesn't intercept global messages from me!
         //.....................................................................
         Call_Back();
+        Frame_Limiter();
     }
 
     //------------------------------------------------------------------------
@@ -8945,7 +8952,7 @@ static int Net_Fake_Join_Dialog(void)
                 focus_timer = 5 * 60;
             }
         } while (!GameInFocus);
-        AllSurfaces.SurfacesRestored = FALSE;
+        AllSurfaces.SurfacesRestored = false;
     }
 
     if (LogicPage != &SeenBuff && LogicPage != &HidPage) {
@@ -8966,7 +8973,7 @@ static int Net_Fake_Join_Dialog(void)
         ** we need to redraw.
         */
         if (AllSurfaces.SurfacesRestored) {
-            AllSurfaces.SurfacesRestored = FALSE;
+            AllSurfaces.SurfacesRestored = false;
             display = REDRAW_ALL;
         }
 #endif
@@ -9077,9 +9084,9 @@ static int Net_Fake_Join_Dialog(void)
                 //............................................................
                 // exit the dialog
                 //............................................................
-                Send_Data_To_DDE_Server("Hello", strlen("Hello"), DDEServerClass::DDE_CONNECTION_FAILED);
+                // Send_Data_To_DDE_Server("Hello", strlen("Hello"), DDEServerClass::DDE_CONNECTION_FAILED);
                 GameStatisticsPacketSent = false;
-                Spawn_WChat(false);
+                // Spawn_WChat(false);
                 process = false;
                 rc = -1;
             }
@@ -9156,8 +9163,8 @@ static int Net_Fake_Join_Dialog(void)
                         if (!check_file.Is_Available()) {
 
                             int current_drive = CCFileClass::Get_CD_Drive();
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-                            int index = Get_CD_Index(current_drive, 1 * 60);
+#ifdef FIXIT_CSII                           //	checked - ajw 9/28/98
+                            int index = -1; /* Get_CD_Index(current_drive, 1 * 60); */
                             bool needcd = false;
                             if (Is_Mission_Counterstrike(Session.ScenarioFileName)) {
                                 if (index != 2 && index != 3) {
@@ -9429,7 +9436,7 @@ static int Net_Fake_Join_Dialog(void)
         //	so Call_Back() doesn't intercept global messages from me!
         //.....................................................................
         Call_Back();
-
+        Frame_Limiter();
     } // end of while
 
     //------------------------------------------------------------------------

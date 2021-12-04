@@ -600,8 +600,9 @@ bool Any_Locked()
  *    4/17/96 9:58AM ST : Created                                                              *
  *=============================================================================================*/
 
-void Assert_Failure(char* expression, int line, char* file)
+void Assert_Failure(const char* expression, int line, const char* file)
 {
+    static char filename[11] = "ASSERT.TXT";
     char assertbuf[256];
     char timebuff[512];
 #ifdef _WIN32
@@ -632,9 +633,9 @@ void Assert_Failure(char* expression, int line, char* file)
             time.wSecond,
             assertbuf);
 
-    HMMIO handle = mmioOpen("ASSERT.TXT", NULL, MMIO_WRITE);
+    HMMIO handle = mmioOpenA(filename, NULL, MMIO_WRITE);
     if (!handle) {
-        handle = mmioOpen("ASSERT.TXT", NULL, MMIO_CREATE | MMIO_WRITE);
+        handle = mmioOpenA(filename, NULL, MMIO_CREATE | MMIO_WRITE);
         // mmioClose(handle, 0);
         // handle = mmioOpen("ASSERT.TXT", NULL, MMIO_WRITE);
     }
@@ -691,18 +692,4 @@ void Memory_Error_Handler(void)
     } while (ReadyToQuit == 1);
 
     exit(1);
-}
-
-#include "filepcx.h"
-void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned char* palette)
-{
-
-    GraphicBufferClass* load_buffer;
-
-    load_buffer = Read_PCX_File(name, (char*)palette, NULL, 0);
-
-    if (load_buffer) {
-        load_buffer->Blit(*video_page);
-        delete load_buffer;
-    }
 }

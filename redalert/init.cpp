@@ -1597,6 +1597,14 @@ bool Parse_Command_Line(int argc, char* argv[])
                     break;
 
                 /*
+                **	Print lots of debug stuff about events & packets
+                */
+                case 'P':
+                    Debug_Print_Events = true;
+                    break;
+#endif
+
+                /*
                 **	"Record" a multi-player game
                 */
                 case 'X':
@@ -1609,14 +1617,6 @@ bool Parse_Command_Line(int argc, char* argv[])
                 case 'Y':
                     Session.Play = 1;
                     break;
-
-                /*
-                **	Print lots of debug stuff about events & packets
-                */
-                case 'P':
-                    Debug_Print_Events = true;
-                    break;
-#endif
 
                 /*
                 **	Quiet mode override control.
@@ -1993,6 +1993,7 @@ static void Init_Color_Remaps(void)
         ColorRemaps[pcolor].Box = HidPage.Get_Pixel(4, pcolor);
     }
 
+#ifdef REMASTER_BUILD
     /* 12/9/2019 SKY - Swap Blue and Grey color remaps */
     {
         RemapControlType temp;
@@ -2000,6 +2001,7 @@ static void Init_Color_Remaps(void)
         memcpy(&ColorRemaps[PCOLOR_BLUE], &ColorRemaps[PCOLOR_GREY], sizeof(RemapControlType));
         memcpy(&ColorRemaps[PCOLOR_GREY], &temp, sizeof(RemapControlType));
     }
+#endif
 
     /*
     ** Now do the special dim grey scheme

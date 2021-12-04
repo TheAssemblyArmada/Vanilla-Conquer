@@ -42,10 +42,10 @@
  *   ConnectionClass::Command_Name -- returns name for a packet command		*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
 #include <stdio.h>
 //#include <mem.h>
 #include <sys/timeb.h>
+#include <string.h>
 #include "connect.h"
 
 //#include "WolDebug.h"
@@ -53,7 +53,7 @@
 /*
 ********************************* Globals ***********************************
 */
-char* ConnectionClass::Commands[PACKET_COUNT] = {"ADATA", "NDATA", "ACK"};
+const char* ConnectionClass::Commands[PACKET_COUNT] = {"ADATA", "NDATA", "ACK"};
 
 /***************************************************************************
  * ConnectionClass::ConnectionClass -- class constructor                   *
@@ -83,9 +83,9 @@ ConnectionClass::ConnectionClass(int numsend,
                                  int numreceive,
                                  int maxlen,
                                  unsigned short magicnum,
-                                 unsigned long retry_delta,
-                                 unsigned long max_retries,
-                                 unsigned long timeout,
+                                 unsigned int retry_delta,
+                                 unsigned int max_retries,
+                                 unsigned int timeout,
                                  int extralen)
 {
     /*------------------------------------------------------------------------
@@ -575,7 +575,7 @@ int ConnectionClass::Service_Send_Queue(void)
     int num_entries;
     SendQueueType* send_entry;  // ptr to send queue entry
     CommHeaderType* packet_hdr; // packet header
-    unsigned long curtime;      // current time
+    unsigned int curtime;       // current time
     int bad_conn = 0;
 
     /*------------------------------------------------------------------------
@@ -743,25 +743,28 @@ int ConnectionClass::Service_Receive_Queue(void)
  * HISTORY:                                                                *
  *   12/20/1994 BR : Created.                                              *
  *=========================================================================*/
-unsigned long ConnectionClass::Time(void)
+unsigned int ConnectionClass::Time(void)
 {
     static struct timeb mytime; // DOS time
-    unsigned long msec;
+    unsigned int msec;
 
 #ifdef WWLIB32_H
+
+    /*TODO: Backport WW Timer to TD. */
+    bool TimerSystemOn = false;
 
     /*------------------------------------------------------------------------
     If the Westwood timer system has been activated, use TickCount's value
     ------------------------------------------------------------------------*/
     if (TimerSystemOn) {
-        return (TickCount); // Westwood Library time
+        //return (TickCount); // Westwood Library time
     }
     /*------------------------------------------------------------------------
     Otherwise, use the DOS timer
     ------------------------------------------------------------------------*/
     else {
         ftime(&mytime);
-        msec = (unsigned long)mytime.time * 1000L + (unsigned long)mytime.millitm;
+        msec = (unsigned int)mytime.time * 1000 + (unsigned int)mytime.millitm;
         return ((msec / 100) * 6);
     }
 
@@ -771,7 +774,7 @@ unsigned long ConnectionClass::Time(void)
     If the Westwood library isn't being used, use the DOS timer.
     ------------------------------------------------------------------------*/
     ftime(&mytime);
-    msec = (unsigned long)mytime.time * 1000L + (unsigned long)mytime.millitm;
+    msec = (unsigned int)mytime.time * 1000 + (unsigned int)mytime.millitm;
     return ((msec / 100) * 6);
 
 #endif
@@ -793,7 +796,7 @@ unsigned long ConnectionClass::Time(void)
  * HISTORY:                                                                *
  *   05/31/1995 BRR : Created.                                             *
  *=========================================================================*/
-char* ConnectionClass::Command_Name(int command)
+const char* ConnectionClass::Command_Name(int command)
 {
     if (command >= 0 && command < PACKET_COUNT) {
         return (Commands[command]);

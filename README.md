@@ -5,7 +5,15 @@ The main focus of Vanilla Conquer is to keep the default out-of-box experience f
 
 Current project goals are tracked as [GitHub issues with the goal label](https://github.com/Vanilla-Conquer/Vanilla-Conquer/issues?q=is%3Aissue+is%3Aopen+label%3Agoal).
 
-Developers hang around [The Assembly Armada Discord server](https://discord.gg/UnWK2Tw) if you feel like chatting.
+## Chat with us
+
+There are rooms on multiple platforms for discussion:
+
+- [The Assembly Armada](https://discord.gg/UnWK2Tw) on [Discord](https://discord.gg)
+- [#vanilla-conquer:vi.fi](https://matrix.to/#/#vanilla-conquer:vi.fi) on [Matrix](https://matrix.org)
+- [#vanilla-conquer](https://web.libera.chat/?channel=#vanilla-conquer) on [Libera.Chat](https://libera.chat]) IRC network
+
+All of these rooms are bridged together so people can choose their preferred service. Please be nice to each other.
 
 ## Building
 
@@ -75,7 +83,7 @@ Binary releases of the latest commit are available from [here](https://github.co
 
 Copy the Vanilla executable (`vanillatd.exe` or `vanillara.exe`) to your legacy game directory, on Windows also copy `SDL2.dll` and `OpenAL32.dll`.
 
-For Tiberian Dawn the final freeware Gold CD release ([GDI](https://www.fileplanet.com/archive/p-63497/Command-Conquer-Gold), [NOD](https://www.fileplanet.com/archive/p-8778/Command-Conquer-Gold)) works fine.
+For Tiberian Dawn the final freeware Gold CD release ([GDI](https://www.moddb.com/games/cc-gold/downloads/command-conquer-gold-free-game-gdi-iso), [NOD](https://www.moddb.com/games/cc-gold/downloads/command-conquer-gold-free-game-nod-iso)) works fine.
 
 For Red Alert the freeware [CD release](https://web.archive.org/web/20080901183216/http://www.ea.com/redalert/news-detail.jsp?id=62) works fine as well.
 The official [Red Alert demo](https://www.moddb.com/games/cc-red-alert/downloads/command-conquer-red-alert-demo) is also fully playable.
@@ -87,56 +95,31 @@ If you encounter a bug that may be data related like invisible things or crashin
 
 ### Remastered
 
-The build process will produce `TiberianDawn.dll` and `RedAlert.dll` in your build directory if you enable them with `-DBUILD_REMASTERTD=ON` and `-DBUILD_REMASTERRA=ON`.
+The build process will produce _Vanilla_TD_ and _Vanilla_RA_ directories in your build directory if you enable them with `-DBUILD_REMASTERTD=ON` and `-DBUILD_REMASTERRA=ON`.
 These work as mods for the Remastered Collection.
 
-To manually create a local Remastered mod after launching both games once, head to _My Documents/CnCRemastered/CnCRemastered/Mods_.
+To manually install a local Remastered mod, launch both games once then head to _My Documents/CnCRemastered/CnCRemastered/Mods_.
 You should see _Tiberian\_Dawn_ and _Red\_Alert_ directories.
-
-Create a mod directory within either game, we'll call it _Vanilla_. Create a directory inside it called _Data_.
 
 #### Tiberian Dawn
 
-Copy _TiberianDawn.dll_ to the _Data_ directory. Next create a JSON file (a text file) `ccmod.json` in the mod directory and add the following content:
-
-```json
-{
-    "name": "Vanilla",
-    "description": "",
-    "author": "",
-    "load_order": 1,
-    "version_high": 1,
-    "version_low": 0,
-    "game_type": "TD"
-}
-```
+Copy the _Vanilla_TD_ directory to the _Tiberian\_Dawn_ directory.
 
 The directory structure should look like this:
 
-    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/Vanilla/Data/TiberianDawn.dll
-    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/Vanilla/ccmod.json
+    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/Vanilla_TD/Data/TiberianDawn.dll
+    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/Vanilla_TD/ccmod.json
+    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/Vanilla_TD/GameConstants_Mod.xml
 
 You should now see the new mod in the mods list of Tiberian Dawn Remastered.
 
 #### Red Alert
 
-Copy _RedAlert.dll_ to the _Data_ directory. Next create a JSON file (a text file) `ccmod.json` in the mod directory and add the following content:
-
-```json
-{
-    "name": "Vanilla",
-    "description": "",
-    "author": "",
-    "load_order": 1,
-    "version_high": 1,
-    "version_low": 0,
-    "game_type": "RA"
-}
-```
+Copy the _Vanilla_RA_ directory to the _Red\_Alert_ directory.
 
 The directory structure should look like this:
 
-    My Documents/CnCRemastered/CnCRemastered/Mods/Red_Alert/Vanilla/Data/RedAlert.dll
-    My Documents/CnCRemastered/CnCRemastered/Mods/Red_Alert/Vanilla/ccmod.json
+    My Documents/CnCRemastered/CnCRemastered/Mods/Red_Alert/Vanilla_RA/Data/RedAlert.dll
+    My Documents/CnCRemastered/CnCRemastered/Mods/Red_Alert/Vanilla_RA/ccmod.json
 
-You should now see the new mod in the mods list of Tiberian Dawn Remastered.
+You should now see the new mod in the mods list of Red Alert Remastered.

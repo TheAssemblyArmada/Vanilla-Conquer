@@ -449,7 +449,7 @@ void SoundControlsClass::Process(void)
     while (listbox.Count()) {
         char const* ptr = listbox.Get_Item(0);
         listbox.Remove_Item(ptr);
-        delete[](void*) ptr;
+        delete[](char*) ptr;
     }
 }
 
@@ -481,7 +481,7 @@ void MusicListClass::Draw_Entry(int index, int x, int y, int width, int selected
 
         if (selected) {
             flags = flags | TPF_BRIGHT_COLOR;
-            LogicPage->Fill_Rect(x, y, x + width - 1, y + LineHeight - 1, CC_GREEN_SHADOW);
+            LogicPage->Fill_Rect(x, y, x + width, y + LineHeight, CC_GREEN_SHADOW);
         } else {
             if (!(flags & TPF_USE_GRAD_PAL)) {
                 flags = flags | TPF_MEDIUM_COLOR;

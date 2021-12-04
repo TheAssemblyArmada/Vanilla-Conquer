@@ -164,13 +164,13 @@ void CellClass::Code_Pointers(void)
 void CellClass::Decode_Pointers(void)
 {
     if (OccupierPtr != NULL) {
-        OccupierPtr = As_Object((TARGET)OccupierPtr, false);
+        OccupierPtr = As_Object(TARGET_SAFE_CAST(OccupierPtr), false);
         assert(OccupierPtr != NULL);
     }
 
     for (int index = 0; index < ARRAY_SIZE(Overlapper); index++) {
         if (Overlapper[index] != NULL) {
-            Overlapper[index] = As_Object((TARGET)Overlapper[index], false);
+            Overlapper[index] = As_Object(TARGET_SAFE_CAST(Overlapper[index]), false);
             assert(Overlapper[index] != NULL);
         }
     }
@@ -435,7 +435,7 @@ void DisplayClass::Decode_Pointers(void)
     **	either.  These have to be done as last-minute fixups.
     */
     if (PendingObjectPtr) {
-        PendingObjectPtr = As_Object((TARGET)PendingObjectPtr, false);
+        PendingObjectPtr = As_Object(TARGET_SAFE_CAST(PendingObjectPtr), false);
         assert(PendingObjectPtr != NULL);
     }
 

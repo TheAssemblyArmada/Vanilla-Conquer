@@ -324,6 +324,11 @@ bool Start_Scenario(char* name, bool briefing)
         return (false);
     }
 
+    /*
+    ** This was added in the Sept 16th 2020 update, causes colors to alternate for both in standalone.
+    ** Seems likely it would affect the remaster classic renderer as well?
+    */
+#ifdef REMASTER_BUILD
     /* Swap Lt. Blue and Blue color remaps in skirmish/multiplayer */
     if (Session.Type != GAME_NORMAL) {
         RemapControlType temp;
@@ -331,6 +336,7 @@ bool Start_Scenario(char* name, bool briefing)
         memcpy(&ColorRemaps[PCOLOR_LTBLUE], &ColorRemaps[PCOLOR_BLUE], sizeof(RemapControlType));
         memcpy(&ColorRemaps[PCOLOR_BLUE], &temp, sizeof(RemapControlType));
     }
+#endif
 
     /*
     **	Play the winning movie and then start the next scenario.
@@ -1571,7 +1577,7 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
     Hide_Mouse();
 
     PaletteClass temp;
-    char* filename = "SOVPAPER.PCX";
+    const char* filename = "SOVPAPER.PCX";
     if (PlayerPtr->Class->House != HOUSE_USSR && PlayerPtr->Class->House != HOUSE_UKRAINE) {
         filename = "ALIPAPER.PCX";
     }
@@ -3104,11 +3110,15 @@ static void Create_Units(bool official)
     **	loop verifies that.
     */
 
+#ifdef REMASTER_BUILD
     const unsigned int MAX_STORED_WAYPOINTS = 26;
+#else
+    const unsigned int MAX_STORED_WAYPOINTS = 8;
+#endif
 
     bool taken[MAX_STORED_WAYPOINTS];
     CELL waypts[MAX_STORED_WAYPOINTS];
-    assert(Rule.MaxPlayers < ARRAY_SIZE(waypts));
+    assert(Rule.MaxPlayers <= ARRAY_SIZE(waypts));
     int num_waypts = 0;
 
     /*
@@ -3129,8 +3139,14 @@ static void Create_Units(bool official)
     int look_for = Session.Players.Count();
 #endif
 
+#ifdef REMASTER_BUILD
     for (int waycount = 0; waycount < 26; waycount++) {
-        //	for (int waycount = 0; waycount < max(4, Session.Players.Count()+Session.Options.AIPlayers); waycount++) {
+#else
+    // This is needed for original game behavior, for example in original game you only spawn at corner spawns
+    // in 1vs1 on A Path Beyond as the corner spawns are the first 4, with the remaster logic you also spawn at
+    // the other 4 spawns in 1vs1 randomly
+    for (int waycount = 0; waycount < max(4, Session.Players.Count() + Session.Options.AIPlayers); waycount++) {
+#endif
         if (Scen.Waypoint[waycount] != -1) {
             waypts[num_waypts] = Scen.Waypoint[waycount];
             taken[num_waypts] = false;

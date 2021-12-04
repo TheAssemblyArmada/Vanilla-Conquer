@@ -115,6 +115,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     InfantryClass(InfantryType classid, HousesType house);
     InfantryClass(NoInitClass const& x)
         : FootClass(x)
@@ -222,7 +225,7 @@ public:
     */
     static void Read_INI(CCINIClass& ini);
     static void Write_INI(CCINIClass& ini);
-    static char* INI_Name(void)
+    static const char* INI_Name(void)
     {
         return "INFANTRY";
     };

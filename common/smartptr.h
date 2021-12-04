@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include <stdint.h>
+
 template <class T> class SmartPtr
 {
 public:
@@ -39,9 +41,9 @@ public:
         return (Pointer);
     }
 
-    operator long(void) const
+    operator intptr_t(void) const
     {
-        return ((long)Pointer);
+        return ((intptr_t)Pointer);
     }
 
     SmartPtr<T> operator++(int)

@@ -34,16 +34,20 @@
 #ifndef WSPROTO_H
 #define WSPROTO_H
 
-#include "_wsproto.h"
+#include "vector.h"
+#include "ipxaddr.h"
+
+class WinsockInterfaceClass;
+extern WinsockInterfaceClass* PacketTransport; // The object for interfacing with Winsock
 
 /*
-** Include standard Winsock 1.0 header file.
+** Include compatability sockets header file.
 */
-#ifdef NETWORKING
-#include <winsock.h>
-#else
-#define SOCKET short
-#endif
+#include "sockets.h"
+
+#include <string.h>
+
+#include <string.h>
 
 /*
 ** Misc defines
@@ -62,12 +66,12 @@
 /*
 ** Define events for Winsock callbacks
 */
-#ifdef _WIN32
+#if !defined _WIN32 && !defined SDL2_BUILD
 #define WM_IPXASYNCEVENT (WM_USER + 115) // IPX socket Async event
 #define WM_UDPASYNCEVENT (WM_USER + 116) // UDP socket Async event
 #else
-#define WM_IPXASYNCEVENT 0
-#define WM_UDPASYNCEVENT 0
+#define WM_IPXASYNCEVENT 1
+#define WM_UDPASYNCEVENT 2
 #endif
 
 /*
@@ -124,8 +128,13 @@ public:
         return (false);
     };
 
-#ifdef _WIN32
+#if defined _WIN32 && !defined SDL2_BUILD
     virtual long Message_Handler(HWND, UINT, UINT, LONG)
+    {
+        return (1);
+    }
+#else
+    virtual long Message_Handler()
     {
         return (1);
     }
@@ -149,6 +158,20 @@ public:
     {
         return (ConnectStatus);
     }
+
+#if !defined _WIN32 || defined SDL2_BUILD
+    fd_set* Get_Readset(void)
+    {
+        memcpy(&ReadyReadSockets, &ReadSockets, sizeof(ReadSockets));
+        return &ReadyReadSockets;
+    }
+
+    fd_set* Get_Writeset(void)
+    {
+        memcpy(&ReadyWriteSockets, &WriteSockets, sizeof(WriteSockets));
+        return &ReadyWriteSockets;
+    }
+#endif
 
 protected:
     /*
@@ -182,8 +205,16 @@ protected:
     /*
     ** Async object required for callbacks to our message handler.
     */
-#ifdef _WIN32
+#if defined _WIN32 && !defined SDL2_BUILD
     HANDLE ASync;
+#else
+    /*
+    ** FD sets to handle event loop polling.
+    */
+    fd_set ReadSockets;
+    fd_set WriteSockets;
+    fd_set ReadyReadSockets;
+    fd_set ReadyWriteSockets;
 #endif
 
     /*

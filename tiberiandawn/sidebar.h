@@ -115,9 +115,7 @@ public:
         : PowerClass(x)
     {
     }
-    virtual ~SidebarClass()
-    {
-    }
+    virtual ~SidebarClass();
 
     /*
     ** Initialization
@@ -396,9 +394,9 @@ public:
     **	This is the button that is used to collapse and expand the sidebar.
     ** These buttons must be available to derived classes, for Save/Load.
     */
-    static ShapeButtonClass Repair;
-    static ShapeButtonClass Upgrade;
-    static ShapeButtonClass Zoom;
+    static ToggleClass* Repair;
+    static ToggleClass* Upgrade;
+    static ToggleClass* Zoom;
     static SBGadgetClass Background;
 
     bool Scroll(bool up, int column);

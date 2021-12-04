@@ -19,7 +19,6 @@ set(TIBDAWN_SRC
     colrlist.cpp
     combat.cpp
     confdlg.cpp
-    connect.cpp
     conquer.cpp
     const.cpp
     coord.cpp
@@ -60,7 +59,6 @@ set(TIBDAWN_SRC
     ioobj.cpp
     ipx.cpp
     ipx95.cpp
-    ipxaddr.cpp
     ipxconn.cpp
     ipxgconn.cpp
     ipxmgr.cpp
@@ -185,6 +183,12 @@ if(BUILD_REMASTERTD)
     target_include_directories(TiberianDawn PUBLIC ${CMAKE_SOURCE_DIR} .)
     target_link_libraries(TiberianDawn commonr ${REMASTER_LIBS} ${STATIC_LIBS})
     set_target_properties(TiberianDawn PROPERTIES PREFIX "")
+
+    add_custom_command(TARGET TiberianDawn POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources/remaster_mods/Vanilla_TD ${CMAKE_BINARY_DIR}/Vanilla_TD
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/Vanilla_TD/Data
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:TiberianDawn> ${CMAKE_BINARY_DIR}/Vanilla_TD/Data/
+    )
 endif()
 
 if(BUILD_VANILLATD)
@@ -217,13 +221,15 @@ if(BUILD_VANILLATD)
     if(MAP_EDITORTD)
         target_compile_definitions(VanillaTD PUBLIC INTERNAL_VERSION)
     endif()
+    if(NETWORKING)
+        target_compile_definitions(VanillaTD PUBLIC WINSOCK_IPX)
+    endif()
     # Control if we auto generate a console and which "main" function we link using MSVC.
     if(MSVC)
-        target_link_options(VanillaTD PRIVATE /subsystem:windows /ENTRY:WinMainCRTStartup)
+        target_link_options(VanillaTD PRIVATE /subsystem:windows /ENTRY:mainCRTStartup)
     endif()
     if(WIN32 AND NOT MSVC)
         set_target_properties(VanillaTD PROPERTIES LINK_FLAGS "-mwindows")
-        target_compile_definitions(VanillaTD PUBLIC main=_main)
     endif()
     if(BUILD_WITH_UBSAN)
         target_compile_options(VanillaTD PUBLIC

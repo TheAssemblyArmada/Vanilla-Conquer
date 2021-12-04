@@ -283,6 +283,12 @@ long TutorFlags[2];
 SpecialClass Special;
 
 /***************************************************************************
+**	This holds the rules database. The rules database won't change during the
+**	program's run, but may need to be referenced intermitently.
+*/
+CCINIClass RuleINI;
+
+/***************************************************************************
 **	General rules that control the game.
 */
 RulesClass Rule;
@@ -603,21 +609,21 @@ int DesiredFrameRate;
 ** These values are used purely for the Mono debug display.  They show the
 ** names of the Global Channel packet types, and the event types.
 */
-char* GlobalPacketNames[] = {"Game?",
-                             "Game!",
-                             "Player?",
-                             "Player!",
-                             "Join?",
-                             "Join!",
-                             "Reject",
-                             "GameOptions",
-                             "Sign Off",
-                             "GO!",
-                             "Message",
-                             "Ping"};
+const char* GlobalPacketNames[] = {"Game?",
+                                   "Game!",
+                                   "Player?",
+                                   "Player!",
+                                   "Join?",
+                                   "Join!",
+                                   "Reject",
+                                   "GameOptions",
+                                   "Sign Off",
+                                   "GO!",
+                                   "Message",
+                                   "Ping"};
 
 // yeah, there's 100 empty names here, because the SerialCommandType starts at 100.
-char* SerialPacketNames[] = {
+const char* SerialPacketNames[] = {
     "",
     "",
     "",
@@ -946,9 +952,10 @@ int ScreenHeight = GBUFF_INIT_HEIGHT;
 WWMouseClass* WWMouse = NULL;
 int AllDone;
 bool InMovie = false; // Are we currently playing a VQ movie?
-bool GameStatisticsPacketSent;
-bool ConnectionLost;
 
 TheaterType LastTheater = THEATER_NONE;
 
 bool RunningAsDLL = false;
+
+/* Holds the title filename. On 320x200, set to TITLE.CPS, else HTITLE.PCX. */
+char* TitlePicture = NULL;

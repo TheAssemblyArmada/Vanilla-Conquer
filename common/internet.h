@@ -19,61 +19,39 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Sun/WSPUDP.h                                               $*
+ *                     $Archive:: /Sun/Internet.h                                             $*
  *                                                                                             *
  *                      $Author:: Joe_b                                                       $*
  *                                                                                             *
  *                     $Modtime:: 8/05/97 6:45p                                               $*
  *                                                                                             *
- *                    $Revision:: 3                                                           $*
+ *                    $Revision:: 7                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef WSPUDP_H
-#define WSPUDP_H
+#ifndef INTERNET_H
+#define INTERNET_H
 
-#include "wsproto.h"
+#define IP_ADDRESS_MAX 40
 
-/*
-** Class to allow access to UDP specific portions of the Winsock interface.
-**
-*/
-class UDPInterfaceClass : public WinsockInterfaceClass
-{
+void Register_Game_Start_Time(void);
+void Register_Game_End_Time(void);
+void Send_Statistics_Packet(void);
+void Check_From_WChat(char* wchat_name);
+bool Do_The_Internet_Menu_Thang(void);
+bool Server_Remote_Connect(void);
+bool Client_Remote_Connect(void);
+int Read_Game_Options(char* name);
 
-public:
-    UDPInterfaceClass(void);
-    virtual ~UDPInterfaceClass(void);
-
-#ifdef _WIN32
-    virtual long Message_Handler(HWND window, UINT message, UINT wParam, LONG lParam);
-#endif
-    virtual bool Open_Socket(SOCKET socketnum);
-    virtual void Set_Broadcast_Address(void* address);
-    virtual void Broadcast(void* buffer, int buffer_len);
-
-    virtual ProtocolEnum Get_Protocol(void)
-    {
-        return (PROTOCOL_UDP);
-    };
-
-    virtual int Protocol_Event_Message(void)
-    {
-        return (WM_UDPASYNCEVENT);
-    };
-
-private:
-    /*
-    ** Address to use when broadcasting a packet.
-    */
-    DynamicVectorClass<unsigned char*> BroadcastAddresses;
-
-    /*
-    ** List of local addresses.
-    */
-    DynamicVectorClass<unsigned char*> LocalAddresses;
-};
+extern char PlanetWestwoodIPAddress[IP_ADDRESS_MAX];
+extern unsigned short PlanetWestwoodPortNumber;
+extern bool PlanetWestwoodIsHost;
+extern bool ConnectionLost;
+extern unsigned PlanetWestwoodGameID;
+extern unsigned PlanetWestwoodStartTime;
+extern char PlanetWestwoodHandle[];   // Planet WW user name
+extern char PlanetWestwoodPassword[]; // Planet WW password
 
 #endif

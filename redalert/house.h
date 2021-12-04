@@ -656,6 +656,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     HouseClass(HousesType house);
     HouseClass(NoInitClass const& x)
         : Class(x)

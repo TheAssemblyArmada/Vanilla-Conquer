@@ -43,7 +43,9 @@ jobs:
         mkdir artifact
         7z a artifact/vanilla-conquer-remasterdll-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/RedAlert.dll ./build/TiberianDawn.dll
         7z a artifact/vanilla-conquer-remasterdll-msvc-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/RedAlert.pdb ./build/TiberianDawn.pdb
-  
+        7z a artifact/vanilla-ra-remaster-mod-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/Vanilla_RA
+        7z a artifact/vanilla-td-remaster-mod-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/Vanilla_TD
+        
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
@@ -121,18 +123,24 @@ jobs:
         
     - name: Configure Vanilla Conquer
       run: |
-        cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DSDL2=ON "-DSDL2_ROOT_DIR=$($Env:TEMP)\SDL2-2.0.12" -DOPENAL=ON "-DOPENAL_ROOT=C:\Program Files (x86)\OpenAL 1.1 SDK" -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DNETWORKING=OFF "-DImageMagick_convert_EXECUTABLE=C:\Program Files\ImageMagick-7.0.10-Q16-HDRI\magick.exe" -DImageMagick_convert_FOUND=TRUE -B build
+        cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_TOOLS=ON -DBUILD_TESTS=ON -DSDL2=ON "-DSDL2_ROOT_DIR=$($Env:TEMP)\SDL2-2.0.12" -DOPENAL=ON "-DOPENAL_ROOT=C:\Program Files (x86)\OpenAL 1.1 SDK" -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DNETWORKING=ON "-DImageMagick_convert_EXECUTABLE=C:\Program Files\ImageMagick-7.0.10-Q16-HDRI\magick.exe" -DImageMagick_convert_FOUND=TRUE -B build
 
     - name: Build Vanilla Conquer
       run: |
         cmake --build build --config RelWithDebInfo
 
+    - name: Run unit tests
+      run: |
+        cd build
+        Copy-Item -Path "$Env:TEMP\SDL2-2.0.12\lib\${{ steps.vars.outputs.sdl_path }}\SDL2.dll" -Destination . -verbose
+        ctest -C RelWithDebInfo
+        
     - name: Create archives
       shell: bash
       run: |
         mkdir artifact
-        7z a artifact/vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd.exe ./build/vanillara.exe $TEMP/SDL2-2.0.12/lib/${{ steps.vars.outputs.sdl_path }}/SDL2.dll $TEMP/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll
-        7z a artifact/vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.pdb ./build/vanillara.pdb
+        7z a artifact/vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd.exe ./build/vanillara.exe ./build/vanillamix.exe $TEMP/SDL2-2.0.12/lib/${{ steps.vars.outputs.sdl_path }}/SDL2.dll $TEMP/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll
+        7z a artifact/vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.pdb ./build/vanillara.pdb ./build/vanillamix.pdb
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2

@@ -87,6 +87,7 @@ MissionType MapEditClass::MapEditMissions[NUM_EDIT_MISSIONS] = {
 extern int UnknownKey; // in menus.cpp
 
 char MapEditClass::HealthBuf[20];
+char MapEditClass::BaseText[6] = "Base:";
 
 /***************************************************************************
  * MapEditClass::MapEditClass -- class constructor                         *
@@ -150,7 +151,7 @@ void MapEditClass::One_Time(void)
     **	The map: a single large "button"
     */
     MapArea =
-        new ControlClass(MAP_AREA, 0, 8, 640 - 8, 400 - 8, GadgetClass::LEFTPRESS | GadgetClass::LEFTRELEASE, false);
+        new ControlClass(MAP_AREA, 0, 16, 640 - 16, 400 - 16, GadgetClass::LEFTPRESS | GadgetClass::LEFTRELEASE, false);
 
     /*
     **	House buttons
@@ -220,7 +221,7 @@ void MapEditClass::One_Time(void)
     */
     BaseGauge = new GaugeClass(POPUP_BASEPERCENT, POPUP_BASE_X, POPUP_BASE_Y, POPUP_BASE_W, POPUP_BASE_H);
     BaseLabel = new TextLabelClass(
-        "Base:", POPUP_BASE_X - 3, POPUP_BASE_Y, GadgetClass::Get_Color_Scheme(), TPF_RIGHT | TPF_NOSHADOW | TPF_EFNT);
+        BaseText, POPUP_BASE_X - 3, POPUP_BASE_Y, GadgetClass::Get_Color_Scheme(), TPF_RIGHT | TPF_NOSHADOW | TPF_EFNT);
     BaseGauge->Set_Maximum(100);
     BaseGauge->Set_Value(Scen.Percent);
 }
@@ -1342,6 +1343,10 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
             HidPage.Clear();
             Flag_To_Redraw(true);
         }
+        input = KN_NONE;
+        break;
+
+    case (KN_LMOUSE):
         input = KN_NONE;
         break;
 

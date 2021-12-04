@@ -456,25 +456,23 @@ int ThemeClass::Still_Playing(void)
  *=============================================================================================*/
 bool ThemeClass::Is_Allowed(ThemeType index) const
 {
-#ifdef DEMO
-    char buffer[128];
+    if (Is_Demo()) {
+        char buffer[128];
 
-    sprintf(buffer, "%s.AUD", Base_Name(index));
-    CCFileClass file(buffer);
-    if (_themes[index].Scenario == 99 || !file.Is_Available()) {
-        _themes[index].Scenario = 99;
-        return (false);
+        sprintf(buffer, "%s.AUD", Base_Name(index));
+        CCFileClass file(buffer);
+        if (_themes[index].Scenario == 99 || !file.Is_Available()) {
+            _themes[index].Scenario = 99;
+            return (false);
+        }
     }
-#endif
 
     return (_themes[index].Available
             && (_themes[index].Normal ||
                 //		(index == THEME_MAP1 && ScenarioInit) ||
-                ((Special.IsVariation && _themes[index].Variation && index != THEME_WIN1) &&
-#ifndef DEMO
-                 (GameToPlay != GAME_NORMAL || _themes[index].Scenario <= (int)Scenario) &&
-#endif
-                 (index != THEME_J1 || Special.IsJurassic))));
+                ((Special.IsVariation && _themes[index].Variation && index != THEME_WIN1)
+                 && (!Is_Demo() || (GameToPlay != GAME_NORMAL || _themes[index].Scenario <= (int)Scenario))
+                 && (index != THEME_J1 || Special.IsJurassic))));
 }
 
 /***********************************************************************************************
@@ -516,7 +514,8 @@ ThemeType ThemeClass::From_Name(char const* name)
         **	yeild a match, but is not guaranteed to be unique.
         */
         for (theme = THEME_FIRST; theme < THEME_COUNT; theme++) {
-            if (strstr(Text_String(_themes[theme].Fullname), name) != NULL) {
+            const char* fullname = Text_String(_themes[theme].Fullname);
+            if (fullname != nullptr && strstr(fullname, name) != NULL) {
                 return (theme);
             }
         }

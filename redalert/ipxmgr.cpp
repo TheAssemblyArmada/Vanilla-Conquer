@@ -1586,7 +1586,7 @@ void IPXManagerClass::Set_Bridge(NetNumType bridge)
 void IPXManagerClass::Configure_Debug(int index,
                                       int type_offset,
                                       int type_size,
-                                      char** names,
+                                      const char** names,
                                       int namestart,
                                       int namecount)
 {

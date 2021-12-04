@@ -129,11 +129,6 @@ public:
     bool Put_PKey(PKey const& key);
 
 protected:
-    enum
-    {
-        MAX_LINE_LENGTH = 128
-    };
-
     /*
     **	The value entries for the INI file are stored as objects of this type.
     **	The entry identifier and value string are combined into this object.
@@ -202,6 +197,16 @@ protected:
     List<INISection> SectionList;
 
     IndexClass<INISection*> SectionIndex;
+
+public:
+    enum
+    {
+        MAX_LINE_LENGTH = 128
+    };
+    const List<INISection>& Section_List() const
+    {
+        return SectionList;
+    }
 };
 
 #endif

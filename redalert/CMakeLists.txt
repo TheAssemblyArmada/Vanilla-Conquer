@@ -1,5 +1,4 @@
 set(REDALERT_SRC
-    _wsproto.cpp
     aadata.cpp
     abstract.cpp
     adata.cpp
@@ -25,7 +24,6 @@ set(REDALERT_SRC
     colrlist.cpp
     combat.cpp
     confdlg.cpp
-    connect.cpp
     conquer.cpp
     const.cpp
     coord.cpp
@@ -72,7 +70,6 @@ set(REDALERT_SRC
     ioobj.cpp
     ipx.cpp
     ipx95.cpp
-    ipxaddr.cpp
     ipxconn.cpp
     ipxgconn.cpp
     ipxmgr.cpp
@@ -107,7 +104,6 @@ set(REDALERT_SRC
     queue.cpp
     radar.cpp
     radio.cpp
-    ramfile.cpp
     rawolapi.cpp
     reinf.cpp
     rules.cpp
@@ -166,8 +162,6 @@ set(REDALERT_SRC
     wolapiob.cpp
     woledit.cpp
     wolstrng.cpp
-    wsproto.cpp
-    wspudp.cpp
 )
 
 if(CMAKE_CONFIGURATION_TYPES)
@@ -221,6 +215,12 @@ if(BUILD_REMASTERRA)
     target_include_directories(RedAlert PUBLIC ${CMAKE_SOURCE_DIR} .)
     target_link_libraries(RedAlert commonr ${REMASTER_LIBS} ${STATIC_LIBS})
     set_target_properties(RedAlert PROPERTIES PREFIX "")
+
+    add_custom_command(TARGET RedAlert POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources/remaster_mods/Vanilla_RA ${CMAKE_BINARY_DIR}/Vanilla_RA
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/Vanilla_RA/Data
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:RedAlert> ${CMAKE_BINARY_DIR}/Vanilla_RA/Data/
+    )
 endif()
 
 if(BUILD_VANILLARA)
@@ -257,7 +257,10 @@ if(BUILD_VANILLARA)
     endif()
     # Control if we auto generate a console and which "main" function we link using MSVC.
     if(MSVC)
-        target_link_options(VanillaRA PRIVATE /subsystem:windows /ENTRY:WinMainCRTStartup)
+        target_link_options(VanillaRA PRIVATE /subsystem:windows /ENTRY:mainCRTStartup)
+    endif()
+    if(WIN32 AND NOT MSVC)
+        set_target_properties(VanillaRA PROPERTIES LINK_FLAGS "-mwindows")
     endif()
     if(BUILD_WITH_UBSAN)
         target_compile_options(VanillaRA PUBLIC

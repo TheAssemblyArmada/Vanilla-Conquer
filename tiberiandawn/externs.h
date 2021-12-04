@@ -1,4 +1,5 @@
 //
+//
 // Copyright 2020 Electronic Arts Inc.
 //
 // TiberianDawn.DLL and RedAlert.dll and corresponding source code is free
@@ -50,6 +51,8 @@
 #include "infantry.h"
 #include "jshell.h"
 #include "common/vqaconfig.h"
+#include "common/winstub.h"
+#include "ccini.h"
 
 #ifdef REMASTER_BUILD
 #ifdef MEGAMAPS
@@ -153,6 +156,7 @@ extern MFCD* MoviesMix;
 extern MFCD* GeneralMix;
 extern ThemeClass Theme;
 extern SpecialClass Special;
+extern CCINIClass RuleINI;
 extern RulesClass Rule;
 extern WWKeyboardClass* Keyboard;
 
@@ -304,8 +308,8 @@ extern int MPlayerCurGame;
 extern int TheirProcessTime[MAX_PLAYERS - 1];
 extern int DesiredFrameRate;
 
-extern char* GlobalPacketNames[];
-extern char* SerialPacketNames[];
+extern const char* GlobalPacketNames[];
+extern const char* SerialPacketNames[];
 
 typedef struct
 {
@@ -417,7 +421,6 @@ extern bool InMainLoop; // True if in game state rather than menu state
 #define GlyphX_Debug_Print(x) DBG_LOG(x)
 #endif
 extern void* PacketLater;
-void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned char* palette);
 
 extern unsigned int IsTheaterShape;
 

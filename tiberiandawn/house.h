@@ -40,6 +40,7 @@
 #include "vector.h"
 #include "credits.h"
 #include "common/miscasm.h"
+#include "common/fixed.h"
 
 class TriggerClass;
 class CCINIClass;
@@ -64,15 +65,15 @@ public:
     /*
     **	Override handicap control values.
     */
-    float FirepowerBias;
-    float GroundspeedBias;
-    float AirspeedBias;
-    float ArmorBias;
-    float ROFBias;
-    float CostBias;
-    float BuildSpeedBias;
-    float RepairDelay;
-    float BuildDelay;
+    fixed FirepowerBias;
+    fixed GroundspeedBias;
+    fixed AirspeedBias;
+    fixed ArmorBias;
+    fixed ROFBias;
+    fixed CostBias;
+    fixed BuildSpeedBias;
+    fixed RepairDelay;
+    fixed BuildDelay;
 
     /*
     **	This is the house type that this house object should act like. This
@@ -416,6 +417,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     HouseClass(void)
         : Class(0){};
     HouseClass(HousesType house);
@@ -491,7 +495,7 @@ public:
     }; // Replaced by function from RA. ST - 7/17/2019 11:51AM
 #endif
     int Adjust_Capacity(int adjust, bool inanger = false);
-    int Power_Fraction(void) const;
+    fixed Power_Fraction(void) const;
     int Tiberium_Fraction(void)
     {
         return (!Tiberium) ? 0 : Cardinal_To_Fixed(Capacity, Tiberium);

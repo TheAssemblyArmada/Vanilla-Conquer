@@ -92,6 +92,7 @@
 #include "function.h"
 #include <time.h>
 #include "common/tcpip.h"
+#include "framelimit.h"
 #define SHOW_MONO 0
 
 // ST = 12/17/2018 5:44PM
@@ -877,7 +878,7 @@ static int Net_Join_Dialog(void)
     void const* up_button;
     void const* down_button;
 
-    if (InMainLoop) {
+    if (InMainLoop || factor == 1) {
         up_button = Hires_Retrieve("BTN-UP.SHP");
         down_button = Hires_Retrieve("BTN-DN.SHP");
     } else {
@@ -1006,7 +1007,7 @@ static int Net_Join_Dialog(void)
     */
     Send_Join_Queries(game_index, 1, 0);
 
-    Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+    Load_Title_Screen(TitlePicture, &HidPage, Palette);
     Blit_Hid_Page_To_Seen_Buff();
     Set_Palette(Palette);
 
@@ -1046,7 +1047,7 @@ static int Net_Join_Dialog(void)
             .................. Redraw backgound & dialog box ...................
             */
             if (display >= REDRAW_BACKGROUND) {
-                Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+                Load_Title_Screen(TitlePicture, &HidPage, Palette);
                 Blit_Hid_Page_To_Seen_Buff();
                 Set_Palette(Palette);
 
@@ -1831,6 +1832,7 @@ static int Net_Join_Dialog(void)
         so Call_Back() doesn't intercept global messages from me!
         ---------------------------------------------------------------------*/
         Call_Back();
+        Frame_Limiter();
     }
 
     /*------------------------------------------------------------------------
@@ -1977,7 +1979,7 @@ static int Net_Join_Dialog(void)
     Restore screen
     ------------------------------------------------------------------------*/
     Hide_Mouse();
-    Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+    Load_Title_Screen(TitlePicture, &HidPage, Palette);
     Blit_Hid_Page_To_Seen_Buff();
     Show_Mouse();
 
@@ -2882,7 +2884,7 @@ static int Net_New_Dialog(void)
     void const* up_button;
     void const* down_button;
 
-    if (InMainLoop) {
+    if (InMainLoop || factor == 1) {
         up_button = Hires_Retrieve("BTN-UP.SHP");
         down_button = Hires_Retrieve("BTN-DN.SHP");
     } else {
@@ -3113,7 +3115,7 @@ static int Net_New_Dialog(void)
     }
     playerlist.Add_Item(item, MPlayerTColors[MPlayerColorIdx]);
 
-    Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+    Load_Title_Screen(TitlePicture, &HidPage, Palette);
     Blit_Hid_Page_To_Seen_Buff();
     Set_Palette(Palette);
     while (Get_Mouse_State() > 0)
@@ -3168,7 +3170,7 @@ static int Net_New_Dialog(void)
                 /*
                 ** Reload and draw the title page
                 */
-                Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+                Load_Title_Screen(TitlePicture, &HidPage, Palette);
                 Blit_Hid_Page_To_Seen_Buff();
                 Set_Palette(Palette);
 
@@ -3755,6 +3757,7 @@ static int Net_New_Dialog(void)
         so Call_Back() doesn't intercept global messages from me!
         ---------------------------------------------------------------------*/
         Call_Back();
+        Frame_Limiter();
 
     } /* end of while */
 
@@ -3858,7 +3861,7 @@ static int Net_New_Dialog(void)
     Restore screen
     ------------------------------------------------------------------------*/
     Hide_Mouse();
-    Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+    Load_Title_Screen(TitlePicture, &HidPage, Palette);
     Blit_Hid_Page_To_Seen_Buff();
     Show_Mouse();
 
@@ -4348,7 +4351,7 @@ static int Net_Fake_New_Dialog(void)
     void const* up_button;
     void const* down_button;
 
-    if (InMainLoop) {
+    if (InMainLoop || factor == 1) {
         up_button = Hires_Retrieve("BTN-UP.SHP");
         down_button = Hires_Retrieve("BTN-DN.SHP");
     } else {
@@ -4437,7 +4440,7 @@ static int Net_Fake_New_Dialog(void)
     Wait_For_Focus();
 
     CCDebugString("C&C95 - About to uncompress title page.\n");
-    Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+    Load_Title_Screen(TitlePicture, &HidPage, Palette);
     Blit_Hid_Page_To_Seen_Buff();
     CCDebugString("C&C95 - About to set the palette.\n");
     Set_Palette(Palette);
@@ -4492,7 +4495,7 @@ static int Net_Fake_New_Dialog(void)
             */
             if (display >= REDRAW_BACKGROUND) {
 
-                Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+                Load_Title_Screen(TitlePicture, &HidPage, Palette);
                 Blit_Hid_Page_To_Seen_Buff();
                 Set_Palette(Palette);
 
@@ -4690,6 +4693,7 @@ static int Net_Fake_New_Dialog(void)
         so Call_Back() doesn't intercept global messages from me!
         ---------------------------------------------------------------------*/
         Call_Back();
+        Frame_Limiter();
 
     } /* end of while */
 
@@ -4814,7 +4818,7 @@ static int Net_Fake_New_Dialog(void)
     Restore screen
     ------------------------------------------------------------------------*/
     Hide_Mouse();
-    Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+    Load_Title_Screen(TitlePicture, &HidPage, Palette);
     Blit_Hid_Page_To_Seen_Buff();
     Show_Mouse();
 
@@ -4949,7 +4953,7 @@ static int Net_Fake_Join_Dialog(void)
     void const* up_button;
     void const* down_button;
 
-    if (InMainLoop) {
+    if (InMainLoop || factor == 1) {
         up_button = Hires_Retrieve("BTN-UP.SHP");
         down_button = Hires_Retrieve("BTN-DN.SHP");
     } else {
@@ -5010,7 +5014,7 @@ static int Net_Fake_Join_Dialog(void)
     Wait_For_Focus();
 
     CCDebugString("C&C95 - About to uncompress title page.\n");
-    Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+    Load_Title_Screen(TitlePicture, &HidPage, Palette);
     Blit_Hid_Page_To_Seen_Buff();
     CCDebugString("C&C95 - About to set the palette.\n");
     Set_Palette(Palette);
@@ -5056,7 +5060,7 @@ static int Net_Fake_Join_Dialog(void)
             .................. Redraw backgound & dialog box ...................
             */
             if (display >= REDRAW_BACKGROUND) {
-                Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+                Load_Title_Screen(TitlePicture, &HidPage, Palette);
                 Blit_Hid_Page_To_Seen_Buff();
                 Set_Palette(Palette);
 
@@ -5356,6 +5360,7 @@ static int Net_Fake_Join_Dialog(void)
         so Call_Back() doesn't intercept global messages from me!
         ---------------------------------------------------------------------*/
         Call_Back();
+        Frame_Limiter();
     }
 
     /*------------------------------------------------------------------------
@@ -5514,7 +5519,7 @@ static int Net_Fake_Join_Dialog(void)
     Restore screen
     ------------------------------------------------------------------------*/
     Hide_Mouse();
-    Load_Title_Screen("HTITLE.PCX", &HidPage, Palette);
+    Load_Title_Screen(TitlePicture, &HidPage, Palette);
     Blit_Hid_Page_To_Seen_Buff();
     Show_Mouse();
 

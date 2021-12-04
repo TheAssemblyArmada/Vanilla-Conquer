@@ -38,6 +38,11 @@
 #endif
 #include <stdint.h>
 
+#ifdef SDL2_BUILD
+#define SDL_MAIN_HANDLED
+#include <SDL.h>
+#endif
+
 typedef enum
 {
     WWKEY_SHIFT_BIT = 0x100,
@@ -709,6 +714,19 @@ typedef enum KeyNumType : unsigned short
     KN_BUTTON = WWKEY_BTN_BIT,
 } KeyNumType;
 
+typedef enum ScrollDirType : unsigned char
+{
+    SDIR_N = 0,
+    SDIR_NE = 1 << 5,
+    SDIR_E = 2 << 5,
+    SDIR_SE = 3 << 5,
+    SDIR_S = 4 << 5,
+    SDIR_SW = 5 << 5,
+    SDIR_W = 6 << 5,
+    SDIR_NW = 7 << 5,
+    SDIR_NONE = 100
+} ScrollDirType;
+
 class WWKeyboardClass
 {
 public:
@@ -722,6 +740,14 @@ public:
     void Clear(void);
     KeyASCIIType To_ASCII(unsigned short num);
     bool Down(unsigned short key);
+
+#ifdef SDL2_BUILD
+    bool Is_Gamepad_Active();
+    void Open_Controller();
+    void Close_Controller();
+    bool Is_Analog_Scroll_Active();
+    unsigned char Get_Scroll_Direction();
+#endif
 
 #if defined(_WIN32) && !defined(SDL2_BUILD)
     /* Define the main hook for the message processing loop.					*/
@@ -770,6 +796,36 @@ private:
     */
     uint8_t DownState[0x2000]; // (UINT16_MAX / 8) + 1
     int DownSkip;
+
+#ifdef SDL2_BUILD
+    void Handle_Controller_Axis_Event(const SDL_ControllerAxisEvent& motion);
+    void Handle_Controller_Button_Event(const SDL_ControllerButtonEvent& button);
+    void Process_Controller_Axis_Motion();
+
+    // used to convert user-friendly pointer speed values into more useable ones
+    static constexpr float CONTROLLER_SPEED_MOD = 2000000.0f;
+    // bigger value correndsponds to faster pointer movement speed with bigger stick axis values
+    static constexpr float CONTROLLER_AXIS_SPEEDUP = 1.03f;
+    // speedup value while the trigger is pressed
+    static constexpr int CONTROLLER_TRIGGER_SPEEDUP = 2;
+
+    enum
+    {
+        CONTROLLER_L_DEADZONE = 4000,
+        CONTROLLER_R_DEADZONE = 6000,
+        CONTROLLER_TRIGGER_R_DEADZONE = 3000
+    };
+
+    SDL_GameController* GameController = nullptr;
+    int16_t ControllerLeftXAxis = 0;
+    int16_t ControllerLeftYAxis = 0;
+    int16_t ControllerRightXAxis = 0;
+    int16_t ControllerRightYAxis = 0;
+    uint32_t LastControllerTime = 0;
+    float ControllerSpeedBoost = 1;
+    bool AnalogScrollActive = false;
+    ScrollDirType ScrollDirection = SDIR_NONE;
+#endif
 };
 
 #endif

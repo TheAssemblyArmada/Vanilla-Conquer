@@ -975,8 +975,9 @@ bool SidebarClass::Activate(int control)
 
     bool old = IsSidebarActive;
 
-    if (Session.Play)
+    if (Session.Attract) {
         return (old);
+    }
 
     /*
     **	Determine the new state of the sidebar.
@@ -1273,7 +1274,7 @@ void SidebarClass::StripClass::Reload_LogoShapes(void)
     /*
     ** Load hi-res strip art here since it is player side specific
     */
-    static char* stripnames[] = {
+    static const char* stripnames[] = {
         "stripna.shp", // Nato
         "stripna.shp",
         "stripus.shp", // USSR

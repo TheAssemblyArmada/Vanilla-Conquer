@@ -35,24 +35,10 @@
 #ifndef STRAW_H
 #define STRAW_H
 
+#include "endianness.h"
+#include "fixed.h"
 #include <stdlib.h>
-
-/*
-**	The "bool" integral type was defined by the C++ committee in
-**	November of '94. Until the compiler supports this, use the following
-**	definition.
-*/
-#ifndef __BORLANDC__
-#ifndef TRUE_FALSE_DEFINED
-#define TRUE_FALSE_DEFINED
-enum
-{
-    false = 0,
-    true = 1
-};
-typedef int bool;
-#endif
-#endif
+#include <stdint.h>
 
 /*
 **	This is a demand driven data carrier. It will retrieve the byte request by passing
@@ -77,6 +63,79 @@ public:
         Get_From(&pipe);
     }
     virtual int Get(void* buffer, int slen);
+
+    bool Get(int8_t& val)
+    {
+        uint8_t data;
+        bool success = Get(&data, sizeof(data)) == sizeof(data);
+        val = data;
+        return success;
+    }
+
+    bool Get(uint8_t& val)
+    {
+        uint8_t data;
+        bool success = Get(&data, sizeof(data)) == sizeof(data);
+        val = data;
+        return success;
+    }
+
+    bool Get(int16_t& val)
+    {
+        uint16_t data;
+        bool success = Get(&data, sizeof(data)) == sizeof(data);
+        val = le16toh(data);
+        return success;
+    }
+
+    bool Get(uint16_t& val)
+    {
+        uint16_t data;
+        bool success = Get(&data, sizeof(data)) == sizeof(data);
+        val = le16toh(data);
+        return success;
+    }
+
+    bool Get(int32_t& val)
+    {
+        uint32_t data;
+        bool success = Get(&data, sizeof(data)) == sizeof(data);
+        val = le32toh(data);
+        return success;
+    }
+
+    bool Get(uint32_t& val)
+    {
+        uint32_t data;
+        bool success = Get(&data, sizeof(data)) == sizeof(data);
+        val = le32toh(data);
+        return success;
+    }
+
+    bool Get(int64_t& val)
+    {
+        uint64_t data;
+        bool success = Get(&data, sizeof(data)) == sizeof(data);
+        val = le64toh(data);
+        return success;
+    }
+
+    bool Get(uint64_t& val)
+    {
+        uint64_t data;
+        bool success = Get(&data, sizeof(data)) == sizeof(data);
+        val = le64toh(data);
+        return success;
+    }
+
+    bool Get(fixed& val)
+    {
+        uint32_t data;
+        bool success = Get(&data, sizeof(data)) == sizeof(data);
+        static_assert(sizeof(data) == sizeof(val.Data.Raw), "Fixed point data does not match written data size.");
+        val.Data.Raw = le32toh(data);
+        return success;
+    }
 
     /*
     **	Pointer to the next pipe segment in the chain.

@@ -541,7 +541,7 @@ void DisplayClass::Init_Theater(TheaterType theater)
  *=============================================================================================*/
 short const* DisplayClass::Text_Overlap_List(char const* text, int x, int y, int lines)
 {
-    static short _list[30];
+    static short _list[50];
 
     if (text) {
         short* ptr = &_list[0];
@@ -734,8 +734,14 @@ void DisplayClass::Set_Cursor_Shape(short const* list)
     if (list) {
         int w, h;
         static short _list[50];
+        const short* src = list;
+        short* dest = _list;
 
-        memcpy(_list, list, sizeof(_list));
+        while (*src != REFRESH_EOL) {
+            *dest++ = *src++;
+        }
+        *dest = REFRESH_EOL;
+
         CursorSize = _list;
         Get_Occupy_Dimensions(w, h, CursorSize);
         ZoneOffset = -(((h / 2) * MAP_CELL_W) + (w / 2));
@@ -2723,7 +2729,7 @@ COORDINATE DisplayClass::Pixel_To_Coord(int x, int y)
     */
     // Possibly ignore the view constraints if we aren't using the internal renderer. ST - 4/17/2019 9:06AM
     // if (x < TacLeptonWidth && y < TacLeptonHeight) {
-    if (IgnoreViewConstraints || ((unsigned)x < TacLeptonWidth && (unsigned)y < TacLeptonHeight)) {
+    if (IgnoreViewConstraints || ((unsigned)x < (unsigned)TacLeptonWidth && (unsigned)y < (unsigned)TacLeptonHeight)) {
         return (Coord_Add(TacticalCoord, XY_Coord(x, y)));
     }
     return (0);
@@ -4358,11 +4364,15 @@ bool DisplayClass::Is_Spot_Free(COORDINATE coord) const
  * HISTORY:                                                                                    *
  *   08/22/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-COORDINATE DisplayClass::Center_Map(void)
+COORDINATE DisplayClass::Center_Map(COORDINATE center)
 {
+    int x = 0;
+    //	unsigned x = 0;
+    int y = 0;
+    //	unsigned y = 0;
+    bool centerit = false;
+
     if (CurrentObject.Count()) {
-        unsigned x = 0;
-        unsigned y = 0;
 
         for (int index = 0; index < CurrentObject.Count(); index++) {
             COORDINATE coord = CurrentObject[index]->Center_Coord();
@@ -4373,9 +4383,29 @@ COORDINATE DisplayClass::Center_Map(void)
 
         x /= CurrentObject.Count();
         y /= CurrentObject.Count();
-        Set_Tactical_Position(XY_Coord(x - (TacLeptonWidth / 2), y - (TacLeptonHeight / 2)));
+        centerit = true;
+    }
 
-        return XY_Coord(x, y);
+    if (center != 0L) {
+        x = Coord_X(center);
+        y = Coord_Y(center);
+        centerit = true;
+    }
+
+    if (centerit) {
+        center = XY_Coord(x, y);
+
+        x = x - (int)TacLeptonWidth / 2;
+        if (x < Cell_To_Lepton(MapCellX))
+            x = Cell_To_Lepton(MapCellX);
+
+        y = y - (int)TacLeptonHeight / 2;
+        if (y < Cell_To_Lepton(MapCellY))
+            y = Cell_To_Lepton(MapCellY);
+
+        Set_Tactical_Position(XY_Coord(x, y));
+
+        return center;
     }
 
     return 0;

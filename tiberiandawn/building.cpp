@@ -1064,7 +1064,7 @@ void BuildingClass::AI(void)
     **	Obelisk charging logic.
     */
     if (*this == STRUCT_OBELISK && BState != BSTATE_CONSTRUCTION) {
-        if (Target_Legal(TarCom) && House->Power_Fraction() >= 0x0100) {
+        if (Target_Legal(TarCom) && House->Power_Fraction() >= 1) {
             if (!IsCharged) {
                 if (IsCharging) {
                     if (stagechange) {
@@ -2133,8 +2133,6 @@ void BuildingClass::Assign_Target(TARGET target)
  *=============================================================================================*/
 void BuildingClass::Init(void)
 {
-    BuildingClass* ptr;
-
     Buildings.Free_All();
 }
 
@@ -3499,7 +3497,7 @@ FireErrorType BuildingClass::Can_Fire(TARGET target, int which) const
         /*
         **	Advanced guard towers need power to fire.
         */
-        if (*this == STRUCT_ATOWER && House->Power_Fraction() < 0x0100) {
+        if (*this == STRUCT_ATOWER && House->Power_Fraction() < 1) {
             return (FIRE_BUSY);
         }
 
@@ -3551,7 +3549,7 @@ bool BuildingClass::Toggle_Primary(void)
         // if (House == PlayerPtr) {
         // 	Speak(VOX_PRIMARY_SELECTED);
         // }
-        if ((HouseClass*)House->IsHuman) {
+        if (House->IsHuman) {
             Speak(VOX_PRIMARY_SELECTED, House);
         }
     }
@@ -4106,6 +4104,12 @@ int BuildingClass::Mission_Deconstruction(void)
                     if (infantry) {
                         ScenarioInit++;
                         COORDINATE coord = Coord_Add(Center_Coord(), XYP_COORD(0, -12));
+
+                        /* extra check to prevent building crew for Obelisk or AGT spawning
+                           one cell above building foundation */
+                        if (*this == STRUCT_ATOWER || *this == STRUCT_OBELISK) {
+                            coord = Map[coord].Adjacent_Cell(FACING_S)->Cell_Coord();
+                        }
                         coord = Map[Coord_Cell(coord)].Closest_Free_Spot(coord, false);
 
                         if (infantry->Unlimbo(coord, DIR_N)) {
@@ -4683,8 +4687,10 @@ int BuildingClass::Mission_Repair(void)
                     Contact_With_Whom()->Assign_Mission(MISSION_GUARD);
                     return (1);
                 } else {
-                    int time = Bound(Fixed_To_Cardinal(TICKS_PER_SECOND, House->Power_Fraction()), 0, TICKS_PER_SECOND);
-                    time = (TICKS_PER_SECOND * 3) - time;
+                    fixed pfrac = Saturate(House->Power_Fraction(), 1);
+                    if (pfrac < fixed::_1_2)
+                        pfrac = fixed::_1_2;
+                    int time = Inverse(pfrac) * TICKS_PER_MINUTE;
                     IsReadyToCommence = false;
                     return (time);
                 }

@@ -13,7 +13,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\ipxconn.h_v   1.12   16 Oct 1995 16:45:10   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/IPXCONN.H 1     3/03/97 10:24a Joe_bostic $ */
 /***************************************************************************
  **   C O N F I D E N T I A L --- W E S T W O O D    S T U D I O S        **
  ***************************************************************************
@@ -33,7 +33,7 @@
  * This is the Connection Class for IPX communications.  It inherits			*
  * a Queue, PacketBuf, timeout variables from ConnectionClass.  It 			*
  * inherits its Send_/Receive_/Get_Packet functions, and the sequenced		*
- * ACK/Retry logic in Service_Send_Queue & Service_Recieve_Queue from		*
+ * ACK/Retry logic in Service_Send_Queue & Service_Receive_Queue from		*
  * SequencedConnClass.  It guarantees order of delivery of packets.			*
  *																									*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -44,13 +44,13 @@
 /*
 ********************************* Includes **********************************
 */
-#include "noseqcon.h"
+#include "connect.h"
 #include "ipxaddr.h"
 
 /*
 ***************************** Class Declaration *****************************
 */
-class IPXConnClass : public NonSequencedConnClass
+class IPXConnClass : public ConnectionClass
 {
     /*
     ---------------------------- Public Interface ----------------------------
@@ -61,8 +61,7 @@ public:
     .....................................................................*/
     enum IPXConnTag
     {
-        CONN_NAME_MAX = 40,   // max # chars allowed for connection name
-        CONNECTION_NONE = -1, // value of an invalid connection ID
+        CONN_NAME_MAX = 40 // max # chars allowed for connection name
     };
 
     /*.....................................................................
@@ -74,7 +73,8 @@ public:
                  unsigned short magicnum,
                  IPXAddressClass* address,
                  int id,
-                 char* name);
+                 const char* name,
+                 int extralen = 0);
     virtual ~IPXConnClass(){};
 
     /*.....................................................................
@@ -104,8 +104,8 @@ public:
     connections at once (there's no way to turn listening on for only one
     connection; it's all or nothing).
     .....................................................................*/
-    static bool Start_Listening(void);
-    static bool Stop_Listening(void);
+    static int Start_Listening(void);
+    static int Stop_Listening(void);
 
     /*.....................................................................
     The Destination IPX Address for this connection
@@ -133,7 +133,7 @@ protected:
     This is the overloaded Send routine declared in ConnectionClass, and
     used in SequencedConnClass.
     .....................................................................*/
-    virtual int Send(char* buf, int buflen);
+    virtual int Send(char* buf, int buflen, void* extrabuf, int extralen);
 
     /*.....................................................................
     These are the routines that access IPX.  Open_Socket & Close_Socket are
@@ -206,3 +206,5 @@ protected:
 };
 
 #endif
+
+/*************************** end of ipxconn.h ******************************/

@@ -2960,47 +2960,51 @@ void BuildingTypeClass::One_Time(void)
 {
     static const struct
     {
-        StructType Class;                                         // Building class number.
-        BStateType Stage;                                         // Animation sequence to assign animation range to.
-        int Start;                                                // Starting frame number.
-        int Length;                                               // Number of frames (-1 means use all frames).
-        int Rate;                                                 // Rate of animation.
-    } _anims[] = {{STRUCT_CHRONOSPHERE, BSTATE_IDLE, 0, 4, 3},    // idling
-                  {STRUCT_CHRONOSPHERE, BSTATE_ACTIVE, 4, 16, 3}, // charging up and activating
-                  {STRUCT_MSLO, BSTATE_IDLE, 0, 0, 0},
-                  {STRUCT_MSLO, BSTATE_ACTIVE, 0, 5, 2}, // door opening
-                  {STRUCT_MSLO, BSTATE_AUX1, 4, 1, 0},   // door held open
-                  {STRUCT_MSLO, BSTATE_AUX2, 5, 3, 2},   // door closing
-                  {STRUCT_CAMOPILLBOX, BSTATE_ACTIVE, 0, 2, 1},
-                  {STRUCT_GAP, BSTATE_IDLE, 0, 32, 3},
-                  {STRUCT_AIRSTRIP, BSTATE_IDLE, 0, 0, 0},
-                  {STRUCT_AIRSTRIP, BSTATE_AUX1, 0, 8, 3},
-                  {STRUCT_BARRACKS, BSTATE_ACTIVE, 0, 10, 3},
-                  {STRUCT_BARRACKS, BSTATE_IDLE, 0, 10, 3},
-                  {STRUCT_TENT, BSTATE_ACTIVE, 0, 10, 3},
-                  {STRUCT_TENT, BSTATE_IDLE, 0, 10, 3},
+        StructType Class; // Building class number.
+        BStateType Stage; // Animation sequence to assign animation range to.
+        int Start;        // Starting frame number.
+        int Length;       // Number of frames (-1 means use all frames).
+        int Rate;         // Rate of animation.
+    } _anims[] = {
+        {STRUCT_CHRONOSPHERE, BSTATE_IDLE, 0, 4, 3},    // idling
+        {STRUCT_CHRONOSPHERE, BSTATE_ACTIVE, 4, 16, 3}, // charging up and activating
+        {STRUCT_MSLO, BSTATE_IDLE, 0, 0, 0},
+        {STRUCT_MSLO, BSTATE_ACTIVE, 0, 5, 2}, // door opening
+        {STRUCT_MSLO, BSTATE_AUX1, 4, 1, 0},   // door held open
+        {STRUCT_MSLO, BSTATE_AUX2, 5, 3, 2},   // door closing
+        {STRUCT_CAMOPILLBOX, BSTATE_ACTIVE, 0, 2, 1},
+        {STRUCT_GAP, BSTATE_IDLE, 0, 32, 3},
+        {STRUCT_AIRSTRIP, BSTATE_IDLE, 0, 0, 0},
+        {STRUCT_AIRSTRIP, BSTATE_AUX1, 0, 8, 3},
+        {STRUCT_BARRACKS, BSTATE_ACTIVE, 0, 10, 3},
+        {STRUCT_BARRACKS, BSTATE_IDLE, 0, 10, 3},
+        {STRUCT_TENT, BSTATE_ACTIVE, 0, 10, 3},
+        {STRUCT_TENT, BSTATE_IDLE, 0, 10, 3},
 #ifdef FIXIT_ANTS
-                  {STRUCT_QUEEN, BSTATE_IDLE, 0, 10, 3},
+        {STRUCT_QUEEN, BSTATE_IDLE, 0, 10, 3},
 #endif
-                  {STRUCT_CONST, BSTATE_ACTIVE, 0, 26, 3},
-                  {STRUCT_FAKECONST, BSTATE_ACTIVE, 0, 26, 3},
-                  {STRUCT_HELIPAD, BSTATE_ACTIVE, 0, 7, 4},
-                  {STRUCT_HELIPAD, BSTATE_IDLE, 0, 0, 0},
-                  {STRUCT_HOSPITAL, BSTATE_IDLE, 0, 4, 3},
-                  {STRUCT_PUMP, BSTATE_IDLE, 0, 14, 4},
-                  {STRUCT_REPAIR, BSTATE_ACTIVE, 0, 7, 2},
-                  {STRUCT_REPAIR, BSTATE_IDLE, 0, 1, 0},
-                  {STRUCT_V20, BSTATE_IDLE, 0, 3, 3},
-                  {STRUCT_V21, BSTATE_IDLE, 0, 3, 3},
-                  {STRUCT_V22, BSTATE_IDLE, 0, 3, 3},
-                  {STRUCT_V23, BSTATE_IDLE, 0, 3, 3},
-                  {STRUCT_WEAP, BSTATE_ACTIVE, 0, 1, 0},
-                  {STRUCT_WEAP, BSTATE_IDLE, 0, 1, 0},
-                  {STRUCT_FAKEWEAP, BSTATE_ACTIVE, 0, 1, 0},
-                  {STRUCT_FAKEWEAP, BSTATE_IDLE, 0, 1, 0},
-                  {STRUCT_IRON_CURTAIN, BSTATE_ACTIVE, 0, 11, 3},
-                  {STRUCT_TESLA, BSTATE_ACTIVE, 0, 10, 2},
-                  {STRUCT_AIRSTRIP, BSTATE_IDLE, 0, 8, 3}};
+        {STRUCT_CONST, BSTATE_ACTIVE, 0, 26, 3},
+        {STRUCT_FAKECONST, BSTATE_ACTIVE, 0, 26, 3},
+        {STRUCT_HELIPAD, BSTATE_ACTIVE, 0, 7, 4},
+        {STRUCT_HELIPAD, BSTATE_IDLE, 0, 0, 0},
+        {STRUCT_HOSPITAL, BSTATE_IDLE, 0, 4, 3},
+        {STRUCT_PUMP, BSTATE_IDLE, 0, 14, 4},
+        {STRUCT_REPAIR, BSTATE_ACTIVE, 0, 7, 2},
+        {STRUCT_REPAIR, BSTATE_IDLE, 0, 1, 0},
+        {STRUCT_V20, BSTATE_IDLE, 0, 3, 3},
+        {STRUCT_V21, BSTATE_IDLE, 0, 3, 3},
+        {STRUCT_V22, BSTATE_IDLE, 0, 3, 3},
+        {STRUCT_V23, BSTATE_IDLE, 0, 3, 3},
+        {STRUCT_WEAP, BSTATE_ACTIVE, 0, 1, 0},
+        {STRUCT_WEAP, BSTATE_IDLE, 0, 1, 0},
+        {STRUCT_FAKEWEAP, BSTATE_ACTIVE, 0, 1, 0},
+        {STRUCT_FAKEWEAP, BSTATE_IDLE, 0, 1, 0},
+        {STRUCT_IRON_CURTAIN, BSTATE_ACTIVE, 0, 11, 3},
+        {STRUCT_TESLA, BSTATE_ACTIVE, 0, 10, 2},
+#ifdef REMASTER_BUILD
+        {STRUCT_AIRSTRIP, BSTATE_IDLE, 0, 8, 3},
+#endif
+    };
 
     for (int sindex = STRUCT_FIRST; sindex < STRUCT_COUNT; sindex++) {
         char fullname[_MAX_FNAME + _MAX_EXT];

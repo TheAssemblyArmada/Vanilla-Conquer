@@ -16,6 +16,8 @@ if(CLANG_FORMAT_FOUND)
         redalert/*.h
         tests/*.cpp
         tests/*.h
+        tools/*.cpp
+        tools/*.h
     )
 
     file(GLOB_RECURSE ALL_SOURCE_FILES RELATIVE ${CMAKE_SOURCE_DIR} ${GLOB_PATTERNS})

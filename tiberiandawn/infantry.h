@@ -118,6 +118,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     InfantryClass(void);
     InfantryClass(NoInitClass const& x)
         : FootClass(x)
@@ -168,6 +171,7 @@ public:
     virtual void Response_Select(void);
     virtual void Response_Move(void);
     virtual void Response_Attack(void);
+    virtual void Response_Sabotage(void);
     virtual void Active_Click_With(ActionType action, ObjectClass* object);
 
     /*
@@ -221,7 +225,7 @@ public:
     */
     static void Read_INI(CCINIClass& ini);
     static void Write_INI(CCINIClass& ini);
-    static char* INI_Name(void)
+    static const char* INI_Name(void)
     {
         return "INFANTRY";
     };

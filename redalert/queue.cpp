@@ -94,10 +94,10 @@ bool bReconnectDialogCancelled;
 //	CRC[] is a record of our last 32 game CRC's.
 // ColorNames is for debug output in Print_CRCs
 //---------------------------------------------------------------------------
-static unsigned long GameCRC;
-static unsigned long CRC[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-static char* ColorNames[8] = {"Yellow", "LtBlue", "Red", "Green", "Orange", "Grey", "Blue", "Brown"};
+static unsigned int GameCRC;
+static unsigned int CRC[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static const char* ColorNames[8] = {"Yellow", "LtBlue", "Red", "Green", "Orange", "Grey", "Blue", "Brown"};
 
 //...........................................................................
 // Mono debugging variables:
@@ -201,7 +201,7 @@ static void Queue_Playback(void);
 // Debugging:
 //...........................................................................
 static void Compute_Game_CRC(void);
-void Add_CRC(unsigned long* crc, unsigned long val);
+void Add_CRC(unsigned int* crc, unsigned int val);
 static void Print_CRCs(EventClass* ev);
 static void Init_Queue_Mono(ConnManClass* net);
 static void Update_Queue_Mono(ConnManClass* net, int flow_index);
@@ -554,8 +554,9 @@ static void Queue_AI_Multiplayer(void)
     if (Session.Type == GAME_SKIRMISH)
         return;
 
+#ifdef REMASTER_BUILD
     return;
-#if (0) // PG
+#else // PG
     //........................................................................
     // Enums:
     //........................................................................
@@ -601,12 +602,8 @@ static void Queue_AI_Multiplayer(void)
     //------------------------------------------------------------------------
     //	Initialize the packet buffer pointer & its max size
     //------------------------------------------------------------------------
-#if (0) // PG
-    if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
-        multi_packet_buf = NullModem.BuildBuf;
-        multi_packet_max = NullModem.MaxLen - sizeof(CommHeaderType);
-        net = &NullModem;
-    } else if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
+#ifndef REMASTER_BUILD
+    if (Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) {
         multi_packet_buf = Session.MetaPacket;
         multi_packet_max = Session.MetaSize;
         net = &Ipx;
@@ -791,16 +788,18 @@ static void Queue_AI_Multiplayer(void)
     //------------------------------------------------------------------------
 #ifdef FIXIT_VERSION_3
     int iFramesyncTimeout;
+#ifdef WOLAPI_INTEGRATION
     if (Session.Type == GAME_INTERNET && pWolapi && pWolapi->GameInfoCurrent.iPlayerCount > 2)
         //	Shortened resync timeout for non-2 player games.
         iFramesyncTimeout = 5 * 60; //	One minute.
     else
+#endif
         iFramesyncTimeout = FRAMESYNC_TIMEOUT;
 
     rc = Wait_For_Players(0,
                           net,
                           (Session.MaxAhead << 3),
-                          MAX(net->Response_Time() * 3, FRAMESYNC_DLG_TIME * timeout_factor),
+                          MAX(net->Response_Time() * 3, (unsigned long)(FRAMESYNC_DLG_TIME * timeout_factor)),
                           iFramesyncTimeout * (2 * timeout_factor),
                           multi_packet_buf,
                           my_sent,
@@ -2569,7 +2568,7 @@ static int Add_Compressed_Events(void* buf, int bufsize, int frame_delay, int si
                 if (OutList.First().Data.MegaMission.Mission == prevevent.Data.MegaMission.Mission
                     && OutList.First().Data.MegaMission.Target == prevevent.Data.MegaMission.Target
                     && OutList.First().Data.MegaMission.Destination == prevevent.Data.MegaMission.Destination) {
-#if (0) // PG
+#ifndef REMASTER_BUILD
                     if (Debug_Print_Events) {
                         printf("      adding Whom:%x (%x) Mission:%s Target:%x (%x) Dest:%x (%x)\n",
                                OutList.First().Data.MegaMission.Whom.As_TARGET(),
@@ -3296,13 +3295,9 @@ static int Execute_DoList(int max_houses,
                         if (CRC[index] != DoList[j].Data.FrameInfo.CRC) {
                             Print_CRCs(&DoList[j]);
 
-#if (0) // PG
+#ifndef REMASTER_BUILD
                             if (WWMessageBox().Process(TXT_OUT_OF_SYNC, TXT_CONTINUE, TXT_STOP) == 0) {
-                                if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
-                                    // PG Destroy_Null_Connection( house, -1 );
-                                    Shutdown_Modem();
-                                    Session.Type = GAME_NORMAL;
-                                } else if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && net) {
+                                if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && net) {
                                     while (net->Num_Connections()) {
                                         Keyboard->Check();
                                         Destroy_Connection(net->Connection_ID(0), -1);
@@ -3471,7 +3466,7 @@ static void Queue_Playback(void)
     //------------------------------------------------------------------------
     if (Keyboard->Check()) {
         key = Keyboard->Get();
-        if (key == KA_ESC || Session.Attract) {
+        if (key == KN_ESC || Session.Attract) {
             GameActive = false;
             return;
         }
@@ -3493,7 +3488,7 @@ static void Queue_Playback(void)
     //------------------------------------------------------------------------
     Compute_Game_CRC();
     CRC[Frame & 0x001f] = GameCRC;
-
+#if 0 // This whole block is potentially the cause of playback desyncs, so wall it off for now.
     //------------------------------------------------------------------------
     // If we've reached the CRC print frame, do so & exit
     //------------------------------------------------------------------------
@@ -3522,7 +3517,7 @@ static void Queue_Playback(void)
             return;
         }
     }
-
+#endif
     //------------------------------------------------------------------------
     //	Read the DoList from disk
     //------------------------------------------------------------------------
@@ -3664,8 +3659,9 @@ static void Compute_Game_CRC(void)
     //------------------------------------------------------------------------
     //	A random #
     //------------------------------------------------------------------------
-    //	Add_CRC(&GameCRC, Scen.RandomNumber.Seed);
-    Add_CRC(&GameCRC, Scen.RandomNumber);
+    // Capture the current internal value, don't roll the random, otherwise playbacks desync.
+    Add_CRC(&GameCRC, Scen.RandomNumber.Seed);
+    // Add_CRC(&GameCRC, Scen.RandomNumber);
 
 } /* end of Compute_Game_CRC */
 
@@ -3685,10 +3681,11 @@ static void Compute_Game_CRC(void)
  * HISTORY:                                                                *
  *   05/09/1995 BRR : Created.                                             *
  *=========================================================================*/
-void Add_CRC(unsigned long* crc, unsigned long val)
+void Add_CRC(unsigned int* crc, unsigned int val)
 {
     int hibit;
 
+    /* FIXME: Perhaps this should be updated to match 32-bits? */
     if ((*crc) & 0x80000000) {
         hibit = 1;
     } else {

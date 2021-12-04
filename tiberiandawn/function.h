@@ -100,6 +100,12 @@ inline int max(int a, int b)
 }
 #endif
 
+#include "common/sockets.h" // Must come before windows.h include.
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 /**********************************************************************
 **	If the following define is enabled, then the memory checking code
 **	will be disabled.
@@ -261,6 +267,7 @@ typedef struct NodeNameTag
         {
             HousesType House;
             unsigned char Color;
+            HousesType ID;
         } Player;
     };
 } NodeNameType;
@@ -371,15 +378,17 @@ void CC_Add_Shape_To_Global(void const* shapeptr, char* filename, char code);
 
 void Bubba_Print(char* format, ...);
 
-void Heap_Dump_Check(char* string);
+void Heap_Dump_Check(const char* string);
 void Dump_Heap_Pointers(void);
 unsigned long Disk_Space_Available(void);
 
-void Validate_Error(char* name);
-void const* Hires_Retrieve(char* name);
+void Validate_Error(const char* name);
+void const* Hires_Retrieve(const char* name);
 int Get_Resolution_Factor(void);
 
 void Shake_The_Screen(int shakes, HousesType house = HOUSE_NONE);
+bool Is_Demo(void);
+bool Is_DOS_Files(void);
 
 /*
 ** INTERPAL.CPP
@@ -908,7 +917,7 @@ inline char const* Text_String(int string)
 void Blit_Hid_Page_To_Seen_Buff(void);
 extern bool RunningAsDLL;
 
-template <class T> inline T Random_Picky(T a, T b, char* sfile, int line)
+template <class T> inline T Random_Picky(T a, T b, const char* sfile, int line)
 {
     sfile = sfile;
     line = line;
@@ -1067,3 +1076,6 @@ void GlyphX_Debug_Print(const char* debug_text);
 ** Achievement event. ST - 11/11/2019 11:39AM
 */
 void On_Achievement_Event(const HouseClass* player_ptr, const char* achievement_type, const char* achievement_reason);
+
+/* Holds the title filename. On 320x200, set to TITLE.CPS, else HTITLE.PCX. */
+extern char* TitlePicture;

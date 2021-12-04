@@ -44,7 +44,7 @@ void Emergency_Exit(int);
 extern int RequiredCD;
 extern bool RunningAsDLL;
 
-template <class T> class MixFileClass : public Node<MixFileClass<T>>
+template <class T, class TCRC = CRCEngine> class MixFileClass : public Node<MixFileClass<T>>
 {
 public:
     char const* Filename; // Filename of mixfile.
@@ -60,6 +60,7 @@ public:
     static bool Cache(char const* filename, Buffer const* buffer = NULL);
     static bool
     Offset(char const* filename, void** realptr = 0, MixFileClass** mixfile = 0, long* offset = 0, long* size = 0);
+    static bool Offset(int hash, void** realptr = 0, MixFileClass** mixfile = 0, long* offset = 0, long* size = 0);
     static void const* Retrieve(char const* filename);
 
 #pragma pack(push, 4)
@@ -83,6 +84,16 @@ public:
         };
     };
 #pragma pack(pop)
+
+    const SubBlock* Get_Index() const
+    {
+        return HeaderBuffer;
+    }
+
+    int Get_File_Count() const
+    {
+        return Count;
+    }
 
 private:
     static MixFileClass* Finder(char const* filename);
@@ -147,14 +158,14 @@ private:
     */
     void* Data; // Pointer to raw data.
 
-    static List<MixFileClass> MixList;
+    static List<MixFileClass<T, TCRC>> MixList;
 };
 
 /*
 **	This is the pointer to the first mixfile in the list of mixfiles registered
 **	with the mixfile system.
 */
-template <class T> List<MixFileClass<T>> MixFileClass<T>::MixList;
+template <class T, class TCRC> List<MixFileClass<T, TCRC>> MixFileClass<T, TCRC>::MixList;
 
 /***********************************************************************************************
  * MixFileClass::Free -- Uncaches a cached mixfile.                                            *
@@ -170,7 +181,7 @@ template <class T> List<MixFileClass<T>> MixFileClass<T>::MixList;
  * HISTORY:                                                                                    *
  *   01/23/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-template <class T> bool MixFileClass<T>::Free(char const* filename)
+template <class T, class TCRC> bool MixFileClass<T, TCRC>::Free(char const* filename)
 {
     MixFileClass* ptr = Finder(filename);
 
@@ -198,7 +209,7 @@ template <class T> bool MixFileClass<T>::Free(char const* filename)
  *   08/08/1994 JLB : Created.                                                                 *
  *   01/06/1995 JLB : Puts mixfile header table into EMS.                                      *
  *=============================================================================================*/
-template <class T> MixFileClass<T>::~MixFileClass(void)
+template <class T, class TCRC> MixFileClass<T, TCRC>::~MixFileClass(void)
 {
     /*
     **	Deallocate any allocated memory.
@@ -207,7 +218,7 @@ template <class T> MixFileClass<T>::~MixFileClass(void)
         free((char*)Filename);
     }
     if (Data != NULL && IsAllocated) {
-        delete[] Data;
+        delete[] static_cast<char*>(Data);
         IsAllocated = false;
     }
     Data = NULL;
@@ -240,8 +251,8 @@ template <class T> MixFileClass<T>::~MixFileClass(void)
  *   08/08/1994 JLB : Created.                                                                 *
  *   07/12/1996 JLB : Handles compressed file header.                                          *
  *=============================================================================================*/
-template <class T>
-MixFileClass<T>::MixFileClass(char const* filename)
+template <class T, class TCRC>
+MixFileClass<T, TCRC>::MixFileClass(char const* filename)
     : IsDigest(false)
     , IsEncrypted(false)
     , IsAllocated(false)
@@ -351,8 +362,8 @@ MixFileClass<T>::MixFileClass(char const* filename)
  *   08/08/1994 JLB : Created.                                                                 *
  *   07/12/1996 JLB : Handles compressed file header.                                          *
  *=============================================================================================*/
-template <class T>
-MixFileClass<T>::MixFileClass(char const* filename, PKey const* key)
+template <class T, class TCRC>
+MixFileClass<T, TCRC>::MixFileClass(char const* filename, PKey const* key)
     : IsDigest(false)
     , IsEncrypted(false)
     , IsAllocated(false)
@@ -473,7 +484,7 @@ MixFileClass<T>::MixFileClass(char const* filename, PKey const* key)
  * HISTORY:                                                                                    *
  *   08/23/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-template <class T> void const* MixFileClass<T>::Retrieve(char const* filename)
+template <class T, class TCRC> void const* MixFileClass<T, TCRC>::Retrieve(char const* filename)
 {
     void* ptr = 0;
     Offset(filename, &ptr);
@@ -497,9 +508,9 @@ template <class T> void const* MixFileClass<T>::Retrieve(char const* filename)
  *   08/08/1994 JLB : Created.                                                                 *
  *   06/08/1996 JLB : Only compares filename and extension.                                    *
  *=============================================================================================*/
-template <class T> MixFileClass<T>* MixFileClass<T>::Finder(char const* filename)
+template <class T, class TCRC> MixFileClass<T, TCRC>* MixFileClass<T, TCRC>::Finder(char const* filename)
 {
-    MixFileClass<T>* ptr = MixList.First();
+    MixFileClass<T, TCRC>* ptr = MixList.First();
     while (ptr->Is_Valid()) {
 #ifdef _WIN32
         char path[_MAX_PATH];
@@ -544,9 +555,9 @@ template <class T> MixFileClass<T>* MixFileClass<T>::Finder(char const* filename
  * HISTORY:                                                                                    *
  *   08/08/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-template <class T> bool MixFileClass<T>::Cache(char const* filename, Buffer const* buffer)
+template <class T, class TCRC> bool MixFileClass<T, TCRC>::Cache(char const* filename, Buffer const* buffer)
 {
-    MixFileClass<T>* mixer = Finder(filename);
+    MixFileClass<T, TCRC>* mixer = Finder(filename);
 
     if (mixer != NULL) {
         return (mixer->Cache(buffer));
@@ -571,7 +582,7 @@ template <class T> bool MixFileClass<T>::Cache(char const* filename, Buffer cons
  *   08/08/1994 JLB : Created.                                                                 *
  *   07/12/1996 JLB : Handles attached message digest.                                         *
  *=============================================================================================*/
-template <class T> bool MixFileClass<T>::Cache(Buffer const* buffer)
+template <class T, class TCRC> bool MixFileClass<T, TCRC>::Cache(Buffer const* buffer)
 {
     /*
     **	If the mixfile is already cached, then no action needs to be performed.
@@ -672,7 +683,7 @@ template <class T> bool MixFileClass<T>::Cache(Buffer const* buffer)
  * HISTORY:                                                                                    *
  *   08/08/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-template <class T> void MixFileClass<T>::Free(void)
+template <class T, class TCRC> void MixFileClass<T, TCRC>::Free(void)
 {
     if (Data != NULL && IsAllocated) {
         delete[] Data;
@@ -720,11 +731,13 @@ inline int compfunc(void const* ptr1, void const* ptr2)
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-template <class T>
-bool MixFileClass<T>::Offset(char const* filename, void** realptr, MixFileClass** mixfile, long* offset, long* size)
+template <class T, class TCRC>
+bool MixFileClass<T, TCRC>::Offset(char const* filename,
+                                   void** realptr,
+                                   MixFileClass** mixfile,
+                                   long* offset,
+                                   long* size)
 {
-    MixFileClass<T>* ptr;
-
     if (filename == NULL) {
         assert(filename != NULL); // BG
         return (false);
@@ -738,9 +751,17 @@ bool MixFileClass<T>::Offset(char const* filename, void** realptr, MixFileClass*
     char filename_upper[_MAX_PATH];
     strcpy(filename_upper, filename);
     strupr(filename_upper);
-    int32_t crc = Calculate_CRC(strupr(filename_upper), strlen(filename_upper));
+    int32_t crc = Calculate_CRC<TCRC>(strupr(filename_upper), int(strlen(filename_upper)));
+
+    return Offset(crc, realptr, mixfile, offset, size);
+}
+
+template <class T, class TCRC>
+bool MixFileClass<T, TCRC>::Offset(int hash, void** realptr, MixFileClass** mixfile, long* offset, long* size)
+{
+    MixFileClass<T, TCRC>* ptr;
     SubBlock key;
-    key.CRC = crc;
+    key.CRC = hash;
 
     /*
     **	Sweep through all registered mixfiles, trying to find the file in question.
@@ -775,7 +796,7 @@ bool MixFileClass<T>::Offset(char const* filename, void** realptr, MixFileClass*
         /*
         **	Advance to next mixfile.
         */
-        ptr = ptr->Next();
+        ptr = (MixFileClass<T, TCRC>*)ptr->Next();
     }
 
     /*
@@ -786,7 +807,7 @@ bool MixFileClass<T>::Offset(char const* filename, void** realptr, MixFileClass*
 }
 
 // ST - 12/18/2019 11:36AM
-template <class T> void MixFileClass<T>::Free_All(void)
+template <class T, class TCRC> void MixFileClass<T, TCRC>::Free_All(void)
 {
     MixFileClass<T>* ptr = MixList.First();
     while (ptr->Is_Valid()) {

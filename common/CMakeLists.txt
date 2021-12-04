@@ -26,6 +26,7 @@ set(COMMON_SRC
     crc.cpp
     crew.cpp
     cstraw.cpp
+    connect.cpp
     debugstring.cpp
     delay.cpp
     dipthong.cpp
@@ -46,6 +47,7 @@ set(COMMON_SRC
     iff.cpp
     ini.cpp
     int.cpp
+    internet.cpp
     irandom.cpp
     keybuff.cpp
     keyframe.cpp
@@ -68,6 +70,7 @@ set(COMMON_SRC
     pk.cpp
     pkpipe.cpp
     pkstraw.cpp
+    ramfile.cpp
     random.cpp
     rand.cpp
     rawfile.cpp
@@ -92,6 +95,7 @@ set(COMMON_SRC
     winasm.cpp
     windows.cpp
     winhide.cpp
+    winstub.cpp
     wsa.cpp
     xordelta.cpp
     xpipe.cpp
@@ -108,6 +112,7 @@ set(COMMONR_SRC
     framelimit.cpp
     gbuffer.cpp
     interpal.cpp
+    ipxaddr.cpp
     soundio_null.cpp
     tcpip_null.cpp
     video_null.cpp
@@ -119,6 +124,7 @@ set(COMMONV_SRC
     framelimit.cpp
     gbuffer.cpp
     interpal.cpp
+    ipxaddr.cpp
     tcpip.cpp
     tcpip_null.cpp
     unvqbuff.cpp
@@ -128,6 +134,8 @@ set(COMMONV_SRC
     vqapalette.cpp
     vqatask.cpp
     vqaver.cpp
+    wsproto.cpp
+    wspudp.cpp
     wwkeyboard.cpp
     wwmouse.cpp
 )
@@ -182,5 +190,8 @@ if(BUILD_VANILLATD OR BUILD_VANILLARA)
     endif()
     if(SDL2)
         target_compile_definitions(commonv PUBLIC SDL2_BUILD)
+    endif()
+    if(NETWORKING)
+        target_compile_definitions(commonv PUBLIC WINSOCK_IPX NETWORKING)
     endif()
 endif()

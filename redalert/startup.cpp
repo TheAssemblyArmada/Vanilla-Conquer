@@ -38,18 +38,20 @@
 #include "language.h"
 #include "settings.h"
 #include "common/paths.h"
+#include "common/utfargs.h"
 
 #include "ipx95.h"
-
-#ifdef MCIMPEG // Denzil 6/15/98
-#include "mcimovie.h"
-#endif
 
 extern char RedAlertINI[_MAX_PATH];
 
 bool Read_Private_Config_Struct(FileClass& file, NewConfigType* config);
 void Print_Error_End_Exit(char* string);
 void Print_Error_Exit(char* string);
+
+#ifdef SDL2_BUILD
+#define SDL_MAIN_HANDLED
+#include <SDL.h>
+#endif
 
 #ifdef _WIN32
 #include <direct.h>
@@ -155,77 +157,40 @@ BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserve
 #ifdef REMASTER_BUILD
 // int PASCAL WinMain(HINSTANCE, HINSTANCE, char *, int )
 // PG int PASCAL WinMain ( HINSTANCE instance , HINSTANCE , char * command_line , int command_show )
+int main(int, char*[]);
+
 int DLL_Startup(const char* command_line_in)
 {
+    /* Construct argc and argv from command_line_in. Remaster build requires
+    ** that first argument is a full path to DLL, not executable. Furthermore, it
+    ** seems to override the argv to include extra parameters which the DLL
+    ** expects. Getting the argc and argv from executable will result in
+    ** a crash trying to read the font files. */
+
     RunningAsDLL = true;
-    int command_show = SW_HIDE;
     HINSTANCE instance = ProgramInstance;
     char command_line[1024];
-    strcpy(command_line, command_line_in);
-#elif defined _WIN32
-int PASCAL WinMain(HINSTANCE instance, HINSTANCE, char* command_line, int command_show)
-{
-#else
-int main(int argc, char* argv[])
-{
-#endif // _WIN32
-
-// printf("in program.\n");getch();
-// printf("ram free = %ld\n",Ram_Free(MEM_NORMAL));getch();
-#ifdef _WIN32
-    if (Ram_Free(MEM_NORMAL) < 7000000) {
-#else
-
-    void* temp_mem = malloc(13 * 1024 * 1024);
-    if (temp_mem) {
-        free(temp_mem);
-    } else {
-
-#endif
-        printf(TEXT_NO_RAM);
-
-#if (0)
-
-        /*
-        ** Take a stab at finding out how much memory there is available.
-        */
-
-        for (int mem = 13 * 1024 * 1024; mem > 0; mem -= 1024) {
-            temp_mem = malloc(mem);
-            if (temp_mem) {
-                free(temp_mem);
-                printf("Memory available: %d", mem);
-                break;
-            }
-        }
-
-        getch();
-#endif //(0)
-        return (EXIT_FAILURE);
-    }
-
-#ifdef _WIN32
-
-    if (strstr(command_line, "f:\\projects\\c&c0") != NULL || strstr(command_line, "F:\\PROJECTS\\C&C0") != NULL) {
-        MessageBoxA(0, "Playing off of the network is not allowed.", "Red Alert", MB_OK | MB_ICONSTOP);
-        return (EXIT_FAILURE);
-    }
-
-    int argc; // Command line argument count
+    int argc = 0;
     unsigned command_scan;
     char command_char;
-    char* argv[20]; // Pointers to command line arguments
-    char path_to_exe[132];
+    char* argv[20];
+    char path_to_exe[280];
 
+    strcpy(command_line, command_line_in);
     ProgramInstance = instance;
 
     /*
-    ** Get the full path to the .EXE
+    ** Get the full path to the .DLL
     */
-    GetModuleFileNameA(instance, &path_to_exe[0], 132);
+    DWORD readed = GetModuleFileNameA(instance, &path_to_exe[0], 280);
+    if (readed >= 280 - 1) {
+        MessageBoxA(NULL, "Path to remaster is too large.", "Command & Conquer", MB_ICONEXCLAMATION | MB_OK);
+        return -1;
+    }
 
     /*
     ** First argument is supposed to be a pointer to the .EXE that is running
+    ** - False. Must be a pointer to the DLL - giulianob 07/11/2021
     **
     */
     argc = 1;                  // Set argument count to 1
@@ -239,6 +204,8 @@ int main(int argc, char* argv[])
     */
 
     command_scan = 0;
+
+    /* This certainly can be improved, but worse than this is not working :)*/
 
     do {
         /*
@@ -261,41 +228,44 @@ int main(int argc, char* argv[])
                     in_quotes = !in_quotes;
                 }
             } while ((in_quotes || command_char != ' ') && command_char != 0 && command_char != 13);
+
             *(command_line + command_scan - 1) = 0;
         }
 
     } while (command_char != 0 && command_char != 13 && argc < 20);
 
-#endif // _WIN32
+    if (argc >= 20) {
+        MessageBoxA(NULL, "Too many arguments on command line.", "Command & Conquer", MB_ICONEXCLAMATION | MB_OK);
+        return -1;
+    }
+
+    return main(argc, argv);
+}
+#endif //REMASTER_BUILD
+
+int main(int argc, char* argv[])
+{
+    UtfArgs args(argc, argv);
+    WWDebugString("RA95 - Starting up.\n");
+
+    if (Ram_Free(MEM_NORMAL) < 7000000) {
+        printf(TEXT_NO_RAM);
+
+        return (EXIT_FAILURE);
+    }
 
     /*
     **	Remember the current working directory and drive.
     */
-    Paths.Init("vanillara", CONFIG_FILE_NAME, "REDALERT.MIX", argv[0]);
-    vc_chdir(Paths.Program_Path());
+    Paths.Init("vanillara", CONFIG_FILE_NAME, "REDALERT.MIX", args.ArgV[0]);
+    vc_chdir(Paths.Data_Path());
     CDFileClass::Refresh_Search_Drives();
 
-    if (Parse_Command_Line(argc, argv)) {
+    if (Parse_Command_Line(args.ArgC, args.ArgV)) {
 
         WinTimerClass::Init(60);
 
-#ifdef REMASTER_BUILD
-        ////////////////////////////////////////
-        // The editor needs to load the Red Alert ini file from a different location than the real game. - 7/18/2019 JAS
-        char* red_alert_file_path = nullptr;
-        if (RunningFromEditor) {
-            red_alert_file_path = RedAlertINI;
-        } else {
-            red_alert_file_path = CONFIG_FILE_NAME;
-        }
-
-        RawFileClass cfile(red_alert_file_path);
-        // RawFileClass cfile(CONFIG_FILE_NAME);
-        // end of change - 7/18/2019 JAS
-        ////////////////////////////////////////
-#else
         CCFileClass cfile(CONFIG_FILE_NAME);
-#endif
 
         Keyboard = new WWKeyboardClass();
 
@@ -327,14 +297,12 @@ int main(int argc, char* argv[])
         Read_Setup_Options(&cfile);
 
 #if defined(_WIN32) && !defined(SDL2_BUILD)
-        Create_Main_Window(instance, command_show, ScreenWidth, ScreenHeight);
+        /* WinMain seems to pass command_show to Create_Main_Window, but since we
+        ** are not using WinMain anymore, we simply pass 0 to it. */
+        Create_Main_Window(ProgramInstance, 0, ScreenWidth, ScreenHeight);
 #endif
         SoundOn = Audio_Init(16, false, 11025 * 2, false);
 
-#ifdef MPEGMOVIE // Denzil 6/10/98
-        if (!InitDDraw())
-            return (EXIT_FAILURE);
-#else
         bool video_success = false;
         /*
         ** Set 640x400 video mode.
@@ -421,7 +389,6 @@ int main(int argc, char* argv[])
 
         SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
         HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-#endif // MPEGMOVIE - Denzil 6/10/98
 
         Options.Adjust_Variables_For_Resolution();
 
@@ -476,15 +443,6 @@ int main(int argc, char* argv[])
             return (EXIT_SUCCESS);
         }
 
-#ifdef MPEGMOVIE // Denzil 6/15/98
-        if (MpgSettings != NULL)
-            delete MpgSettings;
-
-#ifdef MCIMPEG
-        if (MciMovie != NULL)
-            delete MciMovie;
-#endif
-#endif
         /*
         ** Save settings if they were changed during gameplay.
         */
@@ -521,9 +479,7 @@ int main(int argc, char* argv[])
 
         return (EXIT_SUCCESS);
     }
-    /*
-    **	Restore the current drive and directory.
-    */
+
     return (EXIT_SUCCESS);
 }
 
@@ -702,7 +658,11 @@ void Emergency_Exit(int code)
     /*
     ** Post a message to our message handler to tell it to clean up.
     */
-#ifdef _WIN32
+#ifdef SDL2_BUILD
+    SDL_Event sdlevent;
+    sdlevent.type = SDL_QUIT;
+    SDL_PushEvent(&sdlevent);
+#elif defined _WIN32
     PostMessage(MainWindow, WM_DESTROY, 0, 0);
 #endif
 

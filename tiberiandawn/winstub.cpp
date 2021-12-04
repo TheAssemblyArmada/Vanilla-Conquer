@@ -300,7 +300,6 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
  *=============================================================================================*/
 
 #define CC_ICON 1
-int ShowCommand;
 
 #if defined(_WIN32) && !defined(SDL2_BUILD)
 void Create_Main_Window(HANDLE instance, int width, int height)
@@ -508,35 +507,4 @@ void Memory_Error_Handler(void)
     // Nope. ST - 1/10/2019 10:38AM
     // PostQuitMessage( 0 );
     // ExitProcess(0);
-}
-
-/***********************************************************************************************
- * Load_Title_Screen -- loads the title screen into the given video buffer                     *
- *                                                                                             *
- *                                                                                             *
- *                                                                                             *
- * INPUT:    screen name                                                                       *
- *           video buffer                                                                      *
- *           ptr to buffer for palette                                                         *
- *                                                                                             *
- * OUTPUT:   Nothing                                                                           *
- *                                                                                             *
- * WARNINGS: None                                                                              *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *    7/5/96 11:30AM ST : Created                                                              *
- *=============================================================================================*/
-
-#include "filepcx.h"
-void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned char* palette)
-{
-
-    GraphicBufferClass* load_buffer;
-
-    load_buffer = Read_PCX_File(name, (char*)palette, NULL, 0);
-
-    if (load_buffer) {
-        load_buffer->Blit(*video_page);
-        delete load_buffer;
-    }
 }

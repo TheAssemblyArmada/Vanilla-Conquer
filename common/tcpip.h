@@ -39,12 +39,14 @@
  *                                                                         *
  *                                                                         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+#include "sockets.h"
 
 #ifdef _WIN32
 #include <windows.h>
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #endif
 
 extern bool Server;
@@ -96,7 +98,7 @@ public:
     bool Init(void);
     void Start_Server(void);
     void Start_Client(void);
-    void Close_Socket(unsigned s);
+    void Close_Socket(SOCKET s);
 #ifdef _WIN32
     void Message_Handler(HWND window, UINT message, UINT wParam, LONG lParam);
 #endif
@@ -107,7 +109,7 @@ public:
     void Close(void);
     void Set_Host_Address(char* address);
     void Set_Protocol_UDP(bool state);
-    void Clear_Socket_Error(unsigned socket);
+    void Clear_Socket_Error(SOCKET socket);
 
     inline bool Get_Connected(void)
     {
@@ -151,18 +153,17 @@ private:
         bool InUse : 1;
     } InternetBufferType;
 
-#ifdef _WIN32
     bool WinsockInitialised;
-    WSADATA WinsockInfo;
     SOCKET ListenSocket;
     SOCKET ConnectSocket;
     SOCKET UDPSocket;
-    IN_ADDR ClientIPAddress;
+    in_addr ClientIPAddress;
+#ifdef _WIN32
     HANDLE Async;
     char HostBuff[MAXGETHOSTSTRUCT];
+#endif
     char ClientName[128];
     char ReceiveBuffer[WS_RECEIVE_BUFFER_LEN];
-#endif
     // char					InBuffer[WS_IN_BUFFER_LEN];
     // int					InBufferHead;
     // int					InBufferTail;

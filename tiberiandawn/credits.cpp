@@ -103,8 +103,13 @@ void CreditClass::Graphic_Logic(bool forced)
         **	Display the new current value.
         */
         // LogicPage->Fill_Rect(xx-(20 << factor), 1 << factor, xx+(20 << factor), 6 << factor, LTGREY);
+
+        TextPrintType flags =
+            factor ? TPF_GREEN12_GRAD | TPF_CENTER | TPF_USE_GRAD_PAL : TPF_6PT_GRAD | TPF_CENTER | TPF_NOSHADOW;
+        unsigned fore = factor ? 11 : WHITE;
+
         TabClass::Draw_Credits_Tab();
-        Fancy_Text_Print("%ld", xx, 0, 11, TBLACK, TPF_GREEN12_GRAD | TPF_CENTER | TPF_USE_GRAD_PAL, Current);
+        Fancy_Text_Print("%ld", xx, 0, fore, TBLACK, flags, Current);
 
         IsToRedraw = false;
         IsAudible = false;

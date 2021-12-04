@@ -60,6 +60,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
     TerrainClass(void);
     TerrainClass(NoInitClass const& x)
         : ObjectClass(x)
@@ -150,7 +153,7 @@ public:
     */
     static void Read_INI(CCINIClass& ini);
     static void Write_INI(CCINIClass& ini);
-    static char* INI_Name(void)
+    static const char* INI_Name(void)
     {
         return "TERRAIN";
     };

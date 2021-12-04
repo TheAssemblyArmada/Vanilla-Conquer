@@ -421,6 +421,7 @@ void Map_Selection(void)
     int scenario, lastscenario;
     int house = PlayerPtr->Class->House;
     int attackxcoord = 0;
+    int factor = Get_Resolution_Factor() + 1;
 
     static int const _countryx[] = {195,
                                     217,
@@ -547,21 +548,21 @@ void Map_Selection(void)
     ** Load the spinning-globe anim
     */
     if (house == HOUSE_GOOD) {
-        // anim     = Open_Animation("EARTH_E.WSA", NULL,0,(WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE),Palette);
-        anim = Open_Animation("HEARTH_E.WSA", NULL, 0, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), Palette);
-        // progress = Open_Animation(lastscenario ? "BOSNIA.WSA" : "EUROPE.WSA",NULL,0,(WSAOpenType)(WSA_OPEN_FROM_MEM |
-        // WSA_OPEN_TO_PAGE),progresspalette);
-        progress = Open_Animation(lastscenario ? "HBOSNIA.WSA" : "EUROPE.WSA",
+        const char* const earth_e = (factor == 1) ? "EARTH_E.WSA" : "HEARTH_E.WSA";
+        const char* const bosnia = (factor == 1) ? "BOSNIA.WSA" : "HBOSNIA.WSA";
+
+        anim = Open_Animation(earth_e, NULL, 0, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), Palette);
+        progress = Open_Animation(lastscenario ? bosnia : "EUROPE.WSA",
                                   NULL,
                                   0,
                                   (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE),
                                   progresspalette);
     } else {
-        // anim     = Open_Animation("EARTH_A.WSA", NULL,0,(WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE),Palette);
-        anim = Open_Animation("HEARTH_A.WSA", NULL, 0, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), Palette);
-        // progress = Open_Animation(lastscenario ? "S_AFRICA.WSA" : "AFRICA.WSA",NULL,0,(WSAOpenType)(WSA_OPEN_FROM_MEM
-        // | WSA_OPEN_TO_PAGE),progresspalette);
-        progress = Open_Animation(lastscenario ? "HSAFRICA.WSA" : "AFRICA.WSA",
+        const char* const earth_a = (factor == 1) ? "EARTH_A.WSA" : "HEARTH_A.WSA";
+        const char* const safrica = (factor == 1) ? "S_AFRICA.WSA" : "HSAFRICA.WSA";
+
+        anim = Open_Animation(earth_a, NULL, 0, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), Palette);
+        progress = Open_Animation(lastscenario ? safrica : "AFRICA.WSA",
                                   NULL,
                                   0,
                                   (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE),
@@ -671,66 +672,73 @@ void Map_Selection(void)
         if (frame == 74)
             Play_Sample(target2, 255, Options.Normalize_Sound(110));
 
-        switch (frame) {
-        case 1:
-            Alloc_Object(new MultiStagePrintClass(GetMapSelString(TXT_READING_IMAGE_DATA), 0, 10, _othergreenpal));
-            break;
+        if (factor > 1) {
+            switch (frame) {
+            case 1:
+                Alloc_Object(new MultiStagePrintClass(GetMapSelString(TXT_READING_IMAGE_DATA), 0, 10, _othergreenpal));
+                break;
 
-        case 16:
-            TextPrintBuffer->Fill_Rect(
-                0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_READING_IMAGE_DATA)), 2 * (10 + 12), BLACK);
-            break;
+            case 16:
+                TextPrintBuffer->Fill_Rect(
+                    0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_READING_IMAGE_DATA)), 2 * (10 + 12), BLACK);
+                break;
 
-        case 17:
-            TextPrintBuffer->Fill_Rect(
-                0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_READING_IMAGE_DATA)), 2 * (10 + 12), TBLACK);
-            Alloc_Object(new MultiStagePrintClass("ANALYZING", 0, 10, _othergreenpal));
-            break;
+            case 17:
+                TextPrintBuffer->Fill_Rect(
+                    0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_READING_IMAGE_DATA)), 2 * (10 + 12), TBLACK);
+                Alloc_Object(new MultiStagePrintClass("ANALYZING", 0, 10, _othergreenpal));
+                break;
 
-        case 33:
-            TextPrintBuffer->Fill_Rect(
-                0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_ANALYZING)), 2 * (10 + 12), BLACK);
-            break;
+            case 33:
+                TextPrintBuffer->Fill_Rect(
+                    0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_ANALYZING)), 2 * (10 + 12), BLACK);
+                break;
 
-        case 34:
-            TextPrintBuffer->Fill_Rect(
-                0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_ANALYZING)), 2 * (10 + 12), TBLACK);
-            Alloc_Object(new MultiStagePrintClass(GetMapSelString(TXT_ENHANCING_IMAGE_DATA), 0, 10, _othergreenpal));
-            break;
+            case 34:
+                TextPrintBuffer->Fill_Rect(
+                    0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_ANALYZING)), 2 * (10 + 12), TBLACK);
+                Alloc_Object(
+                    new MultiStagePrintClass(GetMapSelString(TXT_ENHANCING_IMAGE_DATA), 0, 10, _othergreenpal));
+                break;
 
-        case 44:
-            TextPrintBuffer->Fill_Rect(
-                0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE_DATA)), 2 * (10 + 12), BLACK);
-            break;
+            case 44:
+                TextPrintBuffer->Fill_Rect(
+                    0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE_DATA)), 2 * (10 + 12), BLACK);
+                break;
 
-        case 45:
-            TextPrintBuffer->Fill_Rect(
-                0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE_DATA)), 2 * (10 + 12), TBLACK);
-            Alloc_Object(
-                new MultiStagePrintClass(GetMapSelString(TXT_ISOLATING_OPERATIONAL_THEATER), 0, 10, _othergreenpal));
-            break;
+            case 45:
+                TextPrintBuffer->Fill_Rect(0,
+                                           2 * 10,
+                                           2 * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE_DATA)),
+                                           2 * (10 + 12),
+                                           TBLACK);
+                Alloc_Object(new MultiStagePrintClass(
+                    GetMapSelString(TXT_ISOLATING_OPERATIONAL_THEATER), 0, 10, _othergreenpal));
+                break;
 
-        case 70:
-            TextPrintBuffer->Fill_Rect(0,
-                                       2 * 10,
-                                       2 * String_Pixel_Width(GetMapSelString(TXT_ISOLATING_OPERATIONAL_THEATER)),
-                                       2 * (10 + 12),
-                                       BLACK);
-            break;
+            case 70:
+                TextPrintBuffer->Fill_Rect(0,
+                                           2 * 10,
+                                           2 * String_Pixel_Width(GetMapSelString(TXT_ISOLATING_OPERATIONAL_THEATER)),
+                                           2 * (10 + 12),
+                                           BLACK);
+                break;
 
-        case 71:
-            TextPrintBuffer->Fill_Rect(0,
-                                       2 * 10,
-                                       2 * String_Pixel_Width(GetMapSelString(TXT_ISOLATING_OPERATIONAL_THEATER)),
-                                       2 * (10 + 12),
-                                       TBLACK);
-            Alloc_Object(new MultiStagePrintClass(
-                GetMapSelString(TXT_ESTABLISHING_TRADITIONAL_BOUNDARIES), 0, 10, _othergreenpal));
-            break;
+            case 71:
+                TextPrintBuffer->Fill_Rect(0,
+                                           2 * 10,
+                                           2 * String_Pixel_Width(GetMapSelString(TXT_ISOLATING_OPERATIONAL_THEATER)),
+                                           2 * (10 + 12),
+                                           TBLACK);
+                Alloc_Object(new MultiStagePrintClass(
+                    GetMapSelString(TXT_ESTABLISHING_TRADITIONAL_BOUNDARIES), 0, 10, _othergreenpal));
+                break;
 
-        case 74:
-            Alloc_Object(new MultiStagePrintClass(GetMapSelString(TXT_FOR_VISUAL_REFERENCE), 0, 22, _othergreenpal));
-            break;
+            case 74:
+                Alloc_Object(
+                    new MultiStagePrintClass(GetMapSelString(TXT_FOR_VISUAL_REFERENCE), 0, 22, _othergreenpal));
+                break;
+            }
         }
 
         Animate_Frame(anim, *PseudoSeenBuff, frame++);
@@ -900,62 +908,71 @@ void Map_Selection(void)
             Play_Sample(newtarg1, 255, Options.Normalize_Sound(90));
 
         if (lastscenario) {
-            switch (frame) {
+            if (factor > 1) {
+                switch (frame) {
 
-            case 23:
-                if (house == HOUSE_GOOD) {
-                    Alloc_Object(new MultiStagePrintClass(GetMapSelString(TXT_ENHANCING_IMAGE), 0, 10, _othergreenpal));
-                } else {
+                case 23:
+                    if (house == HOUSE_GOOD) {
+                        Alloc_Object(
+                            new MultiStagePrintClass(GetMapSelString(TXT_ENHANCING_IMAGE), 0, 10, _othergreenpal));
+                    } else {
 #if (FRENCH)
-                    Alloc_Object(
-                        new MultiStagePrintClass(GetMapSelString(TXT_ENHANCING_IMAGE), 180, 10, _othergreenpal));
+                        Alloc_Object(
+                            new MultiStagePrintClass(GetMapSelString(TXT_ENHANCING_IMAGE), 180, 10, _othergreenpal));
 #else
-                    Alloc_Object(
-                        new MultiStagePrintClass(GetMapSelString(TXT_ENHANCING_IMAGE), 210, 10, _othergreenpal));
+                        Alloc_Object(
+                            new MultiStagePrintClass(GetMapSelString(TXT_ENHANCING_IMAGE), 210, 10, _othergreenpal));
 #endif //(FRENCH)
-                }
+                    }
 
-            case 35:
-                if (house == HOUSE_GOOD) {
-                    TextPrintBuffer->Fill_Rect(
-                        0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE)), 2 * (10 + 12), BLACK);
-                } else {
+                case 35:
+                    if (house == HOUSE_GOOD) {
+                        TextPrintBuffer->Fill_Rect(0,
+                                                   2 * 10,
+                                                   2 * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE)),
+                                                   2 * (10 + 12),
+                                                   BLACK);
+                    } else {
 #if (FRENCH)
-                    TextPrintBuffer->Fill_Rect(2 * 180,
-                                               2 * 10,
-                                               2 * (180 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
-                                               2 * (10 + 12),
-                                               BLACK);
+                        TextPrintBuffer->Fill_Rect(2 * 180,
+                                                   2 * 10,
+                                                   2 * (180 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
+                                                   2 * (10 + 12),
+                                                   BLACK);
 #else
-                    TextPrintBuffer->Fill_Rect(2 * 210,
-                                               2 * 10,
-                                               2 * (210 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
-                                               2 * (10 + 12),
-                                               BLACK);
+                        TextPrintBuffer->Fill_Rect(2 * 210,
+                                                   2 * 10,
+                                                   2 * (210 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
+                                                   2 * (10 + 12),
+                                                   BLACK);
 #endif //(FRENCH)
-                }
-                break;
+                    }
+                    break;
 
-            case 36:
-                if (house == HOUSE_GOOD) {
-                    TextPrintBuffer->Fill_Rect(
-                        0, 2 * 10, 2 * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE)), 2 * (10 + 12), TBLACK);
-                } else {
+                case 36:
+                    if (house == HOUSE_GOOD) {
+                        TextPrintBuffer->Fill_Rect(0,
+                                                   2 * 10,
+                                                   2 * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE)),
+                                                   2 * (10 + 12),
+                                                   TBLACK);
+                    } else {
 #if (FRENCH)
-                    TextPrintBuffer->Fill_Rect(2 * 180,
-                                               2 * 10,
-                                               2 * (180 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
-                                               2 * (10 + 12),
-                                               TBLACK);
+                        TextPrintBuffer->Fill_Rect(2 * 180,
+                                                   2 * 10,
+                                                   2 * (180 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
+                                                   2 * (10 + 12),
+                                                   TBLACK);
 #else
-                    TextPrintBuffer->Fill_Rect(2 * 210,
-                                               2 * 10,
-                                               2 * (210 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
-                                               2 * (10 + 12),
-                                               TBLACK);
+                        TextPrintBuffer->Fill_Rect(2 * 210,
+                                                   2 * 10,
+                                                   2 * (210 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
+                                                   2 * (10 + 12),
+                                                   TBLACK);
 #endif //(FRENCH)
+                    }
+                    break;
                 }
-                break;
             }
         }
 
@@ -1017,7 +1034,7 @@ void Map_Selection(void)
         if (Keyboard->Check()) {
             if ((Keyboard->Get() & 0x10FF) == KN_LMOUSE) {
                 for (selection = 0; selection < CountryArray[scenario].Choices[ScenDir]; selection++) {
-                    color = click_map.Get_Pixel(Get_Mouse_X() / 2, Get_Mouse_Y() / 2);
+                    color = click_map.Get_Pixel(Get_Mouse_X() / factor, Get_Mouse_Y() / factor);
 
                     /*
                     ** Special hack for Egypt the second time through
@@ -1129,8 +1146,8 @@ void Map_Selection(void)
     Theme.Queue_Song(THEME_NONE);
     Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, NULL);
     delete europe;
-    delete progresspalette;
-    delete grey2palette;
+    delete[] progresspalette;
+    delete[] grey2palette;
     delete TextPrintBuffer;
     TextPrintBuffer = NULL;
     BlitList.Clear();

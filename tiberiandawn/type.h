@@ -191,13 +191,13 @@ public:
     **	This controls the various general adjustments to the house owned
     **	unit and building ratings. The default value for these ratings is 1.0.
     */
-    float FirepowerBias;
-    float GroundspeedBias;
-    float AirspeedBias;
-    float ArmorBias;
-    float ROFBias;
-    float CostBias;
-    float BuildSpeedBias;
+    fixed FirepowerBias;
+    fixed GroundspeedBias;
+    fixed AirspeedBias;
+    fixed ArmorBias;
+    fixed ROFBias;
+    fixed CostBias;
+    fixed BuildSpeedBias;
 
     //------------------------------------------------------------------------
     HouseTypeClass(HousesType house,

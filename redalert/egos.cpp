@@ -605,8 +605,8 @@ void Show_Who_Was_Responsible(void)
             ** Fix up our outer loop parsing variables.
             */
             cptr = strparse;
-            column += strparse - strstart;
-            length -= strparse - strstart - 1;
+            column += int(strparse - strstart);
+            length -= int(strparse - strstart - 1);
 
             if (ch == 13) {
                 line++;

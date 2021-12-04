@@ -42,6 +42,13 @@
 
 //#pragma warn -hid
 
+#include "common/sockets.h" // Must come before windows.h include.
+
+#ifdef _WIN32
+//#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 #ifdef _WIN32
 #define MONOC_H
 #endif
@@ -51,6 +58,7 @@
 #define WWMEM_H
 
 #include "common/wwlib32.h"
+#include "common/winstub.h"
 #include "bench.h"
 #include "compat.h"
 #include "fixed.h"
@@ -138,7 +146,7 @@ extern void Fatal(char const* message, ...);
 #ifdef assert
 #undef assert
 #endif // assert
-void Assert_Failure(char* expression, int line, char* file);
+void Assert_Failure(const char* expression, int line, const char* file);
 
 #ifdef NDEBUG
 #define assert(__ignore) ((void)0)
@@ -474,7 +482,7 @@ bool Queue_Mission(TargetClass whom,
 bool Queue_Options(void);
 bool Queue_Exit(void);
 void Queue_AI(void);
-void Add_CRC(unsigned long* crc, unsigned long val);
+void Add_CRC(unsigned int* crc, unsigned int val);
 
 /*
 **	REINF.CPP
@@ -629,11 +637,6 @@ char const* Version_Name(void);
 */
 WeaponType Weapon_From_Name(char const* name);
 ArmorType Armor_From_Name(char const* name);
-
-/*
-** Winstub.cpp
-*/
-void Load_Title_Screen(char* name, GraphicViewPortClass* video_page, unsigned char* palette);
 
 /*
 ** Egos.CPP

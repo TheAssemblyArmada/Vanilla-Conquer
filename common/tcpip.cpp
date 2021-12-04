@@ -67,11 +67,7 @@ using std::min;
 /*
 ** Nasty globals
 */
-bool Server; // Is this player acting as client or server
-/* these are temporary to allow linking, this manager class is not used at the moment -hifi */
-char PlanetWestwoodIPAddress[IP_ADDRESS_MAX];
-unsigned short PlanetWestwoodPortNumber;
-bool PlanetWestwoodIsHost;
+bool Server;               // Is this player acting as client or server
 TcpipManagerClass Winsock; // The object for interfacing with Winsock
 
 /***********************************************************************************************
@@ -90,9 +86,9 @@ TcpipManagerClass Winsock; // The object for interfacing with Winsock
  *=============================================================================================*/
 TcpipManagerClass::TcpipManagerClass(void)
 {
-    WinsockInitialised = FALSE;
-    Connected = FALSE;
-    UseUDP = TRUE;
+    WinsockInitialised = false;
+    Connected = false;
+    UseUDP = true;
     SocketReceiveBuffer = 4096;
     SocketSendBuffer = 4096;
 }
@@ -140,12 +136,14 @@ void TcpipManagerClass::Close(void)
     if (!WinsockInitialised)
         return;
 
-    /*
+        /*
     ** Cancel any outstaning asyncronous events
     */
+#ifdef _WIN32
     if (Async) {
         WSACancelAsyncRequest(Async);
     }
+#endif
 
     /*
     ** Close any open sockets
@@ -168,10 +166,10 @@ void TcpipManagerClass::Close(void)
     /*
     ** Call the Winsock cleanup function to say we are finished using Winsock
     */
-    WSACleanup();
+    socket_cleanup();
 
-    WinsockInitialised = FALSE;
-    Connected = FALSE;
+    WinsockInitialised = false;
+    Connected = false;
 }
 
 /***********************************************************************************************
@@ -181,7 +179,7 @@ void TcpipManagerClass::Close(void)
  *                                                                                             *
  * INPUT:    Nothing                                                                           *
  *                                                                                             *
- * OUTPUT:   TRUE if Winsock is available and was initialised                                  *
+ * OUTPUT:   true if Winsock is available and was initialised                                  *
  *                                                                                             *
  * WARNINGS: None                                                                              *
  *                                                                                             *
@@ -191,14 +189,13 @@ void TcpipManagerClass::Close(void)
 
 bool TcpipManagerClass::Init(void)
 {
-    short version;
     int rc;
 
     /*
     ** Just return true if we are already set up
     */
     if (WinsockInitialised)
-        return (TRUE);
+        return (true);
 
     /*
     ** Initialise sockets to null
@@ -210,24 +207,16 @@ bool TcpipManagerClass::Init(void)
     /*
     ** Start WinSock, and fill in our WinSockData
     */
-    version = (WINSOCK_MINOR_VER << 8) | WINSOCK_MAJOR_VER;
-    rc = WSAStartup(version, &WinsockInfo);
+    rc = socket_startup();
     if (rc != 0) {
-        return (FALSE);
-    }
-
-    /*
-    ** Check the Winsock version number
-    */
-    if ((WinsockInfo.wVersion & 0x00ff) != (version & 0x00ff) || (WinsockInfo.wVersion >> 8) != (version >> 8)) {
-        return (FALSE);
+        return (false);
     }
 
     /*
     ** Everything is OK so return success
     */
-    WinsockInitialised = TRUE;
-    return (TRUE);
+    WinsockInitialised = true;
+    return (true);
 }
 
 /***********************************************************************************************
@@ -276,8 +265,8 @@ void TcpipManagerClass::Start_Server(void)
     /*
     ** Flag that we are the server side not the client
     */
-    IsServer = TRUE;
-    UseUDP = TRUE;
+    IsServer = true;
+    UseUDP = true;
 #if (0)
     /*
     ** Create our socket and bind it to our port number
@@ -292,7 +281,7 @@ void TcpipManagerClass::Start_Server(void)
     addr.sin_port = hton16(PORTNUM);
     addr.sin_addr.s_addr = hton32(INADDR_ANY);
 
-    if (bind(ListenSocket, (LPSOCKADDR)&addr, sizeof(addr)) == SOCKET_ERROR) {
+    if (bind(ListenSocket, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR) {
         Close_Socket(ListenSocket);
         ConnectStatus = NOT_CONNECTING;
         return;
@@ -394,11 +383,13 @@ void TcpipManagerClass::Write(void* buffer, int buffer_len)
     /*
     ** Send a message to ourselves to start off the event
     */
+#ifdef _WIN32
     if (UseUDP) {
         SendMessage(MainWindow, WM_UDPASYNCEVENT, 0, (LONG)FD_WRITE);
     } else {
         SendMessage(MainWindow, WM_ASYNCEVENT, 0, (LONG)FD_WRITE);
     }
+#endif
     /*
     ** Make sure the message loop gets called because all the Winsock notifications
     ** are done via messages.
@@ -413,7 +404,7 @@ void TcpipManagerClass::Write(void* buffer, int buffer_len)
  *                                                                                             *
  * INPUT:    Nothing                                                                           *
  *                                                                                             *
- * OUTPUT:   TRUE if client was successfully connected                                         *
+ * OUTPUT:   true if client was successfully connected                                         *
  *                                                                                             *
  * WARNINGS: None                                                                              *
  *                                                                                             *
@@ -424,17 +415,17 @@ void TcpipManagerClass::Write(void* buffer, int buffer_len)
 bool TcpipManagerClass::Add_Client(void)
 {
     struct sockaddr_in addr;
-    int addrsize;
-    bool delay = TRUE;
+    socklen_t addrsize;
+    bool delay = true;
 
     /*
     ** Accept the connection. If there is an error then dont do anything else
     */
     addrsize = sizeof(addr);
-    ConnectSocket = accept(ListenSocket, (LPSOCKADDR)&addr, &addrsize);
+    ConnectSocket = accept(ListenSocket, (sockaddr*)&addr, &addrsize);
     if (ConnectSocket == INVALID_SOCKET) {
-        // Show_Error("accept", WSAGetLastError());
-        return (FALSE);
+        // Show_Error("accept", LastSocketError);
+        return (false);
     }
 
     /*
@@ -454,24 +445,28 @@ bool TcpipManagerClass::Add_Client(void)
     ** Initiate an asynchronous host lookup by address. Our window will receive notification
     ** when this is complete or when it times out.
     */
+#ifdef _WIN32
     Async = WSAAsyncGetHostByAddr(
         MainWindow, WM_HOSTBYADDRESS, (char const*)&addr.sin_addr, 4, PF_INET, &HostBuff[0], MAXGETHOSTSTRUCT);
+#endif
 
     /*
     ** Enable asynchronous events on this socket
     */
+#ifdef _WIN32
     if (WSAAsyncSelect(ConnectSocket, MainWindow, WM_ASYNCEVENT, FD_READ | FD_WRITE | FD_CLOSE) == SOCKET_ERROR) {
         WSACancelAsyncRequest(Async);
         Close_Socket(ConnectSocket);
-        return (FALSE);
+        return (false);
     }
+#endif
 
     /*
     ** Create our UDP socket
     */
     UDPSocket = socket(AF_INET, SOCK_DGRAM, 0);
     if (UDPSocket == INVALID_SOCKET) {
-        return (FALSE);
+        return (false);
     }
 
     /*
@@ -481,10 +476,10 @@ bool TcpipManagerClass::Add_Client(void)
     addr.sin_port = hton16(PlanetWestwoodPortNumber);
     addr.sin_addr.s_addr = hton32(INADDR_ANY);
 
-    if (bind(UDPSocket, (LPSOCKADDR)&addr, sizeof(addr)) == SOCKET_ERROR) {
+    if (bind(UDPSocket, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR) {
         Close_Socket(UDPSocket);
         ConnectStatus = NOT_CONNECTING;
-        return (FALSE);
+        return (false);
     }
 
     /*
@@ -496,14 +491,16 @@ bool TcpipManagerClass::Add_Client(void)
     /*
     ** Enable asynchronous events on this socket
     */
+#ifdef _WIN32
     if (WSAAsyncSelect(UDPSocket, MainWindow, WM_UDPASYNCEVENT, FD_READ | FD_WRITE) == SOCKET_ERROR) {
         WSACancelAsyncRequest(Async);
         Close_Socket(UDPSocket);
         Close_Socket(ConnectSocket);
-        return (FALSE);
+        return (false);
     }
+#endif
 
-    return (TRUE);
+    return (true);
 }
 
 /***********************************************************************************************
@@ -520,7 +517,7 @@ bool TcpipManagerClass::Add_Client(void)
  * HISTORY:                                                                                    *
  *    3/20/96 3:05PM ST : Created                                                              *
  *=============================================================================================*/
-
+#ifdef _WIN32
 void TcpipManagerClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
 {
     struct hostent* hentry;
@@ -574,7 +571,7 @@ void TcpipManagerClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
             memcpy(&UDPIPAddress, hentry->h_addr, 4);
             strcpy(Server.DotAddr, inet_ntoa(Server.Addr));
             ConnectStatus = CONNECTED_OK;
-            Connected = TRUE;
+            Connected = true;
         } else {
             Server.Name[0] = 0;
             strcpy(Server.DotAddr, "????");
@@ -594,7 +591,7 @@ void TcpipManagerClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
         }
         if (Add_Client()) {
             ConnectStatus = CONNECTED_OK;
-            Connected = TRUE;
+            Connected = true;
         } else {
             ConnectStatus = UNABLE_TO_ACCEPT_CLIENT;
         }
@@ -614,7 +611,7 @@ void TcpipManagerClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
                 return;
             }
             addr_len = sizeof(addr);
-            rc = recvfrom(UDPSocket, ReceiveBuffer, WS_RECEIVE_BUFFER_LEN, 0, (LPSOCKADDR)&addr, &addr_len);
+            rc = recvfrom(UDPSocket, ReceiveBuffer, WS_RECEIVE_BUFFER_LEN, 0, (sockaddr*)&addr, &addr_len);
             if (rc == SOCKET_ERROR) {
                 Clear_Socket_Error(UDPSocket);
                 return;
@@ -646,11 +643,11 @@ void TcpipManagerClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
                                 TransmitBuffers[TXBufferTail].Buffer,
                                 TransmitBuffers[TXBufferTail].DataLength,
                                 0,
-                                (LPSOCKADDR)&addr,
+                                (sockaddr*)&addr,
                                 sizeof(addr));
 
                     if (rc == SOCKET_ERROR) {
-                        if (WSAGetLastError() != WSAEWOULDBLOCK) {
+                        if (LastSocketError != WSAEWOULDBLOCK) {
                             Clear_Socket_Error(UDPSocket);
                         }
                         break;
@@ -683,7 +680,7 @@ void TcpipManagerClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
             WSAAsyncSelect(ConnectSocket, MainWindow, WM_ASYNCEVENT, 0);
             Close_Socket(ConnectSocket);
             ConnectSocket = INVALID_SOCKET;
-            // Connected = FALSE;
+            // Connected = false;
             ConnectStatus = CONNECTION_LOST;
             break;
 #if (0)
@@ -724,7 +721,7 @@ void TcpipManagerClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
             while (OutBufferHead > OutBufferTail) {
                 rc = send(ConnectSocket, OutBuffer + OutBufferTail, OutBufferHead - OutBufferTail, 0);
                 if (rc == SOCKET_ERROR) {
-                    if (WSAGetLastError() != WSAEWOULDBLOCK) {
+                    if (LastSocketError != WSAEWOULDBLOCK) {
                         Clear_Socket_Error(ConnectSocket);
                     }
                     break;
@@ -747,11 +744,12 @@ void TcpipManagerClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
             }
 
             ConnectStatus = CONNECTED_OK;
-            Connected = TRUE;
+            Connected = true;
             return;
         }
     }
 }
+#endif
 
 /***********************************************************************************************
  * TMC::Copy_To_In_Buffer -- copy data from our winsock buffer to our internal buffer          *
@@ -842,12 +840,12 @@ void TcpipManagerClass::Start_Client(void)
         ReceiveBuffers[i].InUse = false;
     }
 
-    Connected = FALSE;
+    Connected = false;
     /*
     ** Flag that we are the client side not the server
     */
-    IsServer = FALSE;
-    UseUDP = TRUE;
+    IsServer = false;
+    UseUDP = true;
 
     /*
     ** Create our UDP socket
@@ -865,7 +863,7 @@ void TcpipManagerClass::Start_Client(void)
     addr.sin_port = hton16(PlanetWestwoodPortNumber);
     addr.sin_addr.s_addr = hton32(INADDR_ANY);
 
-    if (bind(UDPSocket, (LPSOCKADDR)&addr, sizeof(addr)) == SOCKET_ERROR) {
+    if (bind(UDPSocket, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR) {
         Close_Socket(UDPSocket);
         Close_Socket(ConnectSocket);
         ConnectStatus = NOT_CONNECTING;
@@ -881,6 +879,7 @@ void TcpipManagerClass::Start_Client(void)
     /*
     ** Enable asynchronous events on the UDP socket
     */
+#ifdef _WIN32
     if (WSAAsyncSelect(UDPSocket, MainWindow, WM_UDPASYNCEVENT, FD_READ | FD_WRITE) == SOCKET_ERROR) {
         WSACancelAsyncRequest(Async);
         Close_Socket(UDPSocket);
@@ -888,6 +887,7 @@ void TcpipManagerClass::Start_Client(void)
         ConnectStatus = NOT_CONNECTING;
         return;
     }
+#endif
 
     /*
     ** If the name is not a dot-decimal ip address then do a nameserver lookup
@@ -897,11 +897,13 @@ void TcpipManagerClass::Start_Client(void)
     memcpy(&UDPIPAddress, &Server.Addr.s_addr, 4);
     if (Server.Addr.s_addr == INADDR_NONE) {
         strcpy(Server.Name, PlanetWestwoodIPAddress);
+#ifdef _WIN32
         Async = WSAAsyncGetHostByName(MainWindow, WM_HOSTBYNAME, Server.Name, HostBuff, MAXGETHOSTSTRUCT);
+#endif
         ConnectStatus = RESOLVING_HOST_ADDRESS;
     } else {
         ConnectStatus = CONNECTED_OK;
-        Connected = TRUE;
+        Connected = true;
     }
 }
 
@@ -922,11 +924,11 @@ void TcpipManagerClass::Start_Client(void)
 
 void TcpipManagerClass::Close_Socket(SOCKET s)
 {
-    LINGER ling;
+    linger ling;
 
     ling.l_onoff = 0;  // linger off
     ling.l_linger = 0; // timeout in seconds (ie close now)
-    setsockopt(s, SOL_SOCKET, SO_LINGER, (LPSTR)&ling, sizeof(ling));
+    setsockopt(s, SOL_SOCKET, SO_LINGER, (char*)&ling, sizeof(ling));
     closesocket(s);
 }
 
@@ -938,7 +940,7 @@ void TcpipManagerClass::Set_Protocol_UDP(bool state)
 void TcpipManagerClass::Clear_Socket_Error(SOCKET socket)
 {
     unsigned long error_code;
-    int length = 4;
+    socklen_t length = 4;
 
     getsockopt(socket, SOL_SOCKET, SO_ERROR, (char*)&error_code, &length);
     error_code = 0;

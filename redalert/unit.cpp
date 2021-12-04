@@ -1392,8 +1392,11 @@ void UnitClass::Enter_Idle_Mode(bool initial)
 #endif
         } else {
 
-            if (Mission == MISSION_NONE || Mission == MISSION_GUARD || Mission == MISSION_GUARD_AREA
-                || MissionControl[Mission].IsParalyzed || MissionControl[Mission].IsZombie) {
+            if (Mission == MISSION_GUARD || Mission == MISSION_GUARD_AREA) {
+                return;
+            }
+
+            if (Mission != MISSION_NONE && (MissionControl[Mission].IsParalyzed || MissionControl[Mission].IsZombie)) {
                 return;
             }
 
@@ -1801,7 +1804,7 @@ void UnitClass::Per_Cell_Process(PCPType why)
         ** If this is a mobile gap generator, restore the shroud where appropriate
         ** and re-shroud around us.
         */
-        if (Class->IsGapper && !House->IsPlayerControl) {
+        if (Class->IsGapper) {
             Shroud_Regen();
         }
 
@@ -2323,7 +2326,7 @@ bool UnitClass::Goto_Tiberium(int rad)
                     int corner[2];
                     int corners[4][2] = {{x, -radius}, {x, +radius}, {-radius, x}, {+radius, x}};
                     for (int i = 0; i < 3; i++) {
-                        int j = i + rand() / (RAND_MAX / (4 - i) + 1);
+                        int j = i + Random_Pick(0, 0x7FFF) / (0x7FFF / (4 - i) + 1);
                         memcpy(&corner, &corners[j], sizeof(corner));
                         memcpy(&corners[j], &corners[i], sizeof(corner));
                         memcpy(&corners[i], corner, sizeof(corner));
