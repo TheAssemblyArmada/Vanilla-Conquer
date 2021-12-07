@@ -22,6 +22,8 @@ option(SDL2 "Enable SDL2 video backend." ON)
 option(OPENAL "Enable OpenAL audio backend." ON)
 option(BUILD_TESTS "Build unit tests." OFF)
 option(BUILD_TOOLS "Build modding utilities." OFF)
+option(BUILD_WITH_UBSAN "Build with undefined behavior sanitizer" OFF)
+option(BUILD_WITH_ASAN "Build with address sanitizer" OFF)
 
 add_feature_info(RemasterTD BUILD_REMASTERTD, "Remastered Tiberian Dawn dll")
 add_feature_info(RemasterRA BUILD_REMASTERRA "Remastered Red Alert dll")

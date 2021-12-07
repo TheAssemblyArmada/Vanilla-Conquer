@@ -454,7 +454,7 @@ void GameOptionsClass::Process(void)
                 break;
 
             case (BUTTON_RESUME):
-                // Save_Settings();
+                Save_Settings();
                 process = false;
                 display = true;
                 break;

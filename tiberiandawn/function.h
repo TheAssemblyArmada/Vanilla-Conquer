@@ -267,6 +267,7 @@ typedef struct NodeNameTag
         {
             HousesType House;
             unsigned char Color;
+            HousesType ID;
         } Player;
     };
 } NodeNameType;
@@ -387,6 +388,7 @@ int Get_Resolution_Factor(void);
 
 void Shake_The_Screen(int shakes, HousesType house = HOUSE_NONE);
 bool Is_Demo(void);
+bool Is_DOS_Files(void);
 
 /*
 ** INTERPAL.CPP

@@ -45,6 +45,7 @@
 #include "common/gitinfo.h"
 #include "common/tcpip.h"
 #include "common/vqaconfig.h"
+#include "common/wspudp.h"
 #include <time.h>
 
 /****************************************
@@ -169,8 +170,6 @@ bool Init_Game(int, char*[])
     */
     CCDebugString("C&C95 - About to register CCLOCAL.MIX\n");
 
-    MFCD* local_mix = NULL;
-
     if (Is_Demo()) {
         CCDebugString("C&C95 - Detected running as demo, about to register DEMOL.MIX\n");
         RequiredCD = -2;
@@ -190,7 +189,7 @@ bool Init_Game(int, char*[])
             new MFCD("CCLOCAL.MIX"); // Cached.
             MFCD::Cache("CCLOCAL.MIX");
         } else {
-            local_mix = new MFCD("LOCAL.MIX"); // Cached.
+            new MFCD("LOCAL.MIX"); // Cached.
             MFCD::Cache("LOCAL.MIX");
         }
         CCDebugString("C&C95 - About to register UPDATE.MIX\n");
@@ -225,27 +224,13 @@ bool Init_Game(int, char*[])
     WhitePalette = new (MEM_CLEAR | MEM_REAL) unsigned char[768];
     memset(WhitePalette, 63, 768);
 
-    /* FIXME: If LOCAL.MIX is loaded, the game tries to find mission.ini from
-    ** it and crash, as it is not present there. Furthermore, an old version of
-    ** conquer.eng is there, and loading it glitches out the Covert Operations
-    ** strings. There is also fonts which is only present on the Windows version
-    ** and they require loading for now. Therefore, just unload LOCAL.MIX and
-    ** and load CCLOCAL.MIX from Windows.
-    */
-    if (local_mix) {
-        delete local_mix;
-
-        new MFCD("CCLOCAL.MIX"); // Cached.
-        MFCD::Cache("CCLOCAL.MIX");
-    }
-
     if (Get_Resolution_Factor()) {
         MapFontPtr = Load_Alloc_Data(CCFileClass("8FAT.FNT"));
         Green12FontPtr = Load_Alloc_Data(CCFileClass("12GREEN.FNT"));
         Green12GradFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
         ScoreFontPtr = Load_Alloc_Data(CCFileClass("12GRNGRD.FNT"));
     } else {
-        MapFontPtr = Font3Ptr;
+        MapFontPtr = Font6Ptr; // Fixes ingame helpbox
         Green12FontPtr = Font3Ptr;
         Green12GradFontPtr = GradFont6Ptr;
         ScoreFontPtr = GradFont6Ptr;
@@ -1147,24 +1132,20 @@ bool Select_Game(bool fade)
                 **	Network (IPX): start a new network game.
                 */
                 case GAME_IPX:
+                    DBG_LOG("C&C - Game type is IPX.\n");
                     /*
                     ** Init network system & remote-connect
                     */
-                    if (Init_Network() && Remote_Connect()) {
-#if (0)
-                        char seed[80];
-                        sprintf(seed, "Seed: %08x\n", Seed);
-                        CCDebugString(seed);
+#ifdef NETWORKING
+                    if (PacketTransport)
+                        delete PacketTransport;
 
-                        sprintf(seed, "rand: %04x\n", rand());
-                        CCDebugString(seed);
-
-                        sprintf(seed, "rand: %04x\n", rand());
-                        CCDebugString(seed);
-
-                        sprintf(seed, "rand: %04x\n", rand());
-                        CCDebugString(seed);
+                    PacketTransport = new UDPInterfaceClass;
+                    assert(PacketTransport != NULL);
 #endif
+
+                    DBG_LOG("C&C - About to call Init_Network.\n");
+                    if (GameToPlay == GAME_IPX && Init_Network() && Remote_Connect()) {
                         Options.ScoreVolume = 0;
                         ScenPlayer = SCEN_PLAYER_MPLAYER;
                         ScenDir = SCEN_DIR_EAST;
@@ -1174,6 +1155,10 @@ bool Select_Game(bool fade)
                         GameToPlay = GAME_NORMAL;
                         display = true;
                         selection = SEL_NONE;
+#ifdef NETWORKING
+                        delete PacketTransport;
+                        PacketTransport = NULL;
+#endif
                     }
                     break;
                 }

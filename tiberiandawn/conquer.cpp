@@ -424,6 +424,7 @@ void Keyboard_Process(KeyNumType& input)
     ** and we need WWKEY_KN_BIT to still be set if it is.
     */
     KeyNumType plain = (KeyNumType)(input & ~(WWKEY_SHIFT_BIT | WWKEY_ALT_BIT | WWKEY_CTRL_BIT));
+    KeyNumType key = KeyNumType(input & ~WWKEY_VK_BIT);
 
 #ifdef CHEAT_KEYS
 
@@ -448,10 +449,17 @@ void Keyboard_Process(KeyNumType& input)
     }
 #endif
 
-    //#ifdef CHEAT_KEYS
-    if (/*Debug_Playtest && */ input == (KN_W | KN_ALT_BIT)) {
+#ifdef CHEAT_KEYS
+    if (Debug_Playtest && input == (KN_W | KN_ALT_BIT)) {
         PlayerPtr->Blockage = false;
         PlayerPtr->Flag_To_Win();
+    }
+
+    if ((Debug_Flag || Debug_Playtest) && plain == KN_F4) {
+        if (GameToPlay == GAME_NORMAL) {
+            Debug_Unshroud = (Debug_Unshroud == false);
+            Map.Flag_To_Redraw(true);
+        }
     }
 
     if (Debug_Flag && input == KN_SLASH) {
@@ -462,18 +470,7 @@ void Keyboard_Process(KeyNumType& input)
             Special_Dialog();
         }
     }
-    //#endif
-
-    /*
-    **	If the options key(s) were pressed, then bring up the options screen.
-    */
-    if (input == KN_SPACE || input == KN_ESC) {
-        Map.Help_Text(TXT_NONE); // Turns off help text.
-        Queue_Options();
-        input = KN_NONE;
-        // DebugColour++;
-        // DebugColour &=7;
-    }
+#endif
 
     /*
     **	Process prerecorded team selection. This will be an addative select
@@ -488,210 +485,315 @@ void Keyboard_Process(KeyNumType& input)
     if (input & WWKEY_CTRL_BIT)
         action = 2;
 
-    switch (plain) {
-
-    /*
-    **	Center the map around the currently selected objects. If no
-    **	objects are selected, then fall into the home case.
-    */
-    case KN_HOME:
-        if (CurrentObject.Count()) {
-            Map.Center_Map();
-            Map.Flag_To_Redraw(true);
-            break;
-        }
-        // Fall into next case.
-
-    /*
-    **	Center the map about the construction yard or construction vehicle
-    **	if one is present.
-    */
-    case KN_H:
-        for (index = 0; index < Units.Count(); index++) {
-            UnitClass* unit = Units.Ptr(index);
-
-            if (unit && !unit->IsInLimbo && unit->House == PlayerPtr && *unit == UNIT_MCV) {
-                Unselect_All();
-                unit->Select();
-                break;
-            }
-        }
-        for (index = 0; index < Buildings.Count(); index++) {
-            BuildingClass* building = Buildings.Ptr(index);
-
-            if (building && !building->IsInLimbo && building->House == PlayerPtr && *building == STRUCT_CONST) {
-                Unselect_All();
-                building->Select();
-                break;
-            }
-        }
-        Map.Center_Map();
-        Map.Flag_To_Redraw(true);
-        break;
-
-#ifdef CHEAT_KEYS
-    /*
-    **	Toggle free scrolling mode.
-    */
-    case KN_F:
-        Options.IsFreeScroll = (Options.IsFreeScroll == false);
-        break;
-#endif
-
     /*
     **	If the "N" key is pressed, then select the next object.
     */
-    case KN_N:
+    if (key != 0 && key == Options.KeyNext) {
         if (action) {
             obj = Map.Prev_Object(CurrentObject.Count() ? CurrentObject[0] : NULL);
         } else {
             obj = Map.Next_Object(CurrentObject.Count() ? CurrentObject[0] : NULL);
         }
-        if (obj) {
+        if (obj != NULL) {
             Unselect_All();
             obj->Select();
             Map.Center_Map();
             Map.Flag_To_Redraw(true);
         }
-        break;
-
-    /*
-    ** For multiplayer, 'R' pops up the surrender dialog.
-    */
-    case KN_R:
-        if (/*GameToPlay != GAME_NORMAL &&*/ !PlayerPtr->IsDefeated) {
-            SpecialDialog = SDLG_SURRENDER;
-            input = KN_NONE;
+        input = KN_NONE;
+    }
+    if (key != 0 && key == Options.KeyPrevious) {
+        if (action) {
+            obj = Map.Next_Object(CurrentObject.Count() ? CurrentObject[0] : NULL);
+        } else {
+            obj = Map.Prev_Object(CurrentObject.Count() ? CurrentObject[0] : NULL);
         }
-        break;
-
-    /*
-    **	Handle making and breaking alliances.
-    */
-    case KN_A:
-        if (GameToPlay != GAME_NORMAL || Debug_Flag) {
-            if (CurrentObject.Count() && !PlayerPtr->IsDefeated) {
-                if (CurrentObject[0]->Owner() != PlayerPtr->Class->House) {
-                    OutList.Add(EventClass(EventClass::ALLY, (int)CurrentObject[0]->Owner()));
-                }
-            }
+        if (obj != NULL) {
+            Unselect_All();
+            obj->Select();
+            Map.Center_Map();
+            Map.Flag_To_Redraw(true);
         }
-        break;
-
-    /*
-    **	Control the remembered tactical location.
-    */
-    case KN_F7:
-    case KN_F8:
-    case KN_F9:
-    case KN_F10:
-        if (!Debug_Map) {
-            Handle_View(plain - KN_F7, action);
-        }
-        break;
-#if (0)
-    case KN_F11:
-        Winsock.Set_Protocol_UDP(FALSE);
-        break;
-
-    case KN_F12:
-        Winsock.Set_Protocol_UDP(TRUE);
-        break;
-#endif //(0)
-
-    /*
-    **	Control the custom team select state.
-    */
-    case KN_1:
-    case KN_2:
-    case KN_3:
-    case KN_4:
-    case KN_5:
-    case KN_6:
-    case KN_7:
-    case KN_8:
-    case KN_9:
-    case KN_0:
-        Handle_Team(plain - KN_1, action);
-        break;
+        input = KN_NONE;
+    }
 
     /*
     **	All selected units will go into idle mode.
     */
-    case KN_S:
+    if (key != 0 && key == Options.KeyStop) {
         if (CurrentObject.Count()) {
-            for (int index = 0; index < CurrentObject.Count(); index++) {
+            for (index = 0; index < CurrentObject.Count(); index++) {
                 ObjectClass const* tech = CurrentObject[index];
 
-                if (tech
+                if (tech != NULL
                     && (tech->Can_Player_Move() || (tech->Can_Player_Fire() && tech->What_Am_I() != RTTI_BUILDING))) {
                     OutList.Add(EventClass(EventClass::IDLE, tech->As_Target()));
                 }
             }
         }
-        break;
-
-    /*
-    **	All selected units will attempt to scatter.
-    */
-    case KN_X:
-        if (CurrentObject.Count()) {
-            for (int index = 0; index < CurrentObject.Count(); index++) {
-                ObjectClass const* tech = CurrentObject[index];
-
-                if (tech && tech->Can_Player_Move()) {
-                    OutList.Add(EventClass(EventClass::SCATTER, tech->As_Target()));
-                }
-            }
-        }
-        break;
+        input = KN_NONE;
+    }
 
     /*
     **	All selected units will attempt to go into guard area mode.
     */
-    case KN_G:
+    if (key != 0 && key == Options.KeyGuard) {
         if (CurrentObject.Count()) {
-            for (int index = 0; index < CurrentObject.Count(); index++) {
+            for (index = 0; index < CurrentObject.Count(); index++) {
                 ObjectClass const* tech = CurrentObject[index];
 
-                if (tech && tech->Can_Player_Move() && tech->Can_Player_Fire()) {
+                if (tech != NULL && tech->Can_Player_Move() && tech->Can_Player_Fire()) {
                     OutList.Add(EventClass(tech->As_Target(), MISSION_GUARD_AREA));
                 }
             }
         }
-        break;
-
-    default:
-        break;
+        input = KN_NONE;
     }
 
-#ifdef NEVER
-    FacingType facing = KN_To_Facing(input);
-
     /*
-    **	Scroll the map according to the cursor key pressed.
+    **	All selected units will attempt to scatter.
     */
-    if (facing != FACING_NONE) {
-        Map.Scroll_Map(facing);
-        input = 0;
-        facing = FACING_NONE;
-    }
-#endif
+    if (key != 0 && key == Options.KeyScatter) {
+        if (CurrentObject.Count()) {
+            for (index = 0; index < CurrentObject.Count(); index++) {
+                ObjectClass const* tech = CurrentObject[index];
 
-#ifdef NEVER
-    /*
-    **	If the <TAB> key is pressed, then select the next object.
-    */
-    if (input == KN_TAB) {
-        ObjectClass* obj = Map.Next_Object(CurrentObject);
-        if (obj) {
-            if (CurrentObject) {
-                CurrentObject->Unselect();
+                if (tech != NULL && tech->Can_Player_Move()) {
+                    OutList.Add(EventClass(EventClass::SCATTER, tech->As_Target()));
+                }
             }
-            obj->Select();
+        }
+        input = KN_NONE;
+    }
+
+    /*
+    **	Center the map around the currently selected objects. If no
+    **	objects are selected, then fall into the home case.
+    */
+    if (key != 0 && (key == Options.KeyHome1 || key == Options.KeyHome2)) {
+        if (CurrentObject.Count()) {
+            Map.Center_Map();
+            Map.Flag_To_Redraw(true);
+            input = KN_NONE;
+        } else {
+            input = Options.KeyBase;
         }
     }
-#endif
+
+    /*
+    **	Center the map about the construction yard or construction vehicle
+    **	if one is present.
+    */
+    if (key != 0 && key == Options.KeyBase) {
+        Unselect_All();
+        if (PlayerPtr->CurBuildings) {
+            for (index = 0; index < Buildings.Count(); index++) {
+                BuildingClass* building = Buildings.Ptr(index);
+
+                if (building != NULL && !building->IsInLimbo && building->House == PlayerPtr
+                    && *building == STRUCT_CONST) {
+                    Unselect_All();
+                    building->Select();
+                    if (building->IsLeader)
+                        break;
+                }
+            }
+        }
+        if (CurrentObject.Count() == 0 && PlayerPtr->CurUnits) {
+            for (index = 0; index < Units.Count(); index++) {
+                UnitClass* unit = Units.Ptr(index);
+
+                if (unit != NULL && !unit->IsInLimbo && unit->House == PlayerPtr && *unit == UNIT_MCV) {
+                    Unselect_All();
+                    unit->Select();
+                    break;
+                }
+            }
+        }
+        if (CurrentObject.Count()) {
+            Map.Center_Map();
+        } else {
+            if (PlayerPtr->Center != 0) {
+                Map.Center_Map(PlayerPtr->Center);
+            }
+        }
+        Map.Flag_To_Redraw(true);
+        input = KN_NONE;
+    }
+
+    /*
+    ** Toggle the status of formation for the current team
+    */
+    if (key != 0 && key == Options.KeyFormation) {
+        /* TODO, formations not implemented in TD yet. */
+    }
+
+    if (input != 0 && input == Options.KeyResign) {
+        if (!PlayerPtr->IsDefeated) {
+            SpecialDialog = SDLG_SURRENDER;
+        }
+        input = KN_NONE;
+    }
+
+    /*
+    **	Handle making and breaking alliances.
+    */
+    if (key != 0 && key == Options.KeyAlliance) {
+        if (GameToPlay != GAME_NORMAL || Debug_Flag) {
+            if (CurrentObject.Count() && !PlayerPtr->IsDefeated) {
+                if (CurrentObject[0]->Owner() != PlayerPtr->Class->House) {
+                    OutList.Add(EventClass(EventClass::ALLY, CurrentObject[0]->Owner()));
+                }
+            }
+        }
+        input = KN_NONE;
+    }
+
+    /*
+    **	Select all the units on the current display. This is equivalent to
+    **	drag selecting the whole view.
+    */
+    if (key != 0 && key == Options.KeySelectView) {
+        Map.Select_These(0x00000000, XY_Coord(Map.TacLeptonWidth, Map.TacLeptonHeight));
+        input = KN_NONE;
+    }
+
+    /*
+    **	Toggles the repair state similarly to pressing the repair button.
+    */
+    if (key != 0 && key == Options.KeyRepair) {
+        Map.Repair_Mode_Control(-1);
+        input = KN_NONE;
+    }
+
+    /*
+    **	Toggles the sell state similarly to pressing the sell button.
+    */
+    if (key != 0 && key == Options.KeySell) {
+        Map.Sell_Mode_Control(-1);
+        input = KN_NONE;
+    }
+
+    /*
+    **	Toggles the map zoom mode similarly to pressing the map button.
+    */
+    if (key != 0 && key == Options.KeyMap) {
+        Map.Zoom_Mode_Control();
+        input = KN_NONE;
+    }
+
+    /*
+    **	Scrolls the sidebar up one slot.
+    */
+    if (key != 0 && key == Options.KeySidebarUp) {
+        Map.SidebarClass::Scroll(true, -1);
+        input = KN_NONE;
+    }
+
+    /*
+    **	Scrolls the sidebar down one slot.
+    */
+    if (key != 0 && key == Options.KeySidebarDown) {
+        Map.SidebarClass::Scroll(false, -1);
+        input = KN_NONE;
+    }
+
+    /*
+    **	Brings up the options dialog box.
+    */
+    if (key != 0 && (key == Options.KeyOption1 || key == Options.KeyOption2)) {
+        Map.Help_Text(TXT_NONE); // Turns off help text.
+        Queue_Options();
+        input = KN_NONE;
+    }
+
+    /*
+    **	Scrolls the tactical map in the direction specified.
+    */
+    int distance = CELL_LEPTON_W;
+    if (key != 0 && key == Options.KeyScrollLeft) {
+        Map.Scroll_Map(DIR_W, distance, true);
+        input = KN_NONE;
+    }
+    if (key != 0 && key == Options.KeyScrollRight) {
+        Map.Scroll_Map(DIR_E, distance, true);
+        input = KN_NONE;
+    }
+    if (key != 0 && key == Options.KeyScrollUp) {
+        Map.Scroll_Map(DIR_N, distance, true);
+        input = KN_NONE;
+    }
+    if (key != 0 && key == Options.KeyScrollDown) {
+        Map.Scroll_Map(DIR_S, distance, true);
+        input = KN_NONE;
+    }
+
+    /*
+    **	Teams are handled by the 10 special team keys. The manual comparison
+    **	to the KN numbers is because the Windows keyboard driver can vary
+    **	the base code number for the key depending on the shift or alt key
+    **	state!
+    */
+    if (input != 0 && (plain == Options.KeyTeam1 || plain == KN_1)) {
+        Handle_Team(0, action);
+        input = KN_NONE;
+    }
+    if (input != 0 && (plain == Options.KeyTeam2 || plain == KN_2)) {
+        Handle_Team(1, action);
+        input = KN_NONE;
+    }
+    if (input != 0 && (plain == Options.KeyTeam3 || plain == KN_3)) {
+        Handle_Team(2, action);
+        input = KN_NONE;
+    }
+    if (input != 0 && (plain == Options.KeyTeam4 || plain == KN_4)) {
+        Handle_Team(3, action);
+        input = KN_NONE;
+    }
+    if (input != 0 && (plain == Options.KeyTeam5 || plain == KN_5)) {
+        Handle_Team(4, action);
+        input = KN_NONE;
+    }
+    if (input != 0 && (plain == Options.KeyTeam6 || plain == KN_6)) {
+        Handle_Team(5, action);
+        input = KN_NONE;
+    }
+    if (input != 0 && (plain == Options.KeyTeam7 || plain == KN_7)) {
+        Handle_Team(6, action);
+        input = KN_NONE;
+    }
+    if (input != 0 && (plain == Options.KeyTeam8 || plain == KN_8)) {
+        Handle_Team(7, action);
+        input = KN_NONE;
+    }
+    if (input != 0 && (plain == Options.KeyTeam9 || plain == KN_9)) {
+        Handle_Team(8, action);
+        input = KN_NONE;
+    }
+    if (input != 0 && (plain == Options.KeyTeam10 || plain == KN_0)) {
+        Handle_Team(9, action);
+        input = KN_NONE;
+    }
+
+    /*
+    **	Handle the bookmark hotkeys.
+    */
+    if (input != 0 && plain == Options.KeyBookmark1 && !Debug_Map) {
+        Handle_View(0, action);
+        input = KN_NONE;
+    }
+    if (input != 0 && plain == Options.KeyBookmark2 && !Debug_Map) {
+        Handle_View(1, action);
+        input = KN_NONE;
+    }
+    if (input != 0 && plain == Options.KeyBookmark3 && !Debug_Map) {
+        Handle_View(2, action);
+        input = KN_NONE;
+    }
+    if (input != 0 && plain == Options.KeyBookmark4 && !Debug_Map) {
+        Handle_View(3, action);
+        input = KN_NONE;
+    }
 
 #ifdef CHEAT_KEYS
     if (Debug_Flag && input && (input & KN_RLSE_BIT) == 0) {
@@ -3898,4 +4000,29 @@ bool Is_Demo(void)
     }
 
     return bDemo;
+}
+
+/***********************************************************************************************
+ * Is_DOS_Files -- Function to determine if we are running with DOS files                      *
+ *                                                                                             *
+ * INPUT:    Nothing                                                                           *
+ *                                                                                             *
+ * OUTPUT:   true if we seem to have DOS files                                                 *
+ *                                                                                             *
+ * WARNINGS: None                                                                              *
+ *                                                                                             *
+ *=============================================================================================*/
+bool Is_DOS_Files(void)
+{
+    static bool already_checked = false;
+    static bool is_dos = false;
+
+    if (!already_checked) {
+        CCFileClass local("LOCAL.MIX");
+        CCFileClass cclocal("CCLOCAL.MIX");
+        is_dos = local.Is_Available() && !cclocal.Is_Available();
+        already_checked = true;
+    }
+
+    return is_dos;
 }

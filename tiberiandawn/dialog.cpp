@@ -417,8 +417,8 @@ void Simple_Text_Print(char const* text, unsigned x, unsigned y, unsigned fore, 
     **	Change the current font if it differs from the font desired.
     */
     point = (flag & (TextPrintType)0x000F);
-    xspace = 1;
-    yspace = 0;
+    xspace = Get_Resolution_Factor() ? 1 : 0;
+    yspace = 1;
 
     switch (point) {
     case TPF_GREEN12:

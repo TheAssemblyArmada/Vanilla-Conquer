@@ -72,7 +72,7 @@ NonSequencedConnClass::NonSequencedConnClass(int numsend,
                                              unsigned long retry_delta,
                                              unsigned long max_retries,
                                              unsigned long timeout)
-    : ConnectionClass(maxlen, magicnum, retry_delta, max_retries, timeout)
+    : ConnectionClass(160, 160, maxlen, magicnum, retry_delta, max_retries, timeout)
 {
     /*------------------------------------------------------------------------
     Allocate the packet Queue.  This will store incoming packets (which will
@@ -396,7 +396,7 @@ int NonSequencedConnClass::Receive_Packet(void* buf, int buflen)
         ackpacket.Code = PACKET_ACK;
         ackpacket.PacketID = packet->PacketID;
         // Smart_Printf( "Sending ACK for %d \n", packet->PacketID );
-        Send((char*)&ackpacket, sizeof(CommHeaderType));
+        Send((char*)&ackpacket, sizeof(CommHeaderType), NULL, 0);
 
         return (true);
 
@@ -577,7 +577,7 @@ int NonSequencedConnClass::Service_Send_Queue(void)
                 }
             }
 #endif
-            Send(send_entry->Buffer, send_entry->BufLen);
+            Send(send_entry->Buffer, send_entry->BufLen, NULL, 0);
 
             /*
             ....................... Fill in Time fields ........................

@@ -42,10 +42,10 @@
  *   ConnectionClass::Command_Name -- returns name for a packet command		*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "function.h"
 #include <stdio.h>
 //#include <mem.h>
 #include <sys/timeb.h>
+#include <string.h>
 #include "connect.h"
 
 //#include "WolDebug.h"
@@ -750,11 +750,14 @@ unsigned int ConnectionClass::Time(void)
 
 #ifdef WWLIB32_H
 
+    /*TODO: Backport WW Timer to TD. */
+    bool TimerSystemOn = false;
+
     /*------------------------------------------------------------------------
     If the Westwood timer system has been activated, use TickCount's value
     ------------------------------------------------------------------------*/
     if (TimerSystemOn) {
-        return (TickCount); // Westwood Library time
+        //return (TickCount); // Westwood Library time
     }
     /*------------------------------------------------------------------------
     Otherwise, use the DOS timer

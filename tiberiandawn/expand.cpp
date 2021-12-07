@@ -91,7 +91,7 @@ bool Expansion_Dialog(void)
     void const* up_button;
     void const* down_button;
 
-    if (InMainLoop) {
+    if (InMainLoop || factor == 1) {
         up_button = Hires_Retrieve("BTN-UP.SHP");
         down_button = Hires_Retrieve("BTN-DN.SHP");
     } else {
@@ -275,7 +275,7 @@ bool Bonus_Dialog(void)
     void const* up_button;
     void const* down_button;
 
-    if (InMainLoop) {
+    if (InMainLoop || factor == 1) {
         up_button = Hires_Retrieve("BTN-UP.SHP");
         down_button = Hires_Retrieve("BTN-DN.SHP");
     } else {
