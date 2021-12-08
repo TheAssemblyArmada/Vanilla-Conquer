@@ -1513,7 +1513,7 @@ static void Sync_Delay(void)
             Map.Render();
         }
 
-        Frame_Limiter(false);
+        Frame_Limiter(FL_NONE);
     }
     Color_Cycle();
     Call_Back();
