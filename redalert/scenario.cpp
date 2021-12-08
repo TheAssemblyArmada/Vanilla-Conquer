@@ -1635,7 +1635,7 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
                 Call_Back();
             } while (!Keyboard->Check() && cd);
         }
-        Frame_Limiter();
+        Frame_Limiter(FL_NO_BLOCK);
     } while (buffer[++bufindex]);
 
     Show_Mouse();

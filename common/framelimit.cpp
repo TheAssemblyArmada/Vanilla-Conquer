@@ -15,7 +15,7 @@ extern WWMouseClass* WWMouse;
 void Video_Render_Frame();
 #endif
 
-void Frame_Limiter(bool force_render)
+void Frame_Limiter(FrameLimitFlags flags)
 {
     static auto frame_start = std::chrono::steady_clock::now();
 #ifdef SDL2_BUILD
@@ -24,8 +24,12 @@ void Frame_Limiter(bool force_render)
     auto render_start = std::chrono::steady_clock::now();
     auto render_remaining = std::chrono::duration_cast<std::chrono::milliseconds>(frame_start - render_start).count();
 
-    if (force_render == false && render_remaining > render_avg) {
-        ms_sleep(unsigned(render_remaining));
+    if (!(flags & FrameLimitFlags::FL_FORCE_RENDER) && render_remaining > render_avg) {
+        if (!(flags & FrameLimitFlags::FL_NO_BLOCK)) {
+            ms_sleep(unsigned(render_remaining));
+        } else {
+            ms_sleep(1); // Unconditionally yield for minimum time.
+        }
         return;
     }
 
@@ -38,7 +42,7 @@ void Frame_Limiter(bool force_render)
     render_avg = (render_avg + render_time) / 2;
 #endif
 
-    if (Settings.Video.FrameLimit > 0) {
+    if (Settings.Video.FrameLimit > 0 && !(flags & FrameLimitFlags::FL_NO_BLOCK)) {
 #ifdef SDL2_BUILD
         auto frame_end = render_end;
 #else
