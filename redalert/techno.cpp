@@ -5341,7 +5341,8 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                 **	Never recruit sticky guard units to defend a base.
                 */
                 if (!infantry->Is_Weapon_Equipped()
-                    || (!MissionControl[infantry->Mission].IsRecruitable && Session.Type == GAME_NORMAL))
+                    || (!(infantry->Mission >= 0 && MissionControl[infantry->Mission].IsRecruitable)
+                        && Session.Type == GAME_NORMAL))
                     continue;
                 //					(Mission != MISSION_GUARD_AREA || Session.Type == GAME_NORMAL)) continue;
 
@@ -5429,7 +5430,8 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                 **	Never recruit sticky guard units to defend a base.
                 */
                 if (!unit->Is_Weapon_Equipped()
-                    || (!MissionControl[unit->Mission].IsRecruitable && Session.Type == GAME_NORMAL))
+                    || (!(unit->Mission >= 0 && MissionControl[unit->Mission].IsRecruitable)
+                        && Session.Type == GAME_NORMAL))
                     continue;
 
                 /*
