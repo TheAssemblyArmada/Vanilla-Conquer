@@ -3354,7 +3354,7 @@ short const* BuildingTypeClass::Occupy_List(bool placement) const
     if (placement && Bib_And_Offset(bib, cell)) {
 
         SmudgeTypeClass const& smudge = SmudgeTypeClass::As_Reference(bib);
-        static short _list[25];
+        static short _list[50];
         short* dest = &_list[0];
 
         /*

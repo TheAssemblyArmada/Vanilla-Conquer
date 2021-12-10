@@ -544,7 +544,12 @@ int LoadOptionsClass::Process(void)
                     if (game_descr[0] == '(') {
                         char* ptr = strchr(game_descr, ')');
                         if (ptr != NULL) {
-                            strcpy(game_descr, ptr + 1);
+                            char* dst = game_descr;
+                            const char* src = ptr + 1; // Skip ')'
+
+                            // Don't use strcpy, as the memory regions overlap.
+                            while ((*dst++ = *src++) != '\0')
+                                ; // Copy string
                             strtrim(game_descr);
                         }
                     }
