@@ -2350,7 +2350,7 @@ static void Init_Bootstrap_Mixfiles(void)
     } else {
         new MFCD("LORES1.MIX", &FastKey);
         ok1 = MFCD::Cache("LORES1.MIX");
-        assert(ok1);
+        //assert(ok1);
     }
 #endif
 

@@ -92,6 +92,42 @@ extern unsigned int IsTheaterShape;
 extern void Free_Heaps(void);
 extern void DLL_Shutdown(void);
 
+/* Set global variables that require RESFACTOR value.  */
+void Set_Resfactor_Globals(int resfactor)
+{
+    int windowlist[9][9] = {/* xbyte, ypixel, bytewid, pixelht, cursor color, bkgd color,	cursor x, cursor y */
+
+                            /* do not change the first 2 entries!! they are necc. to the system */
+
+                            {0, 0, 40 * 8 * resfactor, 200 * resfactor, WHITE, BLACK, 0, 0}, /* screen window */
+                            {1 * 8, 75, 38 * 8, 100, WHITE, BLACK, 0, 0},                    /* DOS Error window */
+
+                            // Tactical map.
+                            {0, 0, 40 * 8 * resfactor, 200 * resfactor, WHITE, LTGREY, 0, 0},
+
+                            // Initial menu window.
+                            {12 * 8, 199 - 42, 16 * 8, 42, LTGREY, DKGREY, 0, 0},
+
+                            // Sidebar clipping window.
+                            {0, 0, 0, 0, 0, 0, 0, 0},
+
+                            // Scenario editor window.
+                            {5 * 8, 30, 30 * 8, 140, 0, 0, 0, 0},
+
+                            // Partial object draw sub-window.
+                            {0, 0, 0, 0, WHITE, BLACK, 0, 0},
+
+                            // Custom window.
+                            {0, 0, 0, 0, 0, 0, 0, 0},
+
+                            // Virtual window for external rendering. ST - 1/15/2019 3:02PM
+                            {0, 0, 0, 0, 0, 0, 0, 0}
+
+    };
+
+    memcpy((void*)WindowList, (void*)windowlist, sizeof(windowlist));
+}
+
 #if defined REMASTER_BUILD && defined _WIN32
 BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserved)
 {
@@ -304,6 +340,7 @@ int main(int argc, char* argv[])
             ScreenHeight = 200;
         }
 #endif
+        Set_Resfactor_Globals(RESFACTOR);
 
 #if defined(_WIN32) && !defined(SDL2_BUILD)
         /* WinMain seems to pass command_show to Create_Main_Window, but since we
@@ -388,8 +425,8 @@ int main(int argc, char* argv[])
         }
 #endif
 
-        SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-        HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+        SeenBuff.Attach(&VisiblePage, 0, 0, ScreenWidth, ScreenHeight);
+        HidPage.Attach(&HiddenPage, 0, 0, ScreenWidth, ScreenHeight);
 
         Options.Adjust_Variables_For_Resolution();
 
@@ -556,8 +593,8 @@ bool InitDDraw(void)
         }
     }
 
-    SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-    HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+    SeenBuff.Attach(&VisiblePage, 0, 0, ScreenWidth, ScreenHeight);
+    HidPage.Attach(&HiddenPage, 0, 0, ScreenWidth, ScreenHeight);
 #endif
     return true;
 }

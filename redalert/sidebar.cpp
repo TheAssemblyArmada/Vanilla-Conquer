@@ -209,6 +209,12 @@ SidebarClass::SidebarClass(NoInitClass const& x)
  *=============================================================================================*/
 void SidebarClass::One_Time(void)
 {
+    /* Set RESFACTOR positions.  */
+    SidebarClass::Background.X = (int)((int)SIDE_X + 8) * RESFACTOR;
+    SidebarClass::Background.Y = (int)SIDE_Y * RESFACTOR;
+    SidebarClass::Background.Width = (int)((int)SIDE_WIDTH - 1) * RESFACTOR - 1;
+    SidebarClass::Background.Height = (int)((int)SIDE_HEIGHT - 1) * RESFACTOR;
+
     PowerClass::One_Time();
 
     /*
@@ -1927,8 +1933,6 @@ SidebarClass::StripClass::SelectClass::SelectClass(void)
     , Strip(0)
     , Index(0)
 {
-    Width = (OBJECT_WIDTH - 1) * RESFACTOR;
-    Height = OBJECT_HEIGHT * RESFACTOR;
 }
 
 /***********************************************************************************************
