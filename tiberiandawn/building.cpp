@@ -1564,22 +1564,24 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
             **	remembering of this fact. The finale uses this information to
             **	play the correct movie.
             */
-            if (*this == STRUCT_TEMPLE && warhead == WARHEAD_PB) {
-                TempleIoned = true;
+            if (GameToPlay == GAME_NORMAL && *this == STRUCT_TEMPLE) {
+                if (warhead == WARHEAD_PB) {
+                    TempleIoned = true;
 #ifdef REMASTER_BUILD
-                /*
-                ** Maybe trigger an achivement if the structure is owned by an AI house in campaign mode. ST -
-                *11/14/2019 1:53PM
-                */
-                if (GameToPlay == GAME_NORMAL && !House->IsHuman && source && source->House && source->House->IsHuman) {
-                    TechnoTypeClass const* object_type = Techno_Type_Class();
-                    if (object_type) {
-                        On_Achievement_Event(source->House, "ION_DESTROYS_TEMPLE", object_type->IniName);
+                    /*
+                    ** Maybe trigger an achivement if the structure is owned by an AI house in campaign mode. ST -
+                    ** 11/14/2019 1:53PM
+                    */
+                    if (!House->IsHuman && source && source->House && source->House->IsHuman) {
+                        TechnoTypeClass const* object_type = Techno_Type_Class();
+                        if (object_type) {
+                            On_Achievement_Event(source->House, "ION_DESTROYS_TEMPLE", object_type->IniName);
+                        }
                     }
-                }
 #endif
-            } else {
-                TempleIoned = false;
+                } else {
+                    TempleIoned = false;
+                }
             }
 
             if (House) {
