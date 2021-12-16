@@ -637,6 +637,7 @@ bool Save_Misc_Values(FileClass& file)
 
     // This is new...
     file.Write(ActionMovie, sizeof(ActionMovie));
+    file.Write(&TempleIoned, sizeof(TempleIoned));
 
     return (true);
 }
@@ -745,6 +746,10 @@ bool Load_Misc_Values(FileClass& file)
 
     if (file.Seek(0, SEEK_CUR) < file.Size()) {
         file.Read(ActionMovie, sizeof(ActionMovie));
+    }
+
+    if (file.Seek(0, SEEK_CUR) < file.Size()) {
+        file.Read(&TempleIoned, sizeof(TempleIoned));
     }
 
     return (true);
