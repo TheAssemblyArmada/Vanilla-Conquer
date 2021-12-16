@@ -316,6 +316,7 @@ void Clear_Scenario(void)
     CrateCount = 0;
     CrateTimer = 0;
     CrateMaker = false;
+    TempleIoned = false;
 
     /*
     ** Call everyone's Init routine, except the Map's; for the Map, only call
