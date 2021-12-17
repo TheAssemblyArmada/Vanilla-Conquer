@@ -693,8 +693,10 @@ void RadarClass::Zoom_Mode(CELL cell)
     /*
     ** Make sure we do not show more cell then are on the map.
     */
-    map_c_width = MIN(map_c_width, 62);
-    map_c_height = MIN(map_c_height, 62);
+    map_c_width = MIN(map_c_width, RadIWidth);
+    map_c_width = MIN(map_c_width, MapCellWidth);
+    map_c_height = MIN(map_c_height, RadIHeight);
+    map_c_height = MIN(map_c_height, MapCellHeight);
 
     /*
     ** Find the amount of remainder because this will let us calculate
@@ -994,28 +996,26 @@ bool RadarClass::Map_Cell(CELL cell, HouseClass* house, bool and_for_allies)
 
 void RadarClass::Cursor_Cell(CELL cell, int value)
 {
-    /* Radar seem to crash on some clicks because it get cell = -1 */
-    if (cell < 0)
-        return;
-
-    int temp = (*this)[cell].IsRadarCursor;
-
     /*
-    ** If this cell is not on the radar don't botther doing anything.
+    ** If this cell is not on the radar don't bother doing anything.
     */
-    if (In_Radar(cell) && temp != value) {
-        /*
-        **	Record the new state of this cell.
-        */
-        (*this)[cell].IsRadarCursor = value;
+    if (Cell_On_Radar(cell)) {
 
-        /*
-        **	If we are erasing then erase the cell.
-        */
-        ////// ST 8/13/96 2:23PM
-        if (value == false) {
-            Plot_Radar_Pixel(cell);
-            //////
+        int temp = (*this)[cell].IsRadarCursor;
+
+        if (temp != value) {
+
+            /*
+            **	Record the new state of this cell.
+            */
+            (*this)[cell].IsRadarCursor = value;
+
+            /*
+            **	If we are erasing then erase the cell.
+            */
+            if (value == 0) {
+                Plot_Radar_Pixel(cell);
+            }
         }
     }
 }
