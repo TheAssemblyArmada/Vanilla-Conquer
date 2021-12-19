@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 include(FeatureSummary)
@@ -24,6 +24,10 @@ option(BUILD_TESTS "Build unit tests." OFF)
 option(BUILD_TOOLS "Build modding utilities." OFF)
 option(BUILD_WITH_UBSAN "Build with undefined behavior sanitizer" OFF)
 option(BUILD_WITH_ASAN "Build with address sanitizer" OFF)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    option(USE_LSB_GAMES "Install to %prefix%/games rather than %prefix%/bin." OFF)
+endif()
 
 add_feature_info(RemasterTD BUILD_REMASTERTD, "Remastered Tiberian Dawn dll")
 add_feature_info(RemasterRA BUILD_REMASTERRA "Remastered Red Alert dll")
@@ -121,10 +125,24 @@ if(BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
+# Use these for the install destinations.
+include(GNUInstallDirs)
+
 add_subdirectory(common)
 add_subdirectory(tiberiandawn)
 add_subdirectory(redalert)
 add_subdirectory(tools)
+
+if(BUILD_VANILLATD OR BUILD_VANILLARA)
+    if(WIN32)
+        install(FILES ${OPENAL_RUNTIME_LIBRARY} ${SDL2_RUNTIME_LIBRARY}
+            DESTINATION ${CMAKE_INSTALL_BINDIR}
+            COMPONENT VanillaRuntime
+        )
+    endif()
+
+    include(CPackConfig)
+endif()
 
 feature_summary(WHAT ENABLED_FEATURES DESCRIPTION "Enabled features:")
 feature_summary(WHAT DISABLED_FEATURES DESCRIPTION "Disabled features:")
