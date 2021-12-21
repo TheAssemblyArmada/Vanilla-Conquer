@@ -25,7 +25,7 @@ jobs:
         
     - name: Configure Vanilla Conquer
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=cmake/i686-mingw-w64-toolchain.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_REMASTERTD=ON -DBUILD_REMASTERRA=ON -DBUILD_VANILLATD=OFF -DBUILD_VANILLARA=OFF -B build
+        cmake -DCMAKE_TOOLCHAIN_FILE=cmake/i686-mingw-w64-toolchain.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_REMASTERTD=ON -DBUILD_REMASTERRA=ON -DBUILD_VANILLATD=OFF -DBUILD_VANILLARA=OFF -DNETWORKING=OFF -B build
 
     - name: Build Vanilla Conquer
       run: |
@@ -94,7 +94,7 @@ jobs:
         
     - name: Configure Vanilla Conquer
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=cmake/${{ steps.vars.outputs.arc_path }}-mingw-w64-toolchain.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DSDL2=ON -DSDL2_ROOT_DIR=/tmp/SDL2-2.0.12 -DSDL2_INCLUDE_DIR=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/include/SDL2 -DSDL2_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/lib/libSDL2.dll.a -DSDL2_SDLMAIN_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/lib/libSDL2main.a -DSDL2_RUNTIME_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/bin/SDL2.dll -DOPENAL=ON -DOPENAL_ROOT=/tmp/openal-soft-1.21.0-bin -DOPENAL_INCLUDE_DIR=/tmp/openal-soft-1.21.0-bin/include/AL -DOPENAL_LIBRARY=/tmp/openal-soft-1.21.0-bin/libs/${{ steps.vars.outputs.oal_path }}/libOpenAL32.dll.a -DOPENAL_RUNTIME_LIBRARY=/tmp/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll -DBUILD_TOOLS=ON -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DNETWORKING=ON -DImageMagick_convert_EXECUTABLE=/usr/bin/convert -DImageMagick_convert_FOUND=TRUE -B build
+        cmake -DCMAKE_TOOLCHAIN_FILE=cmake/${{ steps.vars.outputs.arc_path }}-mingw-w64-toolchain.cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DSDL2=ON -DSDL2_ROOT_DIR=/tmp/SDL2-2.0.12 -DSDL2_INCLUDE_DIR=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/include/SDL2 -DSDL2_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/lib/libSDL2.dll.a -DSDL2_SDLMAIN_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/lib/libSDL2main.a -DSDL2_RUNTIME_LIBRARY=/tmp/SDL2-2.0.12/${{ steps.vars.outputs.arc_path }}-w64-mingw32/bin/SDL2.dll -DOPENAL=ON -DOPENAL_ROOT=/tmp/openal-soft-1.21.0-bin -DOPENAL_INCLUDE_DIR=/tmp/openal-soft-1.21.0-bin/include/AL -DOPENAL_LIBRARY=/tmp/openal-soft-1.21.0-bin/libs/${{ steps.vars.outputs.oal_path }}/libOpenAL32.dll.a -DOPENAL_RUNTIME_LIBRARY=/tmp/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll -DBUILD_TOOLS=ON -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DImageMagick_convert_EXECUTABLE=/usr/bin/convert -DImageMagick_convert_FOUND=TRUE -B build
 
     - name: Build Vanilla Conquer
       run: |
