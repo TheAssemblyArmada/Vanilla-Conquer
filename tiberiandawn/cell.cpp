@@ -2595,7 +2595,7 @@ void CellClass::Set_Mapped(HouseClass* player, bool set)
 {
     if (player && player->Class) {
         Set_Mapped(player->Class->House, set);
-        if (GameToPlay != GAME_GLYPHX_MULTIPLAYER && player->IsHuman) {
+        if (GameToPlay != GAME_GLYPHX_MULTIPLAYER && player == PlayerPtr) {
             IsMapped = set; // Also set the regular flag in single player
         }
     }
@@ -2657,7 +2657,7 @@ void CellClass::Set_Visible(HouseClass* player, bool set)
 {
     if (player && player->Class) {
         Set_Visible(player->Class->House, set);
-        if (GameToPlay != GAME_GLYPHX_MULTIPLAYER && player->IsHuman) {
+        if (GameToPlay != GAME_GLYPHX_MULTIPLAYER && player == PlayerPtr) {
             IsVisible = set; // Also set the regular flag in single player. This is needed for rendering
         }
     }
