@@ -4690,7 +4690,8 @@ int BuildingClass::Mission_Repair(void)
                     fixed pfrac = Saturate(House->Power_Fraction(), 1);
                     if (pfrac < fixed::_1_2)
                         pfrac = fixed::_1_2;
-                    int time = Inverse(pfrac) * TICKS_PER_MINUTE;
+                    /* fixed(1, 60) reload rate of 1/60 of a minute, should be Rule.ReloadRate when ported from RA.*/
+                    int time = Inverse(pfrac) * fixed(1, 60) * TICKS_PER_MINUTE;
                     IsReadyToCommence = false;
                     return (time);
                 }
