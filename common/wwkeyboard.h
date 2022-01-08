@@ -684,13 +684,25 @@ typedef enum KeyNumType : unsigned short
     KN_PRNTSCRN = VK_PRINT,
     KN_Q = VK_Q,
     KN_R = VK_R,
+#ifdef SDL2_BUILD
+    KN_RALT = SDL_SCANCODE_RALT,
+#else
     KN_RALT = VK_MENU,
+#endif
     KN_RBRACKET = VK_NONE_DD,
+#ifdef SDL2_BUILD
+    KN_RCTRL = SDL_SCANCODE_RCTRL,
+#else
     KN_RCTRL = VK_CONTROL,
+#endif
     KN_RETURN = VK_RETURN,
     KN_RIGHT = VK_RIGHT,
     KN_RMOUSE = VK_RBUTTON,
+#ifdef SDL2_BUILD
+    KN_RSHIFT = SDL_SCANCODE_RSHIFT,
+#else
     KN_RSHIFT = VK_SHIFT,
+#endif
     KN_S = VK_S,
     KN_SCROLLLOCK = VK_SCROLL,
     KN_SEMICOLON = VK_NONE_BA,
