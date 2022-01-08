@@ -100,7 +100,7 @@
 //#define	FIXIT_FAST_LOAD			// Enables faster INI loading
 
 // These fixes will cause the game to go out of sync.
-//#define	FIXIT_ENGINEER_CAPTURE	// If building not allied, will still capture if engineer not allied with building.
+#define FIXIT_ENGINEER_CAPTURE // If building allied, will still capture if engineer not allied with building.
 //#define	FIXIT_HELI_LANDING	// Fixes so new helicopters land at free helipad
 //#define	FIXIT_MINE_PASSABLE	// Fixes units not driving onto mines
 
