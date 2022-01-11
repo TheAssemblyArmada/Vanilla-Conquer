@@ -43,6 +43,7 @@ class StaticButtonClass : public GadgetClass
 public:
     StaticButtonClass(void);
     StaticButtonClass(unsigned id, char const* text, TextPrintType style, int x, int y, int w = -1, int h = -1);
+    ~StaticButtonClass(void);
     virtual int Draw_Me(int forced = false);
     virtual void Set_Text(char const* text, bool resize = false);
 

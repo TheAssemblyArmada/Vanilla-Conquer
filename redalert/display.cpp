@@ -624,8 +624,12 @@ void DisplayClass::Set_Cursor_Shape(short const* list)
     if (list) {
         int w, h;
         static short _list[50];
+        const short* src = list;
+        short* dst = _list;
 
-        memcpy(_list, list, sizeof(_list));
+        while ((*dst++ = *src++) != REFRESH_EOL)
+            ; /* Copy is done in condition.  */
+
         CursorSize = _list;
         Get_Occupy_Dimensions(w, h, CursorSize);
         ZoneOffset = -(((h / 2) * MAP_CELL_W) + (w / 2));

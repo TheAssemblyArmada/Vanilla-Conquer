@@ -261,3 +261,20 @@ void StaticButtonClass::Draw_Text(char const* text)
         Fancy_Text_Print(text, x, Y, GadgetClass::Get_Color_Scheme(), TBLACK, PrintFlags);
     }
 }
+
+/***********************************************************************************************
+ * StaticButtonClass::~StaticButtonClass -- Destructor of StaticButtonClass.                   *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   12/09/2021 mrparrot : Created                                                             *
+ *=============================================================================================*/
+StaticButtonClass::~StaticButtonClass(void)
+{
+    delete[] String;
+}

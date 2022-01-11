@@ -94,12 +94,12 @@ UDPInterfaceClass::UDPInterfaceClass(void)
 UDPInterfaceClass::~UDPInterfaceClass(void)
 {
     while (BroadcastAddresses.Count()) {
-        delete BroadcastAddresses[0];
+        delete[] BroadcastAddresses[0];
         BroadcastAddresses.Delete(0);
     }
 
     while (LocalAddresses.Count()) {
-        delete LocalAddresses[0];
+        delete[] LocalAddresses[0];
         LocalAddresses.Delete(0);
     }
 

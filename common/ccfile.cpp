@@ -109,7 +109,7 @@ CCFileClass::CCFileClass(void)
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void CCFileClass::Error(int, int, char const*)
+void CCFileClass::Error(int error, int canretry, char const* filename)
 {
     if (!Force_CD_Available(RequiredCD)) {
         Prog_End("CCFileClass::Error CD not found", true);
@@ -118,6 +118,9 @@ void CCFileClass::Error(int, int, char const*)
             exit(EXIT_FAILURE);
         }
     }
+
+    // If its not a required CD releated error, pass to next class handling in the chain.
+    CDFileClass::Error(error, canretry, filename);
 }
 
 /***********************************************************************************************

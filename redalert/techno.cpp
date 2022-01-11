@@ -4235,7 +4235,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
 
                 if (source != NULL) {
                     if (Session.Type == GAME_INTERNET) {
-                        source->House->DestroyedBuildings->Increment_Unit_Total(((BuildingClass*)this)->Class->Type);
+                        source->House->DestroyedBuildings.Increment_Unit_Total(((BuildingClass*)this)->Class->Type);
                     }
                     source->House->BuildingsKilled[Owner()]++;
                 }
@@ -4252,27 +4252,26 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
 
         case RTTI_AIRCRAFT:
             if (source != NULL && Session.Type == GAME_INTERNET) {
-                source->House->DestroyedAircraft->Increment_Unit_Total(((AircraftClass*)this)->Class->Type);
+                source->House->DestroyedAircraft.Increment_Unit_Total(((AircraftClass*)this)->Class->Type);
                 total_recorded++;
             }
             // Fall through.....
         case RTTI_INFANTRY:
             if (source != NULL && !total_recorded && Session.Type == GAME_INTERNET) {
-                source->House->DestroyedInfantry->Increment_Unit_Total(((InfantryClass*)this)->Class->Type);
+                source->House->DestroyedInfantry.Increment_Unit_Total(((InfantryClass*)this)->Class->Type);
                 total_recorded++;
             }
             // Fall through.....
         case RTTI_UNIT:
             if (source != NULL && !total_recorded && Session.Type == GAME_INTERNET) {
-                source->House->DestroyedUnits->Increment_Unit_Total(((UnitClass*)this)->Class->Type);
+                source->House->DestroyedUnits.Increment_Unit_Total(((UnitClass*)this)->Class->Type);
                 total_recorded++;
             }
             // Fall through.....
         case RTTI_VESSEL:
             if (source != NULL && !total_recorded && Session.Type == GAME_INTERNET) {
-                source->House->DestroyedUnits->Increment_Unit_Total(((VesselClass*)this)->Class->Type);
+                source->House->DestroyedUnits.Increment_Unit_Total(((VesselClass*)this)->Class->Type);
             }
-
             House->UnitsLost++;
             if (source != NULL)
                 source->House->UnitsKilled[Owner()]++;
@@ -5341,7 +5340,8 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                 **	Never recruit sticky guard units to defend a base.
                 */
                 if (!infantry->Is_Weapon_Equipped()
-                    || (!MissionControl[infantry->Mission].IsRecruitable && Session.Type == GAME_NORMAL))
+                    || (!(infantry->Mission >= 0 && MissionControl[infantry->Mission].IsRecruitable)
+                        && Session.Type == GAME_NORMAL))
                     continue;
                 //					(Mission != MISSION_GUARD_AREA || Session.Type == GAME_NORMAL)) continue;
 
@@ -5429,7 +5429,8 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                 **	Never recruit sticky guard units to defend a base.
                 */
                 if (!unit->Is_Weapon_Equipped()
-                    || (!MissionControl[unit->Mission].IsRecruitable && Session.Type == GAME_NORMAL))
+                    || (!(unit->Mission >= 0 && MissionControl[unit->Mission].IsRecruitable)
+                        && Session.Type == GAME_NORMAL))
                     continue;
 
                 /*

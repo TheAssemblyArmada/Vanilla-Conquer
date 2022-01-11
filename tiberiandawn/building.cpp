@@ -1868,7 +1868,7 @@ BuildingClass::BuildingClass(StructType type, HousesType house)
     }
 
     if (GameToPlay == GAME_INTERNET) {
-        House->BuildingTotals->Increment_Unit_Total((int)type);
+        House->BuildingTotals.Increment_Unit_Total((int)type);
     }
 
 #ifdef USE_RA_AI
@@ -3612,7 +3612,7 @@ bool BuildingClass::Captured(HouseClass* newowner)
         ** Add this building to the list of buildings captured this game. For internet stats purposes
         */
         if (GameToPlay == GAME_INTERNET) {
-            newowner->CapturedBuildings->Increment_Unit_Total(Class->Type);
+            newowner->CapturedBuildings.Increment_Unit_Total(Class->Type);
         }
 
         House->Adjust_Power(-Power_Output());
@@ -4690,7 +4690,8 @@ int BuildingClass::Mission_Repair(void)
                     fixed pfrac = Saturate(House->Power_Fraction(), 1);
                     if (pfrac < fixed::_1_2)
                         pfrac = fixed::_1_2;
-                    int time = Inverse(pfrac) * TICKS_PER_MINUTE;
+                    /* fixed(1, 60) reload rate of 1/60 of a minute, should be Rule.ReloadRate when ported from RA.*/
+                    int time = Inverse(pfrac) * fixed(1, 60) * TICKS_PER_MINUTE;
                     IsReadyToCommence = false;
                     return (time);
                 }

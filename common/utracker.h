@@ -34,33 +34,95 @@
  *                                                                         *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#ifndef UTRACKER_H
+#define UTRACKER_H
+#include <cstdlib>
+
 /*
 ** UnitTracker Class
 */
 
-class UnitTrackerClass
+template <int N> class UnitTrackerClass
 {
 
 public:
-    UnitTrackerClass(int unit_count);
-    ~UnitTrackerClass(void);
-
-    void Increment_Unit_Total(int unit_type);
-    void Decrement_Unit_Total(int unit_type);
-    void Clear_Unit_Total(void);
-
-    int Get_Unit_Total(int unit_type);
-    long* Get_All_Totals(void);
-    int Get_Unit_Count(void)
+    inline void Init()
     {
-        return (UnitCount);
+        InNetworkFormat = 0; // The unit entries are in host format
+        Clear_Unit_Total();  // Clear each entry
+    }
+
+    inline UnitTrackerClass()
+    {
+        Init();
+    }
+
+    /* Increment the total for the specefied unit */
+    inline void Increment_Unit_Total(int unit_type)
+    {
+        UnitTotals[unit_type]++;
+    }
+
+    /* Decrement the total for the specefied unit */
+    inline void Decrement_Unit_Total(int unit_type)
+    {
+        UnitTotals[unit_type]--;
+    }
+
+    /* Clear out all the unit totals */
+    inline void Clear_Unit_Total(void)
+    {
+        memset(UnitTotals, 0, N * sizeof(long));
+    }
+
+    /* Returns a pointer to the start of the unit totals list */
+    int Get_Unit_Total(int unit_type)
+    {
+        if (UnitTotals == NULL) {
+            return 0;
+        }
+        if (unit_type >= 0 && unit_type < N) {
+            return UnitTotals[unit_type];
+        }
+        return 0;
+    }
+
+    /* Returns a pointer to the start of the unit totals list */
+    inline long* Get_All_Totals(void)
+    {
+        return (UnitTotals);
+    }
+
+    inline int Get_Unit_Count(void)
+    {
+        return (N);
     };
 
-    void To_Network_Format(void);
-    void To_PC_Format(void);
+    /* Changes all unit totals to network format for the internet */
+    inline void To_Network_Format(void)
+    {
+        if (!InNetworkFormat) {
+            for (int i = 0; i < N; i++) {
+                UnitTotals[i] = hton32(UnitTotals[i]);
+            }
+        }
+        InNetworkFormat = 1; // Flag that data is now in network format
+    }
+
+    /* Changes all unit totals to PC format from network format */
+    void To_PC_Format(void)
+    {
+        if (InNetworkFormat) {
+            for (int i = 0; i < N; i++) {
+                UnitTotals[i] = ntoh32(UnitTotals[i]);
+            }
+        }
+        InNetworkFormat = 0; // Flag that data is now in PC format
+    }
 
 private:
-    long* UnitTotals;
-    int UnitCount;
     int InNetworkFormat;
+    long UnitTotals[N];
 };
+
+#endif

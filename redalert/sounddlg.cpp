@@ -433,7 +433,7 @@ void SoundControlsClass::Process(void)
     while (listbox.Count()) {
         char const* ptr = listbox.Get_Item(0);
         listbox.Remove_Item(ptr);
-        delete[](void*) ptr;
+        delete[] ptr;
     }
 }
 
