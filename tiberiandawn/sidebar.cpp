@@ -195,9 +195,14 @@ void SidebarClass::One_Time(void)
     **	clipped at the top and bottom edges.
     */
     WindowList[WINDOW_SIDEBAR][WINDOWX] = SideX + PowWidth;
-    WindowList[WINDOW_SIDEBAR][WINDOWY] = SideY + 1 + TopHeight;
+    WindowList[WINDOW_SIDEBAR][WINDOWY] = SideY + TopHeight;
     WindowList[WINDOW_SIDEBAR][WINDOWWIDTH] = SideWidth;
-    WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = (MaxVisible * (StripClass::OBJECT_HEIGHT * factor)) - 1;
+    WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] = (MaxVisible * (StripClass::OBJECT_HEIGHT * factor));
+
+    if (factor == 1) {
+        WindowList[WINDOW_SIDEBAR][WINDOWY] += 1;
+        WindowList[WINDOW_SIDEBAR][WINDOWHEIGHT] -= 1;
+    }
 
     /*
     **	Set up the coordinates for the sidebar strips. These coordinates are for
