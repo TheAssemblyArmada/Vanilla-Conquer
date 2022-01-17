@@ -697,7 +697,7 @@ void Maintenance_Callback()
                     ALint source_status;
                     alGetSourcei(st->OpenALSource, AL_SOURCE_STATE, &source_status);
 
-                    if (source_status != AL_PLAYING) {
+                    if (source_status != AL_PLAYING && source_status != AL_PAUSED) {
                         st->Service = 0;
                         Stop_Sample(i);
                     }
@@ -968,7 +968,7 @@ bool Sample_Status(int index)
     ALint val;
     alGetSourcei(st->OpenALSource, AL_SOURCE_STATE, &val);
 
-    return val == AL_PLAYING;
+    return val == AL_PLAYING || val == AL_PAUSED;
 };
 
 bool Is_Sample_Playing(const void* sample)
