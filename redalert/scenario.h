@@ -310,11 +310,10 @@ public:
     */
     unsigned IsMoneyTiberium : 1;
 
-    /* With this disabled the units will not be evacuated in single player*/
-    bool DisableEvac;
-
-    /* by default evacuate is disabled for multiplayer*/
-    bool EvacInMP;
+    /* 
+    ** When set to false, units will not be evacuated no matter what
+    */
+    bool EnableEvac;
 
     /*
     **	This is the fading countdown timer.  As this timer counts down, the
