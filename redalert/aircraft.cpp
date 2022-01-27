@@ -111,13 +111,10 @@
  *=============================================================================================*/
 static bool _Counts_As_Civ_Evac(ObjectClass const* candidate)
 {
-    if (Scen.DisableEvac) {
-        return false;
-    }
-
-    // If it's a multiplayer game and the scenario doesn't have 
-    // evacuate in multiplayer keyword defined, don't evacuate
-    if (Scen.EvacInMP == false && Session.Type != GAME_NORMAL) {
+    /*
+    **	If evac logic isn't enabled, no candidate can be evacuated.
+    */
+    if (!Scen.EnableEvac) {
         return false;
     }
 
