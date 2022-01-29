@@ -248,7 +248,7 @@ void* Load_Font(char const* name)
         Read_File(fh, ptr + 2, size - 2);
         Close_File(fh);
     } else {
-        return ((void*)errno);
+        return ((void*)(intptr_t)errno);
     }
 
 #ifdef cuts

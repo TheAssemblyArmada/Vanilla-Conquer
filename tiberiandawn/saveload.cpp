@@ -824,7 +824,7 @@ void Code_All_Pointers(void)
     for (i = 0; i < SelectedObjectsType::COUNT; i++) {
         DynamicVectorClass<ObjectClass*>& selection = CurrentObject.Raw(i);
         for (j = 0; j < selection.Count(); j++) {
-            selection[j] = (ObjectClass*)selection[j]->As_Target();
+            selection[j] = (ObjectClass*)(intptr_t)selection[j]->As_Target();
         }
     }
 #ifdef REMASTER_BUILD
@@ -940,7 +940,7 @@ void Decode_All_Pointers(void)
     for (i = 0; i < SelectedObjectsType::COUNT; i++) {
         DynamicVectorClass<ObjectClass*>& selection = CurrentObject.Raw(i);
         for (j = 0; j < selection.Count(); j++) {
-            unsigned long target_as_object_ptr = reinterpret_cast<unsigned long>(selection[j]);
+            uintptr_t target_as_object_ptr = reinterpret_cast<uintptr_t>(selection[j]);
             TARGET target = (TARGET)target_as_object_ptr;
             selection[j] = As_Object(target);
             Check_Ptr(selection[j], __FILE__, __LINE__);

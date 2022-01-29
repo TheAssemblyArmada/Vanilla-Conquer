@@ -1292,7 +1292,7 @@ void Code_All_Pointers(void)
     for (i = 0; i < SelectedObjectsType::COUNT; i++) {
         DynamicVectorClass<ObjectClass*>& selection = CurrentObject.Raw(i);
         for (j = 0; j < selection.Count(); j++) {
-            selection[j] = (ObjectClass*)selection[j]->As_Target();
+            selection[j] = (ObjectClass*)(intptr_t)selection[j]->As_Target();
         }
     }
 #ifdef REMASTER_BUILD

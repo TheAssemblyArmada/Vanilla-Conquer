@@ -91,7 +91,7 @@ void TeamTypeClass::Code_Pointers(void)
     **	Code the Class array
     */
     for (int i = 0; i < ClassCount; i++) {
-        Members[i].Class = (TechnoTypeClass*)Members[i].Class->As_Target();
+        Members[i].Class = (TechnoTypeClass*)(intptr_t)Members[i].Class->As_Target();
         assert(Members[i].Class != NULL);
     }
 }
@@ -152,7 +152,7 @@ void TeamClass::Code_Pointers(void)
     **	Code the 'Member'
     */
     if (Member) {
-        Member = (FootClass*)Member->As_Target();
+        Member = (FootClass*)(intptr_t)Member->As_Target();
     }
 }
 
@@ -262,7 +262,7 @@ void BulletClass::Code_Pointers(void)
     **	Code 'Payback'
     */
     if (Payback) {
-        Payback = (TechnoClass*)Payback->As_Target();
+        Payback = (TechnoClass*)(intptr_t)Payback->As_Target();
     }
 
     /*
@@ -328,7 +328,7 @@ void BulletClass::Decode_Pointers(void)
 void FactoryClass::Code_Pointers(void)
 {
     if (Object) {
-        Object = (TechnoClass*)Object->As_Target();
+        Object = (TechnoClass*)(intptr_t)Object->As_Target();
     }
 
     ((HouseClass*&)House) = (HouseClass*)House->Class->House;
@@ -462,7 +462,7 @@ void LayerClass::Code_Pointers(void)
     for (int index = 0; index < Count(); index++) {
         ObjectClass* obj = (*this)[index];
         assert(obj != NULL);
-        (*this)[index] = (ObjectClass*)(obj->As_Target());
+        (*this)[index] = (ObjectClass*)(intptr_t)(obj->As_Target());
     }
 }
 
@@ -609,7 +609,7 @@ void ScoreClass::Decode_Pointers(void)
 void FootClass::Code_Pointers(void)
 {
     if (Member != NULL && Member->IsActive) {
-        Member = (FootClass*)Member->As_Target();
+        Member = (FootClass*)(intptr_t)Member->As_Target();
     } else {
         Member = (FootClass*)TARGET_NONE;
     }
@@ -672,7 +672,7 @@ void RadioClass::Code_Pointers(void)
     **	Code 'Radio'
     */
     if (Radio) {
-        Radio = (RadioClass*)Radio->As_Target();
+        Radio = (RadioClass*)(intptr_t)Radio->As_Target();
     }
 
     MissionClass::Code_Pointers();
@@ -785,7 +785,7 @@ void CargoClass::Code_Pointers(void)
     **	Code 'CargoHold'
     */
     if (CargoHold) {
-        CargoHold = (FootClass*)CargoHold->As_Target();
+        CargoHold = (FootClass*)(intptr_t)CargoHold->As_Target();
     }
 }
 
@@ -841,7 +841,7 @@ void CargoClass::Decode_Pointers(void)
 void ObjectClass::Code_Pointers(void)
 {
     if (Next) {
-        Next = (ObjectClass*)Next->As_Target();
+        Next = (ObjectClass*)(intptr_t)Next->As_Target();
     }
 }
 

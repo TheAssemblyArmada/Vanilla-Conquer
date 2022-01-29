@@ -284,8 +284,8 @@ void MonoClass::Scroll(int lines)
     if (!Enabled || lines <= 0)
         return;
 
-    memmove((void*)((long)MonoSegment + Offset(0, 0)),
-            (void*)((long)MonoSegment + Offset(0, lines)),
+    memmove((void*)((intptr_t)MonoSegment + Offset(0, 0)),
+            (void*)((intptr_t)MonoSegment + Offset(0, lines)),
             (LINES - lines) * COLUMNS * sizeof(CellType));
 
     //	DOSSegmentClass::Copy(MonoSegment, Offset(0, lines), MonoSegment, Offset(0, 0),
@@ -530,7 +530,8 @@ void MonoClass::Print(int text)
  *=============================================================================================*/
 MonoClass& MonoClass::operator=(MonoClass const& src)
 {
-    memcpy((void*)((long)MonoSegment + src.Offset(0, 0)), (void*)((long)MonoSegment + Offset(0, 0)), SIZE_OF_PAGE);
+    memcpy(
+        (void*)((intptr_t)MonoSegment + src.Offset(0, 0)), (void*)((intptr_t)MonoSegment + Offset(0, 0)), SIZE_OF_PAGE);
     //	DOSSegmentClass::Copy(MonoSegment, src.Offset(0, 0), MonoSegment, Offset(0,0), SIZE_OF_PAGE);
     Set_Cursor(src.X, src.Y);
     return (*this);
@@ -571,8 +572,8 @@ void MonoClass::View(void)
         char temp[SIZE_OF_PAGE];
 
         memcpy(&temp[0], MonoSegment, SIZE_OF_PAGE);
-        memcpy(MonoSegment, (void*)((long)MonoSegment + Offset(0, 0)), SIZE_OF_PAGE);
-        memcpy((void*)((long)MonoSegment + Offset(0, 0)), &temp[0], SIZE_OF_PAGE);
+        memcpy(MonoSegment, (void*)((intptr_t)MonoSegment + Offset(0, 0)), SIZE_OF_PAGE);
+        memcpy((void*)((intptr_t)MonoSegment + Offset(0, 0)), &temp[0], SIZE_OF_PAGE);
 
         //		DOSSegmentClass::Swap(MonoSegment, Offset(0, 0), MonoSegment, 0, SIZE_OF_PAGE);
         displace->Page = Page;
@@ -583,7 +584,7 @@ void MonoClass::View(void)
         **	Just copy the new page over since the display page is not assigned
         **	to a real monochrome page object.
         */
-        memcpy(MonoSegment, (void*)((long)MonoSegment + Offset(0, 0)), SIZE_OF_PAGE);
+        memcpy(MonoSegment, (void*)((intptr_t)MonoSegment + Offset(0, 0)), SIZE_OF_PAGE);
         //		DOSSegmentClass::Copy(MonoSegment, Offset(0, 0), MonoSegment, 0, SIZE_OF_PAGE);
     }
     PageUsage[Page] = displace;
