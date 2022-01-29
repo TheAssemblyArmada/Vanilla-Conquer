@@ -84,7 +84,6 @@ extern bool Server;
 #define WM_HOSTBYADDRESS (WM_USER + 102) // async get host by address
 #define WM_HOSTBYNAME    (WM_USER + 103) // async get host by name
 #define WM_ASYNCEVENT    (WM_USER + 104) // other Async event
-#define WM_UDPASYNCEVENT (WM_USER + 105) // UDP socket Async event
 
 #define VSS_ID -1 // ID of the VSS connection.
 
