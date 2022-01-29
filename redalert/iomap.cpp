@@ -128,12 +128,12 @@ bool CellClass::Save(Pipe& file) const
 void CellClass::Code_Pointers(void)
 {
     if (Cell_Occupier() != NULL) {
-        OccupierPtr = (ObjectClass*)OccupierPtr->As_Target();
+        OccupierPtr = (ObjectClass*)(intptr_t)OccupierPtr->As_Target();
     }
 
     for (int index = 0; index < ARRAY_SIZE(Overlapper); index++) {
         if (Overlapper[index] != NULL && Overlapper[index]->IsActive) {
-            Overlapper[index] = (ObjectClass*)Overlapper[index]->As_Target();
+            Overlapper[index] = (ObjectClass*)(intptr_t)Overlapper[index]->As_Target();
         } else {
             Overlapper[index] = NULL;
         }
@@ -381,7 +381,7 @@ void DisplayClass::Code_Pointers(void)
     **	Code PendingObjectPtr.
     */
     if (PendingObjectPtr) {
-        PendingObjectPtr = (ObjectClass*)PendingObjectPtr->As_Target();
+        PendingObjectPtr = (ObjectClass*)(intptr_t)PendingObjectPtr->As_Target();
     }
 
     /*

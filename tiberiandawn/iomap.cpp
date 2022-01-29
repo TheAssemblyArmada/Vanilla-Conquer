@@ -175,12 +175,12 @@ bool CellClass::Save(FileClass& file)
 void CellClass::Code_Pointers(void)
 {
     if (Cell_Occupier()) {
-        OccupierPtr = (ObjectClass*)OccupierPtr->As_Target();
+        OccupierPtr = (ObjectClass*)(intptr_t)OccupierPtr->As_Target();
     }
 
     for (int index = 0; index < ARRAY_SIZE(Overlapper); index++) {
         if (Overlapper[index] != NULL && Overlapper[index]->IsActive) {
-            Overlapper[index] = (ObjectClass*)Overlapper[index]->As_Target();
+            Overlapper[index] = (ObjectClass*)(intptr_t)Overlapper[index]->As_Target();
         } else {
             Overlapper[index] = NULL;
         }
@@ -190,7 +190,7 @@ void CellClass::Code_Pointers(void)
     ------------------------ Convert trigger pointer -------------------------
     */
     if (IsTrigger) {
-        CellTriggers[Cell_Number()] = (TriggerClass*)CellTriggers[Cell_Number()]->As_Target();
+        CellTriggers[Cell_Number()] = (TriggerClass*)(intptr_t)CellTriggers[Cell_Number()]->As_Target();
     }
 
     /*
@@ -882,7 +882,7 @@ void DisplayClass::Code_Pointers(void)
     **	Code PendingObjectPtr.
     */
     if (PendingObjectPtr) {
-        PendingObjectPtr = (ObjectClass*)PendingObjectPtr->As_Target();
+        PendingObjectPtr = (ObjectClass*)(intptr_t)PendingObjectPtr->As_Target();
     }
 
     /*
