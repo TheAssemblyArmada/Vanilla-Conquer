@@ -485,7 +485,7 @@ private:
 typedef struct
 {
     int ScenarioIndex; // Used on host machine only as index into scenario list
-    int Bases;
+    bool Bases;
     int Credits;
     int Tiberium;
     int Goodies;

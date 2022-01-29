@@ -280,7 +280,7 @@ extern int MPlayerColorIdx;
 extern HousesType MPlayerHouse;
 extern unsigned char MPlayerLocalID;
 extern int MPlayerCount;
-extern int MPlayerBases;
+extern bool MPlayerBases;
 extern int MPlayerCredits;
 extern int MPlayerTiberium;
 extern int MPlayerGoodies;

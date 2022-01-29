@@ -523,7 +523,7 @@ int MPlayerColorIdx;          // actual color index of this player
 HousesType MPlayerHouse;      // House of this player (GDI/NOD)
 unsigned char MPlayerLocalID; // ID of this player
 int MPlayerCount;             // # of human players in this game
-int MPlayerBases;             // 1 = bases are on for this scenario
+bool MPlayerBases;            // 1 = bases are on for this scenario
 int MPlayerCredits;           // # credits everyone gets
 int MPlayerTiberium;          // 1 = tiberium enabled for this scenario
 int MPlayerGoodies;           // 1 = goodies enabled for this scenario
