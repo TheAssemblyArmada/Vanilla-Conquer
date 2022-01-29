@@ -254,19 +254,10 @@ void TActionClass::Read_INI(void)
 
     case 1:
     case 0:
-        Action = TActionType(atoi(strtok(NULL, ",")));
-
-        char const* ptr = strtok(NULL, ",");
-        Team = TeamTypeClass::From_Name(ptr);
-        assert(Action_Needs(Action) != NEED_TEAM || Team.Is_Valid());
-
         /*
-        **	Since triggers refer to other triggers, only record a copy of the trigger text
-        **	name. This will be fixed up later.
+        ** The code that was here made unsafe assumptions that pointers were 32bits.
         */
-        Trigger.Set_Raw((long)strdup(strtok(NULL, ",")));
-
-        Data.Value = atoi(strtok(NULL, ","));
+        DBG_ERROR("NewINIFormat < 2 is an unsupported map format. Trigger actions will not be loaded correctly.");
         break;
     }
 }

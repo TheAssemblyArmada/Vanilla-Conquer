@@ -2127,23 +2127,9 @@ void TriggerTypeClass::Read_INI(CCINIClass& ini)
 
     if (NewINIFormat < 2) {
         /*
-        **	Fix up the self-referential trigger pointers.
+        ** The code that was here made unsafe assumptions that pointers were 32bits.
         */
-        for (int trig_index = 0; trig_index < TriggerTypes.Count(); trig_index++) {
-            TriggerTypeClass* trigger = TriggerTypes.Ptr(trig_index);
-
-            char* ptr = (char*)trigger->Action1.Trigger.Raw();
-            if (ptr /*&& trigger->Action1.Trigger.Raw() != -1*/) {
-                trigger->Action1.Trigger = TriggerTypeClass::From_Name(ptr);
-                free(ptr);
-            }
-
-            ptr = (char*)trigger->Action2.Trigger.Raw();
-            if (ptr /*&& trigger->Action2.Trigger.Raw() != -1*/) {
-                trigger->Action2.Trigger = TriggerTypeClass::From_Name(ptr);
-                free(ptr);
-            }
-        }
+        DBG_ERROR("NewINIFormat < 2 is an unsupported map format. Triggers will not be loaded correctly.");
     }
 }
 

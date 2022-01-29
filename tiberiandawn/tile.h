@@ -37,8 +37,6 @@
 /*=========================================================================*/
 /* The following prototypes are for the file: ICONSET.CPP						*/
 /*=========================================================================*/
-void* Load_Icon_Set(char const* filename, void* iconsetptr, long buffsize);
-void Free_Icon_Set(void const* iconset);
 long Get_Icon_Set_Size(void const* iconset);
 int Get_Icon_Set_Width(void const* iconset);
 int Get_Icon_Set_Height(void const* iconset);
