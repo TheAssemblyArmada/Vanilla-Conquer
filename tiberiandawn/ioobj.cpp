@@ -150,6 +150,7 @@ bool TeamTypeClass::Load(FileClass& file)
         return false;
     }
     ::new (this) TeamTypeClass(NoInitClass());
+    return true;
 }
 
 /***********************************************************************************************
@@ -195,7 +196,7 @@ void TeamTypeClass::Code_Pointers(void)
     -------------------------- Code the Class array --------------------------
     */
     for (int i = 0; i < ClassCount; i++) {
-        Class[i] = (TechnoTypeClass*)TechnoType_To_Target(Class[i]);
+        Class[i] = (TechnoTypeClass*)(intptr_t)TechnoType_To_Target(Class[i]);
     }
 }
 
@@ -256,14 +257,14 @@ void TeamClass::Code_Pointers(void)
     -------------------- Code Class & House for this team --------------------
     */
     cls = Class;
-    ((TeamTypeClass*&)Class) = (TeamTypeClass*)cls->As_Target();
+    ((TeamTypeClass*&)Class) = (TeamTypeClass*)(intptr_t)cls->As_Target();
     ((HouseClass*&)House) = (HouseClass*)House->Class->House;
 
     /*
     --------------------------- Code the 'Member' ----------------------------
     */
     if (Member) {
-        Member = (FootClass*)Member->As_Target();
+        Member = (FootClass*)(intptr_t)Member->As_Target();
     }
 }
 
@@ -344,7 +345,7 @@ void TeamClass::Decode_Pointers(void)
 void TriggerClass::Code_Pointers(void)
 {
     if (Team) {
-        Team = (TeamTypeClass*)Team->As_Target();
+        Team = (TeamTypeClass*)(intptr_t)Team->As_Target();
     }
 }
 
@@ -472,14 +473,14 @@ void AnimClass::Code_Pointers(void)
     ----------------------------- Code 'Object' ------------------------------
     */
     if (Object) {
-        Object = (ObjectClass*)Object->As_Target();
+        Object = (ObjectClass*)(intptr_t)Object->As_Target();
     }
 
     /*
     ----------------------------- Code 'VirtualAnim' -------------------------
     */
     if (VirtualAnim) {
-        VirtualAnim = (AnimClass*)VirtualAnim->As_Target();
+        VirtualAnim = (AnimClass*)(intptr_t)VirtualAnim->As_Target();
     }
 
     /*
@@ -571,7 +572,7 @@ void BuildingClass::Code_Pointers(void)
     it's converted back
     ------------------------------------------------------------------------*/
     if (Factory) {
-        Factory = (FactoryClass*)(Factories.ID(Factory) + 1);
+        Factory = (FactoryClass*)(intptr_t)(Factories.ID(Factory) + 1);
     }
 
     /*
@@ -651,7 +652,7 @@ void BulletClass::Code_Pointers(void)
     ----------------------------- Code 'Payback' -----------------------------
     */
     if (Payback)
-        Payback = (TechnoClass*)Payback->As_Target();
+        Payback = (TechnoClass*)(intptr_t)Payback->As_Target();
 
     /*
     ---------------------------- Chain to parent -----------------------------
@@ -1053,7 +1054,7 @@ void TerrainClass::Decode_Pointers(void)
 void UnitClass::Code_Pointers(void)
 {
     if (TiberiumUnloadRefinery) {
-        TiberiumUnloadRefinery = (BuildingClass*)TiberiumUnloadRefinery->As_Target();
+        TiberiumUnloadRefinery = (BuildingClass*)(intptr_t)TiberiumUnloadRefinery->As_Target();
     }
 
     TarComClass::Code_Pointers();
@@ -1110,7 +1111,7 @@ void UnitClass::Decode_Pointers(void)
 void FactoryClass::Code_Pointers(void)
 {
     if (Object) {
-        Object = (TechnoClass*)Object->As_Target();
+        Object = (TechnoClass*)(intptr_t)Object->As_Target();
     }
 
     ((HouseClass*&)House) = (HouseClass*)House->Class->House;
@@ -1255,7 +1256,7 @@ void LayerClass::Code_Pointers(void)
 
     for (int i = 0; i < Count(); i++) {
         obj = (*this)[i];
-        (*this)[i] = (ObjectClass*)(obj->As_Target());
+        (*this)[i] = (ObjectClass*)(intptr_t)(obj->As_Target());
     }
 }
 
@@ -1695,10 +1696,10 @@ void DriveClass::Decode_Pointers(void)
 void FootClass::Code_Pointers(void)
 {
     if (Team)
-        Team = (TeamClass*)Team->As_Target();
+        Team = (TeamClass*)(intptr_t)Team->As_Target();
 
     if (Member) {
-        Member = (FootClass*)Member->As_Target();
+        Member = (FootClass*)(intptr_t)Member->As_Target();
     }
 
     TechnoClass::Code_Pointers();
@@ -1763,7 +1764,7 @@ void RadioClass::Code_Pointers(void)
     ------------------------------ Code 'Radio' ------------------------------
     */
     if (Radio) {
-        Radio = (RadioClass*)Radio->As_Target();
+        Radio = (RadioClass*)(intptr_t)Radio->As_Target();
     }
 
     MissionClass::Code_Pointers();
@@ -1941,7 +1942,7 @@ void CargoClass::Code_Pointers(void)
     ---------------------------- Code 'CargoHold' ----------------------------
     */
     if (CargoHold) {
-        CargoHold = (FootClass*)CargoHold->As_Target();
+        CargoHold = (FootClass*)(intptr_t)CargoHold->As_Target();
     }
 }
 
@@ -2045,11 +2046,11 @@ void MissionClass::Decode_Pointers(void)
 void ObjectClass::Code_Pointers(void)
 {
     if (Next) {
-        Next = (ObjectClass*)Next->As_Target();
+        Next = (ObjectClass*)(intptr_t)Next->As_Target();
     }
 
     if (Trigger) {
-        Trigger = (TriggerClass*)Trigger->As_Target();
+        Trigger = (TriggerClass*)(intptr_t)Trigger->As_Target();
     }
 }
 
