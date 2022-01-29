@@ -63,6 +63,9 @@ extern WWKeyboardClass* Keyboard;
 using std::min;
 
 #ifdef NETWORKING
+#ifdef _WIN32
+#define WM_UDPASYNCEVENT (WM_USER + 116) // UDP socket Async event
+#endif
 
 /*
 ** Nasty globals
