@@ -2570,14 +2570,11 @@ static int Add_Compressed_Events(void* buf, int bufsize, int frame_delay, int si
                     && OutList.First().Data.MegaMission.Destination == prevevent.Data.MegaMission.Destination) {
 #ifndef REMASTER_BUILD
                     if (Debug_Print_Events) {
-                        printf("      adding Whom:%x (%x) Mission:%s Target:%x (%x) Dest:%x (%x)\n",
+                        printf("      adding Whom:%x Mission:%s Target:%x Dest:%x\n",
                                OutList.First().Data.MegaMission.Whom.As_TARGET(),
-                               OutList.First().Data.MegaMission.Whom,
                                MissionClass::Mission_Name(OutList.First().Data.MegaMission.Mission),
                                OutList.First().Data.MegaMission.Target.As_TARGET(),
-                               OutList.First().Data.MegaMission.Target,
-                               OutList.First().Data.MegaMission.Destination.As_TARGET(),
-                               OutList.First().Data.MegaMission.Destination);
+                               OutList.First().Data.MegaMission.Destination.As_TARGET());
                     }
 #endif
                     datasize = sizeof(prevevent.Data.MegaMission.Whom);
