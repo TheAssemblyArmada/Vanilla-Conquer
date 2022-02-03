@@ -2477,6 +2477,7 @@ bool CellClass::Goodie_Check(FootClass* object)
             if (object->House->IsHuman) {
                 Map.Shroud_The_Map(object->House);
             }
+            object->House->IsVisionary = false;
             break;
 
         /*
