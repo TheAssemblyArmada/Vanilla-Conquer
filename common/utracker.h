@@ -72,7 +72,7 @@ public:
     /* Clear out all the unit totals */
     inline void Clear_Unit_Total(void)
     {
-        memset(UnitTotals, 0, N * sizeof(long));
+        memset(UnitTotals, 0, N * sizeof(int));
     }
 
     /* Returns a pointer to the start of the unit totals list */
@@ -88,7 +88,7 @@ public:
     }
 
     /* Returns a pointer to the start of the unit totals list */
-    inline long* Get_All_Totals(void)
+    inline int* Get_All_Totals(void)
     {
         return (UnitTotals);
     }
@@ -122,7 +122,7 @@ public:
 
 private:
     int InNetworkFormat;
-    long UnitTotals[N];
+    int UnitTotals[N];
 };
 
 #endif

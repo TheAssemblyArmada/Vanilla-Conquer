@@ -176,8 +176,8 @@ void Extract_Mix(const char* filename,
                 filename += name_db.Get_Entry(index[i].CRC, hash).file_name;
             }
 
-            long offset;
-            long size;
+            int offset;
+            int size;
             MixFileClass<RawFileClass, CRC>* mp;
 
             if (!MixFileClass<RawFileClass, CRC>::Offset(index[i].CRC, nullptr, &mp, &offset, &size)) {
@@ -238,8 +238,8 @@ void Extract_Mix(const char* filename,
         }
     } else {
         for (auto it = files.begin(); it != files.end(); ++it) {
-            long offset;
-            long size;
+            int offset;
+            int size;
             MixFileClass<RawFileClass, CRC>* mp;
 
             if (!MixFileClass<RawFileClass, CRC>::Offset(it->c_str(), nullptr, &mp, &offset, &size)) {

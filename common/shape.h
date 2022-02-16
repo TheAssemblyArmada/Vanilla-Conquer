@@ -151,7 +151,7 @@ typedef struct
 
 extern void* MaskPage;
 extern void* BackGroundPage;
-extern long _ShapeBufferSize;
+extern int _ShapeBufferSize;
 extern char* _ShapeBuffer;
 
 void Init_Priority_System(GraphicBufferClass* mask, GraphicBufferClass* back);
@@ -160,7 +160,7 @@ void Init_Priority_System(GraphicBufferClass* mask, GraphicBufferClass* back);
 -------------------------------- drawshp.asm --------------------------------
 */
 
-int Draw_Shape(GraphicViewPortClass* gvp, void const* shape, long x, long y, long flags, ...);
+int Draw_Shape(GraphicViewPortClass* gvp, void const* shape, int x, int y, int flags, ...);
 
 /*
 ---------------------------------- shape.c ----------------------------------

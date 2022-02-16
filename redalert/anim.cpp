@@ -776,7 +776,7 @@ void AnimClass::AI(void)
         GetSystemTimeAsFileTime(&ft);
 
         unsigned long long now =
-            (unsigned long long)ft.dwLowDateTime + ((unsigned long long)ft.dwHighDateTime << 32ULL);
+            (unsigned long long)ft.dwLowDateTime + (((unsigned long long)ft.dwHighDateTime) << 32ULL);
         if (now >= KillTime) {
             IsToDelete = true;
         }

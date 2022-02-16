@@ -59,8 +59,8 @@ public:
     bool Cache(Buffer const* buffer = NULL);
     static bool Cache(char const* filename, Buffer const* buffer = NULL);
     static bool
-    Offset(char const* filename, void** realptr = 0, MixFileClass** mixfile = 0, long* offset = 0, long* size = 0);
-    static bool Offset(int hash, void** realptr = 0, MixFileClass** mixfile = 0, long* offset = 0, long* size = 0);
+    Offset(char const* filename, void** realptr = 0, MixFileClass** mixfile = 0, int* offset = 0, int* size = 0);
+    static bool Offset(int hash, void** realptr = 0, MixFileClass** mixfile = 0, int* offset = 0, int* size = 0);
     static void const* Retrieve(char const* filename);
 
 #pragma pack(push, 4)
@@ -97,7 +97,7 @@ public:
 
 private:
     static MixFileClass* Finder(char const* filename);
-    // long Offset(long crc, long * size = 0) const;	// ST - 5/10/2019
+    // int Offset(int crc, int * size = 0) const;	// ST - 5/10/2019
 
     /*
     **	If this mixfile has an attached message digest, then this flag
@@ -140,12 +140,12 @@ private:
     **	This is the total size of all the data file embedded within the mixfile.
     **	It does not include the header or digest bytes.
     */
-    long DataSize;
+    int DataSize;
 
     /*
     **	Start of raw data in within the mixfile.
     */
-    long DataStart;
+    int DataStart;
 
     /*
     **	Points to the file header control block array. Each file in the mixfile will
@@ -550,7 +550,7 @@ template <class T, class TCRC> MixFileClass<T, TCRC>* MixFileClass<T, TCRC>::Fin
  *                                                                                             *
  * OUTPUT:  bool; Was the cache successful?                                                    *
  *                                                                                             *
- * WARNINGS:   This routine could go to disk for a very long time.                             *
+ * WARNINGS:   This routine could go to disk for a very int time.                             *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   08/08/1994 JLB : Created.                                                                 *
@@ -576,7 +576,7 @@ template <class T, class TCRC> bool MixFileClass<T, TCRC>::Cache(char const* fil
  * OUTPUT:  bool; Was the file load successful?  It could fail if there wasn't enough room     *
  *                to allocate the raw data block.                                              *
  *                                                                                             *
- * WARNINGS:   This routine goes to disk for a potentially very long time.                     *
+ * WARNINGS:   This routine goes to disk for a potentially very int time.                     *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   08/08/1994 JLB : Created.                                                                 *
@@ -635,7 +635,7 @@ template <class T, class TCRC> bool MixFileClass<T, TCRC>::Cache(Buffer const* b
         **	Fetch the whole mixfile data in one step. If the number of bytes retrieved
         **	does not equal that requested, then this indicates a serious error.
         */
-        long actual = straw->Get(Data, DataSize);
+        int actual = straw->Get(Data, DataSize);
         if (actual != DataSize) {
             delete[] Data;
             Data = NULL;
@@ -732,11 +732,7 @@ inline int compfunc(void const* ptr1, void const* ptr2)
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
 template <class T, class TCRC>
-bool MixFileClass<T, TCRC>::Offset(char const* filename,
-                                   void** realptr,
-                                   MixFileClass** mixfile,
-                                   long* offset,
-                                   long* size)
+bool MixFileClass<T, TCRC>::Offset(char const* filename, void** realptr, MixFileClass** mixfile, int* offset, int* size)
 {
     if (filename == NULL) {
         assert(filename != NULL); // BG
@@ -747,7 +743,7 @@ bool MixFileClass<T, TCRC>::Offset(char const* filename,
     **	Create the key block that will be used to binary search for the file.
     */
     // Can't call strupr on a const string. ST - 5/20/2019
-    // long crc = Calculate_CRC(strupr((char *)filename), strlen(filename));
+    // int crc = Calculate_CRC(strupr((char *)filename), strlen(filename));
     char filename_upper[_MAX_PATH];
     strcpy(filename_upper, filename);
     strupr(filename_upper);
@@ -757,7 +753,7 @@ bool MixFileClass<T, TCRC>::Offset(char const* filename,
 }
 
 template <class T, class TCRC>
-bool MixFileClass<T, TCRC>::Offset(int hash, void** realptr, MixFileClass** mixfile, long* offset, long* size)
+bool MixFileClass<T, TCRC>::Offset(int hash, void** realptr, MixFileClass** mixfile, int* offset, int* size)
 {
     MixFileClass<T, TCRC>* ptr;
     SubBlock key;

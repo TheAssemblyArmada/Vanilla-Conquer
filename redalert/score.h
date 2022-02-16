@@ -54,7 +54,7 @@ public:
     int NHarvested;
     int GHarvested;
     int CHarvested;
-    unsigned long ElapsedTime;
+    unsigned int ElapsedTime;
     TTimerClass<SystemTimerClass> RealTime;
 
     void Init(void);

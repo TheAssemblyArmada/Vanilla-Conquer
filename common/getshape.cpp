@@ -192,7 +192,7 @@ void* Extract_Shape(void const* buffer, int shape)
 {
     ShapeBlock_Type* block = (ShapeBlock_Type*)buffer;
     // PG	int numshapes;		// Number of shapes
-    long offset; // Offset of shape data, from start of block
+    int offset; // Offset of shape data, from start of block
     char* bytebuf = (char*)buffer;
 
     /*

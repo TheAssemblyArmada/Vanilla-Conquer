@@ -121,8 +121,8 @@ public:
     Timing management
     .....................................................................*/
     virtual void Reset_Response_Time(void) = 0;
-    virtual unsigned long Response_Time(void) = 0;
-    virtual void Set_Timing(unsigned long retrydelta, unsigned long maxretries, unsigned long timeout) = 0;
+    virtual unsigned int Response_Time(void) = 0;
+    virtual void Set_Timing(unsigned int retrydelta, unsigned int maxretries, unsigned int timeout) = 0;
 
     /*.....................................................................
     Debugging

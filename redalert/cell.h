@@ -331,7 +331,7 @@ public:
     */
     bool Grow_Tiberium(void);
     bool Spread_Tiberium(bool forced = false);
-    long Tiberium_Adjust(bool pregame = false);
+    int Tiberium_Adjust(bool pregame = false);
     void Wall_Update(void);
     void Concrete_Calc(void);
     void Recalc_Attributes(void);

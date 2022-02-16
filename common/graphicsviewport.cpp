@@ -456,9 +456,9 @@ void GraphicViewPortClass::Clear(unsigned char color)
  * HISTORY:                                                                *
  *   01/06/1995 PWG : Created.                                             *
  *=========================================================================*/
-long GraphicViewPortClass::To_Buffer(int x, int y, int w, int h, void* buff, long size)
+int GraphicViewPortClass::To_Buffer(int x, int y, int w, int h, void* buff, int size)
 {
-    long return_code = 0;
+    int return_code = 0;
     if (Lock()) {
         return_code = (Buffer_To_Buffer(this, x, y, w, h, buff, size));
         Unlock();
@@ -478,9 +478,9 @@ long GraphicViewPortClass::To_Buffer(int x, int y, int w, int h, void* buff, lon
  * HISTORY:                                                                *
  *   01/06/1995 PWG : Created.                                             *
  *=========================================================================*/
-long GraphicViewPortClass::To_Buffer(int x, int y, int w, int h, BufferClass* buff)
+int GraphicViewPortClass::To_Buffer(int x, int y, int w, int h, BufferClass* buff)
 {
-    long return_code = 0;
+    int return_code = 0;
     if (Lock()) {
         return_code = (Buffer_To_Buffer(this, x, y, w, h, buff->Get_Buffer(), buff->Get_Size()));
         Unlock();
@@ -500,9 +500,9 @@ long GraphicViewPortClass::To_Buffer(int x, int y, int w, int h, BufferClass* bu
  * HISTORY:                                                                *
  *   01/06/1995 PWG : Created.                                             *
  *=========================================================================*/
-long GraphicViewPortClass::To_Buffer(BufferClass* buff)
+int GraphicViewPortClass::To_Buffer(BufferClass* buff)
 {
-    long return_code = 0;
+    int return_code = 0;
     if (Lock()) {
         return_code = (Buffer_To_Buffer(this, 0, 0, Width, Height, buff->Get_Buffer(), buff->Get_Size()));
         Unlock();
@@ -769,9 +769,9 @@ bool GraphicViewPortClass::Scale(GraphicViewPortClass& dest, char* remap)
  * HISTORY:                                                                *
  *   01/17/1995 PWG : Created.                                             *
  *=========================================================================*/
-unsigned long GraphicViewPortClass::Print(char const* str, int x, int y, int fcol, int bcol)
+unsigned int GraphicViewPortClass::Print(char const* str, int x, int y, int fcol, int bcol)
 {
-    unsigned long return_code = 0;
+    unsigned int return_code = 0;
     if (Lock()) {
         return_code = (Buffer_Print(this, str, x, y, fcol, bcol));
         Unlock();
@@ -792,11 +792,11 @@ unsigned long GraphicViewPortClass::Print(char const* str, int x, int y, int fco
  *                                                                         *
  * HISTORY:                                                                *
  *=========================================================================*/
-unsigned long GraphicViewPortClass::Print(int num, int x, int y, int fcol, int bcol)
+unsigned int GraphicViewPortClass::Print(int num, int x, int y, int fcol, int bcol)
 {
     char str[17];
 
-    unsigned long return_code = 0;
+    unsigned int return_code = 0;
     if (Lock()) {
         snprintf(str, sizeof(str), "%d", num);
         return_code = (Buffer_Print(this, str, x, y, fcol, bcol));
@@ -816,37 +816,13 @@ unsigned long GraphicViewPortClass::Print(int num, int x, int y, int fcol, int b
  *                                                                         *
  * HISTORY:                                                                *
  *=========================================================================*/
-unsigned long GraphicViewPortClass::Print(short num, int x, int y, int fcol, int bcol)
+unsigned int GraphicViewPortClass::Print(short num, int x, int y, int fcol, int bcol)
 {
     char str[17];
 
-    unsigned long return_code = 0;
+    unsigned int return_code = 0;
     if (Lock()) {
         snprintf(str, sizeof(str), "%d", num);
-        return_code = (Buffer_Print(this, str, x, y, fcol, bcol));
-        Unlock();
-    }
-    return (return_code);
-}
-
-/***************************************************************************
- * GVPC::PRINT -- stub function to print a long on a graphic view port     *
- *                                                                         *
- * INPUT:                                                                  *
- *                                                                         *
- * OUTPUT:                                                                 *
- *                                                                         *
- * WARNINGS:                                                               *
- *                                                                         *
- * HISTORY:                                                                *
- *=========================================================================*/
-unsigned long GraphicViewPortClass::Print(long num, int x, int y, int fcol, int bcol)
-{
-    char str[33];
-
-    unsigned long return_code = 0;
-    if (Lock()) {
-        snprintf(str, sizeof(str), "%ld", num);
         return_code = (Buffer_Print(this, str, x, y, fcol, bcol));
         Unlock();
     }

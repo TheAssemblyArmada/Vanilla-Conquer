@@ -170,7 +170,7 @@ public:
     static char const* Name_From_Mission(TeamMissionType order);
     static TeamMissionType Mission_From_Name(char const* name);
     static TeamTypeClass const*
-    Suggested_New_Team(HouseClass* house, long atypes, long utypes, long itypes, long vtypes, bool alerted);
+    Suggested_New_Team(HouseClass* house, int atypes, int utypes, int itypes, int vtypes, bool alerted);
     static TeamTypeClass* From_Name(char const* name);
     bool Edit(void);
 #if defined(CHEAT_KEYS) || defined(SCENARIO_EDITOR)

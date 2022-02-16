@@ -38,7 +38,7 @@
 #include "random.h"
 #ifdef RANDOM_COUNT
 #include <stdio.h>
-extern long Frame;
+extern int Frame;
 #endif
 
 /***********************************************************************************************

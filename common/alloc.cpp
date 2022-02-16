@@ -42,7 +42,7 @@
 
 #include "wwmem.h"
 
-unsigned long Largest_Mem_Block(void);
+size_t Largest_Mem_Block(void);
 
 /*=========================================================================*/
 /* The following PRIVATE functions are in this file:                       */
@@ -50,10 +50,10 @@ unsigned long Largest_Mem_Block(void);
 
 /*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
 
-unsigned long MinRam = 0L; // Record of least memory at worst case.
-unsigned long MaxRam = 0L; // Record of total allocated at worst case.
-static unsigned long TotalRam = 0L;
-static unsigned long Memory_Calls = 0L;
+size_t MinRam = 0; // Record of least memory at worst case.
+size_t MaxRam = 0; // Record of total allocated at worst case.
+static size_t TotalRam = 0;
+static unsigned int Memory_Calls = 0;
 
 void (*Memory_Error)(void) = NULL;
 extern void (*Memory_Error_Exit)(char* string) = NULL;
@@ -92,7 +92,7 @@ void* Alloc(size_t bytes_to_alloc, MemoryFlagType flags)
     void* mem_ptr;
 
 #ifdef MEM_CHECK
-    bytes_to_alloc += 32;
+    bytes_to_alloc += sizeof(uintptr_t) * 8;
 #endif // MEM_CHECK
 
     mem_ptr = malloc(bytes_to_alloc);
@@ -106,17 +106,18 @@ void* Alloc(size_t bytes_to_alloc, MemoryFlagType flags)
     }
 
 #ifdef MEM_CHECK
-    mem_ptr = (void*)((char*)mem_ptr + 16);
-    unsigned long* magic_ptr = (unsigned long*)(((char*)mem_ptr) - 16);
-    *magic_ptr++ = (unsigned long)mem_ptr;
-    *magic_ptr++ = (unsigned long)mem_ptr;
-    *magic_ptr++ = (unsigned long)mem_ptr;
-    *magic_ptr = bytes_to_alloc - 32;
-    magic_ptr = (unsigned long*)(((char*)mem_ptr) + bytes_to_alloc - 32);
-    *magic_ptr++ = (unsigned long)mem_ptr;
-    *magic_ptr++ = (unsigned long)mem_ptr;
-    *magic_ptr++ = (unsigned long)mem_ptr;
-    *magic_ptr = (unsigned long)mem_ptr;
+    static_assert(sizeof(uintptr_t) >= sizeof(size_t), "size type mismatch");
+    mem_ptr = (void*)((char*)mem_ptr + sizeof(uintptr_t) * 4);
+    uintptr_t* magic_ptr = (uintptr_t*)(((char*)mem_ptr) - sizeof(uintptr_t) * 4);
+    *magic_ptr++ = (uintptr_t)mem_ptr;
+    *magic_ptr++ = (uintptr_t)mem_ptr;
+    *magic_ptr++ = (uintptr_t)mem_ptr;
+    *magic_ptr = bytes_to_alloc - sizeof(uintptr_t) * 8;
+    magic_ptr = (uintptr_t*)(((char*)mem_ptr) + bytes_to_alloc - sizeof(uintptr_t) * 8);
+    *magic_ptr++ = (uintptr_t)mem_ptr;
+    *magic_ptr++ = (uintptr_t)mem_ptr;
+    *magic_ptr++ = (uintptr_t)mem_ptr;
+    *magic_ptr = (uintptr_t)mem_ptr;
 #endif // MEM_CHECK
 
     Memory_Calls++;
@@ -145,17 +146,17 @@ void Free(void const* pointer)
 
 #ifdef MEM_CHECK
 
-        unsigned long* magic_ptr = (unsigned long*)(((char*)pointer) - 16);
+        uintptr_t* magic_ptr = (uintptr_t*)(((char*)pointer) - sizeof(uintptr_t) * 4);
 
-        if (*magic_ptr++ != (unsigned long)pointer || *magic_ptr++ != (unsigned long)pointer
-            || *magic_ptr++ != (unsigned long)pointer) {
+        if (*magic_ptr++ != (uintptr_t)pointer || *magic_ptr++ != (uintptr_t)pointer
+            || *magic_ptr++ != (uintptr_t)pointer) {
             Int3();
         }
 
-        magic_ptr = (unsigned long*)(((char*)pointer) + *magic_ptr);
+        magic_ptr = (uintptr_t*)(((char*)pointer) + *magic_ptr);
 
-        if (*magic_ptr++ != (unsigned long)pointer || *magic_ptr++ != (unsigned long)pointer
-            || *magic_ptr++ != (unsigned long)pointer || *magic_ptr++ != (unsigned long)pointer) {
+        if (*magic_ptr++ != (uintptr_t)pointer || *magic_ptr++ != (uintptr_t)pointer
+            || *magic_ptr++ != (uintptr_t)pointer || *magic_ptr++ != (uintptr_t)pointer) {
             Int3();
         }
 
@@ -184,15 +185,15 @@ void Free(void const* pointer)
  * HISTORY:                                                                *
  *   02/01/1992 JLB : Commented.                                           *
  *=========================================================================*/
-void* Resize_Alloc(void* original_ptr, unsigned long new_size_in_bytes)
+void* Resize_Alloc(void* original_ptr, size_t new_size_in_bytes)
 {
 
-    unsigned long* temp;
+    uintptr_t* temp;
 
-    temp = (unsigned long*)original_ptr;
+    temp = (uintptr_t*)original_ptr;
 
     /* ReAlloc the space */
-    temp = (unsigned long*)realloc(temp, new_size_in_bytes);
+    temp = (uintptr_t*)realloc(temp, new_size_in_bytes);
     if (temp == NULL) {
         if (Memory_Error != NULL)
             Memory_Error();
@@ -218,7 +219,7 @@ void* Resize_Alloc(void* original_ptr, unsigned long new_size_in_bytes)
  * HISTORY:                                                                *
  *   09/03/1991 JLB : Commented.                                           *
  *=========================================================================*/
-long Ram_Free(MemoryFlagType)
+int Ram_Free(MemoryFlagType)
 {
     return (64 * 1024 * 1024);
 }
@@ -237,7 +238,7 @@ long Ram_Free(MemoryFlagType)
  * HISTORY:                                                                *
  *   06/21/1994 SKB : Created.                                             *
  *=========================================================================*/
-long Heap_Size(MemoryFlagType)
+int Heap_Size(MemoryFlagType)
 {
     if (!TotalRam) {
         TotalRam = Total_Ram_Free(MEM_NORMAL);
@@ -260,7 +261,7 @@ long Heap_Size(MemoryFlagType)
  *   06/21/1994 SKB : Created.                                             *
  *   03/09/1995 JLB : Uses prerecorded heap size maximum.                  *
  *=========================================================================*/
-long Total_Ram_Free(MemoryFlagType)
+int Total_Ram_Free(MemoryFlagType)
 {
     return (64 * 1024 * 1024);
 }

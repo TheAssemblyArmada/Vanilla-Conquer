@@ -230,7 +230,7 @@ void RandomStraw::Seed_Short(short seed)
  * HISTORY:                                                                                    *
  *   07/10/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void RandomStraw::Seed_Long(long seed)
+void RandomStraw::Seed_Long(int seed)
 {
     for (int index = 0; index < (sizeof(seed) * CHAR_BIT); index++) {
         Seed_Bit(seed);

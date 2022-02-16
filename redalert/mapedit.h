@@ -283,9 +283,9 @@ private:
     /*
     **	Variables for grabbing/moving objects
     */
-    ObjectClass* GrabbedObject;  // object "grabbed" with mouse
-    CELL GrabOffset;             // offset to grabbed obj's upper-left
-    unsigned long LastClickTime; // time of last LMOUSE click
+    ObjectClass* GrabbedObject; // object "grabbed" with mouse
+    CELL GrabOffset;            // offset to grabbed obj's upper-left
+    unsigned int LastClickTime; // time of last LMOUSE click
 
     /*
     **	Number of each type of object in Objects, so we can switch categories

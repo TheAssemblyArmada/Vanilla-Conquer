@@ -53,7 +53,7 @@ public:
     {
         XMP_Init(&reg[0], 0, PRECISION);
     }
-    Int(unsigned long value)
+    Int(unsigned int value)
     {
         XMP_Init(&reg[0], value, PRECISION);
     }
@@ -136,7 +136,7 @@ public:
     }
     unsigned MaxBitPrecision() const
     {
-        return PRECISION * (sizeof(unsigned long) * CHAR_BIT);
+        return PRECISION * (sizeof(unsigned int) * CHAR_BIT);
     }
     bool IsSmallPrime(void) const
     {
@@ -247,7 +247,7 @@ public:
         XMP_Signed_Div(Remainder, quotient, &reg[0], divisor, PRECISION);
         return (quotient);
     }
-    Int operator/(unsigned long b) const
+    Int operator/(unsigned int b) const
     {
         return (*this / Int<PRECISION>(b));
     }
@@ -264,7 +264,7 @@ public:
         XMP_Signed_Div(remainder, Remainder, &reg[0], divisor, PRECISION);
         return (remainder);
     }
-    Int operator%(unsigned long b) const
+    Int operator%(unsigned int b) const
     {
         return (*this % Int<PRECISION>(b));
     }

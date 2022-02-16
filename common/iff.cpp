@@ -70,8 +70,8 @@
  *=========================================================================*/
 int Open_Iff_File(char const* filename)
 {
-    int fh;    // File handle.
-    long type; // IFF file type.
+    int fh;   // File handle.
+    int type; // IFF file type.
 
     /* We want to be able to open the file for READ | WRITE, but we do not
        want the Open_File to create it.  So check to see if it exists before
@@ -129,9 +129,9 @@ void Close_Iff_File(int fh)
 /***************************************************************************
  * GET_IFF_CHUNK_SIZE -- Get the size of the given IFF chunk.              *
  *                                                                         *
- * INPUT:      int file handle to open IFF file, long id to get size of   *
+ * INPUT:      int file handle to open IFF file, int id to get size of   *
  *                                                                         *
- * OUTPUT:     long size of the chunk or 0L if it was not found            *
+ * OUTPUT:     int size of the chunk or 0L if it was not found            *
  *                                                                         *
  * WARNINGS:   none                                                        *
  *                                                                         *
@@ -139,10 +139,10 @@ void Close_Iff_File(int fh)
  *   06/03/1991  CY : Created.                                             *
  *   04/19/1994 SKB : Update to 32 bit library.                            *
  *=========================================================================*/
-unsigned long Get_Iff_Chunk_Size(int fh, long id)
+unsigned int Get_Iff_Chunk_Size(int fh, int id)
 {
-    long form;            // Chunk iff form name.
-    long chunksize;       // Size of the chunk.
+    int form;             // Chunk iff form name.
+    int chunksize;        // Size of the chunk.
     bool first_iteration; // Check once the current chunk name
 
     first_iteration = true;
@@ -206,11 +206,11 @@ unsigned long Get_Iff_Chunk_Size(int fh, long id)
  *   05/16/1991 JLB : Created.                                             *
  *   04/19/1994 SKB : Update to 32 bit library.                            *
  *=========================================================================*/
-unsigned long Read_Iff_Chunk(int fh, long id, void* buffer, unsigned long maxsize)
+unsigned int Read_Iff_Chunk(int fh, int id, void* buffer, unsigned int maxsize)
 {
-    long form;               // Chunk iff form name.
-    unsigned long chunksize; // Size of the chunk.
-    bool first_iteration;    // Check once the current chunk name
+    int form;               // Chunk iff form name.
+    unsigned int chunksize; // Size of the chunk.
+    bool first_iteration;   // Check once the current chunk name
 
     first_iteration = true;
 
@@ -266,12 +266,12 @@ unsigned long Read_Iff_Chunk(int fh, long id, void* buffer, unsigned long maxsiz
  * HISTORY:                                                                *
  *   04/19/1994 SKB : Created.                                             *
  *=========================================================================*/
-void Write_Iff_Chunk(int file, long id, void* buffer, long length)
+void Write_Iff_Chunk(int file, int id, void* buffer, int length)
 {
-    long pos;    // Current position in the IFF file.
-    long oldpos; // Record of start of chunk offset.
-    long endpos; // end of file offset before we write our data
-    long value;
+    int pos;    // Current position in the IFF file.
+    int oldpos; // Record of start of chunk offset.
+    int endpos; // end of file offset before we write our data
+    int value;
     bool odd;     // Is length odd?
     char pad = 0; // Optional padding byte for even sized chunks.
 

@@ -161,7 +161,7 @@ extern long LParam;
 //#include <modem.h>
 //#include <fast.h>
 
-extern long Frame;
+extern int Frame;
 inline CELL Coord_XCell(COORDINATE coord)
 {
     return (CELL)(*(((unsigned char*)&coord) + 1));
@@ -261,7 +261,7 @@ typedef struct NodeNameTag
         {
             int Version;
             unsigned char IsOpen;
-            unsigned long LastTime;
+            unsigned int LastTime;
         } Game;
         struct
         {
@@ -315,7 +315,7 @@ bool Main_Loop();
 TheaterType Theater_From_Name(char const* name);
 // DirType Rotation_Calc(DirType current, DirType desired, int rate);
 void Main_Game(int argc, char* argv[]);
-long VQ_Call_Back(unsigned char* buffer = NULL, long frame = 0);
+int VQ_Call_Back(unsigned char* buffer = NULL, int frame = 0);
 void Call_Back(void);
 char const* Language_Name(char const* basename);
 SourceType Source_From_Name(char const* name);
@@ -380,7 +380,7 @@ void Bubba_Print(char* format, ...);
 
 void Heap_Dump_Check(const char* string);
 void Dump_Heap_Pointers(void);
-unsigned long Disk_Space_Available(void);
+unsigned int Disk_Space_Available(void);
 
 void Validate_Error(const char* name);
 void const* Hires_Retrieve(const char* name);
@@ -547,11 +547,11 @@ int Coord_Spillage_Number(COORDINATE coord, int maxsize);
 /*
 **	MENUS.CPP
 */
-void Setup_Menu(int menu, char const* text[], unsigned long field, int index, int skip);
+void Setup_Menu(int menu, char const* text[], unsigned int field, int index, int skip);
 int Check_Menu(int menu, char const* text[], char* selection, long field, int index);
 int Do_Menu(char const** strings, bool blue);
 extern int UnknownKey;
-int Main_Menu(unsigned long timeout);
+int Main_Menu(unsigned int timeout);
 
 /*
 ** MPLAYER.CPP
@@ -573,7 +573,7 @@ bool Remote_Connect(void);
 void Destroy_Connection(int id, int error);
 bool Process_Global_Packet(GlobalPacketType* packet, IPXAddressClass* address);
 uint32_t Compute_Name_CRC(char* name);
-void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned long timeval);
+void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned int timeval);
 
 /*
 ** NULLDLG.CPP

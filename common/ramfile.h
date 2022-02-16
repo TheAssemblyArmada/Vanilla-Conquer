@@ -57,10 +57,10 @@ public:
     virtual int Is_Open(void) const;
     virtual int Open(char const* filename, int access = READ);
     virtual int Open(int access = READ);
-    virtual long Read(void* buffer, long size);
-    virtual long Seek(long pos, int dir = SEEK_CUR);
-    virtual long Size(void);
-    virtual long Write(void const* buffer, long size);
+    virtual int Read(void* buffer, int size);
+    virtual int Seek(int pos, int dir = SEEK_CUR);
+    virtual int Size(void);
+    virtual int Write(void const* buffer, int size);
     virtual void Close(void);
     virtual void Error(int, int = false, char const* = NULL)
     {

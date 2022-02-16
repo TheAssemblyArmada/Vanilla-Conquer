@@ -619,7 +619,7 @@ void VesselClass::AI(void)
             MoebiusCountDown = Rule.ReloadRate * TICKS_PER_MINUTE;
             ObjectClass* obj = Attached_Object();
             while (obj) {
-                long bogus;
+                int bogus;
                 ((AircraftClass*)obj)->Receive_Message(this, RADIO_RELOAD, bogus);
                 obj = (obj->Next);
             }
@@ -1397,7 +1397,7 @@ void VesselClass::Enter_Idle_Mode(bool)
  * HISTORY:                                                                                    *
  *   05/31/1996 BWG : Created.                                                                 *
  *=============================================================================================*/
-RadioMessageType VesselClass::Receive_Message(RadioClass* from, RadioMessageType message, long& param)
+RadioMessageType VesselClass::Receive_Message(RadioClass* from, RadioMessageType message, int& param)
 {
     assert(Vessels.ID(this) == ID);
     assert(IsActive);
@@ -1922,7 +1922,7 @@ void VesselClass::Assign_Destination(TARGET target)
     */
     if (In_Radio_Contact() && Class->Max_Passengers() > 0
         && (Contact_With_Whom()->Is_Infantry() || Contact_With_Whom()->What_Am_I() == RTTI_UNIT)) {
-        long param = TARGET_NONE;
+        int param = TARGET_NONE;
         Transmit_Message(RADIO_MOVE_HERE, param); // should stop objects heading toward this transport.
         Transmit_Message(RADIO_OVER_OUT);
         if (!Is_Door_Closed()) {

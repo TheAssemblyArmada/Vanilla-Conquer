@@ -1118,8 +1118,8 @@ static void Message_Input(KeyNumType& input)
  *=============================================================================================*/
 bool Color_Cycle(void)
 {
-    static CountDownTimerClass _timer(BT_SYSTEM, 0L);
-    static CountDownTimerClass _ftimer(BT_SYSTEM, 0L);
+    static CountDownTimerClass _timer(BT_SYSTEM, 0);
+    static CountDownTimerClass _ftimer(BT_SYSTEM, 0);
     static bool _up = false;
     bool changed = false;
 
@@ -1912,14 +1912,14 @@ void Go_Editor(bool flag)
  * HISTORY:                                                                                    *
  *   07/04/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-long MixFileHandler(VQAHandle* vqa, long action, void* buffer, long nbytes)
+int MixFileHandler(VQAHandle* vqa, int action, void* buffer, int nbytes)
 {
 #ifdef REMASTER_BUILD
     return 0;
     ;
 #else
     CCFileClass* file;
-    long error;
+    int error;
 
     file = (CCFileClass*)vqa->VQAio;
 
@@ -2915,7 +2915,7 @@ void Trap_Object(void)
  *=============================================================================================*/
 void Check_VQ_Palette_Set(void);
 
-long VQ_Call_Back(unsigned char*, long)
+int VQ_Call_Back(unsigned char*, int)
 {
 #ifndef REMASTER_BUILD
     int key = 0;
@@ -3707,7 +3707,7 @@ bool Force_CD_Available(int cd)
  * HISTORY:                                                                *
  *   08/11/1995 PWG : Created.                                             *
  *=========================================================================*/
-unsigned long Disk_Space_Available(void)
+unsigned int Disk_Space_Available(void)
 {
 
     return 0x7fffffff;
@@ -3775,9 +3775,9 @@ static void Do_Record_Playback(void)
     int i;
     COORDINATE coord;
     ObjectClass* obj;
-    unsigned long sum;
-    unsigned long sum2;
-    unsigned long ltgt;
+    unsigned int sum;
+    unsigned int sum2;
+    unsigned int ltgt;
 
     /*------------------------------------------------------------------------
     Record a game
@@ -3808,7 +3808,7 @@ static void Do_Record_Playback(void)
         .....................................................................*/
         sum = 0;
         for (i = 0; i < count; i++) {
-            ltgt = (unsigned long)(CurrentObject[i]->As_Target());
+            ltgt = (unsigned int)(CurrentObject[i]->As_Target());
             sum += ltgt;
         }
         RecordFile.Write(&sum, sizeof(sum));
@@ -3849,7 +3849,7 @@ static void Do_Record_Playback(void)
             ..................................................................*/
             sum = 0;
             for (i = 0; i < CurrentObject.Count(); i++) {
-                ltgt = (unsigned long)(CurrentObject[i]->As_Target());
+                ltgt = (unsigned int)(CurrentObject[i]->As_Target());
                 sum += ltgt;
             }
 

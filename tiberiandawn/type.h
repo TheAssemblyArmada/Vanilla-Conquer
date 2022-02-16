@@ -709,7 +709,7 @@ public:
     **	left by the unit type ID. If the corresponding bit is set, then that
     **	unit type can enter this building.
     */
-    unsigned long CanEnter;
+    unsigned int CanEnter;
 
     /*
     **	This is the starting facing to give this building when it first
@@ -806,7 +806,7 @@ public:
                       WeaponType primary,
                       WeaponType secondary,
                       ArmorType armor,
-                      unsigned long canenter,
+                      unsigned int canenter,
                       unsigned capacity,
                       int power,
                       int drain,

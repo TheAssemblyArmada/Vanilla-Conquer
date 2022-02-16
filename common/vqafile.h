@@ -83,7 +83,7 @@ typedef enum
     VQACMD_SIZE = 9,
 } VQAStreamActionType;
 
-typedef long (*StreamHandlerFuncPtr)(VQAHandle*, long, void*, long);
+typedef int (*StreamHandlerFuncPtr)(VQAHandle*, int, void*, int);
 
 typedef struct _VQACBNode
 {

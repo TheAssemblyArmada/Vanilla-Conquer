@@ -2489,13 +2489,13 @@ typedef struct
 */
 typedef struct
 {
-    CELL Start;             // Starting cell number.
-    int Cost;               // Accumulated terrain cost.
-    int Length;             // Command string length.
-    FacingType* Command;    // Pointer to command string.
-    unsigned long* Overlap; // Pointer to overlap list
-    CELL LastOverlap;       // stores position of last overlap
-    CELL LastFixup;         // stores position of last overlap
+    CELL Start;            // Starting cell number.
+    int Cost;              // Accumulated terrain cost.
+    int Length;            // Command string length.
+    FacingType* Command;   // Pointer to command string.
+    unsigned int* Overlap; // Pointer to overlap list
+    CELL LastOverlap;      // stores position of last overlap
+    CELL LastFixup;        // stores position of last overlap
 } PathType;
 
 /**********************************************************************
@@ -2687,7 +2687,7 @@ typedef struct
     int Seed;                            // random number seed
     SpecialClass Special;                // command-line options
     unsigned int GameSpeed;              // Game Speed
-    unsigned long ResponseTime;          // packet response time
+    unsigned int ResponseTime;           // packet response time
     char Message[COMPAT_MESSAGE_LENGTH]; // inter-player message
     unsigned char ID;                    // ID of sender of message
 } SerialPacketType;
@@ -2742,9 +2742,9 @@ typedef struct
         } GameInfo;
         struct
         {
-            HousesType House;      // player's House
-            unsigned int Color;    // player's color
-            unsigned long NameCRC; // CRC of player's game's name
+            HousesType House;     // player's House
+            unsigned int Color;   // player's color
+            unsigned int NameCRC; // CRC of player's game's name
         } PlayerInfo;
         struct
         {
@@ -2764,7 +2764,7 @@ typedef struct
         {
             char Buf[COMPAT_MESSAGE_LENGTH]; // inter-user message
             unsigned char ID;                // ID of sender of message
-            unsigned long NameCRC;           // CRC of sender's Game Name
+            unsigned int NameCRC;            // CRC of sender's Game Name
         } Message;
         struct
         {

@@ -70,10 +70,10 @@ public:
         return Open(rights);
     };
     virtual int Open(int rights = READ);
-    virtual long Read(void* buffer, long size);
-    virtual long Seek(long pos, int dir = SEEK_CUR);
-    virtual long Size(void);
-    virtual long Write(void const* buffer, long size);
+    virtual int Read(void* buffer, int size);
+    virtual int Seek(int pos, int dir = SEEK_CUR);
+    virtual int Size(void);
+    virtual int Write(void const* buffer, int size);
     virtual void Close(void);
     virtual void Error(int error, int canretry = false, char const* filename = NULL);
 
@@ -98,7 +98,7 @@ private:
     **	part of a mixfile since the DOS seek position is not accurate. This value will
     **	range from zero to the size of the file in bytes.
     */
-    long Position;
+    int Position;
 
     // Force these to never be invoked.
     CCFileClass const& operator=(CCFileClass const& c);

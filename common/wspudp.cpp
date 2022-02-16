@@ -223,13 +223,13 @@ bool UDPInterfaceClass::Open_Socket(SOCKET)
     ** Add all local IP addresses to the list. This list will be used to discard any packets that
     ** we send to ourselves.
     */
-    unsigned long** addresses = (unsigned long**)(host_info->h_addr_list);
+    unsigned int** addresses = (unsigned int**)(host_info->h_addr_list);
 
     for (;;) {
         if (!*addresses)
             break;
 
-        unsigned long address = **addresses++;
+        unsigned int address = **addresses++;
         // address = ntoh32 (address);
 
         char temp[128];
@@ -364,7 +364,7 @@ void UDPInterfaceClass::Broadcast(void* buffer, int buffer_len)
  *    3/20/96 3:05PM ST : Created                                                              *
  *=============================================================================================*/
 #if defined _WIN32 && !defined SDL2_BUILD
-long UDPInterfaceClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
+int UDPInterfaceClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
 {
     struct sockaddr_in addr;
     int rc;
@@ -492,7 +492,7 @@ long UDPInterfaceClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
     return (0);
 }
 #else
-long UDPInterfaceClass::Message_Handler()
+int UDPInterfaceClass::Message_Handler()
 {
     struct sockaddr_in addr;
     int rc;

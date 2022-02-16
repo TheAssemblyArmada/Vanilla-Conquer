@@ -156,10 +156,10 @@ public:
     STDMETHOD(OnUserFlags)(HRESULT r, LPCSTR name, unsigned int flags, unsigned int mask);
     STDMETHOD(OnChannelBan)(HRESULT r, LPCSTR name, int banned);
 
-    unsigned long GetPlayerGameIP(const char* szPlayerName) const;
+    unsigned int GetPlayerGameIP(const char* szPlayerName) const;
     void DeleteUserList(); //	Deletes from heap all users pointed to through pUserList.
     void DeleteUserIPList();
-    unsigned long GetUserIP(const char* szName) const;
+    unsigned int GetUserIP(const char* szName) const;
 
     void ActionEggSound(const char* szMessage);
 
@@ -291,7 +291,7 @@ public:
 
     STDMETHOD(OnGameresSent)(HRESULT res);
     STDMETHOD(OnLadderList)(HRESULT res, Ladder* list, int totalCount, long timeStamp, int keyRung);
-    STDMETHOD(OnPing)(HRESULT res, int time, unsigned long ip, int handle);
+    STDMETHOD(OnPing)(HRESULT res, int time, unsigned int ip, int handle);
 
     void DeleteLadderList(); //	Deletes from heap all users pointed to through pUserList.
     unsigned int GetUserRank(const char* szName, bool bRankRA);

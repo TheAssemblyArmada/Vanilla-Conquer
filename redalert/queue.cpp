@@ -142,7 +142,7 @@ static RetcodeType Wait_For_Players(int first_time,
                                     int timeout,
                                     char* multi_packet_buf,
                                     int my_sent,
-                                    long* their_frame,
+                                    int* their_frame,
                                     unsigned short* their_sent,
                                     unsigned short* their_recv);
 static void Generate_Timing_Event(ConnManClass* net, int my_sent);
@@ -155,21 +155,18 @@ static RetcodeType Process_Receive_Packet(ConnManClass* net,
                                           char* multi_packet_buf,
                                           int id,
                                           int packetlen,
-                                          long* their_frame,
+                                          int* their_frame,
                                           unsigned short* their_sent,
                                           unsigned short* their_recv);
 static RetcodeType Process_Serial_Packet(char* multi_packet_buf, int first_time);
-static int Can_Advance(ConnManClass* net,
-                       int max_ahead,
-                       long* their_frame,
-                       unsigned short* their_sent,
-                       unsigned short* their_recv);
+static int
+Can_Advance(ConnManClass* net, int max_ahead, int* their_frame, unsigned short* their_sent, unsigned short* their_recv);
 static int Process_Reconnect_Dialog(CDTimerClass<SystemTimerClass>* timeout_timer,
-                                    long* their_frame,
+                                    int* their_frame,
                                     int num_conn,
                                     int reconn,
                                     int fresh);
-static int Handle_Timeout(ConnManClass* net, long* their_frame, unsigned short* their_sent, unsigned short* their_recv);
+static int Handle_Timeout(ConnManClass* net, int* their_frame, unsigned short* their_sent, unsigned short* their_recv);
 static void Stop_Game(void);
 
 //...........................................................................
@@ -190,7 +187,7 @@ static int Execute_DoList(int max_houses,
                           ConnManClass* net,
                           CDTimerClass<FrameTimerClass>* skip_crc,
                           //	ConnManClass *net, TCountDownTimerClass *skip_crc,
-                          long* their_frame,
+                          int* their_frame,
                           unsigned short* their_sent,
                           unsigned short* their_recv);
 static void Clean_DoList(ConnManClass* net);
@@ -205,8 +202,8 @@ void Add_CRC(unsigned int* crc, unsigned int val);
 static void Print_CRCs(EventClass* ev);
 static void Init_Queue_Mono(ConnManClass* net);
 static void Update_Queue_Mono(ConnManClass* net, int flow_index);
-static void Print_Framesync_Values(long curframe,
-                                   unsigned long max_ahead,
+static void Print_Framesync_Values(int curframe,
+                                   unsigned int max_ahead,
                                    int num_connections,
                                    unsigned short* their_recv,
                                    unsigned short* their_sent,
@@ -215,7 +212,7 @@ static void Print_Framesync_Values(long curframe,
 extern void Keyboard_Process(KeyNumType& input);
 void Dump_Packet_Too_Late_Stuff(EventClass* event,
                                 ConnManClass* net,
-                                long* their_frame,
+                                int* their_frame,
                                 unsigned short* their_sent,
                                 unsigned short* their_recv);
 void Check_Mirror(void);
@@ -581,7 +578,7 @@ static void Queue_AI_Multiplayer(void)
     //........................................................................
     // Frame-sync'ing variables
     //........................................................................
-    static long their_frame[MAX_PLAYERS - 1];          // other players' frame #'s
+    static int their_frame[MAX_PLAYERS - 1];           // other players' frame #'s
     static unsigned short their_sent[MAX_PLAYERS - 1]; // # cmds other player claims to have sent
     static unsigned short their_recv[MAX_PLAYERS - 1]; // # cmds actually received from others
     static unsigned short my_sent;                     // # cmds I've sent out
@@ -799,7 +796,7 @@ static void Queue_AI_Multiplayer(void)
     rc = Wait_For_Players(0,
                           net,
                           (Session.MaxAhead << 3),
-                          MAX(net->Response_Time() * 3, (unsigned long)(FRAMESYNC_DLG_TIME * timeout_factor)),
+                          MAX(net->Response_Time() * 3, (unsigned int)(FRAMESYNC_DLG_TIME * timeout_factor)),
                           iFramesyncTimeout * (2 * timeout_factor),
                           multi_packet_buf,
                           my_sent,
@@ -905,7 +902,7 @@ static RetcodeType Wait_For_Players(int first_time,
                                     int timeout,
                                     char* multi_packet_buf,
                                     int my_sent,
-                                    long* their_frame,
+                                    int* their_frame,
                                     unsigned short* their_sent,
                                     unsigned short* their_recv)
 {
@@ -1277,7 +1274,7 @@ static RetcodeType Wait_For_Players(int first_time,
  *=========================================================================*/
 static void Generate_Timing_Event(ConnManClass* net, int my_sent)
 {
-    unsigned long resp_time; // connection response time, in ticks
+    unsigned int resp_time; // connection response time, in ticks
     EventClass ev;
 
     //------------------------------------------------------------------------
@@ -1346,7 +1343,7 @@ static void Generate_Timing_Event(ConnManClass* net, int my_sent)
  *=========================================================================*/
 static void Generate_Real_Timing_Event(ConnManClass* net, int my_sent)
 {
-    unsigned long resp_time; // connection response time, in ticks
+    unsigned int resp_time; // connection response time, in ticks
     EventClass ev;
     int highest_ticks;
     int i;
@@ -1464,7 +1461,7 @@ static void Generate_Process_Time_Event(ConnManClass* net)
 {
     EventClass ev;
     int avgticks;
-    unsigned long resp_time; // connection response time, in ticks
+    unsigned int resp_time; // connection response time, in ticks
 
     //
     // Measure the current connection response time.  This time will be in
@@ -1761,7 +1758,7 @@ static RetcodeType Process_Receive_Packet(ConnManClass* net,
                                           char* multi_packet_buf,
                                           int id,
                                           int packetlen,
-                                          long* their_frame,
+                                          int* their_frame,
                                           unsigned short* their_sent,
                                           unsigned short* their_recv)
 {
@@ -2047,10 +2044,10 @@ static RetcodeType Process_Serial_Packet(char* multi_packet_buf, int first_time)
  *   11/21/1995 BRR : Created.                                             *
  *=========================================================================*/
 static int
-Can_Advance(ConnManClass* net, int max_ahead, long* their_frame, unsigned short* their_sent, unsigned short* their_recv)
+Can_Advance(ConnManClass* net, int max_ahead, int* their_frame, unsigned short* their_sent, unsigned short* their_recv)
 {
-    long their_oldest_frame; // other players' oldest frame #
-    int count_ok;            // true = my cmd count matches theirs
+    int their_oldest_frame; // other players' oldest frame #
+    int count_ok;           // true = my cmd count matches theirs
     int i;
 
     //------------------------------------------------------------------------
@@ -2115,7 +2112,7 @@ Can_Advance(ConnManClass* net, int max_ahead, long* their_frame, unsigned short*
  *   11/21/1995 BRR : Created.                                             *
  *=========================================================================*/
 static int Process_Reconnect_Dialog(CDTimerClass<SystemTimerClass>* timeout_timer,
-                                    long* their_frame,
+                                    int* their_frame,
                                     int num_conn,
                                     int reconn,
                                     int fresh)
@@ -2195,7 +2192,7 @@ static int Process_Reconnect_Dialog(CDTimerClass<SystemTimerClass>* timeout_time
  * HISTORY:                                                                *
  *   11/21/1995 BRR : Created.                                             *
  *=========================================================================*/
-static int Handle_Timeout(ConnManClass* net, long* their_frame, unsigned short* their_sent, unsigned short* their_recv)
+static int Handle_Timeout(ConnManClass* net, int* their_frame, unsigned short* their_sent, unsigned short* their_recv)
 {
     int oldest_index; // index of person requiring a reconnect
     int i, j;
@@ -3112,7 +3109,7 @@ static int Execute_DoList(int max_houses,
                           HousesType base_house,
                           ConnManClass* net,
                           CDTimerClass<FrameTimerClass>* skip_crc,
-                          long* their_frame,
+                          int* their_frame,
                           unsigned short* their_sent,
                           unsigned short* their_recv)
 {
@@ -4138,8 +4135,8 @@ static void Update_Queue_Mono(ConnManClass* net, int flow_index)
  * HISTORY:                                                                *
  *   11/21/1995 BRR : Created.                                             *
  *=========================================================================*/
-static void Print_Framesync_Values(long curframe,
-                                   unsigned long max_ahead,
+static void Print_Framesync_Values(int curframe,
+                                   unsigned int max_ahead,
                                    int num_connections,
                                    unsigned short* their_recv,
                                    unsigned short* their_sent,
@@ -4195,7 +4192,7 @@ static void Print_Framesync_Values(long curframe,
  *=========================================================================*/
 void Dump_Packet_Too_Late_Stuff(EventClass* event,
                                 ConnManClass* net,
-                                long* their_frame,
+                                int* their_frame,
                                 unsigned short* their_sent,
                                 unsigned short* their_recv)
 {
@@ -4261,11 +4258,11 @@ void Check_Mirror(void)
 #ifdef MIRROR_QUEUE
     int i;
     char txt[80];
-    unsigned long* ptr;
+    unsigned int* ptr;
     int found_5s = 0;
 
-    ptr = (unsigned long*)(DoList.Get_Array());
-    for (i = 0; i < (MAX_EVENTS * 64 * sizeof(EventClass)) / sizeof(unsigned long); i++) {
+    ptr = (unsigned int*)(DoList.Get_Array());
+    for (i = 0; i < (MAX_EVENTS * 64 * sizeof(EventClass)) / sizeof(unsigned int); i++) {
         if (ptr[i] == 0x55555555) {
             sprintf(txt, "55555555 found in DoList! Addr:%p", &(ptr[i]));
             WWMessageBox().Process(txt);
@@ -4273,8 +4270,8 @@ void Check_Mirror(void)
         }
     }
 
-    ptr = (unsigned long*)(MirrorList.Get_Array());
-    for (i = 0; i < (MAX_EVENTS * 64 * sizeof(EventClass)) / sizeof(unsigned long); i++) {
+    ptr = (unsigned int*)(MirrorList.Get_Array());
+    for (i = 0; i < (MAX_EVENTS * 64 * sizeof(EventClass)) / sizeof(unsigned int); i++) {
         if (ptr[i] == 0x55555555) {
             sprintf(txt, "55555555 found in MirrorList! Addr:%p", &(ptr[i]));
             WWMessageBox().Process(txt);
@@ -4282,8 +4279,8 @@ void Check_Mirror(void)
         }
     }
 
-    ptr = (unsigned long*)(DoList.Get_Array());
-    for (i = 0; i < (MAX_EVENTS * 64 * sizeof(EventClass)) / sizeof(unsigned long); i++) {
+    ptr = (unsigned int*)(DoList.Get_Array());
+    for (i = 0; i < (MAX_EVENTS * 64 * sizeof(EventClass)) / sizeof(unsigned int); i++) {
         if (ptr[i] == 0xAAAAAAAA) {
             sprintf(txt, "AAAAAAAA found in DoList! Addr:%p", &(ptr[i]));
             WWMessageBox().Process(txt);
@@ -4291,8 +4288,8 @@ void Check_Mirror(void)
         }
     }
 
-    ptr = (unsigned long*)(MirrorList.Get_Array());
-    for (i = 0; i < (MAX_EVENTS * 64 * sizeof(EventClass)) / sizeof(unsigned long); i++) {
+    ptr = (unsigned int*)(MirrorList.Get_Array());
+    for (i = 0; i < (MAX_EVENTS * 64 * sizeof(EventClass)) / sizeof(unsigned int); i++) {
         if (ptr[i] == 0xAAAAAAAA) {
             sprintf(txt, "AAAAAAAA found in MirrorList! Addr:%p", &(ptr[i]));
             WWMessageBox().Process(txt);

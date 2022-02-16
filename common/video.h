@@ -32,7 +32,7 @@ public:
     }
 
     virtual void* GetData() const = 0;
-    virtual long GetPitch() const = 0;
+    virtual int GetPitch() const = 0;
     virtual bool IsAllocated() const = 0;
 
     virtual void AddAttachedSurface(VideoSurface* surface) = 0;

@@ -45,7 +45,7 @@
 /* Iff and Load Picture system defines and enumerations							*/
 /*=========================================================================*/
 
-#define MAKE_ID(a, b, c, d) ((long)((long)d << 24) | ((long)c << 16) | ((long)b << 8) | (long)(a))
+#define MAKE_ID(a, b, c, d) ((int)((int)d << 24) | ((int)c << 16) | ((int)b << 8) | (int)(a))
 #define IFFize_WORD(a)      Reverse_Word(a)
 #define IFFize_LONG(a)      Reverse_Long(a)
 
@@ -95,9 +95,9 @@ typedef struct
 
 int Open_Iff_File(char const* filename);
 void Close_Iff_File(int fh);
-unsigned long Get_Iff_Chunk_Size(int fh, long id);
-unsigned long Read_Iff_Chunk(int fh, long id, void* buffer, unsigned long maxsize);
-void Write_Iff_Chunk(int file, long id, void* buffer, long length);
+unsigned int Get_Iff_Chunk_Size(int fh, int id);
+unsigned int Read_Iff_Chunk(int fh, int id, void* buffer, unsigned int maxsize);
+void Write_Iff_Chunk(int file, int id, void* buffer, int length);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: LOADPICT.CPP						*/
@@ -113,14 +113,14 @@ int Load_Picture(char const* filename,
 /* The following prototypes are for the file: LOAD.CPP							*/
 /*=========================================================================*/
 
-unsigned long Load_Data(char const* name, void* ptr, unsigned long size);
-unsigned long Write_Data(char const* name, void* ptr, unsigned long size);
+unsigned int Load_Data(char const* name, void* ptr, unsigned int size);
+unsigned int Write_Data(char const* name, void* ptr, unsigned int size);
 void* Load_Alloc_Data(char const* name, MemoryFlagType flags);
 void* Load_Alloc_Data(const FileClass& file);
 void* Load_Alloc_Data(const FileClass* file);
-unsigned long
+unsigned int
 Load_Uncompress(char const* file, BufferClass& uncomp_buff, BufferClass& dest_buff, void* reserved_data = NULL);
-unsigned long Uncompress_Data(void const* src, void* dst);
+unsigned int Uncompress_Data(void const* src, void* dst);
 void Set_Uncomp_Buffer(int buffer_segment, int size_of_buffer);
 
 /*=========================================================================*/

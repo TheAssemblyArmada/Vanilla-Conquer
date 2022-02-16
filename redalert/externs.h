@@ -75,7 +75,7 @@ void _PRO(void);
 typedef MixFileClass<CCFileClass> MFCD;
 
 extern bool IsVQ640;
-extern unsigned long GameVersion;
+extern unsigned int GameVersion;
 extern bool Debug_MotionCapture;
 extern bool Debug_Rotate;
 extern bool Debug_Quiet;
@@ -175,7 +175,7 @@ extern VoxType SpeakQueue;
 extern bool PlayerWins;
 extern bool PlayerLoses;
 extern bool PlayerRestarts;
-extern long Frame;
+extern int Frame;
 extern VoxType SpeechRecord[2];
 extern void* SpeechBuffer[2];
 extern int PreserveVQAScreen;
@@ -306,11 +306,11 @@ extern TTimerClass<SystemTimerClass> TickCount;
 extern bool PassedProximity; // used in display.cpp
 extern HousesType Whom;
 extern VQAConfig AnimControl;
-extern long SpareTicks;
-extern long PathCount;
-extern long CellCount;
-extern long TargetScan;
-extern long SidebarRedraws;
+extern int SpareTicks;
+extern int PathCount;
+extern int CellCount;
+extern int TargetScan;
+extern int SidebarRedraws;
 extern DMonoType MonoPage;
 extern bool GameActive;
 extern bool SpecialFlag;
@@ -325,13 +325,13 @@ extern PaletteClass GamePalette;
 extern PaletteClass OriginalPalette;
 extern PaletteClass ScorePalette;
 extern int BuildLevel;
-extern unsigned long ScenarioCRC;
+extern unsigned int ScenarioCRC;
 
 #ifdef FIXIT_VERSION_3
 extern bool bAftermathMultiplayer; //	Is multiplayer game being played with Aftermath rules?
 #else
-extern unsigned long PlayingAgainstVersion; // Negotiated version number
-extern bool Version107InMix;                // Is there a v1.07 in the game
+extern unsigned int PlayingAgainstVersion; // Negotiated version number
+extern bool Version107InMix;               // Is there a v1.07 in the game
 #endif
 
 #ifdef FIXIT_VERSION_3 //	For endgame auto-sonar pulse.
@@ -371,10 +371,10 @@ extern char const* const SpecialWeaponFile[SPC_COUNT];
 extern char const* const ArmorName[ARMOR_COUNT];
 extern char const* const QuarryName[QUARRY_COUNT];
 extern char const* const FormationName[FORMATION_COUNT];
-extern unsigned long const PlayCodes[];
-extern unsigned long const CheatCodes[];
+extern unsigned int const PlayCodes[];
+extern unsigned int const CheatCodes[];
 // extern char const * const					ProjectileNames[];
-extern unsigned long const EditorCodes[];
+extern unsigned int const EditorCodes[];
 extern char const* const SourceName[SOURCE_COUNT];
 extern int const GroundColor[LAND_COUNT];
 extern int const SnowColor[LAND_COUNT];
@@ -411,8 +411,8 @@ extern int CurrentCD;
 extern int MouseInstalled;
 
 extern int LogLevel;
-extern unsigned long LogLevelTime[MAX_LOG_LEVEL];
-extern unsigned long LogLastTime;
+extern unsigned int LogLevelTime[MAX_LOG_LEVEL];
+extern unsigned int LogLastTime;
 
 extern class DynamicVectorClass<EventChoiceClass> test2;
 extern class DynamicVectorClass<ActionChoiceClass> test3;

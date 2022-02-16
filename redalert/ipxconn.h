@@ -95,7 +95,7 @@ public:
                           IPXHeaderType* send_header,
                           char* listen_buf,
                           char* send_buf,
-                          long handler_rm_ptr,
+                          int handler_rm_ptr,
                           int maxpacketlen);
 
     /*.....................................................................
@@ -187,7 +187,7 @@ protected:
     the segment/offset to be computed by the caller gives the caller
     control over CS.)
     .....................................................................*/
-    static long Handler;
+    static int Handler;
 
     /*.....................................................................
     This status flag tells us if Configure() has been called or not.

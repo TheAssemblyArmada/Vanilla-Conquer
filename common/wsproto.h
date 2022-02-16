@@ -129,12 +129,12 @@ public:
     };
 
 #if defined _WIN32 && !defined SDL2_BUILD
-    virtual long Message_Handler(HWND, UINT, UINT, LONG)
+    virtual int Message_Handler(HWND, UINT, UINT, LONG)
     {
         return (1);
     }
 #else
-    virtual long Message_Handler()
+    virtual int Message_Handler()
     {
         return (1);
     }

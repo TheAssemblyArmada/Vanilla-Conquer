@@ -55,7 +55,7 @@
 static void Play_Intro(bool for_real = false);
 void Init_CDROM_Access(void);
 
-extern unsigned long RandNumb;
+extern unsigned int RandNumb;
 
 extern int SimRandIndex;
 

@@ -99,7 +99,7 @@
  *   GVPC::Print -- stub func to print a text string                       *
  *   GVPC::Print -- Stub function to print an integer                      *
  *   GVPC::Print -- Stub function to print a short to a graphic viewport   *
- *   GVPC::Print -- stub function to print a long on a graphic view port   *
+ *   GVPC::Print -- stub function to print a int on a graphic view port   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #ifndef GBUFFER_H
@@ -132,7 +132,7 @@ class VideoSurface;
 /*          int     XAdd     -  is the xadd of graphic buffer              */
 /*          int     XPos;    -  will be 0 because it is graphicbuff        */
 /*          int     YPos;    -  will be 0 because it is graphicbuff        */
-/*          long    Pitch    -  modulo of buffer for reading and writing   */
+/*          int    Pitch    -  modulo of buffer for reading and writing   */
 /*          BOOL    IsDirectDraw -  flag if its a direct draw surface      */
 /*=========================================================================*/
 class GraphicBufferClass : public GraphicViewPortClass, public BufferClass
@@ -140,20 +140,20 @@ class GraphicBufferClass : public GraphicViewPortClass, public BufferClass
 
 public:
     GraphicBufferClass(int w, int h, GBC_Enum flags);
-    GraphicBufferClass(int w, int h, void* buffer, long size);
+    GraphicBufferClass(int w, int h, void* buffer, int size);
     GraphicBufferClass(int w, int h, void* buffer = 0);
     GraphicBufferClass();
     ~GraphicBufferClass();
 
     void DD_Init(GBC_Enum flags);
-    void Init(int w, int h, void* buffer, long size, GBC_Enum flags);
+    void Init(int w, int h, void* buffer, int size, GBC_Enum flags);
     void Un_Init();
     void Attach_DD_Surface(GraphicBufferClass* attach_buffer);
     bool Lock();
     bool Unlock();
     bool IsAllocated() const;
 
-    void Scale_Rotate(BitmapClass& bmp, TPoint2D const& pt, long scale, unsigned char angle);
+    void Scale_Rotate(BitmapClass& bmp, TPoint2D const& pt, int scale, unsigned char angle);
 
     // Member to get a pointer to a direct draw surface
     VideoSurface* Get_DD_Surface()

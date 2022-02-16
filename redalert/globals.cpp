@@ -34,7 +34,7 @@
 #include "function.h"
 
 bool IsVQ640 = false;
-unsigned long GameVersion = 0;
+unsigned int GameVersion = 0;
 bool Debug_MotionCapture = false;
 bool Debug_Quiet = false;
 bool Debug_Cheat = false;
@@ -325,7 +325,7 @@ bool AllowVoice = true;
 **	upward at the rate of one per game logic process. The target rate is 15
 **	per second. This value is saved and restored with the saved game.
 */
-long Frame = 0;
+int Frame = 0;
 
 /***************************************************************************
 **	These globals are constantly monitored to determine if the player
@@ -362,11 +362,11 @@ Buffer* TheaterBuffer;
 ** This accumulates into a useful value that contributes to a
 **	histogram of game performance.
 */
-long SpareTicks;
-long PathCount;      // Number of findpaths called.
-long CellCount;      // Number of cells redrawn.
-long TargetScan;     // Number of target scans.
-long SidebarRedraws; // Number of sidebar redraws.
+int SpareTicks;
+int PathCount;      // Number of findpaths called.
+int CellCount;      // Number of cells redrawn.
+int TargetScan;     // Number of target scans.
+int SidebarRedraws; // Number of sidebar redraws.
 
 /***************************************************************************
 **	This is the monochrome debug page array. The various monochrome data
@@ -464,7 +464,7 @@ bool GameActive;
 **	a long, but the value wasn't supplied to a function. This is used
 **	specifically for the default reference value. As such, it is not stable.
 */
-long LParam;
+int LParam;
 
 #ifdef SCENARIO_EDITOR
 /***************************************************************************
@@ -545,7 +545,7 @@ CarryoverClass* Carryover;
 ** This value is computed every time a new scenario is loaded; it's a
 ** CRC of the INI and binary map files.
 */
-unsigned long ScenarioCRC;
+unsigned int ScenarioCRC;
 
 /***************************************************************************
 ** This class manages data specific to multiplayer games.
@@ -570,8 +570,8 @@ int NewMaxAheadFrame2;
 #ifdef FIXIT_VERSION_3
 bool bAftermathMultiplayer; //	Is multiplayer game being played with Aftermath rules?
 #else
-unsigned long PlayingAgainstVersion; // Negotiated version number
-bool Version107InMix;                // Is there a v1.07 in the game
+unsigned int PlayingAgainstVersion; // Negotiated version number
+bool Version107InMix;               // Is there a v1.07 in the game
 #endif
 
 /***************************************************************************
@@ -650,8 +650,8 @@ int MouseInstalled;
 // Variables for helping track how much time goes bye in routines
 //
 int LogLevel = 0;
-unsigned long LogLevelTime[MAX_LOG_LEVEL] = {0};
-unsigned long LogLastTime = 0;
+unsigned int LogLevelTime[MAX_LOG_LEVEL] = {0};
+unsigned int LogLastTime = 0;
 bool LogDump_Print = false; // true = print the Log time Stuff
 
 /***************************************************************************

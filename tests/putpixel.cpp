@@ -34,7 +34,7 @@ void Close_File(int)
 {
 }
 
-long Read_File(int, void*, unsigned long)
+int Read_File(int, void*, unsigned int)
 {
     return 0;
 }

@@ -387,7 +387,7 @@ void ScoreClass::Presentation(void)
                                 0L,
                                 (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE),
                                 (unsigned char*)ScorePalette.Get_Data());
-    unsigned minutes = (unsigned)((ElapsedTime / (long)TIMER_MINUTE)) + 1;
+    unsigned minutes = (unsigned)((ElapsedTime / (int)TIMER_MINUTE)) + 1;
 
     // Load up the shapes for the Nod score screen
     yellowptr = MFCD::Retrieve("BAR3BHR.SHP");
@@ -748,7 +748,7 @@ void Cycle_Wait_Click(bool cycle)
 {
     int counter = 0;
     int minclicks = 20;
-    unsigned long timingtime = TickCount;
+    unsigned int timingtime = TickCount;
     // PG SerialPacketType sendpacket;
     // PG SerialPacketType receivepacket;
     // PG int packetlen;

@@ -7135,7 +7135,7 @@ void DLLExportClass::Calculate_Start_Positions(void)
     for (int i = 0; i < MULTIPLAYER_COUNT; i++) {
         PlayerPtr = HouseClass::As_Pointer(Session.Players[i]->Player.ID);
         if (PlayerPtr) {
-            long x, y;
+            int x, y;
             Map.Compute_Start_Pos(x, y);
             MultiplayerStartPositions[i] = XY_Cell(x, y);
         }

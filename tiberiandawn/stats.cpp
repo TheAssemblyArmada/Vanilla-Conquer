@@ -121,17 +121,17 @@ enum
     COMPLETION_PLAYER_2_WON_BY_DISCONNECTION
 };
 
-extern unsigned long PlanetWestwoodGameID;
+extern unsigned int PlanetWestwoodGameID;
 #ifdef _WIN32
 extern HINSTANCE ProgramInstance;
 #endif
-extern unsigned long PlanetWestwoodStartTime;
+extern unsigned int PlanetWestwoodStartTime;
 
 char CPUType;
 
 bool GameTimerInUse = false;
 TimerClass GameTimer;
-long GameEndTime;
+int GameEndTime;
 void* PacketLater = NULL;
 
 /***********************************************************************************************
@@ -207,7 +207,7 @@ void Send_Statistics_Packet(void)
         /*
         ** Start credits.
         */
-        stats.Add_Field(FIELD_START_CREDITS, (unsigned long)MPlayerCredits);
+        stats.Add_Field(FIELD_START_CREDITS, (unsigned int)MPlayerCredits);
 
         /*
         ** Bases (On/Off)
@@ -233,12 +233,12 @@ void Send_Statistics_Packet(void)
         /*
         ** Start unit count
         */
-        stats.Add_Field(FIELD_START_UNIT_COUNT, (unsigned long)MPlayerUnitCount);
+        stats.Add_Field(FIELD_START_UNIT_COUNT, (unsigned int)MPlayerUnitCount);
 
         /*
         ** Tech level.
         */
-        stats.Add_Field(FIELD_TECH_LEVEL, (unsigned long)BuildLevel);
+        stats.Add_Field(FIELD_TECH_LEVEL, (unsigned int)BuildLevel);
 
         CCDebugString("C&C95 - Adding stats field for scenario.\n");
         /*
@@ -586,7 +586,7 @@ void Send_Statistics_Packet(void)
                 ** Amount of tiberium turned into credits
                 */
                 field_player_harvested[3] = '1' + (char)house;
-                stats.Add_Field(field_player_harvested, (unsigned long)player->HarvestedCredits);
+                stats.Add_Field(field_player_harvested, (unsigned int)player->HarvestedCredits);
             }
         }
 

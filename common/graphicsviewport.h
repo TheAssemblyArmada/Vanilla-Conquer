@@ -99,7 +99,7 @@
  *   GVPC::Print -- stub func to print a text string                       *
  *   GVPC::Print -- Stub function to print an integer                      *
  *   GVPC::Print -- Stub function to print a short to a graphic viewport   *
- *   GVPC::Print -- stub function to print a long on a graphic view port   *
+ *   GVPC::Print -- stub function to print a int on a graphic view port   *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #ifndef VIEWPORT_H
@@ -238,9 +238,9 @@ public:
     void Put_Pixel(int x, int y, unsigned char color);
     int Get_Pixel(int x, int y);
     void Clear(unsigned char color = 0);
-    long To_Buffer(int x, int y, int w, int h, void* buff, long size);
-    long To_Buffer(int x, int y, int w, int h, BufferClass* buff);
-    long To_Buffer(BufferClass* buff);
+    int To_Buffer(int x, int y, int w, int h, void* buff, int size);
+    int To_Buffer(int x, int y, int w, int h, BufferClass* buff);
+    int To_Buffer(BufferClass* buff);
     bool Blit(GraphicViewPortClass& dest,
               int x_pixel,
               int y_pixel,
@@ -275,10 +275,9 @@ public:
                char* remap);
     bool Scale(GraphicViewPortClass& dest, bool trans = false, char* remap = nullptr);
     bool Scale(GraphicViewPortClass& dest, char* remap);
-    unsigned long Print(char const* string, int x_pixel, int y_pixel, int fcolor, int bcolor);
-    unsigned long Print(short num, int x_pixel, int y_pixel, int fcol, int bcol);
-    unsigned long Print(int num, int x_pixel, int y_pixel, int fcol, int bcol);
-    unsigned long Print(long num, int x_pixel, int y_pixel, int fcol, int bcol);
+    unsigned int Print(char const* string, int x_pixel, int y_pixel, int fcolor, int bcolor);
+    unsigned int Print(short num, int x_pixel, int y_pixel, int fcol, int bcol);
+    unsigned int Print(int num, int x_pixel, int y_pixel, int fcol, int bcol);
 
     /*===================================================================*/
     /* Define the list of graphic functions which work only with a       */
@@ -343,7 +342,7 @@ protected:
     int XAdd;                        // xadd for graphic page (0)
     int XPos;                        // x offset in relation to graphicbuff
     int YPos;                        // y offset in relation to graphicbuff
-    long Pitch;                      // Distance from one line to the next
+    int Pitch;                       // Distance from one line to the next
     GraphicBufferClass* GraphicBuff; // related graphic buff
     bool IsHardware;                 // Flag to let us know if it is a direct draw surface
     int LockCount;                   // Count for stacking locks if non-zero the buffer
@@ -356,6 +355,6 @@ extern GraphicViewPortClass* LogicPage;
 /*      on graphic viewports.                                              */
 /*=========================================================================*/
 
-long Buffer_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortClass& view);
+int Buffer_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortClass& view);
 
 #endif // VIEWPORT_H

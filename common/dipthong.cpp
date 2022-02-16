@@ -114,7 +114,7 @@ int Dip_Text(char const* source, char* dest)
     int common,          // Common character index.
         dipthong;        // Dipthong character index.
 
-    unsigned long length = 0; // Length of output string
+    unsigned int length = 0; // Length of output string
 
     first = *source++;
     next = *source;

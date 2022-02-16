@@ -216,15 +216,15 @@ int Com_Scenario_Dialog(void)
     int recsignedoff = false;
     int i;
     char txt[80];
-    unsigned long timingtime;
-    unsigned long lastmsgtime;
-    unsigned long lastredrawtime;
-    unsigned long transmittime = 0;
-    unsigned long theirresponsetime;
+    unsigned int timingtime;
+    unsigned int lastmsgtime;
+    unsigned int lastredrawtime;
+    unsigned int transmittime = 0;
+    unsigned int theirresponsetime;
     static bool first_time = true;
     bool oppscorescreen = false;
     bool gameoptions = GameToPlay == GAME_SKIRMISH;
-    unsigned long msg_timeout = 1200; // init to 20 seconds
+    unsigned int msg_timeout = 1200; // init to 20 seconds
 
     bool ready_to_go = false;
     CountDownTimerClass ready_time;

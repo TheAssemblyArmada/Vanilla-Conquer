@@ -319,7 +319,7 @@ void PaletteClass::Set(int time, void (*callback)(void)) const
         **	code, at the time of this writing, delays at least one game tick in the process
         **	of setting the palette.
         */
-        long holdtime = timer;
+        int holdtime = timer;
 
         /*
         **	Set the palette to this intermediate palette and then loop back

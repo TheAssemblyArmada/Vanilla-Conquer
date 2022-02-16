@@ -38,12 +38,12 @@
 class FileEntryClass
 {
 public:
-    char Descr[80];         // save-game description
-    unsigned Scenario;      // scenario #
-    HousesType House;       // house
-    int Num;                // save file number (from the extension)
-    unsigned long DateTime; // date/time stamp of file
-    bool Valid;             // Is the scenario valid?
+    char Descr[80];        // save-game description
+    unsigned Scenario;     // scenario #
+    HousesType House;      // house
+    int Num;               // save file number (from the extension)
+    unsigned int DateTime; // date/time stamp of file
+    bool Valid;            // Is the scenario valid?
 };
 
 class LoadOptionsClass

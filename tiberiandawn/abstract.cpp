@@ -132,8 +132,8 @@ void AbstractClass::Delete_This(void)
     **
     ** ST - 1/9/2019 6:02PM
     */
-    unsigned long* this_ptr = (unsigned long*)this;
-    unsigned long vtable_ptr = *this_ptr;
+    unsigned int* this_ptr = (unsigned int*)this;
+    unsigned int vtable_ptr = *this_ptr;
 
     /*
     ** delete this calls the operator delete, it doesn't actually deallocate the memory.

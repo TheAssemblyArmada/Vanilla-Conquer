@@ -60,7 +60,7 @@
  * HISTORY:                                                                                    *
  *   07/29/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Buffer::Buffer(void* buffer, long size)
+Buffer::Buffer(void* buffer, int size)
     : BufferPtr(buffer)
     , Size(size)
     , IsAllocated(false)
@@ -68,7 +68,7 @@ Buffer::Buffer(void* buffer, long size)
 }
 
 // Alternate constructor for char * pointer.
-Buffer::Buffer(char* buffer, long size)
+Buffer::Buffer(char* buffer, int size)
     : BufferPtr(buffer)
     , Size(size)
     , IsAllocated(false)
@@ -76,7 +76,7 @@ Buffer::Buffer(char* buffer, long size)
 }
 
 // Alternate constructor for void const * pointer.
-Buffer::Buffer(void const* buffer, long size)
+Buffer::Buffer(void const* buffer, int size)
     : BufferPtr((void*)buffer)
     , Size(size)
     , IsAllocated(false)
@@ -100,7 +100,7 @@ Buffer::Buffer(void const* buffer, long size)
  * HISTORY:                                                                                    *
  *   07/29/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-Buffer::Buffer(long size)
+Buffer::Buffer(int size)
     : BufferPtr(NULL)
     , Size(size)
     , IsAllocated(false)

@@ -51,7 +51,7 @@ public:
     int NHarvested;
     int GHarvested;
     int CHarvested;
-    unsigned long ElapsedTime;
+    unsigned int ElapsedTime;
 
     ScoreClass(void)
     {

@@ -4,7 +4,7 @@
 #include <iostream>
 #include "common/irandom.h"
 
-extern unsigned long RandNumb;
+extern unsigned int RandNumb;
 
 int test_random()
 {

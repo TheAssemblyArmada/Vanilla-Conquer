@@ -368,7 +368,7 @@ bool PacketClass::Get_Field(const char* id, unsigned short& data)
  * GET_FIELD -- Find specified name and returns data                      *
  *                                                                        *
  * INPUT:		char *   - the id of the field that holds the data.		  *
- *					long &   - the reference to store the data into  			  *
+ *					int &   - the reference to store the data into  			  *
  *                                                                        *
  * OUTPUT:		true if the field was found, false if it was not.			  *
  *                                                                        *
@@ -378,11 +378,11 @@ bool PacketClass::Get_Field(const char* id, unsigned short& data)
  * HISTORY:                                                               *
  *   04/23/1996 PWG : Created.                                            *
  *========================================================================*/
-bool PacketClass::Get_Field(const char* id, long& data)
+bool PacketClass::Get_Field(const char* id, int& data)
 {
     FieldClass* field = Find_Field(id);
     if (field) {
-        data = *((long*)field->Data);
+        data = *((int*)field->Data);
     }
     return ((field) ? true : false);
 }
@@ -416,7 +416,7 @@ bool PacketClass::Get_Field(const char* id, char* data)
  * GET_FIELD -- Find specified name and returns data                      *
  *                                                                        *
  * INPUT:		char *   - the id of the field that holds the data.		  *
- *					unsigned long &   - the reference to store the data into   *
+ *					unsigned int &   - the reference to store the data into   *
  *                                                                        *
  * OUTPUT:		true if the field was found, false if it was not.			  *
  *                                                                        *
@@ -426,11 +426,11 @@ bool PacketClass::Get_Field(const char* id, char* data)
  * HISTORY:                                                               *
  *   04/23/1996 PWG : Created.                                            *
  *========================================================================*/
-bool PacketClass::Get_Field(const char* id, unsigned long& data)
+bool PacketClass::Get_Field(const char* id, unsigned int& data)
 {
     FieldClass* field = Find_Field(id);
     if (field) {
-        data = *((unsigned long*)field->Data);
+        data = *((unsigned int*)field->Data);
     }
     return ((field) ? true : false);
 }

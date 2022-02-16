@@ -87,7 +87,7 @@ typedef struct
 //#include <vqa32\vqafile.h>
 
 extern bool GameActive;
-extern long LParam;
+extern int LParam;
 
 #include <assert.h>
 #include "heap.h"
@@ -100,7 +100,7 @@ extern long LParam;
 #include "ccini.h"
 #include "ccptr.h"
 
-extern long Frame;
+extern int Frame;
 CELL Coord_Cell(COORDINATE coord);
 
 #include "palettec.h" //ST 5/13/2019
@@ -227,7 +227,7 @@ void Play_Movie(VQType name, ThemeType theme = THEME_NONE, bool clrscrn = true, 
 bool Main_Loop(void);
 TheaterType Theater_From_Name(char const* name);
 void Main_Game(int argc, char* argv[]);
-long VQ_Call_Back(unsigned char* buffer = NULL, long frame = 0);
+int VQ_Call_Back(unsigned char* buffer = NULL, int frame = 0);
 void Call_Back(void);
 char const* Language_Name(char const* basename);
 SourceType Source_From_Name(char const* name);
@@ -293,7 +293,7 @@ void CC_Add_Shape_To_Global(void const* shapeptr, char* filename, char code);
 void Bubba_Print(char* format, ...);
 void Heap_Dump_Check(char* string);
 void Dump_Heap_Pointers(void);
-unsigned long Disk_Space_Available(void);
+unsigned int Disk_Space_Available(void);
 void* Hires_Load(char* name);
 void Shake_The_Screen(int shakes, HousesType house = HOUSE_NONE);
 
@@ -365,7 +365,7 @@ void Assign_Houses(void);
 /*
 **	INIBIN.CPP
 */
-unsigned long Ini_Binary_Version(void);
+unsigned int Ini_Binary_Version(void);
 bool Read_Scenario_INB(CCFileClass* file, char* root, bool fresh);
 bool Valid_Scenario_INB(CCFileClass* file);
 
@@ -378,7 +378,7 @@ bool Read_Scenario_INI_Write_INB(char* root, bool fresh);
 **	INIT.CPP
 */
 void Load_Title_Page(bool visible = false);
-long Obfuscate(char const* string);
+int Obfuscate(char const* string);
 void Anim_Init(void);
 bool Init_Game(int argc, char* argv[]);
 bool Select_Game(bool fade = false);
@@ -396,7 +396,7 @@ int Load_Picture(char const* filename,
 void* Conquer_Build_Fading_Table(PaletteClass const& palette, void* dest, int color, int frac);
 void* Small_Icon(void const* iconptr, int iconnum);
 void Set_Window(int window, int x, int y, int w, int h);
-long Load_Uncompress(FileClass& file, BufferClass& uncomp_buff, BufferClass& dest_buff, void* reserved_data);
+int Load_Uncompress(FileClass& file, BufferClass& uncomp_buff, BufferClass& dest_buff, void* reserved_data);
 long Translucent_Table_Size(int count);
 void* Build_Translucent_Table(PaletteClass const& palette, TLucentType const* control, int count, void* buffer);
 void* Conquer_Build_Translucent_Table(PaletteClass const& palette, TLucentType const* control, int count, void* buffer);
@@ -416,11 +416,11 @@ int Coord_Spillage_Number(COORDINATE coord, int maxsize);
 /*
 **	MENUS.CPP
 */
-void Setup_Menu(int menu, char const* text[], unsigned long field, int index, int skip);
-int Check_Menu(int menu, char const* text[], char* selection, long field, int index);
+void Setup_Menu(int menu, char const* text[], unsigned int field, int index, int skip);
+int Check_Menu(int menu, char const* text[], char* selection, int field, int index);
 int Do_Menu(char const** strings, bool blue);
 extern int UnknownKey;
-int Main_Menu(unsigned long timeout);
+int Main_Menu(unsigned int timeout);
 
 /*
 ** MPLAYER.CPP
@@ -446,8 +446,8 @@ void Shutdown_Network(void);
 bool Remote_Connect(void);
 void Destroy_Connection(int id, int error);
 bool Process_Global_Packet(GlobalPacketType* packet, IPXAddressClass* address);
-unsigned long Compute_Name_CRC(char* name);
-void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned long timeval);
+unsigned int Compute_Name_CRC(char* name);
+void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned int timeval);
 
 /*
 ** NULLDLG.CPP

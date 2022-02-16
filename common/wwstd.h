@@ -71,7 +71,7 @@ template <class T> T ABS(T a)
     return (a < 0) ? -a : a;
 }
 // int ABS(int);
-// long ABS(long);
+// int ABS(int);
 
 // Returns the minimum of the two numbers.
 #ifdef MIN
@@ -83,7 +83,7 @@ template <class T> T MIN(T a, T b)
 };
 // short MIN(short, short);
 // int MIN(int, int);
-// long MIN(long, long);
+// int MIN(int, int);
 
 // Returns the maximum of the two numbers.
 #ifdef MAX
@@ -95,13 +95,13 @@ template <class T> T MAX(T a, T b)
 };
 
 // Returns the low word of a long
-#define LOW_WORD(a) ((unsigned short)((long)(a)&0x0000FFFFL))
+#define LOW_WORD(a) ((unsigned short)((int)(a)&0x0000FFFFL))
 
 // Returns the high word of a long
-#define HIGH_WORD(a) ((unsigned long)(a) >> 16)
+#define HIGH_WORD(a) ((unsigned int)(a) >> 16)
 
 // Merges to shorts to become a long
-#define MAKE_LONG(a, b) (((long)(a) << 16) | (long)((b)&0x0000FFFFL))
+#define MAKE_LONG(a, b) (((int)(a) << 16) | (int)((b)&0x0000FFFFL))
 
 /*
 ** Macro allows our routines to act like

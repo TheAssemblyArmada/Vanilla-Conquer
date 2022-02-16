@@ -50,7 +50,7 @@
 */
 typedef union
 {
-    unsigned long Long;
+    unsigned int Long;
     struct
     {
         unsigned char C3;
@@ -134,9 +134,9 @@ void BlowfishEngine::Submit_Key(void const* key, int length)
     */
     int j = 0;
     unsigned char const* key_ptr = (unsigned char const*)key;
-    unsigned long* p_ptr = &P_Encrypt[0];
+    unsigned int* p_ptr = &P_Encrypt[0];
     for (int index = 0; index < ROUNDS + 2; index++) {
-        unsigned long data = 0;
+        unsigned int data = 0;
 
         data = (data << CHAR_BIT) | key_ptr[j++ % length];
         data = (data << CHAR_BIT) | key_ptr[j++ % length];
@@ -153,10 +153,10 @@ void BlowfishEngine::Submit_Key(void const* key, int length)
     **	the table data WHILE it is using the table data, the tables are
     **	thoroughly obfuscated by this process.
     */
-    unsigned long left = 0x00000000L;
-    unsigned long right = 0x00000000L;
-    unsigned long* p_en = &P_Encrypt[0];          // Encryption table.
-    unsigned long* p_de = &P_Decrypt[ROUNDS + 1]; // Decryption table.
+    unsigned int left = 0x00000000L;
+    unsigned int right = 0x00000000L;
+    unsigned int* p_en = &P_Encrypt[0];          // Encryption table.
+    unsigned int* p_de = &P_Decrypt[ROUNDS + 1]; // Decryption table.
     for (int p_index = 0; p_index < ROUNDS + 2; p_index += 2) {
         Sub_Key_Encrypt(left, right);
 
@@ -339,7 +339,7 @@ int BlowfishEngine::Decrypt(void const* cyphertext, int length, void* plaintext)
  * HISTORY:                                                                                    *
  *   04/19/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BlowfishEngine::Process_Block(void const* plaintext, void* cyphertext, unsigned long const* ptable)
+void BlowfishEngine::Process_Block(void const* plaintext, void* cyphertext, unsigned int const* ptable)
 {
     /*
     **	Input the left and right halves of the source block such that
@@ -423,7 +423,7 @@ void BlowfishEngine::Process_Block(void const* plaintext, void* cyphertext, unsi
  * HISTORY:                                                                                    *
  *   04/19/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BlowfishEngine::Sub_Key_Encrypt(unsigned long& left, unsigned long& right)
+void BlowfishEngine::Sub_Key_Encrypt(unsigned int& left, unsigned int& right)
 {
     Int l;
     l.Long = left;
@@ -448,26 +448,26 @@ void BlowfishEngine::Sub_Key_Encrypt(unsigned long& left, unsigned long& right)
 **	integers in machine independent format would be even more painful.
 */
 
-unsigned long const BlowfishEngine::P_Init[BlowfishEngine::ROUNDS + 2] = {0x243F6A88U,
-                                                                          0x85A308D3U,
-                                                                          0x13198A2EU,
-                                                                          0x03707344U,
-                                                                          0xA4093822U,
-                                                                          0x299F31D0U,
-                                                                          0x082EFA98U,
-                                                                          0xEC4E6C89U,
-                                                                          0x452821E6U,
-                                                                          0x38D01377U,
-                                                                          0xBE5466CFU,
-                                                                          0x34E90C6CU,
-                                                                          0xC0AC29B7U,
-                                                                          0xC97C50DDU,
-                                                                          0x3F84D5B5U,
-                                                                          0xB5470917U,
-                                                                          0x9216D5D9U,
-                                                                          0x8979FB1BU};
+unsigned int const BlowfishEngine::P_Init[BlowfishEngine::ROUNDS + 2] = {0x243F6A88U,
+                                                                         0x85A308D3U,
+                                                                         0x13198A2EU,
+                                                                         0x03707344U,
+                                                                         0xA4093822U,
+                                                                         0x299F31D0U,
+                                                                         0x082EFA98U,
+                                                                         0xEC4E6C89U,
+                                                                         0x452821E6U,
+                                                                         0x38D01377U,
+                                                                         0xBE5466CFU,
+                                                                         0x34E90C6CU,
+                                                                         0xC0AC29B7U,
+                                                                         0xC97C50DDU,
+                                                                         0x3F84D5B5U,
+                                                                         0xB5470917U,
+                                                                         0x9216D5D9U,
+                                                                         0x8979FB1BU};
 
-unsigned long const BlowfishEngine::S_Init[4][UCHAR_MAX + 1] = {
+unsigned int const BlowfishEngine::S_Init[4][UCHAR_MAX + 1] = {
     {
         0xD1310BA6U, 0x98DFB5ACU, 0x2FFD72DBU, 0xD01ADFB7U, 0xB8E1AFEDU, 0x6A267E96U, 0xBA7C9045U, 0xF12C7F99U,
         0x24A19947U, 0xB3916CF7U, 0x0801F2E2U, 0x858EFC16U, 0x636920D8U, 0x71574E69U, 0xA458FEA3U, 0xF4933D7EU,

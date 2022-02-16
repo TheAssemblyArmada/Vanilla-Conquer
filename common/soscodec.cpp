@@ -37,7 +37,7 @@ void sosCODECInitStream(_SOS_COMPRESS_INFO* stream)
 // decompress data from a 4:1 ADPCM compressed file.  the number of
 // bytes decompressed is returned.
 //
-unsigned long sosCODECDecompressData(_SOS_COMPRESS_INFO* stream, unsigned long bytes)
+unsigned int sosCODECDecompressData(_SOS_COMPRESS_INFO* stream, unsigned int bytes)
 {
     short current_nybble;
     unsigned step;
@@ -214,7 +214,7 @@ unsigned long sosCODECDecompressData(_SOS_COMPRESS_INFO* stream, unsigned long b
 // Compresses a data stream into 4:1 ADPCM.  16 bit data is compressed 4:1
 // 8 bit data is compressed 2:1.
 //
-unsigned long sosCODECCompressData(_SOS_COMPRESS_INFO* stream, unsigned long bytes)
+unsigned int sosCODECCompressData(_SOS_COMPRESS_INFO* stream, unsigned int bytes)
 {
     int delta;
     int tmp_step;

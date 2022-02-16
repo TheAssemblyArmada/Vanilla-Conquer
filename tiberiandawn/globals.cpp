@@ -159,7 +159,7 @@ bool CrateMaker = false;
 **	upward at the rate of one per game logic process. The target rate is 15
 **	per second. This value is saved and restored with the saved game.
 */
-long Frame = 0;
+int Frame = 0;
 
 /***************************************************************************
 **	These globals are constantly monitored to determine if the player
@@ -541,13 +541,13 @@ int MPlayerCountMax[2] = {50, 12};
 MPlayerMaxAhead is the number of frames ahead of this one to execute a given
 packet.  It's set by the RESPONSE_TIME event.
 ---------------------------------------------------------------------------*/
-unsigned long MPlayerMaxAhead = 3;
+unsigned int MPlayerMaxAhead = 3;
 
 /*---------------------------------------------------------------------------
 'FrameSendRate' is the # frames between data packets
 'FrameRateDelay' is the time ticks to wait between frames, for smoothing.
 ---------------------------------------------------------------------------*/
-unsigned long FrameSendRate;
+unsigned int FrameSendRate;
 
 /***************************************************************************
 **	Multiplayer ID's, stored in order of event execution.
@@ -877,9 +877,9 @@ GraphicBufferClass ModeXBuff;
 GraphicViewPortClass HidPage(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
 GraphicBufferClass SysMemPage(320, 200, (void*)NULL);
 int SoundOn;
-CountDownTimerClass FrameTimer(BT_SYSTEM, 0L);
-CountDownTimerClass DebugTimer(BT_SYSTEM, 0L);
-CountDownTimerClass CountDownTimer(BT_SYSTEM, 0L);
+CountDownTimerClass FrameTimer(BT_SYSTEM, 0);
+CountDownTimerClass DebugTimer(BT_SYSTEM, 0);
+CountDownTimerClass CountDownTimer(BT_SYSTEM, 0);
 
 NewConfigType NewConfig;
 

@@ -2268,7 +2268,7 @@ bool Read_Scenario_INI(char* fname, bool)
     len = strlen(buffer);
     for (int i = 0; i < len; i++) {
         val = (unsigned char)buffer[i];
-        Add_CRC(&ScenarioCRC, (unsigned long)val);
+        Add_CRC(&ScenarioCRC, (unsigned int)val);
     }
 #endif
 
@@ -2615,8 +2615,8 @@ bool Read_Scenario_INI(char* fname, bool)
         /*
         ** All this was originally done within Compute_Start_Pos.
         */
-        long start_x = 0;
-        long start_y = 0;
+        int start_x = 0;
+        int start_y = 0;
         Map.Compute_Start_Pos(start_x, start_y);
         for (int i = 0; i < ARRAY_SIZE(Scen.Views); ++i) {
             Scen.Views[i] = XY_Cell(start_x, start_y);

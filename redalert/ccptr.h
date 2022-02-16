@@ -95,11 +95,11 @@ public:
         return (*this == rvalue || rvalue > *this);
     }
 
-    long Raw(void) const
+    int Raw(void) const
     {
         return (ID);
     }
-    void Set_Raw(long value)
+    void Set_Raw(int value)
     {
         ID = value;
     }

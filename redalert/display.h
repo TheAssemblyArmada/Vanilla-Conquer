@@ -215,7 +215,7 @@ public:
     /*
     ** Computes starting position based on player's units' Coords.
     */
-    void Compute_Start_Pos(long& x, long& y);
+    void Compute_Start_Pos(int& x, int& y);
 
     /*
     **	File I/O.

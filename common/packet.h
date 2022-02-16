@@ -78,11 +78,11 @@ public:
     {
         Add_Field(new FieldClass(field, data));
     };
-    void Add_Field(const char* field, long data)
+    void Add_Field(const char* field, int data)
     {
         Add_Field(new FieldClass(field, data));
     };
-    void Add_Field(const char* field, unsigned long data)
+    void Add_Field(const char* field, unsigned int data)
     {
         Add_Field(new FieldClass(field, data));
     };
@@ -104,8 +104,8 @@ public:
     bool Get_Field(const char* id, unsigned char& data);
     bool Get_Field(const char* id, short& data);
     bool Get_Field(const char* id, unsigned short& data);
-    bool Get_Field(const char* id, long& data);
-    bool Get_Field(const char* id, unsigned long& data);
+    bool Get_Field(const char* id, int& data);
+    bool Get_Field(const char* id, unsigned int& data);
     bool Get_Field(const char* id, char* data);
     bool Get_Field(const char* id, void* data, int& length);
 

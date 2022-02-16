@@ -1068,7 +1068,7 @@ uint32_t SessionClass::Compute_Unique_ID(void)
     // Start with the seconds since Jan 1, 1970 (system local time)
     //------------------------------------------------------------------------
     time(&tm);
-    id = (unsigned long)tm;
+    id = (unsigned int)tm;
 
     //------------------------------------------------------------------------
     // Add in every byte in the user's path environment variable
@@ -1076,7 +1076,7 @@ uint32_t SessionClass::Compute_Unique_ID(void)
     path = getenv("PATH");
     if (path) {
         for (i = 0; i < strlen(path); i++) {
-            Add_CRC(&id, (unsigned long)path[i]);
+            Add_CRC(&id, (unsigned int)path[i]);
         }
     }
 

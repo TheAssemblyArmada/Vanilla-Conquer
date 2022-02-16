@@ -11,7 +11,7 @@
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 #include "face.h"
 
-int Desired_Facing256(long x1, long y1, long x2, long y2)
+int Desired_Facing256(int x1, int y1, int x2, int y2)
 {
     signed char unk1 = 0;
 
@@ -58,7 +58,7 @@ int Desired_Facing256(long x1, long y1, long x2, long y2)
     return 255;
 }
 
-int Desired_Facing8(long x1, long y1, long x2, long y2)
+int Desired_Facing8(int x1, int y1, int x2, int y2)
 {
     int xdiff = 0;
     int ydiff = 0;

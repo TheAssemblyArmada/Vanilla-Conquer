@@ -664,7 +664,7 @@ ReceiveQueueType* CommBufferClass::Get_Receive(int index)
  * HISTORY:                                                                *
  *   01/19/1995 BR : Created.                                              *
  *=========================================================================*/
-void CommBufferClass::Add_Delay(unsigned long delay)
+void CommBufferClass::Add_Delay(unsigned int delay)
 {
     int roundoff = 0;
 
@@ -701,7 +701,7 @@ void CommBufferClass::Add_Delay(unsigned long delay)
  * HISTORY:                                                                *
  *   01/19/1995 BR : Created.                                              *
  *=========================================================================*/
-unsigned long CommBufferClass::Avg_Response_Time(void)
+unsigned int CommBufferClass::Avg_Response_Time(void)
 {
     return (MeanDelay);
 
@@ -722,7 +722,7 @@ unsigned long CommBufferClass::Avg_Response_Time(void)
  * HISTORY:                                                                *
  *   01/19/1995 BR : Created.                                              *
  *=========================================================================*/
-unsigned long CommBufferClass::Max_Response_Time(void)
+unsigned int CommBufferClass::Max_Response_Time(void)
 {
     return (MaxDelay);
 
@@ -816,7 +816,7 @@ void CommBufferClass::Mono_Debug_Print(int refresh)
     { // this mirrors the CommHeaderType
         unsigned short MagicNumber;
         unsigned char Code;
-        unsigned long PacketID;
+        unsigned int PacketID;
     } * hdr;
 
     //------------------------------------------------------------------------
@@ -948,7 +948,7 @@ void CommBufferClass::Mono_Debug_Print2(int refresh)
     { // this mirrors the CommHeaderType
         unsigned short MagicNumber;
         unsigned char Code;
-        unsigned long PacketID;
+        unsigned int PacketID;
     } * hdr;
 
     //------------------------------------------------------------------------

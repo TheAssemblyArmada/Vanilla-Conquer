@@ -73,7 +73,7 @@
         file_ptr = pool;                                                                                               \
     }
 
-GraphicBufferClass* Read_PCX_File(const char* name, char* palette, void* Buff, long Size)
+GraphicBufferClass* Read_PCX_File(const char* name, char* palette, void* Buff, int Size)
 {
     unsigned i, j;
     unsigned rle;

@@ -3512,13 +3512,13 @@ typedef struct
 */
 typedef struct
 {
-    CELL Start;             // Starting cell number.
-    int Cost;               // Accumulated terrain cost.
-    int Length;             // Command string length.
-    FacingType* Command;    // Pointer to command string.
-    unsigned long* Overlap; // Pointer to overlap list
-    CELL LastOverlap;       // stores position of last overlap
-    CELL LastFixup;         // stores position of last overlap
+    CELL Start;            // Starting cell number.
+    int Cost;              // Accumulated terrain cost.
+    int Length;            // Command string length.
+    FacingType* Command;   // Pointer to command string.
+    unsigned int* Overlap; // Pointer to overlap list
+    CELL LastOverlap;      // stores position of last overlap
+    CELL LastFixup;        // stores position of last overlap
 } PathType;
 
 /**********************************************************************

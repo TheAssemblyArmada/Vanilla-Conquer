@@ -99,7 +99,7 @@ public:
     /*
     ** Track when movement last stopped.
     */
-    long StopDriverFrame;
+    int StopDriverFrame;
 
     /*
     ** Track the last cell we looked from.

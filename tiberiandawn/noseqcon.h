@@ -67,9 +67,9 @@ public:
                           int numrecieve,
                           int maxlen,
                           unsigned short magicnum,
-                          unsigned long retry_delta,
-                          unsigned long max_retries,
-                          unsigned long timeout);
+                          unsigned int retry_delta,
+                          unsigned int max_retries,
+                          unsigned int timeout);
     virtual ~NonSequencedConnClass();
 
     /*.....................................................................
@@ -104,23 +104,23 @@ protected:
     Running totals of # of packets we send & receive which require an ACK,
     and those that don't.
     .....................................................................*/
-    unsigned long NumRecNoAck;
-    unsigned long NumRecAck;
-    unsigned long NumSendNoAck;
-    unsigned long NumSendAck;
+    unsigned int NumRecNoAck;
+    unsigned int NumRecAck;
+    unsigned int NumSendNoAck;
+    unsigned int NumSendAck;
 
     /*.....................................................................
     This is the ID of the last consecutively-received packet; anything older
     than this, we know is a resend.  Anything newer than this MUST be lying
     around in the Queue for us to detect it as a resend.
     .....................................................................*/
-    unsigned long LastSeqID;
+    unsigned int LastSeqID;
 
     /*.....................................................................
     This is the ID of the PACKET_DATA_ACK packet we read last; it ensures
     that the application reads that type of packet in order.
     .....................................................................*/
-    unsigned long LastReadID;
+    unsigned int LastReadID;
 };
 
 #endif

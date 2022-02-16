@@ -79,7 +79,7 @@ typedef enum
 
 void* Open_Animation(char const* file_name,
                      char* user_buffer,
-                     long user_buffer_size,
+                     int user_buffer_size,
                      WSAOpenType user_flags,
                      unsigned char* palette = nullptr);
 void Close_Animation(void* handle);
@@ -106,7 +106,7 @@ int Get_Animation_Y(void const* handle);
 int Get_Animation_Width(void const* handle);
 int Get_Animation_Height(void const* handle);
 int Get_Animation_Palette(void const* handle);
-unsigned long Get_Animation_Size(void const* handle);
+unsigned int Get_Animation_Size(void const* handle);
 
 /***************************************************************************
  * OPEN_ANIMATION -- file name, flags, palette, system allocates buffer.   *

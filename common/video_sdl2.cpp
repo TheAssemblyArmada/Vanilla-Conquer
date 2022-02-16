@@ -736,7 +736,7 @@ public:
     {
         return surface->pixels;
     }
-    virtual long GetPitch() const
+    virtual int GetPitch() const
     {
         return surface->pitch;
     }

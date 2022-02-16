@@ -185,7 +185,7 @@ public:
         */
         struct
         {
-            unsigned long CRC;
+            unsigned int CRC;
             unsigned short CommandCount; // # commands sent so far
             unsigned char Delay;         // propogation delay used this frame
                                          // (Frame - Delay = sender's current frame #)

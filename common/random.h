@@ -65,11 +65,11 @@ public:
         SIGNIFICANT_BITS = 15 // Random number bit significance.
     };
 
-    unsigned long Seed;
+    unsigned int Seed;
 
 #ifdef RANDOM_COUNT
-    unsigned long Count1;
-    unsigned long Count2;
+    unsigned int Count1;
+    unsigned int Count2;
 #endif
 
 protected:

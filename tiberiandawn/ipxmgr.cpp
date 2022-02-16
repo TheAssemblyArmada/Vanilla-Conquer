@@ -182,7 +182,7 @@ IPXManagerClass::IPXManagerClass(int glb_maxlen,
     //........................................................................
     //	Save our socket ID number
     //........................................................................
-    Socket = (unsigned short)((((unsigned long)socket & 0x00ff) << 8) | (((unsigned long)socket & 0xff00) >> 8));
+    Socket = (unsigned short)((((unsigned int)socket & 0x00ff) << 8) | (((unsigned int)socket & 0xff00) >> 8));
 
     //------------------------------------------------------------------------
     //	Get the user's IPX local connection number
@@ -422,7 +422,7 @@ int IPXManagerClass::Is_IPX(void)
  * HISTORY:                                                                *
  *   07/02/1995 BR : Created.                                              *
  *=========================================================================*/
-void IPXManagerClass::Set_Timing(unsigned long retrydelta, unsigned long maxretries, unsigned long timeout)
+void IPXManagerClass::Set_Timing(unsigned int retrydelta, unsigned int maxretries, unsigned int timeout)
 {
     int i;
 
@@ -1390,7 +1390,7 @@ int IPXManagerClass::Private_Num_Receive(int id)
  *=========================================================================*/
 void IPXManagerClass::Set_Socket(unsigned short socket)
 {
-    Socket = (unsigned short)((((unsigned long)socket & 0x00ff) << 8) | (((unsigned long)socket & 0xff00) >> 8));
+    Socket = (unsigned short)((((unsigned int)socket & 0x00ff) << 8) | (((unsigned int)socket & 0xff00) >> 8));
 
 } /* end of Set_Socket */
 
@@ -1409,10 +1409,10 @@ void IPXManagerClass::Set_Socket(unsigned short socket)
  * HISTORY:                                                                *
  *   05/04/1995 BRR : Created.                                             *
  *=========================================================================*/
-unsigned long IPXManagerClass::Response_Time(void)
+unsigned int IPXManagerClass::Response_Time(void)
 {
-    unsigned long resp;
-    unsigned long maxresp = 0;
+    unsigned int resp;
+    unsigned int maxresp = 0;
     int i;
 
     for (i = 0; i < NumConnections; i++) {
@@ -1441,7 +1441,7 @@ unsigned long IPXManagerClass::Response_Time(void)
  * HISTORY:                                                                *
  *   05/04/1995 BRR : Created.                                             *
  *=========================================================================*/
-unsigned long IPXManagerClass::Global_Response_Time(void)
+unsigned int IPXManagerClass::Global_Response_Time(void)
 {
     if (GlobalChannel) {
         return (GlobalChannel->Queue->Avg_Response_Time());
@@ -1497,8 +1497,8 @@ void IPXManagerClass::Reset_Response_Time(void)
 void* IPXManagerClass::Oldest_Send(void)
 {
     int i, j;
-    unsigned long time;
-    unsigned long mintime = 0xffffffff;
+    unsigned int time;
+    unsigned int mintime = 0xffffffff;
     SendQueueType* send_entry; // ptr to send entry header
     CommHeaderType* packet;
     void* buf = NULL;

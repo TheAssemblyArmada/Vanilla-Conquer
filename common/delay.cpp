@@ -34,7 +34,7 @@
 
 void Delay(int duration)
 {
-    unsigned long count;
+    unsigned int count;
     TimerClass timer(BT_SYSTEM, true);
 
     while (duration--) {

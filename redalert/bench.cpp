@@ -124,7 +124,7 @@ void Benchmark::Begin(bool reset)
  *=============================================================================================*/
 void Benchmark::End(void)
 {
-    unsigned long value = Clock;
+    unsigned int value = Clock;
 
     if (Counter == MAXIMUM_EVENT_COUNT) {
         Average -= Average / MAXIMUM_EVENT_COUNT;
@@ -151,7 +151,7 @@ void Benchmark::End(void)
  * HISTORY:                                                                                    *
  *   07/18/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-unsigned long Benchmark::Value(void) const
+unsigned int Benchmark::Value(void) const
 {
     if (Counter) {
         return (Average / Counter);

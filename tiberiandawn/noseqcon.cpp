@@ -69,9 +69,9 @@ NonSequencedConnClass::NonSequencedConnClass(int numsend,
                                              int numreceive,
                                              int maxlen,
                                              unsigned short magicnum,
-                                             unsigned long retry_delta,
-                                             unsigned long max_retries,
-                                             unsigned long timeout)
+                                             unsigned int retry_delta,
+                                             unsigned int max_retries,
+                                             unsigned int timeout)
     : ConnectionClass(160, 160, maxlen, magicnum, retry_delta, max_retries, timeout)
 {
     /*------------------------------------------------------------------------
@@ -502,7 +502,7 @@ int NonSequencedConnClass::Service_Send_Queue(void)
     int num_entries;
     SendQueueType* send_entry;  // ptr to send queue entry
     CommHeaderType* packet_hdr; // packet header
-    unsigned long curtime;      // current time
+    unsigned int curtime;       // current time
     int bad_conn = 0;
 
     /*------------------------------------------------------------------------

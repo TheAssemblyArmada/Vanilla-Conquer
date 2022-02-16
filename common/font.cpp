@@ -172,7 +172,7 @@ unsigned int String_Pixel_Width(char const* string)
  *                                                                         *
  *                                                                         *
  * INPUT:   VVPC& vp - viewport that was printed to.                       *
- *          unsigned long offset - offset that Text_Print returned.        *
+ *          unsigned int offset - offset that Text_Print returned.        *
  *          INT *x - x return value.                                       *
  *          INT *y - y return value.                                       *
  *                                                                         *
@@ -183,7 +183,7 @@ unsigned int String_Pixel_Width(char const* string)
  * HISTORY:                                                                *
  *   07/20/1994 SKB : Created.                                             *
  *=========================================================================*/
-void Get_Next_Text_Print_XY(GraphicViewPortClass& gp, unsigned long offset, int* x, int* y)
+void Get_Next_Text_Print_XY(GraphicViewPortClass& gp, unsigned int offset, int* x, int* y)
 {
     if (offset) {
         int buffwidth = gp.Get_Width() + gp.Get_XAdd();
@@ -319,7 +319,7 @@ struct FontHeader
  *   01/17/1995 PWG : Created.                                             *
  *   18/08/2020 OmniBlade : Translation to C++ added.                      *
  *=========================================================================*/
-long Buffer_Print(void* thisptr, const char* string, int x, int y, int fground, int bground)
+int Buffer_Print(void* thisptr, const char* string, int x, int y, int fground, int bground)
 {
     GraphicViewPortClass& vp = *static_cast<GraphicViewPortClass*>(thisptr);
     const FontHeader* fntheader = reinterpret_cast<const FontHeader*>(FontPtr);
