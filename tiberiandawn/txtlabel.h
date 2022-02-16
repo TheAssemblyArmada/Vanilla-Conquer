@@ -59,7 +59,7 @@ public:
     /*
     ** General-purpose data field
     */
-    unsigned long UserData;
+    unsigned int UserData;
     TextPrintType Style;
     char* Text;
     int Color;

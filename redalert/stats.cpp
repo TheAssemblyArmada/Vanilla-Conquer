@@ -153,7 +153,7 @@ enum
 
 bool GameTimerInUse = false;
 TimerClass GameTimer;
-long GameEndTime;
+int GameEndTime;
 void* PacketLater = NULL;
 
 //#include "WolDebug.h"
@@ -246,16 +246,16 @@ void Send_Statistics_Packet(void)
         /*
         ** Game ID. A unique game identifier assigned by WChat.
         */
-        stats.Add_Field(FIELD_GAME_ID, (unsigned long)PlanetWestwoodGameID);
+        stats.Add_Field(FIELD_GAME_ID, PlanetWestwoodGameID);
 
 #ifdef WOLAPI_INTEGRATION
 
         //	Number of players initially in game.
-        stats.Add_Field(FIELD_NUM_INITIAL_PLAYERS, (unsigned long)pWolapi->GameInfoCurrent.iPlayerCount);
+        stats.Add_Field(FIELD_NUM_INITIAL_PLAYERS, (unsigned int)pWolapi->GameInfoCurrent.iPlayerCount);
         // debugprint( "Stats: number of initial players is %i\n", pWolapi->GameInfoCurrent.iPlayerCount );
 
         //	Number of players remaining in game. Not sure of what use this will be statistically...
-        stats.Add_Field(FIELD_NUM_REMAINING_PLAYERS, (unsigned long)Session.Players.Count());
+        stats.Add_Field(FIELD_NUM_REMAINING_PLAYERS, (unsigned int)Session.Players.Count());
         // debugprint( "Stats: number of remaining players is %i\n", Session.Players.Count() );
 
         //	Whether or not this was a tournament game.
@@ -271,7 +271,7 @@ void Send_Statistics_Packet(void)
         /*
         ** Start credits.
         */
-        stats.Add_Field(FIELD_START_CREDITS, (unsigned long)Session.Options.Credits);
+        stats.Add_Field(FIELD_START_CREDITS, (unsigned int)Session.Options.Credits);
 
         /*
         ** Bases (On/Off)
@@ -291,7 +291,7 @@ void Send_Statistics_Packet(void)
         /*
         ** AI Players (On/Off)
         */
-        stats.Add_Field(FIELD_AI_PLAYERS, (unsigned long)Session.Options.AIPlayers);
+        stats.Add_Field(FIELD_AI_PLAYERS, (unsigned int)Session.Options.AIPlayers);
 
         /*
         ** Shadow regrowth enabled
@@ -306,12 +306,12 @@ void Send_Statistics_Packet(void)
         /*
         ** Start unit count
         */
-        stats.Add_Field(FIELD_START_UNIT_COUNT, (unsigned long)Session.Options.UnitCount);
+        stats.Add_Field(FIELD_START_UNIT_COUNT, (unsigned int)Session.Options.UnitCount);
 
         /*
         ** Tech level.
         */
-        stats.Add_Field(FIELD_TECH_LEVEL, (unsigned long)BuildLevel);
+        stats.Add_Field(FIELD_TECH_LEVEL, (unsigned int)BuildLevel);
 
         /*
         ** Scenario
@@ -504,31 +504,31 @@ void Send_Statistics_Packet(void)
         **
         ** Passed from WChat
         */
-        stats.Add_Field(FIELD_START_TIME, (long)PlanetWestwoodStartTime);
+        stats.Add_Field(FIELD_START_TIME, PlanetWestwoodStartTime);
 
         /*
         ** Game duration (seconds).
         */
-        stats.Add_Field(FIELD_GAME_DURATION, (long)GameEndTime / 60);
+        stats.Add_Field(FIELD_GAME_DURATION, GameEndTime / 60);
 
         /*
         ** Avg. frame rate.
         */
 #ifdef FIXIT_IP_CRASH
-        long divisor = GameEndTime / 60;
+        int divisor = GameEndTime / 60;
         if (divisor != 0) {
-            stats.Add_Field(FIELD_FRAME_RATE, (long)Frame / (GameEndTime / 60));
+            stats.Add_Field(FIELD_FRAME_RATE, Frame / (GameEndTime / 60));
         } else {
-            stats.Add_Field(FIELD_FRAME_RATE, 0l);
+            stats.Add_Field(FIELD_FRAME_RATE, 0);
         }
 #else
-        stats.Add_Field(FIELD_FRAME_RATE, (long)Frame / (GameEndTime / 60));
+        stats.Add_Field(FIELD_FRAME_RATE, Frame / (GameEndTime / 60));
 #endif
 
         /*
         ** Memory
         */
-        stats.Add_Field(FIELD_MEMORY, (long)-1);
+        stats.Add_Field(FIELD_MEMORY, -1);
 
         /*
         ** Game speed setting.
@@ -772,7 +772,7 @@ void Send_Statistics_Packet(void)
             ** Amount of tiberium turned into credits
             */
             field_player_harvested[3] = '1' + (char)house;
-            stats.Add_Field(field_player_harvested, (unsigned long)player->HarvestedCredits);
+            stats.Add_Field(field_player_harvested, (unsigned int)player->HarvestedCredits);
         }
 
         /*

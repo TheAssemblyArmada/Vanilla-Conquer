@@ -94,7 +94,7 @@ void GraphicBufferClass::Attach_DD_Surface(GraphicBufferClass* attach_buffer)
  * HISTORY:                                                                *
  *   10/09/1995     : Created.                                             *
  *=========================================================================*/
-void GraphicBufferClass::Init(int w, int h, void* buffer, long size, GBC_Enum flags)
+void GraphicBufferClass::Init(int w, int h, void* buffer, int size, GBC_Enum flags)
 {
     Size = size; // find size of physical buffer
     Width = w;   // Record width of Buffer
@@ -176,7 +176,7 @@ GraphicBufferClass::GraphicBufferClass()
 /***************************************************************************
  * GBC::GRAPHICBUFFERCLASS -- Constructor for fixed size buffers           *
  *                                                                         *
- * INPUT:      long size     - size of the buffer to create                *
+ * INPUT:      int size     - size of the buffer to create                *
  *             int w         - width of buffer in pixels (default = 320)   *
  *             int h         - height of buffer in pixels (default = 200)  *
  *             void *buffer  - a pointer to the buffer if any (optional)   *
@@ -188,7 +188,7 @@ GraphicBufferClass::GraphicBufferClass()
  * HISTORY:                                                                *
  *   05/13/1994 PWG : Created.                                             *
  *=========================================================================*/
-GraphicBufferClass::GraphicBufferClass(int w, int h, void* buffer, long size)
+GraphicBufferClass::GraphicBufferClass(int w, int h, void* buffer, int size)
     : VideoSurfacePtr(nullptr)
 {
     Init(w, h, buffer, size, GBC_NONE);
@@ -375,9 +375,9 @@ bool GraphicBufferClass::IsAllocated() const
  * OUTPUT:     none                                                        *
  *                                                                         *
  **************************************************************************/
-void GraphicBufferClass::Scale_Rotate(BitmapClass& bmp, TPoint2D const& pt, long scale, unsigned char angle)
+void GraphicBufferClass::Scale_Rotate(BitmapClass& bmp, TPoint2D const& pt, int scale, unsigned char angle)
 {
-    static long _SineTab[256] = {
+    static int _SineTab[256] = {
         0,    6,    12,   18,   25,   31,   37,   43,   49,   56,   62,   68,   74,   80,   86,   92,   97,   103,
         109,  115,  120,  126,  131,  136,  142,  147,  152,  157,  162,  167,  171,  176,  180,  185,  189,  193,
         197,  201,  205,  209,  212,  216,  219,  222,  225,  228,  231,  233,  236,  238,  240,  243,  244,  246,
@@ -395,7 +395,7 @@ void GraphicBufferClass::Scale_Rotate(BitmapClass& bmp, TPoint2D const& pt, long
         -25,  -19,  -13,  -7,
     };
 
-    static long _CosineTab[256] = {
+    static int _CosineTab[256] = {
         256,  255,  255,  255,  254,  254,  253,  252,  251,  249,  248,  246,  244,  243,  241,  238,  236,  234,
         231,  228,  225,  222,  219,  216,  212,  209,  205,  201,  197,  193,  189,  185,  181,  176,  171,  167,
         162,  157,  152,  147,  142,  137,  131,  126,  120,  115,  109,  103,  98,   92,   86,   80,   74,   68,
@@ -431,10 +431,10 @@ void GraphicBufferClass::Scale_Rotate(BitmapClass& bmp, TPoint2D const& pt, long
     -------------------------------------------------*/
     {
         angle &= 0x0FF;
-        long c = _CosineTab[angle];
-        long s = _SineTab[angle];
-        long W = (scale * bmp.Width) >> 1;
-        long L = (scale * bmp.Height) >> 1;
+        int c = _CosineTab[angle];
+        int s = _SineTab[angle];
+        int W = (scale * bmp.Width) >> 1;
+        int L = (scale * bmp.Height) >> 1;
 
         p0.x = (pt.x + ((((L * c) >> 8) - ((W * s) >> 8)) >> 8));
         p0.y = (pt.y + (((-(L * s) >> 8) - ((W * c) >> 8)) >> 8));

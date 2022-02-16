@@ -24,7 +24,7 @@
 */
 
 char* _ShapeBuffer = 0;
-long _ShapeBufferSize = 0;
+int _ShapeBufferSize = 0;
 
 /*
 ;***************************************************************************

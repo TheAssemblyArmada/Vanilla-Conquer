@@ -40,7 +40,7 @@
 
 #ifndef DEMO
 // From conquer.cpp
-long MixFileHandler(VQAHandle* vqa, long action, void* buffer, long nbytes);
+int MixFileHandler(VQAHandle* vqa, int action, void* buffer, int nbytes);
 
 #ifndef REMASTER_BUILD
 VQAHandle* Open_Movie(const char* name)

@@ -1027,7 +1027,7 @@ void Cycle_Wait_Click(void)
 {
     int counter = 0;
     int minclicks = 20;
-    unsigned long timingtime = WinTickCount.Time();
+    unsigned int timingtime = WinTickCount.Time();
     // SerialPacketType sendpacket;
     // SerialPacketType receivepacket;
     // int packetlen;

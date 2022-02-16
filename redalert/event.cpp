@@ -432,7 +432,7 @@ EventClass::EventClass(EventType type, int id, CELL cell)
  * HISTORY:                                                                                    *
  *   11/10/1995 BRR : Created.                                                                 *
  *=============================================================================================*/
-EventClass::EventClass(EventType type, void* ptr, unsigned long size)
+EventClass::EventClass(EventType type, void* ptr, unsigned int size)
 {
     ID = PlayerPtr->ID;
     Type = type;

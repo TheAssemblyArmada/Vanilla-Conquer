@@ -120,7 +120,7 @@ bool Save_Game(const char* file_name, const char* descr)
 {
     RawFileClass file;
     int i;
-    unsigned long version;
+    unsigned int version;
     unsigned scenario;
     HousesType house;
     char descr_buf[DESCRIP_MAX];
@@ -325,7 +325,7 @@ bool Load_Game(const char* file_name)
 {
     RawFileClass file;
     int i;
-    unsigned long version;
+    unsigned int version;
     unsigned scenario;
     HousesType house;
     char descr_buf[DESCRIP_MAX];
@@ -983,7 +983,7 @@ bool Get_Savefile_Info(int id, char* buf, unsigned* scenp, HousesType* housep)
 {
     RawFileClass file;
     char name[_MAX_FNAME + _MAX_EXT];
-    unsigned long version;
+    unsigned int version;
     char descr_buf[DESCRIP_MAX];
 
     /*

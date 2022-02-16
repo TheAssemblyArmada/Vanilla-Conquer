@@ -274,7 +274,7 @@ public:
     */
     bool Basic_Path(void);
 
-    virtual RadioMessageType Receive_Message(RadioClass* from, RadioMessageType message, long& param);
+    virtual RadioMessageType Receive_Message(RadioClass* from, RadioMessageType message, int& param);
     virtual bool Can_Demolish(void) const;
     bool Is_Recruitable(HouseClass const* house = NULL) const;
     bool Is_On_Priority_Mission(void) const;

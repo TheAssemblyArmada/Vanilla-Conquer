@@ -233,15 +233,15 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
 {
 #ifdef FIXIT_SCORE_CRASH
     char* ptr;
-    unsigned long offcurr, offdiff;
+    unsigned int offcurr, offdiff;
 #else
     char *ptr, *lockptr;
-    unsigned long offcurr, off16, offdiff;
+    unsigned int offcurr, off16, offdiff;
 #endif
     uint32_t offset[SUBFRAMEOFFS];
     KeyFrameHeaderType* keyfr;
     unsigned short buffsize, currframe, subframe;
-    unsigned long length = 0;
+    unsigned int length = 0;
     char frameflags;
     uintptr_t return_value;
     char* temp_shape_ptr;
@@ -318,7 +318,7 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
     buffsize = keyfr->width * keyfr->height;
 
     // get offset into data
-    ptr = (char*)Add_Long_To_Pointer(dataptr, (((unsigned long)framenumber << 3) + sizeof(KeyFrameHeaderType)));
+    ptr = (char*)Add_Long_To_Pointer(dataptr, (((unsigned int)framenumber << 3) + sizeof(KeyFrameHeaderType)));
     Mem_Copy(ptr, &offset[0], 12L);
     frameflags = (char)(offset[0] >> 24);
 
@@ -335,8 +335,8 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
         if ((frameflags & KF_DELTA)) {
             currframe = (unsigned short)offset[1];
 
-            ptr = (char*)Add_Long_To_Pointer(dataptr, (((unsigned long)currframe << 3) + sizeof(KeyFrameHeaderType)));
-            Mem_Copy(ptr, &offset[0], (long)(SUBFRAMEOFFS * sizeof(uint32_t)));
+            ptr = (char*)Add_Long_To_Pointer(dataptr, (((unsigned int)currframe << 3) + sizeof(KeyFrameHeaderType)));
+            Mem_Copy(ptr, &offset[0], (int)(SUBFRAMEOFFS * sizeof(uint32_t)));
         }
 
         // key frame
@@ -352,7 +352,7 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
         }
 
 #ifndef FIXIT_SCORE_CRASH
-        off16 = (unsigned long)lockptr & 0x00003FFFL;
+        off16 = (unsigned int)lockptr & 0x00003FFFL;
 #endif
 
         length = LCW_Uncompress(ptr, buffptr, buffsize);
@@ -365,7 +365,7 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
         if (((offset[2] & 0x00FFFFFFL) - offcurr) >= (0x00010000L - off16)) {
 
             ptr = (char*)Add_Long_To_Pointer(ptr, offdiff);
-            off16 = (unsigned long)ptr & 0x00003FFFL;
+            off16 = (unsigned int)ptr & 0x00003FFFL;
 
             offcurr += offdiff;
             offdiff = 0;
@@ -388,7 +388,7 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
                 if (((offset[subframe + 2] & 0x00FFFFFFL) - offcurr) >= (0x00010000L - off16)) {
 
                     ptr = (char*)Add_Long_To_Pointer(ptr, offdiff);
-                    off16 = (unsigned long)lockptr & 0x00003FFFL;
+                    off16 = (unsigned int)lockptr & 0x00003FFFL;
 
                     offcurr += offdiff;
                     offdiff = 0;
@@ -403,9 +403,9 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
 
                 if (subframe >= (SUBFRAMEOFFS - 1) && currframe <= framenumber) {
                     Mem_Copy(
-                        Add_Long_To_Pointer(dataptr, (((unsigned long)currframe << 3) + sizeof(KeyFrameHeaderType))),
+                        Add_Long_To_Pointer(dataptr, (((unsigned int)currframe << 3) + sizeof(KeyFrameHeaderType))),
                         &offset[0],
-                        (long)(SUBFRAMEOFFS * sizeof(uint32_t)));
+                        (int)(SUBFRAMEOFFS * sizeof(uint32_t)));
                     subframe = 0;
                 }
             }
@@ -434,7 +434,7 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
             }
 
             /* Check if it will fit. Else, disable TheaterShpBuffer temporarly.  */
-            if (THEATERSHPBUF_AVAILABLE(temp_shape_ptr) < (long)length && !AllowBigShapeBufRealloc) {
+            if (THEATERSHPBUF_AVAILABLE(temp_shape_ptr) < (int)length && !AllowBigShapeBufRealloc) {
                 DBG_LOG("TheaterShpBuf: shape won't fit. Disabling it temporarly...");
                 UseBigShapeBuffer = false;
                 ReallocShapeBufferFlag = true;
@@ -469,7 +469,7 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
             }
 
             /* Check if it will fit. Else, disable BigShpBuffer temporarly.  */
-            if (BIGSHPBUF_AVAILABLE(temp_shape_ptr) <= (long)length) {
+            if (BIGSHPBUF_AVAILABLE(temp_shape_ptr) <= (int)length) {
                 DBG_LOG("BigShpBuf: shape won't fit. Disabling it temporarly...");
                 UseBigShapeBuffer = false;
                 ReallocShapeBufferFlag = true;
@@ -586,7 +586,7 @@ bool Get_Build_Frame_Palette(void const* dataptr, void* palette)
     if (dataptr && (((KeyFrameHeaderType const*)dataptr)->flags & 1)) {
         char const* ptr = (char const*)Add_Long_To_Pointer(
             dataptr,
-            ((((long)sizeof(unsigned long) << 1) * ((KeyFrameHeaderType*)dataptr)->frames) + 16
+            ((((int)sizeof(unsigned int) << 1) * ((KeyFrameHeaderType*)dataptr)->frames) + 16
              + sizeof(KeyFrameHeaderType)));
 
         memcpy(palette, ptr, 768L);

@@ -95,7 +95,7 @@ public:
     void Detach(TARGET target, bool all = true);
     void Shroud_The_Map(HouseClass* house);
 
-    long Overpass(void);
+    int Overpass(void);
 
     virtual void Logic(void);
     virtual void Set_Map_Dimensions(int x, int y, int w, int h);
@@ -124,7 +124,7 @@ public:
     /*
     **	This is the total value of all harvestable Tiberium on the map.
     */
-    long TotalValue;
+    int TotalValue;
 
     CellClass& operator[](COORDINATE coord)
     {

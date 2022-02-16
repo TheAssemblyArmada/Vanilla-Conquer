@@ -76,7 +76,7 @@ FieldClass::FieldClass(const char* id, unsigned short data)
     Next = NULL;
 }
 
-FieldClass::FieldClass(const char* id, long data)
+FieldClass::FieldClass(const char* id, int data)
 {
     strncpy(ID, id, sizeof(ID));
     DataType = TYPE_LONG;
@@ -86,7 +86,7 @@ FieldClass::FieldClass(const char* id, long data)
     Next = NULL;
 }
 
-FieldClass::FieldClass(const char* id, unsigned long data)
+FieldClass::FieldClass(const char* id, unsigned int data)
 {
     strncpy(ID, id, sizeof(ID));
     DataType = TYPE_UNSIGNED_LONG;
@@ -146,7 +146,7 @@ void FieldClass::Host_To_Net(void)
 
     case TYPE_LONG:
     case TYPE_UNSIGNED_LONG:
-        *((unsigned long*)Data) = hton32(*((unsigned long*)Data));
+        *((unsigned int*)Data) = hton32(*((unsigned int*)Data));
         break;
 
     //
@@ -200,7 +200,7 @@ void FieldClass::Net_To_Host(void)
 
     case TYPE_LONG:
     case TYPE_UNSIGNED_LONG:
-        *((unsigned long*)Data) = ntoh32(*((unsigned long*)Data));
+        *((unsigned int*)Data) = ntoh32(*((unsigned int*)Data));
         break;
 
     //

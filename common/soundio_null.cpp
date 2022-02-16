@@ -20,11 +20,11 @@ void* Load_Sample(char const* filename)
 {
     return nullptr;
 };
-long Load_Sample_Into_Buffer(char const* filename, void* buffer, long size)
+int Load_Sample_Into_Buffer(char const* filename, void* buffer, int size)
 {
     return 0;
 }
-long Sample_Read(int fh, void* buffer, long size)
+int Sample_Read(int fh, void* buffer, int size)
 {
     return 0;
 };
@@ -69,7 +69,7 @@ int Get_Digi_Handle(void)
 {
     return 1;
 }
-long Sample_Length(void const* sample)
+int Sample_Length(void const* sample)
 {
     return 0;
 };

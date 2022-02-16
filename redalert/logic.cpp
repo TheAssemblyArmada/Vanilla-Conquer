@@ -259,9 +259,9 @@ void LogicClass::AI(void)
     }
 
     if (Scen.MissionTimer.Is_Active()) {
-        long secs = Scen.MissionTimer / TICKS_PER_SECOND;
-        long mins = secs / 60;
-        long hours = mins / 60;
+        int secs = Scen.MissionTimer / TICKS_PER_SECOND;
+        int mins = secs / 60;
+        int hours = mins / 60;
         secs %= 60;
         mins %= 60;
 

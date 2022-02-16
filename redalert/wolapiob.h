@@ -232,7 +232,7 @@ public:
     bool bConnectionDown; //	Flag used while in a game, set to true if connection goes down.
     bool bGameServer;     //	Flag used while in a game, true if game server (host).
 
-    unsigned long TournamentOpponentIP; //	Valid while playing a tournament game. IP address of opponent.
+    unsigned int TournamentOpponentIP; //	Valid while playing a tournament game. IP address of opponent.
 
     bool bPump_In_Call_Back; //	Used to enable PumpMessages during Call_Back(), for when we're in a modal dialog.
 

@@ -139,7 +139,7 @@ void CCFileClass::Error(int error, int canretry, char const* filename)
  * HISTORY:                                                                                    *
  *   08/08/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-long CCFileClass::Write(void const* buffer, long size)
+int CCFileClass::Write(void const* buffer, int size)
 {
     /*
     **	If this is part of a mixfile, then writing is not allowed. Error out with a fatal
@@ -170,7 +170,7 @@ long CCFileClass::Write(void const* buffer, long size)
  * HISTORY:                                                                                    *
  *   08/08/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-long CCFileClass::Read(void* buffer, long size)
+int CCFileClass::Read(void* buffer, int size)
 {
     bool opened = false;
 
@@ -188,7 +188,7 @@ long CCFileClass::Read(void* buffer, long size)
     **	all that is required for the read.
     */
     if (Is_Resident()) {
-        long maximum = Data.Get_Size() - Position;
+        int maximum = Data.Get_Size() - Position;
 
         size = maximum < size ? maximum : size;
         //		size = MIN(maximum, size);
@@ -202,7 +202,7 @@ long CCFileClass::Read(void* buffer, long size)
         return (size);
     }
 
-    long s = CDFileClass::Read(buffer, size);
+    int s = CDFileClass::Read(buffer, size);
 
     /*
     **	If the file was opened by this routine, then close it at this time.
@@ -236,7 +236,7 @@ long CCFileClass::Read(void* buffer, long size)
  * HISTORY:                                                                                    *
  *   08/08/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-long CCFileClass::Seek(long pos, int dir)
+int CCFileClass::Seek(int pos, int dir)
 {
     /*
     **	When the file is resident, a mere adjustment of the virtual file position is
@@ -282,7 +282,7 @@ long CCFileClass::Seek(long pos, int dir)
  *   08/08/1994 JLB : Created.                                                                 *
  *   08/05/1996 JLB : Handles returning size of embedded file.                                 *
  *=============================================================================================*/
-long CCFileClass::Size(void)
+int CCFileClass::Size(void)
 {
     /*
     **	If the file is resident, the the size is already known. Just return the size in this
@@ -296,7 +296,7 @@ long CCFileClass::Size(void)
     **	mixfiles in order to get its size.
     */
     if (!CDFileClass::Is_Available()) {
-        long length = 0;
+        int length = 0;
         MixFileClass<CCFileClass>::Offset(File_Name(), NULL, NULL, NULL, &length);
         return (length);
     }
@@ -431,8 +431,8 @@ int CCFileClass::Open(int rights)
     */
     MixFileClass<CCFileClass>* mixfile = NULL;
     void* pointer = NULL;
-    long length = 0;
-    long start = 0;
+    int length = 0;
+    int start = 0;
     if (MixFileClass<CCFileClass>::Offset(File_Name(), &pointer, &mixfile, &start, &length)) {
 
         assert(mixfile != NULL);
@@ -500,7 +500,7 @@ void Close_File(int handle)
     }
 }
 
-long Read_File(int handle, void* buf, unsigned long bytes)
+int Read_File(int handle, void* buf, unsigned int bytes)
 {
     if (handle != WWERROR && Handles[handle].Is_Open()) {
         return (Handles[handle].Read(buf, bytes));
@@ -508,7 +508,7 @@ long Read_File(int handle, void* buf, unsigned long bytes)
     return (0);
 }
 
-long Write_File(int handle, void const* buf, unsigned long bytes)
+int Write_File(int handle, void const* buf, unsigned int bytes)
 {
     if (handle != WWERROR && Handles[handle].Is_Open()) {
         return (Handles[handle].Write(buf, bytes));
@@ -527,7 +527,7 @@ int Delete_File(char const* file_name)
     return (CCFileClass(file_name).Delete());
 }
 
-unsigned long File_Size(int handle)
+unsigned int File_Size(int handle)
 {
     if (handle != WWERROR && Handles[handle].Is_Open()) {
         return (Handles[handle].Size());
@@ -535,7 +535,7 @@ unsigned long File_Size(int handle)
     return (0);
 }
 
-unsigned long Seek_File(int handle, long offset, int starting)
+unsigned int Seek_File(int handle, int offset, int starting)
 {
     if (handle != WWERROR && Handles[handle].Is_Open()) {
         return (Handles[handle].Seek(offset, starting));

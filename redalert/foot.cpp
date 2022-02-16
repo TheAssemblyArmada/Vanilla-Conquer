@@ -189,7 +189,7 @@ void FootClass::Debug_Dump(MonoClass* mono) const
     mono->Set_Cursor(54, 5);
     mono->Printf("%2d", PathThreshhold);
     mono->Set_Cursor(72, 3);
-    mono->Printf("%4d", (long)PathDelay);
+    mono->Printf("%4d", PathDelay);
     mono->Set_Cursor(67, 3);
     mono->Printf("%3d", TryTryAgain);
     if (HeadToCoord) {
@@ -1652,7 +1652,7 @@ bool FootClass::Restore_Mission(void)
  * HISTORY:                                                                                    *
  *   05/14/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-RadioMessageType FootClass::Receive_Message(RadioClass* from, RadioMessageType message, long& param)
+RadioMessageType FootClass::Receive_Message(RadioClass* from, RadioMessageType message, int& param)
 {
     assert(IsActive);
 

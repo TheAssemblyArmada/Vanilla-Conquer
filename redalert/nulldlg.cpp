@@ -315,15 +315,15 @@ int Com_Scenario_Dialog(bool skirmish)
     int rc;
     int recsignedoff = false;
     int i;
-    unsigned long timingtime;
-    unsigned long lastmsgtime;
-    unsigned long lastredrawtime;
-    unsigned long transmittime = 0;
-    unsigned long theirresponsetime;
+    unsigned int timingtime;
+    unsigned int lastmsgtime;
+    unsigned int lastredrawtime;
+    unsigned int transmittime = 0;
+    unsigned int theirresponsetime;
     static bool first_time = true;
     bool oppscorescreen = false;
     bool gameoptions = Session.Type == GAME_SKIRMISH;
-    unsigned long msg_timeout = 1200; // init to 20 seconds
+    unsigned int msg_timeout = 1200; // init to 20 seconds
 
     CCFileClass loadfile("SAVEGAME.NET");
     bool load_game = false; // 1 = load a saved game

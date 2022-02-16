@@ -95,7 +95,7 @@ TimerClass::TimerClass(BaseTimerEnum timer, bool on)
  *              10/5/95 4:17PM ST : Created                                                    *
  *=============================================================================================*/
 
-long TimerClass::Get_Ticks(void)
+int TimerClass::Get_Ticks(void)
 
 {
     switch (TickType) {
@@ -123,10 +123,10 @@ long TimerClass::Get_Ticks(void)
  * HISTORY:                                                                *
  *   05/03/1995 SKB : Created.                                             *
  *=========================================================================*/
-long TimerClass::Time(void)
+int TimerClass::Time(void)
 {
     if (Started) {
-        long ticks = Get_Ticks();
+        int ticks = Get_Ticks();
         Accumulated += ticks - (Started - 1);
         Started = ticks + 1;
     }
@@ -147,9 +147,9 @@ long TimerClass::Time(void)
  * HISTORY:                                                                *
  *   07/12/1994 SKB : Created.                                             *
  *=========================================================================*/
-long TimerClass::Stop(void)
+int TimerClass::Stop(void)
 {
-    long time = Time();
+    int time = Time();
     Started = 0;
     return (time);
 }
@@ -167,7 +167,7 @@ long TimerClass::Stop(void)
  * HISTORY:                                                                *
  *   07/12/1994 SKB : Created.                                             *
  *=========================================================================*/
-long TimerClass::Start(void)
+int TimerClass::Start(void)
 {
     if (!Started) {
         Started = Get_Ticks() + 1;
@@ -180,7 +180,7 @@ long TimerClass::Start(void)
  *                                                                         *
  *                                                                         *
  *                                                                         *
- * INPUT:  long value to set timer at.                                     *
+ * INPUT:  int value to set timer at.                                     *
  *                                                                         *
  * OUTPUT:                                                                 *
  *                                                                         *
@@ -190,7 +190,7 @@ long TimerClass::Start(void)
  *   07/12/1994 SKB : Created.                                             *
  *   05/03/1995 SKB : If start return Start since it returns Time          *
  *=========================================================================*/
-long TimerClass::Set(long value, bool start)
+int TimerClass::Set(int value, bool start)
 {
     Started = 0;
     Accumulated = value;
@@ -302,12 +302,12 @@ unsigned long long WinTimerClass::Now()
     return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }
 
-long SystemTimerClass::operator()() const
+int SystemTimerClass::operator()() const
 {
     return WindowsTimer.Get_System_Tick_Count();
 };
 
-SystemTimerClass::operator long() const
+SystemTimerClass::operator int() const
 {
     return WindowsTimer.Get_System_Tick_Count();
 };

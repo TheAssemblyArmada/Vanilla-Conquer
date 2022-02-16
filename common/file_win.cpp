@@ -10,7 +10,7 @@ public:
     virtual ~Find_File_Data_Win();
 
     virtual const char* GetName() const;
-    virtual unsigned long GetTime() const;
+    virtual unsigned int GetTime() const;
 
     virtual bool FindFirst(const char* fname);
     virtual bool FindNext();
@@ -37,12 +37,12 @@ const char* Find_File_Data_Win::GetName() const
     return FindData.cFileName;
 }
 
-unsigned long Find_File_Data_Win::GetTime() const
+unsigned int Find_File_Data_Win::GetTime() const
 {
     ULARGE_INTEGER ull;
     ull.LowPart = FindData.ftLastWriteTime.dwLowDateTime;
     ull.HighPart = FindData.ftLastWriteTime.dwHighDateTime;
-    return (unsigned long)(ull.QuadPart / 10000000ULL - 11644473600ULL);
+    return (unsigned int)(ull.QuadPart / 10000000ULL - 11644473600ULL);
 }
 
 bool Find_File_Data_Win::FindFirst(const char* fname)

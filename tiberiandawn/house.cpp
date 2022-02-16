@@ -1824,7 +1824,7 @@ int HouseClass::Adjust_Capacity(int adjust, bool inanger)
     int retval = 0;
 
     Capacity += adjust;
-    Capacity = MAX(Capacity, 0L);
+    Capacity = MAX(Capacity, 0);
     if (Tiberium > Capacity) {
         retval = Tiberium - Capacity;
         Tiberium = Capacity;

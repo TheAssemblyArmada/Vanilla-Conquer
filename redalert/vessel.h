@@ -123,7 +123,7 @@ public:
     virtual void Draw_It(int x, int y, WindowNumberType window) const;
     virtual short const* Overlap_List(bool redraw = false) const;
     virtual DirType Desired_Load_Dir(ObjectClass* passenger, CELL& moveto) const;
-    virtual RadioMessageType Receive_Message(RadioClass* from, RadioMessageType message, long& param);
+    virtual RadioMessageType Receive_Message(RadioClass* from, RadioMessageType message, int& param);
     virtual void AI(void);
     virtual void Per_Cell_Process(PCPType why);
     virtual void Assign_Destination(TARGET target);

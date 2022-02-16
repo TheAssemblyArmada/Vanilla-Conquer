@@ -376,10 +376,10 @@ bool CCINIClass::Put_MPHType(char const* section, char const* entry, MPHType val
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-long CCINIClass::Get_Owners(char const* section, char const* entry, long defvalue) const
+int CCINIClass::Get_Owners(char const* section, char const* entry, int defvalue) const
 {
     char buffer[128];
-    long ownable = defvalue;
+    int ownable = defvalue;
 
     if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
 
@@ -414,7 +414,7 @@ long CCINIClass::Get_Owners(char const* section, char const* entry, long defvalu
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool CCINIClass::Put_Owners(char const* section, char const* entry, long value)
+bool CCINIClass::Put_Owners(char const* section, char const* entry, int value)
 {
     char buffer[128];
 
@@ -1302,10 +1302,10 @@ bool CCINIClass::Put_TerrainType(char const* section, char const* entry, Terrain
  * HISTORY:                                                                                    *
  *   07/11/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-long CCINIClass::Get_Buildings(char const* section, char const* entry, long defvalue) const
+int CCINIClass::Get_Buildings(char const* section, char const* entry, int defvalue) const
 {
     char buffer[128];
-    long pre;
+    int pre;
 
     if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
 
@@ -1347,7 +1347,7 @@ long CCINIClass::Get_Buildings(char const* section, char const* entry, long defv
  * HISTORY:                                                                                    *
  *   07/11/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool CCINIClass::Put_Buildings(char const* section, char const* entry, long value)
+bool CCINIClass::Put_Buildings(char const* section, char const* entry, int value)
 {
     char buffer[128] = "";
     int maxi = (32 < STRUCT_COUNT) ? 32 : STRUCT_COUNT;

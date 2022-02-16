@@ -59,7 +59,7 @@
  * HISTORY:                                                                *
  *   06/01/1994 PWG : Created.                                             *
  *=========================================================================*/
-BufferClass::BufferClass(void* buffer, long size)
+BufferClass::BufferClass(void* buffer, int size)
 {
     Size = size; // find size of physical buffer
 
@@ -82,7 +82,7 @@ BufferClass::BufferClass(void* buffer, long size)
  * HISTORY:                                                                *
  *   06/01/1994 PWG : Created.                                             *
  *=========================================================================*/
-BufferClass::BufferClass(long size)
+BufferClass::BufferClass(int size)
 {
     Size = size;
     Buffer = new unsigned char[Size]; // otherwise allocate it and
@@ -139,9 +139,9 @@ BufferClass::~BufferClass()
  * HISTORY:                                                                *
  *   01/12/1995 PWG : Created.                                             *
  *=========================================================================*/
-long Buffer_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortClass& view)
+int Buffer_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortClass& view)
 {
-    long return_code = 0;
+    int return_code = 0;
     if (view.Lock()) {
         return_code = (Buffer_To_Page(x, y, w, h, Buffer, &view));
         view.Unlock();
@@ -164,9 +164,9 @@ long Buffer_To_Page(int x, int y, int w, int h, void* Buffer, GraphicViewPortCla
  * HISTORY:                                                                *
  *   07/01/1994 PWG : Created.                                             *
  *=========================================================================*/
-long BufferClass::To_Page(int w, int h, GraphicViewPortClass& view)
+int BufferClass::To_Page(int w, int h, GraphicViewPortClass& view)
 {
-    long return_code = 0;
+    int return_code = 0;
     if (view.Lock()) {
         return_code = (Buffer_To_Page(0, 0, w, h, Buffer, &view));
         view.Unlock();
@@ -188,9 +188,9 @@ long BufferClass::To_Page(int w, int h, GraphicViewPortClass& view)
  * HISTORY:                                                                *
  *   07/01/1994 PWG : Created.                                             *
  *=========================================================================*/
-long BufferClass::To_Page(GraphicViewPortClass& view)
+int BufferClass::To_Page(GraphicViewPortClass& view)
 {
-    long return_code = 0;
+    int return_code = 0;
     if (view.Lock()) {
         return_code = (Buffer_To_Page(0, 0, view.Get_Width(), view.Get_Height(), Buffer, &view));
         view.Unlock();
@@ -212,9 +212,9 @@ long BufferClass::To_Page(GraphicViewPortClass& view)
  * HISTORY:                                                                *
  *   07/01/1994 PWG : Created.                                             *
  *=========================================================================*/
-long BufferClass::To_Page(int x, int y, int w, int h, GraphicViewPortClass& view)
+int BufferClass::To_Page(int x, int y, int w, int h, GraphicViewPortClass& view)
 {
-    long return_code = 0;
+    int return_code = 0;
     if (view.Lock()) {
         return_code = (Buffer_To_Page(x, y, w, h, Buffer, &view));
         view.Unlock();

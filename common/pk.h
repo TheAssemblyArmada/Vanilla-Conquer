@@ -85,7 +85,7 @@ public:
     void Decode_Modulus(void* buffer);
     void Decode_Exponent(void* buffer);
 
-    static long Fast_Exponent(void)
+    static int Fast_Exponent(void)
     {
         return (65537L);
     }

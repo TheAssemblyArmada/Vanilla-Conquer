@@ -590,7 +590,7 @@ void TechnoClass::Debug_Dump(MonoClass* mono) const
     mono->Set_Cursor(71, 1);
     mono->Printf("$%4d", PurchasePrice);
     mono->Set_Cursor(54, 1);
-    mono->Printf("%3d", (long)Arm);
+    mono->Printf("%3d", (int)Arm);
     if (Is_Something_Attached()) {
         mono->Set_Cursor(1, 5);
         mono->Printf("%08X", Attached_Object());
@@ -625,7 +625,7 @@ void TechnoClass::Debug_Dump(MonoClass* mono) const
     mono->Fill_Attrib(40, 15, 12, 1, IsDiscoveredByComputer ? MonoClass::INVERSE : MonoClass::NORMAL);
     mono->Fill_Attrib(40, 16, 12, 1, IsALemon ? MonoClass::INVERSE : MonoClass::NORMAL);
     mono->Set_Cursor(47, 17);
-    mono->Printf("%3d", (long)IronCurtainCountDown);
+    mono->Printf("%3d", (int)IronCurtainCountDown);
     mono->Fill_Attrib(40, 17, 12, 1, IronCurtainCountDown > 0 ? MonoClass::INVERSE : MonoClass::NORMAL);
 
     RadioClass::Debug_Dump(mono);
@@ -919,7 +919,7 @@ bool TechnoClass::Mark(MarkType mark)
  *   10/17/1994 JLB : Created.                                                                 *
  *   06/17/1995 JLB : Handles tether contact messages.                                         *
  *=============================================================================================*/
-RadioMessageType TechnoClass::Receive_Message(RadioClass* from, RadioMessageType message, long& param)
+RadioMessageType TechnoClass::Receive_Message(RadioClass* from, RadioMessageType message, int& param)
 {
     assert(IsActive);
 
@@ -6274,7 +6274,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             if (spiedby) {
                 // If it's a refinery/silo, print the enemy's money
                 if (((BuildingClass*)this)->Class->Capacity) {
-                    long money = House->Available_Money();
+                    int money = House->Available_Money();
 
                     /*
                     **	Determine how many digits will be printed.

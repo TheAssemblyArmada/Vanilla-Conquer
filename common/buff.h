@@ -60,10 +60,10 @@ typedef int bool;
 class Buffer
 {
 public:
-    Buffer(char* ptr, long size = 0);
-    Buffer(void* ptr = 0, long size = 0);
-    Buffer(void const* ptr, long size = 0);
-    Buffer(long size);
+    Buffer(char* ptr, int size = 0);
+    Buffer(void* ptr = 0, int size = 0);
+    Buffer(void const* ptr, int size = 0);
+    Buffer(int size);
     Buffer(Buffer const& buffer);
     ~Buffer(void);
 
@@ -82,7 +82,7 @@ public:
     {
         return (BufferPtr);
     }
-    long Get_Size(void) const
+    int Get_Size(void) const
     {
         return (Size);
     }
@@ -100,7 +100,7 @@ protected:
     /*
     **	The size of the buffer memory.
     */
-    long Size;
+    int Size;
 
     /*
     **	Was the buffer allocated by this class? If so, then this class

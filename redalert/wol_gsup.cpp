@@ -50,7 +50,7 @@ bool operator==(const GAMEPARAMS& gp1, const GAMEPARAMS& gp2);
 bool operator==(const GlobalPacketType& gp1, const GlobalPacketType& gp2);
 PlayerColorType PlayerColorTypeOf(RemapControlType* pColorRemap);
 
-extern unsigned long PlanetWestwoodStartTime; // Time that game was started
+extern unsigned int PlanetWestwoodStartTime; // Time that game was started
 
 extern bool cancel_current_msgbox;
 extern bool disable_current_msgbox;
@@ -520,7 +520,7 @@ RESULT_WOLGSUP WOL_GameSetupDialog::Show()
 
     bool bInformParamChange;
 
-    long ok_timer = 0; // for timing OK button
+    int ok_timer = 0; // for timing OK button
     int i;
     int tabs[] = {77 * RESFACTOR};      // tabs for player list box
     int optiontabs[] = {8 * RESFACTOR}; // tabs for option list box
@@ -3241,7 +3241,7 @@ void WOL_GameSetupDialog::TriggerGameStart(char* szGoMessage)
             pPlayerNew = new NodeNameType;
             strcpy(pPlayerNew->Name, szPlayerName);
             //	Get player's IP address from pChatSink...
-            unsigned long lAddress = (pWO->pChatSink->GetPlayerGameIP(szPlayerName)); // ntoh32(
+            unsigned int lAddress = (pWO->pChatSink->GetPlayerGameIP(szPlayerName)); // ntoh32(
             //			debugprint( "IP address is %i, or 0x%x\n", lAddress, lAddress );
             if (pWO->GameInfoCurrent.bTournament) {
                 //	This is a tournament game, and I therefore have only one opponent: this one.
@@ -3401,7 +3401,7 @@ void WOL_GameSetupDialog::TriggerGameStart(char* szGoMessage)
 
     pWO->GameInfoCurrent.iPlayerCount = Session.Players.Count();
 
-    Ipx.Set_Timing(25, (unsigned long)-1, 1000);
+    Ipx.Set_Timing(25, (unsigned int)-1, 1000);
 
     if (bHost) {
         if (Session.Scenarios[Session.Options.ScenarioIndex]->Get_Official()) {
@@ -3420,7 +3420,7 @@ void WOL_GameSetupDialog::TriggerGameStart(char* szGoMessage)
     }
 
     Session.CommProtocol = COMM_PROTOCOL_MULTI_E_COMP;
-    Ipx.Set_Timing(30, (unsigned long)-1, 600);
+    Ipx.Set_Timing(30, (unsigned int)-1, 600);
 
     pWO->bEnableNewAftermathUnits = bAftermathUnits;
     bAftermathMultiplayer = bAftermathUnits;

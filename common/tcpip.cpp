@@ -942,7 +942,7 @@ void TcpipManagerClass::Set_Protocol_UDP(bool state)
 
 void TcpipManagerClass::Clear_Socket_Error(SOCKET socket)
 {
-    unsigned long error_code;
+    unsigned int error_code;
     socklen_t length = 4;
 
     getsockopt(socket, SOL_SOCKET, SO_ERROR, (char*)&error_code, &length);

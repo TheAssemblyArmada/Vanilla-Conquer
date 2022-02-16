@@ -46,7 +46,7 @@ enum VQALanguageType
 };
 
 // Need to confirm it does return,
-typedef long (*DrawerCallbackFuncPtr)(unsigned char* buffer, long frame_number);
+typedef int (*DrawerCallbackFuncPtr)(unsigned char* buffer, int frame_number);
 typedef int (*EventHandlerFuncPtr)(int mode, uint8_t* pal, int pal_size);
 
 typedef struct _VQAConfig

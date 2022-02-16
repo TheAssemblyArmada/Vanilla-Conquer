@@ -58,7 +58,7 @@ public:
     int Save(FileClass& file, bool withdigest) const;
     int Save(Pipe& pipe, bool withdigest) const;
 
-    long Get_Buildings(char const* section, char const* entry, long defvalue) const;
+    int Get_Buildings(char const* section, char const* entry, int defvalue) const;
     UnitType Get_UnitType(char const* section, char const* entry, UnitType defvalue) const;
     AnimType Get_AnimType(char const* section, char const* entry, AnimType defvalue) const;
     ArmorType Get_ArmorType(char const* section, char const* entry, ArmorType defvalue) const;
@@ -76,10 +76,10 @@ public:
     VocType Get_VocType(char const* section, char const* entry, VocType defvalue) const;
     WarheadType Get_WarheadType(char const* section, char const* entry, WarheadType defvalue) const;
     WeaponType Get_WeaponType(char const* section, char const* entry, WeaponType defvalue) const;
-    long Get_Owners(char const* section, char const* entry, long defvalue) const;
+    int Get_Owners(char const* section, char const* entry, int defvalue) const;
     CrateType Get_CrateType(char const* section, char const* entry, CrateType defvalue) const;
 
-    bool Put_Buildings(char const* section, char const* entry, long value);
+    bool Put_Buildings(char const* section, char const* entry, int value);
     bool Put_AnimType(char const* section, char const* entry, AnimType value);
     bool Put_UnitType(char const* section, char const* entry, UnitType value);
     bool Put_ArmorType(char const* section, char const* entry, ArmorType value);
@@ -89,7 +89,7 @@ public:
     bool Put_MPHType(char const* section, char const* entry, MPHType value);
     bool Put_VQType(char const* section, char const* entry, VQType value);
     bool Put_OverlayType(char const* section, char const* entry, OverlayType value);
-    bool Put_Owners(char const* section, char const* entry, long value);
+    bool Put_Owners(char const* section, char const* entry, int value);
     bool Put_SourceType(char const* section, char const* entry, SourceType value);
     bool Put_TerrainType(char const* section, char const* entry, TerrainType value);
     bool Put_TheaterType(char const* section, char const* entry, TheaterType value);

@@ -307,11 +307,11 @@ unsigned Cardinal_To_Fixed(unsigned base, unsigned cardinal)
  *=============================================================================================*/
 unsigned Fixed_To_Cardinal(unsigned base, unsigned fixed)
 {
-    unsigned long temp;
+    unsigned int temp;
 
     _AX = base;
     asm mul word ptr fixed _CX = _AX;
-    temp = ((unsigned long)MK_FP(_DX, _CX)) + 0x80;
+    temp = ((unsigned int)MK_FP(_DX, _CX)) + 0x80;
     if (*((char*)&temp + 3)) {
         return (0xFFFF);
     }

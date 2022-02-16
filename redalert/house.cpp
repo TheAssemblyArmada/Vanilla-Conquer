@@ -350,7 +350,7 @@ void HouseClass::Debug_Dump(MonoClass* mono) const
     mono->Set_Cursor(65, 1);
     mono->Printf("%2d", IQ);
     mono->Set_Cursor(72, 1);
-    mono->Printf("%5d", (long)RepairTimer);
+    mono->Printf("%5d", (int)RepairTimer);
 
     mono->Set_Cursor(1, 3);
     mono->Printf("%08X", AScan);
@@ -369,9 +369,9 @@ void HouseClass::Debug_Dump(MonoClass* mono) const
     mono->Set_Cursor(52, 3);
     mono->Printf("%5d", PointTotal);
     mono->Set_Cursor(62, 3);
-    mono->Printf("%5d", (long)TeamTime);
+    mono->Printf("%5d", (int)TeamTime);
     mono->Set_Cursor(71, 3);
-    mono->Printf("%5d", (long)AlertTime);
+    mono->Printf("%5d", (int)AlertTime);
 
     mono->Set_Cursor(1, 5);
     mono->Printf("%08X", BScan);
@@ -388,9 +388,9 @@ void HouseClass::Debug_Dump(MonoClass* mono) const
     mono->Set_Cursor(44, 5);
     mono->Printf("%16.16s", QuarryName[PreferredTarget]);
     mono->Set_Cursor(62, 5);
-    mono->Printf("%5d", (long)TriggerTime);
+    mono->Printf("%5d", (int)TriggerTime);
     mono->Set_Cursor(71, 5);
-    mono->Printf("%5d", (long)BorrowedTime);
+    mono->Printf("%5d", (int)BorrowedTime);
 
     mono->Set_Cursor(1, 7);
     mono->Printf("%08X", UScan);
@@ -405,7 +405,7 @@ void HouseClass::Debug_Dump(MonoClass* mono) const
     mono->Set_Cursor(44, 7);
     mono->Printf("%08X", Allies);
     mono->Set_Cursor(71, 7);
-    mono->Printf("%5d", (long)Attack);
+    mono->Printf("%5d", (int)Attack);
 
     mono->Set_Cursor(1, 9);
     mono->Printf("%08X", IScan);
@@ -422,7 +422,7 @@ void HouseClass::Debug_Dump(MonoClass* mono) const
     mono->Set_Cursor(45, 9);
     mono->Printf("%4d", Radius / CELL_LEPTON_W);
     mono->Set_Cursor(71, 9);
-    mono->Printf("%5d", (long)AITimer);
+    mono->Printf("%5d", (int)AITimer);
 
     mono->Set_Cursor(1, 11);
     mono->Printf("%08X", VScan);
@@ -434,7 +434,7 @@ void HouseClass::Debug_Dump(MonoClass* mono) const
     mono->Set_Cursor(54, 11);
     mono->Printf("%04X", Coord_Cell(Center));
     mono->Set_Cursor(71, 11);
-    mono->Printf("%5d", (long)DamageTime);
+    mono->Printf("%5d", (int)DamageTime);
 
     for (int index = 0; index < ARRAY_SIZE(Scen.GlobalFlags); index++) {
         mono->Set_Cursor(1 + index, 15);
@@ -878,7 +878,7 @@ bool HouseClass::Can_Build(ObjectTypeClass const* type, HousesType house) const
     /*
     **	Perform some equivalency fixups for the building existence flags.
     */
-    long flags = ActiveBScan;
+    int flags = ActiveBScan;
 
     /*
     **	The computer records prerequisite buildings because it can't relay on the
@@ -1970,7 +1970,7 @@ void HouseClass::Harvested(unsigned tiberium)
 {
     assert(Houses.ID(this) == ID);
 
-    long oldtib = Tiberium;
+    int oldtib = Tiberium;
 
     Tiberium += tiberium;
     if (Tiberium > Capacity) {
@@ -2019,7 +2019,7 @@ void HouseClass::Stole(unsigned worth)
  * HISTORY:                                                                                    *
  *   01/25/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-long HouseClass::Available_Money(void) const
+int HouseClass::Available_Money(void) const
 {
     assert(Houses.ID(this) == ID);
 
@@ -2047,7 +2047,7 @@ void HouseClass::Spend_Money(unsigned money)
 {
     assert(Houses.ID(this) == ID);
 
-    long oldtib = Tiberium;
+    int oldtib = Tiberium;
     if (money > (unsigned)Tiberium) {
         money -= (unsigned)Tiberium;
         Tiberium = 0;
@@ -2105,7 +2105,7 @@ int HouseClass::Adjust_Capacity(int adjust, bool inanger)
 {
     assert(Houses.ID(this) == ID);
 
-    long oldcap = Capacity;
+    int oldcap = Capacity;
     int retval = 0;
 
     Capacity += adjust;
@@ -2143,7 +2143,7 @@ int HouseClass::Adjust_Capacity(int adjust, bool inanger)
  * HISTORY:                                                                                    *
  *   02/02/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void HouseClass::Silo_Redraw_Check(long oldtib, long oldcap)
+void HouseClass::Silo_Redraw_Check(int oldtib, int oldcap)
 {
     assert(Houses.ID(this) == ID);
 

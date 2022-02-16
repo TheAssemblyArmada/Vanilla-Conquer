@@ -263,8 +263,8 @@ typedef struct NodeNameTag
     {
         struct
         {
-            unsigned char IsOpen;   // is the game open?
-            unsigned long LastTime; // last time we heard from this guy
+            unsigned char IsOpen;  // is the game open?
+            unsigned int LastTime; // last time we heard from this guy
         } Game;
         struct
         {
@@ -275,7 +275,7 @@ typedef struct NodeNameTag
         } Player;
         struct
         {
-            unsigned long LastTime;   // last time we heard from this guy
+            unsigned int LastTime;    // last time we heard from this guy
             unsigned char LastChance; // we're about to remove him from the list
             PlayerColorType Color;    // chat player's color
         } Chat;
@@ -296,8 +296,8 @@ typedef struct
         {
             HousesType House;                  // player's House
             PlayerColorType Color;             // player's color or SIGNOFF ID
-            unsigned long MinVersion;          // min version this game supports
-            unsigned long MaxVersion;          // max version this game supports
+            unsigned int MinVersion;           // min version this game supports
+            unsigned int MaxVersion;           // max version this game supports
             char Scenario[DESCRIP_MAX];        // Scenario name
             unsigned int Credits;              // player's credits
             unsigned int IsBases : 1;          // 1 = bases are allowed
@@ -312,7 +312,7 @@ typedef struct
             int Seed;                          // random number seed
             SpecialClass Special;              // command-line options
             unsigned int GameSpeed;            // Game Speed
-            unsigned long ResponseTime;        // packet response time
+            unsigned int ResponseTime;         // packet response time
             unsigned int FileLength;           // Length of scenario file to expect from host.
 #ifdef WOLAPI_INTEGRATION
             char ShortFileName[13]; // Name of scenario file to expect from host
@@ -361,12 +361,12 @@ typedef struct GlobalPacketType
         } GameInfo;
         struct
         {
-            HousesType House;         // player's House
-            PlayerColorType Color;    // player's color
-            unsigned long NameCRC;    // CRC of player's game's name
-            unsigned long MinVersion; // game's min supported version
-            unsigned long MaxVersion; // game's max supported version
-            int CheatCheck;           // Unique ID of "rules.ini" file.
+            HousesType House;        // player's House
+            PlayerColorType Color;   // player's color
+            unsigned int NameCRC;    // CRC of player's game's name
+            unsigned int MinVersion; // game's min supported version
+            unsigned int MaxVersion; // game's max supported version
+            int CheatCheck;          // Unique ID of "rules.ini" file.
         } PlayerInfo;
         struct
         {
@@ -383,7 +383,7 @@ typedef struct GlobalPacketType
             int Seed;                          // random number seed
             SpecialClass Special;              // command-line options
             unsigned int GameSpeed;            // Game Speed
-            unsigned long Version;             // version # common to all players
+            unsigned int Version;              // version # common to all players
             unsigned int FileLength;           // Length of scenario file to expect from host.
 #ifdef WOLAPI_INTEGRATION
             char ShortFileName[13]; // Name of scenario file to expect from host
@@ -397,7 +397,7 @@ typedef struct GlobalPacketType
         {
             char Buf[MAX_MESSAGE_LENGTH]; // inter-user message
             PlayerColorType Color;        // color of sender of message
-            unsigned long NameCRC;        // CRC of sender's Game Name
+            unsigned int NameCRC;         // CRC of sender's Game Name
         } Message;
         struct
         {
@@ -409,7 +409,7 @@ typedef struct GlobalPacketType
         } Reject;
         struct
         {
-            unsigned long ID;      // unique ID for this chat node
+            unsigned int ID;       // unique ID for this chat node
             PlayerColorType Color; // my color
         } Chat;
     };
@@ -565,7 +565,7 @@ public:
     //.....................................................................
     // Unique workstation ID, for detecting my own packets
     //.....................................................................
-    unsigned long UniqueID;
+    unsigned int UniqueID;
 
     //.....................................................................
     // Player's local options
@@ -589,8 +589,8 @@ public:
     // a given packet.  It's set by the RESPONSE_TIME event.
     // 'FrameSendRate' is the # frames between data packets
     //.....................................................................
-    unsigned long MaxAhead;
-    unsigned long FrameSendRate;
+    unsigned int MaxAhead;
+    unsigned int FrameSendRate;
 
     int DesiredFrameRate;
 
@@ -695,14 +695,14 @@ public:
     //.....................................................................
     // For finding Sync Bugs
     //.....................................................................
-    long TrapFrame;            // frame # to start trapping 'TrapObject'
+    int TrapFrame;             // frame # to start trapping 'TrapObject'
     RTTIType TrapObjType;      // type of object to trap
     TrapObjectType TrapObject; // ptr to object to trap (watch)
     COORDINATE TrapCoord;      // coord of object, 0 = ignore
     TARGET TrapTarget;         // Target # of object, 0 = ignore
     CellClass* TrapCell;       // Ptr to cell to trap (watch)
     int TrapCheckHeap;         // true = check the heap as of TrapFrame
-    long TrapPrintCRC;         // Frame # to print CRC state file
+    int TrapPrintCRC;          // Frame # to print CRC state file
 };
 
 #endif // SESSION_H

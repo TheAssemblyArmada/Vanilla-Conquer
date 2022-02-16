@@ -939,8 +939,8 @@ void Toggle_Formation(void)
             obj->Mark(MARK_CHANGE);
             if (setform) {
                 TeamFormDataStruct& team_form_data = TeamFormData[obj->Owner()];
-                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
                 if (xc < minx)
                     minx = xc;
                 if (xc > maxx)
@@ -965,8 +965,8 @@ void Toggle_Formation(void)
             obj->Mark(MARK_CHANGE);
             if (setform) {
                 TeamFormDataStruct& team_form_data = TeamFormData[obj->Owner()];
-                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
                 if (xc < minx)
                     minx = xc;
                 if (xc > maxx)
@@ -990,8 +990,8 @@ void Toggle_Formation(void)
             obj->Mark(MARK_CHANGE);
             if (setform) {
                 TeamFormDataStruct& team_form_data = TeamFormData[obj->Owner()];
-                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
                 if (xc < minx)
                     minx = xc;
                 if (xc > maxx)
@@ -1021,8 +1021,8 @@ void Toggle_Formation(void)
         for (index = 0; index < Units.Count(); index++) {
             UnitClass* obj = Units.Ptr(index);
             if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
-                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
 
                 obj->XFormOffset = xc - centerx;
                 obj->YFormOffset = yc - centery;
@@ -1032,8 +1032,8 @@ void Toggle_Formation(void)
         for (index = 0; index < Infantry.Count(); index++) {
             InfantryClass* obj = Infantry.Ptr(index);
             if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
-                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
 
                 obj->XFormOffset = xc - centerx;
                 obj->YFormOffset = yc - centery;
@@ -1043,8 +1043,8 @@ void Toggle_Formation(void)
         for (index = 0; index < Vessels.Count(); index++) {
             VesselClass* obj = Vessels.Ptr(index);
             if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
-                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
 
                 obj->XFormOffset = xc - centerx;
                 obj->YFormOffset = yc - centery;
@@ -2133,10 +2133,10 @@ void Go_Editor(bool flag)
  * HISTORY:                                                                                    *
  *   07/04/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-long MixFileHandler(VQAHandle* vqa, long action, void* buffer, long nbytes)
+int MixFileHandler(VQAHandle* vqa, int action, void* buffer, int nbytes)
 {
     CCFileClass* file;
-    long error;
+    int error;
 
     file = (CCFileClass*)vqa->VQAio;
 
@@ -3341,7 +3341,7 @@ void Check_VQ_Palette_Set(void);
 
 extern GraphicBufferClass VQ640;
 extern bool IsVQ640;
-long VQ_Call_Back(unsigned char*, long)
+int VQ_Call_Back(unsigned char*, int)
 {
 #ifdef REMASTER_BUILD
     return 0;
@@ -4363,7 +4363,7 @@ bool Force_CD_Available(int cd)
  * HISTORY:                                                                *
  *   08/11/1995 PWG : Created.                                             *
  *=========================================================================*/
-unsigned long Disk_Space_Available(void)
+unsigned int Disk_Space_Available(void)
 {
     return 0x7fffffff; // ST - 5/8/2019
 #if (0)
@@ -4399,9 +4399,9 @@ static void Do_Record_Playback(void)
     int i;
     COORDINATE coord;
     ObjectClass* obj;
-    unsigned long sum;
-    unsigned long sum2;
-    unsigned long ltgt;
+    unsigned int sum;
+    unsigned int sum2;
+    unsigned int ltgt;
 
     /*
     **	Record a game
@@ -4424,7 +4424,7 @@ static void Do_Record_Playback(void)
         */
         sum = 0;
         for (i = 0; i < count; i++) {
-            ltgt = (unsigned long)(CurrentObject[i]->As_Target());
+            ltgt = (unsigned int)(CurrentObject[i]->As_Target());
             sum += ltgt;
         }
         Session.RecordFile.Write(&sum, sizeof(sum));
@@ -4472,7 +4472,7 @@ static void Do_Record_Playback(void)
             */
             sum = 0;
             for (i = 0; i < CurrentObject.Count(); i++) {
-                ltgt = (unsigned long)(CurrentObject[i]->As_Target());
+                ltgt = (unsigned int)(CurrentObject[i]->As_Target());
                 sum += ltgt;
             }
 

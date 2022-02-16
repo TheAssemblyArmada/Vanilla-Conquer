@@ -141,10 +141,10 @@ void Set_Palette_Color(void* palette, int color, void* data)
  *=========================================================================*/
 void Fade_Palette_To(void* palette1, unsigned int delay, void (*callback)())
 {
-    bool changed;        // Flag that palette has changed this tick.
-    short jump;          // Gun values to jump per palette set.
-    unsigned long timer; // Tick count timer used for timing.
-    short ticksper;      // The ticks (fixed point) per bit jump.
+    bool changed;       // Flag that palette has changed this tick.
+    short jump;         // Gun values to jump per palette set.
+    unsigned int timer; // Tick count timer used for timing.
+    short ticksper;     // The ticks (fixed point) per bit jump.
     int tickaccum;
 
     extern void (*cb_ptr)(void); // callback function pointer
@@ -221,7 +221,7 @@ static void Determine_Bump_Rate(void* palette, int delay, short* ticks, short* r
     int diff;  // Maximum color gun difference.
     int tp;    // Temporary tick accumulator.
     int index; // Color gun working index.
-    long t;    // Working tick intermediate value.
+    int t;     // Working tick intermediate value.
     int adiff; // Absolute difference between guns.
 
     /*
@@ -243,10 +243,10 @@ static void Determine_Bump_Rate(void* palette, int delay, short* ticks, short* r
     time more accurately; the caller must shift the accumulated value down
     8 bits to determine the actual elapsed time!
     ------------------------------------------------------------------------*/
-    t = ((long)delay) << 8;
+    t = ((int)delay) << 8;
     if (diff) {
         t /= diff;
-        t = MIN((long)t, (long)0x7FFF);
+        t = MIN((int)t, (int)0x7FFF);
     }
     *ticks = (short)t;
 

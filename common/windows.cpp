@@ -512,7 +512,7 @@ void Window_Print(char const string[], ...)
             Flush_Line();
             WinCy = Fetch_Char();
             // WinCy = MAX(0, WinCy);
-            WinCy = MIN((long)WindowLines - 1, (long)WinCy);
+            WinCy = MIN((int)WindowLines - 1, (int)WinCy);
             break;
 
         /*

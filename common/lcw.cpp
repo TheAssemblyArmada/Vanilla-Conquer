@@ -53,11 +53,11 @@
  * INPUT:                                                                  *
  *      void * source ptr                                                  *
  *      void * destination ptr                                             *
- *      unsigned long length of uncompressed data                          *
+ *      unsigned int length of uncompressed data                          *
  *                                                                         *
  *                                                                         *
  * OUTPUT:                                                                 *
- *     unsigned long # of destination bytes written                        *
+ *     unsigned int # of destination bytes written                        *
  *                                                                         *
  * WARNINGS:                                                               *
  *     3rd argument is dummy. It exists to provide cross-platform          *

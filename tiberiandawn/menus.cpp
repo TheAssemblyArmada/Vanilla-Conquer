@@ -43,7 +43,7 @@
 #ifdef SCENARIO_EDITOR
 
 PRIVATE int Coordinates_In_Region(int x, int y, int inx1, int iny1, int inx2, int iny2);
-PRIVATE int Select_To_Entry(int select, unsigned long bitfield, int index);
+PRIVATE int Select_To_Entry(int select, unsigned int bitfield, int index);
 PRIVATE void Flash_Line(char const* text, int xpix, int ypix, unsigned nfgc, unsigned hfgc, unsigned bgc);
 
 int UnknownKey;
@@ -62,7 +62,7 @@ PRIVATE int MenuSkip;
 /*				the starting index within the bit field.								*/
 /*	RETURNS:	int the index into the table of entries								*/
 /*=========================================================================*/
-PRIVATE int Select_To_Entry(int select, unsigned long bitfield, int index)
+PRIVATE int Select_To_Entry(int select, unsigned int bitfield, int index)
 {
     int placement;
 
@@ -136,7 +136,7 @@ PRIVATE int Coordinates_In_Region(int x, int y, int inx1, int iny1, int inx2, in
 /*				point to start at within the list.										*/
 /*	RETURNS:	int the total number of items in the menu							*/
 /*=========================================================================*/
-int Find_Menu_Items(int maxitems, unsigned long field, char index)
+int Find_Menu_Items(int maxitems, unsigned int field, char index)
 {
     int loop, ctr;
 
@@ -162,7 +162,7 @@ int Find_Menu_Items(int maxitems, unsigned long field, char index)
 /*				index into the field, int the number of lines to skip.			*/
 /*	RETURNS:	none																				*/
 /*=========================================================================*/
-void Setup_Menu(int menu, char const* text[], unsigned long field, int index, int skip)
+void Setup_Menu(int menu, char const* text[], unsigned int field, int index, int skip)
 {
     int *menuptr, lp;
     int menuy, menux, idx, item, num, drawy;
@@ -452,7 +452,7 @@ int Do_Menu(char const** strings, bool blue)
  * HISTORY:                                                                *
  *   05/17/1995 BRR : Created.                                             *
  *=========================================================================*/
-int Main_Menu(unsigned long timeout)
+int Main_Menu(unsigned int timeout)
 {
     int scale_factor = Get_Resolution_Factor() + 1;
 
@@ -528,7 +528,7 @@ int Main_Menu(unsigned long timeout)
 #else
     TextButtonClass* buttons[5];
 #endif
-    //	unsigned long starttime;
+    //	unsigned int starttime;
 
     ControlClass* commands = NULL; // the button list
 

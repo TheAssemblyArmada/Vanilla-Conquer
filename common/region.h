@@ -77,7 +77,7 @@ public:
     };
 
 protected:
-    long Threat;
+    int Threat;
 };
 
 #endif

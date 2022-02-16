@@ -33,20 +33,20 @@
  * Functions:                                                                                  *
  *   BasicTimerClass<T>::BasicTimerClass -- Constructor for basic timer class.                 *
  *   BasicTimerClass<T>::operator () -- Function operator for timer object.                    *
- *   BasicTimerClass<T>::operator long -- Conversion to long operator.                         *
+ *   BasicTimerClass<T>::operator int -- Conversion to int operator.                         *
  *   BasicTimerClass<T>::~BasicTimerClass -- Destructor for basic timer object.                *
  *   TTimerClass<T>::Is_Active -- Checks to see if the timer is counting.                      *
  *   TTimerClass<T>::Start -- Starts (resumes) a stopped timer.                                *
  *   TTimerClass<T>::Stop -- Stops the current timer from incrementing.                        *
  *   TTimerClass<T>::TTimerClass -- Constructor for timer class object.                        *
  *   TTimerClass<T>::operator () -- Function operator for timer object.                        *
- *   TTimerClass<T>::operator long -- Conversion operator for timer object.                    *
+ *   TTimerClass<T>::operator int -- Conversion operator for timer object.                    *
  *   CDTimerClass<T>::CDTimerClass -- Constructor for count down timer.                        *
  *   CDTimerClass<T>::Is_Active -- Checks to see if the timer object is active.                *
  *   CDTimerClass<T>::Start -- Starts (resumes) the count down timer.                          *
  *   CDTimerClass<T>::Stop -- Stops (pauses) the count down timer.                             *
  *   CDTimerClass<T>::operator () -- Function operator for the count down timer.               *
- *   CDTimerClass<T>::operator long -- Conversion to long operator function.                   *
+ *   CDTimerClass<T>::operator int -- Conversion to int operator function.                   *
  *   CDTimerClass<T>::~CDTimerClass -- Destructor for the count down timer object.             *
  *   TTimerClass<T>::Value -- Returns with the current value of the timer.                     *
  *   CDTimerClass<T>::Value -- Fetches the current value of the countdown timer.               *
@@ -89,23 +89,23 @@ template <class T> class BasicTimerClass
 {
 public:
     // Constructor allows assignment as if class was integral 'long' type.
-    BasicTimerClass(unsigned long set = 0);
+    BasicTimerClass(unsigned int set = 0);
     BasicTimerClass(NoInitClass const&);
 
     ~BasicTimerClass(void);
 
     // Fetch current value of timer.
-    unsigned long Value(void) const;
+    unsigned int Value(void) const;
 
     // Conversion operator to allow consistent treatment with integral types.
-    operator unsigned long(void) const;
+    operator unsigned int(void) const;
 
     // Function operator to allow timer object definition to be cascaded.
-    unsigned long operator()(void) const;
+    unsigned int operator()(void) const;
 
 protected:
-    T Timer;               // Timer regulator (ticks at constant rate).
-    unsigned long Started; // Time started.
+    T Timer;              // Timer regulator (ticks at constant rate).
+    unsigned int Started; // Time started.
 };
 
 template <class T> inline BasicTimerClass<T>::BasicTimerClass(NoInitClass const&)
@@ -131,7 +131,7 @@ template <class T> inline BasicTimerClass<T>::BasicTimerClass(NoInitClass const&
 // lint -esym(1403,BasicTimerClass<class FrameTimerClass>::Timer)
 // lint -esym(1403,BasicTimerClass<class SystemTimerClass>::Timer)
 template <class T>
-inline BasicTimerClass<T>::BasicTimerClass(unsigned long set)
+inline BasicTimerClass<T>::BasicTimerClass(unsigned int set)
     : Started(Timer() - set)
 {
 }
@@ -154,16 +154,16 @@ template <class T> inline BasicTimerClass<T>::~BasicTimerClass(void)
 {
 }
 
-template <class T> inline unsigned long BasicTimerClass<T>::Value(void) const
+template <class T> inline unsigned int BasicTimerClass<T>::Value(void) const
 {
     return (Timer() - Started);
 }
 
 /***********************************************************************************************
- * BasicTimerClass<T>::operator long -- Conversion to long operator.                           *
+ * BasicTimerClass<T>::operator int -- Conversion to int operator.                           *
  *                                                                                             *
  *    This conversion operator allows the basic timer object to function in much the same      *
- *    manner as the integral "long" type. One can assign a long with a timer object and the    *
+ *    manner as the integral "long" type. One can assign a int with a timer object and the    *
  *    actual value of the timer is extracted from the object and used.                         *
  *                                                                                             *
  * INPUT:   none                                                                               *
@@ -175,7 +175,7 @@ template <class T> inline unsigned long BasicTimerClass<T>::Value(void) const
  * HISTORY:                                                                                    *
  *   02/05/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template <class T> inline BasicTimerClass<T>::operator unsigned long(void) const
+template <class T> inline BasicTimerClass<T>::operator unsigned int(void) const
 {
     return (Timer() - Started);
 }
@@ -196,7 +196,7 @@ template <class T> inline BasicTimerClass<T>::operator unsigned long(void) const
  * HISTORY:                                                                                    *
  *   02/05/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template <class T> inline unsigned long BasicTimerClass<T>::operator()(void) const
+template <class T> inline unsigned int BasicTimerClass<T>::operator()(void) const
 {
     return (Timer() - Started);
 }
@@ -213,19 +213,19 @@ template <class T> class TTimerClass : public BasicTimerClass<T>
 
 public:
     // Constructor allows assignment as if class was integral 'long' type.
-    TTimerClass(unsigned long set = 0);
+    TTimerClass(unsigned int set = 0);
     TTimerClass(NoInitClass const& x);
 
     ~TTimerClass(void){};
 
     // Fetches current value of timer.
-    unsigned long Value(void) const;
+    unsigned int Value(void) const;
 
     // Conversion operator to allow consistent treatment with integral types.
-    operator unsigned long(void) const;
+    operator unsigned int(void) const;
 
     // Function operator to allow timer object definition to be cascaded.
-    unsigned long operator()(void) const;
+    unsigned int operator()(void) const;
 
     // Stops (pauses) the timer.
     void Stop(void);
@@ -237,7 +237,7 @@ public:
     bool Is_Active(void) const;
 
 private:
-    unsigned long Accumulated; //	Total accumulated ticks.
+    unsigned int Accumulated; //	Total accumulated ticks.
 };
 
 template <class T>
@@ -263,7 +263,7 @@ inline TTimerClass<T>::TTimerClass(NoInitClass const& x)
  *   02/05/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template <class T>
-inline TTimerClass<T>::TTimerClass(unsigned long set)
+inline TTimerClass<T>::TTimerClass(unsigned int set)
     : BasicTimerClass<T>(set)
     , Accumulated(0)
 {
@@ -285,9 +285,9 @@ inline TTimerClass<T>::TTimerClass(unsigned long set)
  * HISTORY:                                                                                    *
  *   07/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template <class T> inline unsigned long TTimerClass<T>::Value(void) const
+template <class T> inline unsigned int TTimerClass<T>::Value(void) const
 {
-    unsigned long value = Accumulated;
+    unsigned int value = Accumulated;
     if (Started != 0xFFFFFFFFU) {
         value += BasicTimerClass<T>::Value();
     }
@@ -295,11 +295,11 @@ template <class T> inline unsigned long TTimerClass<T>::Value(void) const
 }
 
 /***********************************************************************************************
- * TTimerClass<T>::operator long -- Conversion operator for timer object.                      *
+ * TTimerClass<T>::operator int -- Conversion operator for timer object.                      *
  *                                                                                             *
  *    This conversion operator allows this timer object to function as an "rvalue" of a "long" *
  *    type. This is consistent with the integral "long" value. It is possible to assign a      *
- *    timer object to a long and have the long initialized with the current value of the       *
+ *    timer object to a int and have the int initialized with the current value of the       *
  *    timer.                                                                                   *
  *                                                                                             *
  * INPUT:   none                                                                               *
@@ -311,9 +311,9 @@ template <class T> inline unsigned long TTimerClass<T>::Value(void) const
  * HISTORY:                                                                                    *
  *   02/05/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template <class T> inline TTimerClass<T>::operator unsigned long(void) const
+template <class T> inline TTimerClass<T>::operator unsigned int(void) const
 {
-    unsigned long value = Accumulated;
+    unsigned int value = Accumulated;
     if (Started != 0xFFFFFFFFU) {
         value += BasicTimerClass<T>::Value();
     }
@@ -337,9 +337,9 @@ template <class T> inline TTimerClass<T>::operator unsigned long(void) const
  * HISTORY:                                                                                    *
  *   02/05/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template <class T> inline unsigned long TTimerClass<T>::operator()(void) const
+template <class T> inline unsigned int TTimerClass<T>::operator()(void) const
 {
-    unsigned long value = Accumulated;
+    unsigned int value = Accumulated;
     if (Started != 0xFFFFFFFFU) {
         value += BasicTimerClass<T>::Value();
     }
@@ -365,7 +365,7 @@ template <class T> inline unsigned long TTimerClass<T>::operator()(void) const
 template <class T> void TTimerClass<T>::Stop(void)
 {
     if (Started != 0xFFFFFFFFU) {
-        Accumulated += BasicTimerClass<T>::operator unsigned long();
+        Accumulated += BasicTimerClass<T>::operator unsigned int();
         Started = 0xFFFFFFFFU;
     }
 }
@@ -417,7 +417,7 @@ template <class T> inline bool TTimerClass<T>::Is_Active(void) const
 **	The countdown rate is controlled by the timer object specified. This timer object can
 **	be started or stopped. It can also be tested to see if it has expired or not. An expired
 **	count down timer is one that has value of zero. You can treat this class object as if it
-**	were an integral "magic" long that automatically counts down toward zero.
+**	were an integral "magic" int that automatically counts down toward zero.
 */
 template <class T> class CDTimerClass : public BasicTimerClass<T>
 {
@@ -425,19 +425,19 @@ template <class T> class CDTimerClass : public BasicTimerClass<T>
 
 public:
     // Constructor allows assignment as if class was integral 'long' type.
-    CDTimerClass(unsigned long set = 0);
+    CDTimerClass(unsigned int set = 0);
     CDTimerClass(NoInitClass const& x);
 
     ~CDTimerClass(void);
 
     // Fetches current value of count down timer.
-    unsigned long Value(void) const;
+    unsigned int Value(void) const;
 
     // Conversion operator to allow consistent treatment with integral types.
-    operator unsigned long(void) const;
+    operator unsigned int(void) const;
 
     // Function operator to allow timer object definition to be cascaded.
-    unsigned long operator()(void) const;
+    unsigned int operator()(void) const;
 
     // Stops (pauses) the timer.
     void Stop(void);
@@ -454,7 +454,7 @@ public:
     }
 
 private:
-    unsigned long DelayTime; // Ticks remaining before countdown timer expires.
+    unsigned int DelayTime; // Ticks remaining before countdown timer expires.
     bool WasStarted;
 };
 
@@ -470,7 +470,7 @@ inline CDTimerClass<T>::CDTimerClass(NoInitClass const& x)
  *                                                                                             *
  *    This is the constructor for the count down timer object. The optional starting value     *
  *    can be used to initiate the timer. Because of this constructor it is possible to assign  *
- *    a long to a count down timer object in order to begin the countdown process.             *
+ *    a int to a count down timer object in order to begin the countdown process.             *
  *                                                                                             *
  * INPUT:   set   -- The initial starting value for the countdown timer.                       *
  *                                                                                             *
@@ -482,7 +482,7 @@ inline CDTimerClass<T>::CDTimerClass(NoInitClass const& x)
  *   02/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 template <class T>
-inline CDTimerClass<T>::CDTimerClass(unsigned long set)
+inline CDTimerClass<T>::CDTimerClass(unsigned int set)
     : BasicTimerClass<T>(0)
     , DelayTime(set)
     , WasStarted(false)
@@ -523,11 +523,11 @@ template <class T> inline CDTimerClass<T>::~CDTimerClass(void)
  * HISTORY:                                                                                    *
  *   07/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template <class T> inline unsigned long CDTimerClass<T>::Value(void) const
+template <class T> inline unsigned int CDTimerClass<T>::Value(void) const
 {
-    unsigned long remain = DelayTime;
+    unsigned int remain = DelayTime;
     if (Started != 0xFFFFFFFFU) {
-        unsigned long value = BasicTimerClass<T>::Value();
+        unsigned int value = BasicTimerClass<T>::Value();
         if (value < remain) {
             return (remain - value);
         } else {
@@ -538,26 +538,26 @@ template <class T> inline unsigned long CDTimerClass<T>::Value(void) const
 }
 
 /***********************************************************************************************
- * CDTimerClass<T>::operator long -- Conversion to long operator function.                     *
+ * CDTimerClass<T>::operator int -- Conversion to int operator function.                     *
  *                                                                                             *
  *    This conversion operator allows the count down timer object to be used as if it were     *
- *    a "magic" long that automatically counted downward at the controller class tick rate.    *
- *    The count down object can be used in any place that an rvalue long could be used.        *
+ *    a "magic" int that automatically counted downward at the controller class tick rate.    *
+ *    The count down object can be used in any place that an rvalue int could be used.        *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
- * OUTPUT:  Returns with the current count down time expressed in the form of a long value.    *
+ * OUTPUT:  Returns with the current count down time expressed in the form of a int value.    *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   02/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template <class T> inline CDTimerClass<T>::operator unsigned long(void) const
+template <class T> inline CDTimerClass<T>::operator unsigned int(void) const
 {
-    unsigned long remain = DelayTime;
+    unsigned int remain = DelayTime;
     if (Started != 0xFFFFFFFFU) {
-        unsigned long value = BasicTimerClass<T>::Value();
+        unsigned int value = BasicTimerClass<T>::Value();
         if (value < remain) {
             return (remain - value);
         } else {
@@ -583,11 +583,11 @@ template <class T> inline CDTimerClass<T>::operator unsigned long(void) const
  * HISTORY:                                                                                    *
  *   02/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-template <class T> inline unsigned long CDTimerClass<T>::operator()(void) const
+template <class T> inline unsigned int CDTimerClass<T>::operator()(void) const
 {
-    unsigned long remain = DelayTime;
+    unsigned int remain = DelayTime;
     if (Started != 0xFFFFFFFFU) {
-        unsigned long value = BasicTimerClass<T>::Value();
+        unsigned int value = BasicTimerClass<T>::Value();
         if (value < remain) {
             return (remain - value);
         } else {
@@ -676,7 +676,7 @@ class TCountDownTimerClass
 public:
     // Constructor.  Timers set before low level init has been done will not
     // be able to be 'Started' or 'on' until timer system is in place.
-    TCountDownTimerClass(long set = 0)
+    TCountDownTimerClass(int set = 0)
     {
         Set(set);
     };
@@ -688,13 +688,13 @@ public:
     {
     }
 
-    operator long(void) const
+    operator int(void) const
     {
         return Time();
     };
 
     // Public functions
-    void Set(long set)
+    void Set(int set)
     {
         Started = Frame;
         DelayTime = set;
@@ -705,11 +705,11 @@ public:
         Started = -1;
         DelayTime = 0;
     };
-    long Get_Start(void) const
+    int Get_Start(void) const
     {
         return (Started);
     };
-    long Get_Delay(void) const
+    int Get_Delay(void) const
     {
         return (DelayTime);
     };
@@ -721,17 +721,17 @@ public:
     {
         return (Time() == 0);
     };
-    long Time(void) const
+    int Time(void) const
     {
-        long remain = DelayTime - (Frame - Started);
+        int remain = DelayTime - (Frame - Started);
         if (remain < 0)
             remain = 0;
         return (remain);
     }; // Fetch current count down value.
 
 protected:
-    long Started;   // Initial frame time start.
-    long DelayTime; // Ticks remaining before countdown timer expires.
+    int Started;   // Initial frame time start.
+    int DelayTime; // Ticks remaining before countdown timer expires.
 };
 
 #endif

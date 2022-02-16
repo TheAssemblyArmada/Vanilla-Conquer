@@ -126,7 +126,7 @@ void Buffer_Remap(void* thisptr, int sx, int sy, int width, int height, void* re
     }
 }
 
-long Buffer_To_Page(int x, int y, int w, int h, void* buffer, void* view)
+int Buffer_To_Page(int x, int y, int w, int h, void* buffer, void* view)
 {
     GraphicViewPortClass& vp = *static_cast<GraphicViewPortClass*>(view);
 

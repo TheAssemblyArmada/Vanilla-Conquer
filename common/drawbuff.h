@@ -26,13 +26,13 @@ class GraphicBufferClass;
 /* Externs for all of the common functions between the video buffer		*/
 /*		class and the graphic buffer class.											*/
 /*======================================================================*/
-long Buffer_Size_Of_Region(void* thisptr, int w, int h);
+int Buffer_Size_Of_Region(void* thisptr, int w, int h);
 
 void Buffer_Put_Pixel(void* thisptr, int x, int y, unsigned char color);
 int Buffer_Get_Pixel(void* thisptr, int x, int y);
 void Buffer_Clear(void* thisptr, unsigned char color);
 int Buffer_To_Buffer(void* thisptr, int x, int y, int w, int h, void* buff, int size);
-long Buffer_To_Page(int x, int y, int w, int h, void* Buffer, void* view);
+int Buffer_To_Page(int x, int y, int w, int h, void* Buffer, void* view);
 
 /*======================================================================*/
 /* Externs for all of the graphic buffer class only functions				*/

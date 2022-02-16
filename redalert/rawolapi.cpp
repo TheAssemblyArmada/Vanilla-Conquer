@@ -1261,7 +1261,7 @@ STDMETHODIMP RAChatEventSink::OnGameStart(HRESULT hRes, Channel*, User* pUserIn,
 }
 
 //***********************************************************************************************
-unsigned long RAChatEventSink::GetPlayerGameIP(const char* szPlayerName) const
+unsigned int RAChatEventSink::GetPlayerGameIP(const char* szPlayerName) const
 {
     //	Returns ipaddr value of player if found in pGameUserList, else 0.
     User* pUser = pGameUserList;
@@ -1373,7 +1373,7 @@ void RAChatEventSink::DeleteUserIPList()
 }
 
 //***********************************************************************************************
-unsigned long RAChatEventSink::GetUserIP(const char* szName) const
+unsigned int RAChatEventSink::GetUserIP(const char* szName) const
 {
     //	Looks in pUserIPList for the ipaddr of user with name szName.
     //	This is used only while in game channels.
@@ -1727,7 +1727,7 @@ STDMETHODIMP RANetUtilEventSink::OnLadderList(HRESULT hRes,
 }
 
 //***********************************************************************************************
-STDMETHODIMP RANetUtilEventSink::OnPing(HRESULT hRes, int time, unsigned long ip, int /*handle*/)
+STDMETHODIMP RANetUtilEventSink::OnPing(HRESULT hRes, int time, unsigned int ip, int /*handle*/)
 {
     if (pOwner->bDoingDisconnectPinging) {
         //		debugprint( ">>> OnPing got : ip %i, time %i, ", ip, time );

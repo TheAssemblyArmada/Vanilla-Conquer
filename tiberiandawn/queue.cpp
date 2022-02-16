@@ -88,8 +88,8 @@ int tmp_flag = 0;
 //---------------------------------------------------------------------------
 #ifndef DEMO
 static uint32_t GameCRC;
-static unsigned long CRC[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static unsigned int CRC[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 static const char* ColorNames[6] = {
     "Yellow",
@@ -207,7 +207,7 @@ static void Compute_Game_CRC(void);
 static void Init_Queue_Mono(ConnManClass* net);
 static void Update_Queue_Mono(ConnManClass* net, int flow_index);
 static void Print_Framesync_Values(long curframe,
-                                   unsigned long max_ahead,
+                                   unsigned int max_ahead,
                                    int num_connections,
                                    unsigned short* their_recv,
                                    unsigned short* their_sent,
@@ -688,7 +688,7 @@ static void Queue_AI_Multiplayer(void)
     //------------------------------------------------------------------------
     Compute_Game_CRC();
     CRC[Frame & 0x001f] = GameCRC;
-    // unsigned long save_crc = GameCRC;
+    // unsigned int save_crc = GameCRC;
     // Print_CRCs((EventClass *)NULL);
     // GameCRC = save_crc;
 
@@ -725,7 +725,7 @@ static void Queue_AI_Multiplayer(void)
     rc = Wait_For_Players(0,
                           net,
                           (MPlayerMaxAhead << 3),
-                          MAX(net->Response_Time() * 3, (unsigned long)FRAMESYNC_DLG_TIME * timeout_factor),
+                          MAX(net->Response_Time() * 3, (unsigned int)FRAMESYNC_DLG_TIME * timeout_factor),
                           FRAMESYNC_TIMEOUT * (timeout_factor * 2),
                           multi_packet_buf,
                           my_sent,
@@ -1082,7 +1082,7 @@ static RetcodeType Wait_For_Players(int first_time,
  *=========================================================================*/
 static void Generate_Timing_Event(ConnManClass* net, int my_sent)
 {
-    unsigned long resp_time; // connection response time, in ticks
+    unsigned int resp_time; // connection response time, in ticks
     EventClass ev;
 
     //------------------------------------------------------------------------
@@ -1126,9 +1126,9 @@ static void Generate_Timing_Event(ConnManClass* net, int my_sent)
             else {
                 if (GameToPlay == GAME_MODEM || GameToPlay == GAME_NULL_MODEM) {
                     //|| GameToPlay == GAME_INTERNET) {
-                    ev.Data.FrameInfo.Delay = MAX((resp_time / 8), (unsigned long)MODEM_MIN_MAX_AHEAD);
+                    ev.Data.FrameInfo.Delay = MAX((resp_time / 8), (unsigned int)MODEM_MIN_MAX_AHEAD);
                 } else if (GameToPlay == GAME_IPX || GameToPlay == GAME_INTERNET) {
-                    ev.Data.FrameInfo.Delay = MAX((resp_time / 8), (unsigned long)NETWORK_MIN_MAX_AHEAD);
+                    ev.Data.FrameInfo.Delay = MAX((resp_time / 8), (unsigned int)NETWORK_MIN_MAX_AHEAD);
                 }
             }
             OutList.Add(ev);
@@ -1155,7 +1155,7 @@ static void Generate_Timing_Event(ConnManClass* net, int my_sent)
  *=========================================================================*/
 static void Generate_Real_Timing_Event(ConnManClass* net, int my_sent)
 {
-    unsigned long resp_time; // connection response time, in ticks
+    unsigned int resp_time; // connection response time, in ticks
     EventClass ev;
     int highest_ticks;
     int i;
@@ -1266,7 +1266,7 @@ static void Generate_Process_Time_Event(ConnManClass* net)
 {
     EventClass ev;
     int avgticks;
-    unsigned long resp_time; // connection response time, in ticks
+    unsigned int resp_time; // connection response time, in ticks
 
     //
     // Measure the current connection response time.  This time will be in
@@ -4049,7 +4049,7 @@ static void Update_Queue_Mono(ConnManClass* net, int flow_index)
  *   11/21/1995 BRR : Created.                                             *
  *=========================================================================*/
 static void Print_Framesync_Values(long curframe,
-                                   unsigned long max_ahead,
+                                   unsigned int max_ahead,
                                    int num_connections,
                                    unsigned short* their_recv,
                                    unsigned short* their_sent,

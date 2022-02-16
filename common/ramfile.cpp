@@ -284,7 +284,7 @@ int RAMFileClass::Open(int access)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-long RAMFileClass::Read(void* buffer, long size)
+int RAMFileClass::Read(void* buffer, int size)
 {
     if (Buffer == NULL || buffer == NULL || size == 0) {
         return (0);
@@ -332,7 +332,7 @@ long RAMFileClass::Read(void* buffer, long size)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-long RAMFileClass::Seek(long pos, int dir)
+int RAMFileClass::Seek(int pos, int dir)
 {
     if (Buffer == NULL || !Is_Open()) {
         return (Offset);
@@ -385,7 +385,7 @@ long RAMFileClass::Seek(long pos, int dir)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-long RAMFileClass::Size(void)
+int RAMFileClass::Size(void)
 {
     return (Length);
 }
@@ -408,7 +408,7 @@ long RAMFileClass::Size(void)
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-long RAMFileClass::Write(void const* buffer, long size)
+int RAMFileClass::Write(void const* buffer, int size)
 {
     if (Buffer == NULL || buffer == NULL || size == 0) {
         return (0);

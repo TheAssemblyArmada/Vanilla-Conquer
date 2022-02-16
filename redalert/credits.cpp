@@ -112,13 +112,13 @@ void CreditClass::Graphic_Logic(bool forced)
         */
 #ifndef REMASTER_BUILD
         TabClass::Draw_Credits_Tab();
-        Fancy_Text_Print("%ld", xx, 0, &MetalScheme, TBLACK, TPF_METAL12 | TPF_CENTER | TPF_USE_GRAD_PAL, Current);
+        Fancy_Text_Print("%d", xx, 0, &MetalScheme, TBLACK, TPF_METAL12 | TPF_CENTER | TPF_USE_GRAD_PAL, Current);
 #endif
 
         if (Scen.MissionTimer.Is_Active()) {
-            long secs = Scen.MissionTimer / TICKS_PER_SECOND;
-            long mins = secs / 60;
-            long hours = mins / 60;
+            int secs = Scen.MissionTimer / TICKS_PER_SECOND;
+            int mins = secs / 60;
+            int hours = mins / 60;
             secs %= 60;
             mins %= 60;
 #if (0) // Moved to LOGIC.CPP

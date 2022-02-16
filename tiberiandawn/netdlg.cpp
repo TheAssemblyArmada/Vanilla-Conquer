@@ -866,7 +866,7 @@ static int Net_Join_Dialog(void)
     unsigned char min_id;              // for sorting player ID's
     unsigned char id;                  // connection ID
     char* item;
-    unsigned long starttime;
+    unsigned int starttime;
 
     NodeNameType* who;
 
@@ -1956,7 +1956,7 @@ static int Net_Join_Dialog(void)
         a chance to get to the other system.  If he doesn't get our ACK, he'll
         be waiting the whole time we load MIX files.
         ---------------------------------------------------------------------*/
-        i = MAX(Ipx.Global_Response_Time() * 2, (unsigned long)60);
+        i = MAX(Ipx.Global_Response_Time() * 2, (unsigned int)60);
         starttime = WinTickCount.Time();
         while (WinTickCount.Time() - starttime < (unsigned)i) {
             Ipx.Service();
@@ -3478,7 +3478,7 @@ static int Net_New_Dialog(void)
             an OK; force a wait longer than 1 second (to give all players
             a chance to know about this new guy)
             ...............................................................*/
-            i = MAX(Ipx.Global_Response_Time() * 2, (unsigned long)60);
+            i = MAX(Ipx.Global_Response_Time() * 2, (unsigned int)60);
             while (WinTickCount.Time() - ok_timer < i)
                 Ipx.Service();
 
@@ -3781,7 +3781,7 @@ static int Net_New_Dialog(void)
         - Divide global channel's response time by 8 (2 to convert to 1-way
           value, 4 more to convert from ticks to frames)
         .....................................................................*/
-        MPlayerMaxAhead = MAX((Ipx.Global_Response_Time() / 8), (unsigned long)2);
+        MPlayerMaxAhead = MAX((Ipx.Global_Response_Time() / 8), (unsigned int)2);
 
         /*.....................................................................
         Send all players the NET_GO packet.  Wait until all ACK's have been
@@ -4110,7 +4110,7 @@ uint32_t Compute_Name_CRC(char* name)
  * HISTORY:                                                                *
  *   07/08/1995 BRR : Created.                                             *
  *=========================================================================*/
-void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned long timeval)
+void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned int timeval)
 {
     static int x, y, w, h;
     int id;
@@ -4614,7 +4614,7 @@ static int Net_Fake_New_Dialog(void)
                 an OK; force a wait longer than 2 seconds (to give all players
                 a chance to know about this new guy)
                 ...............................................................*/
-                i = MAX(Ipx.Global_Response_Time() * 2, (unsigned long)120);
+                i = MAX(Ipx.Global_Response_Time() * 2, (unsigned int)120);
                 while (WinTickCount.Time() - ok_timer < i)
                     Ipx.Service();
 
@@ -4720,7 +4720,7 @@ static int Net_Fake_New_Dialog(void)
         - Divide global channel's response time by 8 (2 to convert to 1-way
           value, 4 more to convert from ticks to frames)
         .....................................................................*/
-        MPlayerMaxAhead = MAX((Ipx.Global_Response_Time() / 8), (unsigned long)2);
+        MPlayerMaxAhead = MAX((Ipx.Global_Response_Time() / 8), (unsigned int)2);
 
         /*.....................................................................
         Send all players the NET_GO packet.  Wait until all ACK's have been
@@ -4946,7 +4946,7 @@ static int Net_Fake_Join_Dialog(void)
     unsigned char min_id;              // for sorting player ID's
     unsigned char id;                  // connection ID
     char* item;
-    unsigned long starttime;
+    unsigned int starttime;
 
     NodeNameType* who;
 
@@ -5496,7 +5496,7 @@ static int Net_Fake_Join_Dialog(void)
         a chance to get to the other system.  If he doesn't get our ACK, he'll
         be waiting the whole time we load MIX files.
         ---------------------------------------------------------------------*/
-        i = MAX(Ipx.Global_Response_Time() * 2, (unsigned long)120);
+        i = MAX(Ipx.Global_Response_Time() * 2, (unsigned int)120);
         starttime = WinTickCount.Time();
         while (WinTickCount.Time() - starttime < (unsigned)i) {
             Ipx.Service();

@@ -701,7 +701,7 @@ void UnitClass::Firing_AI(void)
  * HISTORY:                                                                                    *
  *   05/22/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-RadioMessageType UnitClass::Receive_Message(RadioClass* from, RadioMessageType message, long& param)
+RadioMessageType UnitClass::Receive_Message(RadioClass* from, RadioMessageType message, int& param)
 {
     assert(Units.ID(this) == ID);
     assert(IsActive);

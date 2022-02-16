@@ -146,7 +146,7 @@ VersionClass::VersionClass(void)
 //	Version number used is now GAME_VERSION.
 //	Note also that VERSION_RA_300 is wrong, but not used.
 
-unsigned long VersionClass::Version_Number(void)
+unsigned int VersionClass::Version_Number(void)
 {
     //------------------------------------------------------------------------
     // Read the text description, if there is one
@@ -470,7 +470,7 @@ void VersionClass::Read_Text_String(void)
  * HISTORY:                                                                *
  *   10/26/1995 BRR : Created.                                             *
  *=========================================================================*/
-CommProtocolType VersionClass::Version_Protocol(unsigned long version)
+CommProtocolType VersionClass::Version_Protocol(unsigned int version)
 {
     int i, j;
 
@@ -557,7 +557,7 @@ void VersionClass::Init_Clipping(void)
  * HISTORY:                                                                *
  *   10/26/1995 BRR : Created.                                             *
  *=========================================================================*/
-unsigned long VersionClass::Clip_Version(unsigned long minver, unsigned long maxver)
+unsigned int VersionClass::Clip_Version(unsigned int minver, unsigned int maxver)
 {
     //------------------------------------------------------------------------
     // If the given range is outside & above our own, return an error.
@@ -611,7 +611,7 @@ unsigned long VersionClass::Clip_Version(unsigned long minver, unsigned long max
  * HISTORY:                                                                *
  *   10/26/1995 BRR : Created.                                             *
  *=========================================================================*/
-unsigned long VersionClass::Min_Version(void)
+unsigned int VersionClass::Min_Version(void)
 {
 #ifdef DEV_VERSION
     return (Version_Number());
@@ -665,7 +665,7 @@ unsigned long VersionClass::Min_Version(void)
  * HISTORY:                                                                *
  *   10/26/1995 BRR : Created.                                             *
  *=========================================================================*/
-unsigned long VersionClass::Max_Version(void)
+unsigned int VersionClass::Max_Version(void)
 {
 #ifdef DEV_VERSION
     return (Version_Number());

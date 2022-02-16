@@ -73,7 +73,7 @@ typedef enum CommProtocolEnum
 
 typedef struct
 {
-    unsigned long Version;
+    unsigned int Version;
     CommProtocolType Protocol;
 } VersionProtocolType;
 
@@ -91,7 +91,7 @@ public:
     // number contains the major version in the high word, and the minor
     // version in the low word.  They should be interpreted in hex.
     //.....................................................................
-    unsigned long Version_Number(void);
+    unsigned int Version_Number(void);
     unsigned short Major_Version(void);
     unsigned short Minor_Version(void);
 
@@ -112,14 +112,14 @@ public:
     //.....................................................................
     // Returns the default comm protocol for a given version number.
     //.....................................................................
-    CommProtocolType Version_Protocol(unsigned long version);
+    CommProtocolType Version_Protocol(unsigned int version);
 
     //.....................................................................
     // These routines support "version clipping".
     //.....................................................................
     void Init_Clipping(void);
-    unsigned long Clip_Version(unsigned long minver, unsigned long maxver);
-    unsigned long Get_Clipped_Version(void)
+    unsigned int Clip_Version(unsigned int minver, unsigned int maxver);
+    unsigned int Get_Clipped_Version(void)
     {
         return (MaxClipVer);
     }
@@ -129,8 +129,8 @@ public:
     // that this program will connect to; this does not take any previous
     // version clipping into account.
     //.....................................................................
-    unsigned long Min_Version(void);
-    unsigned long Max_Version(void);
+    unsigned int Min_Version(void);
+    unsigned int Max_Version(void);
 
 private:
     //.....................................................................
@@ -174,7 +174,7 @@ private:
     //.....................................................................
     // This is the program's version number, stored internally.
     //.....................................................................
-    unsigned long Version;
+    unsigned int Version;
     unsigned short MajorVer;
     unsigned short MinorVer;
 
@@ -193,8 +193,8 @@ private:
     //.....................................................................
     // Values used for "Version Clipping"
     //.....................................................................
-    unsigned long MinClipVer;
-    unsigned long MaxClipVer;
+    unsigned int MinClipVer;
+    unsigned int MaxClipVer;
 
     //.....................................................................
     // Bitfield Flags

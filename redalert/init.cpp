@@ -103,7 +103,7 @@ static void Init_Keys(void);
 
 extern int UnitBuildPenalty;
 
-extern unsigned long RandNumb;
+extern unsigned int RandNumb;
 
 // extern int SimRandIndex;
 void Init_Random(void);
@@ -1339,7 +1339,7 @@ bool Parse_Command_Line(int argc, char* argv[])
 
     for (int index = 1; index < argc; index++) {
         char* string; // Pointer to argument.
-        long code = 0;
+        int code = 0;
 
         char arg_string[512];
         int str_len = strlen(argv[index]);
@@ -1372,12 +1372,12 @@ bool Parse_Command_Line(int argc, char* argv[])
         }
 
         bool processed = true;
-        long ob = Obfuscate(string);
+        unsigned ob = unsigned(Obfuscate(string));
 
         /*
         **	Check to see if the parameter is a cheat enabling one.
         */
-        long const* optr = (const long*)&CheatCodes[0];
+        unsigned const* optr = &CheatCodes[0];
         while (*optr) {
             if (*optr++ == ob) {
                 Debug_Playtest = true;
@@ -1389,7 +1389,7 @@ bool Parse_Command_Line(int argc, char* argv[])
         /*
         **	Check to see if the parameter is a cheat enabling one.
         */
-        optr = (const long*)&PlayCodes[0];
+        optr = &PlayCodes[0];
         while (*optr) {
             if (*optr++ == ob) {
                 Debug_Playtest = true;
@@ -1402,7 +1402,7 @@ bool Parse_Command_Line(int argc, char* argv[])
         **	Check to see if the parameter is a scenario editor
         **	enabling one.
         */
-        optr = (const long*)&EditorCodes[0];
+        optr = &EditorCodes[0];
         while (*optr) {
             if (*optr++ == ob) {
                 Debug_Map = true;
@@ -1668,7 +1668,7 @@ bool Parse_Command_Line(int argc, char* argv[])
  * HISTORY:                                                                                    *
  *   08/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-long Obfuscate(char const* string)
+int Obfuscate(char const* string)
 {
     char buffer[1024];
 
@@ -1723,13 +1723,13 @@ long Obfuscate(char const* string)
     **	Transform the buffer into a number. This transformation is character
     **	order dependant.
     */
-    long code = Calculate_CRC(buffer, length);
+    int code = Calculate_CRC(buffer, length);
 
     /*
     **	Record a copy of this initial transformation to be used in a later
     **	self referential transformation.
     */
-    long copy = code;
+    int copy = code;
 
     /*
     **	Reverse the character string and combine with the previous transformation.
@@ -1756,7 +1756,7 @@ long Obfuscate(char const* string)
         unsigned char temp = (unsigned char)code;
         buffer[index] ^= temp;
         code >>= 8;
-        code |= (((long)temp) << 24);
+        code |= (((int)temp) << 24);
     }
 
     /*

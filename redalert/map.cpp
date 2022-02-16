@@ -1179,9 +1179,9 @@ void MapClass::Overlap_Up(CELL cell, ObjectClass* object)
  *   02/13/1995 JLB : Returns total tiberium worth.                                            *
  *   02/15/1995 JLB : Optimal scan.                                                            *
  *=============================================================================================*/
-long MapClass::Overpass(void)
+int MapClass::Overpass(void)
 {
-    long value = 0;
+    int value = 0;
 
     /*
     **	Smooth out Tiberium. Cells that are not surrounded by other tiberium

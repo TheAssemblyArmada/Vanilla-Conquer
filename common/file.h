@@ -137,9 +137,9 @@ typedef enum
 typedef struct
 {
     char* Name;              // File name (include sub-directory but not volume).
-    long Size;               // File size (0=indeterminate).
+    int Size;                // File size (0=indeterminate).
     void* Ptr;               // Resident file pointer.
-    long Start;              // Starting offset in DOS handle file.
+    int Start;               // Starting offset in DOS handle file.
     unsigned char Disk;      // Disk number location.
     unsigned char OpenCount; // Count of open locks on resident file.
     unsigned short Flag;     // File control flags.
@@ -168,7 +168,7 @@ extern char StartPath[XMAXPATH + 1];
 /*=========================================================================*/
 
 void WWDOS_Shutdown(void);
-FileInitErrorType WWDOS_Init(unsigned long cachesize, char* filedata, char* cdpath);
+FileInitErrorType WWDOS_Init(unsigned int cachesize, char* filedata, char* cdpath);
 
 /*=========================================================================*/
 /* The following prototypes are for the file: FILE.CPP							*/
@@ -176,12 +176,12 @@ FileInitErrorType WWDOS_Init(unsigned long cachesize, char* filedata, char* cdpa
 
 int Open_File(char const* file_name, int mode);
 void Close_File(int handle);
-long Read_File(int handle, void* buf, unsigned long bytes);
+int Read_File(int handle, void* buf, unsigned int bytes);
 int Load_File(const char* file_name, void* load_addr);
-long Write_File(int handle, void const* buf, unsigned long bytes);
-unsigned long Seek_File(int handle, long offset, int starting);
+int Write_File(int handle, void const* buf, unsigned int bytes);
+unsigned int Seek_File(int handle, int offset, int starting);
 int File_Exists(char const* file_name);
-unsigned long File_Size(int handle);
+unsigned int File_Size(int handle);
 int Open_File_With_Recovery(char const* file_name, unsigned int mode);
 
 /*=========================================================================*/
@@ -231,7 +231,7 @@ public:
     {
     }
     virtual const char* GetName() const = 0;
-    virtual unsigned long GetTime() const = 0;
+    virtual unsigned int GetTime() const = 0;
 
     virtual bool FindFirst(const char* fname) = 0;
     virtual bool FindNext() = 0;

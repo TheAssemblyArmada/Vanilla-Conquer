@@ -161,7 +161,7 @@ COORDINATE const BuildingClass::CenterOffset[BSIZE_COUNT] = {
  *   06/26/1995 JLB : Forces refinery load anim to start immediately.                          *
  *   08/13/1995 JLB : Uses ScenarioInit for special loose "CAN_LOAD" check.                    *
  *=============================================================================================*/
-RadioMessageType BuildingClass::Receive_Message(RadioClass* from, RadioMessageType message, long& param)
+RadioMessageType BuildingClass::Receive_Message(RadioClass* from, RadioMessageType message, int& param)
 {
     assert(Buildings.ID(this) == ID);
     assert(IsActive);

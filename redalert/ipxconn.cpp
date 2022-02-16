@@ -72,7 +72,7 @@ char* IPXConnClass::ListenBuf;
 ECBType* IPXConnClass::SendECB;
 IPXHeaderType* IPXConnClass::SendHeader;
 char* IPXConnClass::SendBuf;
-long IPXConnClass::Handler;
+int IPXConnClass::Handler;
 int IPXConnClass::Configured = 0;
 int IPXConnClass::SocketOpen = 0;
 int IPXConnClass::Listening = 0;
@@ -231,7 +231,7 @@ void IPXConnClass::Configure(unsigned short socket,
                              IPXHeaderType* send_header,
                              char* listen_buf,
                              char* send_buf,
-                             long handler_rm_ptr,
+                             int handler_rm_ptr,
                              int maxpacketlen)
 {
     /*------------------------------------------------------------------------

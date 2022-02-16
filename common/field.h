@@ -69,8 +69,8 @@ public:
     FieldClass(const char* id, unsigned char data);
     FieldClass(const char* id, short data);
     FieldClass(const char* id, unsigned short data);
-    FieldClass(const char* id, long data);
-    FieldClass(const char* id, unsigned long data);
+    FieldClass(const char* id, int data);
+    FieldClass(const char* id, unsigned int data);
     FieldClass(const char* id, const char* data);
     FieldClass(const char* id, void* data, int length);
 

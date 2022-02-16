@@ -48,7 +48,7 @@ bool InDebugger = false;
 int ReadyToQuit = 0;
 
 #ifdef _WIN32
-unsigned long CCFocusMessage = WM_USER + 50; // Private message for receiving application focus
+unsigned int CCFocusMessage = WM_USER + 50; // Private message for receiving application focus
 #endif
 
 ThemeType OldTheme = THEME_NONE;
@@ -449,7 +449,7 @@ bool Any_Locked()
 // void  IPXManagerClass::Set_Bridge( char unsigned  * ){}
 // int  IPXManagerClass::Global_Num_Send() { return (0); }
 // void  IPXManagerClass::Set_Timing( long unsigned, long unsigned, long unsigned ){}
-// unsigned long IPXManagerClass::Global_Response_Time() { return (0); }
+// unsigned int IPXManagerClass::Global_Response_Time() { return (0); }
 // int  IPXManagerClass::Create_Connection( int, char  *, IPXAddressClass  * ) { return (0); }
 // int  IPXAddressClass::operator !=( IPXAddressClass  & ) { return (0); }
 // int  IPXManagerClass::Send_Private_Message( void  *, int, int, int ) { return (0); }

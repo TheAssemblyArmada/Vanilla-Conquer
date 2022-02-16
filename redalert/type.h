@@ -490,7 +490,7 @@ public:
     **	This specifies the building prerequisites required before an object
     **	of this type can be produced.
     */
-    long Prerequisite;
+    int Prerequisite;
 
     /*
     **	The risk and reward values are used to determine targets and paths
@@ -525,7 +525,7 @@ public:
     **	to take possession of an object type otherwise not normally allowed.
     **	This event usually occurs as a result of capture.
     */
-    long Ownable;
+    int Ownable;
 
     /*
     **	This is the small icon image that is used to display the object in

@@ -12,7 +12,7 @@
 #ifndef COMMON_FACE_H
 #define COMMON_FACE_H
 
-int Desired_Facing256(long srcx, long srcy, long dstx, long dsty);
-int Desired_Facing8(long x1, long y1, long x2, long y2);
+int Desired_Facing256(int srcx, int srcy, int dstx, int dsty);
+int Desired_Facing8(int x1, int y1, int x2, int y2);
 
 #endif

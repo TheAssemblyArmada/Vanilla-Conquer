@@ -1219,7 +1219,7 @@ bool WolapiObject::ListChannelUsers()
                 int iLatencyBarWidth = 0;
                 int iLatency;
                 if (CurrentLevel == WOL_LEVEL_INGAMECHANNEL) {
-                    unsigned long UserIP = pChatSink->GetUserIP((char*)pUser->name);
+                    unsigned int UserIP = pChatSink->GetUserIP((char*)pUser->name);
                     //					debugprint( "player %s ip address %i\n", szNameToShow, UserIP );
                     if (UserIP && pNetUtil->GetAvgPing(UserIP, &iLatency) == S_OK) {
                         //						debugprint( "player %s latency %i\n", szNameToShow, iLatency );
@@ -1427,7 +1427,7 @@ void WolapiObject::RequestPlayerPings()
     for (int i = 0; i < pILPlayers->Count(); i++) {
         User* pUser = (User*)pILPlayers->Get_Item_ExtraDataPtr(i);
         if (pUser && !(pUser->flags & CHAT_USER_MYSELF)) {
-            unsigned long UserIP = pChatSink->GetUserIP((char*)pUser->name);
+            unsigned int UserIP = pChatSink->GetUserIP((char*)pUser->name);
             if (UserIP) {
                 int iUnused;
                 in_addr inaddrUser;

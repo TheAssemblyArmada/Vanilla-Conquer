@@ -15,7 +15,7 @@ public:
     virtual ~Find_File_Data_Posix();
 
     virtual const char* GetName() const;
-    virtual unsigned long GetTime() const;
+    virtual unsigned int GetTime() const;
 
     virtual bool FindFirst(const char* fname);
     virtual bool FindNext();
@@ -50,7 +50,7 @@ const char* Find_File_Data_Posix::GetName() const
     return FullName;
 }
 
-unsigned long Find_File_Data_Posix::GetTime() const
+unsigned int Find_File_Data_Posix::GetTime() const
 {
     if (DirEntry == nullptr) {
         return 0;

@@ -89,9 +89,9 @@ public:
 private:
     bool IsKeyed;
 
-    void Sub_Key_Encrypt(unsigned long& left, unsigned long& right);
+    void Sub_Key_Encrypt(unsigned int& left, unsigned int& right);
 
-    void Process_Block(void const* plaintext, void* cyphertext, unsigned long const* ptable);
+    void Process_Block(void const* plaintext, void* cyphertext, unsigned int const* ptable);
     void Initialize_Tables(void);
 
     enum
@@ -105,19 +105,19 @@ private:
     **	filled with a number generated from pi. Thus they are not random but
     **	they don't hold a weak pattern either.
     */
-    static unsigned long const P_Init[(int)ROUNDS + 2];
-    static unsigned long const S_Init[4][UCHAR_MAX + 1];
+    static unsigned int const P_Init[(int)ROUNDS + 2];
+    static unsigned int const S_Init[4][UCHAR_MAX + 1];
 
     /*
     **	Permutation tables for encryption and decryption.
     */
-    unsigned long P_Encrypt[(int)ROUNDS + 2];
-    unsigned long P_Decrypt[(int)ROUNDS + 2];
+    unsigned int P_Encrypt[(int)ROUNDS + 2];
+    unsigned int P_Decrypt[(int)ROUNDS + 2];
 
     /*
     **	S-Box tables (four).
     */
-    unsigned long bf_S[4][UCHAR_MAX + 1];
+    unsigned int bf_S[4][UCHAR_MAX + 1];
 };
 
 #endif

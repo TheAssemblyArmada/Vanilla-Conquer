@@ -162,9 +162,9 @@ inline static FacingType Next_Direction(FacingType facing, FacingType dir)
 /* Define a couple of variables which are private to the module they are   */
 /*      declared in.                                                       */
 /*=========================================================================*/
-static unsigned long MainOverlap[MAP_CELL_TOTAL / 32];  // overlap list for the main path
-static unsigned long LeftOverlap[MAP_CELL_TOTAL / 32];  // overlap list for the left path
-static unsigned long RightOverlap[MAP_CELL_TOTAL / 32]; // overlap list for the right path
+static unsigned int MainOverlap[MAP_CELL_TOTAL / 32];  // overlap list for the main path
+static unsigned int LeftOverlap[MAP_CELL_TOTAL / 32];  // overlap list for the left path
+static unsigned int RightOverlap[MAP_CELL_TOTAL / 32]; // overlap list for the right path
 
 // static CELL MoveMask = 0;
 static CELL DestLocation;

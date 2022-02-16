@@ -220,12 +220,12 @@ public:
     **	accumulated over time, the "New" element contains the under-construction
     **	version.
     */
-    unsigned long BScan;
-    unsigned long ActiveBScan;
-    unsigned long NewBScan;
-    unsigned long NewActiveBScan;
+    unsigned int BScan;
+    unsigned int ActiveBScan;
+    unsigned int NewBScan;
+    unsigned int NewActiveBScan;
 #ifdef USE_RA_AI
-    unsigned long OldBScan;
+    unsigned int OldBScan;
 #endif
 
     /*
@@ -234,26 +234,26 @@ public:
     **	the scan bits are being constructed, they are built into the "New" element
     **	and then duplicated into the regular element at the end of every logic cycle.
     */
-    unsigned long UScan;
-    unsigned long ActiveUScan;
-    unsigned long NewUScan;
-    unsigned long NewActiveUScan;
+    unsigned int UScan;
+    unsigned int ActiveUScan;
+    unsigned int NewUScan;
+    unsigned int NewActiveUScan;
 
     /*
     **	Infantry type existence bits. Similar to unit and building bits.
     */
-    unsigned long IScan;
-    unsigned long ActiveIScan;
-    unsigned long NewIScan;
-    unsigned long NewActiveIScan;
+    unsigned int IScan;
+    unsigned int ActiveIScan;
+    unsigned int NewIScan;
+    unsigned int NewActiveIScan;
 
     /*
     **	Aircraft type existence bits. Similar to unit and building buts.
     */
-    unsigned long AScan;
-    unsigned long ActiveAScan;
-    unsigned long NewAScan;
-    unsigned long NewActiveAScan;
+    unsigned int AScan;
+    unsigned int ActiveAScan;
+    unsigned int NewAScan;
+    unsigned int NewActiveAScan;
 
     /*
     **	Record of gains and losses for this house during the course of the
@@ -287,10 +287,10 @@ public:
     /*
     **	This is the running total of the number of credits this house has accumulated.
     */
-    long Tiberium;
-    long Credits;
-    long InitialCredits;
-    long Capacity;
+    int Tiberium;
+    int Credits;
+    int InitialCredits;
+    int Capacity;
 
     /*
     ** Did this house lose via resignation?

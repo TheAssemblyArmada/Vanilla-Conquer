@@ -56,22 +56,22 @@ public:
     /*===================================================================*/
     /* Define the base constructor and destructors for the class			*/
     /*===================================================================*/
-    BufferClass(void* ptr, long size);
-    BufferClass(long size);
+    BufferClass(void* ptr, int size);
+    BufferClass(int size);
     BufferClass();
     ~BufferClass();
     /*===================================================================*/
     /* Define functions which work with the buffer class.						*/
     /*===================================================================*/
-    long To_Page(GraphicViewPortClass& view);
-    long To_Page(int w, int h, GraphicViewPortClass& view);
-    long To_Page(int x, int y, int w, int h, GraphicViewPortClass& view);
+    int To_Page(GraphicViewPortClass& view);
+    int To_Page(int w, int h, GraphicViewPortClass& view);
+    int To_Page(int x, int y, int w, int h, GraphicViewPortClass& view);
 
     /*===================================================================*/
     /* define functions to get at the protected data members					*/
     /*===================================================================*/
     void* Get_Buffer(void);
-    long Get_Size(void);
+    int Get_Size(void);
 
 private:
     /*===================================================================*/
@@ -85,7 +85,7 @@ private:
 
 protected:
     void* Buffer;
-    long Size;
+    int Size;
     bool Allocated;
 };
 /***************************************************************************
@@ -93,12 +93,12 @@ protected:
  *                                                                         *
  * INPUT:		none                                                        *
  *                                                                         *
- * OUTPUT:     long the size of the buffer                                 *
+ * OUTPUT:     int the size of the buffer                                 *
  *                                                                         *
  * HISTORY:                                                                *
  *   06/01/1994 PWG : Created.                                             *
  *=========================================================================*/
-inline long BufferClass::Get_Size(void)
+inline int BufferClass::Get_Size(void)
 {
     return (Size);
 }

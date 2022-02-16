@@ -762,15 +762,15 @@ void InfantryClass::Per_Cell_Process(PCPType why)
                                     if (IsOwnedByPlayer || bldg->IsOwnedByPlayer)
                                         Speak(VOX_MONEY_STOLEN);
 #ifdef OBSOLETE
-                                    long capacity = bldg->Class->Capacity * 256;
+                                    int capacity = bldg->Class->Capacity * 256;
                                     capacity /= (bldg->House->Tiberium + 1);
                                     int bldgcap = bldg->Class->Capacity;
 
-                                    long cash = (bldgcap * 256) / (capacity + 1);
+                                    int cash = (bldgcap * 256) / (capacity + 1);
                                     if (cash > (bldgcap / 2))
                                         cash = bldgcap / 2;
 #else
-                                    long cash = bldg->House->Available_Money() / 2;
+                                    int cash = bldg->House->Available_Money() / 2;
 #endif
                                     bldg->House->Spend_Money(cash);
                                     House->Refund_Money(cash);

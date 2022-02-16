@@ -237,7 +237,7 @@ public:
     {
         return nullptr;
     }
-    virtual long GetPitch() const
+    virtual int GetPitch() const
     {
         return 0;
     }

@@ -272,8 +272,8 @@ public:
     EventClass(EventType type, RTTIType object, CELL cell);
     EventClass(EventType type, int id, CELL cell);
     EventClass(AnimType anim, HousesType owner, COORDINATE coord, int visible = -1);
-    EventClass(void* ptr, unsigned long size);
-    EventClass(EventType type, void* ptr, unsigned long size);
+    EventClass(void* ptr, unsigned int size);
+    EventClass(EventType type, void* ptr, unsigned int size);
 
     // Process the event.
     void Execute(void);

@@ -131,11 +131,11 @@ struct SampleTrackerType
     **	Streaming control handlers.
     */
     bool (*Callback)(short id, short* odd, void** buffer, int* size);
-    int FilePending;      // Number of buffers already filled ahead.
-    long FilePendingSize; // Number of bytes in last filled buffer.
-    short Odd;            // Block number tracker (0..StreamBufferCount-1).
-    void* QueueBuffer;    // Pointer to continued sample data.
-    int QueueSize;        // Size of queue buffer attached.
+    int FilePending;     // Number of buffers already filled ahead.
+    int FilePendingSize; // Number of bytes in last filled buffer.
+    short Odd;           // Block number tracker (0..StreamBufferCount-1).
+    void* QueueBuffer;   // Pointer to continued sample data.
+    int QueueSize;       // Size of queue buffer attached.
 
     /*
     **	The file variables are used when streaming directly off of the
@@ -195,7 +195,7 @@ struct LockedDataType
     bool ServiceSomething;   // = false;
     unsigned MagicNumber;    // = 0xDEAF;
     void* UncompBuffer;      // = NULL;
-    long StreamBufferSize;   // = (2*SECONDARY_BUFFER_SIZE)+128;
+    int StreamBufferSize;    // = (2*SECONDARY_BUFFER_SIZE)+128;
     short StreamBufferCount; // = 32;
     SampleTrackerType SampleTracker[MAX_SAMPLE_TRACKERS];
     unsigned SoundVolume;
@@ -564,7 +564,7 @@ int File_Stream_Sample_Vol(char const* filename, int volume, bool real_time_star
     }
 
     if (FileStreamBuffer == nullptr) {
-        FileStreamBuffer = malloc((unsigned long)(LockedData.StreamBufferSize * LockedData.StreamBufferCount));
+        FileStreamBuffer = malloc((unsigned int)(LockedData.StreamBufferSize * LockedData.StreamBufferCount));
 
         for (int i = 0; i < MAX_SAMPLE_TRACKERS; ++i) {
             LockedData.SampleTracker[i].FileBuffer = FileStreamBuffer;
@@ -771,7 +771,7 @@ void* Load_Sample(char const* filename)
     return data;
 };
 
-long Load_Sample_Into_Buffer(char const* filename, void* buffer, long size)
+int Load_Sample_Into_Buffer(char const* filename, void* buffer, int size)
 {
     if (buffer == nullptr || size == 0 || LockedData.DigiHandle == INVALID_AUDIO_HANDLE || !filename
         || !Find_File(filename)) {
@@ -789,7 +789,7 @@ long Load_Sample_Into_Buffer(char const* filename, void* buffer, long size)
     return sample_size;
 }
 
-long Sample_Read(int fh, void* buffer, long size)
+int Sample_Read(int fh, void* buffer, int size)
 {
     if (buffer == nullptr || fh == INVALID_AUDIO_HANDLE || size <= sizeof(AUDHeaderType)) {
         return 0;
@@ -1231,7 +1231,7 @@ int Get_Digi_Handle()
     return LockedData.DigiHandle;
 }
 
-long Sample_Length(const void* sample)
+int Sample_Length(const void* sample)
 {
     if (sample == nullptr) {
         return 0;

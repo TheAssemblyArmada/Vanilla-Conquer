@@ -2806,7 +2806,7 @@ TARGET AircraftClass::New_LZ(TARGET oldlz) const
  * HISTORY:                                                                                    *
  *   06/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-RadioMessageType AircraftClass::Receive_Message(RadioClass* from, RadioMessageType message, long& param)
+RadioMessageType AircraftClass::Receive_Message(RadioClass* from, RadioMessageType message, int& param)
 {
     assert(Aircraft.ID(this) == ID);
     assert(IsActive);

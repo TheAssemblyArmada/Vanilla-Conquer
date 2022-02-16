@@ -188,7 +188,7 @@ private:
     // app to receive the same packet twice!
     //.....................................................................
     IPXAddressClass LastAddress[4]; // array of last 4 addresses
-    unsigned long LastPacketID[4];  // array of last 4 packet ID's
+    unsigned int LastPacketID[4];   // array of last 4 packet ID's
     int LastRXIndex;                // index of next avail pos
 };
 

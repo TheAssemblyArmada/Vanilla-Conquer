@@ -62,16 +62,16 @@ public:
     virtual int Is_Open(void) const = 0;
     virtual int Open(char const* filename, int rights = READ) = 0;
     virtual int Open(int rights = READ) = 0;
-    virtual long Read(void* buffer, long size) = 0;
-    virtual long Seek(long pos, int dir = SEEK_CUR) = 0;
-    virtual long Size(void) = 0;
-    virtual long Write(void const* buffer, long size) = 0;
+    virtual int Read(void* buffer, int size) = 0;
+    virtual int Seek(int pos, int dir = SEEK_CUR) = 0;
+    virtual int Size(void) = 0;
+    virtual int Write(void const* buffer, int size) = 0;
     virtual void Close(void) = 0;
-    virtual unsigned long Get_Date_Time(void)
+    virtual unsigned int Get_Date_Time(void)
     {
         return (0);
     }
-    virtual bool Set_Date_Time(unsigned long)
+    virtual bool Set_Date_Time(unsigned int)
     {
         return (false);
     }

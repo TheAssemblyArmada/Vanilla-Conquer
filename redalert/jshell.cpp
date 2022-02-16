@@ -181,7 +181,7 @@ void File_Fatal(char const* message)
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-long Load_Uncompress(FileClass& file, BufferClass& uncomp_buff, BufferClass& dest_buff, void* reserved_data)
+int Load_Uncompress(FileClass& file, BufferClass& uncomp_buff, BufferClass& dest_buff, void* reserved_data)
 {
     unsigned short size;
     void* sptr = uncomp_buff.Get_Buffer();
@@ -254,7 +254,7 @@ long Load_Uncompress(FileClass& file, BufferClass& uncomp_buff, BufferClass& des
     if (opened) {
         file.Close();
     }
-    return ((long)size);
+    return ((int)size);
 }
 
 int Load_Picture(char const* filename,

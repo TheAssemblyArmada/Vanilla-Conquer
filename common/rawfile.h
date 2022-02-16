@@ -86,10 +86,10 @@ public:
     virtual int Is_Open(void) const;
     virtual int Open(char const* filename, int rights = READ);
     virtual int Open(int rights = READ);
-    virtual long Read(void* buffer, long size);
-    virtual long Seek(long pos, int dir = SEEK_CUR);
-    virtual long Size(void);
-    virtual long Write(void const* buffer, long size);
+    virtual int Read(void* buffer, int size);
+    virtual int Seek(int pos, int dir = SEEK_CUR);
+    virtual int Size(void);
+    virtual int Write(void const* buffer, int size);
     virtual void Close(void);
     virtual void Error(int error, int canretry = false, char const* filename = NULL);
     void Bias(int start, int length = -1);
@@ -112,12 +112,12 @@ protected:
     **	This function returns the largest size a low level DOS read or write may
     **	perform. Larger file transfers are performed in chunks of this size or less.
     */
-    long Transfer_Block_Size(void)
+    int Transfer_Block_Size(void)
     {
-        return (long)((unsigned)UINT_MAX) - 16L;
+        return (int)((unsigned)UINT_MAX) - 16L;
     };
 
-    long Raw_Seek(long pos, int dir = SEEK_CUR);
+    int Raw_Seek(int pos, int dir = SEEK_CUR);
 
 private:
     /*

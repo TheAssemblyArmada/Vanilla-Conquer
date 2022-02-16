@@ -25,7 +25,7 @@
 
 #include "function.h"
 
-void Mem_Copy(void const* source, void* dest, unsigned long bytes_to_copy)
+void Mem_Copy(void const* source, void* dest, unsigned int bytes_to_copy)
 {
     if (dest != source) {
         memcpy(dest, source, bytes_to_copy);
