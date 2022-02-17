@@ -35,7 +35,11 @@
 #ifndef SPECIAL_H
 #define SPECIAL_H
 
-class SpecialClass
+#include "common/bitfields.h"
+#include <stdint.h>
+
+#pragma pack(push, 1)
+class BITFIELD_STRUCT SpecialClass
 {
 public:
     void Init(void)
@@ -234,7 +238,7 @@ public:
     /*
     ** Health bar display mode
     */
-    enum eHealthBarDisplayMode
+    enum eHealthBarDisplayMode : int32_t
     {
         HB_DAMAGED = 0,
         HB_ALWAYS,
@@ -244,7 +248,7 @@ public:
     /*
     ** Resource bar display mode
     */
-    enum eResourceBarDisplayMode
+    enum eResourceBarDisplayMode : int32_t
     {
         RB_SELECTED = 0,
         RB_ALWAYS,
@@ -267,5 +271,6 @@ public:
     //
     unsigned char SaveLoadPadding[124];
 };
+#pragma pack(pop)
 
 #endif

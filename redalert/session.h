@@ -35,6 +35,7 @@
 #define SESSION_H
 
 #include "common/ipxaddr.h"
+#include "common/bitfields.h"
 #include "msglist.h"
 #include "connect.h"
 #include "version.h"
@@ -174,7 +175,7 @@ typedef enum ModemGameType
 //...........................................................................
 // Commands sent over the serial Global Channel
 //...........................................................................
-typedef enum SerialCommandType
+typedef enum SerialCommandType : int32_t
 {
     SERIAL_CONNECT = 100,       // Are you there?  Hello?  McFly?
     SERIAL_GAME_OPTIONS = 101,  // Hey, dudes, here's some new game options
@@ -195,7 +196,7 @@ typedef enum SerialCommandType
 //...........................................................................
 // Commands sent over the network Global Channel
 //...........................................................................
-typedef enum NetCommandType
+typedef enum NetCommandType : int32_t
 {
     NET_QUERY_GAME,          // Hey, what games are out there?
     NET_ANSWER_GAME,         // Yo, Here's my game's name!
@@ -285,6 +286,7 @@ typedef struct NodeNameTag
 //...........................................................................
 // Packet sent over the serial Global Channel
 //...........................................................................
+#pragma pack(push, 1)
 typedef struct
 {
     SerialCommandType Command;   // One of the enum's defined above
@@ -292,7 +294,7 @@ typedef struct
     unsigned char ID;            // unique ID of sender of message
     union
     {
-        struct
+        struct BITFIELD_STRUCT
         {
             HousesType House;                  // player's House
             PlayerColorType Color;             // player's color or SIGNOFF ID
@@ -355,7 +357,7 @@ typedef struct GlobalPacketType
     char Name[MPLAYER_NAME_MAX]; // Player or Game Name
     union
     {
-        struct
+        struct BITFIELD_STRUCT
         {
             unsigned int IsOpen : 1; // 1 = game is open for joining
         } GameInfo;
@@ -368,7 +370,7 @@ typedef struct GlobalPacketType
             unsigned int MaxVersion; // game's max supported version
             int CheatCheck;          // Unique ID of "rules.ini" file.
         } PlayerInfo;
-        struct
+        struct BITFIELD_STRUCT
         {
             char Scenario[DESCRIP_MAX];        // Scenario Name
             unsigned int Credits;              // player's credits
@@ -414,7 +416,7 @@ typedef struct GlobalPacketType
         } Chat;
     };
 } GlobalPacketType;
-
+#pragma pack(pop)
 //...........................................................................
 // For finding sync bugs; filled in by the engine when certain conditions
 // are met; the pointers allow examination of objects in the debugger.

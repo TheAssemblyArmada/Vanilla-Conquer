@@ -34,6 +34,8 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+#include "common/bitfields.h"
+
 //#define PETROGLYPH_EXAMPLE_MOD
 
 /**********************************************************************
@@ -2669,7 +2671,8 @@ typedef enum SerialCommandType : unsigned short
 **	These is the structure sent over the network Global Channel.
 **	Also used for the Null-Modem and Modem.
 */
-typedef struct
+#pragma pack(push, 1)
+typedef struct BITFIELD_STRUCT
 {
     SerialCommandType Command;           // One of the enum's defined above
     char Name[MPLAYER_NAME_MAX];         // Player or Game Name
@@ -2691,6 +2694,7 @@ typedef struct
     char Message[COMPAT_MESSAGE_LENGTH]; // inter-player message
     unsigned char ID;                    // ID of sender of message
 } SerialPacketType;
+#pragma pack(pop)
 
 typedef enum ModemGameType : unsigned char
 {
@@ -2729,13 +2733,14 @@ typedef enum NetCommandType : unsigned char
 /****************************************************************************
 **	These is the structure sent over the network Global Channel.
 */
+#pragma pack(push, 1)
 typedef struct
 {
     NetCommandType Command;      // One of the enum's defined above
     char Name[MPLAYER_NAME_MAX]; // Player or Game Name
     union
     {
-        struct
+        struct BITFIELD_STRUCT
         {
             int Version;             // game's version number
             unsigned int IsOpen : 1; // 1 = game is open for joining
@@ -2746,7 +2751,7 @@ typedef struct
             unsigned int Color;   // player's color
             unsigned int NameCRC; // CRC of player's game's name
         } PlayerInfo;
-        struct
+        struct BITFIELD_STRUCT
         {
             unsigned char Scenario;      // Scenario #
             unsigned int Credits;        // player's credits
@@ -2772,7 +2777,7 @@ typedef struct
         } ResponseTime;
     };
 } GlobalPacketType;
-
+#pragma pack(pop)
 /****************************************************************************
 **	This structure is for keeping score in multiplayer games.
 */
