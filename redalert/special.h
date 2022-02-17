@@ -35,7 +35,10 @@
 #ifndef SPECIAL_H
 #define SPECIAL_H
 
-class SpecialClass
+#include "common/bitfields.h"
+
+#pragma pack(push, 1)
+class BITFIELD_STRUCT SpecialClass
 {
 public:
     /*
@@ -118,5 +121,6 @@ public:
     unsigned char SaveLoadPadding[128]; // Works with With last weeks saves (7/16/2020) and newest saves; Skyler says go
                                         // with this.
 };
+#pragma pack(pop)
 
 #endif

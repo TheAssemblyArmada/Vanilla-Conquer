@@ -48,13 +48,16 @@
 #ifndef COMBUF_H
 #define COMBUF_H
 
+#include "bitfields.h"
+
 /*
 ********************************** Defines **********************************
 */
 /*---------------------------------------------------------------------------
 This is one output queue entry
 ---------------------------------------------------------------------------*/
-typedef struct
+#pragma pack(push, 1)
+typedef struct BITFIELD_STRUCT
 {
     unsigned int IsActive : 1; // 1 = this entry is ready to be processed
     unsigned int IsACK : 1;    // 1 = ACK received for this packet
@@ -70,7 +73,7 @@ typedef struct
 /*---------------------------------------------------------------------------
 This is one input queue entry
 ---------------------------------------------------------------------------*/
-typedef struct
+typedef struct BITFIELD_STRUCT
 {
     unsigned int IsActive : 1; // 1 = this entry is ready to be processed
     unsigned int IsRead : 1;   // 1 = caller has read this entry
@@ -80,6 +83,7 @@ typedef struct
     int ExtraLen;              // size of extra data
     char* ExtraBuffer;         // extra data buffer
 } ReceiveQueueType;
+#pragma pack(pop)
 
 /*
 ***************************** Class Declaration *****************************
