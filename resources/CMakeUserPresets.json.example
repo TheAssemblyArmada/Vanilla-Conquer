@@ -1,0 +1,39 @@
+{
+    "version": 2,
+    "configurePresets": [    
+        {
+            "name": "gcc-vanilla-debug",
+            "inherits": "gcc-vanilla",
+            "displayName": "GCC Vanilla debug build",
+            "binaryDir": "${sourceDir}/build_gcc",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "clang-vanilla-debug",
+            "inherits": "clang-vanilla",
+            "displayName": "Clang Vanilla debug build",
+            "binaryDir": "${sourceDir}/build_clang",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "mingw-i686-vanilla-debug",
+            "inherits": "mingw-i686-vanilla",
+            "displayName": "MinGW-w64 32bit Vanilla debug build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "mingw-x86_64-vanilla-debug",
+            "inherits": "mingw-x86_64-vanilla",
+            "displayName": "MinGW-w64 64bit Vanilla debug build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        }
+    ]
+}

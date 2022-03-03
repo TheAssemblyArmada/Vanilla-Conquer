@@ -169,6 +169,7 @@ add_library(common STATIC ${COMMON_SRC} ${COMMON_HEADERS})
 target_link_libraries(common PUBLIC ${COMMON_LIBS})
 target_include_directories(common PUBLIC .)
 target_compile_definitions(common PRIVATE FIXIT_FAST_LOAD $<$<CONFIG:Debug>:_DEBUG>)
+target_compile_options(common PUBLIC ${VC_CXX_FLAGS})
 # Make build check state of git to check for uncommitted changes.
 add_dependencies(common check_git)
 

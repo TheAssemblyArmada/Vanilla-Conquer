@@ -1,14 +1,14 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 include(FeatureSummary)
 include(CheckCXXCompilerFlag)
 
 if(NOT DEFINED CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo" FORCE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo" FORCE)
 endif()
 
-project(VanillaConquer CXX)
+project(VanillaConquer C CXX)
 
 option(BUILD_REMASTERTD "Build Tiberian Dawn remaster dll." OFF)
 option(BUILD_REMASTERRA "Build Red Alert remaster dll." OFF)
@@ -72,39 +72,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-if(NOT MSVC)
-    if(WIN32)
-        set(CMAKE_CXX_FLAGS_DEBUG "-gstabs3")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
-        set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
-    else()
-        set(CMAKE_CXX_FLAGS_DEBUG "-g3")
-        set(CMAKE_FIND_FRAMEWORK "LAST")
-    endif()
-
-    message(STATUS "Checking whether compiler supports -fdata-sections")
-    check_cxx_compiler_flag("-Werror -fdata-sections" HAVE_DATA_SECTIONS)
-    if(HAVE_DATA_SECTIONS)
-      message(STATUS "yes")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fdata-sections")
-    else()
-      message(STATUS "no")
-    endif()
-
-    message(STATUS "Checking whether compiler supports -ffunction-sections")
-    check_cxx_compiler_flag("-Werror -ffunction-sections" HAVE_FUNCTION_SECTIONS)
-    if(HAVE_FUNCTION_SECTIONS)
-      message(STATUS "yes")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffunction-sections")
-    else()
-      message(STATUS "no")
-    endif()
-
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -Wwrite-strings -Werror=write-strings -fcheck-new -fsigned-char -fdata-sections -ffunction-sections -DNOMINMAX")
-else()
-    set(CMAKE_CXX_FLAGS "/Zc:strictStrings")
-endif()
+set(CMAKE_FIND_FRAMEWORK "LAST")
 
 add_definitions(-DTRUE_FALSE_DEFINED)
 

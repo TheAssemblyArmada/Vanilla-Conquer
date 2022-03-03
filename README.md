@@ -19,6 +19,14 @@ All of these rooms are bridged together so people can choose their preferred ser
 
 We support wide variety of compilers and platforms to target. Vanilla Conquer is known to compile with recent enough gcc, MSVC, mingw-w64 or clang and known to run on Windows, Linux, macOS and BSDs.
 
+### Presets
+
+A [CMakePresets.json](CMakePresets.json) file is provided that contains presets for common build configurations and is used by our CI scripts to build the release builds. These presets require the [Ninja](https://ninja-build.org/) build tool to be available in the system PATH in order to be used.
+
+We also provide an example [CMakeUserPresets.json](resources/CMakeUserPresets.json.example) that can be copied to the root source directory and renamed. You can edit this file to create your own development presets that won't be included in git commits. A few example presets are provided which override the release presets to build a "debug" configuration.
+
+To build using a preset, add `--preset preset_name` to the CMake command line examples below.
+
 ### Windows
 
 #### Requirements
@@ -35,13 +43,11 @@ Extract SDL2 and OpenAL somewhere you know. If you are building only Remastered 
 
 #### Building
 
-In a VS command line window:
+In a VS command line window in the Vanilla Conquer source directory:
 
 ```sh
-mkdir build
-cd build
-cmake .. -DSDL2_ROOT_DIR=C:\path\to\SDL2 -DOPENAL_ROOT=C:\path\to\OpenAL
-cmake --build .
+cmake -DSDL2_ROOT_DIR=C:\path\to\SDL2 -DOPENAL_ROOT=C:\path\to\OpenAL -B build .
+cmake --build build
 ```
 
 This will build Vanilla Conquer executables in the build directory. If you are building Remastered dlls you need to configure cmake with `-A win32` and ensure your VS command line is x86.
@@ -57,23 +63,37 @@ This will build Vanilla Conquer executables in the build directory. If you are b
 
 On Debian/Ubuntu you can install the build requirements as follows:
 
-```
-sudo apt-get update
-sudo apt-get install g++ cmake libsdl2-dev libopenal-dev
+```sh
+sudo apt update
+sudo apt install g++ cmake libsdl2-dev libopenal-dev
 or
-sudo apt-get install g++ cmake libsdl1.2-dev libopenal-dev
+sudo apt install g++ cmake libsdl1.2-dev libopenal-dev
+```
+
+On Fedora/RedHat based system you can install the build requirements as follows:
+
+```sh
+sudo dnf install gcc-c++ cmake SDL2-devel openal-soft-devel
+or
+sudo dnf install gcc-c++ cmake SDL-devel openal-soft-devel
 ```
 
 #### Building
 
 ```sh
-mkdir build
-cd build
-cmake ..
-make -j8
+cmake -B build .
+cmake --build build
 ```
 
 This will build Vanilla Conquer executables in the build directory.
+
+#### macOS considerations
+
+To create a portable bundle for macOS we run [macdylibbundler](https://github.com/auriamg/macdylibbundler) in our CI builds as an extra step to add the SDL2 and OpenAL libraries to the bundle. If you wish to create a portable bundle yourself, you will need to do this step manually as CMake will not currently do it for you.
+
+### Icons
+
+CMake will attempt to generate icons in an appropriate format for Windows and macOS if ImageMagick is found in the system PATH. Otherwise you will end up with generic "program" icons.
 
 ## Releases
 
