@@ -11,6 +11,7 @@
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 #include "audio.h"
 #include "auduncmp.h"
+#include "debugstring.h"
 #include "file.h"
 #include "memflag.h"
 #include "soscomp.h"
@@ -37,7 +38,7 @@ enum
     TIMER_TARGET_RESOLUTION = 10, // 10-millisecond target resolution
     INVALID_AUDIO_HANDLE = -1,
     INVALID_FILE_HANDLE = -1,
-    OPENAL_BUFFER_COUNT = 2,
+    OPENAL_BUFFER_COUNT = 3,
 };
 
 /*
@@ -669,7 +670,7 @@ void Maintenance_Callback()
                     // Work out if we have any space to buffer more data right now.
                     alGetSourcei(st->OpenALSource, AL_BUFFERS_PROCESSED, &processed_buffers);
 
-                    while (processed_buffers > 0 && st->MoreSource) {
+                    while (processed_buffers > 0) {
                         int bytes_copied = Sample_Copy(st,
                                                        &st->Source,
                                                        &st->Remainder,
@@ -681,16 +682,20 @@ void Maintenance_Callback()
                                                        nullptr,
                                                        nullptr);
 
-                        if (bytes_copied != BUFFER_CHUNK_SIZE) {
-                            st->MoreSource = false;
-                        }
-
                         if (bytes_copied > 0) {
                             ALuint buffer;
                             alSourceUnqueueBuffers(st->OpenALSource, 1, &buffer);
                             alBufferData(buffer, st->Format, ChunkBuffer, bytes_copied, st->Frequency);
                             alSourceQueueBuffers(st->OpenALSource, 1, &buffer);
                             --processed_buffers;
+                        }
+
+                        if (bytes_copied != BUFFER_CHUNK_SIZE && st->FilePending == 0) {
+                            st->MoreSource = false;
+                        }
+
+                        if (bytes_copied != BUFFER_CHUNK_SIZE) {
+                            break;
                         }
                     }
                 } else {
