@@ -87,6 +87,28 @@ find_library(OPENAL_LIBRARY
   [HKEY_LOCAL_MACHINE\\SOFTWARE\\Creative\ Labs\\OpenAL\ 1.1\ Software\ Development\ Kit\\1.00.0000;InstallDir]
 )
 
+set(_openal_framework FALSE)
+# Some special-casing if we've found/been given a framework.
+# Handles whether we're given the library inside the framework or the framework itself.
+if(APPLE AND "${OPENAL_LIBRARY}" MATCHES "(/[^/]+)*.framework(/.*)?$")
+    set(_openal_framework TRUE)
+    set(OPENAL_FRAMEWORK "${OPENAL_LIBRARY}")
+    # Move up in the directory tree as required to get the framework directory.
+    while("${OPENAL_FRAMEWORK}" MATCHES "(/[^/]+)*.framework(/.*)$" AND NOT "${OPENAL_FRAMEWORK}" MATCHES "(/[^/]+)*.framework$")
+        get_filename_component(OPENAL_FRAMEWORK "${OPENAL_FRAMEWORK}" DIRECTORY)
+    endwhile()
+    if("${OPENAL_FRAMEWORK}" MATCHES "(/[^/]+)*.framework$")
+        set(OPENAL_FRAMEWORK_NAME ${CMAKE_MATCH_1})
+        if(EXISTS "${OPENAL_FRAMEWORK}${OPENAL_FRAMEWORK_NAME}.tbd")
+            set(OPENAL_FRAMEWORK_NAME "${OPENAL_FRAMEWORK_NAME}.tbd")
+        endif()
+    else()
+        # For some reason we couldn't get the framework directory itself.
+        # Shouldn't happen, but might if something is weird.
+        unset(OPENAL_FRAMEWORK)
+    endif()
+endif()
+
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
   set(_OpenAL_ARCH_DIR bin/Win64)
 else()
@@ -117,9 +139,16 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(OpenAL  DEFAULT_MSG  OPENAL_LIBRARY OPENAL_INC
 if(OPENAL_FOUND)
     if(NOT TARGET OpenAL::OpenAL)
         add_library(OpenAL::OpenAL UNKNOWN IMPORTED)
-        set_target_properties(OpenAL::OpenAL PROPERTIES 
-            IMPORTED_LOCATION ${OPENAL_LIBRARY}
-        )
+        if(OPENAL_FRAMEWORK AND OPENAL_FRAMEWORK_NAME)
+                # Handle the case that OPENAL is a framework and we were able to decompose it above.
+                set_target_properties(OpenAL::OpenAL PROPERTIES
+                    IMPORTED_LOCATION "${OPENAL_FRAMEWORK}/${OPENAL_FRAMEWORK_NAME}"
+                )
+        else()
+            set_target_properties(OpenAL::OpenAL PROPERTIES 
+                IMPORTED_LOCATION ${OPENAL_LIBRARY}
+            )
+        endif()
         set_target_properties(OpenAL::OpenAL PROPERTIES 
             INTERFACE_INCLUDE_DIRECTORIES ${OPENAL_INCLUDE_DIR}
         )
