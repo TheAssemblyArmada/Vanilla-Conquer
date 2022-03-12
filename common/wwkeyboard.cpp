@@ -56,6 +56,7 @@
 #include "miscasm.h"
 #include <string.h>
 #include <cmath>
+#include <cstdlib>
 #ifdef SDL2_BUILD
 #include <SDL.h>
 #include "sdl_keymap.h"
