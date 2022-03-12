@@ -18,6 +18,7 @@
 #include <al.h>
 #include <alc.h>
 #include <algorithm>
+#include <stdlib.h>
 
 enum
 {
