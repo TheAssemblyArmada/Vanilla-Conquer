@@ -225,10 +225,10 @@ endif()
 
 if(BUILD_VANILLARA)
     include(BuildIcons)
+    # Create the custom command for generating the ico file for windows.
+    make_icon(INPUT "${CMAKE_SOURCE_DIR}/resources/vanillara_icon.svg" OUTPUT VANILLARA_ICON)
 
     if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        # Create the custom command for generating the ico file for windows.
-        make_icon(INPUT "${CMAKE_SOURCE_DIR}/resources/vanillara_icon.svg" OUTPUT VANILLARA_ICON)
         # Generate windows version info.
         generate_product_version(
             VANILLARA_RC
@@ -243,8 +243,23 @@ if(BUILD_VANILLARA)
             ICON "${VANILLARA_ICON}"
         )
     endif()
+
     # A target must include the icon for the custom command to run.
     add_executable(VanillaRA ${REDALERT_SRC} ${REDALERT_HEADERS} ${VANILLARA_RC} ${VANILLARA_ICON})
+
+    if(MAKE_BUNDLE)
+        set_source_files_properties(${VANILLARA_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+        set_target_properties(VanillaRA PROPERTIES
+            MACOSX_BUNDLE True
+            MACOSX_BUNDLE_GUI_IDENTIFIER com.vanilla-conquer.vanillara
+            MACOSX_BUNDLE_BUNDLE_NAME VanillaRA
+            MACOSX_BUNDLE_BUNDLE_VERSION "1.0"
+            MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
+            MACOSX_BUNDLE_COPYRIGHT "Based on code released under GPLv3 by EA"
+            MACOSX_BUNDLE_ICON_FILE "vanillara_icon.icns"
+        )
+    endif()
+
     target_compile_definitions(VanillaRA PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS})
     target_include_directories(VanillaRA PUBLIC ${CMAKE_SOURCE_DIR} .)
     target_link_libraries(VanillaRA commonv ${VANILLA_LIBS} ${STATIC_LIBS})
