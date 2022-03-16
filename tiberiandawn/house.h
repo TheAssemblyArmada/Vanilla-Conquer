@@ -305,28 +305,28 @@ public:
     /*
     ** Stuff to keep track of the total number of units built by this house.
     */
-    UnitTrackerClass* AircraftTotals;
-    UnitTrackerClass* InfantryTotals;
-    UnitTrackerClass* UnitTotals;
-    UnitTrackerClass* BuildingTotals;
+    UnitTrackerClass<AIRCRAFT_COUNT> AircraftTotals;
+    UnitTrackerClass<INFANTRY_COUNT> InfantryTotals;
+    UnitTrackerClass<UNIT_COUNT> UnitTotals;
+    UnitTrackerClass<STRUCT_COUNT> BuildingTotals;
 
     /*
     ** Total number of units destroyed by this house
     */
-    UnitTrackerClass* DestroyedAircraft;
-    UnitTrackerClass* DestroyedInfantry;
-    UnitTrackerClass* DestroyedUnits;
-    UnitTrackerClass* DestroyedBuildings;
+    UnitTrackerClass<AIRCRAFT_COUNT> DestroyedAircraft;
+    UnitTrackerClass<INFANTRY_COUNT> DestroyedInfantry;
+    UnitTrackerClass<UNIT_COUNT> DestroyedUnits;
+    UnitTrackerClass<STRUCT_COUNT> DestroyedBuildings;
 
     /*
     ** Total number of enemy buildings captured by this house
     */
-    UnitTrackerClass* CapturedBuildings;
+    UnitTrackerClass<STRUCT_COUNT> CapturedBuildings;
 
     /*
     ** Total number of crates found by this house
     */
-    UnitTrackerClass* TotalCrates;
+    UnitTrackerClass<TOTAL_CRATE_TYPES> TotalCrates;
 
     /*
     **	Records the number of infantry and vehicle factories active. This value is
@@ -425,7 +425,6 @@ public:
     HouseClass(HousesType house);
     HouseClass(NoInitClass const&)
         : Class(this->Class){};
-    ~HouseClass(void);
     operator HousesType(void) const;
 
     /*---------------------------------------------------------------------
@@ -548,7 +547,6 @@ public:
     void Check_Pertinent_Structures(void);
 
     void Init_Unit_Trackers(void);
-    void Free_Unit_Trackers(void);
 
     // MBL 09.08.2020 Mod support stub
     void Handle_Mod_Game_Command(CELL cell, int mod_command_index); // mod_command_index = 0-3

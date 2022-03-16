@@ -4460,29 +4460,21 @@ bool DLLExportClass::Get_Sidebar_State(uint64 player_id, unsigned char* buffer_i
         sidebar->RadarMapActive = PlayerPtr->Radar == RADAR_ON;
 
         // A. Get the DestroyedBuildings and DestroyedInfantry stats if they are available at this point
-        if (PlayerPtr->DestroyedBuildings) {
-            for (int index = 0; index < PlayerPtr->DestroyedBuildings->Get_Unit_Count(); index++) {
-                unsigned int count = (unsigned int)PlayerPtr->DestroyedBuildings->Get_Unit_Total(index);
-                sidebar->BuildingsKilled += count;
-            }
+        for (int index = 0; index < PlayerPtr->DestroyedBuildings.Get_Unit_Count(); index++) {
+            unsigned int count = (unsigned int)PlayerPtr->DestroyedBuildings.Get_Unit_Total(index);
+            sidebar->BuildingsKilled += count;
         }
-        if (PlayerPtr->DestroyedInfantry) {
-            for (int index = 0; index < PlayerPtr->DestroyedInfantry->Get_Unit_Count(); index++) {
-                unsigned int count = (unsigned int)PlayerPtr->DestroyedInfantry->Get_Unit_Total(index);
-                sidebar->UnitsKilled += count; // Includes Infantry, Vehicles, Aircraft
-            }
+        for (int index = 0; index < PlayerPtr->DestroyedInfantry.Get_Unit_Count(); index++) {
+            unsigned int count = (unsigned int)PlayerPtr->DestroyedInfantry.Get_Unit_Total(index);
+            sidebar->UnitsKilled += count; // Includes Infantry, Vehicles, Aircraft
         }
-        if (PlayerPtr->DestroyedUnits) {
-            for (int index = 0; index < PlayerPtr->DestroyedUnits->Get_Unit_Count(); index++) {
-                unsigned int count = (unsigned int)PlayerPtr->DestroyedUnits->Get_Unit_Total(index);
-                sidebar->UnitsKilled += count; // Includes Infantry, Vehicles, Aircraft
-            }
+        for (int index = 0; index < PlayerPtr->DestroyedUnits.Get_Unit_Count(); index++) {
+            unsigned int count = (unsigned int)PlayerPtr->DestroyedUnits.Get_Unit_Total(index);
+            sidebar->UnitsKilled += count; // Includes Infantry, Vehicles, Aircraft
         }
-        if (PlayerPtr->DestroyedAircraft) {
-            for (int index = 0; index < PlayerPtr->DestroyedAircraft->Get_Unit_Count(); index++) {
-                unsigned int count = (unsigned int)PlayerPtr->DestroyedAircraft->Get_Unit_Total(index);
-                sidebar->UnitsKilled += count; // Includes Infantry, Vehicles, Aircraft
-            }
+        for (int index = 0; index < PlayerPtr->DestroyedAircraft.Get_Unit_Count(); index++) {
+            unsigned int count = (unsigned int)PlayerPtr->DestroyedAircraft.Get_Unit_Total(index);
+            sidebar->UnitsKilled += count; // Includes Infantry, Vehicles, Aircraft
         }
 
         // B. If the DestroyedBuildings and DestroyedInfantry stats seemed to be unvailable, this is another way to do

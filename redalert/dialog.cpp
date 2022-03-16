@@ -423,7 +423,7 @@ void Simple_Text_Print(char const* text,
     /*
     **	Change the current font if it differs from the font desired.
     */
-    xspace = 1;
+    xspace = (RESFACTOR == 1) ? 0 : 1;
     yspace = 0;
 
     switch (point) {

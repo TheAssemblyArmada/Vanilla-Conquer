@@ -363,11 +363,7 @@ public:
     {
     public:
         SBGadgetClass(void)
-            : GadgetClass((int)((int)SIDE_X + 8) * RESFACTOR,
-                          (int)SIDE_Y * RESFACTOR,
-                          (int)((int)SIDE_WIDTH - 1) * RESFACTOR - 1,
-                          (int)((int)SIDE_HEIGHT - 1) * RESFACTOR,
-                          LEFTUP){};
+            : GadgetClass(0, 0, 0, 0, LEFTUP){};
 
     protected:
         virtual int Action(unsigned flags, KeyNumType& key);

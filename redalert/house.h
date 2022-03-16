@@ -40,6 +40,8 @@
 #include "credits.h"
 #include "super.h"
 
+#include "common/utracker.h"
+
 class FootClass;
 class BuildingClass;
 class MonoClass;
@@ -49,7 +51,6 @@ class TechnoClass;
 class UnitClass;
 struct NoInitClass;
 class FactoryClass;
-class UnitTrackerClass;
 
 #define HOUSE_NAME_MAX 12
 
@@ -435,30 +436,30 @@ public:
     /*
     ** Stuff to keep track of the total number of units built by this house.
     */
-    UnitTrackerClass* AircraftTotals;
-    UnitTrackerClass* InfantryTotals;
-    UnitTrackerClass* UnitTotals;
-    UnitTrackerClass* BuildingTotals;
-    UnitTrackerClass* VesselTotals;
+    UnitTrackerClass<AIRCRAFT_COUNT> AircraftTotals;
+    UnitTrackerClass<INFANTRY_COUNT> InfantryTotals;
+    UnitTrackerClass<UNIT_COUNT> UnitTotals;
+    UnitTrackerClass<STRUCT_COUNT> BuildingTotals;
+    UnitTrackerClass<VESSEL_COUNT> VesselTotals;
 
     /*
     ** Total number of units destroyed by this house
     */
-    UnitTrackerClass* DestroyedAircraft;
-    UnitTrackerClass* DestroyedInfantry;
-    UnitTrackerClass* DestroyedUnits;
-    UnitTrackerClass* DestroyedBuildings;
-    UnitTrackerClass* DestroyedVessels;
+    UnitTrackerClass<AIRCRAFT_COUNT> DestroyedAircraft;
+    UnitTrackerClass<INFANTRY_COUNT> DestroyedInfantry;
+    UnitTrackerClass<UNIT_COUNT> DestroyedUnits;
+    UnitTrackerClass<STRUCT_COUNT> DestroyedBuildings;
+    UnitTrackerClass<VESSEL_COUNT> DestroyedVessels;
 
     /*
     ** Total number of enemy buildings captured by this house
     */
-    UnitTrackerClass* CapturedBuildings;
+    UnitTrackerClass<STRUCT_COUNT> CapturedBuildings;
 
     /*
     ** Total number of crates found by this house
     */
-    UnitTrackerClass* TotalCrates;
+    UnitTrackerClass<CRATE_COUNT> TotalCrates;
 
     /*
     **	Records the number of infantry and vehicle factories active. This value is
@@ -826,7 +827,6 @@ public:
     void Check_Pertinent_Structures(void);
 
     void Init_Unit_Trackers(void);
-    void Free_Unit_Trackers(void);
 
     // MBL 09.08.2020 Mod support stub
     void Handle_Mod_Game_Command(CELL cell, int mod_command_index); // mod_command_index = 0-3

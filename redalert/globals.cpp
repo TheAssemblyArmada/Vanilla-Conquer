@@ -618,36 +618,7 @@ int Seed = 0;
 */
 int CustomSeed = 0;
 
-int WindowList[][9] = {
-    /* xbyte, ypixel, bytewid, pixelht, cursor color, bkgd color,	cursor x, cursor y */
-
-    /* do not change the first 2 entries!! they are necc. to the system */
-
-    {0, 0, 40 * 8 * RESFACTOR, 200 * RESFACTOR, WHITE, BLACK, 0, 0}, /* screen window */
-    {1 * 8, 75, 38 * 8, 100, WHITE, BLACK, 0, 0},                    /* DOS Error window */
-
-    // Tactical map.
-    {0, 0, 40 * 8 * RESFACTOR, 200 * RESFACTOR, WHITE, LTGREY, 0, 0},
-
-    // Initial menu window.
-    {12 * 8, 199 - 42, 16 * 8, 42, LTGREY, DKGREY, 0, 0},
-
-    // Sidebar clipping window.
-    {0, 0, 0, 0, 0, 0, 0, 0},
-
-    // Scenario editor window.
-    {5 * 8, 30, 30 * 8, 140, 0, 0, 0, 0},
-
-    // Partial object draw sub-window.
-    {0, 0, 0, 0, WHITE, BLACK, 0, 0},
-
-    // Custom window.
-    {0, 0, 0, 0, 0, 0, 0, 0},
-
-    // Virtual window for external rendering. ST - 1/15/2019 3:02PM
-    {0, 0, 0, 0, 0, 0, 0, 0}
-
-};
+int WindowList[9][9];
 
 /* X,Y,Item Width,Items High,Selected,Norm Color,Sel Color,zero 	*/
 int MenuList[][8] = {
@@ -656,8 +627,8 @@ int MenuList[][8] = {
 
 GraphicBufferClass VisiblePage;
 GraphicBufferClass HiddenPage;
-GraphicViewPortClass SeenBuff(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-GraphicViewPortClass HidPage(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+GraphicViewPortClass SeenBuff;
+GraphicViewPortClass HidPage;
 
 int SoundOn;
 CDTimerClass<SystemTimerClass> FrameTimer;

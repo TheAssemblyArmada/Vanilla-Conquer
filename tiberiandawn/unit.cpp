@@ -1170,7 +1170,7 @@ UnitClass::UnitClass(UnitType classid, HousesType house)
     ** Keep count of the number of units created.
     */
     if (GameToPlay == GAME_INTERNET) {
-        House->UnitTotals->Increment_Unit_Total((int)classid);
+        House->UnitTotals.Increment_Unit_Total((int)classid);
     }
 
 #ifdef USE_RA_AI

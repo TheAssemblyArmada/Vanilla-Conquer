@@ -94,10 +94,12 @@
 MPG_RESPONSE far __stdcall MpegCallback(MPG_CMD cmd, LPVOID data, LPVOID user);
 #endif
 
+int RESFACTOR = 2;
+
 /* Dummy function for Interpolate_2X_Scale in `common` database. */
 int Get_Resolution_Factor(void)
 {
-    return 1;
+    return RESFACTOR - 1;
 }
 
 #define SHAPE_TRANS 0x40
@@ -2523,7 +2525,7 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
 void Play_Movie(VQType name, ThemeType theme, bool clrscrn, bool immediate)
 {
     if (name != VQ_NONE) {
-        if (name == VQ_REDINTRO) {
+        if (name == VQ_REDINTRO && RESFACTOR != 1) {
             IsVQ640 = true;
         }
         Play_Movie(VQName[name], theme, clrscrn, immediate);

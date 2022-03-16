@@ -1236,10 +1236,12 @@ static void Play_Intro(bool sequenced)
 
         //		Show_Mouse();
     } else {
+        VQType intro = RESFACTOR == 1 ? VQ_TITLE : VQ_REDINTRO;
+
         Hide_Mouse();
         VisiblePage.Clear();
         Show_Mouse();
-        Play_Movie(VQ_REDINTRO, THEME_NONE, false);
+        Play_Movie(intro, THEME_NONE, false);
     }
 }
 
@@ -1923,7 +1925,9 @@ void Init_Random(void)
  *=============================================================================================*/
 void Load_Title_Page(bool visible)
 {
-    Load_Title_Screen("TITLE.PCX", &HidPage, (unsigned char*)CCPalette.Get_Data());
+    const char* titlepict = RESFACTOR == 1 ? "TITLE.CPS" : "TITLE.PCX";
+
+    Load_Title_Screen((char*)titlepict, &HidPage, (unsigned char*)CCPalette.Get_Data());
     if (visible) {
         HidPage.Blit(SeenPage);
     }
@@ -2308,6 +2312,12 @@ static void Init_CDROM_Access(void)
  *=============================================================================================*/
 static void Init_Bootstrap_Mixfiles(void)
 {
+#ifdef REMASTER_BUILD
+    const bool is_remaster = true;
+#else
+    const bool is_remaster = false;
+#endif
+
     int temp = RequiredCD;
     RequiredCD = -2;
 
@@ -2330,18 +2340,18 @@ static void Init_Bootstrap_Mixfiles(void)
 
 #ifdef FIXIT_CSII //	Ok. ajw
     bool ok1;
-#ifndef REMASTER_BUILD
-    CCFileClass fileHires1Mix("HIRES1.MIX");
-    if (fileHires1Mix.Is_Available()) {
-        new MFCD("HIRES1.MIX", &FastKey);
-        ok1 = MFCD::Cache("HIRES1.MIX");
-        assert(ok1);
+    if (RESFACTOR != 1 && !is_remaster) {
+        CCFileClass fileHires1Mix("HIRES1.MIX");
+        if (fileHires1Mix.Is_Available()) {
+            new MFCD("HIRES1.MIX", &FastKey);
+            ok1 = MFCD::Cache("HIRES1.MIX");
+            assert(ok1);
+        }
+    } else {
+        new MFCD("LORES1.MIX", &FastKey);
+        ok1 = MFCD::Cache("LORES1.MIX");
+        //assert(ok1);
     }
-#else
-    new MFCD("LORES1.MIX", &FastKey);
-    ok1 = MFCD::Cache("LORES1.MIX");
-    assert(ok1);
-#endif
 #endif
 
 #ifdef FIXIT_ANTS //	Ok. ajw
@@ -2363,17 +2373,17 @@ static void Init_Bootstrap_Mixfiles(void)
     bool ok = MFCD::Cache("LOCAL.MIX");
     assert(ok);
 
-#ifndef REMASTER_BUILD
-    new MFCD("HIRES.MIX", &FastKey);
-    ok = MFCD::Cache("HIRES.MIX");
-    assert(ok);
+    if (RESFACTOR != 1 && !is_remaster) {
+        new MFCD("HIRES.MIX", &FastKey);
+        ok = MFCD::Cache("HIRES.MIX");
+        assert(ok);
 
-    new MFCD("NCHIRES.MIX", &FastKey); //Non-cached hires stuff incl VQ palettes
-#else
-    new MFCD("LORES.MIX", &FastKey);
-    ok = MFCD::Cache("LORES.MIX");
-    assert(ok);
-#endif // REMASTER_BUILD
+        new MFCD("NCHIRES.MIX", &FastKey); //Non-cached hires stuff incl VQ palettes
+    } else {
+        new MFCD("LORES.MIX", &FastKey);
+        ok = MFCD::Cache("LORES.MIX");
+        assert(ok);
+    }
 
     RequiredCD = temp;
 }

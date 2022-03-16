@@ -160,11 +160,6 @@ SidebarClass::SidebarClass(void)
     */
     new (&Column[0]) StripClass(InitClass());
     new (&Column[1]) StripClass(InitClass());
-
-    Column[0].X = COLUMN_ONE_X * RESFACTOR;
-    Column[0].Y = COLUMN_ONE_Y * RESFACTOR;
-    Column[1].X = COLUMN_TWO_X * RESFACTOR;
-    Column[1].Y = COLUMN_TWO_Y * RESFACTOR;
 }
 
 /***********************************************************************************************
@@ -214,6 +209,12 @@ SidebarClass::SidebarClass(NoInitClass const& x)
  *=============================================================================================*/
 void SidebarClass::One_Time(void)
 {
+    /* Set RESFACTOR positions.  */
+    SidebarClass::Background.X = (int)((int)SIDE_X + 8) * RESFACTOR;
+    SidebarClass::Background.Y = (int)SIDE_Y * RESFACTOR;
+    SidebarClass::Background.Width = (int)((int)SIDE_WIDTH - 1) * RESFACTOR - 1;
+    SidebarClass::Background.Height = (int)((int)SIDE_HEIGHT - 1) * RESFACTOR;
+
     PowerClass::One_Time();
 
     /*
@@ -236,10 +237,10 @@ void SidebarClass::One_Time(void)
     **	Set up the coordinates for the sidebar strips. These coordinates are for
     **	the upper left corner.
     */
-    //	Column[0].X = COLUMN_ONE_X * RESFACTOR;
-    //	Column[0].Y = COLUMN_ONE_Y * RESFACTOR;
-    //	Column[1].X = COLUMN_TWO_X * RESFACTOR;
-    //	Column[1].Y = COLUMN_TWO_Y * RESFACTOR;
+    Column[0].X = COLUMN_ONE_X * RESFACTOR;
+    Column[0].Y = COLUMN_ONE_Y * RESFACTOR;
+    Column[1].X = COLUMN_TWO_X * RESFACTOR;
+    Column[1].Y = COLUMN_TWO_Y * RESFACTOR;
     Column[0].One_Time(0);
     Column[1].One_Time(1);
 
@@ -310,7 +311,7 @@ void SidebarClass::Init_IO(void)
 
         Upgrade.IsSticky = true;
         Upgrade.ID = BUTTON_UPGRADE;
-        Upgrade.X = 0x21f;
+        Upgrade.X = (RESFACTOR == 1) ? 271 : 0x21f;
         Upgrade.Y = (0x96 / 2) * RESFACTOR;
         Upgrade.IsPressed = false;
         Upgrade.IsToggleType = true;
@@ -1932,8 +1933,6 @@ SidebarClass::StripClass::SelectClass::SelectClass(void)
     , Strip(0)
     , Index(0)
 {
-    Width = (OBJECT_WIDTH - 1) * RESFACTOR;
-    Height = OBJECT_HEIGHT * RESFACTOR;
 }
 
 /***********************************************************************************************

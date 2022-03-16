@@ -92,6 +92,42 @@ extern unsigned int IsTheaterShape;
 extern void Free_Heaps(void);
 extern void DLL_Shutdown(void);
 
+/* Set global variables that require RESFACTOR value.  */
+void Set_Resfactor_Globals(int resfactor)
+{
+    int windowlist[9][9] = {/* xbyte, ypixel, bytewid, pixelht, cursor color, bkgd color,	cursor x, cursor y */
+
+                            /* do not change the first 2 entries!! they are necc. to the system */
+
+                            {0, 0, 40 * 8 * resfactor, 200 * resfactor, WHITE, BLACK, 0, 0}, /* screen window */
+                            {1 * 8, 75, 38 * 8, 100, WHITE, BLACK, 0, 0},                    /* DOS Error window */
+
+                            // Tactical map.
+                            {0, 0, 40 * 8 * resfactor, 200 * resfactor, WHITE, LTGREY, 0, 0},
+
+                            // Initial menu window.
+                            {12 * 8, 199 - 42, 16 * 8, 42, LTGREY, DKGREY, 0, 0},
+
+                            // Sidebar clipping window.
+                            {0, 0, 0, 0, 0, 0, 0, 0},
+
+                            // Scenario editor window.
+                            {5 * 8, 30, 30 * 8, 140, 0, 0, 0, 0},
+
+                            // Partial object draw sub-window.
+                            {0, 0, 0, 0, WHITE, BLACK, 0, 0},
+
+                            // Custom window.
+                            {0, 0, 0, 0, 0, 0, 0, 0},
+
+                            // Virtual window for external rendering. ST - 1/15/2019 3:02PM
+                            {0, 0, 0, 0, 0, 0, 0, 0}
+
+    };
+
+    memcpy((void*)WindowList, (void*)windowlist, sizeof(windowlist));
+}
+
 #if defined REMASTER_BUILD && defined _WIN32
 BOOL WINAPI DllMain(HINSTANCE instance, unsigned int fdwReason, void* lpvReserved)
 {
@@ -296,6 +332,16 @@ int main(int argc, char* argv[])
         */
         Read_Setup_Options(&cfile);
 
+#ifndef REMASTER_BUILD
+        /* If DOSMode is enabled, adjust resolution accordingly. */
+        if (Settings.Video.DOSMode) {
+            RESFACTOR = 1;
+            ScreenWidth = 320;
+            ScreenHeight = 200;
+        }
+#endif
+        Set_Resfactor_Globals(RESFACTOR);
+
 #if defined(_WIN32) && !defined(SDL2_BUILD)
         /* WinMain seems to pass command_show to Create_Main_Window, but since we
         ** are not using WinMain anymore, we simply pass 0 to it. */
@@ -304,9 +350,7 @@ int main(int argc, char* argv[])
         SoundOn = Audio_Init(16, false, 11025 * 2, false);
 
         bool video_success = false;
-        /*
-        ** Set 640x400 video mode.
-        */
+
 #ifdef REMASTER_BUILD
         video_success = true;
 #else
@@ -323,72 +367,66 @@ int main(int argc, char* argv[])
             return (EXIT_FAILURE);
         }
 
-        if (ScreenWidth == 320) {
-            VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
-            ModeXBuff.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VISIBLE | GBC_VIDEOMEM));
-        } else {
-
 #ifdef REMASTER_BUILD // ST - 1/3/2019 2:11PM
 
-            VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
-            HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
+        VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
+        HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
 
 #else
-            VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VISIBLE | GBC_VIDEOMEM));
+        VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VISIBLE | GBC_VIDEOMEM));
 
+        /*
+        ** Check that we really got a video memory page. Failure is fatal.
+        */
+        if (VisiblePage.IsAllocated()) {
             /*
-            ** Check that we really got a video memory page. Failure is fatal.
+            ** Aaaarrgghh!
             */
-            if (VisiblePage.IsAllocated()) {
-                /*
-                ** Aaaarrgghh!
-                */
-                WWDebugString(TEXT_DDRAW_ERROR);
-                WWDebugString("\n");
+            WWDebugString(TEXT_DDRAW_ERROR);
+            WWDebugString("\n");
 #ifdef _WIN32
-                MessageBoxA(MainWindow, TEXT_DDRAW_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
+            MessageBoxA(MainWindow, TEXT_DDRAW_ERROR, TEXT_SHORT_TITLE, MB_ICONEXCLAMATION | MB_OK);
 #endif
-                return (EXIT_FAILURE);
-            }
-
-            /*
-            ** If we have enough left then put the hidpage in video memory unless...
-            **
-            ** If there is no blitter then we will get better performance with a system
-            ** memory hidpage
-            **
-            ** Use a system memory page if the user has specified it via the ccsetup program.
-            */
-            unsigned video_memory = Get_Free_Video_Memory();
-            unsigned video_capabilities = Get_Video_Hardware_Capabilities();
-            if (video_memory < (unsigned int)(ScreenWidth * ScreenHeight) || (!(video_capabilities & VIDEO_BLITTER))
-                || (video_capabilities & VIDEO_NO_HARDWARE_ASSIST) || !VideoBackBufferAllowed) {
-                HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
-            } else {
-                // HiddenPage.Init (ScreenWidth , ScreenHeight , NULL , 0 , (GBC_Enum)0);
-                HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)GBC_VIDEOMEM);
-
-                /*
-                ** Make sure we really got a video memory hid page. If we didnt then things
-                ** will run very slowly.
-                */
-                if (HiddenPage.IsAllocated()) {
-
-                    /*
-                    ** Oh dear, big trub. This must be an IBM Aptiva or something similarly cruddy.
-                    ** We must redo the Hidden Page as system memory.
-                    */
-                    HiddenPage.Un_Init();
-                    HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
-                } else {
-                    VisiblePage.Attach_DD_Surface(&HiddenPage);
-                }
-            }
-#endif
+            return (EXIT_FAILURE);
         }
 
-        SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-        HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+        /*
+        ** If we have enough left then put the hidpage in video memory unless...
+        **
+        ** If there is no blitter then we will get better performance with a system
+        ** memory hidpage
+        **
+        ** Use a system memory page if the user has specified it via the ccsetup program.
+        */
+        unsigned video_memory = Get_Free_Video_Memory();
+        unsigned video_capabilities = Get_Video_Hardware_Capabilities();
+        if (video_memory < (unsigned int)(ScreenWidth * ScreenHeight) || (!(video_capabilities & VIDEO_BLITTER))
+            || (video_capabilities & VIDEO_NO_HARDWARE_ASSIST) || !VideoBackBufferAllowed) {
+            HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
+        } else {
+            // HiddenPage.Init (ScreenWidth , ScreenHeight , NULL , 0 , (GBC_Enum)0);
+            HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)GBC_VIDEOMEM);
+
+            /*
+            ** Make sure we really got a video memory hid page. If we didnt then things
+            ** will run very slowly.
+            */
+            if (HiddenPage.IsAllocated()) {
+
+                /*
+                ** Oh dear, big trub. This must be an IBM Aptiva or something similarly cruddy.
+                ** We must redo the Hidden Page as system memory.
+                */
+                HiddenPage.Un_Init();
+                HiddenPage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)0);
+            } else {
+                VisiblePage.Attach_DD_Surface(&HiddenPage);
+            }
+        }
+#endif
+
+        SeenBuff.Attach(&VisiblePage, 0, 0, ScreenWidth, ScreenHeight);
+        HidPage.Attach(&HiddenPage, 0, 0, ScreenWidth, ScreenHeight);
 
         Options.Adjust_Variables_For_Resolution();
 
@@ -555,8 +593,8 @@ bool InitDDraw(void)
         }
     }
 
-    SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
-    HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+    SeenBuff.Attach(&VisiblePage, 0, 0, ScreenWidth, ScreenHeight);
+    HidPage.Attach(&HiddenPage, 0, 0, ScreenWidth, ScreenHeight);
 #endif
     return true;
 }
