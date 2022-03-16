@@ -1745,7 +1745,7 @@ bool Main_Loop()
     /*
     ** Very rarely, the human players will get a message from the computer.
     */
-    if (GameToPlay != GAME_NORMAL && MPlayerGhosts && IRandom(0, 10000) == 1) {
+    if (GameToPlay == GAME_SKIRMISH && MPlayerGhosts && Random_Pick(0, 10000) == 1) {
         Computer_Message();
     }
 

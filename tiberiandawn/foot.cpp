@@ -712,7 +712,7 @@ int FootClass::Mission_Timed_Hunt(void)
             rndmax = 1000;
         }
 
-        if (IRandom(0, rndmax) == 1) {
+        if (Random_Pick(0, rndmax) == 1) {
             Assign_Mission(MISSION_HUNT);
             changed = 1;
         }

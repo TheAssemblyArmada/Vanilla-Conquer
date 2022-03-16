@@ -57,7 +57,9 @@ void Init_CDROM_Access(void);
 
 extern unsigned int RandNumb;
 
-extern int SimRandIndex;
+// extern int SimRandIndex;
+
+void Init_Random(void);
 
 #define ATTRACT_MODE_TIMEOUT 3600 // timeout for attract mode
 #if (0)
@@ -1322,34 +1324,9 @@ bool Select_Game(bool fade)
     Keyboard->Clear();
 
     /*
-    ** Get a pointer to the compiler's random number seed.
-    **	the Get_EAX() must follow immediately after the srand(0) in order to save
-    **	the address of the random seed.  (Currently not used.)
+    ** Initialize the random number generator(s)
     */
-    srand(0);
-    // RandSeedPtr = (long *)Get_EAX();	 // ST - 1/2/2019 5:26PM
-
-    /*
-    **	Initialize the random number Seed.  For multiplayer, this will have been done
-    ** in the connection dialogs.  For single-player games, AND if we're not playing
-    ** back a recording, init the Seed to a random value.
-    */
-    if (GameToPlay == GAME_NORMAL && !PlaybackGame) {
-#ifdef _WIN32
-        srand(timeGetTime());
-#else
-        srand(time(NULL));
-#endif
-        // randomize();
-        Seed = rand();
-    }
-
-    /*
-    ** If user has specified a desired random number seed, use it for multiplayer games
-    */
-    if (CustomSeed != 0) {
-        Seed = CustomSeed;
-    }
+    Init_Random();
 
     /*
     ** Save initialization values if we're recording this game.
@@ -1362,35 +1339,6 @@ bool Select_Game(bool fade)
             RecordGame = false;
         }
     }
-
-    /*
-    **	Initialize the random-number generator.
-    */
-    // Seed = 1;
-
-    srand(Seed);
-    RandNumb = Seed;
-    SimRandIndex = 0;
-#if (0)
-    DWORD actual;
-    HANDLE sfile = CreateFile("random.txt", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
-    if (sfile != INVALID_HANDLE_VALUE) {
-        SetFilePointer(sfile, 0, NULL, FILE_END);
-
-        int minimum;
-        int maximum;
-        char whatever[80];
-        for (int i = 0; i < 1000; i++) {
-            minimum = rand();
-            maximum = rand();
-
-            sprintf(whatever, "%04x\n", Random_Pick(minimum, maximum));
-            WriteFile(sfile, whatever, strlen(whatever), &actual, NULL);
-        }
-        CloseHandle(sfile);
-    }
-#endif
 
     /*
     **	Load the scenario.  Specify variation 'A' for the editor; for the game,
@@ -2573,4 +2521,56 @@ long Obfuscate(char const* string)
     **	Return the final code value.
     */
     return (code);
+}
+
+/***************************************************************************
+ * Init_Random -- Initializes the random-number generator                  *
+ *                                                                         *
+ * INPUT:                                                                  *
+ *		none.																						*
+ *                                                                         *
+ * OUTPUT:                                                                 *
+ *		none.																						*
+ *                                                                         *
+ * WARNINGS:                                                               *
+ *		none.																						*
+ *                                                                         *
+ * HISTORY:                                                                *
+ *   12/04/1995 BRR : Created.                                             *
+ *=========================================================================*/
+void Init_Random(void)
+{
+    //
+    // If we're playing a recording, the Seed is loaded in
+    // Load_Recording_Values().  Just init the random # and return.
+    //
+    if (PlaybackGame) {
+        RandNumb = Seed;
+        ScenRandomNumber = Seed;
+        return;
+    }
+
+    /*
+    **	Initialize the random number Seed.  For multiplayer, this will have been done
+    ** in the connection dialogs.  For single-player games, AND if we're not playing
+    ** back a recording, init the Seed to a random value.
+    */
+    if (GameToPlay == GAME_NORMAL || GameToPlay == GAME_SKIRMISH && PlaybackGame) {
+
+        /*
+        ** Set the optional user-specified seed
+        */
+        if (CustomSeed != 0) {
+            Seed = CustomSeed;
+        } else {
+            srand((unsigned)time(NULL));
+            Seed = rand();
+        }
+    }
+
+    /*
+    **	Initialize the random-number generators
+    */
+    ScenRandomNumber = Seed;
+    RandNumb = Seed;
 }

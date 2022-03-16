@@ -605,12 +605,6 @@ void Queue_AI(void);
 void Add_CRC(uint32_t* crc, uint32_t val);
 
 /*
-**	RAND.CPP
-*/
-int Sim_IRandom(int minval, int maxval);
-int Sim_Random(void);
-
-/*
 **	REINF.CPP
 */
 bool Do_Reinforcements(TeamTypeClass* team);
@@ -924,12 +918,25 @@ template <class T> inline T Random_Picky(T a, T b, const char* sfile, int line)
     return (T)IRandom((int)a, (int)b); //, sfile, line);
 };
 
-#define Random_Pick(low, high) Random_Picky((low), (high), __FILE__, __LINE__)
+template <class T> inline T Random_Pick(T a, T b)
+{
+    return T(ScenRandomNumber((int)a, (int)b));
+};
+
+inline bool Percent_Chance(int percent)
+{
+    return (ScenRandomNumber(0, 99) < percent);
+}
 
 template <class T> inline T Sim_Random_Pick(T a, T b)
 {
-    return (T)Sim_IRandom((int)a, (int)b);
+    return (T)NonCriticalRandomNumber((int)a, (int)b);
 };
+
+inline bool Sim_Percent_Chance(int percent)
+{
+    return (NonCriticalRandomNumber(0, 99) < percent);
+}
 
 #ifdef CHEAT_KEYS
 #define Check_Ptr(ptr, file, line)                                                                                     \

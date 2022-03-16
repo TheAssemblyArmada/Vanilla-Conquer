@@ -560,13 +560,13 @@ void TerrainClass::AI(void)
                     if (Fetch_Stage() >= Get_Build_Frame_Count(Class->Get_Image_Data()) - 1) {
                         Explosion_Damage(Sort_Y(), 5, NULL, WARHEAD_SPORE);
                         Set_Stage(FIRST_SPORE_STAGE);
-                        if (Random() & 1) {
+                        if (Percent_Chance(50)) {
                             IsSporing = false;
                             StageClass::Set_Rate(0);
                         }
                     }
                 } else {
-                    if (Random() == 255) { // is it time to start sporing?
+                    if (Random_Pick(0, 255) == 255) { // is it time to start sporing?
                         IsSporing = true;
                         StageClass::Set_Rate(Options.Normalize_Delay(1));
                     }
@@ -575,7 +575,7 @@ void TerrainClass::AI(void)
         } else {
 
             // If it hasn't tried to blossom yet, can it do so now?
-            if (Random_Picky((int)1, (int)5000, (char*)NULL, (int)0) == 1) {
+            if (Random_Pick(1, 5000) == 1) {
                 IsBlossoming = true;
                 StageClass::Set_Stage(1);
                 StageClass::Set_Rate(Options.Normalize_Delay(1));

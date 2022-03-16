@@ -1257,7 +1257,7 @@ static void Assign_Houses(void)
             **	to the house instance
             */
             house = (HousesType)(i + (int)HOUSE_MULTI1);
-            pref_house = (HousesType)(IRandom(0, 1) + (int)HOUSE_GOOD);
+            pref_house = (HousesType)(Random_Pick(0, 1) + (int)HOUSE_GOOD);
             for (;;) {
                 color = Random_Pick(REMAP_FIRST, REMAP_LAST);
                 if (color_used[color] == false) {
@@ -1577,7 +1577,7 @@ static void Create_Units(void)
         .....................................................................*/
         try_count = 0;
         while (true) {
-            j = IRandom(0, MPlayerMax - 1);
+            j = Random_Pick(0, MPlayerMax - 1);
             if (sorted_waypts[j] != -1) {
                 centroid = sorted_waypts[j];
                 sorted_waypts[j] = -1;
@@ -1591,7 +1591,7 @@ static void Create_Units(void)
             ..................................................................*/
             if (try_count > 200) {
                 while (true) {
-                    centroid = IRandom(0, MAP_CELL_TOTAL - 1);
+                    centroid = Random_Pick(0, MAP_CELL_TOTAL - 1);
                     if (Map.In_Radar(centroid))
                         break;
                 }
@@ -1877,7 +1877,7 @@ int Scan_Place_Object(ObjectClass* obj, CELL cell)
         /*.....................................................................
         Pick a random starting direction
         .....................................................................*/
-        rot = (FacingType)IRandom(FACING_N, FACING_NW);
+        rot = Random_Pick(FACING_N, FACING_NW);
         /*.....................................................................
         Try all directions twice
         .....................................................................*/
@@ -2088,8 +2088,8 @@ static CELL Clip_Scatter(CELL cell, int maxdist)
     /*------------------------------------------------------------------------
     Adjust the x-coordinate
     ------------------------------------------------------------------------*/
-    xdist = IRandom(0, maxdist);
-    if (IRandom(0, 1) == 0) {
+    xdist = Random_Pick(0, maxdist);
+    if (Random_Pick(0, 1) == 0) {
         x += xdist;
         if (x > xmax) {
             x = xmax;
@@ -2104,8 +2104,8 @@ static CELL Clip_Scatter(CELL cell, int maxdist)
     /*------------------------------------------------------------------------
     Adjust the y-coordinate
     ------------------------------------------------------------------------*/
-    ydist = IRandom(0, maxdist);
-    if (IRandom(0, 1) == 0) {
+    ydist = Random_Pick(0, maxdist);
+    if (Random_Pick(0, 1) == 0) {
         y += ydist;
         if (y > ymax) {
             y = ymax;

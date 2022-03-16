@@ -3094,9 +3094,8 @@ static int Net_New_Dialog(void)
     Init random-number generator, & create a seed to be used for all random
     numbers from here on out
     ........................................................................*/
-    // ST - 12/18/2018 11:37AM
-    // randomize();
-    // Seed = rand();
+    srand(time(NULL));
+    Seed = rand();
 
     /*........................................................................
     Init the message display system
