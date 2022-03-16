@@ -152,8 +152,8 @@ void RadarClass::One_Time(void)
     RadPHeight = 64 * RESFACTOR;
     RadOffX = 6;
     RadOffY = 7;
-    RadIWidth = 128 + 18; //************
-    RadIHeight = 128 + 2; //************
+    RadIWidth = (64 + 9) * RESFACTOR;  //************
+    RadIHeight = (64 + 1) * RESFACTOR; //************
 
     DisplayClass::One_Time();
 #ifdef OBSOLETE

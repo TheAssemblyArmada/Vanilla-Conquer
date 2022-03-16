@@ -53,6 +53,7 @@
 #include <string.h>
 #include <stddef.h>
 
+#include "debugstring.h"
 #include "rawfile.h"
 #include "file.h"
 #include "wwstd.h"
@@ -93,10 +94,11 @@
  *=============================================================================================*/
 void RawFileClass::Error(int error, int canretry, char const* filename)
 {
-#ifndef _WIN32
-    perror(filename);
-#endif
-    exit(1);
+    if (filename != nullptr) {
+        DBG_ERROR("RawFileClass:Error for '%s': %s", filename, strerror(error));
+    } else {
+        DBG_ERROR("RawFileClass:Error: %s", strerror(error));
+    }
 }
 
 /***********************************************************************************************
@@ -870,15 +872,15 @@ long RawFileClass::Raw_Seek(long pos, int dir)
     */
     if (!Is_Open()) {
         Error(EBADF, false, Filename);
+    } else {
+
+        clearerr(Handle);
+        if (fseek(Handle, pos, dir) < 0) {
+            Error(errno, false, Filename);
+        }
+
+        pos = ftell(Handle);
     }
-
-    clearerr(Handle);
-    if (fseek(Handle, pos, dir) < 0) {
-        Error(errno, false, Filename);
-    }
-
-    pos = ftell(Handle);
-
     /*
     **	Return with the new position of the file. This will range between zero and the number of
     **	bytes the file contains.

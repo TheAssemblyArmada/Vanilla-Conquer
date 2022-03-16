@@ -251,7 +251,7 @@ void Debug_Key(unsigned input)
             break;
 
         case KN_D:
-            if (Teams.Ptr(0)) {
+            if (Teams.Count() != 0 && Teams.Ptr(0) != nullptr) {
                 delete Teams.Ptr(0);
             }
             break;
