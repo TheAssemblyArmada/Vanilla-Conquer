@@ -72,7 +72,6 @@ set(COMMON_SRC
     pkstraw.cpp
     ramfile.cpp
     random.cpp
-    rand.cpp
     rawfile.cpp
     readline.cpp
     rect.cpp

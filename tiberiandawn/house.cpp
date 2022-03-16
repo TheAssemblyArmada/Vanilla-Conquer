@@ -1062,7 +1062,7 @@ void HouseClass::AI(void)
             }
 
             // if (IRandom(0, rlimit) == 0) {
-            if (IRandom(0, rlimit) <= 5) { // More visceroids! ST - 3/3/2020 4:34PM
+            if (Random_Pick(0, rlimit) <= 5) { // More visceroids! ST - 3/3/2020 4:34PM
                 UnitClass* obj = NULL;
                 CELL cell;
 
@@ -3871,7 +3871,7 @@ bool HouseClass::Flag_Attach(CELL cell, bool set_home)
     **	Randomly decide if we're going to search cells clockwise or counter-
     **	clockwise
     */
-    clockwise = IRandom(0, 1);
+    clockwise = Percent_Chance(50);
 
     /*
     **	Only continue if this cell is a legal placement cell.
@@ -3904,7 +3904,7 @@ bool HouseClass::Flag_Attach(CELL cell, bool set_home)
                 **	Clockwise search.
                 */
                 if (clockwise) {
-                    rot = (FacingType)IRandom(FACING_N, FACING_NW);
+                    rot = Random_Pick(FACING_N, FACING_NW);
                     for (fcounter = FACING_N; fcounter <= FACING_NW; fcounter++) {
                         newcell = Coord_Cell(Coord_Move(Cell_Coord(cell), Facing_Dir(rot), dist * 256));
                         if (Map.In_Radar(newcell) && Map[newcell].Flag_Place(Class->House)) {
@@ -3921,7 +3921,7 @@ bool HouseClass::Flag_Attach(CELL cell, bool set_home)
                     /*
                     **	Counter-clockwise search
                     */
-                    rot = (FacingType)IRandom(FACING_N, FACING_NW);
+                    rot = Random_Pick(FACING_N, FACING_NW);
                     for (fcounter = FACING_NW; fcounter >= FACING_N; fcounter--) {
                         newcell = Coord_Cell(Coord_Move(Cell_Coord(cell), Facing_Dir(rot), dist * 256));
                         if (Map.In_Radar(newcell) && Map[newcell].Flag_Place(Class->House)) {
@@ -4444,7 +4444,7 @@ void HouseClass::Blowup_All(void)
             count = 0;
             while (Infantry.Ptr(i) == iptr && iptr->Strength) {
                 damage = 0x7fff;
-                warhead = (WarheadType)IRandom(WARHEAD_SA, WARHEAD_FIRE);
+                warhead = Random_Pick(WARHEAD_SA, WARHEAD_FIRE);
                 Explosion_Damage(iptr->Center_Coord(), damage, NULL, warhead);
                 if (iptr->IsActive) {
                     damage = 0x7fff;
@@ -4880,14 +4880,6 @@ void HouseClass::Init_Unit_Trackers(void)
 ** In RA, Control is a container for other variables. In TD, they are defined in the class
 */
 #define Control (*this)
-
-/*
-** Percent_Chance - implementation similar to Red Alert
-*/
-inline bool Percent_Chance(int percent)
-{
-    return (Random_Pick(0, 99) < percent);
-}
 
 /*
 ** Engineer was renamed to RENOVATOR for RA

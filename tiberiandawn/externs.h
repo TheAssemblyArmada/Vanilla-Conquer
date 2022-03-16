@@ -235,6 +235,8 @@ extern int CarryOverPercent;
 extern char ScenarioName[_MAX_FNAME + _MAX_EXT];
 extern unsigned BuildLevel;
 extern uint32_t ScenarioCRC;
+extern RandomClass ScenRandomNumber;
+extern RandomClass NonCriticalRandomNumber;
 
 #ifdef SCENARIO_EDITOR
 extern CELL CurrentCell;

@@ -759,11 +759,11 @@ void Computer_Message(void)
         We now have a 1/4 chance of echoing one of the human players' messages
         back.
         .....................................................................*/
-        if (IRandom(0, 3) == 2) {
+        if (Random_Pick(0, 3) == 2) {
             /*..................................................................
             Now we have a 1/3 chance of garbling the human message.
             ..................................................................*/
-            if (IRandom(0, 2) == 1) {
+            if (Random_Pick(0, 2) == 1) {
                 Garble_Message(LastMessage);
             }
 
@@ -775,7 +775,7 @@ void Computer_Message(void)
                 Messages.Add_Message(txt, color, TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW, 600, 0, 0);
             }
         } else {
-            sprintf(txt, "%s %s", Text_String(TXT_FROM_COMPUTER), Text_String(TXT_COMP_MSG1 + IRandom(0, 12)));
+            sprintf(txt, "%s %s", Text_String(TXT_FROM_COMPUTER), Text_String(TXT_COMP_MSG1 + Random_Pick(0, 12)));
             Messages.Add_Message(txt, color, TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW, 600, 0, 0);
         }
 
@@ -854,7 +854,7 @@ static void Garble_Message(char* buf)
     ------------------------------------------------------------------------*/
     buf[0] = 0;
     for (i = 0; i < numwords; i++) {
-        j = Sim_IRandom(0, numwords);
+        j = Sim_Random_Pick(0, numwords);
         if (words[j] == NULL) { // this word has been used already
             i--;
             continue;

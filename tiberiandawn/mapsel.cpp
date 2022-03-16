@@ -1542,14 +1542,14 @@ void Bit_It_In_Scale(int x,
     for (i = 0; i < h; i++)
         yindex[i] = i;        /* init the index array */
     for (i = 0; i < w; i++) { /* shuffle the indexes */
-        k = IRandom(0, w - 1);
+        k = Sim_Random_Pick(0, w - 1);
         m = i;
         n = xindex[k];
         xindex[k] = xindex[m];
         xindex[m] = n;
     }
     for (i = 0; i < h; i++) { /* shuffle the indexes */
-        k = IRandom(0, h - 1);
+        k = Sim_Random_Pick(0, h - 1);
         m = i;
         n = yindex[k];
         yindex[k] = yindex[m];

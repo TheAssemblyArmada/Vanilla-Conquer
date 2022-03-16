@@ -316,6 +316,8 @@ int CarryOverPercent;                     // Carry over money percentage control
 int CarryOverCap;                         // Maxmimum carry over money allowed.
 int ScenarioInit;
 bool SpecialFlag = false;
+RandomClass ScenRandomNumber;
+RandomClass NonCriticalRandomNumber;
 
 /***************************************************************************
 ** This value tells the sidebar what items it's allowed to add.  The

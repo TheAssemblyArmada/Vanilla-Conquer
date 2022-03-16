@@ -1358,7 +1358,7 @@ void ScoreClass::Do_Nod_Casualties_Graph(void)
         InfantryMan[i + r].remap = RemapCiv;
         InfantryMan[i + 0].anim = InfantryMan[i + q].anim = InfantryMan[i + r].anim = 0;
         InfantryMan[i + 0].stage = InfantryMan[i + q].stage = InfantryMan[i + r].stage = 0;
-        InfantryMan[i + 0].delay = InfantryMan[i + q].delay = InfantryMan[i + r].delay = Random() & 0x1F;
+        InfantryMan[i + 0].delay = InfantryMan[i + q].delay = InfantryMan[i + r].delay = NonCriticalRandomNumber & 0x1F;
         InfantryMan[i + 0].Class = InfantryMan[i + q].Class = &InfantryTypeClass::As_Reference(INFANTRY_E1);
         InfantryMan[i + r].Class = &InfantryTypeClass::As_Reference(INFANTRY_C1);
     }
@@ -1829,7 +1829,7 @@ void New_Infantry_Anim(int index, int anim)
     if (anim >= DO_GUN_DEATH) {
         InfantryMan[index].delay = 1; // start right away
     } else {
-        InfantryMan[index].delay = Random() & 15;
+        InfantryMan[index].delay = NonCriticalRandomNumber & 15;
     }
 }
 
@@ -1859,7 +1859,7 @@ void Draw_Bar_Graphs(int i, int gkilled, int nkilled, int ckilled)
             int anim = InfantryMan[i / 11].anim;
             if (anim != -1 && anim < DO_GUN_DEATH) {
                 if (i / 11) {
-                    New_Infantry_Anim(i / 11, DO_GUN_DEATH + (Random() & 3));
+                    New_Infantry_Anim(i / 11, DO_GUN_DEATH + (NonCriticalRandomNumber & 3));
                 } else {
                     New_Infantry_Anim(i / 11, DO_GUN_DEATH);
                 }
@@ -1875,7 +1875,7 @@ void Draw_Bar_Graphs(int i, int gkilled, int nkilled, int ckilled)
             int anim = InfantryMan[(NUMINFANTRYMEN / 3) + (i / 11)].anim;
             if (anim != -1 && anim < DO_GUN_DEATH) {
                 if (i / 11) {
-                    New_Infantry_Anim((NUMINFANTRYMEN / 3) + (i / 11), DO_GUN_DEATH + (Random() & 3));
+                    New_Infantry_Anim((NUMINFANTRYMEN / 3) + (i / 11), DO_GUN_DEATH + (NonCriticalRandomNumber & 3));
                 } else {
                     New_Infantry_Anim((NUMINFANTRYMEN / 3) + (i / 11), DO_GUN_DEATH);
                 }
@@ -1892,7 +1892,8 @@ void Draw_Bar_Graphs(int i, int gkilled, int nkilled, int ckilled)
             int anim = InfantryMan[((NUMINFANTRYMEN * 2) / 3) + (i / 11)].anim;
             if (anim != -1 && anim < DO_GUN_DEATH) {
                 if (i / 11) {
-                    New_Infantry_Anim(((NUMINFANTRYMEN * 2) / 3) + (i / 11), DO_GUN_DEATH + (Random() & 3));
+                    New_Infantry_Anim(((NUMINFANTRYMEN * 2) / 3) + (i / 11),
+                                      DO_GUN_DEATH + (NonCriticalRandomNumber & 3));
                 } else {
                     New_Infantry_Anim(((NUMINFANTRYMEN * 2) / 3) + (i / 11), DO_GUN_DEATH);
                 }
