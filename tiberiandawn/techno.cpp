@@ -2449,7 +2449,7 @@ BulletClass* TechnoClass::Fire_At(TARGET target, int which)
         //reveal that unit and a little area around it.
         if (GameToPlay == GAME_NORMAL) {
             if ((!IsOwnedByPlayer && !IsDiscoveredByPlayer)
-                || (!Map[Center_Coord()].IsMapped && (What_Am_I() != RTTI_AIRCRAFT || !IsOwnedByPlayer))) {
+                || (!Map[Coord_Cell(Center_Coord())].IsMapped && (What_Am_I() != RTTI_AIRCRAFT || !IsOwnedByPlayer))) {
                 Map.Sight_From(PlayerPtr, Coord_Cell(Center_Coord()), 1, false);
             }
         }
