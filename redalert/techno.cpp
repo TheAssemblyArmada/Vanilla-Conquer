@@ -3406,7 +3406,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
 
 #ifndef REMASTER_BUILD
             if ((!IsOwnedByPlayer && !IsDiscoveredByPlayer)
-                || (!Map[Center_Coord()].IsMapped && (What_Am_I() != RTTI_AIRCRAFT || !IsOwnedByPlayer))) {
+                || (!Map[Coord_Cell(Center_Coord())].IsMapped && (What_Am_I() != RTTI_AIRCRAFT || !IsOwnedByPlayer))) {
                 if (Session.Type == GAME_NORMAL) {
                     Map.Sight_From(Coord_Cell(Center_Coord()), 2, PlayerPtr, false);
                 } else {
@@ -3427,7 +3427,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         //reveal that unit and a little area around it.
         if (Session.Type == GAME_NORMAL) {
             if ((!IsOwnedByPlayer && !IsDiscoveredByPlayer)
-                || (!Map[Center_Coord()].IsMapped && (What_Am_I() != RTTI_AIRCRAFT || !IsOwnedByPlayer))) {
+                || (!Map[Coord_Cell(Center_Coord())].IsMapped && (What_Am_I() != RTTI_AIRCRAFT || !IsOwnedByPlayer))) {
                 Map.Sight_From(Coord_Cell(Center_Coord()), 2, PlayerPtr, false);
             }
         }
