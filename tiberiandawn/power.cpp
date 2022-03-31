@@ -130,7 +130,11 @@ void PowerClass::One_Time(void)
 
     int factor = Get_Resolution_Factor();
     PowX = SeenBuff.Get_Width() - Map.RadWidth;
-    PowY = Map.RadY + Map.RadHeight + (13 << factor);
+    if (factor) {
+        PowY = Map.RadY + Map.RadHeight + (13 << factor) - 4;
+    } else {
+        PowY = Map.RadY + Map.RadHeight + (13 << factor);
+    }
     PowWidth = 8 << factor;
     PowHeight = SeenBuff.Get_Height() - PowY;
     PowLineSpace = 5 << factor;
@@ -228,7 +232,7 @@ void PowerClass::Draw_It(bool complete)
                 /*
                 ** Set up the clip region for the filled section
                 */
-                WindowList[WINDOW_CUSTOM][WINDOWY] = bottom - power_height;
+                WindowList[WINDOW_CUSTOM][WINDOWY] = bottom - power_height - 3;
                 WindowList[WINDOW_CUSTOM][WINDOWHEIGHT] = SeenBuff.Get_Height() - WindowList[WINDOW_CUSTOM][WINDOWY];
 
                 /*
@@ -269,7 +273,11 @@ void PowerClass::Draw_It(bool complete)
                 /*
                 **	Draw the power drain threshold marker.
                 */
-                CC_Draw_Shape(PowerShape, 0, PowX, bottom - drain_height, WINDOW_MAIN, SHAPE_NORMAL);
+                if (factor) {
+                    CC_Draw_Shape(PowerShape, 0, PowX, bottom - drain_height - 4, WINDOW_MAIN, SHAPE_NORMAL);
+                } else {
+                    CC_Draw_Shape(PowerShape, 0, PowX, bottom - drain_height, WINDOW_MAIN, SHAPE_NORMAL);
+                }
             }
             LogicPage->Unlock();
         }
