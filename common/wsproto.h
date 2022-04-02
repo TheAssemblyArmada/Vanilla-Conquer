@@ -41,7 +41,7 @@ class WinsockInterfaceClass;
 extern WinsockInterfaceClass* PacketTransport; // The object for interfacing with Winsock
 
 /*
-** Include compatability sockets header file.
+** Include compatibility sockets header file.
 */
 #include "sockets.h"
 
@@ -56,10 +56,10 @@ extern WinsockInterfaceClass* PacketTransport; // The object for interfacing wit
 #define WINSOCK_MAJOR_VER 1 // 	that we require
 
 //#define WS_RECEIVE_BUFFER_LEN	32768		// Length of our temporary receive buffer. Needs to be more that the max
-//packet size which is about 550 bytes. #define SOCKET_BUFFER_SIZE		32768		// Length of winsocks internal
+//packet size which is about 550 bytes. #define SOCKET_BUFFER_SIZE		32768		// Length of Winsock's internal
 //buffer.
 #define WS_RECEIVE_BUFFER_LEN 1024       // Length of our temporary receive buffer.
-#define SOCKET_BUFFER_SIZE    1024 * 128 // Length of winsocks internal buffer.
+#define SOCKET_BUFFER_SIZE    1024 * 128 // Length of Winsock's internal buffer.
 
 #define PLANET_WESTWOOD_HANDLE_MAX 20 // Max length of a WChat handle
 

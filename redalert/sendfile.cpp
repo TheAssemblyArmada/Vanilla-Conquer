@@ -74,7 +74,7 @@ extern bool Is_Mission_Aftermath(char* file_name);
  * INPUT:    ptr to buffer to copy file name into                                              *
  *           game type - 0 for modem/null modem, 1 otherwise                                   *
  *                                                                                             *
- * OUTPUT:   true if file sucessfully downloaded                                               *
+ * OUTPUT:   true if file successfully downloaded                                              *
  *                                                                                             *
  * WARNINGS: None                                                                              *
  *                                                                                             *

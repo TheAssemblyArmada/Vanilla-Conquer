@@ -317,7 +317,7 @@ void Interpolate_2X_Scale(GraphicBufferClass* source,
         }
 
         /*
-        ** Write the palette table to disk so we dont have to create it again next time
+        ** Write the palette table to disk so we don't have to create it again next time
         */
         if (palette_file_name) {
             Write_Interpolation_Palette(palette_file_name);
@@ -328,7 +328,7 @@ void Interpolate_2X_Scale(GraphicBufferClass* source,
 
     Wait_Blit();
     /*
-    ** Lock video surfaces if requred
+    ** Lock video surfaces if required
     */
     if (source->Get_IsDirectDraw()) {
         if (!source->Lock()) {

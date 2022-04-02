@@ -38,7 +38,7 @@
  *   IndexClass<T>::IndexClass -- Constructor for index handler.                               *
  *   IndexClass<T>::Invalidate_Archive -- Invalidate the archive pointer.                      *
  *   IndexClass<T>::Is_Archive_Same -- Checks to see if archive pointer is same as index.      *
- *   IndexClass<T>::Is_Present -- Checks for presense of index entry.                          *
+ *   IndexClass<T>::Is_Present -- Checks for presence of index entry.                          *
  *   IndexClass<T>::Remove_Index -- Find matching index and remove it from system.             *
  *   IndexClass<T>::Search_For_Node -- Perform a search for the specified node ID              *
  *   IndexClass<T>::Set_Archive -- Records the node pointer into the archive.                  *
@@ -55,12 +55,12 @@
 /*
 **	This class is used to create and maintain an index. It does this by assigning a unique
 **	identifier number to the type objects that it is indexing. The regular binary sort and search
-**	function are used for speedy index retreival. Typical use of this would be to index pointers to
+**	function are used for speedy index retrieval. Typical use of this would be to index pointers to
 **	normal data objects, but it can be used to hold the data objects themselves. Keep in mind that
 **	the data object "T" is copied around by this routine in the internal tables so not only must
 **	it have a valid copy constructor, it must also be efficient. The internal algorithm will
 **	create an arbitrary number of default constructed objects of type "T". Make sure it has a
-**	default constructor that is effecient. The constructor need not perform any actual
+**	default constructor that is efficient. The constructor need not perform any actual
 **	initialization since this class has prior knowledge about the legality of these temporary
 **	objects and doesn't use them until after the copy constructor is used to initialize them.
 */
@@ -314,7 +314,7 @@ template <class T> bool IndexClass<T>::Increase_Table_Size(int amount)
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
- * OUTPUT:  Returns with number of recored indecies present.                                   *
+ * OUTPUT:  Returns with number of recored indices present.                                    *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
@@ -327,7 +327,7 @@ template <class T> int IndexClass<T>::Count(void) const
 }
 
 /***********************************************************************************************
- * IndexClass<T>::Is_Present -- Checks for presense of index entry.                            *
+ * IndexClass<T>::Is_Present -- Checks for presence of index entry.                            *
  *                                                                                             *
  *    This routine will scan for the specified index entry. If it was found, then 'true' is    *
  *    returned.                                                                                *
@@ -392,7 +392,7 @@ template <class T> bool IndexClass<T>::Is_Present(int id) const
  *                                                                                             *
  * WARNINGS:   This routine presumes that the index exists. If it doesn't exist, then the      *
  *             default constructed object "T" is returned instead. To avoid this problem,      *
- *             always verfiy the existance of the index by calling Is_Present() first.         *
+ *             always verify the existence of the index by calling Is_Present() first.         *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   11/02/1996 JLB : Created.                                                                 *
@@ -585,9 +585,9 @@ template <class T> bool IndexClass<T>::Remove_Index(int id)
  *                                                                                             *
  *          ptr2  -- Pointer to second node.                                                   *
  *                                                                                             *
- * OUTPUT:  Returns with the comparision value between the two nodes.                          *
+ * OUTPUT:  Returns with the comparison value between the two nodes.                           *
  *                                                                                             *
- * WARNINGS:   This is highly dependant upon the layout of the NodeElement structure.          *
+ * WARNINGS:   This is highly dependent upon the layout of the NodeElement structure.          *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   11/02/1996 JLB : Created.                                                                 *

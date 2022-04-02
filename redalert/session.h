@@ -181,15 +181,15 @@ typedef enum SerialCommandType
     SERIAL_SIGN_OFF = 102,      // Bogus, dudes, my boss is coming; I'm outta here!
     SERIAL_GO = 103,            // OK, dudes, jump into the game loop!
     SERIAL_MESSAGE = 104,       // Here's a message
-    SERIAL_TIMING = 105,        // timimg packet
+    SERIAL_TIMING = 105,        // timing packet
     SERIAL_SCORE_SCREEN = 106,  // player at score screen
     SERIAL_LOADGAME = 107,      // Start the game, loading a saved game first
     SERIAL_LAST_COMMAND,        // last command
-    SERIAL_REQ_SCENARIO = 1000, // Reqest that host sends the scenario file to the other players.
+    SERIAL_REQ_SCENARIO = 1000, // Request that host sends the scenario file to the other players.
     SERIAL_FILE_INFO = 1001,    // Info about the file that is going to be transferred
     SERIAL_FILE_CHUNK = 1002,   // A chunk of scenario
     SERIAL_READY_TO_GO = 1003,  // Sent in response to a 'GO' command
-    SERIAL_NO_SCENARIO = 1004   // Scenario isnt available on remote machine so we cant play
+    SERIAL_NO_SCENARIO = 1004   // Scenario isn't available on remote machine so we can't play
 } SerialCommandType;
 
 //...........................................................................
@@ -212,11 +212,11 @@ typedef enum NetCommandType
     NET_MESSAGE,             // Here's a message
     NET_PING,                // I'm pinging you to take a time measurement
     NET_LOADGAME,            // start a game by loading a saved game
-    NET_REQ_SCENARIO = 1000, // Reqest that host sends the scenario file to the other players.
+    NET_REQ_SCENARIO = 1000, // Request that host sends the scenario file to the other players.
     NET_FILE_INFO = 1001,    // Info about the file that is going to be transferred
     NET_FILE_CHUNK = 1002,   // A chunk of scenario
     NET_READY_TO_GO = 1003,  // Sent in response to a 'GO' command
-    NET_NO_SCENARIO = 1004   // Scenario isnt available on remote machine so we cant play
+    NET_NO_SCENARIO = 1004   // Scenario isn't available on remote machine so we can't play
 } NetCommandType;
 
 //---------------------------------------------------------------------------

@@ -137,7 +137,7 @@ void TcpipManagerClass::Close(void)
         return;
 
         /*
-    ** Cancel any outstaning asyncronous events
+    ** Cancel any outstanding asynchronous events
     */
 #ifdef _WIN32
     if (Async) {
@@ -419,7 +419,7 @@ bool TcpipManagerClass::Add_Client(void)
     bool delay = true;
 
     /*
-    ** Accept the connection. If there is an error then dont do anything else
+    ** Accept the connection. If there is an error then don't do anything else
     */
     addrsize = sizeof(addr);
     ConnectSocket = accept(ListenSocket, (sockaddr*)&addr, &addrsize);

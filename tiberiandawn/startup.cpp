@@ -247,7 +247,7 @@ int main(int argc, char** argv)
         Check_Use_Compressed_Shapes();
 
         /*
-        ** If there is not enough disk space free, dont allow the product to run.
+        ** If there is not enough disk space free, don't allow the product to run.
         */
         if (Disk_Space_Available() < INIT_FREE_DISK_SPACE) {
 #if (0) // PG

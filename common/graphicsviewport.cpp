@@ -199,7 +199,7 @@ void GraphicViewPortClass::Attach(GraphicBufferClass* gbuffer, int x, int y, int
  *              int the new width of the viewport in pixels                *
  *              int the new height of the viewport in pixels               *
  *                                                                         *
- * OUTPUT:      BOOL whether the Graphic View Port could be sucessfully    *
+ * OUTPUT:      BOOL whether the Graphic View Port could be successfully   *
  *                      resized.                                           *
  *                                                                         *
  * WARNINGS:   You may not resize a Graphic View Port which is derived     *

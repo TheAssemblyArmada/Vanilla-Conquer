@@ -2209,7 +2209,7 @@ void UnitClass::Draw_It(int x, int y, WindowNumberType window)
             shapenum = TechnoClass::BodyShape[tfacing] + 32;
 
             /*
-            **	The shape to use for the rocket launcher is dependant on the
+            **	The shape to use for the rocket launcher is dependent on the
             **	ammo remaining.
             */
             if (*this == UNIT_MSAM) {
@@ -3227,13 +3227,13 @@ MoveType UnitClass::Can_Enter_Cell(CELL cell, FacingType) const
 
                     /*
                     **	If this unit can crush infantry, and there is an enemy infantry in the
-                    **	cell, don't consider the cell impassible. This is true even if the unit
+                    **	cell, don't consider the cell impassable. This is true even if the unit
                     **	doesn't contain a legitimate weapon.
                     */
                     if (!Class->IsCrusher || !obj->Class_Of().IsCrushable) {
 
                         /*
-                        **	Any non-allied blockage is considered impassible if the unit
+                        **	Any non-allied blockage is considered impassable if the unit
                         **	is not equipped with a weapon.
                         */
                         if (Class->Primary == WEAPON_NONE)
@@ -3469,7 +3469,7 @@ bool UnitClass::Stop_Driver(void)
         int temp = IsDown;
 
         /*
-        ** If the vehicle is down, pick it up so it doesnt interfere with
+        ** If the vehicle is down, pick it up so it doesn't interfere with
         ** our flags.
         */
         if (temp) {

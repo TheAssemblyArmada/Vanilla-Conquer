@@ -2383,7 +2383,7 @@ bool WOL_GameSetupDialog::AcceptParams(char* szParams)
         //		//	Advance string pointer to next param.
         //		szRemaining += iLen + 1;
         //	There is a digest.
-        szToken = strtok(NULL, szDelimiter); //	(Digests can't have spaces in the them.)
+        szToken = strtok(NULL, szDelimiter); //	(Digests can't have spaces in them.)
                                              // debugprint( "digest: '%s'\n", szToken );
         if (!szToken)
             return false;

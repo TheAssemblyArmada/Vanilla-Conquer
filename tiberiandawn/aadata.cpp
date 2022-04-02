@@ -691,7 +691,7 @@ bool AircraftTypeClass::Create_And_Place(CELL, HousesType) const
 }
 
 /***********************************************************************************************
- * ATC::Init -- load up terrain set dependant sidebar icons                                    *
+ * ATC::Init -- load up terrain set dependent sidebar icons                                    *
  *                                                                                             *
  *                                                                                             *
  *                                                                                             *

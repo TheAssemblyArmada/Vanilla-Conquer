@@ -50,7 +50,7 @@
  * Small_Icon -- Create a small icon from a big one.                                           *
  *                                                                                             *
  *    This routine will extract the specified icon from the icon data file and convert that    *
- *    incon into a small (3x3) representation. Typicall use of this mini-icon is for the radar *
+ *    icon into a small (3x3) representation. Typical use of this mini-icon is for the radar   *
  *    map.                                                                                     *
  *                                                                                             *
  * INPUT:   iconptr  -- Pointer to the icon data file.                                         *

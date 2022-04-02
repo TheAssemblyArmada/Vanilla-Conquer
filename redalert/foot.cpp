@@ -325,7 +325,7 @@ bool FootClass::Basic_Path(void)
         cell = As_Cell(NavCom);
 
         /*
-        **	When the navigation computer is set to a location that is impassible, then
+        **	When the navigation computer is set to a location that is impassable, then
         **	find a nearby cell that can be entered and try to head toward that instead.
         **	EXCEPT when that cell is very close -- then just bail.
         */

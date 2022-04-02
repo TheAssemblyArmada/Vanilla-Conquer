@@ -782,7 +782,7 @@ void Send_Statistics_Packet(void)
 
 #ifndef WOLAPI_INTEGRATION //	ajw - 'PacketLater' is no longer ever used.
         /*
-        ** If a player disconnected then dont send the packet at this time - save it for later
+        ** If a player disconnected then don't send the packet at this time - save it for later
         */
         if (completion == COMPLETION_PLAYER_1_WON_BY_DISCONNECTION
             || completion == COMPLETION_PLAYER_2_WON_BY_DISCONNECTION) {

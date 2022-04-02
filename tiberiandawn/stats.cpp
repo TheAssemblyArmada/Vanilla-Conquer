@@ -598,7 +598,7 @@ void Send_Statistics_Packet(void)
         CCDebugString("C&C95 - Returned from Create_Comms_Packet.\n");
 
         /*
-        ** If a player disconnected then dont send the packet at this time - save it for later
+        ** If a player disconnected then don't send the packet at this time - save it for later
         */
         if (completion == COMPLETION_PLAYER_1_WON_BY_DISCONNECTION
             || completion == COMPLETION_PLAYER_2_WON_BY_DISCONNECTION) {

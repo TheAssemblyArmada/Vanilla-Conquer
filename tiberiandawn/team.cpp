@@ -55,7 +55,7 @@
 #include "mission.h"
 
 /*
-**	This array records the number of teams in existance of each type.
+**	This array records the number of teams in existence of each type.
 */
 unsigned char TeamClass::Number[TEAMTYPE_MAX];
 
@@ -230,7 +230,7 @@ void TeamClass::Assign_Mission_Target(TARGET new_target)
     /*
     **	If there is not currently an override on the current mission target
     ** then assign both MissionTarget and Target to the new target.  If
-    ** there is an overide, allow the team to keep fighting the overide but
+    ** there is an override, allow the team to keep fighting the override but
     ** make sure they pick up on the new mission when they are ready.
     */
     if (Target == MissionTarget || !Target_Legal(Target)) {
@@ -837,7 +837,7 @@ bool TeamClass::Remove(FootClass* obj, int typeindex)
  *                                                                                             *
  *    This routine will take the given index ID and scan for available objects of that type    *
  *    to recruit to the team. Recruiting will continue until that object type has either       *
- *    been exhausted or if the team's requirment for that type has been filled.                *
+ *    been exhausted or if the team's requirement for that type has been filled.               *
  *                                                                                             *
  * INPUT:   typeindex   -- The index for the object type to recruit. The index is used to      *
  *                         look into the type type's array of object types that make up this   *
@@ -943,7 +943,7 @@ void TeamClass::Detach(TARGET target, bool)
     Validate();
 
     /*
-    **	If the target to detatch matches the target of this team, then remove
+    **	If the target to detach matches the target of this team, then remove
     **	the target from this team's Tar/Nav com and let the chips fall
     **	where they may.
     */
@@ -1275,7 +1275,7 @@ void TeamClass::Coordinate_Move(void)
 }
 
 /***************************************************************************
- * Lagging_Units -- processes units that cant keep up with the pack        *
+ * Lagging_Units -- processes units that can't keep up with the pack       *
  *                                                                         *
  * INPUT:      none                                                        *
  *                                                                         *

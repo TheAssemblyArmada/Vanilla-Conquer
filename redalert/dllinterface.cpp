@@ -481,7 +481,7 @@ int DLLForceMouseY = 0;
 
 CNC_Event_Callback_Type DLLExportClass::EventCallback = NULL;
 
-// Needed to accomodate Glyphx client sidebar. ST - 4/12/2019 5:29PM
+// Needed to accommodate GlyphX client sidebar. ST - 4/12/2019 5:29PM
 int GlyphXClientSidebarWidthInLeptons = 0;
 
 bool MPlayerIsHuman[MAX_PLAYERS];
@@ -503,7 +503,7 @@ int GetRandSeed()
 
     return abs(static_cast<int>(microseconds_since_epoch.time_since_epoch().count()));
 #endif
-    // for mingw compatility
+    // for mingw compatibility
     return GetTickCount();
 }
 
@@ -1031,7 +1031,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Select_Object(uint64 player_id
 }
 
 /**************************************************************************************************
- * GlyphX_Assign_Houses -- Replacement for Assign_Houses in INI.CPP / SCNEARIO.CPP
+ * GlyphX_Assign_Houses -- Replacement for Assign_Houses in INI.CPP / SCENARIO.CPP
  *
  * In:
  *
@@ -1394,7 +1394,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Start_Instance_Variation(int s
     } else {
         if (MPSuperWeaponDisable) {
             /*
-            ** Write over the tecb level settings we just loaded from the Rules ini
+            ** Write over the tech level settings we just loaded from the Rules ini
             */
             Rule.GPSTechLevel = 100;
             Rule.ParaInfantryTechLevel = 100;
@@ -1631,7 +1631,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Start_Custom_Instance(const ch
     } else {
         if (MPSuperWeaponDisable) {
             /*
-            ** Write over the tecb level settings we just loaded from the Rules ini
+            ** Write over the tech level settings we just loaded from the Rules ini
             */
             Rule.GPSTechLevel = 100;
             Rule.ParaInfantryTechLevel = 100;
@@ -1751,7 +1751,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Advance_Instance(uint64 player
     /*
     ** Shouldn't really need to do this, but I like the idea of always running the main loop in the context of the same
     *player.
-    ** Might make tbe bugs more repeatable and consistent. ST - 3/15/2019 11:58AM
+    ** Might make the bugs more repeatable and consistent. ST - 3/15/2019 11:58AM
     */
     if (player_id != 0) {
         DLLExportClass::Set_Player_Context(player_id);
@@ -6999,7 +6999,7 @@ void DLLExportClass::Refresh_Player_Control_Flags(void)
 }
 
 /**************************************************************************************************
- * Logic_Switch_Player_Context -- Called when the internal game locic needs to switch player context
+ * Logic_Switch_Player_Context -- Called when the internal game logic needs to switch player context
  *
  * In:
  *
@@ -7015,7 +7015,7 @@ void Logic_Switch_Player_Context(ObjectClass* object)
 }
 
 /**************************************************************************************************
- * DLLExportClass::Logic_Switch_Player_Context -- Called when the internal game locic needs to switch player context
+ * DLLExportClass::Logic_Switch_Player_Context -- Called when the internal game logic needs to switch player context
  *
  * In:
  *
@@ -7045,7 +7045,7 @@ void DLLExportClass::Logic_Switch_Player_Context(ObjectClass* object)
 }
 
 /**************************************************************************************************
- * Logic_Switch_Player_Context -- Called when the internal game locic needs to switch player context
+ * Logic_Switch_Player_Context -- Called when the internal game logic needs to switch player context
  *
  * In:
  *
@@ -7061,7 +7061,7 @@ void Logic_Switch_Player_Context(HouseClass* object)
 }
 
 /**************************************************************************************************
- * DLLExportClass::Logic_Switch_Player_Context -- Called when the internal game locic needs to switch player context
+ * DLLExportClass::Logic_Switch_Player_Context -- Called when the internal game logic needs to switch player context
  *
  * In:
  *
@@ -7333,7 +7333,7 @@ void DLLExportClass::Sell_Mode(uint64 player_id)
 }
 
 /**************************************************************************************************
- * DLLExportClass::Sell -- Sell's a player's speceific building.
+ * DLLExportClass::Sell -- Sells a player's specific building.
  *
  * In:
  *

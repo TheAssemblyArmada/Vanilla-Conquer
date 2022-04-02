@@ -226,7 +226,7 @@ TextLabelClass* MessageListClass::Add_Message(char* txt,
         txtlabel = MessageList;
         while (txtlabel) {
             /*
-            ** Dont check for duplicates in multi-segment strings
+            ** Don't check for duplicates in multi-segment strings
             */
             if (!txtlabel->Segments) {
                 if (!strcmp(txtlabel->Text, txt) && txtlabel->Color == color && txtlabel->Style == style) {

@@ -995,7 +995,7 @@ void BuildingClass::AI(void)
     if (IsGoingToBlow && CountDown == 0) {
 #ifdef REMASTER_BUILD
         /*
-        ** Maybe trigger an achivement. ST - 11/14/2019 1:53PM
+        ** Maybe trigger an achievement. ST - 11/14/2019 1:53PM
         */
         TechnoTypeClass const* object_type = Techno_Type_Class();
         if (object_type) {
@@ -1014,7 +1014,7 @@ void BuildingClass::AI(void)
     }
 
     /*
-    **	Turret equiped buildings must handle turret rotation logic here. This entails
+    **	Turret equipped buildings must handle turret rotation logic here. This entails
     **	rotating the turret to the desired facing as well as figuring out what that
     **	desired facing should be.
     */
@@ -1802,8 +1802,8 @@ void BuildingClass::Drop_Debris(TARGET source)
         }
 
         /*
-        **	Smoke and fire only appear on terrestrail cells. They should not appear on
-        **	rivers, clifs, or water cells.
+        **	Smoke and fire only appear on terrestrial cells. They should not appear on
+        **	rivers, cliffs, or water cells.
         */
         if (cellptr->Is_Clear_To_Move(SPEED_TRACK, true, true)) {
 
@@ -3226,7 +3226,7 @@ bool BuildingClass::Captured(HouseClass* newowner)
 #endif
 #ifdef REMASTER_BUILD
         /*
-        ** Maybe trigger an achivement. ST - 11/14/2019 1:53PM
+        ** Maybe trigger an achievement. ST - 11/14/2019 1:53PM
         */
         if (newowner->IsHuman) {
             TechnoTypeClass const* object_type = Techno_Type_Class();
@@ -4714,7 +4714,7 @@ bool BuildingClass::Revealed(HouseClass* house)
  *    This routine is called when the exact mode of the building isn't known. By examining     *
  *    the building's condition, this routine will assign an appropriate mission.               *
  *                                                                                             *
- * INPUT:   initial  -- This this being called during scenario init?                           *
+ * INPUT:   initial  -- Is this being called during scenario init?                             *
  *                                                                                             *
  * OUTPUT:  none                                                                               *
  *                                                                                             *
@@ -5749,7 +5749,7 @@ void BuildingClass::Rotation_AI(void)
  * BuildingClass::Charging_AI -- Handles the special charging logic for Tesla coils.           *
  *                                                                                             *
  *    This handles the special logic required of the charging tesla coil. It requires special  *
- *    processing since its charge up is dependant upon the target and power surplus of the     *
+ *    processing since its charge up is dependent upon the target and power surplus of the     *
  *    owning house.                                                                            *
  *                                                                                             *
  * INPUT:   none                                                                               *

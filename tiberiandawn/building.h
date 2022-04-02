@@ -108,7 +108,7 @@ public:
     unsigned IsSurvivorless : 1;
 
     /*
-    **	These state control variables are used by the oblisk for the charging
+    **	These state control variables are used by the obelisk for the charging
     **	animation.
     */
     unsigned IsCharging : 1;
@@ -116,7 +116,7 @@ public:
 
     /*
     **	A building that has been captured will not contain the full compliment
-    **	of crew. This is true even if it subsiquently gets captured back.
+    **	of crew. This is true even if it subsequently gets captured back.
     */
     unsigned IsCaptured : 1;
 

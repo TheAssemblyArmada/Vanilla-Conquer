@@ -408,7 +408,7 @@ void RawFileClass::Close(void)
         Handle = nullptr;
 
         /*
-        **	Clear any positioning information incase class is reused to open another file.
+        **	Clear any positioning information in case class is reused to open another file.
         */
         BiasStart = 0;
         BiasLength = -1;

@@ -55,7 +55,7 @@
  *                                                                                             *
  *          flags -- The input event flags that this gadget recognizes.                        *
  *                                                                                             *
- *          sticky-- This this a "sticky" gadget? A sticky gadget is one that takes over the   *
+ *          sticky-- Is this a "sticky" gadget? A sticky gadget is one that takes over the     *
  *                   gadget list while the mouse button is held down, if the mouse button was  *
  *                   initially clicked over its region. This is the behavior of "normal"       *
  *                   buttons in Windows.                                                       *

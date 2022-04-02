@@ -57,11 +57,11 @@
  *   FootClass::Mission_Hunt -- Handles the default hunt order.                                *
  *   FootClass::Mission_Move -- AI process for moving a vehicle to its destination.            *
  *   FootClass::Offload_Tiberium_Bail -- Fetches the Tiberium to offload per step.             *
- *   FootClass::Override_Mission -- temporarily overides a units mission                       *
+ *   FootClass::Override_Mission -- temporarily overrides a units mission                      *
  *   FootClass::Per_Cell_Process -- Perform action based on once-per-cell condition.           *
  *   FootClass::Receive_Message -- Movement related radio messages are handled here.           *
  *   FootClass::Rescue_Mission -- Calls this unit to the rescue.                               *
- *   FootClass::Restore_Mission -- Restores an overidden mission                               *
+ *   FootClass::Restore_Mission -- Restores an overridden mission                              *
  *   FootClass::Sell_Back -- Causes this object to be sold back.                               *
  *   FootClass::Set_Speed -- Initiate unit movement physics.                                   *
  *   FootClass::Sort_Y -- Determine the sort coordinate for foot class objects.                *
@@ -359,7 +359,7 @@ bool FootClass::Basic_Path(void)
         cell = As_Cell(NavCom);
 
         /*
-        **	When the navigation computer is set to a location that is impassible, then
+        **	When the navigation computer is set to a location that is impassable, then
         **	find a nearby cell that can be entered and try to head toward that instead.
         **	EXCEPT when that cell is very close -- then just bail.
         */
@@ -1434,17 +1434,17 @@ void FootClass::Per_Cell_Process(bool center)
 }
 
 /***************************************************************************
- * FootClass::Override_Mission -- temporarily overides a units mission     *
+ * FootClass::Override_Mission -- temporarily overrides a units mission    *
  *                                                                         *
  *                                                                         *
  *                                                                         *
- * INPUT:		MissionType mission - the mission we want to overide        *
- *					TARGET	   tarcom  - the new target we want to overide		*
- *					TARGET		navcom  - the new navigation point to overide	*
+ * INPUT:		MissionType mission - the mission we want to override      *
+ *					TARGET	   tarcom  - the new target we want to override		*
+ *					TARGET		navcom  - the new navigation point to override	*
  *                                                                         *
  * OUTPUT:		none                                                        *
  *                                                                         *
- * WARNINGS:   If a mission is already overidden, the current mission is   *
+ * WARNINGS:   If a mission is already overridden, the current mission is  *
  *					just re-assigned.															*
  *                                                                         *
  * HISTORY:                                                                *
@@ -1459,7 +1459,7 @@ void FootClass::Override_Mission(MissionType mission, TARGET tarcom, TARGET navc
 }
 
 /***************************************************************************
- * FootClass::Restore_Mission -- Restores an overidden mission             *
+ * FootClass::Restore_Mission -- Restores an overridden mission            *
  *                                                                         *
  * INPUT:		none                                                        *
  *                                                                         *
@@ -1548,7 +1548,7 @@ RadioMessageType FootClass::Receive_Message(RadioClass* from, RadioMessageType m
 
     /*
     **	Checks to see if this unit needs to move somewhere. If it is already in motion,
-    **	then it doesn't need furthur movement instructions.
+    **	then it doesn't need further movement instructions.
     */
     case RADIO_NEED_TO_MOVE:
         param = (long)NavCom;

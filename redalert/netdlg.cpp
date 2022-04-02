@@ -2044,7 +2044,7 @@ static int Net_Join_Dialog(void)
     TTimerClass<SystemTimerClass> lastclick_timer; // time b/w send periods
     int lastclick_idx = 0;                         // index of item last clicked on
     RemapControlType* scheme = GadgetClass::Get_Color_Scheme();
-    Session.Options.ScenarioDescription[0] = 0; // Flag that we dont know the scenario name yet
+    Session.Options.ScenarioDescription[0] = 0; // Flag that we don't know the scenario name yet
 
     char* item;
     unsigned long starttime;
@@ -2275,7 +2275,7 @@ static int Net_Join_Dialog(void)
 
         /*
         ** Kludge to make sure we redraw the message input line when it loses focus.
-        ** If we dont do this then the cursor doesnt disappear.
+        ** If we don't do this then the cursor doesn't disappear.
         */
         if (messages_have_focus) {
             if (name_edt.Has_Focus()) {
@@ -3127,8 +3127,8 @@ static int Net_Join_Dialog(void)
                                         Session.ScenarioDigest,
                                         Session.ScenarioIsOfficial)) {
 
-                    Session.Options.ScenarioIndex = 1; // We dont care what it
-                                                       // is as long as it isnt -1
+                    Session.Options.ScenarioIndex = 1; // We don't care what it
+                                                       // is as long as it isn't -1
 
                     /*
                     ** We have the scenario. Tell the host that I am ready to go.
@@ -3144,7 +3144,7 @@ static int Net_Join_Dialog(void)
                 } else {
 #ifndef FIXIT_VERSION_3 //	Removed restriction on downloading official maps.
                     /*
-                    ** Oh dear. Thats a scenario I don't have. Request that the host sends the
+                    ** Oh dear. That's a scenario I don't have. Request that the host sends the
                     **	scenario to me provided it's not an official scenario.
                     **
                     ** If the file is received OK then we will get a true return value and the
@@ -3154,8 +3154,8 @@ static int Net_Join_Dialog(void)
                         Session.Options.ScenarioIndex = -1;
                     } else {
 #endif
-                        Session.Options.ScenarioIndex = 1; // We dont care what it
-                                                           // is as long as it isnt -1
+                        Session.Options.ScenarioIndex = 1; // We don't care what it
+                                                           // is as long as it isn't -1
 #ifdef FIXIT_VERSION_3
                         if (bSpecialAftermathScenario(Session.Options.ScenarioDescription))
                             break;
@@ -3165,7 +3165,7 @@ static int Net_Join_Dialog(void)
                             break;
                         } else {
                             /*
-                            ** Make sure we dont time-out because of the download
+                            ** Make sure we don't time-out because of the download
                             */
                         }
 #ifndef FIXIT_VERSION_3
@@ -5563,7 +5563,7 @@ static int Net_New_Dialog(void)
 
                 /*
                 ** Set up the scenario info so the remote player can match the scenario on his machine
-                ** or request a download if it doesnt exist
+                ** or request a download if it doesn't exist
                 */
                 strcpy(Session.GPacket.ScenarioInfo.Scenario,
                        Session.Scenarios[Session.Options.ScenarioIndex]->Description());
@@ -5697,7 +5697,7 @@ static int Net_New_Dialog(void)
         bool send_scenario = false;
         WWDebugString("RA95 - About to wait for 'GO' response.");
         CDTimerClass<SystemTimerClass> response_timer; // timeout timer for waiting for responses
-        response_timer = 60 * 10; // Wait for 10 seconds. If we dont hear by then assume someone crashed
+        response_timer = 60 * 10; // Wait for 10 seconds. If we don't hear by then assume someone crashed
 
         do {
             Ipx.Service();
@@ -8337,7 +8337,7 @@ static int Net_Fake_New_Dialog(void)
                 Session.GPacket.Command = NET_GAME_OPTIONS;
                 /*
                 ** Set up the scenario info so the remote player can match the scenario on his machine
-                ** or request a download if it doesnt exist
+                ** or request a download if it doesn't exist
                 */
                 strcpy(Session.GPacket.ScenarioInfo.Scenario,
                        Session.Scenarios[Session.Options.ScenarioIndex]->Description());
@@ -8398,7 +8398,7 @@ static int Net_Fake_New_Dialog(void)
                     }
 
                     /*
-                    ** See if that file is available now. Its fatal if it isnt.
+                    ** See if that file is available now. It's fatal if it isn't.
                     */
                     if (!file.Is_Available()) {
 
@@ -8558,7 +8558,7 @@ static int Net_Fake_New_Dialog(void)
         WWDebugString("RA95 - About to wait for 'GO' response.\n");
 
         CDTimerClass<SystemTimerClass> response_timer; // timeout timer for waiting for responses
-        response_timer = 60 * 30; // Wait for 30 seconds. If we dont hear by then assume someone crashed
+        response_timer = 60 * 30; // Wait for 30 seconds. If we don't hear by then assume someone crashed
 
         do {
             Ipx.Service();
@@ -8829,7 +8829,7 @@ static int Net_Fake_Join_Dialog(void)
     int lastclick_idx = 0;                         // index of item last clicked on
     RemapControlType* scheme = GadgetClass::Get_Color_Scheme();
     int ready_to_go = 0;
-    Session.Options.ScenarioDescription[0] = 0; // Flag that we dont know the scenario name yet
+    Session.Options.ScenarioDescription[0] = 0; // Flag that we don't know the scenario name yet
     int width;
     int height;
 
@@ -9209,7 +9209,7 @@ static int Net_Fake_Join_Dialog(void)
                                 Session.Read_Scenario_Descriptions();
 
                                 /*
-                                ** See if that scenario is available now. Its pretty fatal if it isnt.
+                                ** See if that scenario is available now. It's pretty fatal if it isn't.
                                 */
                                 Session.Options.ScenarioIndex = -1;
                                 for (i = 0; i < Session.Scenarios.Count(); i++) {
@@ -9224,7 +9224,7 @@ static int Net_Fake_Join_Dialog(void)
                     }
 
                     /*
-                    ** If the scenario that the host wants to play doesnt exist locally then we
+                    ** If the scenario that the host wants to play doesn't exist locally then we
                     **	need to request that it is sent. If we can identify the scenario locally then
                     **	we need to fix up the file name so we load the right one.
                     */
@@ -9234,8 +9234,8 @@ static int Net_Fake_Join_Dialog(void)
                                             Session.ScenarioDigest,
                                             Session.ScenarioIsOfficial)) {
 
-                        Session.Options.ScenarioIndex = 1; // We dont care what it
-                                                           // is as long as it isnt -1
+                        Session.Options.ScenarioIndex = 1; // We don't care what it
+                                                           // is as long as it isn't -1
 
                         /*
                         ** We have the scenario. Tell the host that I am ready to go.
@@ -9251,7 +9251,7 @@ static int Net_Fake_Join_Dialog(void)
                     } else {
 #ifndef FIXIT_VERSION_3 //	Removed restriction on downloading official maps.
                         /*
-                        ** Oh dear. Thats a scenario I dont have. Request that the host sends the
+                        ** Oh dear. That's a scenario I don't have. Request that the host sends the
                         **	scenario to me provided its not an official Westwood scenario.
                         **
                         ** If the file is received OK then we will get a true return value and the
@@ -9261,8 +9261,8 @@ static int Net_Fake_Join_Dialog(void)
                             Session.Options.ScenarioIndex = -1;
                         } else {
 #endif
-                            Session.Options.ScenarioIndex = 1; // We dont care what it
-                                                               // is as long as it isnt -1
+                            Session.Options.ScenarioIndex = 1; // We don't care what it
+                                                               // is as long as it isn't -1
 #ifdef FIXIT_VERSION_3
                             if (bSpecialAftermathScenario(Session.Options.ScenarioDescription))
                                 break;
@@ -9272,7 +9272,7 @@ static int Net_Fake_Join_Dialog(void)
                                 break;
                             } else {
                                 /*
-                                ** Make sure we dont time-out because of the download
+                                ** Make sure we don't time-out because of the download
                                 */
                             }
 #ifndef FIXIT_VERSION_3

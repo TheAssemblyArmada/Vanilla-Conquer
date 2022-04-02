@@ -177,7 +177,7 @@ static CELL StartLocation;
  *      (x - x2)(z1 - z2) = (z - z2)(x1 - x2) given x,z a point on the     *
  *      line (x1,z1),(x2,z2).                                              *
  *      If the right side is > then the left side then the point is on one *
- *      side of the line and if the right side is < the the left side, then*
+ *      side of the line and if the right side is < the left side, then    *
  *      the point is on the other side of the line.  By subtracting one side*
  *      from the other we can determine on what side (if any) the point is on*
  *      by testing the side of the resulting subtraction.                  *
@@ -226,8 +226,8 @@ int Point_Relative_To_Line(int x, int z, int x1, int z1, int x2, int z2)
  *               destx    - the dest x position for this path segment      *
  *               desty    - the dest y position for this path segment      *
  *                                                                         *
- * OUTPUT:      TRUE    - loop has been sucessfully unravelled             *
- *               FALSE  - loop can not be unravelled so abort follow edge  *
+ * OUTPUT:      TRUE    - loop has been successfully unraveled             *
+ *               FALSE  - loop can not be unraveled so abort follow edge   *
  *                                                                         *
  * WARNINGS:   none                                                        *
  *                                                                         *
@@ -692,7 +692,7 @@ PathType* FootClass::Find_Path(CELL dest, FacingType* final_moves, int maxlen, M
 
                     /*
                     ** If the cell is passable then we have been completely
-                    ** sucessful.  If the cell is not passable then continue.
+                    ** successful.  If the cell is not passable then continue.
                     */
                     if ((Passable_Cell(next, FACING_NONE, threat, threshhold)) || (next == dest)) {
                         Draw_Cell_Point(next, true, threat_stage);
@@ -703,7 +703,7 @@ PathType* FootClass::Find_Path(CELL dest, FacingType* final_moves, int maxlen, M
 
                     /*
                     **	If we reached destination while in this loop, we
-                    **	know that either the destination is impassible (if
+                    **	know that either the destination is impassable (if
                     **	we are ignoring) or that we need to up our threat
                     ** tolerance and try again.
                     */
@@ -820,7 +820,7 @@ PathType* FootClass::Find_Path(CELL dest, FacingType* final_moves, int maxlen, M
 
                     /*
                     **	If we reached destination while in this loop, we
-                    **	know that either the destination is impassible (if
+                    **	know that either the destination is impassable (if
                     **	we are ignoring) or that we need to up our threat
                     ** tolerance and try again.
                     */
@@ -928,7 +928,7 @@ end_of_list:
  *                                                                                             *
  *          search   -- Direction of search (1=clock, -1=counterclock).                        *
  *                                                                                             *
- *          olddir   -- Facing impassible direction from start.                                *
+ *          olddir   -- Facing impassable direction from start.                                *
  *                                                                                             *
  *          callback -- Function pointer for determining if a cell is                          *
  *                      passable or not.                                                       *
@@ -1052,8 +1052,8 @@ bool FootClass::Follow_Edge(CELL start,
                 /*
                 **	Perform special diagonal check. If the edge follower would cross the
                 **	diagonal or fall on the diagonal line from the source, then consider
-                **	that cell impassible. Otherwise, the find path algorithm will fail
-                **	when there are two impassible locations located on a diagonal
+                **	that cell impassable. Otherwise, the find path algorithm will fail
+                **	when there are two impassable locations located on a diagonal
                 **	that is lined up between the source and destination location.
                 **
                 ** P.S. It might help if you check the right cell rather than using

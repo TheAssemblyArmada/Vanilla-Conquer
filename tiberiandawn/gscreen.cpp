@@ -297,7 +297,7 @@ void GScreenClass::Input(KeyNumType& key, int& x, int& y)
  * GScreenClass::Add_A_Button -- Add a gadget to the game input system.                        *
  *                                                                                             *
  *    This will add a gadget to the game input system. The gadget will be processed in         *
- *    subsiquent calls to the GScreenClass::Input() function.                                  *
+ *    subsequent calls to the GScreenClass::Input() function.                                  *
  *                                                                                             *
  * INPUT:   gadget   -- Reference to the gadget that will be added to the input system.        *
  *                                                                                             *

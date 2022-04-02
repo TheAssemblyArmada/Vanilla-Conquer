@@ -45,7 +45,7 @@
  *   AircraftClass::Fire_Coord -- Calculates the point of origin for a bullet.                 *
  *   AircraftClass::Fire_Direction -- Determines the direction of fire.                        *
  *   AircraftClass::Good_Fire_Location -- Searches for and finds a good spot to fire from.     *
- *   AircraftClass::Good_LZ -- Locates a good spot ot land.                                    *
+ *   AircraftClass::Good_LZ -- Locates a good spot to land.                                    *
  *   AircraftClass::In_Which_Layer -- Determine which render layer the aircraft lies.          *
  *   AircraftClass::Init -- Initialize the aircraft system to an empty state.                  *
  *   AircraftClass::Is_LZ_Clear -- Determines if landing zone is free for landing.             *
@@ -237,7 +237,7 @@ AircraftClass::AircraftClass(AircraftType classid, HousesType house)
     ReinforcementStart = -1;
 
     /*
-    ** Keep count of the number of units created. Dont track cargo planes as they are created
+    ** Keep count of the number of units created. Don't track cargo planes as they are created
     ** automatically, not bought.
     */
     if (classid != AIRCRAFT_CARGO && GameToPlay == GAME_INTERNET) {
@@ -2039,7 +2039,7 @@ void AircraftClass::Debug_Dump(MonoClass* mono) const
 /***********************************************************************************************
  * AircraftClass::Active_Click_With -- Handles clicking over specified object.                 *
  *                                                                                             *
- *    This routine is used when the player clicks over the speicifed object. It will assign    *
+ *    This routine is used when the player clicks over the specified object. It will assign    *
  *    the appropriate mission to the aircraft.                                                 *
  *                                                                                             *
  * INPUT:   action   -- The action that was nominally determined by the What_Action function.  *
@@ -2049,7 +2049,7 @@ void AircraftClass::Debug_Dump(MonoClass* mono) const
  * OUTPUT:  none                                                                               *
  *                                                                                             *
  * WARNINGS:   This routine will alter the game sequence and causes an event packet to be      *
- *             propogated to all connected machines.                                           *
+ *             propagated to all connected machines.                                           *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   06/19/1995 JLB : Created.                                                                 *
@@ -2085,7 +2085,7 @@ void AircraftClass::Active_Click_With(ActionType action, ObjectClass* object)
  * OUTPUT:  none                                                                               *
  *                                                                                             *
  * WARNINGS:   This routine will affect the game sequence and causes an event object to be     *
- *             propogated to all connected machines.                                           *
+ *             propagated to all connected machines.                                           *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   06/19/1995 JLB : Created.                                                                 *
@@ -2127,7 +2127,7 @@ void AircraftClass::Active_Click_With(ActionType action, CELL cell)
  * OUTPUT:  none                                                                               *
  *                                                                                             *
  * WARNINGS:   The mission specified will be executed at an indeterminate future game frame.   *
- *             This is controlled by net/modem propogation delay.                              *
+ *             This is controlled by net/modem propagation delay.                              *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   06/19/1995 JLB : Created.                                                                 *
@@ -2569,7 +2569,7 @@ RadioMessageType AircraftClass::Receive_Message(RadioClass* from, RadioMessageTy
         return (RADIO_NEGATIVE);
 
     /*
-    **	Something disasterous has happened to the object in contact with. Fall back
+    **	Something disastrous has happened to the object in contact with. Fall back
     **	and regroup. This means that any landing process is immediately aborted.
     */
     case RADIO_RUN_AWAY:
@@ -2915,7 +2915,7 @@ TARGET AircraftClass::Good_Fire_Location(TARGET target) const
  * AircraftClass::Cell_Seems_Ok -- Checks to see if a cell is good to enter.                   *
  *                                                                                             *
  *    This routine examines the navigation computers of other aircraft in order to see if the  *
- *    specified cell is safe to fly to. The intent of this routine is to avoid unneccessary    *
+ *    specified cell is safe to fly to. The intent of this routine is to avoid unnecessary     *
  *    mid-air collisions.                                                                      *
  *                                                                                             *
  * INPUT:   cell     -- The cell to examine for clear airspace.                                *
@@ -3109,7 +3109,7 @@ int AircraftClass::Mission_Enter(void)
 }
 
 /***********************************************************************************************
- * AircraftClass::Good_LZ -- Locates a good spot ot land.                                      *
+ * AircraftClass::Good_LZ -- Locates a good spot to land.                                      *
  *                                                                                             *
  *    This routine is used when helicopters need a place to land, but there are no obvious     *
  *    spots (i.e., helipad) available. It will try to land near a friendly helipad or friendly *
@@ -3307,7 +3307,7 @@ int AircraftClass::Rearm_Delay(bool second) const
  *    meaningless.                                                                             *
  *                                                                                             *
  * INPUT:   control  -- The range control parameter;                                           *
- *                      -1 = range doesn't matter -- return -1 for compatability reasons.      *
+ *                      -1 = range doesn't matter -- return -1 for compatibility reasons.      *
  *                      0  = short range scan                                                  *
  *                      1  = long range scan                                                   *
  *                                                                                             *

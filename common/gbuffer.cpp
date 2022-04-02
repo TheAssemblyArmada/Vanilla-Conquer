@@ -66,8 +66,8 @@ void GraphicBufferClass::DD_Init(GBC_Enum flags)
 {
     VideoSurfacePtr = Video::Shared().CreateSurface(Width, Height, flags);
 
-    Allocated = false;   // even if system alloced, dont flag it cuz
-                         //   we dont want it freed.
+    Allocated = false;   // even if system alloced, don't flag it cuz
+                         //   we don't want it freed.
     IsHardware = true;   // flag it as a video surface
     Offset = NOT_LOCKED; // flag it as unavailable for reading or writing
     LockCount = 0;       //  surface is not locked
@@ -82,7 +82,7 @@ void GraphicBufferClass::Attach_DD_Surface(GraphicBufferClass* attach_buffer)
  * GBC::INIT -- Core function responsible for initing a GBC                *
  *                                                                         *
  * INPUT:      int      - the width in pixels of the GraphicBufferClass    *
- *             int      - the heigh in pixels of the GraphicBufferClass    *
+ *             int      - the height in pixels of the GraphicBufferClass   *
  *             void *   - pointer to user supplied buffer (system will     *
  *                        allocate space if buffer is NULL)                *
  *             long     - size of the user provided buffer                 *
@@ -212,7 +212,7 @@ GraphicBufferClass::GraphicBufferClass(int w, int h, void* buffer)
 }
 
 /*====================================================================================*
- * GBC::GRAPHICBUFFERCLASS -- contructor for GraphicsBufferClass with special flags   *
+ * GBC::GRAPHICBUFFERCLASS -- constructor for GraphicsBufferClass with special flags   *
  *                                                                                    *
  * INPUT:        int w          - width of buffer in pixels (default = 320)           *
  *               int h          - height of buffer in pixels (default = 200)          *
@@ -254,7 +254,7 @@ GraphicBufferClass::~GraphicBufferClass()
 bool GraphicBufferClass::Lock()
 {
     //
-    // If its not a direct draw surface then the lock is always sucessful.
+    // If its not a direct draw surface then the lock is always successful.
     //
     if (!IsHardware) {
         return (Offset != 0);
@@ -268,7 +268,7 @@ bool GraphicBufferClass::Lock()
     }
 
     /*
-    ** If we dont have focus then return failure
+    ** If we don't have focus then return failure
     */
     if (!GameInFocus) {
         return false;
@@ -306,7 +306,7 @@ bool GraphicBufferClass::Lock()
 
     Unblock_Mouse(this);
 
-    return result; // Return false because we couldnt lock or restore the surface
+    return result; // Return false because we couldn't lock or restore the surface
 }
 
 /***************************************************************************

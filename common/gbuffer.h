@@ -46,10 +46,10 @@
  * minimum amount of code space.  For programs that require MCGA or VESA   *
  * support, all that is necessary to do is link either the MCGA or VESA    *
  * specific libraries in, previous to WWLIB32.  The linker will then       *
- * overide the the necessary stub functions automatically.                 *
+ * override the necessary stub functions automatically.                    *
  *                                                                         *
  * In addition, there are helpful inline function calls for parameter      *
- * ellimination.  This header file gives the defintion for all             *
+ * elimination.  This header file gives the definition for all             *
  * GraphicViewPort and GraphicBuffer classes.                              *
  *                                                                         *
  * Terminology:                                                            *
@@ -124,7 +124,7 @@ class VideoSurface;
 /*=========================================================================*/
 /* GraphicBufferClass - A GraphicBuffer refers to an actual instance of an */
 /*      allocated buffer.  The GraphicBuffer may be drawn to directly      */
-/*      becuase it inherits a ViewPort which represents its physcial size. */
+/*      because it inherits a ViewPort which represents its physical size. */
 /*                                                                         */
 /*          BYTE    *Buffer  -  is the offset to graphic buffer            */
 /*          int     Width    -  is the width of graphic buffer             */

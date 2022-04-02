@@ -110,7 +110,7 @@ public:
     bool IsOrganic : 1;
 
     /*
-    **	The warhead damage is reduced depending on the the type of armor the
+    **	The warhead damage is reduced depending on the type of armor the
     **	defender has. This table is what gives weapons their "character".
     */
     fixed Modifier[ARMOR_COUNT];

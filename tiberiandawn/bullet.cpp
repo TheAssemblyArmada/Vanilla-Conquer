@@ -615,7 +615,7 @@ void BulletClass::Detach(TARGET target, bool all)
  *                                                                                             *
  *    This routine is used to take a bullet object that is in limbo and transition it to the   *
  *    game system. A bullet object so transitioned, will be drawn and logic processing         *
- *    performed. In effect, it comes into existance.                                           *
+ *    performed. In effect, it comes into existence.                                           *
  *                                                                                             *
  * INPUT:   coord -- The location where the bullet object is to appear.                        *
  *                                                                                             *

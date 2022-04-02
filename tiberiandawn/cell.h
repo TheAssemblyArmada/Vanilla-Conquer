@@ -67,7 +67,7 @@ public:
 
     /*
     **	If any part of this cell is visible (even just peeking out from under the shadow),
-    **	this this flag will be true. Mapped cells always have this flag set, but unmapped
+    **	then this flag will be true. Mapped cells always have this flag set, but unmapped
     **	cells might not -- it depends on where the shadow edge is located.
     */
     unsigned IsVisible : 1;
@@ -156,7 +156,7 @@ public:
     **	This array of bit flags is used to indicate which sub positions
     **	within the cell are either occupied or are soon going to be
     **	occupied. For vehicles, the cells that the vehicle is passing over
-    **	will be flagged with the vehicle bit. For infantry, the the sub
+    **	will be flagged with the vehicle bit. For infantry, the sub
     **	position the infantry is stopped at or headed toward will be marked.
     **	The sub positions it passes over will NOT be marked.
     */

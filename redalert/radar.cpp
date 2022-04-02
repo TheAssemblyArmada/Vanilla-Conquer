@@ -1930,14 +1930,14 @@ void RadarClass::Set_Radar_Position(CELL cell)
                 /*
                 ** Blit the section that is actually overlapping.
                 **
-                ** If the video card isnt able to blit overlapped regions then we have
+                ** If the video card isn't able to blit overlapped regions then we have
                 ** to do the blit in two stages via an intermediate buffer. The test to allow
                 ** overlapped blits is done in the library at the time of setting the video mode.
                 */
                 if (OverlappedVideoBlits || !HidPage.Get_IsDirectDraw()) {
 
                     /*
-                    ** Overlapped blits are OK or we dont have a video memory hid page so blits are
+                    ** Overlapped blits are OK or we don't have a video memory hid page so blits are
                     ** always done in software by the library anyway.
                     */
                     HidPage.Blit(HidPage,

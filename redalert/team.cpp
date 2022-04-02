@@ -2657,7 +2657,7 @@ int TeamClass::TMission_Formation(void)
  * TeamClass::TMission_Attack -- Perform the team attack mission command.                      *
  *                                                                                             *
  *    This will tell the team to attack the quarry specified in the team command. If the team  *
- *    already has a target, this it is presumed that this target take precidence and it won't  *
+ *    already has a target, this it is presumed that this target take precedence and it won't  *
  *    be changed.                                                                              *
  *                                                                                             *
  * INPUT:   none                                                                               *

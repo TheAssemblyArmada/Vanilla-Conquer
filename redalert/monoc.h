@@ -182,9 +182,6 @@ private:
     //		static MonoPageType * MonoRAM;
 
     /*
-    ** This the the arrays of characters used for drawing boxes.
-    */
-    /*
     **	This is a private structure that is used to control which characters
     **	are used when a box is drawn. Line drawing on the monochrome screen is
     **	really made up of characters. This specifies which characters to use.
@@ -200,6 +197,10 @@ private:
         unsigned char BottomLeft;
         unsigned char LeftEdge;
     };
+
+    /*
+    ** These are the arrays of characters used for drawing boxes.
+    */
     static BoxDataType const CharData[4];
 
     /*

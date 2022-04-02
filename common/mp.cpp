@@ -757,7 +757,7 @@ void XMP_Shift_Left_Bits(digit* number, int bits, int precision)
  *                                                                                             *
  *          precision-- The precision of the MP number specified.                              *
  *                                                                                             *
- * OUTPUT:  Returns with the final value of the carry bit. This is the the bit value of the    *
+ * OUTPUT:  Returns with the final value of the carry bit. This is the bit value of the        *
  *          upper most bit of the MP number prior to the rotate operation.                     *
  *                                                                                             *
  * WARNINGS:   none                                                                            *

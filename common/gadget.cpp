@@ -66,7 +66,7 @@
 extern WWKeyboardClass* Keyboard;
 
 /*
-**	This records the current gadget the the gadget system is "stuck on". Such a
+**	This records the current gadget that the gadget system is "stuck on". Such a
 **	gadget will be processed to the exclusion of all others until the mouse button
 **	is no longer pressed.
 */
@@ -524,7 +524,7 @@ KeyNumType GadgetClass::Input(void)
     **	For mouse button clicks, the mouse position is actually held in the MouseQ...
     **	globals rather than their normal Mouse... globals. This is because we need to
     **	know the position of the mouse at the exact instant when the click occurred
-    **	rather the the mouse position at the time we get around to this function.
+    **	rather than the mouse position at the time we get around to this function.
     */
     if (((key & 0xFF) == KN_LMOUSE) || ((key & 0xFF) == KN_RMOUSE)) {
         mousex = Keyboard->MouseQX;

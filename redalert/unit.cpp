@@ -3366,7 +3366,7 @@ MoveType UnitClass::Can_Enter_Cell(CELL cell, FacingType) const
 
                     /*
                     **	If this unit can crush infantry, and there is an enemy infantry in the
-                    **	cell, don't consider the cell impassible. This is true even if the unit
+                    **	cell, don't consider the cell impassable. This is true even if the unit
                     **	doesn't contain a legitimate weapon.
                     */
                     bool crusher = Class->IsCrusher;

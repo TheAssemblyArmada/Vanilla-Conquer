@@ -137,7 +137,7 @@ Buffer::Buffer(Buffer const& buffer)
  * Buffer::operator = -- Assignment operator for the buffer object.                            *
  *                                                                                             *
  *    This will make a duplicate of the buffer object specified. Any buffer pointed to by the  *
- *    left hand buffer will be lost (possibley freed as a result).                             *
+ *    left hand buffer will be lost (possibly freed as a result).                              *
  *                                                                                             *
  * INPUT:   buffer   -- Reference to the right hand buffer object.                             *
  *                                                                                             *

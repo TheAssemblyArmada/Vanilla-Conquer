@@ -81,7 +81,7 @@ void Set_Video_Cursor(void* cursor, int w, int h, int hotx, int hoty);
 /* Hardware blits supported? */
 #define VIDEO_BLITTER 1
 
-/* Hardware blits asyncronous? */
+/* Hardware blits asynchronous? */
 #define VIDEO_BLITTER_ASYNC 2
 
 /* Can palette changes be synced to vertical refresh? */
@@ -93,7 +93,7 @@ void Set_Video_Cursor(void* cursor, int w, int h, int hotx, int hoty);
 /* Can the blitter do filled rectangles? */
 #define VIDEO_COLOR_FILL 16
 
-/* Is there no hardware assistance avaailable at all? */
+/* Is there no hardware assistance available at all? */
 #define VIDEO_NO_HARDWARE_ASSIST 32
 
 unsigned Get_Video_Hardware_Capabilities();

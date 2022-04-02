@@ -61,7 +61,7 @@
 //#define BONUS_MISSIONS
 
 /**********************************************************************
-** Handle expansion scnearios as a set of single missions with all
+** Handle expansion scenarios as a set of single missions with all
 **	necessary information self contained within the mission file.
 */
 #ifndef DEMO
@@ -637,7 +637,7 @@ typedef enum MPHType : unsigned char
 
 /**********************************************************************
 **	General audio volume is enumerated by these identifiers. Since small
-**	volume variations are usually unnoticable when specifying the volume
+**	volume variations are usually unnoticeable when specifying the volume
 **	to play a sample, this enumeration list creates more readable code.
 */
 typedef enum VolType : unsigned char
@@ -997,8 +997,8 @@ typedef enum InfantryType : signed char
     INFANTRY_C7,      // Civilian
     INFANTRY_C8,      // Civilian
     INFANTRY_C9,      // Civilian
-    INFANTRY_C10,     // Nikumba
-    INFANTRY_MOEBIUS, // Dr. Moebius
+    INFANTRY_C10,     // Nikoomba
+    INFANTRY_MOEBIUS, // Dr. Mobius
     INFANTRY_DELPHI,  // Agent "Delphi"
     INFANTRY_CHAN,    // Dr. Chan
 
@@ -1034,9 +1034,9 @@ typedef enum UnitType : signed char
     UNIT_MCV,       // Mobile construction vehicle.
     UNIT_BIKE,      // Nod recon motor-bike.
     UNIT_TRIC,      // Triceratops
-    UNIT_TREX,      //	Tyranosaurus Rex
+    UNIT_TREX,      //	Tyrannosaurus Rex
     UNIT_RAPT,      //	Velociraptor
-    UNIT_STEG,      //	Stegasaurus
+    UNIT_STEG,      //	Stegosaurus
 
 #ifdef PETROGLYPH_EXAMPLE_MOD
     UNIT_NUKE_TANK, // Mammoth with a nuke
@@ -1072,7 +1072,7 @@ typedef enum UnitType : signed char
 #define UNITF_STEG      (1L << UNIT_STEG)
 
 /**********************************************************************
-**	The variuos aircraft types are enumerated here. These include helicopters
+**	The various aircraft types are enumerated here. These include helicopters
 **	as well as traditional aircraft.
 */
 typedef enum AircraftType : signed char
@@ -1098,7 +1098,7 @@ typedef enum AircraftType : signed char
 
 /**********************************************************************
 **	The game templates are enumerated here. These are the underlying
-**	terrain art. This includes everything from water to clifs. If the
+**	terrain art. This includes everything from water to cliffs. If the
 **	terrain is broken up into icons, is not transparent, and is drawn
 **	as the bottom most layer, then it is a template.
 */
@@ -2653,7 +2653,7 @@ typedef enum SerialCommandType : unsigned short
     SERIAL_SIGN_OFF = 102,     // Bogus, dudes, my boss is coming; I'm outta here!
     SERIAL_GO = 103,           // OK, dudes, jump into the game loop!
     SERIAL_MESSAGE = 104,      // Here's a message
-    SERIAL_TIMING = 105,       // timimg packet
+    SERIAL_TIMING = 105,       // timing packet
     SERIAL_SCORE_SCREEN = 106, // player at score screen
     SERIAL_READY_TO_GO = 107,  // Host is ready to start the game
     SERIAL_LAST_COMMAND        // last command

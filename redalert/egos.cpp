@@ -623,7 +623,7 @@ void Show_Who_Was_Responsible(void)
     } while (length > 0);
 
     /*
-    ** Work out which palette entries the font needs so we dont fade those colors.
+    ** Work out which palette entries the font needs so we don't fade those colors.
     */
     memset(PaletteLUT, 1, sizeof(PaletteLUT));
     int pcolor = PCOLOR_GREEN;
@@ -803,7 +803,7 @@ void Show_Who_Was_Responsible(void)
         }
 
         /*
-        ** Stop calling Theme.AI after a while so a different song doesnt start playing
+        ** Stop calling Theme.AI after a while so a different song doesn't start playing
         */
         Call_Back();
         Frame_Limiter();
@@ -821,7 +821,7 @@ void Show_Who_Was_Responsible(void)
         }
 
         /*
-        ** Blit all but the top and bottom of the hid page. This is beacuse the text print doesn't
+        ** Blit all but the top and bottom of the hid page. This is because the text print doesn't
         ** clip vertically and looks ugly when it suddenly appears and disappears.
         */
         HidPage.Blit(SeenBuff,

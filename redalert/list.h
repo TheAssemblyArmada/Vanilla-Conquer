@@ -589,7 +589,7 @@ template <class T> int TListClass<T>::Add_Scroll_Bar(void)
 
         /*
         **	Everything has been created successfully. Flag the list box to be
-        **	redrawn because it now must be made narrower to accomodate the new
+        **	redrawn because it now must be made narrower to accommodate the new
         **	slider gadgets.
         */
         Flag_To_Redraw();

@@ -1295,7 +1295,7 @@ bool CCINIClass::Put_TerrainType(char const* section, char const* entry, Terrain
  *                      located.                                                               *
  *                                                                                             *
  * OUTPUT:  Returns with the building list (as a bitfield). If the entry could not be          *
- *          found, the the default value is returned instead.                                  *
+ *          found, then the default value is returned instead.                                 *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *

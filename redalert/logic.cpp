@@ -32,7 +32,7 @@
  * Functions:                                                                                  *
  *   LogicClass::AI -- Handles AI logic processing for game objects.                           *
  *   LogicClass::Debug_Dump -- Displays logic class status to the mono screen.                 *
- *   LogicClass::Detach -- Detatch the specified target from the logic system.                 *
+ *   LogicClass::Detach -- Detach the specified target from the logic system.                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
@@ -446,14 +446,14 @@ void LogicClass::AI(void)
 }
 
 /***********************************************************************************************
- * LogicClass::Detach -- Detatch the specified target from the logic system.                   *
+ * LogicClass::Detach -- Detach the specified target from the logic system.                    *
  *                                                                                             *
  *    This routine is called when the specified target object is about to be removed from the  *
  *    game system and all references to it must be severed. The only thing that the logic      *
  *    system looks for in this case is to see if the target refers to a trigger and if so,     *
  *    it scans through the trigger list and removes all references to it.                      *
  *                                                                                             *
- * INPUT:   target   -- The target to remove from the sytem.                                   *
+ * INPUT:   target   -- The target to remove from the system.                                  *
  *                                                                                             *
  * OUTPUT:  none                                                                               *
  *                                                                                             *

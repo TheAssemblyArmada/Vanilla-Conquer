@@ -44,18 +44,18 @@
  * GBC* Read_PCX_File (char* name, char* palette ,void *Buff, long size ); *
  *                                                                         *
  *                                                                         *
- * INPUT: name is a NULL terminated string of the fromat [xxxx.pcx]        *
- *        palette is optional, if palette != NULL the the color palette of *
+ * INPUT: name is a NULL terminated string of the format [xxxx.pcx]        *
+ *        palette is optional, if palette != NULL then the color palette of*
  *                  the pcx file will be place in the memory block pointed *
  *              by palette.                                                *
- *           Buff is optinal, if Buff == NULL a new memory Buffer          *
+ *           Buff is optional, if Buff == NULL a new memory Buffer         *
  *                   will be allocated, otherwise the file will be placed  *
- *                   at location pointd by Buffer;                         *
+ *                   at the location pointed to by Buffer;                 *
  *          Size is the size in bytes of the memory block pointed by Buff  *
  *              is also optional;                                          *
  *                                                                         *
- * OUTPUT: on succes a pointer to a GraphicBufferClass cointaining the     *
- *         pcx file, NULL othewise.                                        *
+ * OUTPUT: on success a pointer to a GraphicBufferClass containing the     *
+ *         pcx file, NULL otherwise.                                       *
  *                                                                         *
  * WARNINGS:                                                               *
  *         Appears to be a comment-free zone                               *
@@ -182,10 +182,10 @@ static void Write_Pcx_ScanLine(int file_handle, int scansize, unsigned char* ptr
  *                                                                         *
  *                                                                         *
  *                                                                         *
- * INPUT:  name  is a NULL terminated string of the fromat [xxxx.pcx]      *
+ * INPUT:  name  is a NULL terminated string of the format [xxxx.pcx]      *
  *         pic   is a pointer to a GraphicViewPortClass or to a            *
  *         GraphicBufferClass holding the picture.                         *
- *         palette is a pointer the the memry block holding the color      *
+ *         palette is a pointer to the memory block holding the color      *
  *            palette of the picture.                                      *
  *                                                                         *
  * OUTPUT: FALSE  if the function fails zero otherwise                     *

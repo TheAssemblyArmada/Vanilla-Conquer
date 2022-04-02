@@ -99,7 +99,7 @@ void Detach_This_From_All(TARGET target, bool all)
         ChronalVortex.Detach(target);
 
         /*
-        **	Removing a trigger type must also remove all triggers that are dependant
+        **	Removing a trigger type must also remove all triggers that are dependent
         **	upon that type.
         */
         if (As_TriggerType(target) != NULL) {

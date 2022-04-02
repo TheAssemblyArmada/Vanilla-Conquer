@@ -166,7 +166,7 @@ bool Init_Game(int, char*[])
     Set_Shape_Buffer(new unsigned char[SHAPE_BUFFER_SIZE], SHAPE_BUFFER_SIZE);
 
     /*
-    **	Bootstrap enough of the system so that the error dialog box can sucessfully
+    **	Bootstrap enough of the system so that the error dialog box can successfully
     **	be displayed.
     */
     CCDebugString("C&C95 - About to register CCLOCAL.MIX\n");
@@ -182,7 +182,7 @@ bool Init_Game(int, char*[])
 
         /*
         ** On low resolution mode, we want to load the DOS version fonts present in LOCAL.MIX.
-        ** Load it first and and find the fonts there. Else, on high resolution, use
+        ** Load it first and find the fonts there. Else, on high resolution, use
         ** Windows CCLOCAL.MIX
         */
 
@@ -441,7 +441,7 @@ bool Init_Game(int, char*[])
 
     /*
     **	These are sound card specific, but the install program would have
-    **	copied the coorect versions to the hard drive.
+    **	copied the correct versions to the hard drive.
     */
     CCDebugString("C&C95 - About to register SPEECH.MIX\n");
     if (CCFileClass("SPEECH.MIX").Is_Available()) {
@@ -783,7 +783,7 @@ bool Select_Game(bool fade)
         ScenarioInit--;
 
         /*
-        ** If we're playing back a recording, load all pertinant values & skip
+        ** If we're playing back a recording, load all pertinent values & skip
         ** the menu loop.  Hide the now-useless mouse pointer.
         */
         if (PlaybackGame && RecordFile.Is_Available()) {
@@ -1101,7 +1101,7 @@ bool Select_Game(bool fade)
 
 #ifdef FORCE_WINSOCK
                 /*
-                ** Handle being spawned from WChat. Intermnet play based on IPX code now.
+                ** Handle being spawned from WChat. Internet play based on IPX code now.
                 */
                 case GAME_INTERNET:
                     break;
@@ -1178,7 +1178,7 @@ bool Select_Game(bool fade)
                 Play_Intro(false);
                 Hide_Mouse();
 
-                // verify existance of movie file before playing this sequence.
+                // verify existence of movie file before playing this sequence.
                 if (CCFileClass("TRAILER.VQA").Is_Available()) {
                     Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
                     VisiblePage.Clear();
@@ -1445,7 +1445,7 @@ bool Select_Game(bool fade)
     Call_Back();
 
     /*
-    ** This is desperately sad isnt it?
+    ** This is desperately sad isn't it?
     */
     Hide_Mouse();
     Hide_Mouse();
@@ -1724,7 +1724,7 @@ bool Parse_Command_Line(int argc, char* argv[])
                  "  -SOCKET   = Network Socket ID (0 - 16383)\n"
                  "  -STEALTH  = Hide multiplayer names (\"Boss mode\")\r\n"
                  "  -MESSAGES = Allow messages from outside this game.\r\n"
-                 "  -o        = Enable compatability with version 1.07.\r\n"
+                 "  -o        = Enable compatibility with version 1.07.\r\n"
 #ifdef JAPANESE
                  "  -ENGLISH  = Enable English keyboard compatibility.\r\n"
 #endif
@@ -1739,7 +1739,7 @@ bool Parse_Command_Line(int argc, char* argv[])
                  "     E : Elite defense mode disable (attacker advantage).\r\n"
                  "     D : Deploy reversal allowed for construction yard.\r\n"
                  "     F : Fleeing from direct immediate threats is enabled.\r\n"
-                 "     H : Hussled recharge time.\r\n"
+                 "     H : Hustled recharge time.\r\n"
                  "     G : Growth for Tiberium slowed in multiplay.\r\n"
                  "     I : Inert weapons -- no damage occurs.\r\n"
                  "     J : 7th grade sound effects.\r\n"
@@ -2048,7 +2048,7 @@ bool Parse_Command_Line(int argc, char* argv[])
 
 #ifdef CHEAT_KEYS
                 /*
-                **	Hussled recharge timer.
+                **	Hustled recharge timer.
                 */
                 case 'H':
                     Special.IsSpeedBuild = true;
@@ -2263,7 +2263,7 @@ int Version_Number(void)
  * Init_CDROM_Access -- Initialize the CD-ROM access handler.                                  *
  *                                                                                             *
  *    This routine is called to setup the CD-ROM access or emulation handler. It will ensure   *
- *    that the appropriate CD-ROM is present (dependant on the RequiredCD global).             *
+ *    that the appropriate CD-ROM is present (dependent on the RequiredCD global).             *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
@@ -2467,7 +2467,7 @@ long Obfuscate(char const* string)
 
     /*
     **	Transform the buffer into a number. This transformation is character
-    **	order dependant.
+    **	order dependent.
     */
     long code = Calculate_CRC(buffer, length);
 

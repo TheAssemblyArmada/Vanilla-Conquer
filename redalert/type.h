@@ -194,7 +194,7 @@ public:
 };
 
 /***************************************************************************
-**	This the the common base class of game objects. Since these values
+**	This is the common base class of game objects. Since these values
 **	represent the unchanging object TYPES, this data is initialized at game
 **	start and not changed during play. It is "const" data.
 */
@@ -418,7 +418,7 @@ public:
     /*
     **	Does this object contain a crew?  If it does, then when the object is destroyed, there
     **	is a distinct possibility that infantry will "pop out". Only units with crews can
-    **	become "heros".
+    **	become "heroes".
     */
     unsigned IsCrew : 1;
 
@@ -645,7 +645,7 @@ public:
     unsigned IsFake : 1;
 
     /*
-    **	This flag controls whether the building is equiped with a dirt
+    **	This flag controls whether the building is equipped with a dirt
     **	bib or not. A building with a bib has a dirt patch automatically
     **	attached to the structure when it is placed.
     */

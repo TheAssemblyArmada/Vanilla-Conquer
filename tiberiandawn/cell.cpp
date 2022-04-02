@@ -1940,7 +1940,7 @@ long CellClass::Tiberium_Adjust(bool pregame)
 /***********************************************************************************************
  * CellClass::Goodie_Check -- Performs crate discovery logic.                                  *
  *                                                                                             *
- *    Call this routine whenever an object enters a cell. It will check for the existance      *
+ *    Call this routine whenever an object enters a cell. It will check for the existence      *
  *    of a crate and generate any "goodie" it might contain.                                   *
  *                                                                                             *
  * INPUT:   object   -- Pointer to the object that is triggering this crate.                   *
@@ -2708,7 +2708,7 @@ void CellClass::Override_Land_Type(LandType type)
  *    calculation. Only blockages that cannot be circumvented are considered to make a cell    *
  *    impassable. All other obstructions can either be destroyed or are temporary.             *
  *                                                                                             *
- * INPUT:   loco     -- The locomotion type to use when determining passablility.              *
+ * INPUT:   loco     -- The locomotion type to use when determining passibility.              *
  *                                                                                             *
  *          ignoreinfantry -- Should infantry in the cell be ignored for movement purposes?    *
  *                                                                                             *
@@ -2751,7 +2751,7 @@ bool CellClass::Is_Clear_To_Move(bool ignoreinfantry, bool ignorevehicles) const
 
     /*
     **	Check the occupy bits for passable legality. If ignore infantry is true, then
-    **	don't consider infnatry.
+    **	don't consider infantry.
     */
     int composite = Flag.Composite;
     if (ignoreinfantry) {

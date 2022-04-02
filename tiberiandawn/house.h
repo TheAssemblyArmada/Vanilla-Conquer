@@ -166,7 +166,7 @@ public:
     unsigned IsAirstrikePending : 1;
 
     /*
-    **	This records the existance of the three nuke weapon pieces.
+    **	This records the existence of the three nuke weapon pieces.
     */
     unsigned NukePieces : 3;
 
@@ -906,7 +906,7 @@ public:
 
     /*
     **	This structure is used to record a build request as determined by
-    **	the house AI processing. Higher priority build requests take precidence.
+    **	the house AI processing. Higher priority build requests take precedence.
     */
     struct BuildChoiceClass
     {

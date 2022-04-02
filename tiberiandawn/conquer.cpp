@@ -2281,7 +2281,7 @@ void Unselect_All(void)
     //	CurrentObject[0]->Unselect();
     //}
 
-    // Added some error handling incase there was an issue removing the object - JAS 6/28/2019
+    // Added some error handling in case there was an issue removing the object - JAS 6/28/2019
     while (CurrentObject.Count()) {
 
         int count_before = CurrentObject.Count();
@@ -2318,7 +2318,7 @@ void Unselect_All_Except(ObjectClass* object)
 /***********************************************************************************************
  * Fading_Table_Name -- Builds a theater specific fading table name.                           *
  *                                                                                             *
- *    This routine builds a standard fading table name. This name is dependant on the theater  *
+ *    This routine builds a standard fading table name. This name is dependent on the theater  *
  *    being played, since each theater has its own palette.                                    *
  *                                                                                             *
  * INPUT:   base  -- The base name of this fading table. The base name can be no longer than   *
@@ -2397,7 +2397,7 @@ void const* Get_Radar_Icon(void const* shapefile, int shapenum, int frames, int 
 
     /*
     ** Allocate a position to store our icons.  If the alloc fails then
-    ** we dont add these icons to the set.
+    ** we don't add these icons to the set.
     **/
     buffer = new char[(icon_width * icon_height * 9 * frames) + 2];
     if (!buffer)
@@ -3514,7 +3514,7 @@ static bool Change_Local_Dir(int cd)
         _initialised = true;
     }
 
-    // No local folders with cd data dectected so we can't load any.
+    // No local folders with cd data detected so we can't load any.
     if (_detected == 0) {
         return false;
     }
@@ -3883,9 +3883,9 @@ static void Do_Record_Playback(void)
     }
 }
 /***************************************************************************
- * HIRES_RETRIEVE -- retrieves a resolution dependant file						*
+ * HIRES_RETRIEVE -- retrieves a resolution dependent file                 *
  *                                                                         *
- * INPUT:		char * file name of the file to retrieve							*
+ * INPUT:		char * file name of the file to retrieve                   *
  *                                                                         *
  * OUTPUT:     none                                                        *
  *                                                                         *

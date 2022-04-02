@@ -189,7 +189,7 @@ void ProgressBarClass::Redraw(void) const
     }
 
     /*
-    **	The working "length" of the bargraph is dependant on whether the
+    **	The working "length" of the bargraph is dependent on whether the
     **	bargraph is horizontal or vertical.
     */
     int size = Is_Horizontal() ? w : h;

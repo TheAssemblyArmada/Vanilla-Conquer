@@ -539,7 +539,7 @@ template <class T> int DynamicVectorClass<T>::ID(T const& object)
  * DynamicVectorClass<T>::Add -- Add an element to the vector.                                 *
  *                                                                                             *
  *    Use this routine to add an element to the vector. The vector will automatically be       *
- *    resized to accomodate the new element IF the vector was allocated previously and the     *
+ *    resized to accommodate the new element IF the vector was allocated previously and the    *
  *    growth rate is not zero.                                                                 *
  *                                                                                             *
  * INPUT:   object   -- Reference to the object that will be added to the vector.              *
@@ -774,7 +774,7 @@ VectorClass<T>::VectorClass(VectorClass<T> const& vector)
 /***********************************************************************************************
  * VectorClass<T>::operator = -- The assignment operator.                                      *
  *                                                                                             *
- *    This the the assignment operator for vector objects. It will alter the existing lvalue   *
+ *    This is the assignment operator for vector objects. It will alter the existing lvalue    *
  *    vector to duplicate the rvalue one.                                                      *
  *                                                                                             *
  * INPUT:   vector   -- The rvalue vector to copy into the lvalue one.                         *

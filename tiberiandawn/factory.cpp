@@ -475,7 +475,7 @@ void FactoryClass::Set(TechnoClass& object)
 /***********************************************************************************************
  * FactoryClass::Suspend -- Temporarily stop production.                                       *
  *                                                                                             *
- *    This routine will suspend production until a subsiquent call to Start() or Abandon().    *
+ *    This routine will suspend production until a subsequent call to Start() or Abandon().    *
  *    Typical use of this function is when the player puts production on hold or when there    *
  *    is insufficient funds.                                                                   *
  *                                                                                             *

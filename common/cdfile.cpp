@@ -233,7 +233,7 @@ int CDFileClass::Set_Search_Drives(char* pathlist)
                 }
 
                 /*
-                ** Regardless of anything else, add the relative path so it works if its in the working dir.
+                ** Regardless of anything else, add the relative path so it works if it's in the working dir.
                 */
                 Add_Search_Drive(ptr);
             }

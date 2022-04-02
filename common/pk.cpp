@@ -99,7 +99,7 @@ int PKey::Encode_Modulus(void* buffer) const
  *                                                                                             *
  * INPUT:   buffer   -- Pointer to the buffer that will be filled with the encoded exponent.   *
  *                                                                                             *
- * OUTPUT:  Returns with the nuber of bytes stored into the buffer.                            *
+ * OUTPUT:  Returns with the number of bytes stored into the buffer.                           *
  *                                                                                             *
  * WARNINGS:   Be sure the buffer is big enough to hold the encoded exponent. Usually this is  *
  *             about the same size as the Crypt_Block_Size (plus a byte or two).               *
@@ -306,7 +306,7 @@ int PKey::Encrypt(void const* source, int slen, void* dest) const
  * PKey::Decrypt -- Decrypt supplied cyphertext into its original plaintext.                   *
  *                                                                                             *
  *    This routine will process the supplied cyphertext by breaking it up into blocks and      *
- *    then decrypting each block in turn. The block size is dependant upon the key. By NOT     *
+ *    then decrypting each block in turn. The block size is dependent upon the key. By NOT     *
  *    embedding this information into the cypher data, it makes the encryption more secure.    *
  *                                                                                             *
  * INPUT:   source   -- Pointer to the cypher text to be decrypted.                            *

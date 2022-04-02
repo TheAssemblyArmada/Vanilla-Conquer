@@ -57,7 +57,7 @@
  *   HouseClass::Flag_To_Lose -- Flags the house to die soon.                                  *
  *   HouseClass::Flag_To_Win -- Flags the house to win soon.                                   *
  *   HouseClass::Harvested -- Adds Tiberium to the harvest storage.                            *
- *   HouseClass::Has_Nuke_Device -- Deteremines if the house has a nuclear device.             *
+ *   HouseClass::Has_Nuke_Device -- Determines if the house has a nuclear device.              *
  *   HouseClass::HouseClass -- Constructor for a house object.                                 *
  *   HouseClass::Init -- init's in preparation for new scenario                                *
  *   HouseClass::Init_Air_Strike -- Add (or reset) the air strike sidebar button.              *
@@ -552,7 +552,7 @@ bool HouseClass::Can_Build(TechnoTypeClass const* type, HousesType house) const
         return (false);
 
         /*
-        **	The computer can always build everthing.
+        **	The computer can always build everything.
         */
 #ifdef USE_RA_AI
     if (!IsHuman && GameToPlay == GAME_NORMAL)
@@ -563,7 +563,7 @@ bool HouseClass::Can_Build(TechnoTypeClass const* type, HousesType house) const
 #endif
 
     /*
-    **	Perform some equivalency fixups for the building existance flags.
+    **	Perform some equivalency fixups for the building existence flags.
     */
     long flags = ActiveBScan;
 
@@ -2780,7 +2780,7 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
     }
 #ifdef REMASTER_BUILD
     /*
-    ** Maybe trigger an achivement. ST - 12/2/2019 11:25AM
+    ** Maybe trigger an achievement. ST - 12/2/2019 11:25AM
     */
     if (IsHuman && fired && what) {
         On_Achievement_Event(this, "SUPERWEAPON_FIRED", what);
@@ -4662,7 +4662,7 @@ fixed HouseClass::Power_Fraction(void) const
 }
 
 /***********************************************************************************************
- * HouseClass::Has_Nuke_Device -- Deteremines if the house has a nuclear device.               *
+ * HouseClass::Has_Nuke_Device -- Determines if the house has a nuclear device.                *
  *                                                                                             *
  *    This routine checks to see if the house has a nuclear device to launch. A nuclear        *
  *    device is available when the necessary parts have been retrieved in earlier scenarios    *
@@ -8024,7 +8024,7 @@ bool HouseClass::Is_Allowed_To_Ally(HousesType house) const
     }
 
     /*
-    **	Alliances (outside of scneario init time) are allowed only if
+    **	Alliances (outside of scenario init time) are allowed only if
     **	this is a multiplayer game. Otherwise, they are prohibited.
     */
     // if (Session.Type == GAME_NORMAL) {

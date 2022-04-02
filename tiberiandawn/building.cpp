@@ -588,7 +588,7 @@ void BuildingClass::Draw_It(int x, int y, WindowNumberType window)
                 } else {
 
                     /*
-                    **	Special render stage for silos. The stage is dependant on the current
+                    **	Special render stage for silos. The stage is dependent on the current
                     **	Tiberium collected as it relates to Tiberium capacity.
                     */
                     if (*this == STRUCT_STORAGE) {
@@ -1016,7 +1016,7 @@ void BuildingClass::AI(void)
 
     /*
     **	If a change of animation was requested, then make the change
-    **	now. The building animation system acts independantly but subordinate
+    **	now. The building animation system acts independently but subordinate
     **	to the mission state machine system. By performing the animation change-up
     **	here, the mission AI system is ensured of immediate visual affect when it
     **	decides to change the animation state of the building.
@@ -1237,7 +1237,7 @@ void BuildingClass::AI(void)
     if (IsGoingToBlow && CountDown.Expired()) {
 #ifdef REMASTER_BUILD
         /*
-        ** Maybe trigger an achivement. ST - 11/14/2019 1:53PM
+        ** Maybe trigger an achievement. ST - 11/14/2019 1:53PM
         */
         TechnoTypeClass const* object_type = Techno_Type_Class();
         if (object_type) {
@@ -1263,7 +1263,7 @@ void BuildingClass::AI(void)
     }
 
     /*
-    **	Turret equiped buildings must handle turret rotation logic here. This entails
+    **	Turret equipped buildings must handle turret rotation logic here. This entails
     **	rotating the turret to the desired facing as well as figuring out what that
     **	desired facing should be.
     */
@@ -1554,7 +1554,7 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
             }
 
             /*
-            **	A destuction of the Temple by an ion cannon requires a global
+            **	A destruction of the Temple by an ion cannon requires a global
             **	remembering of this fact. The finale uses this information to
             **	play the correct movie.
             */
@@ -1562,7 +1562,7 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
                 TempleIoned = true;
 #ifdef REMASTER_BUILD
                 /*
-                ** Maybe trigger an achivement if the structure is owned by an AI house in campaign mode. ST -
+                ** Maybe trigger an achievement if the structure is owned by an AI house in campaign mode. ST -
                 *11/14/2019 1:53PM
                 */
                 if (GameToPlay == GAME_NORMAL && !House->IsHuman && source && source->House && source->House->IsHuman) {
@@ -3595,7 +3595,7 @@ bool BuildingClass::Captured(HouseClass* newowner)
         }
 #ifdef REMASTER_BUILD
         /*
-        ** Maybe trigger an achivement. ST - 11/14/2019 1:53PM
+        ** Maybe trigger an achievement. ST - 11/14/2019 1:53PM
         */
         if (newowner->IsHuman) {
             TechnoTypeClass const* object_type = Techno_Type_Class();
@@ -4887,7 +4887,7 @@ bool BuildingClass::Revealed(HouseClass* house)
  *    This routine is called when the exact mode of the building isn't known. By examining     *
  *    the building's condition, this routine will assign an appropriate mission.               *
  *                                                                                             *
- * INPUT:   initial  -- This this being called during scenario init?                           *
+ * INPUT:   initial  -- Is this being called during scenario init?                             *
  *                                                                                             *
  * OUTPUT:  none                                                                               *
  *                                                                                             *

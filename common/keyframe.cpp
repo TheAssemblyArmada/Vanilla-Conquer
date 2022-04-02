@@ -414,7 +414,7 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
 
     if (UseBigShapeBuffer) {
         /*
-        ** Save the uncompressed shape data so we dont have to uncompress it
+        ** Save the uncompressed shape data so we don't have to uncompress it
         ** again next time its drawn.
         ** We keep a space free before the raw shape data so we can add line
         ** header info before the shape is drawn for the first time

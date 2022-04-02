@@ -46,10 +46,10 @@
  * minimum amount of code space.  For programs that require MCGA or VESA   *
  * support, all that is necessary to do is link either the MCGA or VESA    *
  * specific libraries in, previous to WWLIB32.  The linker will then       *
- * overide the the necessary stub functions automatically.                 *
+ * override the necessary stub functions automatically.                    *
  *                                                                         *
  * In addition, there are helpful inline function calls for parameter      *
- * ellimination.  This header file gives the defintion for all             *
+ * elimination.  This header file gives the definition for all             *
  * GraphicViewPort and GraphicBuffer classes.                              *
  *                                                                         *
  * Terminology:                                                            *
@@ -305,7 +305,7 @@ public:
         return;
     }
 
-    // This doesnt seem to exist anywhere?? - Steve T 9/26/95 6:05PM
+    // This doesn't seem to exist anywhere?? - Steve T 9/26/95 6:05PM
     //      VOID Grey_Out_Region(int x, int y, int width, int height, int color);
 
     //

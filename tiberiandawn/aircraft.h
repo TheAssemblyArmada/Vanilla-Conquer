@@ -240,7 +240,7 @@ private:
 
     /*
     **	This is the jitter tracker to be used when the aircraft is a helicopter and
-    **	is flying. It is most noticable when the helicopter is hovering.
+    **	is flying. It is most noticeable when the helicopter is hovering.
     */
     unsigned char Jitter;
 

@@ -560,7 +560,7 @@ void TerrainTypeClass::Init_Heap(void)
  *                                                                                             *
  *    This routine will perform any special one time processing needed for the terrain         *
  *    object types. Typically, this would load up artwork for terrain objects that have        *
- *    artwork independant of the theater they appear in.                                       *
+ *    artwork independent of the theater they appear in.                                       *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *

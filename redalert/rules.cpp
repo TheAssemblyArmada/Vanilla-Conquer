@@ -623,7 +623,7 @@ bool RulesClass::Heap_Maximums(CCINIClass& ini)
     }
 
     /*
-    **	Special case: double maximum animations to accomodate lots of action
+    **	Special case: double maximum animations to accommodate lots of action
     */
     AnimMax = max(AnimMax, 200);
 

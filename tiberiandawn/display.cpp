@@ -2056,7 +2056,7 @@ ObjectClass* DisplayClass::Cell_Object(CELL cell, int x, int y)
  *    This will draw the tactical map at the recorded position.   This                         *
  *    routine is used whenever the tactical map moves or needs to be                           *
  *    completely redrawn. It will handle making the necessary adjustments                      *
- *    to accomodate a moving cursor.                                                           *
+ *    to accommodate a moving cursor.                                                          *
  *                                                                                             *
  * INPUT:      forced   -- bool; force redraw of the entire display?                           *
  *                                                                                             *
@@ -4072,7 +4072,7 @@ void DisplayClass::Mouse_Left_Held(int x, int y)
     }
 }
 
-// Needed to accomodate Glyphx client sidebar. ST - 4/12/2019 5:29PM
+// Needed to accommodate GlyphX client sidebar. ST - 4/12/2019 5:29PM
 extern int GlyphXClientSidebarWidthInLeptons;
 
 /***********************************************************************************************
@@ -4104,7 +4104,7 @@ void DisplayClass::Set_Tactical_Position(COORDINATE coord)
                  TacLeptonWidth,
                  TacLeptonHeight,
                  Cell_To_Lepton(MapCellWidth) + GlyphXClientSidebarWidthInLeptons,
-                 Cell_To_Lepton(MapCellHeight)); // Needed to accomodate Glyphx client sidebar. ST - 4/12/2019 5:29PM
+                 Cell_To_Lepton(MapCellHeight)); // Needed to accommodate GlyphX client sidebar. ST - 4/12/2019 5:29PM
 #else
     int xx = Coord_X(coord) - Cell_To_Lepton(MapCellX);
     int yy = Coord_Y(coord) - Cell_To_Lepton(MapCellY);

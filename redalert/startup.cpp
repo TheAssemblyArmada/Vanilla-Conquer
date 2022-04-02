@@ -680,7 +680,7 @@ void Emergency_Exit(int code)
     }
 
     /*
-    ** Clear out the video buffers so we dont glitch when we lose focus
+    ** Clear out the video buffers so we don't glitch when we lose focus
     */
     VisiblePage.Clear();
     HiddenPage.Clear();

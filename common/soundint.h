@@ -27,7 +27,7 @@
  *                                                                         *
  *                  Last Update : June 23, 1995   [PWG]                    *
  *                                                                         *
- * This file is the include file for the Westwood Sound Sytem defines and  *
+ * This file is the include file for the Westwood Sound System defines and *
  * routines that are handled in an interrupt.
  *                                                                         *
  *-------------------------------------------------------------------------*
@@ -38,7 +38,7 @@
 #include <dsound.h>
 
 /*
-** Define the different type of sound compression avaliable to the westwood
+** Define the different type of sound compression available to the Westwood
 ** library.
 */
 typedef enum
@@ -50,7 +50,7 @@ typedef enum
 } SCompressType;
 
 /*
-**	This is the safety overrun margin for the sonarc compressed
+**	This is the safety overrun margin for the Sonarc compressed
 ** data frames.  This value should be equal the maximum 'order' times
 **	the maximum number of bytes per sample.  It should be evenly divisible
 **	by 16 to aid paragraph alignment.
@@ -97,7 +97,7 @@ typedef struct
     **	pointer rather than handle. The handle method is necessary when more than one
     **	sample could be playing simultaneously. The pointer method is necessary when
     **	the dealing with a sample that may have stopped behind the programmer's back and
-    **	this occurance is not otherwise determinable.  It is also used in
+    **	this occurrence is not otherwise determinable.  It is also used in
     ** conjunction with original size to unlock a sample which has been DPMI
     ** locked.
     */

@@ -296,7 +296,7 @@ bool Init_Game(int, char*[])
     Session.MaxPlayers = Rule.MaxPlayers;
 
     /*
-    **	Initialize the game object heaps as well as other rules-dependant buffer allocations.
+    **	Initialize the game object heaps as well as other rules-dependent buffer allocations.
     */
     Init_Heaps();
 
@@ -1165,7 +1165,7 @@ bool Select_Game(bool fade)
     }
 
     /*
-    ** If this isnt an internet game that set the unit build rate to its default value
+    ** If this isn't an internet game that set the unit build rate to its default value
     */
     if (Session.Type != GAME_INTERNET) {
         UnitBuildPenalty = 100;
@@ -1592,7 +1592,7 @@ bool Parse_Command_Line(int argc, char* argv[])
                     break;
 
                 /*
-                **	Hussled recharge timer.
+                **	Hustled recharge timer.
                 */
                 case 'H':
                     Special.IsSpeedBuild = true;
@@ -1721,7 +1721,7 @@ long Obfuscate(char const* string)
 
     /*
     **	Transform the buffer into a number. This transformation is character
-    **	order dependant.
+    **	order dependent.
     */
     long code = Calculate_CRC(buffer, length);
 
@@ -1936,7 +1936,7 @@ void Load_Title_Page(bool visible)
 /***********************************************************************************************
  * Init_Color_Remaps -- Initialize the text remap tables.                                      *
  *                                                                                             *
- *    There are various color scheme remap tables that are dependant upon the color remap      *
+ *    There are various color scheme remap tables that are dependent upon the color remap      *
  *    information embedded within the palette control file. This routine will fetch that       *
  *    data and build the text remap tables as indicated.                                       *
  *                                                                                             *
@@ -2266,7 +2266,7 @@ static void Init_Fonts(void)
  * Init_CDROM_Access -- Initialize the CD-ROM access handler.                                  *
  *                                                                                             *
  *    This routine is called to setup the CD-ROM access or emulation handler. It will ensure   *
- *    that the appropriate CD-ROM is present (dependant on the RequiredCD global).             *
+ *    that the appropriate CD-ROM is present (dependent on the RequiredCD global).             *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *

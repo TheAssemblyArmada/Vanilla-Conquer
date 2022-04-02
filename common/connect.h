@@ -66,7 +66,7 @@
  * NOTES ON ACK/RETRY:																		*
  * This class provides a "non-sequenced" ACK/Retry approach to packet		*
  * transmission.  It sends out as many packets as are in the queue, whose	*
- * resend delta times have expired; and it ACK's any packets its received	*
+ * resend delta times have expired; and it ACK's any packets it's received *
  * who haven't been ACK'd yet.  Thus, order of delivery is NOT guaranteed;	*
  * but, the performance is better than a "sequenced" approach.  Also, the	*
  * Packet ID scheme (see below) ensures that the application will read		*

@@ -64,7 +64,7 @@ FacingClass::FacingClass(void)
  * FacingClass::Set_Desired -- Sets the desired facing  value.                                 *
  *                                                                                             *
  *    This routine is used to set the desired facing value without altering the current        *
- *    facing setting. Typicall use of this routine is when a vehicle needs to face a           *
+ *    facing setting. Typical use of this routine is when a vehicle needs to face a            *
  *    direction, but currently isn't facing the correct direction. After this routine is       *
  *    called, it is presumed that subsequent calls to Rotation_Adjust() will result in the     *
  *    eventual alignment of the current facing.                                                *

@@ -84,7 +84,7 @@
  *   HouseClass::Is_Allowed_To_Ally -- Determines if this house is allied to make allies.      *
  *   HouseClass::Is_Ally -- Checks to see if the object is an ally.                            *
  *   HouseClass::Is_Ally -- Determines if the specified house is an ally.                      *
- *   HouseClass::Is_Hack_Prevented -- Is production of the specified type and id prohibted?    *
+ *   HouseClass::Is_Hack_Prevented -- Is production of the specified type and id prohibited?   *
  *   HouseClass::Is_No_YakMig -- Determines if no more yaks or migs should be allowed.         *
  *   HouseClass::MPlayer_Defeated -- multiplayer; house is defeated                            *
  *   HouseClass::Make_Ally -- Make the specified house an ally.                                *
@@ -3112,7 +3112,7 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
     }
 #ifdef REMASTER_BUILD
     /*
-    ** Maybe trigger an achivement. ST - 12/2/2019 11:25AM
+    ** Maybe trigger an achievement. ST - 12/2/2019 11:25AM
     */
     if (IsHuman && fired && what) {
         On_Achievement_Event(this, "SUPERWEAPON_FIRED", what);
@@ -7578,7 +7578,7 @@ bool HouseClass::Is_No_YakMig(void) const
 }
 
 /***********************************************************************************************
- * HouseClass::Is_Hack_Prevented -- Is production of the specified type and id prohibted?      *
+ * HouseClass::Is_Hack_Prevented -- Is production of the specified type and id prohibited?     *
  *                                                                                             *
  *    This is a special hack check routine to see if the object type and id specified is       *
  *    prevented from being produced. The Yak and the Mig are so prevented if there would be    *
@@ -7736,7 +7736,7 @@ bool HouseClass::Is_Allowed_To_Ally(HousesType house) const
     }
 
     /*
-    **	Alliances (outside of scneario init time) are allowed only if
+    **	Alliances (outside of scenario init time) are allowed only if
     **	this is a multiplayer game. Otherwise, they are prohibited.
     */
     if (Session.Type == GAME_NORMAL) {

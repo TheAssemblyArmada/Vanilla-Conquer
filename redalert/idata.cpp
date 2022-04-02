@@ -44,7 +44,7 @@
  *   InfantryTypeClass::Prep_For_Add -- Prepares the scenario editor for adding of infantry obj*
  *   InfantryTypeClass::Read_INI -- Fetches infantry override values from the INI database.    *
  *   InfantryTypeClass::operator delete -- Frees an infantry type class object.                *
- *   InfantryTypeClass::operator new -- Allocate an infanty type class object.                 *
+ *   InfantryTypeClass::operator new -- Allocate an infantry type class object.                *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
@@ -1082,7 +1082,7 @@ InfantryTypeClass::InfantryTypeClass(InfantryType type,
 }
 
 /***********************************************************************************************
- * InfantryTypeClass::operator new -- Allocate an infanty type class object.                   *
+ * InfantryTypeClass::operator new -- Allocate an infantry type class object.                  *
  *                                                                                             *
  *    This will allocate an infantry type class object from the special memory pool of that    *
  *    purpose.                                                                                 *

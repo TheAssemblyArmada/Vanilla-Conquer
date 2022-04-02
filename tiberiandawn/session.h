@@ -176,7 +176,7 @@ typedef enum SerialCommandType
     SERIAL_SIGN_OFF = 102,     // Bogus, dudes, my boss is coming; I'm outta here!
     SERIAL_GO = 103,           // OK, dudes, jump into the game loop!
     SERIAL_MESSAGE = 104,      // Here's a message
-    SERIAL_TIMING = 105,       // timimg packet
+    SERIAL_TIMING = 105,       // timing packet
     SERIAL_SCORE_SCREEN = 106, // player at score screen
     SERIAL_LOADGAME = 107,     // Start the game, loading a saved game first
     SERIAL_LAST_COMMAND        // last command

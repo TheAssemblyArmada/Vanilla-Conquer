@@ -129,7 +129,7 @@ bool Linear_Scale_To_Linear(void* thisptr,
     int dst_x1 = dst_width + dst_x;
     int dst_y1 = dst_height + dst_y;
 
-    // These ifs are all for clipping purposes incase coords are outside
+    // These ifs are all for clipping purposes in case coords are outside
     // the expected area.
     if (src_x < 0) {
         src_x0 = 0;

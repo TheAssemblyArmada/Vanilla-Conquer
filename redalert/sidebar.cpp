@@ -245,7 +245,7 @@ void SidebarClass::One_Time(void)
     Column[1].One_Time(1);
 
     /*
-    **	Load the sidebar shape in at this time. (Hi-Res sidebar is theater dependant)
+    **	Load the sidebar shape in at this time. (Hi-Res sidebar is theater dependent)
     */
     if (SidebarShape == NULL) {
         SidebarShape = (void*)MFCD::Retrieve("SIDEBAR.SHP");

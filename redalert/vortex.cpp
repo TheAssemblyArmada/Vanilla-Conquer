@@ -199,7 +199,7 @@ void ChronalVortexClass::Disappear(void)
  *                                                                                             *
  * OUTPUT:   Nothing                                                                           *
  *                                                                                             *
- * WARNINGS: This doesnt deactivate the vortex. Use Disappear to get rid of it permanently.    *
+ * WARNINGS: This doesn't deactivate the vortex. Use Disappear to get rid of it permanently.   *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *    8/29/96 4:30PM ST : Created                                                              *
@@ -228,7 +228,7 @@ void ChronalVortexClass::Hide(void)
 void ChronalVortexClass::Show(void)
 {
     /*
-    ** Dont do anything if vortx is dying.
+    ** Don't do anything if vortex is dying.
     */
     if (!StartShutdown) {
 
@@ -357,7 +357,7 @@ void ChronalVortexClass::AI(void)
     int chance;
 
     /*
-    ** No AI if vortex isnt active
+    ** No AI if vortex isn't active
     */
     if (Active) {
 
@@ -845,7 +845,7 @@ void ChronalVortexClass::Render(void)
             /*
             ** Build a representation of the area of the screen where the vortex will be
             ** in an off-screen buffer.
-            ** This is necessary for clipping as we cant remap pixels from off screen if we build
+            ** This is necessary for clipping as we can't remap pixels from off screen if we build
             ** the image from the hidpage.
             */
             if (!RenderBuffer) {
@@ -1101,7 +1101,7 @@ void ChronalVortexClass::Setup_Remap_Tables(TheaterType theater)
 
     /*
     ** If the theater has changed then load the remap tables from disk if they exist or create
-    ** them if they dont.
+    ** them if they don't.
     */
     if (theater != Theater) {
 

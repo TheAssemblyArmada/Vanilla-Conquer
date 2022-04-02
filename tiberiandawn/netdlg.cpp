@@ -2417,7 +2417,7 @@ Get_Join_Responses(JoinStateType* joinstate, ListClass* gamelist, ColorListClass
             found = 1;
 
         /*
-        ** Dont add this player if its really me! (hack, hack)
+        ** Don't add this player if its really me! (hack, hack)
         */
         if (!strcmp(GPacket.Name, MPlayerName)) {
             found = 1;

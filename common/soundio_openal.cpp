@@ -40,7 +40,7 @@ enum
 };
 
 /*
-** Define the different type of sound compression avaliable to the westwood
+** Define the different type of sound compression available to the Westwood
 ** library.
 */
 typedef enum
@@ -74,7 +74,7 @@ struct SampleTrackerType
     **	pointer rather than handle. The handle method is necessary when more than one
     **	sample could be playing simultaneously. The pointer method is necessary when
     **	the dealing with a sample that may have stopped behind the programmer's back and
-    **	this occurance is not otherwise determinable.  It is also used in
+    **	this occurrence is not otherwise determinable.  It is also used in
     ** conjunction with original size to unlock a sample which has been DPMI
     ** locked.
     */
@@ -244,7 +244,7 @@ static const char* Get_OpenAL_Error(ALenum error)
 {
     switch (error) {
     case AL_NO_ERROR:
-        return "No OpenAL error occured.";
+        return "No OpenAL error occurred.";
 
     case AL_INVALID_NAME:
         return "OpenAL invalid device name.";
@@ -821,7 +821,7 @@ bool Audio_Init(int bits_per_sample, bool stereo, int rate, bool reverse_channel
 
     if (device == nullptr) {
 
-        //CCDebugString("Error occured getting OpenAL device.\n");
+        //CCDebugString("Error occurred getting OpenAL device.\n");
 
         return false;
     }
@@ -843,7 +843,7 @@ bool Audio_Init(int bits_per_sample, bool stereo, int rate, bool reverse_channel
         return false;
     }
 
-    // Create placback buffers for all trackers.
+    // Create playback buffers for all trackers.
     for (int i = 0; i < MAX_SAMPLE_TRACKERS; ++i) {
         SampleTrackerType* st = &LockedData.SampleTracker[i];
 

@@ -260,7 +260,7 @@ InfantryClass::InfantryClass(InfantryType classid, HousesType house)
     Ammo = Class->MaxAmmo;
 
     /*
-    ** Keep count of the number of units created. Dont track civilians.
+    ** Keep count of the number of units created. Don't track civilians.
     */
     if (!Class->IsCivilian && GameToPlay == GAME_INTERNET) {
         House->InfantryTotals.Increment_Unit_Total((int)classid);
@@ -1077,7 +1077,7 @@ void InfantryClass::AI(void)
     if (Fear) {
 
         /*
-        **	Nikumba is really a coward at heart. He never becomes un-afraid.
+        **	Nikoomba is really a coward at heart. He never becomes un-afraid.
         */
         if (*this != INFANTRY_C10) {
             Fear--;
@@ -1695,7 +1695,7 @@ MoveType InfantryClass::Can_Enter_Cell(CELL cell, FacingType) const
                     if (!obj->Is_Techno() || !((TechnoClass*)obj)->Is_Cloaked(this)) {
 
                         /*
-                        **	Any non-allied blockage is considered impassible if the infantry
+                        **	Any non-allied blockage is considered impassable if the infantry
                         **	is not equipped with a weapon.
                         */
                         if (Class->Primary == WEAPON_NONE)
@@ -1739,7 +1739,7 @@ MoveType InfantryClass::Can_Enter_Cell(CELL cell, FacingType) const
     }
 
     /*
-    **	If foot soldiers cannot travel on the cell -- consider it impassible.
+    **	If foot soldiers cannot travel on the cell -- consider it impassable.
     */
     if (retval == MOVE_OK && !IsTethered && !Ground[cellptr->Land_Type()].Cost[SPEED_FOOT]) {
         return (MOVE_NO);
@@ -2541,7 +2541,7 @@ TARGET InfantryClass::Greatest_Threat(ThreatType threat) const
         break; // Added. ST - 4/24/2019 11:02AM
 
     /*
-    **	Dragon missile equiped soldiers are also assumed to carry a Stinger missile. As such,
+    **	Dragon missile equipped soldiers are also assumed to carry a Stinger missile. As such,
     **	they will consider aircraft a legal target.
     */
     default:

@@ -129,7 +129,7 @@ void* WeaponTypeClass::operator new(size_t)
  * WeaponTypeClass::operator delete -- Returns weapon type object back to special heap.        *
  *                                                                                             *
  *    This routine will return the weapon type object back to the heap so that the memory      *
- *    can be reused for subsiquent allocations of weapon type objects.                         *
+ *    can be reused for subsequent allocations of weapon type objects.                         *
  *                                                                                             *
  * INPUT:   pointer  -- Pointer to the weapon type object to return to the special heap.       *
  *                                                                                             *

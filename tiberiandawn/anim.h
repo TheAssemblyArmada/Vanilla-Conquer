@@ -199,7 +199,7 @@ private:
     /*
     **	If this animation is invisible, then this flag will be true. An invisible
     **	animation is one that is created for the sole purpose of keeping all
-    **	machines syncronised. It will not be displayed.
+    **	machines synchronized. It will not be displayed.
     */
     unsigned IsInvisible : 1;
 

@@ -1348,7 +1348,7 @@ void CellClass::Draw_It(int x, int y, bool objects) const
             break;
 
         /*
-        **	Large number of objects can be effeciently sorted by using
+        **	Large number of objects can be efficiently sorted by using
         **	a quicksort.
         */
         default:
@@ -1811,7 +1811,7 @@ int CellClass::Reduce_Wall(int damage)
 
                     /*
                     **	The zone calculation changes now for non-crushable zone sensitive
-                    **	travellers.
+                    **	travelers.
                     */
                     if (wall.IsCrushable) {
                         Map.Zone_Reset(MZONEF_NORMAL);
@@ -2224,7 +2224,7 @@ bool CellClass::Goodie_Check(FootClass* object)
 
         /*
         **	Pick a random crate powerup according to the shares allotted to each powerup.
-        **	In solo play, the bonus item is dependant upon the rules control.
+        **	In solo play, the bonus item is dependent upon the rules control.
         */
         CrateType powerup;
         if (Session.Type == GAME_NORMAL) {
@@ -2916,7 +2916,7 @@ void CellClass::Shimmer(void)
  *    calculation. Only blockages that cannot be circumvented are considered to make a cell    *
  *    impassable. All other obstructions can either be destroyed or are temporary.             *
  *                                                                                             *
- * INPUT:   loco     -- The locomotion type to use when determining passablility.              *
+ * INPUT:   loco     -- The locomotion type to use when determining passability.               *
  *                                                                                             *
  *          ignoreinfantry -- Should infantry in the cell be ignored for movement purposes?    *
  *                                                                                             *
@@ -2963,7 +2963,7 @@ bool CellClass::Is_Clear_To_Move(SpeedType loco,
 
     /*
     **	Check the occupy bits for passable legality. If ignore infantry is true, then
-    **	don't consider infnatry.
+    **	don't consider infantry.
     */
     int composite = Flag.Composite;
     if (ignoreinfantry) {

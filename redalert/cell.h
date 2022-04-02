@@ -116,7 +116,7 @@ public:
     **	same number if they are contiguous (terrain consideration only). There
     **	are basically two kinds of zones. The difference being determined by
     **	walls that can be crushed by movement. A vehicle that can crush walls
-    **	will only consider the CrushZone. All other terrestrial travellers will
+    **	will only consider the CrushZone. All other terrestrial travelers will
     **	use the normal Zone.
     */
     unsigned char Zones[MZONE_COUNT];
@@ -198,7 +198,7 @@ public:
     **	This array of bit flags is used to indicate which sub positions
     **	within the cell are either occupied or are soon going to be
     **	occupied. For vehicles, the cells that the vehicle is passing over
-    **	will be flagged with the vehicle bit. For infantry, the the sub
+    **	will be flagged with the vehicle bit. For infantry, the sub
     **	position the infantry is stopped at or headed toward will be marked.
     **	The sub positions it passes over will NOT be marked.
     */

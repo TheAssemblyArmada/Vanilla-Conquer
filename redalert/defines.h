@@ -1565,7 +1565,7 @@ typedef enum InfantryType : char
     INFANTRY_C7,       // Civilian
     INFANTRY_C8,       // Civilian
     INFANTRY_C9,       // Civilian
-    INFANTRY_C10,      // Nikumba
+    INFANTRY_C10,      // Nikoomba
     INFANTRY_EINSTEIN, // Einstein
     INFANTRY_DELPHI,   // Agent "Delphi"
     INFANTRY_CHAN,     // Dr. Chan

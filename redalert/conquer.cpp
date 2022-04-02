@@ -2708,7 +2708,7 @@ void Unselect_All(void)
     //	CurrentObject[0]->Unselect();
     //}
 
-    // Added some error handling incase there was an issue removing the object - JAS 6/28/2019
+    // Added some error handling in case there was an issue removing the object - JAS 6/28/2019
     while (CurrentObject.Count()) {
 
         int count_before = CurrentObject.Count();
@@ -2745,7 +2745,7 @@ void Unselect_All_Except(ObjectClass* object)
 /***********************************************************************************************
  * Fading_Table_Name -- Builds a theater specific fading table name.                           *
  *                                                                                             *
- *    This routine builds a standard fading table name. This name is dependant on the theater  *
+ *    This routine builds a standard fading table name. This name is dependent on the theater  *
  *    being played, since each theater has its own palette.                                    *
  *                                                                                             *
  * INPUT:   base  -- The base name of this fading table. The base name can be no longer than   *
@@ -3179,7 +3179,7 @@ void CC_Draw_Shape(void const* shapefile,
  * OUTPUT:  Returns with the rectangle that encloses the shape.                                *
  *                                                                                             *
  * WARNINGS:   This routine uses brute force and is slow. It is presumed that the results      *
- *             will be cached for subsiquent reuse.                                            *
+ *             will be cached for subsequent reuse.                                            *
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   07/22/1996 JLB : Created.                                                                 *
@@ -3713,7 +3713,7 @@ void Handle_View(int view, int action)
                 Coord_Whole(Cell_Coord(Scen.Views[view] - (MAP_CELL_W * 4 * RESFACTOR) - (5 * RESFACTOR))));
 
             /*
-            ** Win95 scrolling logic cant handle just jumps in screen position so redraw the lot.
+            ** Win95 scrolling logic can't handle just jumps in screen position so redraw the lot.
             */
             Map.Flag_To_Redraw(true);
         } else {
@@ -3887,7 +3887,7 @@ static bool Change_Local_Dir(int cd)
         _initialised = true;
     }
 
-    // No local folders with cd data dectected so we can't load any.
+    // No local folders with cd data detected so we can't load any.
     if (_detected == 0) {
         return false;
     }
@@ -4526,7 +4526,7 @@ static void Do_Record_Playback(void)
 }
 
 /***********************************************************************************************
- * Hires_Load -- Allocates memory for, and loads, a resolution dependant file.                 *
+ * Hires_Load -- Allocates memory for, and loads, a resolution dependent file.                 *
  *                                                                                             *
  *                                                                                             *
  *                                                                                             *

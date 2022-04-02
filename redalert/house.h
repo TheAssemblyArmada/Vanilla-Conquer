@@ -936,7 +936,7 @@ private:
 public:
     /*
     **	This structure is used to record a build request as determined by
-    **	the house AI processing. Higher priority build requests take precidence.
+    **	the house AI processing. Higher priority build requests take precedence.
     */
     struct BuildChoiceClass
     {

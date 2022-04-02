@@ -220,7 +220,7 @@ void SidebarClass::One_Time(void)
     Column[1].One_Time(1);
 
     /*
-    **	Load the sidebar shape in at this time. (Hi-Res sidebar is theater dependant)
+    **	Load the sidebar shape in at this time. (Hi-Res sidebar is theater dependent)
     */
     if (SidebarShape1 == NULL) {
         SidebarShape1 = Hires_Retrieve("SIDE1.SHP");
@@ -1383,7 +1383,7 @@ void SidebarClass::StripClass::Deactivate(void)
  *          ptr2  -- Pointer to the second sidebar class object.                               *
  *                                                                                             *
  * OUTPUT:  Returns <0 if the first object can be produced before the second. It returns       *
- *          >0 if the reverse is true. It returns exactly 0 if the production scneario for     *
+ *          >0 if the reverse is true. It returns exactly 0 if the production scenario for     *
  *          both objects is the same.                                                          *
  *                                                                                             *
  * WARNINGS:   none                                                                            *

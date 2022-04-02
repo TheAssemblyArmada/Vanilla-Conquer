@@ -120,7 +120,7 @@ public:
     bool IsTiberiumDestroyer;
 
     /*
-    **	The warhead damage is reduced depending on the the type of armor the
+    **	The warhead damage is reduced depending on the type of armor the
     **	defender has. This table is what gives weapons their "character".
     */
     unsigned Modifier[ARMOR_COUNT];
@@ -274,7 +274,7 @@ public:
 };
 
 /***************************************************************************
-**	This the the common base class of game objects. Since these values
+**	This is the common base class of game objects. Since these values
 **	represent the unchanging object TYPES, this data is initialized at game
 **	start and not changed during play. It is "const" data.
 */
@@ -464,7 +464,7 @@ public:
     /*
     **	Is this object possible to be constructed?  Certain buildings and units cannot
     **	be constructed using normal means. They are either initially placed in the scenario
-    **	or can only arrive by pre arranged reinforcement scheduling. Civilian buildings and
+    **	or can only arrive by prearranged reinforcement scheduling. Civilian buildings and
     **	vehicles are typical examples of this type of object. They would set this flag to
     **	false.
     */
@@ -473,13 +473,13 @@ public:
     /*
     **	Does this object contain a crew?  If it does, then when the object is destroyed, there
     **	is a distinct possibility that infantry will "pop out". Only units with crews can
-    **	become "heros".
+    **	become "heroes".
     */
     unsigned IsCrew : 1;
 
     /*
     **	Is this object typically used to transport reinforcements or other cargo?
-    **	Transport aircraft, helicopters, and hovercraft are typicall examples of
+    **	Transport aircraft, helicopters, and hovercraft are typical examples of
     **	this.
     */
     unsigned IsTransporter : 1;
@@ -618,7 +618,7 @@ class BuildingTypeClass : public TechnoTypeClass
 
 public:
     /*
-    **	This flag controls whether the building is equiped with a dirt
+    **	This flag controls whether the building is equipped with a dirt
     **	bib or not. A building with a bib has a dirt patch automatically
     **	attached to the structure when it is placed.
     */
@@ -1685,7 +1685,7 @@ public:
     **	This is the frame that the animation is biggest. The biggest frame of animation
     **	will hide any changes to underlying ground (e.g., craters) that the animation
     **	causes, so these effects are delayed until this frame is reached. The end result
-    **	is to prevent the player from seeing craters "pop" into existance.
+    **	is to prevent the player from seeing craters "pop" into existence.
     */
     int Biggest;
 

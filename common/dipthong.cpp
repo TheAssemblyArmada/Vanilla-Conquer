@@ -45,7 +45,7 @@
 /***************************************************************************
  * Fixup_Text -- Converts dipthonged foreign text into normal text.        *
  *                                                                         *
- *    Takes text that has been processed (or undipped) to hold foriegn     *
+ *    Takes text that has been processed (or undipped) to hold foreign     *
  *    language character pairs (needed for Window_Print) and converts it   *
  *    so that Text_Print will print it properly.  Typically this would be  *
  *    used after text has been undipped but before it will be Text_Printed.*
@@ -124,7 +124,7 @@ int Dip_Text(char const* source, char* dest)
 
             /*
             **	Characters greater than 127 cannot be dipthonged.  They must
-            **	be preceeded with an extended character code.
+            **	be preceded with an extended character code.
             */
             *dest++ = (char)KA_EXTEND;
             first -= 127;

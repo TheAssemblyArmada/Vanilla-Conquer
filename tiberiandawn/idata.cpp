@@ -105,7 +105,7 @@ static InfantryTypeClass const E1(INFANTRY_E1,          // Infantry type number.
                                   false,                // Is this a female type?
                                   true,                 // Is a leader type?
                                   true,                 // Has crawling animation frames?
-                                  false,                // Is this a civlian?
+                                  false,                // Is this a civilian?
                                   false,                // Always use the given name for the infantry?
                                   false,                // Is this a "fraidycat" run-away type infantry?
                                   false,                // Can this infantry type capture a building?
@@ -175,7 +175,7 @@ static InfantryTypeClass const E2(INFANTRY_E2,         // Infantry type number.
                                   false,               // Is this a female type?
                                   true,                // Is a leader type?
                                   true,                // Has crawling animation frames?
-                                  false,               // Is this a civlian?
+                                  false,               // Is this a civilian?
                                   false,               // Always use the given name for the infantry?
                                   false,               // Is this a "fraidycat" run-away type infantry?
                                   false,               // Can this infantry type capture a building?
@@ -244,7 +244,7 @@ static InfantryTypeClass const E3(INFANTRY_E3,       // Infantry type number.
                                   false,             // Is this a female type?
                                   true,              // Is a leader type?
                                   true,              // Has crawling animation frames?
-                                  false,             // Is this a civlian?
+                                  false,             // Is this a civilian?
                                   false,             // Always use the given name for the infantry?
                                   false,             // Is this a "fraidycat" run-away type infantry?
                                   false,             // Can this infantry type capture a building?
@@ -314,7 +314,7 @@ static InfantryTypeClass const E4(INFANTRY_E4,            // Infantry type numbe
                                   false,                  // Is this a female type?
                                   true,                   // Is a leader type?
                                   true,                   // Has crawling animation frames?
-                                  false,                  // Is this a civlian?
+                                  false,                  // Is this a civilian?
                                   false,                  // Always use the given name for the infantry?
                                   false,                  // Is this a "fraidycat" run-away type infantry?
                                   false,                  // Can this infantry type capture a building?
@@ -382,7 +382,7 @@ static InfantryTypeClass const E5(INFANTRY_E5,           // Infantry type number
                                   false,                 // Is this a female type?
                                   true,                  // Is a leader type?
                                   true,                  // Has crawling animation frames?
-                                  false,                 // Is this a civlian?
+                                  false,                 // Is this a civilian?
                                   false,                 // Always use the given name for the infantry?
                                   false,                 // Is this a "fraidycat" run-away type infantry?
                                   false,                 // Can this infantry type capture a building?
@@ -452,7 +452,7 @@ static InfantryTypeClass const E7(INFANTRY_E7,        // Infantry type number.
                                   false,              // Is this a female type?
                                   false,              // Is a leader type?
                                   false,              // Has crawling animation frames?
-                                  false,              // Is this a civlian?
+                                  false,              // Is this a civilian?
                                   false,              // Always use the given name for the infantry?
                                   false,              // Is this a "fraidycat" run-away type infantry?
                                   true,               // Can this infantry type capture a building?
@@ -522,7 +522,7 @@ static InfantryTypeClass const Commando(INFANTRY_RAMBO,     // Infantry type num
                                         false,              // Is this a female type?
                                         true,               // Is a leader type?
                                         true,               // Has crawling animation frames?
-                                        false,              // Is this a civlian?
+                                        false,              // Is this a civilian?
                                         false,              // Always use the given name for the infantry?
                                         false,              // Is this a "fraidycat" run-away type infantry?
                                         false,              // Can this infantry type capture a building?
@@ -592,7 +592,7 @@ static InfantryTypeClass const C1(INFANTRY_C1,         // Infantry type number.
                                   false,               // Is this a female type?
                                   true,                // Is a leader type?
                                   false,               // Has crawling animation frames?
-                                  true,                // Is this a civlian?
+                                  true,                // Is this a civilian?
                                   true,                // Always use the given name for the infantry?
                                   true,                // Is this a "fraidycat" run-away type infantry?
                                   false,               // Can this infantry type capture a building?
@@ -659,7 +659,7 @@ static InfantryTypeClass const C2(INFANTRY_C2,         // Infantry type number.
                                   false,               // Is this a female type?
                                   false,               // Is a leader type?
                                   false,               // Has crawling animation frames?
-                                  true,                // Is this a civlian?
+                                  true,                // Is this a civilian?
                                   true,                // Always use the given name for the infantry?
                                   true,                // Is this a "fraidycat" run-away type infantry?
                                   false,               // Can this infantry type capture a building?
@@ -727,7 +727,7 @@ static InfantryTypeClass const C3(INFANTRY_C3,         // Infantry type number.
                                   true,                // Is this a female type?
                                   false,               // Is a leader type?
                                   false,               // Has crawling animation frames?
-                                  true,                // Is this a civlian?
+                                  true,                // Is this a civilian?
                                   true,                // Always use the given name for the infantry?
                                   true,                // Is this a "fraidycat" run-away type infantry?
                                   false,               // Can this infantry type capture a building?
@@ -794,7 +794,7 @@ static InfantryTypeClass const C4(INFANTRY_C4,         // Infantry type number.
                                   true,                // Is this a female type?
                                   false,               // Is a leader type?
                                   false,               // Has crawling animation frames?
-                                  true,                // Is this a civlian?
+                                  true,                // Is this a civilian?
                                   true,                // Always use the given name for the infantry?
                                   true,                // Is this a "fraidycat" run-away type infantry?
                                   false,               // Can this infantry type capture a building?
@@ -861,7 +861,7 @@ static InfantryTypeClass const C5(INFANTRY_C5,         // Infantry type number.
                                   false,               // Is this a female type?
                                   false,               // Is a leader type?
                                   false,               // Has crawling animation frames?
-                                  true,                // Is this a civlian?
+                                  true,                // Is this a civilian?
                                   true,                // Always use the given name for the infantry?
                                   true,                // Is this a "fraidycat" run-away type infantry?
                                   false,               // Can this infantry type capture a building?
@@ -928,7 +928,7 @@ static InfantryTypeClass const C6(INFANTRY_C6,         // Infantry type number.
                                   false,               // Is this a female type?
                                   false,               // Is a leader type?
                                   false,               // Has crawling animation frames?
-                                  true,                // Is this a civlian?
+                                  true,                // Is this a civilian?
                                   true,                // Always use the given name for the infantry?
                                   true,                // Is this a "fraidycat" run-away type infantry?
                                   false,               // Can this infantry type capture a building?
@@ -995,7 +995,7 @@ static InfantryTypeClass const C7(INFANTRY_C7,         // Infantry type number.
                                   false,               // Is this a female type?
                                   true,                // Is a leader type?
                                   false,               // Has crawling animation frames?
-                                  true,                // Is this a civlian?
+                                  true,                // Is this a civilian?
                                   true,                // Always use the given name for the infantry?
                                   true,                // Is this a "fraidycat" run-away type infantry?
                                   false,               // Can this infantry type capture a building?
@@ -1062,7 +1062,7 @@ static InfantryTypeClass const C8(INFANTRY_C8,         // Infantry type number.
                                   false,               // Is this a female type?
                                   false,               // Is a leader type?
                                   false,               // Has crawling animation frames?
-                                  true,                // Is this a civlian?
+                                  true,                // Is this a civilian?
                                   true,                // Always use the given name for the infantry?
                                   true,                // Is this a "fraidycat" run-away type infantry?
                                   false,               // Can this infantry type capture a building?
@@ -1129,7 +1129,7 @@ static InfantryTypeClass const C9(INFANTRY_C9,         // Infantry type number.
                                   false,               // Is this a female type?
                                   false,               // Is a leader type?
                                   false,               // Has crawling animation frames?
-                                  true,                // Is this a civlian?
+                                  true,                // Is this a civilian?
                                   true,                // Always use the given name for the infantry?
                                   true,                // Is this a "fraidycat" run-away type infantry?
                                   false,               // Can this infantry type capture a building?
@@ -1198,7 +1198,7 @@ static InfantryTypeClass const C10(INFANTRY_C10,       // Infantry type number.
                                    false,              // Is this a female type?
                                    false,              // Is a leader type?
                                    false,              // Has crawling animation frames?
-                                   true,               // Is this a civlian?
+                                   true,               // Is this a civilian?
                                    true,               // Always use the given name for the infantry?
                                    true,               // Is this a "fraidycat" run-away type infantry?
                                    false,              // Can this infantry type capture a building?
@@ -1265,7 +1265,7 @@ static InfantryTypeClass const Moebius(INFANTRY_MOEBIUS,  // Infantry type numbe
                                        false,             // Is this a female type?
                                        false,             // Is a leader type?
                                        false,             // Has crawling animation frames?
-                                       true,              // Is this a civlian?
+                                       true,              // Is this a civilian?
                                        true,              // Always use the given name for the infantry?
                                        true,              // Is this a "fraidycat" run-away type infantry?
                                        false,             // Can this infantry type capture a building?
@@ -1332,7 +1332,7 @@ static InfantryTypeClass const Delphi(INFANTRY_DELPHI,  // Infantry type number.
                                       false,            // Is this a female type?
                                       false,            // Is a leader type?
                                       false,            // Has crawling animation frames?
-                                      true,             // Is this a civlian?
+                                      true,             // Is this a civilian?
                                       true,             // Always use the given name for the infantry?
                                       true,             // Is this a "fraidycat" run-away type infantry?
                                       false,            // Can this infantry type capture a building?
@@ -1399,7 +1399,7 @@ static InfantryTypeClass const DrChan(INFANTRY_CHAN,    // Infantry type number.
                                       false,            // Is this a female type?
                                       false,            // Is a leader type?
                                       false,            // Has crawling animation frames?
-                                      true,             // Is this a civlian?
+                                      true,             // Is this a civilian?
                                       true,             // Always use the given name for the infantry?
                                       true,             // Is this a "fraidycat" run-away type infantry?
                                       false,            // Can this infantry type capture a building?
@@ -1896,7 +1896,7 @@ void InfantryTypeClass::One_Time(void)
 }
 
 /***********************************************************************************************
- * ITC::Init -- load up terrain set dependant sidebar icons                                    *
+ * ITC::Init -- load up terrain set dependent sidebar icons                                    *
  *                                                                                             *
  *                                                                                             *
  *                                                                                             *
@@ -1947,7 +1947,7 @@ void InfantryTypeClass::Init(TheaterType theater)
  *                                                                                             *
  * INPUT:   intheory -- If no regard is to be given to whether the construction building is    *
  *                      currently busy, then this flag should be true. In such a case, only    *
- *                      the existance of the building is sufficient to achieve success.        *
+ *                      the existence of the building is sufficient to achieve success.        *
  *                                                                                             *
  *          legal    -- Should building prerequisite legality checks be performed as well?     *
  *                      For building placements, this is usually false. For sidebar button     *

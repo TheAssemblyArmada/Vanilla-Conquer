@@ -119,7 +119,7 @@ void CCFileClass::Error(int error, int canretry, char const* filename)
         }
     }
 
-    // If its not a required CD releated error, pass to next class handling in the chain.
+    // If it's not a required CD related error, pass to next class handling in the chain.
     CDFileClass::Error(error, canretry, filename);
 }
 
@@ -285,7 +285,7 @@ long CCFileClass::Seek(long pos, int dir)
 long CCFileClass::Size(void)
 {
     /*
-    **	If the file is resident, the the size is already known. Just return the size in this
+    **	If the file is resident, then the size is already known. Just return the size in this
     **	case.
     */
     if (Is_Resident())
@@ -345,7 +345,7 @@ int CCFileClass::Is_Available(int)
  * CCFileClass::Is_Open -- Determines if the file is open.                                     *
  *                                                                                             *
  *    A mixfile is open if there is a pointer to the mixfile data. In absence of this,         *
- *    the the file is open if the file handle is valid.                                        *
+ *    then the file is open if the file handle is valid.                                       *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *

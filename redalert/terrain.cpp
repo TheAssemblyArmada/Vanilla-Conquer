@@ -358,7 +358,7 @@ void TerrainClass::Init(void)
 /***********************************************************************************************
  * TerrainClass::Can_Enter_Cell -- Determines if the terrain object can exist in the cell.     *
  *                                                                                             *
- *    This routine will examine the cell specified and determine if the the terrain object     *
+ *    This routine will examine the cell specified and determine if the terrain object         *
  *    can legally exist there.                                                                 *
  *                                                                                             *
  * INPUT:   cell  -- The cell to examine.                                                      *

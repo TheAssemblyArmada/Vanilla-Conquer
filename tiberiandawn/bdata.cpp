@@ -38,7 +38,7 @@
  *   BuildingTypeClass::Dimensions -- Fetches the pixel dimensions of the building.            *
  *   BuildingTypeClass::Display -- Renders a generic view of building.                         *
  *   BuildingTypeClass::Full_Name -- Fetches the full name text number.                        *
- *   BuildingTypeClass::Height -- Determins the height of the building in icons.               *
+ *   BuildingTypeClass::Height -- Determines the height of the building in icons.              *
  *   BuildingTypeClass::Init -- Performs theater specific initialization.                      *
  *   BuildingTypeClass::Init_Anim -- Initialize an animation control for a building.           *
  *   BuildingTypeClass::Legal_Placement -- Determines if building can be legally placed at pos.*
@@ -50,7 +50,7 @@
  *   BuildingTypeClass::Repair_Cost -- Determines cost per "step" of repair.                   *
  *   BuildingTypeClass::Repair_Step -- Determines the repair step rate.                        *
  *   BuildingTypeClass::Who_Can_Build_Me -- Determines which factory can create the building.  *
- *   BuildingTypeClass::Width -- Determines width of bulding in icons.                         *
+ *   BuildingTypeClass::Width -- Determines width of building in icons.                        *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
@@ -3548,7 +3548,7 @@ BuildingTypeClass const* const BuildingTypeClass::Pointers[STRUCT_COUNT] = {
     &ClassWeapon,        //	STRUCT_WEAP
     &ClassGTower,        //	STRUCT_GTOWER
     &ClassATower,        //	STRUCT_ATOWER
-    &ClassObelisk,       //	STRUCT_OBLISK
+    &ClassObelisk,       //	STRUCT_OBELISK
     &ClassCommand,       //	STRUCT_RADAR
     &ClassTurret,        //	STRUCT_TURRET
     &ClassConst,         //	STRUCT_CONST
@@ -4360,7 +4360,7 @@ short const* BuildingTypeClass::Overlap_List(void) const
 }
 
 /***********************************************************************************************
- * BuildingTypeClass::Width -- Determines width of bulding in icons.                           *
+ * BuildingTypeClass::Width -- Determines width of building in icons.                          *
  *                                                                                             *
  *    Use this routine to determine the width of the building type in icons.                   *
  *                                                                                             *
@@ -4380,7 +4380,7 @@ int BuildingTypeClass::Width(void) const
 }
 
 /***********************************************************************************************
- * BuildingTypeClass::Height -- Determins the height of the building in icons.                 *
+ * BuildingTypeClass::Height -- Determines the height of the building in icons.                *
  *                                                                                             *
  *    Use this routine to find the height of the building in icons.                            *
  *                                                                                             *

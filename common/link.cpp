@@ -245,7 +245,7 @@ LinkClass& LinkClass::Tail_Of_List(void)
  *                                                                                             *
  *    Use this routine to add a link object to the list, but to be added right after the       *
  *    given link. This allows inserting a link in the middle of the chain. A quite necessary   *
- *    ability if the chain is order dependant (e.g., the gadget system).                       *
+ *    ability if the chain is order dependent (e.g., the gadget system).                       *
  *                                                                                             *
  * INPUT:   list -- gadget object to add this one to                                           *
  *                                                                                             *

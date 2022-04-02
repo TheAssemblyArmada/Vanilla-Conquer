@@ -32,7 +32,7 @@
  * Functions:                                                                                  *
  *   ObjectClass::Debug_Dump -- Displays status of the object class to the mono monitor.       *
  *   ObjectClass::Detach_All -- Removes the object from all tracking systems.                  *
- *   ObjectClass::Detach_This_From_All -- Detatches this object from all others.               *
+ *   ObjectClass::Detach_This_From_All -- Detaches this object from all others.                *
  *   ObjectClass::Fire_Out -- Informs object that attached animation has finished.             *
  *   ObjectClass::Get_Mission -- Fetches the current mission of this object.                   *
  *   ObjectClass::Init -- Initializes the basic object system.                                 *
@@ -52,7 +52,7 @@
  *   ObjectClass::Unlimbo -- Brings the object into the game system.                           *
  *   ObjectClass::Unselect -- This will un-select the object if it was selected.               *
  *   ObjectClass::Value -- Fetches the target value of this object.                            *
- *   ObjectClass::What_Action -- Deteremines what action to perform on specified object.       *
+ *   ObjectClass::What_Action -- Determines what action to perform on specified object.        *
  *   ObjectClass::What_Am_I -- RTTI query of this object type.                                 *
  *   ObjectTypeClass::Cost_Of -- Returns the cost to buy this unit.                            *
  *   ObjectTypeClass::Dimensions -- Gets the dimensions of the object in pixels.               *
@@ -300,7 +300,7 @@ ObjectClass::ObjectClass(void)
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
- * OUTPUT:  Returns with the RTTI value that coresponds to the object's type.                  *
+ * OUTPUT:  Returns with the RTTI value that corresponds to the object's type.                 *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
@@ -313,7 +313,7 @@ RTTIType ObjectClass::What_Am_I(void) const
 }
 
 /***********************************************************************************************
- * ObjectClass::What_Action -- Deteremines what action to perform on specified object.         *
+ * ObjectClass::What_Action -- Determines what action to perform on specified object.          *
  *                                                                                             *
  *    This routine will return that action that this object could perform if the mouse were    *
  *    clicked over the object specified.                                                       *
@@ -1245,7 +1245,7 @@ void ObjectClass::Detach_All(bool all)
     //	Unselect();
     //}
 
-    // Added some error handling incase there was an issue removing the object - JAS 6/28/2019
+    // Added some error handling in case there was an issue removing the object - JAS 6/28/2019
     if (all) {
         // Unselect();
         // Updated to function for multiplayer - 6/28/2019 JAS
@@ -1264,7 +1264,7 @@ void ObjectClass::Detach_All(bool all)
 }
 
 /***********************************************************************************************
- * ObjectClass::Detach_This_From_All -- Detatches this object from all others.                 *
+ * ObjectClass::Detach_This_From_All -- Detaches this object from all others.                  *
  *                                                                                             *
  *    This routine sweeps through all game objects and makes sure that it is no longer         *
  *    referenced by them. Typically, this is called in preparation for the object's death      *

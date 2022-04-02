@@ -222,7 +222,7 @@ void WWMouseClass::Process_Mouse(void)
                 Low_Show_Mouse(x, y);
             }
             //
-            // Finally unlock the destination surface as we have sucessfully
+            // Finally unlock the destination surface as we have successfully
             // updated the mouse.
             //
             Screen->Unlock();
@@ -329,7 +329,7 @@ void WWMouseClass::Low_Show_Mouse(int x, int y)
     //
     if (!State) {
         //
-        // Try to lock the screen til we sucessfully get a lock.
+        // Try to lock the screen til we successfully get a lock.
         //
         if (Screen->Lock()) {
             //
@@ -474,7 +474,7 @@ void WWMouseClass::Draw_Mouse(GraphicViewPortClass* scr)
         EraseFlags = true;
 
         //
-        // Try to lock the screen  - dont do video stuff if we cant.
+        // Try to lock the screen  - don't do video stuff if we can't.
         //
         if (scr->Lock()) {
             //

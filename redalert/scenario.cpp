@@ -248,8 +248,8 @@ void ScenarioClass::Do_Fade_AI(void)
 /***********************************************************************************************
  * ScenarioClass::Set_Global_To -- Set scenario global to value specified.                     *
  *                                                                                             *
- *    This routine will set the global flag to the falue (true/false) specified. It will       *
- *    also scan for and spring any triggers that are dependant upon that global.               *
+ *    This routine will set the global flag to the value (true/false) specified. It will       *
+ *    also scan for and spring any triggers that are dependent upon that global.               *
  *                                                                                             *
  * INPUT:   global   -- The global flag to change.                                             *
  *                                                                                             *
@@ -1825,7 +1825,6 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
  *    INI root file name for the specified scenario parameters.                                *
  *                                                                                             *
  * INPUT:                                                                                      *
- *         buf         buffer to store filename in; must be long enough for root.ext           *
  *       scenario      scenario number                                                         *
  *       player      player type for this game (GDI, NOD, multi-player, ...)                   *
  *       dir         directional parameter for this game (East/West)                           *
@@ -2042,9 +2041,9 @@ bool Read_Scenario_INI(char* fname, bool)
     /*
     ** Only force a CD check if this is a single player game or if its
     ** a multiplayer game on an official scenario. If its non-official
-    ** (a user scenario) then we dont care which CD is in because the
+    ** (a user scenario) then we don't care which CD is in because the
     ** scenario is stored locally on the hard drive. In this case, we
-    ** have already verified its existance. ST 3/1/97 4:52PM.
+    ** have already verified its existence. ST 3/1/97 4:52PM.
     */
 #ifdef FIXIT_VERSION_3 //	Avoid CD check if official scenario was downloaded.
     if ((Session.Type == GAME_NORMAL || Session.ScenarioIsOfficial) && _stricmp(Scen.ScenarioName, "download.tmp")) {

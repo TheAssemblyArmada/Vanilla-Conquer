@@ -64,7 +64,7 @@ public:
 
     /*
     **	Certain infantry will either perform some comment or say something after an
-    **	amount of time has expired subsiquent to an significant event. This is the
+    **	amount of time has expired subsequent to an significant event. This is the
     **	timer the counts down.
     */
     TCountDownTimerClass Comment;

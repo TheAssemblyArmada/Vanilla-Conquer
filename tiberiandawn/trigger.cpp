@@ -722,7 +722,7 @@ bool TriggerClass::Spring(EventType event, CELL cell)
  * TriggerClass::Spring -- Trigger processing routine                                          *
  *                                                                                             *
  * This version of Spring is for house-specific triggers.                                      *
- * For a time-based trigger, 'data' will the the current WinTickCount.                         *
+ * For a time-based trigger, 'data' will be the current WinTickCount.                          *
  * For a credit-based trigger, 'data' will be the credits for the HouseClass                   *
  * containing this trigger.                                                                    *
  *                                                                                             *

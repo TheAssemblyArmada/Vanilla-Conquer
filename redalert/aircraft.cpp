@@ -250,7 +250,7 @@ AircraftClass::AircraftClass(AircraftType classid, HousesType house)
     NavCom = TARGET_NONE;
 
     /*
-    ** Keep count of the number of units created. Dont track cargo planes as they are created
+    ** Keep count of the number of units created. Don't track cargo planes as they are created
     ** automatically, not bought.
     */
     //	if (/*classid != AIRCRAFT_CARGO && */ Session.Type == GAME_INTERNET) {
@@ -2264,7 +2264,7 @@ void AircraftClass::Debug_Dump(MonoClass* mono) const
 /***********************************************************************************************
  * AircraftClass::Active_Click_With -- Handles clicking over specified object.                 *
  *                                                                                             *
- *    This routine is used when the player clicks over the speicifed object. It will assign    *
+ *    This routine is used when the player clicks over the specified object. It will assign    *
  *    the appropriate mission to the aircraft.                                                 *
  *                                                                                             *
  * INPUT:   action   -- The action that was nominally determined by the What_Action function.  *

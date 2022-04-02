@@ -38,8 +38,8 @@
  *   MissionClass::MissionClass -- Default constructor for the mission object type.            *
  *   MissionClass::Mission_From_Name -- Fetch order pointer from its name.                     *
  *   MissionClass::Mission_Name -- Converts a mission number into an ASCII string.             *
- *   MissionClass::Overide_Mission -- temporarily overides the units mission                   *
- *   MissionClass::Restore_Mission -- Restores overidden mission                               *
+ *   MissionClass::Overide_Mission -- temporarily overrides the units mission                  *
+ *   MissionClass::Restore_Mission -- Restores overridden mission                              *
  *   MissionClass::Set_Mission -- Sets the mission to the specified value.                     *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
@@ -442,17 +442,17 @@ char const* MissionClass::Mission_Name(MissionType mission)
 }
 
 /***********************************************************************************************
- * MissionClass::Override_Mission -- temporarily overides the units mission                    *
+ * MissionClass::Override_Mission -- temporarily overrides the units mission                   *
  *                                                                                             *
  *                                                                                             *
  *                                                                                             *
- * INPUT:      MissionType mission - the mission we want to overide                            *
- *               TARGET      tarcom  - the new target we want to overide                       *
- *               TARGET      navcom  - the new navigation point to overide                     *
+ * INPUT:      MissionType mission - the mission we want to override                           *
+ *               TARGET      tarcom  - the new target we want to override                      *
+ *               TARGET      navcom  - the new navigation point to override                    *
  *                                                                                             *
  * OUTPUT:      none                                                                           *
  *                                                                                             *
- * WARNINGS:   If a mission is already overidden, the current mission is                       *
+ * WARNINGS:   If a mission is already overridden, the current mission is                      *
  *               just re-assigned.                                                             *
  *                                                                                             *
  * HISTORY:                                                                                    *
@@ -470,7 +470,7 @@ void MissionClass::Override_Mission(MissionType mission, TARGET, TARGET)
 }
 
 /***********************************************************************************************
- * MissionClass::Restore_Mission -- Restores overidden mission                                 *
+ * MissionClass::Restore_Mission -- Restores overridden mission                                *
  *                                                                                             *
  * INPUT:      none                                                                            *
  *                                                                                             *

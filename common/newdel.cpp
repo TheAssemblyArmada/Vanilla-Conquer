@@ -29,10 +29,10 @@
  *                                                                         *
  *-------------------------------------------------------------------------*
  * Functions:                                                              *
- *   operator NEW -- Overides the global new function.                     *
- *   operator delete -- Overides the global delete function.               *
- *   operator NEW[] -- Overides the array version of new.                  *
- *   operator delete[] -- Overides the array version of delete[]           *
+ *   operator NEW -- Overrides the global new function.                    *
+ *   operator delete -- Overrides the global delete function.              *
+ *   operator NEW[] -- Overrides the array version of new.                 *
+ *   operator delete[] -- Overrides the array version of delete[]          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "wwmem.h"
@@ -44,7 +44,7 @@
 /*= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =*/
 
 /***************************************************************************
- * OPERATOR NEW -- Overides the global new function.                       *
+ * OPERATOR NEW -- Overrides the global new function.                      *
  *                                                                         *
  * INPUT:                                                                  *
  *                                                                         *
@@ -61,7 +61,7 @@ void* operator new(size_t size)
 }
 
 /***************************************************************************
- * OPERATOR NEW[] -- Overides the array version of new.                    *
+ * OPERATOR NEW[] -- Overrides the array version of new.                   *
  *                                                                         *
  *                                                                         *
  *                                                                         *
@@ -80,7 +80,7 @@ void* operator new[](size_t size)
 }
 
 /***************************************************************************
- * OPERATOR DELETE -- Overides the global delete function.                 *
+ * OPERATOR DELETE -- Overrides the global delete function.                *
  *                                                                         *
  *                                                                         *
  *                                                                         *
@@ -99,7 +99,7 @@ void operator delete(void* ptr)
 }
 
 /***************************************************************************
- * OPERATOR DELETE[] -- Overides the array version of delete[]           	*
+ * OPERATOR DELETE[] -- Overrides the array version of delete[]            *
  *                                                                         *
  *                                                                         *
  *                                                                         *

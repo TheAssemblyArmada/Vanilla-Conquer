@@ -855,7 +855,7 @@ int INIClass::Get_Int(char const* section, char const* entry, int defvalue) cons
  *                                                                                             *
  *          entry    -- The entry identifier to tag to the integer number specified.           *
  *                                                                                             *
- *          number   -- The number to assign the the specified entry and placed in the         *
+ *          number   -- The number to assign to the specified entry and place in the           *
  *                      specified section.                                                     *
  *                                                                                             *
  * OUTPUT:  bool; Was the number placed into the INI database?                                 *

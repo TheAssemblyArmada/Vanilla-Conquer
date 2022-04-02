@@ -182,7 +182,7 @@ private:
     static void* MonoSegment;
 
     /*
-    ** This the the arrays of characters used for drawing boxes.
+    ** These are the arrays of characters used for drawing boxes.
     */
     static BoxDataType const CharData[4];
 

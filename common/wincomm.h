@@ -30,7 +30,7 @@
  *---------------------------------------------------------------------------------------------*
  * Overview:                                                                                   *
  *                                                                                             *
- *   These classes was created to replace the greenleaf comms functions used in C&C DOS with   *
+ *   These classes was created to replace the Greenleaf comms functions used in C&C DOS with   *
  *  WIN32 API calls.                                                                           *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
@@ -64,14 +64,14 @@ typedef enum WinCommDialMethodType
 ** WinModemClass.
 **
 ** This class provides access to modems under Win95. The functions are designed to be more or less
-** drop in replacements for the Grenleaf comms functions.
+** drop in replacements for the Greenleaf comms functions.
 */
 
 class WinModemClass
 {
 
 public:
-    WinModemClass(void);          // WinModemClass Contructor
+    WinModemClass(void);          // WinModemClass Constructor
     virtual ~WinModemClass(void); // WinModemClass Destructor
 
     /*
@@ -220,12 +220,12 @@ protected:
     unsigned char* SerialBuffer;
 
     /*
-    ** Overlap object for asyncronous reads from the serial port
+    ** Overlap object for asynchronous reads from the serial port
     */
     OVERLAPPED ReadOverlap;
 
     /*
-    ** Overlap object for asyncronous writes to the serial port
+    ** Overlap object for asynchronous writes to the serial port
     */
     OVERLAPPED WriteOverlap;
 
@@ -266,7 +266,7 @@ protected:
     int (*AbortFunction)(void);
 
     /*
-    ** Serial buffer for asyncronous reads
+    ** Serial buffer for asynchronous reads
     */
     char TempSerialBuffer[SIZE_OF_WINDOWS_SERIAL_BUFFER];
 };
@@ -275,9 +275,9 @@ protected:
 ** WinNullModemClass.
 **
 ** This class provides access to serial ports under Win95. The functions are designed to be more or less
-** drop in replacements for the Grenleaf comms functions.
+** drop in replacements for the Greenleaf comms functions.
 **
-** This class just overloads the WinModemClass members that arent required for direct serial communications
+** This class just overloads the WinModemClass members that aren't required for direct serial communications
 ** via a 'null modem' cable.
 */
 class WinNullModemClass : public WinModemClass

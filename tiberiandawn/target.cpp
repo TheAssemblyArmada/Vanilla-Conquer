@@ -370,7 +370,7 @@ BuildingClass* As_Building(TARGET target, bool check_active)
  * Target_Legal -- Determines if the specified target is legal.                                *
  *                                                                                             *
  *    This routine is used to check for the legality of the target value specified. It is      *
- *    necessary to call this routine if there is doubt about the the legality of the target.   *
+ *    necessary to call this routine if there is doubt about the legality of the target.       *
  *    It is possible for the unit that a target value represents to be eliminated and thus     *
  *    rendering the target value invalid.                                                      *
  *                                                                                             *

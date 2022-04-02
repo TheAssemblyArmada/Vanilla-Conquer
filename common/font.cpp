@@ -224,8 +224,8 @@ void Set_Font_Palette_Range(void const* palette, int start_idx, int end_idx)
  * WARNINGS:   Some system memory is grabbed by this routine.              *
  *                                                                         *
  * HISTORY:                                                                *
- *   4/10/91    BS  : 2.0 compatibily                                      *
- *   6/09/91    JLB : IBM and Amiga compatability.                         *
+ *   4/10/91    BS  : 2.0 compatibility                                    *
+ *   6/09/91    JLB : IBM and Amiga compatibility.                         *
  *   11/27/1991 JLB : Uses file I/O routines for disk access.              *
  *   01/29/1992 DRD : Modified to use new font format.                     *
  *   02/01/1992 DRD : Added font file verification.                        *

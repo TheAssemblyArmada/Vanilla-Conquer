@@ -2893,17 +2893,17 @@ int TechnoClass::Weapon_Range(int which) const
 }
 
 /***************************************************************************
- * TechnoClass::Override_Mission -- temporarily overides a units mission   *
+ * TechnoClass::Override_Mission -- temporarily overrides a units mission  *
  *                                                                         *
  *                                                                         *
  *                                                                         *
- * INPUT:      MissionType mission - the mission we want to overide        *
- *               TARGET      tarcom  - the new target we want to overide   *
- *               TARGET      navcom  - the new navigation point to overide *
+ * INPUT:      MissionType mission - the mission we want to override       *
+ *               TARGET      tarcom  - the new target we want to override  *
+ *               TARGET      navcom  - the new navigation point to override*
  *                                                                         *
  * OUTPUT:      none                                                       *
  *                                                                         *
- * WARNINGS:   If a mission is already overidden, the current mission is   *
+ * WARNINGS:   If a mission is already overridden, the current mission is  *
  *               just re-assigned.                                         *
  *                                                                         *
  * HISTORY:                                                                *
@@ -2917,7 +2917,7 @@ void TechnoClass::Override_Mission(MissionType mission, TARGET tarcom, TARGET na
 }
 
 /***************************************************************************
- * TechnoClass::Restore_Mission -- Restores an overidden mission           *
+ * TechnoClass::Restore_Mission -- Restores an overridden mission          *
  *                                                                         *
  * INPUT:		none                                                        *
  *                                                                         *
@@ -3093,7 +3093,7 @@ ResultType TechnoClass::Take_Damage(int& damage, int distance, WarheadType warhe
  * TechnoTypeClass::Max_Passengers -- Fetches the maximum passengers allowed.                  *
  *                                                                                             *
  *    This routine will return with the maximum number of passengers allowed in this           *
- *    transport. This typically applies to APCs and possibley transport helicopters.           *
+ *    transport. This typically applies to APCs and possibly transport helicopters.            *
  *                                                                                             *
  * INPUT:   none                                                                               *
  *                                                                                             *
@@ -4407,7 +4407,7 @@ void TechnoClass::Enter_Idle_Mode(bool)
  *    used for transporter object. It will also display if the techno object is "primary"      *
  *    if necessary.                                                                            *
  *                                                                                             *
- * INPUT:   x,y   -- The pixel coordinate for the center of the first pip. Subsiquent pips     *
+ * INPUT:   x,y   -- The pixel coordinate for the center of the first pip. Subsequent pips     *
  *                   are drawn rightward.                                                      *
  *                                                                                             *
  *          window-- The window that pip clipping is relative to.                              *

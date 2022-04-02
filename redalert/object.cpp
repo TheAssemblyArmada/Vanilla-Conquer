@@ -1552,7 +1552,7 @@ void ObjectClass::Detach_All(bool all)
     //	Unselect();
     //}
 
-    // Added some error handling incase there was an issue removing the object - JAS 6/28/2019
+    // Added some error handling in case there was an issue removing the object - JAS 6/28/2019
     if (all) {
         // Unselect();
         // Updated to function for multiplayer - 6/28/2019 JAS

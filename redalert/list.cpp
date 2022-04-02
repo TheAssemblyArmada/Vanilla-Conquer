@@ -593,7 +593,7 @@ int ListClass::Add_Scroll_Bar(void)
 
         /*
         **	Everything has been created successfully. Flag the list box to be
-        **	redrawn because it now must be made narrower to accomodate the new
+        **	redrawn because it now must be made narrower to accommodate the new
         **	slider gadgets.
         */
         Flag_To_Redraw();
@@ -735,8 +735,8 @@ void ListClass::Draw_Entry(int index, int x, int y, int width, int selected)
  * - Up arrow (if active)                                                                      *
  * - Down arrow (if active)                                                                    *
  * - Scroll gadget (if active)                                                                 *
- *                                                                                             * * INPUT:   object   --
- *Pointer to the object to be added right after this one.                *
+ *                                                                                             *
+ * INPUT:   object   -- Pointer to the object to be added right after this one.                *
  *                                                                                             *
  * OUTPUT:  Returns with a pointer to the head of the list.                                    *
  *                                                                                             *

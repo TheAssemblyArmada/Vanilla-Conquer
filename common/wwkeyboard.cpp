@@ -181,7 +181,7 @@ KeyNumType WWKeyboardClass::Get(void)
  *                                                                                             *
  * INPUT:		int	 	- the key to insert into the buffer          								  *
  *                                                                                             *
- * OUTPUT:     bool		- true if key is sucessfuly inserted.							              *
+ * OUTPUT:     bool		- true if key is successfully inserted.                                *
  *                                                                                             *
  * WARNINGS:   none							                                                        *
  *                                                                                             *
@@ -253,7 +253,7 @@ bool WWKeyboardClass::Put_Key_Message(unsigned short vk_key, bool release)
  *                                                                                             *
  *          release  -- Is this a mouse button release?                                        *
  *                                                                                             *
- * OUTPUT:  bool; Was the event stored sucessfully into the keyboard buffer?                   *
+ * OUTPUT:  bool; Was the event stored successfully into the keyboard buffer?                  *
  *                                                                                             *
  * WARNINGS:   none                                                                            *
  *                                                                                             *
@@ -878,7 +878,7 @@ void WWKeyboardClass::Clear(void)
  *                                                                                             *
  *          wParam   -- The windows specific word parameter (meaning depends on message).      *
  *                                                                                             *
- *          lParam   -- The windows specific long word parameter (meaning is message dependant)*
+ *          lParam   -- The windows specific long word parameter (meaning is message dependent)*
  *                                                                                             *
  * OUTPUT:  bool; Was this keyboard message recognized and processed? A 'false' return value   *
  *                means that the message should be processed normally.                         *
@@ -897,7 +897,7 @@ bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LO
 
     /*
     **	Examine the message to see if it is one that should be processed. Only keyboard and
-    **	pertinant mouse messages are processed.
+    **	pertinent mouse messages are processed.
     */
     switch (message) {
 
@@ -1004,7 +1004,7 @@ bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LO
         break;
 
     /*
-    **	If the message is not pertinant to the keyboard system,
+    **	If the message is not pertinent to the keyboard system,
     **	then do nothing.
     */
     default:

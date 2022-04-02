@@ -463,7 +463,7 @@ int LoadOptionsClass::Process(void)
             break;
 
         /*
-        ** If the user clicks on the list, see if the there is a new current
+        ** If the user clicks on the list, see if there is a new current
         ** item; if so, and if we're in SAVE mode, copy the list item into
         ** the save-game description field.
         */

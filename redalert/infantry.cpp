@@ -1511,7 +1511,7 @@ MoveType InfantryClass::Can_Enter_Cell(CELL cell, FacingType) const
                 if (!obj->Is_Techno() || !((TechnoClass*)obj)->Is_Cloaked(this)) {
 
                     /*
-                    **	Any non-allied blockage is considered impassible if the infantry
+                    **	Any non-allied blockage is considered impassable if the infantry
                     **	is not equipped with a weapon.
                     */
                     if (Combat_Damage() <= 0)

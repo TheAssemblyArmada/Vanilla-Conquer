@@ -226,8 +226,8 @@ int RAMFileClass::Open(char const*, int access)
  * RAMFileClass::Open -- Opens the RAM based file.                                             *
  *                                                                                             *
  *    This will open the ram based file for read or write. If the file is opened for write,    *
- *    the the 'file' can be written up to the limit of the buffer's size. If the file is       *
- *    opened for read, then the buffer is presumed to hold the data to be read.                *
+ *    then the 'file' can be written up to the limit of the buffer's size. If the file is      *
+ *    opened for reading, then the buffer is presumed to hold the data to be read.             *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *

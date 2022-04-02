@@ -293,7 +293,7 @@ public:
 
     /*
     **	If the map selection is to be skipped then this flag will be true. If this
-    **	ins't a one time only scenario, then the next scenario will have the same
+    **	isn't a one time only scenario, then the next scenario will have the same
     **	name as the current one but will be for variation "B".
     */
     unsigned IsNoMapSel : 1;
