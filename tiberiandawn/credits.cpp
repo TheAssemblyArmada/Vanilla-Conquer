@@ -148,7 +148,7 @@ void CreditClass::AI(bool forced, HouseClass* player_ptr, bool logic_only)
     /*
     **	Make sure that the credit counter doesn't drop below zero.
     */
-    Credits = MAX(Credits, 0L);
+    Credits = MAX(Credits, 0);
 
     if (Current == Credits)
         return;
@@ -167,7 +167,7 @@ void CreditClass::AI(bool forced, HouseClass* player_ptr, bool logic_only)
         **	Determine the amount to change the display toward the
         **	desired value.
         */
-        long adder = Credits - Current;
+        int adder = Credits - Current;
         adder = ABS(adder);
         adder >>= 5;
         adder = Bound(adder, 1L, 71 + 72);

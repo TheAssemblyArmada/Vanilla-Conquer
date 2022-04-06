@@ -125,7 +125,7 @@ EventClass::EventClass(SpecialClass data)
  * HISTORY:                                                                                    *
  *   06/25/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-EventClass::EventClass(EventType type, TARGET target)
+EventClass::EventClass(EventType type, TargetClass target)
 {
     ID = Houses.ID(PlayerPtr);
     Type = type;

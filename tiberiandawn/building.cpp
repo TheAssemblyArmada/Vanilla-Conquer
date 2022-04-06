@@ -187,7 +187,7 @@ int BuildingClass::Validate(void) const
  *   06/26/1995 JLB : Forces refinery load anim to start immediately.                          *
  *   08/13/1995 JLB : Uses ScenarioInit for special loose "CAN_LOAD" check.                    *
  *=============================================================================================*/
-RadioMessageType BuildingClass::Receive_Message(RadioClass* from, RadioMessageType message, long& param)
+RadioMessageType BuildingClass::Receive_Message(RadioClass* from, RadioMessageType message, int& param)
 {
     Validate();
     switch (message) {
@@ -4629,7 +4629,7 @@ int BuildingClass::Mission_Repair(void)
             }
             if (IsReadyToCommence && Transmit_Message(RADIO_NEED_TO_MOVE) == RADIO_ROGER) {
                 IsReadyToCommence = false;
-                long param = Health_Ratio();
+                int param = Health_Ratio();
                 if (Transmit_Message(RADIO_REPAIR, param) != RADIO_ROGER) {
 #ifdef OBSOLETE
                     if (House->Available_Money() < 10) {

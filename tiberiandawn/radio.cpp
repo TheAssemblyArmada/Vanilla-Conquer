@@ -126,7 +126,7 @@ void RadioClass::Debug_Dump(MonoClass* mono) const
  *   09/24/1994 JLB : Streamlined to be only a communications carrier.                         *
  *   05/22/1995 JLB : Recognized who is sending the message                                    *
  *=============================================================================================*/
-RadioMessageType RadioClass::Receive_Message(RadioClass* from, RadioMessageType message, long& param)
+RadioMessageType RadioClass::Receive_Message(RadioClass* from, RadioMessageType message, int& param)
 {
     /*
     **	Keep a record of the last message received by this radio.
@@ -181,7 +181,7 @@ RadioMessageType RadioClass::Receive_Message(RadioClass* from, RadioMessageType 
  * HISTORY:                                                                                    *
  *   05/22/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-RadioMessageType RadioClass::Transmit_Message(RadioMessageType message, long& param, RadioClass* to)
+RadioMessageType RadioClass::Transmit_Message(RadioMessageType message, int& param, RadioClass* to)
 {
     if (!to) {
         to = Contact_With_Whom();

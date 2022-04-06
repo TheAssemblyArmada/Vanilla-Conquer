@@ -628,8 +628,8 @@ bool Read_Scenario_Ini(char* root, bool fresh)
         /*
         ** All this was originally done within Compute_Start_Pos.
         */
-        long start_x = 0;
-        long start_y = 0;
+        int start_x = 0;
+        int start_y = 0;
         Map.Compute_Start_Pos(start_x, start_y);
         for (int i = 0; i < ARRAY_SIZE(Views); ++i) {
             Views[i] = XY_Cell(start_x, start_y);

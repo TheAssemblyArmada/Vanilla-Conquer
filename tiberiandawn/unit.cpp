@@ -527,7 +527,7 @@ FireErrorType UnitClass::Can_Fire(TARGET target, int which) const
  * HISTORY:                                                                                    *
  *   05/22/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-RadioMessageType UnitClass::Receive_Message(RadioClass* from, RadioMessageType message, long& param)
+RadioMessageType UnitClass::Receive_Message(RadioClass* from, RadioMessageType message, int& param)
 {
     Validate();
     switch (message) {
@@ -648,7 +648,7 @@ RadioMessageType UnitClass::Receive_Message(RadioClass* from, RadioMessageType m
                     if (cell == 0) {
                         Transmit_Message(RADIO_OVER_OUT, from);
                     } else {
-                        param = (long)::As_Target(cell);
+                        param = (int)::As_Target(cell);
 
                         if (!is_busy && !IsDriving) {
                             Do_Turn(dir);
@@ -676,7 +676,7 @@ RadioMessageType UnitClass::Receive_Message(RadioClass* from, RadioMessageType m
                         */
                         if (Transmit_Message(RADIO_MOVE_HERE, param, from) == RADIO_YEA_NOW_WHAT) {
                             if (Is_Door_Open() || Target_Legal(TarCom)) {
-                                param = (long)As_Target();
+                                param = (int)As_Target();
                                 Transmit_Message(RADIO_TETHER);
                                 if (Transmit_Message(RADIO_MOVE_HERE, param, from) != RADIO_ROGER) {
                                     Transmit_Message(RADIO_OVER_OUT, from);

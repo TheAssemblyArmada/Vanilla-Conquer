@@ -4137,7 +4137,7 @@ void DisplayClass::Set_Tactical_Position(COORDINATE coord)
  *   02/28/1995 JLB : Commented.                                                               *
  *   06/26/1995 JLB : Fixed building loop.                                                     *
  *=============================================================================================*/
-void DisplayClass::Compute_Start_Pos(long& x, long& y)
+void DisplayClass::Compute_Start_Pos(int& x, int& y)
 {
     /*
     **	Find the summation cell-x & cell-y for all the player's units, infantry,
@@ -4146,13 +4146,13 @@ void DisplayClass::Compute_Start_Pos(long& x, long& y)
     */
     x = 0;
     y = 0;
-    long num = 0;
+    int num = 0;
     int i;
     for (i = 0; i < Infantry.Count(); i++) {
         InfantryClass* infp = Infantry.Ptr(i);
         if (!infp->IsInLimbo && infp->House == PlayerPtr) {
-            x += (long)Coord_XCell(infp->Coord);
-            y += (long)Coord_YCell(infp->Coord);
+            x += (int)Coord_XCell(infp->Coord);
+            y += (int)Coord_YCell(infp->Coord);
             num++;
         }
     }
@@ -4160,8 +4160,8 @@ void DisplayClass::Compute_Start_Pos(long& x, long& y)
     for (i = 0; i < Units.Count(); i++) {
         UnitClass* unitp = Units.Ptr(i);
         if (!unitp->IsInLimbo && unitp->House == PlayerPtr) {
-            x += (long)Coord_XCell(unitp->Coord);
-            y += (long)Coord_YCell(unitp->Coord);
+            x += (int)Coord_XCell(unitp->Coord);
+            y += (int)Coord_YCell(unitp->Coord);
             num++;
         }
     }
@@ -4169,8 +4169,8 @@ void DisplayClass::Compute_Start_Pos(long& x, long& y)
     for (i = 0; i < Buildings.Count(); i++) {
         BuildingClass* bldgp = Buildings.Ptr(i);
         if (!bldgp->IsInLimbo && bldgp->House == PlayerPtr) {
-            x += (((long)Coord_XCell(bldgp->Coord)) << 4);
-            y += (((long)Coord_YCell(bldgp->Coord)) << 4);
+            x += (((int)Coord_XCell(bldgp->Coord)) << 4);
+            y += (((int)Coord_YCell(bldgp->Coord)) << 4);
             num += 16;
         }
     }

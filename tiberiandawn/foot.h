@@ -199,7 +199,7 @@ public:
     */
     bool Basic_Path(void);
 
-    virtual RadioMessageType Receive_Message(RadioClass* from, RadioMessageType message, long& param);
+    virtual RadioMessageType Receive_Message(RadioClass* from, RadioMessageType message, int& param);
     virtual bool Can_Demolish(void) const;
 
     /*

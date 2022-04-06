@@ -563,7 +563,7 @@ public:
     //.....................................................................
     // For finding Sync Bugs
     //.....................................................................
-    long TrapFrame;
+    int TrapFrame;
     RTTIType TrapObjType;
     TrapObjectType TrapObject;
     COORD TrapCoord;

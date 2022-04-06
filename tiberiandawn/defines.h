@@ -1659,11 +1659,35 @@ typedef enum RadioMessageType : unsigned char
 typedef unsigned COORDINATE;
 typedef signed short CELL;
 
-#ifdef MEGAMAPS
-typedef long TARGET;
+/**********************************************************************
+**	This is the target composit information. Notice that with an RTTI_NONE
+**	and an index value of 0, the target value returned is identical with
+**	TARGET_NONE. This is by design and is necessary.
+*/
+typedef int TARGET;
+
+/* Safe cast to target type */
+#define TARGET_SAFE_CAST(x) (static_cast<TARGET>(reinterpret_cast<intptr_t>((void*)(x))))
+
+#define TARGET_MANTISSA 24 // Bits of value precision.
+#define TARGET_EXPONENT 8
+#pragma pack(push, 1)
+typedef union
+{
+    TARGET Target;
+    struct BITFIELD_STRUCT
+    {
+#ifdef __BIG_ENDIAN__
+        unsigned Exponent : TARGET_EXPONENT;
+        unsigned Mantissa : TARGET_MANTISSA;
 #else
-typedef unsigned short TARGET;
+        unsigned Mantissa : TARGET_MANTISSA;
+        unsigned Exponent : TARGET_EXPONENT;
 #endif
+    } Sub;
+} TARGET_COMPOSITE;
+#pragma pack(pop)
+
 #define TARGET_NONE ((TARGET)0)
 
 /****************************************************************************

@@ -353,7 +353,7 @@ bool Do_Reinforcements(TeamTypeClass* teamtype)
             **	exactly lines up with the airfield they will unload at.
             */
             COORDINATE newcoord;
-            long reinforcement_delay = -1;
+            int reinforcement_delay = -1;
             ScenarioInit++;
             newcoord = Cell_Coord(Map.Calculated_Cell(HouseClass::As_Pointer(teamtype->House)->Edge, teamtype->House));
             ScenarioInit--;

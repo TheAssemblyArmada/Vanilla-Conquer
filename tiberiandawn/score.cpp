@@ -655,7 +655,7 @@ void ScoreClass::Presentation(void)
     */
     anim = Open_Animation(ScreenNames[house], NULL, 0L, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), Palette);
 
-    unsigned minutes = (unsigned)((ElapsedTime / (long)TIMER_MINUTE)) + 1;
+    unsigned minutes = (unsigned)((ElapsedTime / TIMER_MINUTE)) + 1;
 
     /*
     **	Determine leadership rating.
@@ -713,7 +713,7 @@ void ScoreClass::Presentation(void)
     /*
     ** Calculate total score
     */
-    long total = ((leadership * 40) + (4600) + (efficiency * 14)) / 100;
+    int total = ((leadership * 40) + (4600) + (efficiency * 14)) / 100;
     if (!total)
         total++;
     total *= (BuildLevel + 1);
@@ -790,7 +790,7 @@ void ScoreClass::Presentation(void)
     Play_Sample(sfx4, 255, Options.Normalize_Sound(120));
     Call_Back_Delay(13);
 
-    max = MAX((long)leadership, (long)efficiency);
+    max = MAX((int)leadership, (int)efficiency);
     int scorecounter = 0;
     int factor = Get_Resolution_Factor() + 1;
     Keyboard->Clear();

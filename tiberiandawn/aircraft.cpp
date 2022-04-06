@@ -2556,7 +2556,7 @@ COORDINATE AircraftClass::Target_Coord(void) const
  * HISTORY:                                                                                    *
  *   06/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-RadioMessageType AircraftClass::Receive_Message(RadioClass* from, RadioMessageType message, long& param)
+RadioMessageType AircraftClass::Receive_Message(RadioClass* from, RadioMessageType message, int& param)
 {
     Validate();
     switch (message) {

@@ -143,7 +143,7 @@ static RetcodeType Wait_For_Players(int first_time,
                                     int timeout,
                                     char* multi_packet_buf,
                                     int my_sent,
-                                    long* their_frame,
+                                    int* their_frame,
                                     unsigned short* their_sent,
                                     unsigned short* their_recv);
 static void Generate_Timing_Event(ConnManClass* net, int my_sent);
@@ -156,18 +156,18 @@ static RetcodeType Process_Receive_Packet(ConnManClass* net,
                                           char* multi_packet_buf,
                                           int id,
                                           int packetlen,
-                                          long* their_frame,
+                                          int* their_frame,
                                           unsigned short* their_sent,
                                           unsigned short* their_recv);
 static RetcodeType Process_Serial_Packet(char* multi_packet_buf, int first_time);
 static int Can_Advance(ConnManClass* net,
                        int max_ahead,
-                       long* their_frame,
+                       int* their_frame,
                        unsigned short* their_sent,
                        unsigned short* their_recv);
 static int
-Process_Reconnect_Dialog(CountDownTimerClass* timeout_timer, long* their_frame, int num_conn, int reconn, int fresh);
-static int Handle_Timeout(ConnManClass* net, long* their_frame, unsigned short* their_sent, unsigned short* their_recv);
+Process_Reconnect_Dialog(CountDownTimerClass* timeout_timer, int* their_frame, int num_conn, int reconn, int fresh);
+static int Handle_Timeout(ConnManClass* net, int* their_frame, unsigned short* their_sent, unsigned short* their_recv);
 static void Stop_Game(void);
 #endif // DEMO
 
@@ -190,7 +190,7 @@ static int Execute_DoList(int max_houses,
                           HousesType base_house,
                           ConnManClass* net,
                           TCountDownTimerClass* skip_crc,
-                          long* their_frame,
+                          int* their_frame,
                           unsigned short* their_sent,
                           unsigned short* their_recv);
 static void Clean_DoList(ConnManClass* net);
@@ -206,7 +206,7 @@ static void Queue_Playback(void);
 static void Compute_Game_CRC(void);
 static void Init_Queue_Mono(ConnManClass* net);
 static void Update_Queue_Mono(ConnManClass* net, int flow_index);
-static void Print_Framesync_Values(long curframe,
+static void Print_Framesync_Values(int curframe,
                                    unsigned int max_ahead,
                                    int num_connections,
                                    unsigned short* their_recv,
@@ -545,7 +545,7 @@ static void Queue_AI_Multiplayer(void)
     // order in which the connections are created.
     // (ie net->Connection_Index(id))
     //........................................................................
-    static long their_frame[MAX_PLAYERS - 1];          // other players' frame #'s
+    static int their_frame[MAX_PLAYERS - 1];          // other players' frame #'s
     static unsigned short their_sent[MAX_PLAYERS - 1]; // # cmds other player claims to have sent
     static unsigned short their_recv[MAX_PLAYERS - 1]; // # cmds actually received from others
     static unsigned short my_sent;                     // # cmds I've sent out
@@ -809,7 +809,7 @@ static RetcodeType Wait_For_Players(int first_time,
                                     int timeout,
                                     char* multi_packet_buf,
                                     int my_sent,
-                                    long* their_frame,
+                                    int* their_frame,
                                     unsigned short* their_sent,
                                     unsigned short* their_recv)
 {
@@ -1561,7 +1561,7 @@ static RetcodeType Process_Receive_Packet(ConnManClass* net,
                                           char* multi_packet_buf,
                                           int id,
                                           int packetlen,
-                                          long* their_frame,
+                                          int* their_frame,
                                           unsigned short* their_sent,
                                           unsigned short* their_recv)
 {
@@ -1803,9 +1803,9 @@ static RetcodeType Process_Serial_Packet(char* multi_packet_buf, int first_time)
  *   11/21/1995 BRR : Created.                                             *
  *=========================================================================*/
 static int
-Can_Advance(ConnManClass* net, int max_ahead, long* their_frame, unsigned short* their_sent, unsigned short* their_recv)
+Can_Advance(ConnManClass* net, int max_ahead, int* their_frame, unsigned short* their_sent, unsigned short* their_recv)
 {
-    long their_oldest_frame; // other players' oldest frame #
+    int their_oldest_frame; // other players' oldest frame #
     int count_ok;            // true = my cmd count matches theirs
     int i;
 
@@ -1870,7 +1870,7 @@ Can_Advance(ConnManClass* net, int max_ahead, long* their_frame, unsigned short*
  *   11/21/1995 BRR : Created.                                             *
  *=========================================================================*/
 static int
-Process_Reconnect_Dialog(CountDownTimerClass* timeout_timer, long* their_frame, int num_conn, int reconn, int fresh)
+Process_Reconnect_Dialog(CountDownTimerClass* timeout_timer, int* their_frame, int num_conn, int reconn, int fresh)
 {
     static int displayed_time = 0; // time value currently displayed
     int new_time;
@@ -1956,7 +1956,7 @@ Process_Reconnect_Dialog(CountDownTimerClass* timeout_timer, long* their_frame, 
  * HISTORY:                                                                *
  *   11/21/1995 BRR : Created.                                             *
  *=========================================================================*/
-static int Handle_Timeout(ConnManClass* net, long* their_frame, unsigned short* their_sent, unsigned short* their_recv)
+static int Handle_Timeout(ConnManClass* net, int* their_frame, unsigned short* their_sent, unsigned short* their_recv)
 {
     int oldest_index; // index of person requiring a reconnect
     int i, j;
@@ -2773,7 +2773,7 @@ static int Execute_DoList(int,
                           HousesType,
                           ConnManClass* net,
                           TCountDownTimerClass*,
-                          long* their_frame,
+                          int* their_frame,
                           unsigned short* their_sent,
                           unsigned short* their_recv)
 {
@@ -4048,7 +4048,7 @@ static void Update_Queue_Mono(ConnManClass* net, int flow_index)
  * HISTORY:                                                                *
  *   11/21/1995 BRR : Created.                                             *
  *=========================================================================*/
-static void Print_Framesync_Values(long curframe,
+static void Print_Framesync_Values(int curframe,
                                    unsigned int max_ahead,
                                    int num_connections,
                                    unsigned short* their_recv,

@@ -2417,13 +2417,13 @@ long Obfuscate(char const* string)
     **	Transform the buffer into a number. This transformation is character
     **	order dependant.
     */
-    long code = Calculate_CRC(buffer, length);
+    int code = Calculate_CRC(buffer, length);
 
     /*
     **	Record a copy of this initial transformation to be used in a later
     **	self referential transformation.
     */
-    long copy = code;
+    int copy = code;
 
     /*
     **	Reverse the character string and combine with the previous transformation.
@@ -2450,7 +2450,7 @@ long Obfuscate(char const* string)
         unsigned char temp = (unsigned char)code;
         buffer[index] ^= temp;
         code >>= 8;
-        code |= (((long)temp) << 24);
+        code |= (((int)temp) << 24);
     }
 
     /*

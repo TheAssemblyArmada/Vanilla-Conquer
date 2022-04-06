@@ -1602,7 +1602,7 @@ static int Net_Join_Dialog(void)
                     If 'input' returned 3, it means send the current message.
                     ...............................................................*/
                     if (i == 3) {
-                        long actual_message_size;
+                        int actual_message_size;
                         char* the_string;
 
                         sent_so_far = 0;
@@ -2854,14 +2854,14 @@ static int Net_New_Dialog(void)
     int old_cred;                 // old value in credits buffer
     int transmit;                 // 1 = re-transmit new game options
 
-    long ok_timer = 0; // for timing OK button
+    int ok_timer = 0; // for timing OK button
     int index;         // index for rejecting a player
     int rc;
     int i, j;
     char* item;
     int tabs[] = {77 * factor}; // tabs for player list box
 
-    long ping_timer = 0; // for sending Ping packets
+    int ping_timer = 0; // for sending Ping packets
 
     unsigned char tmp_id[MAX_PLAYERS]; // temp storage for sorting player ID's
     int min_index;                     // for sorting player ID's
@@ -3616,7 +3616,7 @@ static int Net_New_Dialog(void)
             If 'input' returned 3, it means send the current message.
             ...............................................................*/
             else if (i == 3) {
-                long actual_message_size;
+                int actual_message_size;
                 char* the_string;
 
                 sent_so_far = 0;
@@ -4333,13 +4333,13 @@ static int Net_Fake_New_Dialog(void)
     int old_cred;                 // old value in credits buffer
     int transmit;                 // 1 = re-transmit new game options
 
-    long ok_timer = 0; // for timing OK button
+    int ok_timer = 0; // for timing OK button
     int rc;
     int i, j;
     char* item;
     int tabs[] = {77 * factor}; // tabs for player list box
 
-    long ping_timer = 0; // for sending Ping packets
+    int ping_timer = 0; // for sending Ping packets
 
     unsigned char tmp_id[MAX_PLAYERS]; // temp storage for sorting player ID's
     int min_index;                     // for sorting player ID's

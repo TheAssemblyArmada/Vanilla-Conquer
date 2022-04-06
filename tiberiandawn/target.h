@@ -59,26 +59,25 @@ typedef enum KindType : unsigned char
     KIND_TEAMTYPE
 } KindType;
 
-#ifdef MEGAMAPS
-#define TARGET_MANTISSA 24 // Bits of value precision.
-#else
-#define TARGET_MANTISSA 12 // Bits of value precision.
-#endif
-#define TARGET_MANTISSA_MASK (~((~0) << TARGET_MANTISSA))
-#define TARGET_EXPONENT      ((sizeof(TARGET) * 8) - TARGET_MANTISSA)
-#define TARGET_EXPONENT_MASK (~(((unsigned)(~0)) >> TARGET_EXPONENT))
+inline TARGET Build_Target(KindType kind, int value)
+{
+    TARGET_COMPOSITE target;
+
+    target.Target = 0;
+    target.Sub.Exponent = kind;
+    target.Sub.Mantissa = value;
+    return (target.Target);
+}
 
 inline KindType Target_Kind(TARGET a)
 {
-    return (KindType)(((unsigned)a) >> TARGET_MANTISSA);
-}
-inline unsigned Target_Value(TARGET a)
-{
-    return (((unsigned)a) & TARGET_MANTISSA_MASK);
+    return (KindType(((TARGET_COMPOSITE&)a).Sub.Exponent));
 }
 
-// intentionally discarding higher bits that do not decode the target information
-#define Target_Ptr(ptr) ((TARGET)(intptr_t)ptr)
+inline unsigned Target_Value(TARGET a)
+{
+    return (((TARGET_COMPOSITE&)a).Sub.Mantissa);
+}
 
 inline bool Is_Target_Team(TARGET a)
 {
@@ -129,10 +128,6 @@ inline bool Is_Target_Animation(TARGET a)
     return (Target_Kind(a) == KIND_ANIMATION);
 }
 
-inline TARGET Build_Target(KindType kind, int value)
-{
-    return (TARGET)((((unsigned)kind) << TARGET_MANTISSA) | (unsigned)value);
-}
 inline TARGET As_Target(CELL cell)
 {
     return (TARGET)(((unsigned)KIND_CELL << TARGET_MANTISSA) | cell);
@@ -151,99 +146,139 @@ class TeamTypeClass;
 class AnimClass;
 class AircraftClass;
 
-#ifdef NEVER
-class TargetClass
+/*
+** Must not have a constructor since Watcom cannot handle a class that has a constructor if
+** that class object is in a union. Don't use this class for normal purposes. Use the TargetClass
+**	instead. The xTargetClass is only used in one module for a special reason -- keep it that way.
+*/
+class xTargetClass
+{
+protected:
+    TARGET_COMPOSITE Target;
+
+public:
+    // conversion operator to RTTIType
+    operator RTTIType(void) const
+    {
+        return (RTTIType(Target.Sub.Exponent));
+    }
+
+    // comparison operator
+    int operator==(xTargetClass& tgt)
+    {
+        return (tgt.Target.Target == Target.Target ? 1 : 0);
+    }
+
+    // conversion operator to regular TARGET type
+    TARGET As_TARGET(void) const
+    {
+        return (Target.Target);
+    }
+
+    unsigned Value(void) const
+    {
+        return (Target.Sub.Mantissa);
+    };
+
+    void Invalidate(void)
+    {
+        Target.Sub.Exponent = RTTI_NONE;
+        Target.Sub.Mantissa = -1;
+    }
+    bool Is_Valid(void) const
+    {
+        return (Target.Sub.Exponent != RTTI_NONE);
+    }
+
+    TARGET As_Target(void) const
+    {
+        return (Target.Target);
+    }
+    AbstractTypeClass* As_TypeClass(void) const;
+    AbstractClass* As_Abstract(bool check_active = true) const;
+    TechnoClass* As_Techno(bool check_active = true) const;
+    ObjectClass* As_Object(bool check_active = true) const;
+
+    /*
+    **	Helper routines to combine testing for, and fetching a pointer to, the
+    **	type of object indicated.
+    */
+    TerrainClass* As_Terrain(bool check_active = true) const
+    {
+        if (*this == RTTI_TERRAIN)
+            return ((TerrainClass*)As_Abstract(check_active));
+        return (0);
+    }
+    BulletClass* As_Bullet(bool check_active = true) const
+    {
+        if (*this == RTTI_BULLET)
+            return ((BulletClass*)As_Abstract(check_active));
+        return (0);
+    }
+    AnimClass* As_Anim(bool check_active = true) const
+    {
+        if (*this == RTTI_ANIM)
+            return ((AnimClass*)As_Abstract(check_active));
+        return (0);
+    }
+    TeamClass* As_Team(bool check_active = true) const
+    {
+        if (*this == RTTI_TEAM)
+            return ((TeamClass*)As_Abstract(check_active));
+        return (0);
+    }
+    InfantryClass* As_Infantry(bool check_active = true) const
+    {
+        if (*this == RTTI_INFANTRY)
+            return ((InfantryClass*)As_Techno(check_active));
+        return (0);
+    }
+    UnitClass* As_Unit(bool check_active = true) const
+    {
+        if (*this == RTTI_UNIT)
+            return ((UnitClass*)As_Techno(check_active));
+        return (0);
+    }
+    BuildingClass* As_Building(bool check_active = true) const
+    {
+        if (*this == RTTI_BUILDING)
+            return ((BuildingClass*)As_Techno(check_active));
+        return (0);
+    }
+    AircraftClass* As_Aircraft(bool check_active = true) const
+    {
+        if (*this == RTTI_AIRCRAFT)
+            return ((AircraftClass*)As_Techno(check_active));
+        return (0);
+    }
+};
+
+/*
+**	This class only serves as a wrapper to the xTargetClass. This class must not define any members except
+**	for the constructors. This is because the xTargetClass is used in a union and this target object is
+**	used as its initializer. If this class had any extra members they would not be properly copied and
+**	communicated to the other machines in a network/modem game. Combining this class with xTargetClass would
+**	be more efficient, but Watcom doesn't allow class objects that have a constructor to be part of a union [even
+**	if the class object has a default constructor!].
+*/
+class TargetClass : public xTargetClass
 {
 public:
     TargetClass(void)
     {
-        Target.Raw = 0;
-    };
-
-    /*
-    **	This handles assignment from an integer and conversion
-    **	to an integer.
-    */
-    inline TargetClass(int val, KindType kind)
+        Invalidate();
+    }
+    TargetClass(NoInitClass const&)
     {
-        Target.Component.Value = val;
-        Target.Component.Kind = kind;
-    };
-    inline TargetClass(int val)
+    }
+    TargetClass(RTTIType rtti, int id)
     {
-        Target.Raw = val;
-    };
-    inline operator int()
-    {
-        return Target.Raw;
-    };
-    // inline TargetClass & operator = (const int &val) {*((int*)this)=val; return *this;};
-
-    inline bool Is_Filled(void)
-    {
-        return Target.Component.Kind != KIND_NONE;
-    };
-    inline void Invalidate(void)
-    {
-        Target.Component.Kind = 0;
-    };
-    inline bool Is_Cell(void)
-    {
-        return Target.Component.Kind == KIND_CELL;
-    };
-    inline bool Is_Unit(void)
-    {
-        return Target.Component.Kind == KIND_UNIT;
-    };
-    inline bool Is_Building(void)
-    {
-        return Target.Component.Kind == KIND_BUILDING;
-    };
-    inline bool Is_Aircraft(void)
-    {
-        return Target.Component.Kind == KIND_AIRCRAFT;
-    };
-    inline int As_Value(void)
-    {
-        return Target.Component.Value;
-    };
-    inline KindType As_Kind(void)
-    {
-        return Target.Component.Kind;
-    };
-
-    // Allows comparing one target to another (for equality).
-    inline bool operator==(TargetClass t1)
-    {
-        return (Target.Raw == t1.Target.Raw);
-    };
-
-    UnitClass* As_Unit(void);
-    BuildingClass* As_Building(void);
-    bool Legal(void);
-    CELL As_Cell(void);
-    COORDINATE As_Coord(void);
-    int Distance(TechnoClass* base);
-    static int As_Target(UnitClass* unit);
-    static int As_Target(BuildingClass* building);
-    static int As_Target(CELL cell);
-
-private:
-    /*
-    **	This is the special encoded target value.
-    */
-    union
-    {
-        struct
-        {
-            unsigned Value : TARGET_MANTISSA;
-            KindType Kind : TARGET_EXPONENT;
-        } Component;
-        int Raw;
-    } Target;
-
-    static int Build(int value, KindType kind);
+        Target.Sub.Exponent = rtti;
+        Target.Sub.Mantissa = id;
+    }
+    TargetClass(TARGET target);
+    TargetClass(AbstractClass const* ptr);
+    TargetClass(AbstractTypeClass const* ptr);
 };
-#endif
 
 #endif

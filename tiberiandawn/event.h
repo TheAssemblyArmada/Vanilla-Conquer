@@ -220,7 +220,7 @@ public:
         Type = EMPTY;
     };
     EventClass(SpecialClass data);
-    EventClass(EventType type, TARGET target);
+    EventClass(EventType type, TargetClass target);
     EventClass(EventType type);
     EventClass(EventType type, int val);
     EventClass(EventType type, TARGET src, TARGET dest);

@@ -565,7 +565,7 @@ bool HouseClass::Can_Build(TechnoTypeClass const* type, HousesType house) const
     /*
     **	Perform some equivalency fixups for the building existance flags.
     */
-    long flags = ActiveBScan;
+    int flags = ActiveBScan;
 
     /*
     **	AI players update flags using building quantity tracker.
@@ -1712,7 +1712,7 @@ void HouseClass::Attacked(BuildingClass* source)
 void HouseClass::Harvested(unsigned tiberium)
 {
     Validate();
-    long oldtib = Tiberium;
+    int oldtib = Tiberium;
 
     Tiberium += tiberium;
     if (Tiberium > Capacity) {
@@ -1738,7 +1738,7 @@ void HouseClass::Harvested(unsigned tiberium)
  * HISTORY:                                                                                    *
  *   01/25/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-long HouseClass::Available_Money(void) const
+int HouseClass::Available_Money(void) const
 {
     Validate();
     return (Tiberium + Credits);
@@ -1764,7 +1764,7 @@ long HouseClass::Available_Money(void) const
 void HouseClass::Spend_Money(unsigned money)
 {
     Validate();
-    long oldtib = Tiberium;
+    int oldtib = Tiberium;
     if ((int)money > Tiberium) {
         money -= (unsigned)Tiberium;
         Tiberium = 0;
@@ -1820,7 +1820,7 @@ void HouseClass::Refund_Money(unsigned money)
 int HouseClass::Adjust_Capacity(int adjust, bool inanger)
 {
     Validate();
-    long oldcap = Capacity;
+    int oldcap = Capacity;
     int retval = 0;
 
     Capacity += adjust;
@@ -1858,7 +1858,7 @@ int HouseClass::Adjust_Capacity(int adjust, bool inanger)
  * HISTORY:                                                                                    *
  *   02/02/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void HouseClass::Silo_Redraw_Check(long oldtib, long oldcap)
+void HouseClass::Silo_Redraw_Check(int oldtib, int oldcap)
 {
     Validate();
     int oldratio = 0;
@@ -1917,7 +1917,7 @@ void HouseClass::Read_INI(CCINIClass& ini)
 
         p->MaxBuilding = maxbuilding;
         p->MaxUnit = maxunit;
-        p->Credits = (long)credits * 100;
+        p->Credits = credits * 100;
         p->InitialCredits = p->Credits;
         p->Edge = ini.Get_SourceType(hname, "Edge", SOURCE_NORTH);
 

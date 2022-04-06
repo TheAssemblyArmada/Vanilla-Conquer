@@ -958,7 +958,7 @@ static void Message_Input(KeyNumType& input)
 
         message_length = strlen(Messages.Get_Edit_Buf());
 
-        long actual_message_size;
+        int actual_message_size;
         char* the_string;
 
         /*

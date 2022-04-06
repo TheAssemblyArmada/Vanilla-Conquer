@@ -36,7 +36,7 @@
 #define COMPAT_H
 
 #define movmem(a, b, c) memmove(b, a, c)
-extern long ShapeBufferSize;
+extern int ShapeBufferSize;
 extern char* ShapeBuffer;
 
 /*=========================================================================*/
