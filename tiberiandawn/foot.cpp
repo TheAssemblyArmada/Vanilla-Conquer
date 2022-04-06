@@ -1499,7 +1499,7 @@ bool FootClass::Restore_Mission(void)
  * HISTORY:                                                                                    *
  *   05/14/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-RadioMessageType FootClass::Receive_Message(RadioClass* from, RadioMessageType message, long& param)
+RadioMessageType FootClass::Receive_Message(RadioClass* from, RadioMessageType message, int& param)
 {
     switch (message) {
 

@@ -345,7 +345,7 @@ private:
     This is a real-mode pointer to the address of the real-mode assembly
     entry point.
     .....................................................................*/
-    long Handler;
+    int Handler;
 
     /*.....................................................................
     Event Control Block for listening; contained within the real-mode

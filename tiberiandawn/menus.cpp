@@ -200,7 +200,7 @@ void Setup_Menu(int menu, char const* text[], unsigned int field, int index, int
 /*	INPUTS:																						*/
 /*	RETURNS:																						*/
 /*=========================================================================*/
-int Check_Menu(int menu, char const* text[], char*, long field, int index)
+int Check_Menu(int menu, char const* text[], char*, int field, int index)
 {
     int maxitem, select, key, menuy, menux;
     int mx1, mx2, my1, my2, tempy;

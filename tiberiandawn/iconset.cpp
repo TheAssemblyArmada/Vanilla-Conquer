@@ -49,8 +49,6 @@
 // extern int Misc;
 int Misc;
 
-void* Load_Icon_Set(char const* filename, void* iconsetptr, long buffsize);
-void Free_Icon_Set(void const* iconset);
 long Get_Icon_Set_Size(void const* iconset);
 int Get_Icon_Set_Width(void const* iconset);
 int Get_Icon_Set_Height(void const* iconset);
@@ -74,7 +72,7 @@ void* Get_Icon_Set_Map(void const* iconset);
 long Get_Icon_Set_Size(void const* iconset)
 {
     IControl_Type* icontrol;
-    long size = 0;
+    int size = 0;
 
     icontrol = (IControl_Type*)iconset;
     if (icontrol) {

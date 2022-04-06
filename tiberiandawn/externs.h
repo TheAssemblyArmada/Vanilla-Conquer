@@ -211,14 +211,14 @@ extern char const* SystemStrings;
 */
 extern HousesType Whom;
 extern VQAConfig AnimControl;
-extern long SpareTicks;
+extern int SpareTicks;
 extern int MonoPage;
 extern unsigned char* OriginalPalette;
 extern int EndCountDown;
 extern bool GameActive;
 extern bool SpecialFlag;
 extern int ScenarioInit;
-extern long TutorFlags[2];
+extern int TutorFlags[2];
 extern HouseClass* PlayerPtr;
 extern unsigned char* BlackPalette;
 extern unsigned char* WhitePalette;
@@ -327,7 +327,7 @@ typedef struct
     } Ptr;
 } TrapObjectType;
 
-extern long TrapFrame;
+extern int TrapFrame;
 extern RTTIType TrapObjType;
 extern TrapObjectType TrapObject;
 extern COORDINATE TrapCoord;
@@ -356,7 +356,7 @@ extern DynamicVectorClass<NodeNameType*> Games;
 extern DynamicVectorClass<NodeNameType*> Players;
 
 extern int Seed;
-extern long* RandSeedPtr;
+extern int* RandSeedPtr;
 extern int CustomSeed;
 extern int NewMaxAheadFrame1;
 extern int NewMaxAheadFrame2;

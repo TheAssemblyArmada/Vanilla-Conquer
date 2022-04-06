@@ -173,7 +173,7 @@ public:
     */
     virtual void AI(void);
     virtual void Enter_Idle_Mode(bool initial = false);
-    virtual RadioMessageType Receive_Message(RadioClass* from, RadioMessageType message, long& param);
+    virtual RadioMessageType Receive_Message(RadioClass* from, RadioMessageType message, int& param);
     virtual void Scatter(COORDINATE threat, bool forced = false, bool nokidding = false);
     void Set_Reinforcement_Delay(long delay);
 
@@ -271,7 +271,7 @@ private:
     /*
     **	Cargo planes will wait a certain number of ticks before flying in.
     */
-    long ReinforcementStart;
+    int ReinforcementStart;
 
     /*
     ** Some additional padding in case we need to add data to the class and maintain backwards compatibility for

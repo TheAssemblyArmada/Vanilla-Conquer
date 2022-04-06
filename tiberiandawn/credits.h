@@ -44,7 +44,7 @@ extern HouseClass* PlayerPtr;
 class CreditClass
 {
 public:
-    long Credits; // Value of credits trying to update display to.
+    int Credits; // Value of credits trying to update display to.
 
     /*---------------------------------------------------------------------
     **	Constructors, Destructors, and overloaded operators.
@@ -62,7 +62,7 @@ public:
             HouseClass* player_ptr = PlayerPtr,
             bool logic_only = false); // Added house and logic_only parameters. ST - 10/16/2019 2:26PM
 
-    long Current; // Credit value currently displayed.
+    int Current; // Credit value currently displayed.
 
     unsigned IsToRedraw : 1;
     unsigned IsUp : 1;

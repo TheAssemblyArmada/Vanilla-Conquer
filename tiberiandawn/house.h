@@ -479,7 +479,7 @@ public:
     TechnoTypeClass const* Suggest_New_Object(RTTIType objectype) const;
     bool Does_Enemy_Building_Exist(StructType) const;
     void Harvested(unsigned tiberium);
-    long Available_Money(void) const;
+    int Available_Money(void) const;
     void Spend_Money(unsigned money);
     void Refund_Money(unsigned money);
     void Attacked(BuildingClass* source);
@@ -560,7 +560,7 @@ public:
     void Recalc_Center(void);
     // void Harvested(unsigned tiberium);
     void Stole(unsigned worth);
-    // long Available_Money(void) const;
+    // int Available_Money(void) const;
     // void Spend_Money(unsigned money);
     // void Refund_Money(unsigned money);
     // void Attacked(void);
@@ -708,7 +708,7 @@ public:
     TCountDownTimerClass ScreenShakeTime;
 
 private:
-    void Silo_Redraw_Check(long oldtib, long oldcap);
+    void Silo_Redraw_Check(int oldtib, int oldcap);
 
     /*
     **	This is a bit field record of all the other houses that are allies with

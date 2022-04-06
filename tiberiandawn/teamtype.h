@@ -134,7 +134,7 @@ public:
     */
     static char const* Name_From_Mission(TeamMissionType order);
     static TeamMissionType Mission_From_Name(char const* name);
-    static TeamTypeClass const* Suggested_New_Team(HouseClass* house, long utypes, long itypes, bool alerted);
+    static TeamTypeClass const* Suggested_New_Team(HouseClass* house, int utypes, int itypes, bool alerted);
 
     TARGET As_Target(void) const;
 

@@ -196,7 +196,7 @@ TechnoClass* CellClass::Cell_Techno(int x, int y) const
     ObjectClass* object;
     COORDINATE click; // Coordinate of click relative to cell corner.
     TechnoClass* close = NULL;
-    long distance = 0; // Recorded closest distance.
+    int distance = 0; // Recorded closest distance.
 
     /*
     **	Create a coordinate value that represent the pixel location within the cell. This is
@@ -209,7 +209,7 @@ TechnoClass* CellClass::Cell_Techno(int x, int y) const
         while (object && object->IsActive) {
             if (object->Is_Techno()) {
                 COORDINATE coord; // Coordinate relative to cell corner.
-                long dist;
+                int dist;
 
                 coord = object->Center_Coord() & 0x00FF00FFL;
                 dist = Distance(coord, click);
@@ -1898,7 +1898,7 @@ void CellClass::Adjust_Threat(HousesType house, int threat_value)
  * HISTORY:                                                                                    *
  *   05/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-long CellClass::Tiberium_Adjust(bool pregame)
+int CellClass::Tiberium_Adjust(bool pregame)
 {
     Validate();
     if (Overlay != OVERLAY_NONE) {

@@ -373,7 +373,7 @@ int main(int argc, char** argv)
         ** Use a system memory page if the user has specified it via the ccsetup program.
         */
         CCDebugString("C&C95 - Allocating back buffer ");
-        long video_memory = Get_Free_Video_Memory();
+        int video_memory = Get_Free_Video_Memory();
         unsigned video_capabilities = Get_Video_Hardware_Capabilities();
         if (video_memory < ScreenWidth * ScreenHeight || (!(video_capabilities & VIDEO_BLITTER))
             || (video_capabilities & VIDEO_NO_HARDWARE_ASSIST) || !VideoBackBufferAllowed) {

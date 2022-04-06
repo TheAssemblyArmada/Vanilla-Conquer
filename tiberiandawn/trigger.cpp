@@ -741,7 +741,7 @@ bool TriggerClass::Spring(EventType event, CELL cell)
  *   12/06/1994 BR : Created.                                                                  *
  *   06/25/1995 JLB : Added more trigger events.                                               *
  *=============================================================================================*/
-bool TriggerClass::Spring(EventType event, HousesType house, long data)
+bool TriggerClass::Spring(EventType event, HousesType house, int data)
 {
     Validate();
     /*

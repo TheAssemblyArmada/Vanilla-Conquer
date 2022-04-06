@@ -144,7 +144,7 @@ typedef struct
 //#include <vqa32\vqafile.h>
 
 extern bool GameActive;
-extern long LParam;
+extern int LParam;
 
 #include "vector.h"
 #include "heap.h"
@@ -371,7 +371,7 @@ void CC_Draw_Pip(ObjectClass* object,
 void CC_Draw_Line(int x, int y, int x1, int y1, unsigned char color, int frame, WindowNumberType window);
 
 void Go_Editor(bool flag);
-// long MixFileHandler(VQAHandle *vqa, long action, void *buffer, long nbytes);
+// long MixFileHandler(VQAHandle *vqa, int action, void *buffer, int nbytes);
 
 char* CC_Get_Shape_Filename(void const* shapeptr);
 void CC_Add_Shape_To_Global(void const* shapeptr, char* filename, char code);
@@ -548,7 +548,7 @@ int Coord_Spillage_Number(COORDINATE coord, int maxsize);
 **	MENUS.CPP
 */
 void Setup_Menu(int menu, char const* text[], unsigned int field, int index, int skip);
-int Check_Menu(int menu, char const* text[], char* selection, long field, int index);
+int Check_Menu(int menu, char const* text[], char* selection, int field, int index);
 int Do_Menu(char const** strings, bool blue);
 extern int UnknownKey;
 int Main_Menu(unsigned int timeout);

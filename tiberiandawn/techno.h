@@ -305,7 +305,7 @@ public:
     */
     virtual void AI(void);
     virtual bool Revealed(HouseClass* house);
-    virtual RadioMessageType Receive_Message(RadioClass* from, RadioMessageType message, long& param);
+    virtual RadioMessageType Receive_Message(RadioClass* from, RadioMessageType message, int& param);
 
 /*
 **	Scenario and debug support.

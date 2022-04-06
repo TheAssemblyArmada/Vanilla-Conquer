@@ -2754,7 +2754,7 @@ COORDINATE InfantryClass::Fire_Coord(int) const
  *   01/19/1995 BWG : Created.                                             *
  *   05/14/1995 JLB : Handles loading maneuver messages.                   *
  *=========================================================================*/
-RadioMessageType InfantryClass::Receive_Message(RadioClass* from, RadioMessageType message, long& param)
+RadioMessageType InfantryClass::Receive_Message(RadioClass* from, RadioMessageType message, int& param)
 {
     Validate();
     int damage;

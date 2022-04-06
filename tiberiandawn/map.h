@@ -85,7 +85,7 @@ public:
     // Added for loading custom maps - 2019/10/28 JAS
     bool Read_Binary_File(char const* fname, uint32_t* crc);
 
-    long Overpass(void);
+    int Overpass(void);
 
     virtual void Logic(void);
     virtual void Set_Map_Dimensions(int x, int y, int w, int h);
@@ -126,7 +126,7 @@ public:
     /*
     **	This is the total value of all harvestable Tiberium on the map.
     */
-    long TotalValue;
+    int TotalValue;
 
 #ifdef MEGAMAPS
     /*

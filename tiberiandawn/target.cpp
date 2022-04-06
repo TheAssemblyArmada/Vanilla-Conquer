@@ -50,6 +50,11 @@
 #include "function.h"
 #include "target.h"
 
+TargetClass::TargetClass(TARGET target)
+{
+    Target.Target = target;
+}
+
 /***********************************************************************************************
  * As_Trigger -- Converts specified target into a trigger pointer.                             *
  *                                                                                             *

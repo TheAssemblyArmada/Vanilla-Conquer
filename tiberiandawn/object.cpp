@@ -1328,7 +1328,7 @@ void ObjectClass::Detach_This_From_All(TARGET target, bool all)
  * HISTORY:                                                                                    *
  *   09/24/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-RadioMessageType ObjectClass::Receive_Message(RadioClass*, RadioMessageType message, long&)
+RadioMessageType ObjectClass::Receive_Message(RadioClass*, RadioMessageType message, int&)
 {
     switch (message) {
 

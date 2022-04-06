@@ -147,7 +147,7 @@ int const TechnoClass::BodyShape[32] = {0,  31, 30, 29, 28, 27, 26, 25, 24, 23, 
 TechnoTypeClass::TechnoTypeClass(int name,
                                  char const* ininame,
                                  unsigned char level,
-                                 long pre,
+                                 int pre,
                                  bool is_leader,
                                  bool is_scanner,
                                  bool is_nominal,
@@ -758,7 +758,7 @@ bool TechnoClass::Mark(MarkType mark)
  *   10/17/1994 JLB : Created.                                                                 *
  *   06/17/1995 JLB : Handles tether contact messages.                                         *
  *=============================================================================================*/
-RadioMessageType TechnoClass::Receive_Message(RadioClass* from, RadioMessageType message, long& param)
+RadioMessageType TechnoClass::Receive_Message(RadioClass* from, RadioMessageType message, int& param)
 {
     switch (message) {
 

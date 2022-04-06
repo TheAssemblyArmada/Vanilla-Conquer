@@ -504,7 +504,7 @@ public:
     **	multi-player or special events.
     */
     unsigned char Level;
-    long Pre;
+    int Pre;
 
     /*
     **	The risk and reward values are used to determine targets and paths
@@ -555,7 +555,7 @@ public:
     TechnoTypeClass(int name,
                     char const* ininame,
                     unsigned char level,
-                    long pre,
+                    int pre,
                     bool is_leader,
                     bool is_scanner,
                     bool is_nominal,
@@ -758,7 +758,7 @@ public:
     **	This is a mask flag used to determine if all the necessary prerequisite
     **	buildings have been built.
     */
-    //		long Prerequisite;
+    //		int Prerequisite;
 
     /*---------------------------------------------------------------------------
     **	This is the building type explicit constructor.
@@ -772,7 +772,7 @@ public:
                       char const* ininame,
                       COORDINATE exitpoint,
                       unsigned char level,
-                      long pre,
+                      int pre,
                       bool is_scanner,
                       bool is_regulated,
                       bool is_bibbed,
@@ -1032,7 +1032,7 @@ public:
                   char const* ininame,
                   AnimType exp,
                   unsigned char level,
-                  long pre,
+                  int pre,
                   bool is_goodie,
                   bool is_leader,
                   bool is_eight,
@@ -1189,7 +1189,7 @@ public:
                       int name,
                       char const* ininame,
                       unsigned char level,
-                      long pre,
+                      int pre,
                       bool is_female,
                       bool is_leader,
                       bool is_crawling,
@@ -1863,7 +1863,7 @@ public:
                       int name,
                       char const* ininame,
                       unsigned char level,
-                      long pre,
+                      int pre,
                       bool is_leader,
                       bool is_twoshooter,
                       bool is_transporter,

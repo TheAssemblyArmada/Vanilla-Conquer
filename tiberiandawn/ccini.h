@@ -59,7 +59,7 @@ public:
     int Save(FileClass& file, bool withdigest) const;
     int Save(Pipe& pipe, bool withdigest) const;
 
-    long Get_Buildings(char const* section, char const* entry, long defvalue) const;
+    int Get_Buildings(char const* section, char const* entry, int defvalue) const;
     UnitType Get_UnitType(char const* section, char const* entry, UnitType defvalue) const;
     BulletType Get_BulletType(char const* section, char const* entry, BulletType defvalue) const;
     HousesType Get_HousesType(char const* section, char const* entry, HousesType defvalue) const;
@@ -71,7 +71,7 @@ public:
     ThemeType Get_ThemeType(char const* section, char const* entry, ThemeType defvalue) const;
     TriggerClass* Get_Trigger(char const* section, char const* entry) const;
 
-    bool Put_Buildings(char const* section, char const* entry, long value);
+    bool Put_Buildings(char const* section, char const* entry, int value);
     bool Put_UnitType(char const* section, char const* entry, UnitType value);
     bool Put_BulletType(char const* section, char const* entry, BulletType value);
     bool Put_HousesType(char const* section, char const* entry, HousesType value);

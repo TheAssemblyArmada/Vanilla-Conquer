@@ -996,8 +996,8 @@ TARGET TeamClass::As_Target(void) const
 void TeamClass::Calc_Center(CELL& center, CELL& obj_center) const
 {
     Validate();
-    long x = 0;
-    long y = 0;
+    int x = 0;
+    int y = 0;
     int dist = 0x7FFFFFFF;
     int quantity = 0;
     FootClass* unit;

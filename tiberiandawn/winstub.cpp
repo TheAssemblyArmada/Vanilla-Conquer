@@ -448,7 +448,7 @@ bool Any_Locked()
 // void  IPXAddressClass::Get_Address( char unsigned  *, char unsigned  * ){}
 // void  IPXManagerClass::Set_Bridge( char unsigned  * ){}
 // int  IPXManagerClass::Global_Num_Send() { return (0); }
-// void  IPXManagerClass::Set_Timing( long unsigned, long unsigned, long unsigned ){}
+// void  IPXManagerClass::Set_Timing( int unsigned, int unsigned, int unsigned ){}
 // unsigned int IPXManagerClass::Global_Response_Time() { return (0); }
 // int  IPXManagerClass::Create_Connection( int, char  *, IPXAddressClass  * ) { return (0); }
 // int  IPXAddressClass::operator !=( IPXAddressClass  & ) { return (0); }
@@ -456,26 +456,26 @@ bool Any_Locked()
 // int  IPXManagerClass::Get_Private_Message( void  *, int  *, int  * ) { return (0); }
 // int  IPXManagerClass::Connection_Index( int ) { return (0); }
 // void  IPXManagerClass::Reset_Response_Time(){}
-// long unsigned  IPXManagerClass::Response_Time() { return (0); }
+// int unsigned  IPXManagerClass::Response_Time() { return (0); }
 // int  IPXManagerClass::Private_Num_Send( int ) { return (0); }
 
 //_VQAHandle  *  VQA_Alloc(void){ return ((_VQAHandle *)0); }
-// void  VQA_Init( _VQAHandle  *, long ( *)()) {}
-// long  VQA_Open( _VQAHandle  *, char const  *, _VQAConfig  * ) { return (0); }
+// void  VQA_Init( _VQAHandle  *, int ( *)()) {}
+// int  VQA_Open( _VQAHandle  *, char const  *, _VQAConfig  * ) { return (0); }
 // void  VQA_Free( _VQAHandle  * ) {}
 // void  VQA_Close( _VQAHandle  * ) {}
-// long  VQA_Play( _VQAHandle  *, long ) { return (0); }
+// int  VQA_Play( _VQAHandle  *, int ) { return (0); }
 
-// void VQA_Init(VQAHandle *, long(*)(VQAHandle *vqa, long action,	void *buffer, long nbytes)){}
+// void VQA_Init(VQAHandle *, int(*)(VQAHandle *vqa, int action,	void *buffer, int nbytes)){}
 
-// long VQA_Open(VQAHandle *, char const *, VQAConfig *)
+// int VQA_Open(VQAHandle *, char const *, VQAConfig *)
 //{
 //	return (0);
 //}
 
 // void VQA_Close(VQAHandle *){}
 
-// long VQA_Play(VQAHandle *, long)
+// int VQA_Play(VQAHandle *, int)
 //{
 //	return (0);
 //}
