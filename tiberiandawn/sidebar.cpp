@@ -782,6 +782,15 @@ void SidebarClass::Draw_It(bool complete)
                     LogicPage->Fill_Rect(SideX, SideY - 1, SideX + SideWidth, SideY + TopHeight - 1, LTGREY);
                 }
 
+                // Draw a small rectangle strip between sidebar button strip to
+                // erase helpbox messages when mouse is moved from the right
+                // strip.
+                LogicPage->Fill_Rect(Column[0].X + Column[0].ObjectWidth + 1,
+                                     SideY + TopHeight + 1,
+                                     Column[1].X,
+                                     SideY + SideHeight - 1,
+                                     LTGREY);
+
                 Draw_Box(SideX + Map.PowWidth,
                          SideY + TopHeight,
                          SideWidth - Map.PowWidth,
