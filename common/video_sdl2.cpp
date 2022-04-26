@@ -134,20 +134,23 @@ static void Update_HWCursor_Settings()
     */
     float ar = (float)hwcursor.GameW / hwcursor.GameH;
     if (Settings.Video.Boxing) {
-        try {
-            size_t colonPos = Settings.Video.BoxingAspectRatio.find(":");
+        size_t colonPos = Settings.Video.BoxingAspectRatio.find(":");
+        std::string arW;
+        std::string arH;
 
-            if (colonPos == std::string::npos) {
-                throw "No colon";
-            }
-
+        /*
+        ** If we don't have a valid string for aspect ratio, default back to 4:3.
+        */
+        if (colonPos == std::string::npos) {
+            arW = "4";
+            arH = "3";
+        } else {
             size_t arLen = Settings.Video.BoxingAspectRatio.length();
-            std::string arW = Settings.Video.BoxingAspectRatio.substr(0, colonPos);
-            std::string arH = Settings.Video.BoxingAspectRatio.substr(colonPos + 1, arLen - colonPos);
-            ar = std::stof(arW) / std::stof(arH);
-        } catch (...) {
-            DBG_ERROR("Aspect ratio '%s' is invalid", Settings.Video.BoxingAspectRatio.c_str());
+            arW = Settings.Video.BoxingAspectRatio.substr(0, colonPos);
+            arH = Settings.Video.BoxingAspectRatio.substr(colonPos + 1, arLen - colonPos);
         }
+
+        ar = std::stof(arW) / std::stof(arH);
 
         render_dst.w = win_w;
         render_dst.h = render_dst.w / ar;
