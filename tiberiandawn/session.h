@@ -169,7 +169,7 @@ typedef enum ModemGameType
 //...........................................................................
 // Commands sent over the serial Global Channel
 //...........................................................................
-typedef enum SerialCommandType
+typedef enum SerialCommandType : int32_t
 {
     SERIAL_CONNECT = 100,      // Are you there?  Hello?  McFly?
     SERIAL_GAME_OPTIONS = 101, // Hey, dudes, here's some new game options
@@ -185,7 +185,7 @@ typedef enum SerialCommandType
 //...........................................................................
 // Commands sent over the network Global Channel
 //...........................................................................
-typedef enum NetCommandType
+typedef enum NetCommandType : int32_t
 {
     NET_QUERY_GAME,    // Hey, what games are out there?
     NET_ANSWER_GAME,   // Yo, Here's my game's name!
@@ -265,7 +265,8 @@ typedef struct NodeNameTag
 //...........................................................................
 // Packet sent over the serial Global Channel
 //...........................................................................
-typedef struct
+#pragma pack(push, 1)
+typedef struct BITFIELD_STRUCT
 {
     SerialCommandType Command;           // One of the enum's defined above
     char Name[MPLAYER_NAME_MAX];         // Player or Game Name
@@ -298,7 +299,7 @@ typedef struct
     char Name[MPLAYER_NAME_MAX]; // Player or Game Name
     union
     {
-        struct
+        struct BITFIELD_STRUCT
         {
             unsigned int IsOpen : 1; // 1 = game is open for joining
         } GameInfo;
@@ -310,7 +311,7 @@ typedef struct
             unsigned int MinVersion; // game's min supported version
             unsigned int MaxVersion; // game's max supported version
         } PlayerInfo;
-        struct
+        struct BITFIELD_STRUCT
         {
             unsigned char Scenario;      // Scenario #
             unsigned int Credits;        // player's credits
@@ -346,6 +347,7 @@ typedef struct
         } Chat;
     };
 } GlobalPacketType;
+#pragma pack(pop)
 
 //...........................................................................
 // For finding sync bugs; filled in by the engine when certain conditions
