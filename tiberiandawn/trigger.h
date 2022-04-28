@@ -135,8 +135,8 @@ public:
     /*
     **	Processing routines
     */
-    bool Spring(EventType event, ObjectClass* object);             // object-based
-    bool Spring(EventType event, CELL cell);                       // cell-based
+    bool Spring(EventType event, ObjectClass* object);            // object-based
+    bool Spring(EventType event, CELL cell);                      // cell-based
     bool Spring(EventType event, HousesType house, int data = 0); // house-based
     bool Remove(void);
 
