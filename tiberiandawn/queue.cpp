@@ -74,6 +74,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include "function.h"
 #include "common/tcpip.h"
+#include "common/framelimit.h"
 
 /********************************** Defines *********************************/
 #define SHOW_MONO 1
@@ -160,11 +161,8 @@ static RetcodeType Process_Receive_Packet(ConnManClass* net,
                                           unsigned short* their_sent,
                                           unsigned short* their_recv);
 static RetcodeType Process_Serial_Packet(char* multi_packet_buf, int first_time);
-static int Can_Advance(ConnManClass* net,
-                       int max_ahead,
-                       int* their_frame,
-                       unsigned short* their_sent,
-                       unsigned short* their_recv);
+static int
+Can_Advance(ConnManClass* net, int max_ahead, int* their_frame, unsigned short* their_sent, unsigned short* their_recv);
 static int
 Process_Reconnect_Dialog(CountDownTimerClass* timeout_timer, int* their_frame, int num_conn, int reconn, int fresh);
 static int Handle_Timeout(ConnManClass* net, int* their_frame, unsigned short* their_sent, unsigned short* their_recv);
@@ -545,7 +543,7 @@ static void Queue_AI_Multiplayer(void)
     // order in which the connections are created.
     // (ie net->Connection_Index(id))
     //........................................................................
-    static int their_frame[MAX_PLAYERS - 1];          // other players' frame #'s
+    static int their_frame[MAX_PLAYERS - 1];           // other players' frame #'s
     static unsigned short their_sent[MAX_PLAYERS - 1]; // # cmds other player claims to have sent
     static unsigned short their_recv[MAX_PLAYERS - 1]; // # cmds actually received from others
     static unsigned short my_sent;                     // # cmds I've sent out
@@ -1044,6 +1042,7 @@ static RetcodeType Wait_For_Players(int first_time,
             Map.Render();
         }
 
+        Frame_Limiter(FrameLimitFlags::FL_NO_BLOCK);
     } /* end of while */
 
     //------------------------------------------------------------------------
@@ -1806,7 +1805,7 @@ static int
 Can_Advance(ConnManClass* net, int max_ahead, int* their_frame, unsigned short* their_sent, unsigned short* their_recv)
 {
     int their_oldest_frame; // other players' oldest frame #
-    int count_ok;            // true = my cmd count matches theirs
+    int count_ok;           // true = my cmd count matches theirs
     int i;
 
     //------------------------------------------------------------------------
@@ -3233,11 +3232,11 @@ static void Queue_Playback(void)
  *=========================================================================*/
 static void Compute_Game_CRC(void)
 {
-    int i;
+    int i, j;
     InfantryClass* infp;
     UnitClass* unitp;
     BuildingClass* bldgp;
-    // ObjectClass *objp;
+    ObjectClass* objp;
 
     GameCRC = 0;
 
@@ -3246,7 +3245,7 @@ static void Compute_Game_CRC(void)
     //------------------------------------------------------------------------
     for (i = 0; i < Infantry.Count(); i++) {
         infp = (InfantryClass*)Infantry.Active_Ptr(i);
-        Add_CRC(&GameCRC, (int)infp->Coord + (int)infp->PrimaryFacing);
+        Add_CRC(&GameCRC, (int)infp->Coord + (int)infp->PrimaryFacing.Current());
     }
 
     //------------------------------------------------------------------------
@@ -3254,7 +3253,8 @@ static void Compute_Game_CRC(void)
     //------------------------------------------------------------------------
     for (i = 0; i < Units.Count(); i++) {
         unitp = (UnitClass*)Units.Active_Ptr(i);
-        Add_CRC(&GameCRC, (int)unitp->Coord + (int)unitp->PrimaryFacing + (int)unitp->SecondaryFacing);
+        Add_CRC(&GameCRC,
+                (int)unitp->Coord + (int)unitp->PrimaryFacing.Current() + (int)unitp->SecondaryFacing.Current());
     }
 
     //------------------------------------------------------------------------
@@ -3262,10 +3262,9 @@ static void Compute_Game_CRC(void)
     //------------------------------------------------------------------------
     for (i = 0; i < Buildings.Count(); i++) {
         bldgp = (BuildingClass*)Buildings.Active_Ptr(i);
-        Add_CRC(&GameCRC, (int)bldgp->Coord + (int)bldgp->PrimaryFacing);
+        Add_CRC(&GameCRC, (int)bldgp->Coord + (int)bldgp->PrimaryFacing.Current());
     }
 
-#if (0)
     //------------------------------------------------------------------------
     //	Map Layers
     //------------------------------------------------------------------------
@@ -3283,14 +3282,11 @@ static void Compute_Game_CRC(void)
         objp = Logic[i];
         Add_CRC(&GameCRC, (int)objp->Coord + (int)objp->What_Am_I());
     }
-#endif
 
     //------------------------------------------------------------------------
     //	A random #
     //------------------------------------------------------------------------
-    // This should just store the current value, not roll it as well. Otherwise
-    // we get a mismatch on playback.
-    // Add_CRC(&GameCRC, rand());
+    Add_CRC(&GameCRC, ScenRandomNumber.Seed);
 
 } /* end of Compute_Game_CRC */
 
@@ -3345,16 +3341,16 @@ void Print_CRCs(EventClass* ev)
 {
     ev = ev;
 
-    int i; //,j;
+    int i, j;
     InfantryClass* infp;
     UnitClass* unitp;
     BuildingClass* bldgp;
-    // ObjectClass *objp;
-    FILE* fp;
+    ObjectClass* objp;
     int rnd;
     HouseClass* housep;
-    // HousesType house;
+    HousesType house;
     int color;
+    char buffer[256];
 
     Mono_Clear_Screen();
     Mono_Set_Cursor(0, 0);
@@ -3362,473 +3358,164 @@ void Print_CRCs(EventClass* ev)
     char filename[80];
     sprintf(filename, "CRC%02d.TXT", Frame & 0x1f);
 
-    fp = fopen(filename, "wt"); //"OUT.TXT","wt");
-    if (fp == NULL) {
+    CDFileClass fc;
+    fc.Open(filename, WRITE);
+    if (!fc.Is_Available()) {
         return;
     }
 
     for (i = 0; i < 32; i++) {
-        fprintf(fp, "CRC[%d]=%x\n", i, CRC[i]);
+        snprintf(buffer, sizeof(buffer), "CRC[%d]=%08x\n", i, CRC[i]);
+        fc.Write(buffer, strlen(buffer));
     }
 
-    housep = HouseClass::As_Pointer(HOUSE_MULTI1);
-    if (housep) {
-        color = housep->RemapColor;
-        fprintf(fp, "Multi1: IsHuman:%d  Color:%s\n", housep->IsHuman, ColorNames[color]);
-    }
-
-    housep = HouseClass::As_Pointer(HOUSE_MULTI2);
-    if (housep) {
-        color = housep->RemapColor;
-        fprintf(fp, "Multi2: IsHuman:%d  Color:%s\n", housep->IsHuman, ColorNames[color]);
-    }
-
-    housep = HouseClass::As_Pointer(HOUSE_MULTI3);
-    if (housep) {
-        color = housep->RemapColor;
-        fprintf(fp, "Multi3: IsHuman:%d  Color:%s\n", housep->IsHuman, ColorNames[color]);
-    }
-
-    housep = HouseClass::As_Pointer(HOUSE_MULTI4);
-    if (housep) {
-        color = housep->RemapColor;
-        fprintf(fp, "Multi4: IsHuman:%d  Color:%s\n", housep->IsHuman, ColorNames[color]);
-    }
-
-    housep = HouseClass::As_Pointer(HOUSE_MULTI5);
-    if (housep) {
-        color = housep->RemapColor;
-        fprintf(fp, "Multi5: IsHuman:%d  Color:%s\n", housep->IsHuman, ColorNames[color]);
-    }
-
-    housep = HouseClass::As_Pointer(HOUSE_MULTI6);
-    if (housep) {
-        color = housep->RemapColor;
-        fprintf(fp, "Multi6: IsHuman:%d  Color:%s\n", housep->IsHuman, ColorNames[color]);
-    }
-
-    //------------------------------------------------------------------------
-    //	Multi1 Infantry
-    //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI1)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI1 INFANTRY -------------------\n");
-        for (i = 0; i < Infantry.Count(); i++) {
-            infp = (InfantryClass*)Infantry.Active_Ptr(i);
-            if (infp->Owner() == HOUSE_MULTI1) {
-                Add_CRC(&GameCRC, (int)infp->Coord + (int)infp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Mission:%d   Type:%d\n",
-                        infp->Coord,
-                        (int)infp->PrimaryFacing,
-                        infp->Get_Mission(),
-                        infp->Class->Type);
-            }
+    for (house = HOUSE_MULTI1; house <= HOUSE_MULTI6; ++house) {
+        housep = HouseClass::As_Pointer(house);
+        if (housep) {
+            color = housep->RemapColor;
+            snprintf(buffer,
+                     sizeof(buffer),
+                     "Multi%d: IsHuman:%d  Color:%s\n",
+                     (int)house,
+                     housep->IsHuman,
+                     ColorNames[color]);
+            fc.Write(buffer, strlen(buffer));
         }
-        Mono_Printf("Multi1 Infantry:%d\n", GameCRC);
     }
 
     //------------------------------------------------------------------------
-    //	Multi2 Infantry
+    //	MultiX Infantry
     //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI2)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI2 INFANTRY -------------------\n");
-        for (i = 0; i < Infantry.Count(); i++) {
-            infp = (InfantryClass*)Infantry.Active_Ptr(i);
-            if (infp->Owner() == HOUSE_MULTI2) {
-                Add_CRC(&GameCRC, (int)infp->Coord + (int)infp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Mission:%d   Type:%d\n",
-                        infp->Coord,
-                        (int)infp->PrimaryFacing,
-                        infp->Get_Mission(),
-                        infp->Class->Type);
+    for (house = HOUSE_MULTI1; house <= HOUSE_MULTI6; ++house) {
+        if (HouseClass::As_Pointer(house)) {
+            GameCRC = 0;
+            snprintf(buffer, sizeof(buffer), "-------------------- MULTI%d Infantry -------------------\n", (int)house);
+            fc.Write(buffer, strlen(buffer));
+            for (i = 0; i < Infantry.Count(); i++) {
+                infp = (InfantryClass*)Infantry.Active_Ptr(i);
+                if (infp->Owner() == house) {
+                    Add_CRC(&GameCRC, (int)infp->Coord + (int)infp->PrimaryFacing.Current());
+                    snprintf(buffer,
+                             sizeof(buffer),
+                             "COORD:%x   Facing:%d   Mission:%d   Type:%d\n",
+                             infp->Coord,
+                             (int)infp->PrimaryFacing.Current(),
+                             infp->Get_Mission(),
+                             infp->Class->Type);
+                    fc.Write(buffer, strlen(buffer));
+                }
             }
+            Mono_Printf("Multi%d Infantry:%d\n", (int)house, GameCRC);
         }
-        Mono_Printf("Multi2 Infantry:%d\n", GameCRC);
     }
 
     //------------------------------------------------------------------------
-    //	Multi3 Infantry
+    //	MultiX Units
     //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI3)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI3 INFANTRY -------------------\n");
-        for (i = 0; i < Infantry.Count(); i++) {
-            infp = (InfantryClass*)Infantry.Active_Ptr(i);
-            if (infp->Owner() == HOUSE_MULTI3) {
-                Add_CRC(&GameCRC, (int)infp->Coord + (int)infp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Mission:%d   Type:%d\n",
-                        infp->Coord,
-                        (int)infp->PrimaryFacing,
-                        infp->Get_Mission(),
-                        infp->Class->Type);
+    for (house = HOUSE_MULTI1; house <= HOUSE_MULTI6; ++house) {
+        if (HouseClass::As_Pointer(house)) {
+            GameCRC = 0;
+            snprintf(buffer, sizeof(buffer), "-------------------- MULTI%d Units -------------------\n", (int)house);
+            fc.Write(buffer, strlen(buffer));
+            for (i = 0; i < Units.Count(); i++) {
+                unitp = (UnitClass*)Units.Active_Ptr(i);
+                if (unitp->Owner() == house) {
+                    Add_CRC(&GameCRC, (int)unitp->Coord + (int)unitp->PrimaryFacing.Current());
+                    snprintf(buffer,
+                             sizeof(buffer),
+                             "COORD:%x   Facing:%d   Facing2:%d   Mission:%d   Type:%d\n",
+                             unitp->Coord,
+                             (int)unitp->PrimaryFacing.Current(),
+                             (int)unitp->SecondaryFacing.Current(),
+                             unitp->Get_Mission(),
+                             unitp->Class->Type);
+                    fc.Write(buffer, strlen(buffer));
+                }
             }
+            Mono_Printf("Multi%d Units:%d\n", (int)house, GameCRC);
         }
-        Mono_Printf("Multi3 Infantry:%d\n", GameCRC);
     }
 
     //------------------------------------------------------------------------
-    //	Multi4 Infantry
+    //	MultiX Buildings
     //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI4)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI4 INFANTRY -------------------\n");
-        for (i = 0; i < Infantry.Count(); i++) {
-            infp = (InfantryClass*)Infantry.Active_Ptr(i);
-            if (infp->Owner() == HOUSE_MULTI4) {
-                Add_CRC(&GameCRC, (int)infp->Coord + (int)infp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Mission:%d   Type:%d\n",
-                        infp->Coord,
-                        (int)infp->PrimaryFacing,
-                        infp->Get_Mission(),
-                        infp->Class->Type);
+    for (house = HOUSE_MULTI1; house <= HOUSE_MULTI6; ++house) {
+        if (HouseClass::As_Pointer(house)) {
+            GameCRC = 0;
+            snprintf(
+                buffer, sizeof(buffer), "-------------------- MULTI%d Buildings -------------------\n", (int)house);
+            fc.Write(buffer, strlen(buffer));
+            for (i = 0; i < Buildings.Count(); i++) {
+                bldgp = (BuildingClass*)Buildings.Active_Ptr(i);
+                if (bldgp->Owner() == house) {
+                    Add_CRC(&GameCRC, (int)bldgp->Coord + (int)bldgp->PrimaryFacing.Current());
+                    snprintf(buffer,
+                             sizeof(buffer),
+                             "COORD:%x   Facing:%d   Mission:%d   Type:%d\n",
+                             bldgp->Coord,
+                             (int)bldgp->PrimaryFacing.Current(),
+                             bldgp->Get_Mission(),
+                             bldgp->Class->Type);
+                    fc.Write(buffer, strlen(buffer));
+                }
             }
+            Mono_Printf("Multi%d Buildings:%d\n", (int)house, GameCRC);
         }
-        Mono_Printf("Multi4 Infantry:%d\n", GameCRC);
     }
 
-    //------------------------------------------------------------------------
-    //	Multi5 Infantry
-    //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI5)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI5 INFANTRY -------------------\n");
-        for (i = 0; i < Infantry.Count(); i++) {
-            infp = (InfantryClass*)Infantry.Active_Ptr(i);
-            if (infp->Owner() == HOUSE_MULTI5) {
-                Add_CRC(&GameCRC, (int)infp->Coord + (int)infp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Mission:%d   Type:%d\n",
-                        infp->Coord,
-                        (int)infp->PrimaryFacing,
-                        infp->Get_Mission(),
-                        infp->Class->Type);
-            }
-        }
-        Mono_Printf("Multi5 Infantry:%d\n", GameCRC);
-    }
-
-    //------------------------------------------------------------------------
-    //	Multi6 Infantry
-    //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI6)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI6 INFANTRY -------------------\n");
-        for (i = 0; i < Infantry.Count(); i++) {
-            infp = (InfantryClass*)Infantry.Active_Ptr(i);
-            if (infp->Owner() == HOUSE_MULTI6) {
-                Add_CRC(&GameCRC, (int)infp->Coord + (int)infp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Mission:%d   Type:%d\n",
-                        infp->Coord,
-                        (int)infp->PrimaryFacing,
-                        infp->Get_Mission(),
-                        infp->Class->Type);
-            }
-        }
-        Mono_Printf("Multi6 Infantry:%d\n", GameCRC);
-    }
-
-    //------------------------------------------------------------------------
-    //	Multi1 Units
-    //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI1)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI1 UNITS -------------------\n");
-        for (i = 0; i < Units.Count(); i++) {
-            unitp = (UnitClass*)Units.Active_Ptr(i);
-            if (unitp->Owner() == HOUSE_MULTI1) {
-                Add_CRC(&GameCRC, (int)unitp->Coord + (int)unitp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Facing2:%d   Mission:%d   Type:%d\n",
-                        unitp->Coord,
-                        (int)unitp->PrimaryFacing,
-                        (int)unitp->SecondaryFacing,
-                        unitp->Get_Mission(),
-                        unitp->Class->Type);
-            }
-        }
-        Mono_Printf("Multi1 Units:%d\n", GameCRC);
-    }
-
-    //------------------------------------------------------------------------
-    //	Multi2 Units
-    //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI2)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI2 UNITS -------------------\n");
-        for (i = 0; i < Units.Count(); i++) {
-            unitp = (UnitClass*)Units.Active_Ptr(i);
-            if (unitp->Owner() == HOUSE_MULTI2) {
-                Add_CRC(&GameCRC, (int)unitp->Coord + (int)unitp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Facing2:%d   Mission:%d   Type:%d\n",
-                        unitp->Coord,
-                        (int)unitp->PrimaryFacing,
-                        (int)unitp->SecondaryFacing,
-                        unitp->Get_Mission(),
-                        unitp->Class->Type);
-            }
-        }
-        Mono_Printf("Multi2 Units:%d\n", GameCRC);
-    }
-
-    //------------------------------------------------------------------------
-    //	Multi3 Units
-    //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI3)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI3 UNITS -------------------\n");
-        for (i = 0; i < Units.Count(); i++) {
-            unitp = (UnitClass*)Units.Active_Ptr(i);
-            if (unitp->Owner() == HOUSE_MULTI3) {
-                Add_CRC(&GameCRC, (int)unitp->Coord + (int)unitp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Facing2:%d   Mission:%d   Type:%d\n",
-                        unitp->Coord,
-                        (int)unitp->PrimaryFacing,
-                        (int)unitp->SecondaryFacing,
-                        unitp->Get_Mission(),
-                        unitp->Class->Type);
-            }
-        }
-        Mono_Printf("Multi3 Units:%d\n", GameCRC);
-    }
-
-    //------------------------------------------------------------------------
-    //	Multi4 Units
-    //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI4)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI4 UNITS -------------------\n");
-        for (i = 0; i < Units.Count(); i++) {
-            unitp = (UnitClass*)Units.Active_Ptr(i);
-            if (unitp->Owner() == HOUSE_MULTI4) {
-                Add_CRC(&GameCRC, (int)unitp->Coord + (int)unitp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Facing2:%d   Mission:%d   Type:%d\n",
-                        unitp->Coord,
-                        (int)unitp->PrimaryFacing,
-                        (int)unitp->SecondaryFacing,
-                        unitp->Get_Mission(),
-                        unitp->Class->Type);
-            }
-        }
-        Mono_Printf("Multi4 Units:%d\n", GameCRC);
-    }
-
-    //------------------------------------------------------------------------
-    //	Multi5 Units
-    //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI5)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI5 UNITS -------------------\n");
-        for (i = 0; i < Units.Count(); i++) {
-            unitp = (UnitClass*)Units.Active_Ptr(i);
-            if (unitp->Owner() == HOUSE_MULTI5) {
-                Add_CRC(&GameCRC, (int)unitp->Coord + (int)unitp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Facing2:%d   Mission:%d   Type:%d\n",
-                        unitp->Coord,
-                        (int)unitp->PrimaryFacing,
-                        (int)unitp->SecondaryFacing,
-                        unitp->Get_Mission(),
-                        unitp->Class->Type);
-            }
-        }
-        Mono_Printf("Multi5 Units:%d\n", GameCRC);
-    }
-
-    //------------------------------------------------------------------------
-    //	Multi6 Units
-    //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI6)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI6 UNITS -------------------\n");
-        for (i = 0; i < Units.Count(); i++) {
-            unitp = (UnitClass*)Units.Active_Ptr(i);
-            if (unitp->Owner() == HOUSE_MULTI6) {
-                Add_CRC(&GameCRC, (int)unitp->Coord + (int)unitp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Facing2:%d   Mission:%d   Type:%d\n",
-                        unitp->Coord,
-                        (int)unitp->PrimaryFacing,
-                        (int)unitp->SecondaryFacing,
-                        unitp->Get_Mission(),
-                        unitp->Class->Type);
-            }
-        }
-        Mono_Printf("Multi6 Units:%d\n", GameCRC);
-    }
-
-    //------------------------------------------------------------------------
-    //	Multi1 Buildings
-    //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI1)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI1 BUILDINGS -------------------\n");
-        for (i = 0; i < Buildings.Count(); i++) {
-            bldgp = (BuildingClass*)Buildings.Active_Ptr(i);
-            if (bldgp->Owner() == HOUSE_MULTI1) {
-                Add_CRC(&GameCRC, (int)bldgp->Coord + (int)bldgp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Mission:%d   Type:%d\n",
-                        bldgp->Coord,
-                        (int)bldgp->PrimaryFacing,
-                        bldgp->Get_Mission(),
-                        bldgp->Class->Type);
-            }
-        }
-        Mono_Printf("Multi1 Buildings:%d\n", GameCRC);
-    }
-
-    //------------------------------------------------------------------------
-    //	Multi2 Buildings
-    //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI2)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI2 BUILDINGS -------------------\n");
-        for (i = 0; i < Buildings.Count(); i++) {
-            bldgp = (BuildingClass*)Buildings.Active_Ptr(i);
-            if (bldgp->Owner() == HOUSE_MULTI2) {
-                Add_CRC(&GameCRC, (int)bldgp->Coord + (int)bldgp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Mission:%d   Type:%d\n",
-                        bldgp->Coord,
-                        (int)bldgp->PrimaryFacing,
-                        bldgp->Get_Mission(),
-                        bldgp->Class->Type);
-            }
-        }
-        Mono_Printf("Multi2 Buildings:%d\n", GameCRC);
-    }
-
-    //------------------------------------------------------------------------
-    //	Multi3 Buildings
-    //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI3)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI3 BUILDINGS -------------------\n");
-        for (i = 0; i < Buildings.Count(); i++) {
-            bldgp = (BuildingClass*)Buildings.Active_Ptr(i);
-            if (bldgp->Owner() == HOUSE_MULTI3) {
-                Add_CRC(&GameCRC, (int)bldgp->Coord + (int)bldgp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Mission:%d   Type:%d\n",
-                        bldgp->Coord,
-                        (int)bldgp->PrimaryFacing,
-                        bldgp->Get_Mission(),
-                        bldgp->Class->Type);
-            }
-        }
-        Mono_Printf("Multi3 Buildings:%d\n", GameCRC);
-    }
-
-    //------------------------------------------------------------------------
-    //	Multi4 Buildings
-    //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI4)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI4 BUILDINGS -------------------\n");
-        for (i = 0; i < Buildings.Count(); i++) {
-            bldgp = (BuildingClass*)Buildings.Active_Ptr(i);
-            if (bldgp->Owner() == HOUSE_MULTI4) {
-                Add_CRC(&GameCRC, (int)bldgp->Coord + (int)bldgp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Mission:%d   Type:%d\n",
-                        bldgp->Coord,
-                        (int)bldgp->PrimaryFacing,
-                        bldgp->Get_Mission(),
-                        bldgp->Class->Type);
-            }
-        }
-        Mono_Printf("Multi4 Buildings:%d\n", GameCRC);
-    }
-
-    //------------------------------------------------------------------------
-    //	Multi5 Buildings
-    //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI5)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI5 BUILDINGS -------------------\n");
-        for (i = 0; i < Buildings.Count(); i++) {
-            bldgp = (BuildingClass*)Buildings.Active_Ptr(i);
-            if (bldgp->Owner() == HOUSE_MULTI5) {
-                Add_CRC(&GameCRC, (int)bldgp->Coord + (int)bldgp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Mission:%d   Type:%d\n",
-                        bldgp->Coord,
-                        (int)bldgp->PrimaryFacing,
-                        bldgp->Get_Mission(),
-                        bldgp->Class->Type);
-            }
-        }
-        Mono_Printf("Multi5 Buildings:%d\n", GameCRC);
-    }
-
-    //------------------------------------------------------------------------
-    //	Multi6 Buildings
-    //------------------------------------------------------------------------
-    if (HouseClass::As_Pointer(HOUSE_MULTI6)) {
-        GameCRC = 0;
-        fprintf(fp, "-------------------- MULTI6 BUILDINGS -------------------\n");
-        for (i = 0; i < Buildings.Count(); i++) {
-            bldgp = (BuildingClass*)Buildings.Active_Ptr(i);
-            if (bldgp->Owner() == HOUSE_MULTI6) {
-                Add_CRC(&GameCRC, (int)bldgp->Coord + (int)bldgp->PrimaryFacing);
-                fprintf(fp,
-                        "COORD:%x   Facing:%d   Mission:%d   Type:%d\n",
-                        bldgp->Coord,
-                        (int)bldgp->PrimaryFacing,
-                        bldgp->Get_Mission(),
-                        bldgp->Class->Type);
-            }
-        }
-        Mono_Printf("Multi6 Buildings:%d\n", GameCRC);
-    }
-#if (0)
     //------------------------------------------------------------------------
     //	Map Layers
     //------------------------------------------------------------------------
     GameCRC = 0;
     for (i = 0; i < LAYER_COUNT; i++) {
-        fprintf(fp, ">>>> MAP LAYER %d <<<<\n", i);
+        snprintf(buffer, sizeof(buffer), ">>>> MAP LAYER %d <<<<\n", i);
+        fc.Write(buffer, strlen(buffer));
         for (j = 0; j < Map.Layer[i].Count(); j++) {
             objp = Map.Layer[i][j];
             Add_CRC(&GameCRC, (int)objp->Coord + (int)objp->What_Am_I());
-            fprintf(fp, "Object %d: %x ", j, objp->Coord);
+            snprintf(buffer, sizeof(buffer), "Object %d: %x ", j, objp->Coord);
+            fc.Write(buffer, strlen(buffer));
 
-            if (objp->What_Am_I() == RTTI_AIRCRAFT)
-                fprintf(fp, "Aircraft  (Type:%d) ", (AircraftType)(*((AircraftClass*)objp)));
-            else if (objp->What_Am_I() == RTTI_ANIM)
-                fprintf(fp, "Anim      (Type:%d) ", (AnimType)(*((AnimClass*)objp)));
-            else if (objp->What_Am_I() == RTTI_BUILDING)
-                fprintf(fp, "Building  (Type:%d) ", (StructType)(*((BuildingClass*)objp)));
-            else if (objp->What_Am_I() == RTTI_BULLET)
-                fprintf(fp, "Bullet    (Type:%d) ", (BulletType)(*((BulletClass*)objp)));
-            else if (objp->What_Am_I() == RTTI_INFANTRY)
-                fprintf(fp, "Infantry  (Type:%d) ", (InfantryType)(*((InfantryClass*)objp)));
-            else if (objp->What_Am_I() == RTTI_OVERLAY)
-                fprintf(fp, "Overlay   (Type:%d) ", (OverlayType)(*((OverlayClass*)objp)));
-            else if (objp->What_Am_I() == RTTI_SMUDGE)
-                fprintf(fp, "Smudge    (Type:%d) ", (SmudgeType)(*((SmudgeClass*)objp)));
-            else if (objp->What_Am_I() == RTTI_TEMPLATE)
-                fprintf(fp, "Template  (Type:%d) ", (TemplateType)(*((TemplateClass*)objp)));
-            else if (objp->What_Am_I() == RTTI_TERRAIN)
-                fprintf(fp, "Terrain   (Type:%d) ", (TerrainType)(*((TerrainClass*)objp)));
-            else if (objp->What_Am_I() == RTTI_UNIT)
-                fprintf(fp, "Unit      (Type:%d) ", (UnitType)(*((UnitClass*)objp)));
+            if (objp->What_Am_I() == RTTI_AIRCRAFT) {
+                snprintf(buffer, sizeof(buffer), "Aircraft  (Type:%d) ", (AircraftType)(*((AircraftClass*)objp)));
+                fc.Write(buffer, strlen(buffer));
+            } else if (objp->What_Am_I() == RTTI_ANIM) {
+                snprintf(buffer, sizeof(buffer), "Anim      (Type:%d) ", (AnimType)(*((AnimClass*)objp)));
+                fc.Write(buffer, strlen(buffer));
+            } else if (objp->What_Am_I() == RTTI_BUILDING) {
+                snprintf(buffer, sizeof(buffer), "Building  (Type:%d) ", (StructType)(*((BuildingClass*)objp)));
+                fc.Write(buffer, strlen(buffer));
+            } else if (objp->What_Am_I() == RTTI_BULLET) {
+                snprintf(buffer, sizeof(buffer), "Bullet    (Type:%d) ", (BulletType)(*((BulletClass*)objp)));
+                fc.Write(buffer, strlen(buffer));
+            } else if (objp->What_Am_I() == RTTI_INFANTRY) {
+                snprintf(buffer, sizeof(buffer), "Infantry  (Type:%d) ", (InfantryType)(*((InfantryClass*)objp)));
+                fc.Write(buffer, strlen(buffer));
+            } else if (objp->What_Am_I() == RTTI_OVERLAY) {
+                snprintf(buffer, sizeof(buffer), "Overlay   (Type:%d) ", (OverlayType)(*((OverlayClass*)objp)));
+                fc.Write(buffer, strlen(buffer));
+            } else if (objp->What_Am_I() == RTTI_SMUDGE) {
+                snprintf(buffer, sizeof(buffer), "Smudge    (Type:%d) ", (SmudgeType)(*((SmudgeClass*)objp)));
+                fc.Write(buffer, strlen(buffer));
+            } else if (objp->What_Am_I() == RTTI_TEMPLATE) {
+                snprintf(buffer, sizeof(buffer), "Template  (Type:%d) ", (TemplateType)(*((TemplateClass*)objp)));
+                fc.Write(buffer, strlen(buffer));
+            } else if (objp->What_Am_I() == RTTI_TERRAIN) {
+                snprintf(buffer, sizeof(buffer), "Terrain   (Type:%d) ", (TerrainType)(*((TerrainClass*)objp)));
+                fc.Write(buffer, strlen(buffer));
+            } else if (objp->What_Am_I() == RTTI_UNIT) {
+                snprintf(buffer, sizeof(buffer), "Unit      (Type:%d) ", (UnitType)(*((UnitClass*)objp)));
+                fc.Write(buffer, strlen(buffer));
+            }
 
             house = objp->Owner();
             if (house != HOUSE_NONE) {
                 housep = HouseClass::As_Pointer(house);
-                fprintf(fp, "Owner: %s\n", housep->Class->IniName);
+                snprintf(buffer, sizeof(buffer), "Owner: %s\n", housep->Class->IniName);
+                fc.Write(buffer, strlen(buffer));
             } else {
-                fprintf(fp, "Owner: NONE\n");
+                snprintf(buffer, sizeof(buffer), "Owner: NONE\n");
+                fc.Write(buffer, strlen(buffer));
             }
         }
     }
@@ -3838,66 +3525,83 @@ void Print_CRCs(EventClass* ev)
     //	Logic Layers
     //------------------------------------------------------------------------
     GameCRC = 0;
-    fprintf(fp, ">>>> LOGIC LAYER <<<<\n");
+    snprintf(buffer, sizeof(buffer), ">>>> LOGIC LAYER <<<<\n");
+    fc.Write(buffer, strlen(buffer));
     for (i = 0; i < Logic.Count(); i++) {
         objp = Logic[i];
         Add_CRC(&GameCRC, (int)objp->Coord + (int)objp->What_Am_I());
-        fprintf(fp, "Object %d: %x ", i, objp->Coord);
+        snprintf(buffer, sizeof(buffer), "Object %d: %x ", i, objp->Coord);
+        fc.Write(buffer, strlen(buffer));
 
-        if (objp->What_Am_I() == RTTI_AIRCRAFT)
-            fprintf(fp, "Aircraft  (Type:%d) ", (AircraftType)(*((AircraftClass*)objp)));
-        else if (objp->What_Am_I() == RTTI_ANIM)
-            fprintf(fp, "Anim      (Type:%d) ", (AnimType)(*((AnimClass*)objp)));
-        else if (objp->What_Am_I() == RTTI_BUILDING)
-            fprintf(fp, "Building  (Type:%d) ", (StructType)(*((BuildingClass*)objp)));
-        else if (objp->What_Am_I() == RTTI_BULLET)
-            fprintf(fp, "Bullet    (Type:%d) ", (BulletType)(*((BulletClass*)objp)));
-        else if (objp->What_Am_I() == RTTI_INFANTRY)
-            fprintf(fp, "Infantry  (Type:%d) ", (InfantryType)(*((InfantryClass*)objp)));
-        else if (objp->What_Am_I() == RTTI_OVERLAY)
-            fprintf(fp, "Overlay   (Type:%d) ", (OverlayType)(*((OverlayClass*)objp)));
-        else if (objp->What_Am_I() == RTTI_SMUDGE)
-            fprintf(fp, "Smudge    (Type:%d) ", (SmudgeType)(*((SmudgeClass*)objp)));
-        else if (objp->What_Am_I() == RTTI_TEMPLATE)
-            fprintf(fp, "Template  (Type:%d) ", (TemplateType)(*((TemplateClass*)objp)));
-        else if (objp->What_Am_I() == RTTI_TERRAIN)
-            fprintf(fp, "Terrain   (Type:%d) ", (TerrainType)(*((TerrainClass*)objp)));
-        else if (objp->What_Am_I() == RTTI_UNIT)
-            fprintf(fp, "Unit      (Type:%d) ", (UnitType)(*((UnitClass*)objp)));
+        if (objp->What_Am_I() == RTTI_AIRCRAFT) {
+            snprintf(buffer, sizeof(buffer), "Aircraft  (Type:%d) ", (AircraftType)(*((AircraftClass*)objp)));
+            fc.Write(buffer, strlen(buffer));
+        } else if (objp->What_Am_I() == RTTI_ANIM) {
+            snprintf(buffer, sizeof(buffer), "Anim      (Type:%d) ", (AnimType)(*((AnimClass*)objp)));
+            fc.Write(buffer, strlen(buffer));
+        } else if (objp->What_Am_I() == RTTI_BUILDING) {
+            snprintf(buffer, sizeof(buffer), "Building  (Type:%d) ", (StructType)(*((BuildingClass*)objp)));
+            fc.Write(buffer, strlen(buffer));
+        } else if (objp->What_Am_I() == RTTI_BULLET) {
+            snprintf(buffer, sizeof(buffer), "Bullet    (Type:%d) ", (BulletType)(*((BulletClass*)objp)));
+            fc.Write(buffer, strlen(buffer));
+        } else if (objp->What_Am_I() == RTTI_INFANTRY) {
+            snprintf(buffer, sizeof(buffer), "Infantry  (Type:%d) ", (InfantryType)(*((InfantryClass*)objp)));
+            fc.Write(buffer, strlen(buffer));
+        } else if (objp->What_Am_I() == RTTI_OVERLAY) {
+            snprintf(buffer, sizeof(buffer), "Overlay   (Type:%d) ", (OverlayType)(*((OverlayClass*)objp)));
+            fc.Write(buffer, strlen(buffer));
+        } else if (objp->What_Am_I() == RTTI_SMUDGE) {
+            snprintf(buffer, sizeof(buffer), "Smudge    (Type:%d) ", (SmudgeType)(*((SmudgeClass*)objp)));
+            fc.Write(buffer, strlen(buffer));
+        } else if (objp->What_Am_I() == RTTI_TEMPLATE) {
+            snprintf(buffer, sizeof(buffer), "Template  (Type:%d) ", (TemplateType)(*((TemplateClass*)objp)));
+            fc.Write(buffer, strlen(buffer));
+        } else if (objp->What_Am_I() == RTTI_TERRAIN) {
+            snprintf(buffer, sizeof(buffer), "Terrain   (Type:%d) ", (TerrainType)(*((TerrainClass*)objp)));
+            fc.Write(buffer, strlen(buffer));
+        } else if (objp->What_Am_I() == RTTI_UNIT) {
+            snprintf(buffer, sizeof(buffer), "Unit      (Type:%d) ", (UnitType)(*((UnitClass*)objp)));
+            fc.Write(buffer, strlen(buffer));
+        }
 
         house = objp->Owner();
         if (house != HOUSE_NONE) {
             housep = HouseClass::As_Pointer(house);
-            fprintf(fp, "Owner: %s\n", housep->Class->IniName);
+            snprintf(buffer, sizeof(buffer), "Owner: %s\n", housep->Class->IniName);
+            fc.Write(buffer, strlen(buffer));
         } else {
-            fprintf(fp, "Owner: NONE\n");
+            snprintf(buffer, sizeof(buffer), "Owner: NONE\n");
+            fc.Write(buffer, strlen(buffer));
         }
     }
     Mono_Printf("Logic:%d\n", GameCRC);
-#endif
 
     //------------------------------------------------------------------------
     //	Random # generator, frame #
     //------------------------------------------------------------------------
-    rnd = rand();
+    snprintf(buffer, sizeof(buffer), "\nRandom Number:%x\n", ScenRandomNumber.Seed);
+    fc.Write(buffer, strlen(buffer));
 
-    Mono_Printf("Random Number:%d\n", rnd);
-    fprintf(fp, "\nRandom Number:%d\n", rnd);
+    snprintf(buffer, sizeof(buffer), "My Frame:%d\n", Frame);
+    fc.Write(buffer, strlen(buffer));
 
-    Mono_Printf("My Frame:%d\n", Frame);
-    fprintf(fp, "My Frame:%d\n", Frame);
-#if (0)
-    fprintf(fp, "-------------- Offending event: ----------------\n");
-    fprintf(fp, "Type:         %d\n", ev->Type);
-    fprintf(fp, "Frame:        %d\n", ev->Frame);
-    fprintf(fp, "MPlayerID:    %04x\n", ev->MPlayerID);
-    if (ev->Type == EventClass::FRAMEINFO) {
-        fprintf(fp, "CRC:          %x\n", ev->Data.FrameInfo.CRC);
-        fprintf(fp, "CommandCount: %x\n", ev->Data.FrameInfo.CommandCount);
-        fprintf(fp, "Delay:        %x\n", ev->Data.FrameInfo.Delay);
-    }
-#endif
-    fclose(fp);
+    snprintf(buffer, sizeof(buffer), "\n");
+    fc.Write(buffer, strlen(buffer));
+    snprintf(buffer, sizeof(buffer), "Offending event:\n");
+    fc.Write(buffer, strlen(buffer));
+    snprintf(buffer, sizeof(buffer), "  Type:         %d\n", ev->Type);
+    fc.Write(buffer, strlen(buffer));
+    snprintf(buffer, sizeof(buffer), "  Frame:        %d\n", ev->Frame);
+    fc.Write(buffer, strlen(buffer));
+    snprintf(buffer, sizeof(buffer), "  ID:           %x\n", ev->ID);
+    fc.Write(buffer, strlen(buffer));
+    snprintf(buffer, sizeof(buffer), "  CRC:          %x\n", ev->Data.FrameInfo.CRC);
+    fc.Write(buffer, strlen(buffer));
+    snprintf(buffer, sizeof(buffer), "  CommandCount: %d\n", ev->Data.FrameInfo.CommandCount);
+    fc.Write(buffer, strlen(buffer));
+    snprintf(buffer, sizeof(buffer), "  Delay:        %d\n", ev->Data.FrameInfo.Delay);
+    fc.Write(buffer, strlen(buffer));
 
 } /* end of Print_CRCs */
 

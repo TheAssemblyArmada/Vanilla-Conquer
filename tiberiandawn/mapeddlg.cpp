@@ -1734,9 +1734,9 @@ int MapEditClass::Scenario_Dialog(void)
     */
     TheaterType theater;      // DisplayClass::Theater
     TheaterType orig_theater; // original theater
-    int gdi_credits;         // HouseClass::As_Pointer(HouseType)->Credits
-    int nod_credits;         // HouseClass::As_Pointer(HouseType)->Credits
-    int neut_credits;        // HouseClass::As_Pointer(HouseType)->Credits
+    int gdi_credits;          // HouseClass::As_Pointer(HouseType)->Credits
+    int nod_credits;          // HouseClass::As_Pointer(HouseType)->Credits
+    int neut_credits;         // HouseClass::As_Pointer(HouseType)->Credits
     SourceType gdi_edge;      // HouseClass::As_Pointer(HouseType)->Edge
     SourceType nod_edge;      // HouseClass::As_Pointer(HouseType)->Edge
     char level_buf[10] = {0};

@@ -2855,7 +2855,7 @@ static int Net_New_Dialog(void)
     int transmit;                 // 1 = re-transmit new game options
 
     int ok_timer = 0; // for timing OK button
-    int index;         // index for rejecting a player
+    int index;        // index for rejecting a player
     int rc;
     int i, j;
     char* item;
