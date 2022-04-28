@@ -1132,7 +1132,7 @@ void InfantryClass::AI(void)
     */
     if (!Target_Legal(NavCom) && !IsProne && IsStoked && Comment.Expired()) {
         IsStoked = false;
-        Do_Action((Random_Pick(0, 1) == 0) ? DO_GESTURE1 : DO_GESTURE2);
+        Do_Action(Percent_Chance(50) ? DO_GESTURE1 : DO_GESTURE2);
         if (*this == INFANTRY_RAMBO) {
             VocType _response[] = {VOC_RAMBO_LEFTY, VOC_RAMBO_LAUGH, VOC_RAMBO_COMIN, VOC_RAMBO_TUFF};
             Sound_Effect(_response[Sim_Random_Pick(0, (int)(sizeof(_response) / sizeof(_response[0])) - 1)], Coord);
@@ -1990,7 +1990,7 @@ void InfantryClass::Random_Animate(void)
             }
         }
 
-        switch (Random_Picky((int)0, (int)55, (char*)NULL, (int)0)) {
+        switch (Random_Pick(0, 55)) {
         case 10:
             Do_Action(DO_SALUTE1);
             break;

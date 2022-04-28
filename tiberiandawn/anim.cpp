@@ -1225,28 +1225,25 @@ void AnimClass::Middle(void)
 
     case ANIM_NAPALM1:
     case ANIM_NAPALM2:
-    case ANIM_NAPALM3:
-        new AnimClass(ANIM_FIRE_SMALL,
-                      Map.Closest_Free_Spot(Coord_Scatter(Center_Coord(), 0x0040), true),
-                      0,
-                      ((Random_Pick(0, 1) == 1) ? 1 : 2));
-        if (Random_Pick(0, 1) == 1) {
-            new AnimClass(ANIM_FIRE_SMALL,
-                          Map.Closest_Free_Spot(Coord_Scatter(Center_Coord(), 0x00A0), true),
-                          0,
-                          ((Random_Pick(0, 1) == 1) ? 1 : 2));
+    case ANIM_NAPALM3: {
+        COORDINATE scatter_coord = Coord_Scatter(Center_Coord(), 0x0040);
+        int loop = Random_Pick(1, 2);
+        new AnimClass(ANIM_FIRE_SMALL, Map.Closest_Free_Spot(scatter_coord, true), 0, loop);
+        if (Percent_Chance(50)) {
+            scatter_coord = Coord_Scatter(Center_Coord(), 0x00A0);
+            loop = Random_Pick(1, 2);
+            new AnimClass(ANIM_FIRE_SMALL, Map.Closest_Free_Spot(scatter_coord, true), 0, loop);
         }
         if (Random_Pick(0, 1) == 1) {
-            new AnimClass(ANIM_FIRE_MED,
-                          Map.Closest_Free_Spot(Coord_Scatter(Center_Coord(), 0x0070), true),
-                          0,
-                          ((Random_Pick(0, 1) == 1) ? 1 : 2));
+            scatter_coord = Coord_Scatter(Center_Coord(), 0x0070);
+            loop = Random_Pick(1, 2);
+            new AnimClass(ANIM_FIRE_MED, Map.Closest_Free_Spot(scatter_coord, true), 0, loop);
         }
         break;
-
+    }
     case ANIM_FIRE_MED:
     case ANIM_FIRE_MED2:
-        newanim = new AnimClass(ANIM_FIRE_SMALL, Center_Coord(), 0, ((Random_Pick(0, 1) == 1) ? 1 : 2));
+        newanim = new AnimClass(ANIM_FIRE_SMALL, Center_Coord(), 0, Random_Pick(1, 2));
         if (newanim && Object) {
             newanim->Attach_To(Object);
         }
