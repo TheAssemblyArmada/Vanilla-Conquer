@@ -60,7 +60,7 @@
 #include "options.h"
 #include "common/ini.h"
 
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
 char const* const OptionsClass::HotkeyName = "SDLHotkeys";
 #else
 char const* const OptionsClass::HotkeyName = "WinHotkeys";

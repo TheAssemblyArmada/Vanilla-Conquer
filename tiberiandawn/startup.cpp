@@ -297,7 +297,7 @@ int main(int argc, char** argv)
         }
 #endif
 
-#if defined(_WIN32) && !defined(SDL2_BUILD)
+#if defined(_WIN32) && !defined(SDL_BUILD)
         Create_Main_Window(ProgramInstance, ScreenWidth, ScreenHeight);
 #endif
 

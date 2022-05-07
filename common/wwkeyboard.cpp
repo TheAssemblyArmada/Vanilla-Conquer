@@ -544,13 +544,6 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
     while (!Is_Buffer_Full() && SDL_PollEvent(&event)) {
         unsigned short key;
         switch (event.type) {
-        case SDL_MOUSEWHEEL:
-            if (event.wheel.y > 0) { // scroll up
-                Put_Key_Message(VK_MOUSEWHEEL_UP, false);
-            } else if (event.wheel.y < 0) { // scroll down
-                Put_Key_Message(VK_MOUSEWHEEL_DOWN, false);
-            }
-            break;
         case SDL_QUIT:
             exit(0);
             break;
@@ -585,6 +578,14 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
             case SDL_BUTTON_MIDDLE:
                 key = VK_MBUTTON;
                 break;
+#ifdef SDL1_BUILD
+            case SDL_BUTTON_WHEELUP:
+                key = VK_MOUSEWHEEL_UP;
+                break;
+            case SDL_BUTTON_WHEELDOWN:
+                key = VK_MOUSEWHEEL_DOWN;
+                break;
+#endif
             }
 
             if (Settings.Mouse.RawInput || Is_Gamepad_Active()) {
@@ -613,6 +614,13 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
                 break;
             }
             break;
+        case SDL_MOUSEWHEEL:
+            if (event.wheel.y > 0) { // scroll up
+                Put_Key_Message(VK_MOUSEWHEEL_UP, false);
+            } else if (event.wheel.y < 0) { // scroll down
+                Put_Key_Message(VK_MOUSEWHEEL_DOWN, false);
+            }
+            break;
         case SDL_CONTROLLERDEVICEREMOVED:
             if (GameController != nullptr) {
                 const SDL_GameController* removedController = SDL_GameControllerFromInstanceID(event.jdevice.which);
@@ -637,9 +645,11 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
 #endif
         }
     }
+#ifdef SDL2_BUILD
     if (Is_Gamepad_Active()) {
         Process_Controller_Axis_Motion();
     }
+#endif
 #elif defined(_WIN32)
     if (!Is_Buffer_Full()) {
         MSG msg;
@@ -896,7 +906,7 @@ void WWKeyboardClass::Clear(void)
  * HISTORY:                                                                                    *
  *   09/30/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-#if defined(_WIN32) && !defined(SDL2_BUILD)
+#if defined(_WIN32) && !defined(SDL_BUILD)
 bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LONG lParam)
 {
 // ST - 5/13/2019

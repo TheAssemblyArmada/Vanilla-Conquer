@@ -33,12 +33,12 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-#if defined(_WIN32) && !defined(SDL2_BUILD)
+#if defined(_WIN32) && !defined(SDL_BUILD)
 #include <windows.h>
 #endif
 #include <stdint.h>
 
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #endif
@@ -60,6 +60,8 @@ typedef enum
 #define VK_LBUTTON  0x01
 #define VK_RBUTTON  0x02
 #define VK_MBUTTON  0x03
+#define VK_MOUSEWHEEL_UP   0x04
+#define VK_MOUSEWHEEL_DOWN 0x05
 #define VK_BACK     SDLK_BACKSPACE
 #define VK_TAB      SDLK_TAB
 #define VK_CLEAR    SDLK_CLEAR
@@ -528,7 +530,7 @@ typedef enum
 #define VK_MOUSEWHEEL_UP   0xFE
 #define VK_NONE_FF         0xFF
 
-#endif // !SDL2_BUILD
+#endif // !SDL_BUILD
 
 #define VK_UPLEFT    VK_HOME
 #define VK_UPRIGHT   VK_PRIOR
@@ -652,7 +654,7 @@ typedef enum KeyASCIIType : unsigned short
     KA_RBRACE, /* ] */
     KA_TILDA,  /* ~ */
 
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
     KA_ESC = 0x1B,
     KA_EXTEND = 0x1B,
     KA_RETURN = 0x0D,
@@ -791,12 +793,16 @@ typedef enum KeyNumType : unsigned short
     KN_R = VK_R,
 #ifdef SDL2_BUILD
     KN_RALT = SDL_SCANCODE_RALT,
+#elif defined(SDL1_BUILD)
+    KN_RALT = SDLK_RALT,
 #else
     KN_RALT = VK_MENU,
 #endif
     KN_RBRACKET = VK_NONE_DD,
 #ifdef SDL2_BUILD
     KN_RCTRL = SDL_SCANCODE_RCTRL,
+#elif defined(SDL1_BUILD)
+    KN_RCTRL = SDLK_RCTRL,
 #else
     KN_RCTRL = VK_CONTROL,
 #endif
@@ -805,6 +811,8 @@ typedef enum KeyNumType : unsigned short
     KN_RMOUSE = VK_RBUTTON,
 #ifdef SDL2_BUILD
     KN_RSHIFT = SDL_SCANCODE_RSHIFT,
+#elif defined(SDL1_BUILD)
+    KN_RSHIFT = SDLK_RSHIFT,
 #else
     KN_RSHIFT = VK_SHIFT,
 #endif
@@ -869,9 +877,11 @@ public:
     void Close_Controller();
     bool Is_Analog_Scroll_Active();
     unsigned char Get_Scroll_Direction();
+#elif defined(SDL1_BUILD)
+    bool Is_Gamepad_Active() { return false; }
 #endif
 
-#if defined(_WIN32) && !defined(SDL2_BUILD)
+#if defined(_WIN32) && !defined(SDL_BUILD)
     /* Define the main hook for the message processing loop.					*/
     bool Message_Handler(HWND hwnd, UINT message, UINT wParam, LONG lParam);
 #endif

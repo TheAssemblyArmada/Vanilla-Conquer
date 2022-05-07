@@ -373,6 +373,7 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     hwcursor.Y = h / 2;
     Update_HWCursor_Settings();
 
+#ifdef SDL2_BUILD
     /*
     ** Init gamepad.
     */
@@ -380,6 +381,7 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
         SDL_Init(SDL_INIT_GAMECONTROLLER);
         Keyboard->Open_Controller();
     }
+#endif
 
     return true;
 }
@@ -516,6 +518,8 @@ void Reset_Video_Mode(void)
 
     SDL_DestroyWindow(window);
     window = nullptr;
+
+    Keyboard->Close_Controller();
 #else
     if (window) {
         SDL_FreeSurface(window);
@@ -525,9 +529,6 @@ void Reset_Video_Mode(void)
 
     SDL_FreePalette(palette);
     palette = nullptr;
-
-    Keyboard->Close_Controller();
-
 }
 
 static void Update_HWCursor()

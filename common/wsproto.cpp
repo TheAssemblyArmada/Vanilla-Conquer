@@ -65,7 +65,7 @@ WinsockInterfaceClass* PacketTransport = nullptr; // The object for interfacing 
 
 void Process_Network()
 {
-#if !defined _WIN32 || defined SDL2_BUILD
+#if !defined _WIN32 || defined SDL_BUILD
     if (PacketTransport != nullptr) {
         PacketTransport->Message_Handler();
     }
@@ -91,7 +91,7 @@ void Process_Network()
 WinsockInterfaceClass::WinsockInterfaceClass(void)
 {
     WinsockInitialised = false;
-#if defined _WIN32 && !defined SDL2_BUILD
+#if defined _WIN32 && !defined SDL_BUILD
     ASync = INVALID_HANDLE_VALUE;
 #else
     FD_ZERO(&ReadSockets);
@@ -197,7 +197,7 @@ void WinsockInterfaceClass::Close_Socket(void)
  *=============================================================================================*/
 bool WinsockInterfaceClass::Start_Listening(void)
 {
-#if defined _WIN32 && !defined SDL2_BUILD
+#if defined _WIN32 && !defined SDL_BUILD
     /*
     ** Enable asynchronous events on the socket
     */
@@ -238,7 +238,7 @@ bool WinsockInterfaceClass::Start_Listening(void)
  *=============================================================================================*/
 void WinsockInterfaceClass::Stop_Listening(void)
 {
-#if defined _WIN32 && !defined SDL2_BUILD
+#if defined _WIN32 && !defined SDL_BUILD
     if (ASync != INVALID_HANDLE_VALUE) {
         WSACancelAsyncRequest(ASync);
         ASync = INVALID_HANDLE_VALUE;
@@ -329,7 +329,7 @@ bool WinsockInterfaceClass::Init(void)
     ** Initialise socket and event handle to null
     */
     Socket = INVALID_SOCKET;
-#if defined _WIN32 && !defined SDL2_BUILD
+#if defined _WIN32 && !defined SDL_BUILD
     ASync = INVALID_HANDLE_VALUE;
 #else
     FD_ZERO(&ReadSockets);
@@ -457,7 +457,7 @@ void WinsockInterfaceClass::WriteTo(void* buffer, int buffer_len, void* address)
     */
     OutBuffers.Add(packet);
 
-#if defined _WIN32 && !defined SDL2_BUILD
+#if defined _WIN32 && !defined SDL_BUILD
     /*
     ** Send a message to ourselves so that we can initiate a write if Winsock is idle.
     */
@@ -509,7 +509,7 @@ void WinsockInterfaceClass::Broadcast(void* buffer, int buffer_len)
     */
     OutBuffers.Add(packet);
 
-#if defined _WIN32 && !defined SDL2_BUILD
+#if defined _WIN32 && !defined SDL_BUILD
     /*
     ** Send a message to ourselves so that we can initiate a write if Winsock is idle.
     */
