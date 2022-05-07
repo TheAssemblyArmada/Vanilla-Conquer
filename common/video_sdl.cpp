@@ -264,7 +264,15 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
 #ifndef SDL2_BUILD
     const SDL_VideoInfo* video_info = SDL_GetVideoInfo();
     window = SDL_SetVideoMode(win_w, win_h, video_info->vfmt->BitsPerPixel, win_flags);
+    if (window == nullptr) {
+        DBG_ERROR("SDL_SetVideoMode failed: %s", SDL_GetError());
+        Reset_Video_Mode();
+        return false;
+    }
+
     SDL_WM_SetCaption("Vanilla Conquer", NULL);
+
+    DBG_INFO("Created SDL1 %s window in %dx%d@%dbpp", (win_flags & SDL_FULLSCREEN ? "fullscreen" : "windowed"), win_w, win_h, video_info->vfmt->BitsPerPixel);
 #else
     window =
         SDL_CreateWindow("Vanilla Conquer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, win_w, win_h, win_flags);
@@ -776,7 +784,9 @@ public:
             windowSurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(pixel_format), pixel_format);
             texture = SDL_CreateTexture(renderer, windowSurface->format->format, SDL_TEXTUREACCESS_STREAMING, w, h);
 #else
-            windowSurface = SDL_CreateRGBSurface(0, w, h, 16, 0, 0, 0, 0);
+            windowSurface = SDL_CreateRGBSurface(0, w, h, window->format->BitsPerPixel,
+                                                 window->format->Rmask, window->format->Gmask,
+                                                 window->format->Bmask, window->format->Amask);
 #endif
             frontSurface = this;
         }
@@ -834,7 +844,9 @@ public:
 
     virtual void Blt(const Rect& destRect, VideoSurface* src, const Rect& srcRect, bool mask)
     {
-        SDL_BlitSurface(((VideoSurfaceSDL*)src)->surface, (SDL_Rect*)(&srcRect), surface, (SDL_Rect*)&destRect);
+        SDL_Rect srcRectSDL = { srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height };
+        SDL_Rect destRectSDL = { destRect.X, destRect.Y, destRect.Width, destRect.Height };
+        SDL_BlitSurface(((VideoSurfaceSDL*)src)->surface, &srcRectSDL, surface, &destRectSDL);
     }
 
     virtual void FillRect(const Rect& rect, unsigned char color)
