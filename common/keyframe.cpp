@@ -47,6 +47,8 @@
 
 #define Apply_Delta(buffer, delta) Apply_XOR_Delta((char*)(buffer), (char*)(delta))
 
+#pragma pack(push, 1)
+
 typedef struct
 {
     unsigned short frames;
@@ -57,6 +59,8 @@ typedef struct
     unsigned short largest_frame_size;
     short flags;
 } KeyFrameHeaderType;
+
+#pragma pack(pop)
 
 #define INITIAL_BIG_SHAPE_BUFFER_SIZE 12000 * 1024
 #define THEATER_BIG_SHAPE_BUFFER_SIZE 2000 * 1024
