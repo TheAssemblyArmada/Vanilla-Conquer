@@ -41,6 +41,8 @@
 #ifndef PCX_H
 #define PCX_H
 
+#pragma pack(push, 1)
+
 typedef struct
 {
     unsigned char red;
@@ -67,6 +69,8 @@ typedef struct
     short palette_type;
     char filler[58];
 } PCX_HEADER;
+
+#pragma pack(pop)
 
 class GraphicBufferClass;
 
