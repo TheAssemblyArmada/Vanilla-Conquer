@@ -24,7 +24,7 @@ SettingsClass::SettingsClass()
     Video.Width = 0;
     Video.Height = 0;
     Video.Boxing = true;
-    Video.BoxingAspectRatio = "4:3";
+    Video.BoxingAspectRatio = "16:10";
     Video.FrameLimit = 120;
     Video.InterpolationMode = 2;
     Video.HardwareCursor = false;
