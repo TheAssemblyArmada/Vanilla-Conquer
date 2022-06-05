@@ -102,11 +102,12 @@ void Choose_Side(void)
     VQAHandle *gdibrief = 0, *nodbrief = 0;
     void const *staticaud, *oldfont;
     void const *speechg, *speechn, *speech;
-    int statichandle, speechhandle, speechplaying = 0;
+    int statichandle, speechhandle, speechplaying, speechduration = 0;
     int oldfontxspacing = FontXSpacing;
     int setpalette = 0;
     int gdi_start_palette;
     int scale_factor = Get_Resolution_Factor() + 1;
+    CountDownTimerClass speechtimer;
 
     TextPrintBuffer = new GraphicBufferClass(SeenBuff.Get_Width(), SeenBuff.Get_Height(), (void*)NULL);
     TextPrintBuffer->Clear();
@@ -182,7 +183,7 @@ void Choose_Side(void)
     while (Get_Mouse_State())
         Show_Mouse();
 
-    while (endframe != frame || (speechplaying && Is_Sample_Playing(speech))) {
+    while (endframe != frame || (speechplaying && speechtimer.Time() != 0)) {
         Animate_Frame(anim, SysMemPage, frame++);
         if (setpalette) {
             Wait_Vert_Blank();
@@ -221,6 +222,7 @@ void Choose_Side(void)
                         Whom = HOUSE_GOOD;
                         ScenPlayer = SCEN_PLAYER_GDI;
                         endframe = 0;
+                        speechduration = Sample_Length(speechg);
                         speechhandle = Play_Sample(speechg);
                         speechplaying = true;
                         speech = speechg;
@@ -230,10 +232,13 @@ void Choose_Side(void)
                         endframe = 14;
                         Whom = HOUSE_BAD;
                         ScenPlayer = SCEN_PLAYER_NOD;
+                        speechduration = Sample_Length(speechn);
                         speechhandle = Play_Sample(speechn);
                         speechplaying = true;
                         speech = speechn;
                     }
+
+                    speechtimer.Set(speechduration);
                 }
             }
         }
