@@ -231,7 +231,7 @@ bool Read_Scenario(char* root)
 
     } else {
 
-#if (1)
+#ifdef REMASTER_BUILD
         char message[200];
         if (root) {
             sprintf(message, "Failed to load scenario %s", root);
