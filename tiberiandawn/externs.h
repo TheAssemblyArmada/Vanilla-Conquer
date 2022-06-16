@@ -339,8 +339,6 @@ extern int TrapCheckHeap;
 ** Network (IPX) globals
 */
 extern IPXManagerClass Ipx;
-extern int IsBridge;
-extern IPXAddressClass BridgeNet;
 extern bool NetMaster;
 extern bool NetStealth;
 extern bool NetProtect;

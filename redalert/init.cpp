@@ -1468,57 +1468,6 @@ bool Parse_Command_Line(int argc, char* argv[])
 #endif //(0)
 
         /*
-        **	Specify destination connection for network play
-        */
-        if (strstr(string, "-DESTNET")) {
-            NetNumType net;
-            NetNodeType node;
-
-            /*
-            ** Scan the command-line string, pulling off each address piece
-            */
-            int i = 0;
-            char* p = strtok(string + 8, ".");
-            while (p) {
-                int x;
-
-                sscanf(p, "%x", &x); // convert from hex string to int
-                if (i < 4) {
-                    net[i] = (char)x; // fill NetNum
-                } else {
-                    node[i - 4] = (char)x; // fill NetNode
-                }
-                i++;
-                p = strtok(NULL, ".");
-            }
-
-            /*
-            ** If all the address components were successfully read, fill in the
-            ** BridgeNet with a broadcast address to the network across the bridge.
-            */
-            if (i >= 4) {
-                Session.IsBridge = 1;
-                memset(node, 0xff, 6);
-                Session.BridgeNet = IPXAddressClass(net, node);
-            }
-            continue;
-        }
-
-        /*
-        **	Specify socket ID, as an offset from 0x4000.
-        */
-        if (strstr(string, "-SOCKET")) {
-            unsigned short socket;
-
-            socket = (unsigned short)(atoi(string + strlen("SOCKET")));
-            socket += 0x4000;
-            if (socket >= 0x4000 && socket < 0x8000) {
-                Ipx.Set_Socket(socket);
-            }
-            continue;
-        }
-
-        /*
         **	Set the Net Stealth option
         */
         if (strstr(string, "-STEALTH")) {

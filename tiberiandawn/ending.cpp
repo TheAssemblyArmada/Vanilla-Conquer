@@ -114,9 +114,6 @@ void Nod_Ending(void)
         0x0, 0xED, 0xED, 0x2C, 0x2C, 0xFB, 0xFB, 0xFD, 0xFD, 0x0, 0x0, 0x0, 0x0, 0x0, 0x52, 0x0};
 
     char fname[12];
-#ifdef NOT_FOR_WIN95
-    char* satpic = new char[64000];
-#endif // NOT_FOR_WIN95
     int oldfontxspacing = FontXSpacing;
     void const* oldfont;
     int factor = Get_Resolution_Factor() + 1;
@@ -135,11 +132,7 @@ void Nod_Ending(void)
 
     void* localpal = Load_Alloc_Data(CCFileClass("SATSEL.PAL"));
     Load_Uncompress(CCFileClass("SATSEL.CPS"), SysMemPage, SysMemPage);
-#ifdef NOT_FOR_WIN95
-    memcpy(satpic, HidPage.Get_Buffer(), 64000);
-#else
     SysMemPage.Blit(*PseudoSeenBuff);
-#endif // NOT_FOR_WIN95
     void* kanefinl = Load_Sample("KANEFINL.AUD");
     void* loopie6m = Load_Sample("LOOPIE6M.AUD");
 
@@ -148,9 +141,6 @@ void Nod_Ending(void)
     Hide_Mouse();
     Wait_Vert_Blank();
     Set_Palette(localpal);
-#ifdef NOT_FOR_WIN95
-    memcpy(SeenBuff.Get_Buffer(), satpic, 64000);
-#endif // NOT_FOR_WIN95
     Show_Mouse();
 
     InterpolationPaletteChanged = true;
@@ -201,11 +191,8 @@ void Nod_Ending(void)
     }
     if (mouseshown)
         Hide_Mouse();
-#ifdef NOT_FOR_WIN95
-    delete satpic;
-#else
+
     delete PseudoSeenBuff;
-#endif // NOT_FOR_WIN95
 
     /* get rid of all the animating objects */
     for (int i = 0; i < MAXSCOREOBJS; i++)

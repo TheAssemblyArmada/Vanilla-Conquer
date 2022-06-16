@@ -1669,7 +1669,6 @@ bool Parse_Command_Line(int argc, char* argv[])
                  //						"  -CD<path> = Set search path for data files.\r\n"
                  "  -DESTNET  = Specify Network Number of destination system\r\n"
                  "              (Syntax: DESTNETxx.xx.xx.xx)\r\n"
-                 "  -SOCKET   = Network Socket ID (0 - 16383)\n"
                  "  -STEALTH  = Hide multiplayer names (\"Boss mode\")\r\n"
                  "  -MESSAGES = Allow messages from outside this game.\r\n"
                  "  -o        = Enable compatability with version 1.07.\r\n"
@@ -1857,57 +1856,6 @@ bool Parse_Command_Line(int argc, char* argv[])
             continue;
         }
 #endif
-
-        /*
-        **	Specify destination connection for network play
-        */
-        if (strstr(string, "-DESTNET")) {
-            NetNumType net;
-            NetNodeType node;
-
-            /*
-            ** Scan the command-line string, pulling off each address piece
-            */
-            int i = 0;
-            char* p = strtok(string + 8, ".");
-            while (p) {
-                int x;
-
-                sscanf(p, "%x", &x); // convert from hex string to int
-                if (i < 4) {
-                    net[i] = (char)x; // fill NetNum
-                } else {
-                    node[i - 4] = (char)x; // fill NetNode
-                }
-                i++;
-                p = strtok(NULL, ".");
-            }
-
-            /*
-            ** If all the address components were successfully read, fill in the
-            ** BridgeNet with a broadcast address to the network across the bridge.
-            */
-            if (i >= 4) {
-                IsBridge = 1;
-                memset(node, 0xff, 6);
-                BridgeNet = IPXAddressClass(net, node);
-            }
-            continue;
-        }
-
-        /*
-        **	Specify socket ID, as an offset from 0x4000.
-        */
-        if (strstr(string, "-SOCKET")) {
-            unsigned short socket;
-
-            socket = (unsigned short)(atoi(string + strlen("SOCKET")));
-            socket += 0x4000;
-            if (socket >= 0x4000 && socket < 0x8000) {
-                Ipx.Set_Socket(socket);
-            }
-            continue;
-        }
 
         /*
         **	Set the Net Stealth option
