@@ -776,15 +776,6 @@ int NewMaxAheadFrame2;
 //#endif
 
 /***************************************************************************
-**	This is the user-specified IPX address of a desired game owner machine.
-** Use this to cross a bridge.  Only the 1st 4 numbers in the address are
-** used; the rest are set to ff's, for broadcasting.  'IsBridge' is set
-** if this address should be used.
-*/
-int IsBridge = 0;
-IPXAddressClass BridgeNet;
-
-/***************************************************************************
 **	This flag is true if the user has requested that this game be "secret"
 ** (The game will not appear to other systems just starting up.)
 */

@@ -112,11 +112,6 @@ public:
     virtual int Get_Packet(void* buf, int* buflen, IPXAddressClass* address, unsigned short* product_id);
 
     /*.....................................................................
-    This is for telling the connection it can cross a bridge.
-    .....................................................................*/
-    void Set_Bridge(NetNumType bridge);
-
-    /*.....................................................................
     The Product ID for this product.
     .....................................................................*/
     unsigned short ProductID;

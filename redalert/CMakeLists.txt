@@ -68,8 +68,6 @@ set(REDALERT_SRC
     intro.cpp
     iomap.cpp
     ioobj.cpp
-    ipx.cpp
-    ipx95.cpp
     ipxconn.cpp
     ipxgconn.cpp
     ipxmgr.cpp

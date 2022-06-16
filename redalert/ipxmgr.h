@@ -168,7 +168,6 @@ public:
     int Init(void);
     int Is_IPX(void);
     virtual void Set_Timing(unsigned int retrydelta, unsigned int maxretries, unsigned int timeout);
-    void Set_Bridge(NetNumType bridge);
 
     /*.....................................................................
     These routines control creation of the "Connections" (data queues) for
@@ -210,14 +209,6 @@ public:
     virtual int Global_Num_Receive(void);
     virtual int Private_Num_Send(int id = CONNECTION_NONE);
     virtual int Private_Num_Receive(int id = CONNECTION_NONE);
-
-    /*.....................................................................
-    This routine changes the socket ID assigned the IPX Manager when it
-    was constructed.  Do not call this function after calling Init()!
-    The Socket ID should be known by both ends of the communications before
-    any packets are sent.
-    .....................................................................*/
-    void Set_Socket(unsigned short socket);
 
     /*.....................................................................
     Routines to return the largest average queue response time, and to

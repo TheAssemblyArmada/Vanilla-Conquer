@@ -177,7 +177,6 @@ SessionClass::SessionClass(void)
     Play = 0;                          // set via command line
     Attract = 0;                       // set via command line
 
-    IsBridge = 0;
     NetStealth = false;
     NetProtect = true;
     NetOpen = false;

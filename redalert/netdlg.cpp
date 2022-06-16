@@ -1449,16 +1449,6 @@ bool Init_Network(void)
         return (false);
     }
 
-    //------------------------------------------------------------------------
-    //	Set up the IPX manager to cross a bridge
-    //------------------------------------------------------------------------
-    if (Session.Type != GAME_INTERNET) {
-        if (Session.IsBridge) {
-            Session.BridgeNet.Get_Address(net, node);
-            Ipx.Set_Bridge(net);
-        }
-    }
-
     return (true);
 
 } /* end of Init_Network */
@@ -2846,9 +2836,6 @@ static int Net_Join_Dialog(void)
                 //	Now broadcast a SIGN_OFF just to be thorough
                 //............................................................
                 Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, NULL);
-                if (Session.IsBridge) {
-                    Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, &Session.BridgeNet);
-                }
 
                 while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0)
                     ;
@@ -3505,11 +3492,6 @@ static int Net_Join_Dialog(void)
             Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, NULL);
             Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, NULL);
 
-            if (Session.IsBridge) {
-                Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, &Session.BridgeNet);
-                Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, &Session.BridgeNet);
-            }
-
             while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0)
                 ;
 
@@ -3838,14 +3820,6 @@ Send_Join_Queries(int curgame, JoinStateType joinstate, int gamenow, int playern
         Session.GPacket.Command = NET_QUERY_GAME;
 
         Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, NULL);
-
-        //.....................................................................
-        //	If the user specified a remote server address, broadcast over that
-        //	network, too.
-        //.....................................................................
-        if (Session.IsBridge) {
-            Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, &Session.BridgeNet);
-        }
     }
 
     //------------------------------------------------------------------------
@@ -3863,14 +3837,6 @@ Send_Join_Queries(int curgame, JoinStateType joinstate, int gamenow, int playern
         strcpy(Session.GPacket.Name, Session.Games[curgame]->Name);
 
         Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, NULL);
-
-        //.....................................................................
-        //	If the user specified a remote server address, broadcast over that
-        //	network, too.
-        //.....................................................................
-        if (Session.IsBridge) {
-            Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, &Session.BridgeNet);
-        }
     }
 
     //------------------------------------------------------------------------
@@ -3888,10 +3854,6 @@ Send_Join_Queries(int curgame, JoinStateType joinstate, int gamenow, int playern
         Session.GPacket.Chat.Color = Session.ColorIdx;
 
         Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, NULL);
-
-        if (Session.IsBridge) {
-            Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, &Session.BridgeNet);
-        }
     }
 
 } /* end of Send_Join_Queries */
@@ -4221,9 +4183,6 @@ static JoinEventType Get_Join_Responses(JoinStateType* joinstate,
             }
 
             Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, NULL);
-            if (Session.IsBridge) {
-                Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, &Session.BridgeNet);
-            }
 
             while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0)
                 ;
@@ -5367,16 +5326,6 @@ static int Net_New_Dialog(void)
             //...............................................................
             Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, NULL);
             Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, NULL);
-            while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0)
-                ;
-
-            //...............................................................
-            //	Broadcast my sign-off over a bridged network if there is one
-            //...............................................................
-            if (Session.IsBridge) {
-                Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, &Session.BridgeNet);
-                Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, &Session.BridgeNet);
-            }
             while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0)
                 ;
 
@@ -9074,9 +9023,6 @@ static int Net_Fake_Join_Dialog(void)
                 //	Now broadcast a SIGN_OFF just to be thorough
                 //............................................................
                 Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, NULL);
-                if (Session.IsBridge) {
-                    Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, &Session.BridgeNet);
-                }
 
                 while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0)
                     ;
@@ -9465,11 +9411,6 @@ static int Net_Fake_Join_Dialog(void)
 
             Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, NULL);
             Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, NULL);
-
-            if (Session.IsBridge) {
-                Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, &Session.BridgeNet);
-                Ipx.Send_Global_Message(&Session.GPacket, sizeof(GlobalPacketType), 0, &Session.BridgeNet);
-            }
 
             while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0)
                 ;

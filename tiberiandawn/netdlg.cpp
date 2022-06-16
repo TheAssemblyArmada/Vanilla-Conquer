@@ -178,16 +178,6 @@ bool Init_Network(void)
         MetaPacket = new char[sizeof(EventClass) * MAX_EVENTS];
     }
 
-    /*------------------------------------------------------------------------
-    Set up the IPX manager to cross a bridge
-    ------------------------------------------------------------------------*/
-    if (!(GameToPlay == GAME_INTERNET)) {
-        if (IsBridge) {
-            BridgeNet.Get_Address(net, node);
-            Ipx.Set_Bridge(net);
-        }
-    }
-
     return (true);
 
 } /* end of Init_Network */
@@ -1476,11 +1466,6 @@ static int Net_Join_Dialog(void)
             Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, NULL);
             Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, NULL);
 
-            if (IsBridge) {
-                Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, &BridgeNet);
-                Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, &BridgeNet);
-            }
-
             while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0)
                 ;
 
@@ -1878,11 +1863,6 @@ static int Net_Join_Dialog(void)
             Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, NULL);
             Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, NULL);
 
-            if (IsBridge) {
-                Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, &BridgeNet);
-                Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, &BridgeNet);
-            }
-
             while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0)
                 ;
 
@@ -2217,13 +2197,6 @@ static void Send_Join_Queries(int curgame, int gamenow, int playernow)
         GPacket.Command = NET_QUERY_GAME;
 
         Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, NULL);
-
-        /*.....................................................................
-        If the user specified a remote server address, broadcast over that
-        network, too.
-        .....................................................................*/
-        if (IsBridge)
-            Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, &BridgeNet);
     }
 
     /*------------------------------------------------------------------------
@@ -2240,13 +2213,6 @@ static void Send_Join_Queries(int curgame, int gamenow, int playernow)
         strcpy(GPacket.Name, Games[curgame]->Name);
 
         Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, NULL);
-
-        /*.....................................................................
-        If the user specified a remote server address, broadcast over that
-        network, too.
-        .....................................................................*/
-        if (IsBridge)
-            Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, &BridgeNet);
     }
 
 } /* end of Send_Join_Queries */
@@ -2482,11 +2448,6 @@ Get_Join_Responses(JoinStateType* joinstate, ListClass* gamelist, ColorListClass
 
             Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, NULL);
             Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, NULL);
-
-            if (IsBridge) {
-                Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, &BridgeNet);
-                Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, &BridgeNet);
-            }
 
             while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0)
                 ;
@@ -3514,16 +3475,6 @@ static int Net_New_Dialog(void)
             ...............................................................*/
             Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, NULL);
             Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, NULL);
-            while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0)
-                ;
-
-            /*...............................................................
-            Broadcast my sign-off over a bridged network if there is one
-            ...............................................................*/
-            if (IsBridge) {
-                Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, &BridgeNet);
-                Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, &BridgeNet);
-            }
             while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0)
                 ;
 
@@ -5154,11 +5105,6 @@ static int Net_Fake_Join_Dialog(void)
             Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, NULL);
             Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, NULL);
 
-            if (IsBridge) {
-                Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, &BridgeNet);
-                Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, &BridgeNet);
-            }
-
             while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0)
                 ;
 
@@ -5400,11 +5346,6 @@ static int Net_Fake_Join_Dialog(void)
 
             Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, NULL);
             Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, NULL);
-
-            if (IsBridge) {
-                Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, &BridgeNet);
-                Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 0, &BridgeNet);
-            }
 
             while (Ipx.Global_Num_Send() > 0 && Ipx.Service() != 0)
                 ;

@@ -50,15 +50,6 @@
 
 #ifdef WINSOCK_IPX
 #include "wsproto.h"
-
-#else
-
-#include "ipx95.h"
-#ifdef _WIN32
-#include "common/tcpip.h"
-#else // _WIN32
-#include "common/fakesock.h"
-#endif // _WIN32
 #endif // WINSOCK_IPX
 
 /*
@@ -132,40 +123,6 @@ IPXConnClass::IPXConnClass(int numsend,
     Address.Get_Address(net, node);
     memcpy(ImmediateAddress, node, 6);
     Immed_Set = 0;
-#else
-    if (!Winsock.Get_Connected()) {
-        /*------------------------------------------------------------------------
-        If our Address field is an actual address (ie NULL wasn't passed to the
-        constructor), pre-compute the ImmediateAddress value for the SendECB.
-        This allows pre-computing of the ImmediateAddress for all connections
-        created after Configure() is called.
-        ------------------------------------------------------------------------*/
-        if (!Address.Is_Broadcast() && Configured == 1) {
-            Address.Get_Address(net, node);
-
-            /*.....................................................................
-            If the user is logged in & has a valid Novell Connection Number, get
-            the bridge address the "official" way
-            .....................................................................*/
-            if (ConnectionNum != 0) {
-                if (IPX_Get_Local_Target(net, node, Socket, ImmediateAddress) != 0) {
-                    memcpy(ImmediateAddress, node, 6);
-                }
-            }
-            /*.....................................................................
-            Otherwise, use the destination node address as the ImmediateAddress,
-            and just hope there's no network bridge in the path.
-            .....................................................................*/
-            else {
-                memcpy(ImmediateAddress, node, 6);
-            }
-
-            Immed_Set = 1;
-        } else {
-            memset(ImmediateAddress, 0, 6);
-            Immed_Set = 0;
-        }
-    }
 #endif // WINSOCK_IPX
 } /* end of IPXConnClass */
 
@@ -294,22 +251,7 @@ int IPXConnClass::Start_Listening(void)
     }
 
 #else
-    if (Winsock.Get_Connected())
-        return (true);
-
-    /*------------------------------------------------------------------------
-    Open the Socket
-    ------------------------------------------------------------------------*/
-    if (!Open_Socket(Socket))
-        return (false);
-
-    if (IPX_Start_Listening95()) {
-        Listening = 1;
-        return (true);
-    } else {
-        Close_Socket(Socket);
-        return (false);
-    }
+    return (false);
 #endif // WINSOCK_IPX
 } /* end of Start_Listening */
 
@@ -338,26 +280,6 @@ int IPXConnClass::Stop_Listening(void)
     //	All done.
     return (1);
 #else
-    /*------------------------------------------------------------------------
-    Don't do anything unless we're already Listening.
-    ------------------------------------------------------------------------*/
-    if (Listening == 0) {
-        return (0);
-    }
-
-    if (Winsock.Get_Connected()) {
-        Listening = 0;
-        return (true);
-    } else {
-        IPX_Shut_Down95();
-        Close_Socket(Socket);
-    }
-
-    Listening = 0;
-
-    /*------------------------------------------------------------------------
-    All done.
-    ------------------------------------------------------------------------*/
     return (1);
 #endif // WINSOCK_IPX
 
@@ -419,41 +341,7 @@ int IPXConnClass::Open_Socket(unsigned short socket)
     return (rc);
 
 #else  // WINSOCK_IPX
-    if (Winsock.Get_Connected()) {
-        SocketOpen = 1;
-        return (true);
-    }
-
-    SocketOpen = 0;
-
-    /*------------------------------------------------------------------------
-    Try to open a listen socket.  The socket may have been left open by
-    a previously-crashed program, so ignore the state of the SocketOpen
-    flag for this call; use IPX to determine if the socket was already open.
-    ------------------------------------------------------------------------*/
-    rc = IPX_Open_Socket(socket);
-    if (rc) {
-
-        /*.....................................................................
-        If already open, close & reopen it
-        .....................................................................*/
-        if (rc == IPXERR_SOCKET_ERROR) {
-            WWDebugString("Error -- Specified socket is already open");
-            IPX_Close_Socket(socket);
-            rc = IPX_Open_Socket(socket);
-        }
-
-        /*..................................................................
-        Still can't open: return error
-        ..................................................................*/
-        if (rc) {
-            return (0);
-        }
-    }
-
-    SocketOpen = 1;
-
-    return (1);
+    return (0);
 #endif // WINSOCK_IPX
 
 } /* end of Open_Socket */
@@ -478,23 +366,6 @@ void IPXConnClass::Close_Socket(unsigned short socket)
 #ifdef WINSOCK_IPX
     socket = socket;
     PacketTransport->Close_Socket();
-    SocketOpen = 0;
-#else  // WINSOCK_IPX
-    if (Winsock.Get_Connected()) {
-        SocketOpen = 0;
-        return;
-    }
-
-    /*------------------------------------------------------------------------
-    Never, ever, ever, under any circumstances whatsoever, close a socket
-    that isn't open.  You'll regret it forever (or until at least until
-    you're through rebooting, which, if you're on a Pentium is the same
-    thing).
-    ------------------------------------------------------------------------*/
-    if (SocketOpen == 1) {
-        IPX_Close_Socket(socket);
-    }
-
     SocketOpen = 0;
 #endif // WINSOCK_IPX
 } /* end of Close_Socket */
@@ -536,50 +407,8 @@ int IPXConnClass::Send_To(char* buf, int buflen, IPXAddressClass* address, NetNo
     PacketTransport->WriteTo((void*)buf, buflen, (void*)address);
     return (true);
 
-#else // WINSOCK_IPX
-    NetNumType net;
-    NetNodeType node;
-    int rc;
-
-    unsigned char send_address[6];
-
-    if (Winsock.Get_Connected()) {
-        Winsock.Write((void*)buf, buflen);
-        return (true);
-    }
-
-    if (immed) {
-        memcpy(send_address, immed, 6);
-#ifdef FIXIT_DESTNET
-        // fixes DESTNET
-        address->Get_Address(net, node);
-#else
-        // breaks DESTNET
-        memcpy(node, immed, 6);
-        memset(net, 0, sizeof(net));
-#endif
-    } else {
-        address->Get_Address(net, node);
-        /*.....................................................................
-        If the user is logged in & has a valid Novell Connection Number, get the
-        bridge address the "official" way
-        .....................................................................*/
-        if (ConnectionNum != 0) {
-            rc = IPX_Get_Local_Target(net, node, Socket, &send_address[0]);
-            if (rc != 0) {
-                return (false);
-            }
-        } else {
-            /*.....................................................................
-            Otherwise, use the destination node address as the ImmediateAddress, and
-            just hope there's no network bridge in the path.
-            .....................................................................*/
-            memcpy(send_address, node, 6);
-        }
-    }
-
-    return (
-        IPX_Send_Packet95(&send_address[0], (unsigned char*)buf, buflen, (unsigned char*)net, (unsigned char*)node));
+#else  // WINSOCK_IPX
+    return (false);
 #endif // WINSOCK_IPX
 
 } /* end of Send_To */
@@ -606,12 +435,7 @@ int IPXConnClass::Broadcast(char* buf, int buflen)
     return (true);
 
 #else  // WINSOCK_IPX
-    if (Winsock.Get_Connected()) {
-        Winsock.Write((void*)buf, buflen);
-        return (true);
-    } else {
-        return (IPX_Broadcast_Packet95((unsigned char*)buf, buflen));
-    }
+    return (false);
 #endif // WINSOCK_IPX
 } /* end of Broadcast */
 
