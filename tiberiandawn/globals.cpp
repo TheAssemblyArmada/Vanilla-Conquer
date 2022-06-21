@@ -122,10 +122,10 @@ char BriefingText[512];
 ThemeType TransitTheme = THEME_NONE;
 
 /***************************************************************************
-**	This records the view hotspots for the player. These are the cell numbers
-**	of the upper left corner for the view position.
+**	These are the movie names to use for mission briefing, winning, and losing
+**	sequences. They are read from the INI file.
 */
-CELL Views[4];
+ScenarioClass Scen;
 
 /***************************************************************************
 **	This is the pending speech sample to play. This sample will be played
@@ -306,7 +306,6 @@ WWKeyboardClass* Keyboard;
 HousesType Whom;                          // Initial command line house choice.
 DiffType ScenDifficulty = DIFF_NORMAL;    // For human player.
 DiffType ScenCDifficulty = DIFF_NORMAL;   // For computer players.
-unsigned Scenario;                        // Scenario #
 ScenarioPlayerType ScenPlayer;            // GDI, NOD, 2-Player, Multi-Player
 ScenarioDirType ScenDir;                  // East/West
 ScenarioVarType ScenVar;                  // variation A/B/C

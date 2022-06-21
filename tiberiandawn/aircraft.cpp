@@ -3378,7 +3378,7 @@ int AircraftClass::Mission_Guard(void)
     **	Special case to force the GDI helicopter to be brain dead in the Nod
     **	mission where it is supposed to be captured.
     */
-    if (GameToPlay == GAME_NORMAL && Scenario == 7 && House->Class->House == HOUSE_GOOD) {
+    if (GameToPlay == GAME_NORMAL && Scen.Scenario == 7 && House->Class->House == HOUSE_GOOD) {
         return (TICKS_PER_SECOND * 20);
     }
 

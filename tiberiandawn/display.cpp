@@ -1354,7 +1354,7 @@ void DisplayClass::Read_INI(CCINIClass& ini)
         Waypoint[WAYPT_HOME] = XY_Cell(MapCellX, MapCellY);
     }
     Set_Tactical_Position(Cell_Coord(Waypoint[WAYPT_HOME]) & 0xFF00FF00L);
-    Views[0] = Views[1] = Views[2] = Views[3] = Waypoint[WAYPT_HOME];
+    Scen.Views[0] = Scen.Views[1] = Scen.Views[2] = Scen.Views[3] = Waypoint[WAYPT_HOME];
 
     /*
     **	Loop through all CellTrigger entries.
@@ -3757,7 +3757,7 @@ void DisplayClass::Mouse_Left_Up(bool shadow, ObjectClass* object, ActionType ac
 	**	Give a generic help message when over shadow terrain.
 	*/
     if (shadow) {
-        if (Scenario < 4) {
+        if (Scen.Scenario < 4) {
             Help_Text(TXT_SHADOW);
         } else {
             Help_Text(TXT_NONE);
@@ -3812,7 +3812,7 @@ void DisplayClass::Mouse_Left_Up(bool shadow, ObjectClass* object, ActionType ac
                 }
             }
 
-            if (Scenario > 3 || object->What_Am_I() != RTTI_TERRAIN) {
+            if (Scen.Scenario > 3 || object->What_Am_I() != RTTI_TERRAIN) {
                 Help_Text(text, -1, -1, color);
             } else {
                 Help_Text(TXT_NONE);

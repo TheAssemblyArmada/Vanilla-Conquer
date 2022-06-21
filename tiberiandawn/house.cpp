@@ -607,7 +607,7 @@ bool HouseClass::Can_Build(TechnoTypeClass const* type, HousesType house) const
 #ifdef NEWMENU
     int level = BuildLevel;
 #else
-    int level = Scenario;
+    int level = Scen.Scenario;
 #endif
 
     /*

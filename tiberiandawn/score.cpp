@@ -930,7 +930,7 @@ void ScoreClass::Presentation(void)
                 for (i = (NUMFAMENAMES - 1); i > index; i--)
                     hallfame[i] = hallfame[i - 1];
             hallfame[index].score = total;
-            hallfame[index].level = Scenario;
+            hallfame[index].level = Scen.Scenario;
             //			hallfame[index].level = BuildLevel;
             // hallfame[index].name[0] = 0;	// blank out the name
             memset(hallfame[index].name, ' ', sizeof(hallfame[index].name) - 1);

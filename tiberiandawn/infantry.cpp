@@ -2972,8 +2972,8 @@ void InfantryClass::Read_INI(CCINIClass& ini)
             /*
             **	Special case: replace C7 with C5 on scg08eb
             */
-            if (GameToPlay == GAME_NORMAL && PlayerPtr->ActLike == HOUSE_GOOD && Scenario == 8 && ScenVar == SCEN_VAR_B
-                && classid == INFANTRY_C7) {
+            if (GameToPlay == GAME_NORMAL && PlayerPtr->ActLike == HOUSE_GOOD && Scen.Scenario == 8
+                && ScenVar == SCEN_VAR_B && classid == INFANTRY_C7) {
                 classid = INFANTRY_C5;
             }
 
@@ -3023,7 +3023,8 @@ void InfantryClass::Read_INI(CCINIClass& ini)
                         **	Special case: delete pre-placed Chan on scb10ea; he will spawn from the Tech Center.
                         */
                         bool is_scb10ea_chan = GameToPlay == GAME_NORMAL && PlayerPtr->ActLike == HOUSE_BAD
-                                               && Scenario == 10 && ScenVar == SCEN_VAR_A && *infantry == INFANTRY_CHAN;
+                                               && Scen.Scenario == 10 && ScenVar == SCEN_VAR_A
+                                               && *infantry == INFANTRY_CHAN;
 
                         if (!is_scb10ea_chan && infantry->Unlimbo(coord, dir)) {
                             infantry->Strength = Fixed_To_Cardinal(infantry->Class_Of().MaxStrength, strength);

@@ -740,7 +740,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Set_Multiplayer_Data(int scena
         Special.IsTSpread = 0;
     }
 
-    Scenario = scenario_index;
+    Scen.Scenario = scenario_index;
     MPlayerCount = 0;
 
     for (int i = 0; i < num_players; i++) {
@@ -1077,7 +1077,7 @@ void HandleSabotagedStructure(int structure_type)
     SabotagedType = (StructType)structure_type;
 
     int index;
-    if (SabotagedType != STRUCT_NONE && Scenario == 7 && PlayerPtr->Class->House == HOUSE_GOOD) {
+    if (SabotagedType != STRUCT_NONE && Scen.Scenario == 7 && PlayerPtr->Class->House == HOUSE_GOOD) {
         for (index = 0; index < Buildings.Count(); index++) {
             BuildingClass* building = Buildings.Ptr(index);
 
@@ -1129,7 +1129,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Read_INI(int scenario_index,
     DLLExportClass::Set_Content_Directory(content_directory);
 
     // Hack a fix for scenario 21 since the same mission number is used in Covert Ops and N64
-    Scenario = (scenario_index == 81) ? 21 : scenario_index;
+    Scen.Scenario = (scenario_index == 81) ? 21 : scenario_index;
 
     ScenVar = (ScenarioVarType)scenario_variation;
     ScenDir = (ScenarioDirType)scenario_direction;
@@ -1141,7 +1141,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Read_INI(int scenario_index,
         strcpy(ScenarioName, override_map_name);
     } else {
         Set_Scenario_Name(ScenarioName,
-                          Scenario,
+                          Scen.Scenario,
                           ScenPlayer,
                           (ScenarioDirType)scenario_direction,
                           (ScenarioVarType)scenario_variation);
@@ -1257,7 +1257,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Start_Instance_Variation(int s
     DLLExportClass::Set_Content_Directory(content_directory);
 
     // Hack a fix for scenario 21 since the same mission number is used in Covert Ops and N64
-    Scenario = (scenario_index == 81) ? 21 : scenario_index;
+    Scen.Scenario = (scenario_index == 81) ? 21 : scenario_index;
     BuildLevel = build_level;
 
     SabotagedType = (StructType)sabotaged_structure;
@@ -1280,7 +1280,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Start_Instance_Variation(int s
         strcpy(ScenarioName, override_map_name);
     } else {
         Set_Scenario_Name(ScenarioName,
-                          Scenario,
+                          Scen.Scenario,
                           ScenPlayer,
                           (ScenarioDirType)scenario_direction,
                           (ScenarioVarType)scenario_variation);
@@ -2073,15 +2073,14 @@ void DLLExportClass::Config(const CNCRulesDataStruct& rules)
  *
  * History: 2/14/2020 - LLL
  **************************************************************************************************/
-extern CELL Views[4];
 void DLLExportClass::Set_Home_Cell(int x, int y, uint64 player_id)
 {
     if (GameToPlay == GAME_NORMAL) {
-        MultiplayerStartPositions[0] = Views[0] = XY_Cell(x, y);
+        MultiplayerStartPositions[0] = Scen.Views[0] = XY_Cell(x, y);
     } else {
         for (int i = 0; i < MPlayerCount && i < 4; i++) {
             if (GlyphxPlayerIDs[i] == player_id) {
-                Views[i] = MultiplayerStartPositions[i] = XY_Cell(x, y);
+                Scen.Views[i] = MultiplayerStartPositions[i] = XY_Cell(x, y);
             }
         }
     }
@@ -2452,11 +2451,11 @@ void DLLExportClass::On_Game_Over(uint64 glyphx_Player_id, bool player_wins)
     Calculate_Single_Player_Score(new_event);
 
     if (player_wins) {
-        if (PlayerPtr->Class->House == HOUSE_BAD && Scenario == 13) {
+        if (PlayerPtr->Class->House == HOUSE_BAD && Scen.Scenario == 13) {
             // TODO: Nod_Ending() Also looks like it plays some audio that might need to be integrated.
             new_event.GameOver.MovieName = "";
             new_event.GameOver.AfterScoreMovieName = "NODFINAL";
-        } else if (PlayerPtr->Class->House == HOUSE_GOOD && Scenario == 15) {
+        } else if (PlayerPtr->Class->House == HOUSE_GOOD && Scen.Scenario == 15) {
             if (TempleIoned) {
                 new_event.GameOver.MovieName = "GDIFINB";
                 new_event.GameOver.AfterScoreMovieName = "GDIEND2";
@@ -2891,7 +2890,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Get_Game_State(GameStateReques
 
         // Hack a fix for scenario 21 since the same mission number is used in Covert Ops and N64
         memset(map_data->ScenarioName, 0, sizeof(map_data->ScenarioName));
-        if ((Map.Theater == CNC_THEATER_DESERT) && (Scenario == 21)) {
+        if ((Map.Theater == CNC_THEATER_DESERT) && (Scen.Scenario == 21)) {
             strncpy(map_data->ScenarioName, "SCB81EA", sizeof(map_data->ScenarioName) - 1);
         } else {
             strncpy(map_data->ScenarioName, ScenarioName, sizeof(map_data->ScenarioName) - 1);
@@ -6302,7 +6301,7 @@ void DLLExportClass::Logic_Switch_Player_Context(HouseClass* house)
 void DLLExportClass::Calculate_Start_Positions(void)
 {
     if (GameToPlay == GAME_NORMAL) {
-        MultiplayerStartPositions[0] = Views[0];
+        MultiplayerStartPositions[0] = Scen.Views[0];
         return;
     }
 

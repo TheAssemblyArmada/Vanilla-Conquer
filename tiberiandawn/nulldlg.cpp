@@ -901,7 +901,7 @@ int Com_Scenario_Dialog(void)
         /*.....................................................................
         Get the scenario filename
         .....................................................................*/
-        Scenario = MPlayerFilenum[ScenarioIdx];
+        Scen.Scenario = MPlayerFilenum[ScenarioIdx];
 
         int diff = difficulty.Get_Value() * (Rule.IsFineDifficulty ? 1 : 2);
         switch (diff) {
