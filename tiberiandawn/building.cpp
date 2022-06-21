@@ -1163,16 +1163,16 @@ void BuildingClass::AI(void)
         **	Possibly start repair process if the building is below half strength.
         */
         int ratio = 0x0040;
-        if (Scenario > 6)
+        if (Scen.Scenario > 6)
             ratio = 0x0080;
-        if (Scenario > 10)
+        if (Scen.Scenario > 10)
             ratio = 0x00C0;
         if (Class->IsRepairable && Health_Ratio() <= (unsigned)ratio) {
             if (House->Available_Money() >= REPAIR_THRESHHOLD) {
                 Repair(1);
             } else {
-                if (IsTickedOff && (int)Scenario > 2 && Random_Pick(0, 50) < (int)Scenario && !Trigger) {
-                    if (GameToPlay != GAME_NORMAL || Scenario != 15 || PlayerPtr->ActLike != HOUSE_GOOD
+                if (IsTickedOff && (int)Scen.Scenario > 2 && Random_Pick(0, 50) < (int)Scen.Scenario && !Trigger) {
+                    if (GameToPlay != GAME_NORMAL || Scen.Scenario != 15 || PlayerPtr->ActLike != HOUSE_GOOD
                         || *this != STRUCT_TEMPLE) {
                         Sell_Back(1);
                     }
@@ -1947,7 +1947,8 @@ void BuildingClass::Drop_Debris(TARGET source)
     **	Special case for Chan to run from destroyed technology
     **	building.
     */
-    if (GameToPlay == GAME_NORMAL && *this == STRUCT_MISSION && PlayerPtr->ActLike == HOUSE_BAD && Scenario == 10) {
+    if (GameToPlay == GAME_NORMAL && *this == STRUCT_MISSION && PlayerPtr->ActLike == HOUSE_BAD
+        && Scen.Scenario == 10) {
         InfantryClass* i = new InfantryClass(INFANTRY_CHAN, House->Class->House);
 
         ScenarioInit++;

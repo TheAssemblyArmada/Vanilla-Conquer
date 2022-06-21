@@ -40,6 +40,7 @@
  *   Fill_In_Data -- Recreate all data that is not loaded with scenario.                       *
  *   Read_Scenario -- Reads a scenario from disk.                                              *
  *   Restate_Mission -- Handles restating the mission objective.                               *
+ *   ScenarioClass::ScenarioClass -- Constructor for the scenario control object.              *
  *   Start_Scenario -- Starts the scenario.                                                    *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
@@ -47,6 +48,28 @@
 #include "common/framelimit.h"
 
 extern int PreserveVQAScreen;
+
+/***********************************************************************************************
+ * ScenarioClass::ScenarioClass -- Constructor for the scenario control object.                *
+ *                                                                                             *
+ *    This constructs the default scenario control object. Normally, all the default values    *
+ *    are meaningless since the act of starting a scenario will fill in all of the values with *
+ *    settings retrieved from the scenario control file.                                       *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/03/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+ScenarioClass::ScenarioClass(void)
+    : Scenario(1)
+{
+    memset(Views, '\0', sizeof(Views));
+}
 
 /***********************************************************************************************
  * Start_Scenario -- Starts the scenario.                                                      *
@@ -87,20 +110,20 @@ bool Start_Scenario(char* root, bool briefing)
         ** sides introduction.  We don't want an intro movie on scenario 1, and
         ** we don't want a briefing movie on GDI scenario 1.
         */
-        if (Scenario < 20 && (!Special.IsJurassic || !AreThingiesEnabled)) {
-            if (Scenario != 1 || Whom == HOUSE_GOOD) {
+        if (Scen.Scenario < 20 && (!Special.IsJurassic || !AreThingiesEnabled)) {
+            if (Scen.Scenario != 1 || Whom == HOUSE_GOOD) {
                 Play_Movie(IntroMovie);
             }
 #ifndef REMASTER_BUILD
-            if (Scenario > 1 || Whom == HOUSE_BAD) {
+            if (Scen.Scenario > 1 || Whom == HOUSE_BAD) {
                 if (briefing) {
-                    PreserveVQAScreen = (Scenario == 1);
+                    PreserveVQAScreen = (Scen.Scenario == 1);
                     Play_Movie(BriefMovie);
                 }
             }
 #else
             if (briefing) {
-                PreserveVQAScreen = (Scenario == 1);
+                PreserveVQAScreen = (Scen.Scenario == 1);
                 Play_Movie(BriefMovie);
             }
 #endif
@@ -224,7 +247,7 @@ bool Read_Scenario(char* root)
         **	Clear out the tutor flags for scenarios one and two. This is designed
         **	so that tutorial message will reappear in scenario two.
         */
-        if (Scenario < 5) {
+        if (Scen.Scenario < 5) {
             TutorFlags[0] = 0L;
             TutorFlags[1] = 0L;
         }
@@ -422,10 +445,10 @@ void Do_Win(void)
     **	Play the winning movie and then start the next scenario.
     */
     if (RequiredCD != -2) {
-        if (Scenario >= 20 && Scenario < 60 && GameToPlay == GAME_NORMAL) {
+        if (Scen.Scenario >= 20 && Scen.Scenario < 60 && GameToPlay == GAME_NORMAL) {
             RequiredCD = 2;
         } else {
-            if (Scenario >= 60) {
+            if (Scen.Scenario >= 60) {
                 RequiredCD = -1;
             } else {
                 if (PlayerPtr->Class->House == HOUSE_GOOD) {
@@ -448,15 +471,15 @@ void Do_Win(void)
     */
     if (!PlaybackGame) {
         if (Is_Demo()) {
-            switch (Scenario) {
+            switch (Scen.Scenario) {
             case 1:
                 Score.Presentation();
-                Scenario = 10;
+                Scen.Scenario = 10;
                 break;
 
             case 10:
                 Score.Presentation();
-                Scenario = 6;
+                Scen.Scenario = 6;
                 break;
 
             default:
@@ -468,7 +491,7 @@ void Do_Win(void)
             }
         } else {
 #ifdef NEWMENU
-            if (Scenario >= 20) {
+            if (Scen.Scenario >= 20) {
                 Keyboard->Clear();
                 Score.Presentation();
                 GameActive = false;
@@ -477,7 +500,7 @@ void Do_Win(void)
             }
 #endif
 
-            if (PlayerPtr->Class->House == HOUSE_BAD && Scenario == 13) {
+            if (PlayerPtr->Class->House == HOUSE_BAD && Scen.Scenario == 13) {
                 Nod_Ending();
                 // Prog_End();
                 // exit(0);
@@ -486,7 +509,7 @@ void Do_Win(void)
                 GameActive = false;
                 return;
             }
-            if (PlayerPtr->Class->House == HOUSE_GOOD && Scenario == 15) {
+            if (PlayerPtr->Class->House == HOUSE_GOOD && Scen.Scenario == 15) {
                 GDI_Ending();
                 // Prog_End();
                 // exit(0);
@@ -496,7 +519,7 @@ void Do_Win(void)
                 return;
             }
 
-            if ((Special.IsJurassic && AreThingiesEnabled) && Scenario == 5) {
+            if ((Special.IsJurassic && AreThingiesEnabled) && Scen.Scenario == 5) {
                 Prog_End("Do_Win - Last Jurassic mission complete");
                 if (!RunningAsDLL) {
                     exit(0);
@@ -513,13 +536,13 @@ void Do_Win(void)
                 /*
                 **	Skip scenario #7 if the airfield was blown up.
                 */
-                if (Scenario == 6 && PlayerPtr->Class->House == HOUSE_GOOD && SabotagedType == STRUCT_AIRSTRIP) {
-                    Scenario++;
+                if (Scen.Scenario == 6 && PlayerPtr->Class->House == HOUSE_GOOD && SabotagedType == STRUCT_AIRSTRIP) {
+                    Scen.Scenario++;
                 }
 
                 Map_Selection();
             }
-            Scenario++;
+            Scen.Scenario++;
             Keyboard->Clear();
         }
     }
@@ -531,7 +554,7 @@ void Do_Win(void)
     /*
     ** Generate a new scenario filename
     */
-    Set_Scenario_Name(ScenarioName, Scenario, ScenPlayer, ScenDir, ScenVar);
+    Set_Scenario_Name(ScenarioName, Scen.Scenario, ScenPlayer, ScenDir, ScenVar);
     Start_Scenario(ScenarioName);
 
     PlayerPtr->NukePieces = pieces;
@@ -541,7 +564,7 @@ void Do_Win(void)
     **	applies to GDI mission #7.
     */
     int index;
-    if (SabotagedType != STRUCT_NONE && Scenario == 7 && PlayerPtr->Class->House == HOUSE_GOOD) {
+    if (SabotagedType != STRUCT_NONE && Scen.Scenario == 7 && PlayerPtr->Class->House == HOUSE_GOOD) {
         for (index = 0; index < Buildings.Count(); index++) {
             BuildingClass* building = Buildings.Ptr(index);
 
@@ -782,7 +805,7 @@ void Fixup_Scenario(void)
     ** "Fraidycat" civilians avoid wandering into Tiberium for SCG08EB, since they're mission-critical.
     */
     bool is_scg08ea =
-        GameToPlay == GAME_NORMAL && PlayerPtr->ActLike == HOUSE_GOOD && Scenario == 8 && ScenVar == SCEN_VAR_B;
+        GameToPlay == GAME_NORMAL && PlayerPtr->ActLike == HOUSE_GOOD && Scen.Scenario == 8 && ScenVar == SCEN_VAR_B;
     for (InfantryType index = INFANTRY_FIRST; index < INFANTRY_COUNT; index++) {
         InfantryTypeClass& infantry_type = (InfantryTypeClass&)InfantryTypeClass::As_Reference(index);
         if (infantry_type.IsFraidyCat) {
@@ -793,7 +816,7 @@ void Fixup_Scenario(void)
     /*
     ** Laser-firing Orcas in the PATSUX secret mission
     */
-    if (GameToPlay == GAME_NORMAL && Scenario == 72) {
+    if (GameToPlay == GAME_NORMAL && Scen.Scenario == 72) {
         ((AircraftTypeClass&)AircraftTypeClass::As_Reference(AIRCRAFT_ORCA)).Primary = WEAPON_OBELISK_LASER;
     } else {
         ((AircraftTypeClass&)AircraftTypeClass::As_Reference(AIRCRAFT_ORCA)).Primary = WEAPON_DRAGON;

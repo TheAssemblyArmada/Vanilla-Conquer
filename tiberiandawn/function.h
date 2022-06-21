@@ -234,6 +234,7 @@ inline CELL Coord_YCell(COORDINATE coord)
 #include "queue.h"
 #include "event.h"
 #include "base.h" // defines the AI's pre-built base
+#include "scenario.h"
 #include "ipxmgr.h"
 #include "combuf.h"
 #include "connect.h"

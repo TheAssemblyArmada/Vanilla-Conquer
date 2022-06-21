@@ -125,7 +125,7 @@ bool Save_Game(const char* file_name, const char* descr)
     HousesType house;
     char descr_buf[DESCRIP_MAX];
 
-    scenario = Scenario;             // get current scenario #
+    scenario = Scen.Scenario;        // get current scenario #
     house = PlayerPtr->Class->House; // get current house
 
     /*
@@ -520,7 +520,7 @@ bool Load_Game(const char* file_name)
     }
 
 #ifdef DEMO
-    if (Scenario != 10 && Scenario != 1 && Scenario != 6) {
+    if (Scen.Scenario != 10 && Scen.Scenario != 1 && Scen.Scenario != 6) {
         Clear_Scenario();
         return (false);
     }
@@ -561,7 +561,7 @@ bool Save_Misc_Values(FileClass& file)
     /*
     **	Save this scenario number.
     */
-    if (file.Write(&Scenario, sizeof(Scenario)) != sizeof(Scenario)) {
+    if (file.Write(&Scen.Scenario, sizeof(Scen.Scenario)) != sizeof(Scen.Scenario)) {
         return (false);
     }
 
@@ -631,7 +631,7 @@ bool Save_Misc_Values(FileClass& file)
     file.Write(&CarryOverPercent, sizeof(CarryOverPercent));
     file.Write(&BuildLevel, sizeof(BuildLevel));
     file.Write(BriefMovie, sizeof(BriefMovie));
-    file.Write(Views, sizeof(Views));
+    file.Write(Scen.Views, sizeof(Scen.Views));
     file.Write(&EndCountDown, sizeof(EndCountDown));
     file.Write(BriefingText, sizeof(BriefingText));
 
@@ -669,7 +669,7 @@ bool Load_Misc_Values(FileClass& file)
     /*
     **	Read this scenario number.
     */
-    if (file.Read(&Scenario, sizeof(Scenario)) != sizeof(Scenario)) {
+    if (file.Read(&Scen.Scenario, sizeof(Scen.Scenario)) != sizeof(Scen.Scenario)) {
         return (false);
     }
 
@@ -739,7 +739,7 @@ bool Load_Misc_Values(FileClass& file)
     file.Read(&CarryOverPercent, sizeof(CarryOverPercent));
     file.Read(&BuildLevel, sizeof(BuildLevel));
     file.Read(BriefMovie, sizeof(BriefMovie));
-    file.Read(Views, sizeof(Views));
+    file.Read(Scen.Views, sizeof(Scen.Views));
     file.Read(&EndCountDown, sizeof(EndCountDown));
     file.Read(BriefingText, sizeof(BriefingText));
 
@@ -932,7 +932,7 @@ void Decode_All_Pointers(void)
     if (PlayerPtr->ActLike == HOUSE_JP) {
         ScenPlayer = SCEN_PLAYER_JP;
     }
-    Set_Scenario_Name(ScenarioName, Scenario, ScenPlayer, ScenDir, ScenVar);
+    Set_Scenario_Name(ScenarioName, Scen.Scenario, ScenPlayer, ScenDir, ScenVar);
 
     /*
     **	Currently-selected objects.

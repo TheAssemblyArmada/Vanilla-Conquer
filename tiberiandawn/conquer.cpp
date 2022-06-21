@@ -3121,12 +3121,12 @@ void Handle_Team(int team, int action)
  *=============================================================================================*/
 void Handle_View(int view, int action)
 {
-    if ((unsigned)view < sizeof(Views) / sizeof(Views[0])) {
+    if ((unsigned)view < sizeof(Scen.Views) / sizeof(Scen.Views[0])) {
         if (action == 0) {
-            Map.Set_Tactical_Position(Cell_Coord(Views[view]) & 0xFF00FF00L);
+            Map.Set_Tactical_Position(Cell_Coord(Scen.Views[view]) & 0xFF00FF00L);
             Map.Flag_To_Redraw(true);
         } else {
-            Views[view] = Coord_Cell(Map.TacticalCoord);
+            Scen.Views[view] = Coord_Cell(Map.TacticalCoord);
         }
     }
 }

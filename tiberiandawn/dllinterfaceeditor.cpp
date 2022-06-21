@@ -233,7 +233,7 @@ extern "C" __declspec(dllexport) int __cdecl CNC_Editor_Load_Map(char* cncdata_d
 
     CNC_Editor_Load_Mix_Files();
 
-    Scenario = scenario_index;
+    Scen.Scenario = scenario_index;
     BuildLevel = 7;
 
     if (stricmp(east_west, "w") == 0) {
@@ -254,7 +254,7 @@ extern "C" __declspec(dllexport) int __cdecl CNC_Editor_Load_Map(char* cncdata_d
         variant_enum = SCEN_VAR_A;
     }
 
-    Set_Scenario_Name(ScenarioName, Scenario, ScenPlayer, ScenDir, variant_enum);
+    Set_Scenario_Name(ScenarioName, Scen.Scenario, ScenPlayer, ScenDir, variant_enum);
 
     char fname[_MAX_FNAME + _MAX_EXT];
     sprintf(fname, "%s.INI", ScenarioName);

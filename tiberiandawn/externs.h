@@ -107,6 +107,7 @@ extern void const* WarFactoryOverlay;
 extern bool IsV107;
 extern char OverridePath[128];
 #endif
+extern ScenarioClass Scen;
 extern bool SlowPalette;
 extern char VersionText[64];
 extern bool ScoresPresent;
@@ -137,7 +138,6 @@ extern void* SpeechBuffer;
 extern int PreserveVQAScreen;
 extern bool BreakoutAllowed;
 extern bool Brokeout;
-extern CELL Views[4];
 
 extern GameOptionsClass Options;
 
@@ -225,7 +225,6 @@ extern unsigned char* WhitePalette;
 extern unsigned char* GamePalette;
 extern DiffType ScenDifficulty;  // For human player.
 extern DiffType ScenCDifficulty; // For computer players.
-extern unsigned Scenario;
 extern ScenarioPlayerType ScenPlayer;
 extern ScenarioDirType ScenDir;
 extern ScenarioVarType ScenVar;

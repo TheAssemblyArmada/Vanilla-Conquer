@@ -240,7 +240,7 @@ void DriveClass::Overrun_Square(CELL cell, bool threaten)
                 **	Scattering is controlled by the game difficulty level.
                 */
                 if (((GameToPlay == GAME_NORMAL && PlayerPtr->Difficulty == DIFF_HARD) || Special.IsScatter
-                     || Scenario > 8)
+                     || Scen.Scenario > 8)
                     && !(GameToPlay == GAME_NORMAL && PlayerPtr->Difficulty == DIFF_EASY)) {
                     cellptr->Incoming(0, true);
                 }

@@ -74,7 +74,7 @@
  *=========================================================================*/
 int MapEditClass::New_Scenario(void)
 {
-    int scen_num = Scenario;
+    int scen_num = Scen.Scenario;
     ScenarioPlayerType player = ScenPlayer;
     ScenarioDirType dir = ScenDir;
     ScenarioVarType var = ScenVar;
@@ -97,7 +97,7 @@ int MapEditClass::New_Scenario(void)
     /*
     ----------------------------- Set parameters -----------------------------
     */
-    Scenario = scen_num;
+    Scen.Scenario = scen_num;
     ScenPlayer = player;
     ScenDir = dir;
     ScenVar = var;
@@ -180,7 +180,7 @@ int MapEditClass::New_Scenario(void)
  *=========================================================================*/
 int MapEditClass::Load_Scenario(void)
 {
-    int scen_num = Scenario;
+    int scen_num = Scen.Scenario;
     ScenarioPlayerType player = ScenPlayer;
     ScenarioDirType dir = ScenDir;
     ScenarioVarType var = ScenVar;
@@ -197,7 +197,7 @@ int MapEditClass::Load_Scenario(void)
     /*
     ----------------------------- Set parameters -----------------------------
     */
-    Scenario = scen_num;
+    Scen.Scenario = scen_num;
     ScenPlayer = player;
     ScenDir = dir;
     ScenVar = var;
@@ -266,7 +266,7 @@ int MapEditClass::Load_Scenario(void)
  *=========================================================================*/
 int MapEditClass::Save_Scenario(void)
 {
-    int scen_num = Scenario;
+    int scen_num = Scen.Scenario;
     ScenarioPlayerType player = ScenPlayer;
     ScenarioDirType dir = ScenDir;
     ScenarioVarType var = ScenVar;
@@ -300,7 +300,7 @@ int MapEditClass::Save_Scenario(void)
     /*
     ----------------------------- Set parameters -----------------------------
     */
-    Scenario = scen_num;
+    Scen.Scenario = scen_num;
     ScenPlayer = player;
     ScenDir = dir;
     ScenVar = var;

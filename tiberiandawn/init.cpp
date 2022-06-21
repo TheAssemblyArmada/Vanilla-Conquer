@@ -994,7 +994,7 @@ bool Select_Game(bool fade)
                     Show_Mouse();
                 }
 
-                Scenario = 1;
+                Scen.Scenario = 1;
                 BuildLevel = 1;
 
                 ScenPlayer = SCEN_PLAYER_GDI;
@@ -1305,7 +1305,7 @@ bool Select_Game(bool fade)
         /*
         ** For Debug_Map (editor) mode, if JP option is on, set to load that scenario
         */
-        Scenario = 1;
+        Scen.Scenario = 1;
         if (Special.IsJurassic && AreThingiesEnabled) {
             ScenPlayer = SCEN_PLAYER_JP;
             ScenDir = SCEN_DIR_EAST;
@@ -1347,9 +1347,9 @@ bool Select_Game(bool fade)
     */
     if (!gameloaded) {
         if (Debug_Map) {
-            Set_Scenario_Name(ScenarioName, Scenario, ScenPlayer, ScenDir, SCEN_VAR_A);
+            Set_Scenario_Name(ScenarioName, Scen.Scenario, ScenPlayer, ScenDir, SCEN_VAR_A);
         } else {
-            Set_Scenario_Name(ScenarioName, Scenario, ScenPlayer, ScenDir);
+            Set_Scenario_Name(ScenarioName, Scen.Scenario, ScenPlayer, ScenDir);
         }
 
         /*
@@ -1593,9 +1593,9 @@ bool Parse_Command_Line(int argc, char* argv[])
     **	passed in.
     */
 #ifdef DEMO
-    Scenario = 3;
+    Scen.Scenario = 3;
 #else
-    Scenario = 1;
+    Scen.Scenario = 1;
 #endif
     ScenPlayer = SCEN_PLAYER_GDI;
     ScenDir = SCEN_DIR_EAST;
@@ -2274,7 +2274,7 @@ void Save_Recording_Values(void)
     RecordFile.Write(MPlayerID, sizeof(MPlayerID));
     RecordFile.Write(MPlayerHouses, sizeof(MPlayerHouses));
     RecordFile.Write(&Seed, sizeof(Seed));
-    RecordFile.Write(&Scenario, sizeof(Scenario));
+    RecordFile.Write(&Scen.Scenario, sizeof(Scen.Scenario));
     RecordFile.Write(&ScenPlayer, sizeof(ScenPlayer));
     RecordFile.Write(&ScenDir, sizeof(ScenDir));
     RecordFile.Write(&Whom, sizeof(Whom));
@@ -2325,7 +2325,7 @@ void Load_Recording_Values(void)
     RecordFile.Read(MPlayerID, sizeof(MPlayerID));
     RecordFile.Read(MPlayerHouses, sizeof(MPlayerHouses));
     RecordFile.Read(&Seed, sizeof(Seed));
-    RecordFile.Read(&Scenario, sizeof(Scenario));
+    RecordFile.Read(&Scen.Scenario, sizeof(Scen.Scenario));
     RecordFile.Read(&ScenPlayer, sizeof(ScenPlayer));
     RecordFile.Read(&ScenDir, sizeof(ScenDir));
     RecordFile.Read(&Whom, sizeof(Whom));

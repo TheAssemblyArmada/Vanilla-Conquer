@@ -227,11 +227,11 @@ bool Read_Scenario_Ini(char* root, bool fresh)
     ** then make sure the correct disk is in the drive.
     */
     if (RequiredCD != -2) {
-        if (Scenario >= 20 && Scenario < 60 && GameToPlay == GAME_NORMAL) {
+        if (Scen.Scenario >= 20 && Scen.Scenario < 60 && GameToPlay == GAME_NORMAL) {
             RequiredCD = 2;
         } else {
-            if (Scenario != 1) {
-                if (Scenario >= 60) {
+            if (Scen.Scenario != 1) {
+                if (Scen.Scenario >= 60) {
                     RequiredCD = -1;
                 } else {
                     switch (ScenPlayer) {
@@ -301,17 +301,17 @@ bool Read_Scenario_Ini(char* root, bool fresh)
     */
     if (GameToPlay == GAME_NORMAL) {
 #ifdef NEWMENU
-        if (Scenario <= 15) {
-            BuildLevel = Scenario;
+        if (Scen.Scenario <= 15) {
+            BuildLevel = Scen.Scenario;
         } else if (_stricmp(ScenarioName, "scg30ea") == 0 || _stricmp(ScenarioName, "scg90ea") == 0
                    || _stricmp(ScenarioName, "scb22ea") == 0) {
             // N64 missions require build level 15
             BuildLevel = 15;
         } else {
-            BuildLevel = ini.Get_Int("Basic", "BuildLevel", Scenario);
+            BuildLevel = ini.Get_Int("Basic", "BuildLevel", Scen.Scenario);
         }
 #else
-        BuildLevel = Scenario;
+        BuildLevel = Scen.Scenario;
 #endif
     }
 
@@ -631,8 +631,8 @@ bool Read_Scenario_Ini(char* root, bool fresh)
         int start_x = 0;
         int start_y = 0;
         Map.Compute_Start_Pos(start_x, start_y);
-        for (int i = 0; i < ARRAY_SIZE(Views); ++i) {
-            Views[i] = XY_Cell(start_x, start_y);
+        for (int i = 0; i < ARRAY_SIZE(Scen.Views); ++i) {
+            Scen.Views[i] = XY_Cell(start_x, start_y);
         }
         Waypoint[27] = XY_Cell(start_x, start_y);
         COORDINATE pos = Cell_Coord(XY_Cell(start_x, start_y));
@@ -1004,11 +1004,11 @@ bool Read_Movies_From_Scenario_Ini(char* root, bool fresh)
     ** then make sure the correct disk is in the drive.
     */
     if (RequiredCD != -2) {
-        if (Scenario >= 20 && Scenario < 60 && GameToPlay == GAME_NORMAL) {
+        if (Scen.Scenario >= 20 && Scen.Scenario < 60 && GameToPlay == GAME_NORMAL) {
             RequiredCD = 2;
         } else {
-            if (Scenario != 1) {
-                if (Scenario >= 60) {
+            if (Scen.Scenario != 1) {
+                if (Scen.Scenario >= 60) {
                     RequiredCD = -1;
                 } else {
                     switch (ScenPlayer) {
