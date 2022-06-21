@@ -422,6 +422,7 @@ extern bool InMainLoop; // True if in game state rather than menu state
 #ifndef REMASTER_BUILD
 #define GlyphX_Debug_Print(x) DBG_LOG(x)
 #endif
+extern int ShowCommand;
 extern void* PacketLater;
 
 extern unsigned int IsTheaterShape;

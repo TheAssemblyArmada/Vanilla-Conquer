@@ -45,6 +45,7 @@
 #include "endianness.h"
 #include "debugstring.h"
 #include "wspudp.h"
+#include "misc.h"
 #include "wwkeyboard.h"
 extern WWKeyboardClass* Keyboard;
 

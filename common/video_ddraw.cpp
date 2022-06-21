@@ -1171,7 +1171,7 @@ public:
     virtual ~VideoSurfaceDDraw();
 
     virtual void* GetData() const;
-    virtual long GetPitch() const;
+    virtual int GetPitch() const;
     virtual bool IsAllocated() const;
 
     virtual void AddAttachedSurface(VideoSurface* surface);
@@ -1234,7 +1234,7 @@ void* VideoSurfaceDDraw::GetData() const
     return VideoSurfaceDescription.lpSurface;
 }
 
-long VideoSurfaceDDraw::GetPitch() const
+int VideoSurfaceDDraw::GetPitch() const
 {
     return VideoSurfaceDescription.lPitch;
 }

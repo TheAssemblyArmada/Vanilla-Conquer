@@ -273,7 +273,7 @@ void Init_Locked_Data()
     LockedData._int = 0;
 }
 
-bool File_Callback(short id, short* odd, void** buffer, long* size)
+bool File_Callback(short id, short* odd, void** buffer, int* size)
 {
     if (id == INVALID_AUDIO_HANDLE) {
         return false;
@@ -386,7 +386,7 @@ bool File_Callback(short id, short* odd, void** buffer, long* size)
 
 int __cdecl Stream_Sample_Vol(void* buffer,
                               int size,
-                              bool (*callback)(short int, short int*, void**, long*),
+                              bool (*callback)(short int, short int*, void**, int*),
                               int volume,
                               int handle)
 {
@@ -616,7 +616,7 @@ long Load_Sample_Into_Buffer(char const* filename, void* buffer, long size)
     return sample_size;
 }
 
-long Sample_Read(int fh, void* buffer, long size)
+int Sample_Read(int fh, void* buffer, int size)
 {
     if (buffer == nullptr || fh == INVALID_AUDIO_HANDLE || size <= sizeof(AUDHeaderType)) {
         return 0;

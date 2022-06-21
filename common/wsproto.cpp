@@ -54,6 +54,7 @@
 
 #include "wsproto.h"
 #include "debugstring.h"
+#include "misc.h"
 #include "wwkeyboard.h"
 extern WWKeyboardClass* Keyboard;
 
@@ -201,7 +202,7 @@ bool WinsockInterfaceClass::Start_Listening(void)
     ** Enable asynchronous events on the socket
     */
     if (WSAAsyncSelect(Socket, MainWindow, Protocol_Event_Message(), FD_READ | FD_WRITE) == SOCKET_ERROR) {
-        WWDebugString("TS: Async select failed.\n");
+        DBG_LOG("TS: Async select failed.\n");
         assert(false);
         WSACancelAsyncRequest(ASync);
         ASync = INVALID_HANDLE_VALUE;
