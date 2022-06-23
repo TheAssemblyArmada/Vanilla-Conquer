@@ -288,6 +288,7 @@ int RawFileClass::Open(int rights)
         */
         if (Handle == nullptr) {
             Error(errno, false, Filename);
+            return (false);
         }
         break;
     }
