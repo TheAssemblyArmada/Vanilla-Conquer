@@ -543,7 +543,7 @@ int BufferIOFileClass::Open(int rights)
         FilePos = 0;
         IsOpen = true;
     } else {
-        RawFileClass::Open(rights);
+        return RawFileClass::Open(rights);
     }
 
     return (true);
