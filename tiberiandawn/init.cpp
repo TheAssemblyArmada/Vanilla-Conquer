@@ -348,7 +348,7 @@ bool Init_Game(int, char*[])
         }
 
         strcpy(scan_path, search_path);
-        strcat(scan_path, "SC*.MIX");
+        strcat(scan_path, "sc*.mix");
         found = Find_First(scan_path, 0, &ffd);
         while (found) {
             char* ptr = (char*)ffd->GetName();
@@ -361,7 +361,7 @@ bool Init_Game(int, char*[])
         }
 
         strcpy(scan_path, search_path);
-        strcat(scan_path, "SS*.MIX");
+        strcat(scan_path, "ss*.mix");
         found = Find_First(scan_path, 0, &ffd);
         while (found) {
             char* ptr = (char*)ffd->GetName();
