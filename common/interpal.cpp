@@ -364,12 +364,16 @@ void Interpolate_2X_Scale(GraphicBufferClass* source,
     dest_width = (scale_factor + 1) * (dest->Get_Width() + dest->Get_XAdd() + dest->Get_Pitch());
     last_dest_ptr = dest_ptr;
 
+    int h = source->Get_Height();
+
     /*
     ** Call the appropriate assembly language copy routine
     */
     switch (mode) {
     case -1:
-        memcpy(dest_ptr, src_ptr, src_width * source->Get_Height());
+        for (int i = 0; i < h; i++) {
+            memcpy(dest_ptr + i * dest_width, src_ptr + i * src_width, src_width);
+        }
         break;
 
     case 0:

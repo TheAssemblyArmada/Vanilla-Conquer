@@ -260,7 +260,9 @@ void SHAEngine::Process_Block(void const* source, SHADigest& acc) const
     int32_t const* data = (int32_t const*)source;
     int index;
     for (index = 0; index < SRC_BLOCK_SIZE / sizeof(int32_t); index++) {
-        block[index] = htobe32(data[index]);
+        int32_t x;
+        memcpy(&x, data + index, sizeof(int32_t));
+        block[index] = htobe32(x);
     }
 
     for (index = SRC_BLOCK_SIZE / sizeof(int32_t); index < PROC_BLOCK_SIZE / sizeof(int32_t); index++) {

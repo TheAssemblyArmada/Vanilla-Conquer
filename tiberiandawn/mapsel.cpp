@@ -503,8 +503,8 @@ void Map_Selection(void)
     static char const _regpal[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     GraphicBufferClass backpage(20 * 6, 8);
 
-    unsigned char* grey2palette = new unsigned char[768];
-    unsigned char* progresspalette = new unsigned char[768];
+    unsigned char grey2palette[768];
+    unsigned char progresspalette[768];
 
     Keyboard->Clear();
     oldfont = Set_Font(ScoreFontPtr);
@@ -1146,10 +1146,10 @@ void Map_Selection(void)
     Theme.Queue_Song(THEME_NONE);
     Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, NULL);
     delete europe;
-    delete[] progresspalette;
-    delete[] grey2palette;
     delete TextPrintBuffer;
+    delete PseudoSeenBuff;
     TextPrintBuffer = NULL;
+    PseudoSeenBuff = NULL;
     BlitList.Clear();
 }
 
