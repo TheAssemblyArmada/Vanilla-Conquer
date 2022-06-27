@@ -212,7 +212,7 @@ bool Expansion_Dialog(void)
                 }
                 ScenDir = SCEN_DIR_EAST;
                 Whom = HOUSE_GOOD;
-                Scenario = *(int*)list.Current_Item();
+                Scen.Scenario = *(int*)list.Current_Item();
                 okval = true;
                 process = false;
                 break;
@@ -224,7 +224,7 @@ bool Expansion_Dialog(void)
             ScenDir = SCEN_DIR_EAST;
             Whom = HOUSE_GOOD;
             if (list.Current_Item()) {
-                Scenario = *(int*)list.Current_Item();
+                Scen.Scenario = *(int*)list.Current_Item();
             }
             process = false;
             okval = false;
@@ -395,7 +395,7 @@ bool Bonus_Dialog(void)
                 }
                 ScenDir = SCEN_DIR_EAST;
                 Whom = HOUSE_GOOD;
-                Scenario = *(int*)list.Current_Item();
+                Scen.Scenario = *(int*)list.Current_Item();
                 process = false;
                 okval = true;
                 break;
@@ -407,7 +407,7 @@ bool Bonus_Dialog(void)
             ScenDir = SCEN_DIR_EAST;
             Whom = HOUSE_GOOD;
             if (list.Current_Item()) {
-                Scenario = *(int*)list.Current_Item();
+                Scen.Scenario = *(int*)list.Current_Item();
             }
             process = false;
             okval = false;

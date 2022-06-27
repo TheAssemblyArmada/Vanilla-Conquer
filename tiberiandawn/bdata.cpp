@@ -4532,7 +4532,7 @@ int BuildingTypeClass::Max_Pips(void) const
  *=============================================================================================*/
 int BuildingTypeClass::Full_Name(void) const
 {
-    if (::Scenario == 3 && Type == STRUCT_MISSION) {
+    if (Scen.Scenario == 3 && Type == STRUCT_MISSION) {
         return (TXT_PRISON);
     }
     if (!IsNominal || Special.IsNamed || IsWall || Debug_Map || Type == STRUCT_V23 || Type == STRUCT_V30

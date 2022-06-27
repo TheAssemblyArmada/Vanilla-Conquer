@@ -1879,7 +1879,7 @@ static int Net_Join_Dialog(void)
             /*..................................................................
             Get the scenario number
             ..................................................................*/
-            Scenario = MPlayerFilenum[ScenarioIdx];
+            Scen.Scenario = MPlayerFilenum[ScenarioIdx];
 
             /*..................................................................
             Form connections with all other players.  Form the IPX Connection ID
@@ -3724,7 +3724,7 @@ static int Net_New_Dialog(void)
         /*.....................................................................
         Get the scenario filename
         .....................................................................*/
-        Scenario = MPlayerFilenum[ScenarioIdx];
+        Scen.Scenario = MPlayerFilenum[ScenarioIdx];
 
         /*.....................................................................
         Compute frame delay value for packet transmissions:
@@ -4662,8 +4662,9 @@ static int Net_Fake_New_Dialog(void)
         /*.....................................................................
         Get the scenario filename
         .....................................................................*/
-        Scenario = ScenarioIdx; // PlayerFilenum[ScenarioIdx]; We are passed actual number now from wchat not index from
-        // Scenario = MPlayerFilenum[ScenarioIdx];
+        Scen.Scenario =
+            ScenarioIdx; // PlayerFilenum[ScenarioIdx]; We are passed actual number now from wchat not index from
+        // Scen.Scenario = MPlayerFilenum[ScenarioIdx];
 
         /*.....................................................................
         Compute frame delay value for packet transmissions:
@@ -5363,7 +5364,7 @@ static int Net_Fake_Join_Dialog(void)
             /*..................................................................
             Get the scenario number
             ..................................................................*/
-            Scenario =
+            Scen.Scenario =
                 ScenarioIdx; // PlayerFilenum[ScenarioIdx]; We are passed actual number now from wchat not index from
 
             /*..................................................................
