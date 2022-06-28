@@ -906,28 +906,28 @@ int Com_Scenario_Dialog(void)
         int diff = difficulty.Get_Value() * (Rule.IsFineDifficulty ? 1 : 2);
         switch (diff) {
         case 0:
-            ScenCDifficulty = DIFF_HARD;
-            ScenDifficulty = DIFF_EASY;
+            Scen.CDifficulty = DIFF_HARD;
+            Scen.Difficulty = DIFF_EASY;
             break;
 
         case 1:
-            ScenCDifficulty = DIFF_HARD;
-            ScenDifficulty = DIFF_NORMAL;
+            Scen.CDifficulty = DIFF_HARD;
+            Scen.Difficulty = DIFF_NORMAL;
             break;
 
         case 2:
-            ScenCDifficulty = DIFF_NORMAL;
-            ScenDifficulty = DIFF_NORMAL;
+            Scen.CDifficulty = DIFF_NORMAL;
+            Scen.Difficulty = DIFF_NORMAL;
             break;
 
         case 3:
-            ScenCDifficulty = DIFF_EASY;
-            ScenDifficulty = DIFF_NORMAL;
+            Scen.CDifficulty = DIFF_EASY;
+            Scen.Difficulty = DIFF_NORMAL;
             break;
 
         case 4:
-            ScenCDifficulty = DIFF_EASY;
-            ScenDifficulty = DIFF_HARD;
+            Scen.CDifficulty = DIFF_EASY;
+            Scen.Difficulty = DIFF_HARD;
             break;
         }
     }

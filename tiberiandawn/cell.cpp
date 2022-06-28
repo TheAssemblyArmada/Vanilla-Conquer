@@ -1072,7 +1072,7 @@ void CellClass::Draw_It(int x, int y, int draw_type) const
                 */
                 if (IsWaypoint) {
                     for (i = 0; i < 26; i++) {
-                        if (Waypoint[i] == Cell_Number()) {
+                        if (Scen.Waypoint[i] == Cell_Number()) {
                             waypt[0] = 'A' + i;
                             waypt[1] = 0;
                             Fancy_Text_Print(waypt,
@@ -1084,7 +1084,7 @@ void CellClass::Draw_It(int x, int y, int draw_type) const
                             break;
                         }
                     }
-                    if (Waypoint[WAYPT_HOME] == Cell_Number()) {
+                    if (Scen.Waypoint[WAYPT_HOME] == Cell_Number()) {
                         Fancy_Text_Print("Home",
                                          Map.TacPixelX + x,
                                          Map.TacPixelY + y + (CELL_PIXEL_H)-7,
@@ -1092,7 +1092,7 @@ void CellClass::Draw_It(int x, int y, int draw_type) const
                                          TBLACK,
                                          TPF_NOSHADOW | TPF_6POINT);
                     }
-                    if (Waypoint[WAYPT_REINF] == Cell_Number()) {
+                    if (Scen.Waypoint[WAYPT_REINF] == Cell_Number()) {
                         Fancy_Text_Print("Reinf",
                                          Map.TacPixelX + x,
                                          Map.TacPixelY + y + (CELL_PIXEL_H)-7,

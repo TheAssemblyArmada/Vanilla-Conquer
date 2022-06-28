@@ -903,7 +903,7 @@ void GlyphX_Assign_Houses(void)
     int num_start_locations = 0;
     int num_random_start_locations = 0;
     for (i = 0; i < 26; i++) {
-        if (Waypoint[i] != -1) {
+        if (Scen.Waypoint[i] != -1) {
             preassigned = false;
             for (j = 0; !preassigned && (j < MPlayerCount); j++) {
                 if (MPlayerStartLocations[j] == num_start_locations) {
@@ -1138,9 +1138,9 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Read_INI(int scenario_index,
     ScenPlayer = SCEN_PLAYER_MPLAYER;
 
     if (override_map_name && strlen(override_map_name)) {
-        strcpy(ScenarioName, override_map_name);
+        strcpy(Scen.ScenarioName, override_map_name);
     } else {
-        Set_Scenario_Name(ScenarioName,
+        Set_Scenario_Name(Scen.ScenarioName,
                           Scen.Scenario,
                           ScenPlayer,
                           (ScenarioDirType)scenario_direction,
@@ -1161,7 +1161,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Read_INI(int scenario_index,
 
     char fname[_MAX_PATH];
 
-    sprintf(fname, "%s.INI", ScenarioName);
+    sprintf(fname, "%s.INI", Scen.ScenarioName);
     CCFileClass file(fname);
     if (!file.Is_Available()) {
         GlyphX_Debug_Print("Failed to find scenario file");
@@ -1277,9 +1277,9 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Start_Instance_Variation(int s
     }
 
     if (override_map_name && strlen(override_map_name)) {
-        strcpy(ScenarioName, override_map_name);
+        strcpy(Scen.ScenarioName, override_map_name);
     } else {
-        Set_Scenario_Name(ScenarioName,
+        Set_Scenario_Name(Scen.ScenarioName,
                           Scen.Scenario,
                           ScenPlayer,
                           (ScenarioDirType)scenario_direction,
@@ -1301,7 +1301,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Start_Instance_Variation(int s
 
     Seed = timeGetTime();
 
-    if (!Start_Scenario(ScenarioName)) {
+    if (!Start_Scenario(Scen.ScenarioName)) {
         return (false);
     }
 
@@ -1400,7 +1400,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Start_Custom_Instance(const ch
 
     Play_Movie(IntroMovie);
     Play_Movie(BriefMovie);
-    Play_Movie(ActionMovie, TransitTheme);
+    Play_Movie(ActionMovie, Scen.TransitTheme);
 
     /*
     if (!Start_Scenario(ScenarioName)) {
@@ -2893,7 +2893,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Get_Game_State(GameStateReques
         if ((Map.Theater == CNC_THEATER_DESERT) && (Scen.Scenario == 21)) {
             strncpy(map_data->ScenarioName, "SCB81EA", sizeof(map_data->ScenarioName) - 1);
         } else {
-            strncpy(map_data->ScenarioName, ScenarioName, sizeof(map_data->ScenarioName) - 1);
+            strncpy(map_data->ScenarioName, Scen.ScenarioName, sizeof(map_data->ScenarioName) - 1);
         }
 
         int cell_index = 0;

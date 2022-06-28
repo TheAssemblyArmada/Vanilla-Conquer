@@ -1199,7 +1199,7 @@ int AircraftClass::Mission_Unload(void)
                 Status = UNLOAD_PASSENGERS;
             } else {
                 if (!Is_LZ_Clear(NavCom)) {
-                    Assign_Destination(New_LZ(::As_Target(Waypoint[WAYPT_REINF])));
+                    Assign_Destination(New_LZ(::As_Target(Scen.Waypoint[WAYPT_REINF])));
                 } else {
                     if (Altitude == FLIGHT_LEVEL) {
                         Status = FLY_TO_LZ;

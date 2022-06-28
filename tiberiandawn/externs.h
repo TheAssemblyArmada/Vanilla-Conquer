@@ -114,10 +114,8 @@ extern bool ScoresPresent;
 extern int CrateCount;
 extern TCountDownTimerClass CrateTimer;
 extern bool CrateMaker;
-extern ThemeType TransitTheme;
 extern bool AllowVoice;
 extern NewConfigType NewConfig;
-extern char BriefingText[512];
 extern char IntroMovie[_MAX_FNAME + _MAX_EXT];
 extern char ActionMovie[_MAX_FNAME + _MAX_EXT];
 extern char BriefMovie[_MAX_FNAME + _MAX_EXT];
@@ -187,8 +185,6 @@ extern SelectedObjectsType CurrentObject;
 extern DynamicVectorClass<TriggerClass*> CellTriggers;
 extern DynamicVectorClass<TriggerClass*> HouseTriggers[HOUSE_COUNT];
 
-extern CELL Waypoint[WAYPT_COUNT];
-
 extern BaseClass Base;
 
 /*
@@ -223,18 +219,11 @@ extern HouseClass* PlayerPtr;
 extern unsigned char* BlackPalette;
 extern unsigned char* WhitePalette;
 extern unsigned char* GamePalette;
-extern DiffType ScenDifficulty;  // For human player.
-extern DiffType ScenCDifficulty; // For computer players.
 extern ScenarioPlayerType ScenPlayer;
 extern ScenarioDirType ScenDir;
 extern ScenarioVarType ScenVar;
-extern int CarryOverMoney;
-extern int CarryOverCap;
-extern int CarryOverPercent;
-extern char ScenarioName[_MAX_FNAME + _MAX_EXT];
 extern unsigned BuildLevel;
 extern uint32_t ScenarioCRC;
-extern RandomClass ScenRandomNumber;
 extern RandomClass NonCriticalRandomNumber;
 
 #ifdef SCENARIO_EDITOR

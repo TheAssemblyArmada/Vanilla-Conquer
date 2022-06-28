@@ -638,8 +638,8 @@ void Read_Scenario_Descriptions(void)
     its number to the FileNum list.
     ------------------------------------------------------------------------*/
     for (i = 0; i < 100; i++) {
-        Set_Scenario_Name(ScenarioName, i, SCEN_PLAYER_MPLAYER, SCEN_DIR_EAST, SCEN_VAR_A);
-        sprintf(fname, "%s.INI", ScenarioName);
+        Set_Scenario_Name(Scen.ScenarioName, i, SCEN_PLAYER_MPLAYER, SCEN_DIR_EAST, SCEN_VAR_A);
+        sprintf(fname, "%s.INI", Scen.ScenarioName);
         file.Set_Name(fname);
 
         if (file.Is_Available()) {
@@ -661,8 +661,8 @@ void Read_Scenario_Descriptions(void)
         /*.....................................................................
         Create filename and read the file.
         .....................................................................*/
-        Set_Scenario_Name(ScenarioName, MPlayerFilenum[i], SCEN_PLAYER_MPLAYER, SCEN_DIR_EAST, SCEN_VAR_A);
-        sprintf(fname, "%s.INI", ScenarioName);
+        Set_Scenario_Name(Scen.ScenarioName, MPlayerFilenum[i], SCEN_PLAYER_MPLAYER, SCEN_DIR_EAST, SCEN_VAR_A);
+        sprintf(fname, "%s.INI", Scen.ScenarioName);
         file.Set_Name(fname);
         ini.Load(file);
 

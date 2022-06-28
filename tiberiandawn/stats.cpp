@@ -243,7 +243,7 @@ void Send_Statistics_Packet(void)
         */
         char fname[128];
         char namebuffer[40];
-        sprintf(fname, "%s.INI", ScenarioName);
+        sprintf(fname, "%s.INI", Scen.ScenarioName);
         CCFileClass fileo;
         INIClass ini;
         fileo.Set_Name(fname);
