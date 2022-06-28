@@ -82,7 +82,6 @@ set(TIBDAWN_SRC
     msgbox.cpp
     msglist.cpp
     netdlg.cpp
-    noseqcon.cpp
     nulldlg.cpp
     object.cpp
     odata.cpp
