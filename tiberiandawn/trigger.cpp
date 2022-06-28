@@ -465,7 +465,7 @@ bool TriggerClass::Spring(EventType event, ObjectClass* obj)
         break;
 
     case ACTION_DZ:
-        new AnimClass(ANIM_LZ_SMOKE, Cell_Coord(Waypoint[25]));
+        new AnimClass(ANIM_LZ_SMOKE, Cell_Coord(Scen.Waypoint[25]));
         break;
 
     case ACTION_NONE:
@@ -655,7 +655,7 @@ bool TriggerClass::Spring(EventType event, CELL cell)
         break;
 
     case ACTION_DZ:
-        new AnimClass(ANIM_LZ_SMOKE, Cell_Coord(Waypoint[25]));
+        new AnimClass(ANIM_LZ_SMOKE, Cell_Coord(Scen.Waypoint[25]));
         break;
 
     case ACTION_NONE:
@@ -853,7 +853,7 @@ bool TriggerClass::Spring(EventType event, HousesType house, int data)
         break;
 
     case ACTION_DZ:
-        new AnimClass(ANIM_LZ_SMOKE, Cell_Coord(Waypoint[25]));
+        new AnimClass(ANIM_LZ_SMOKE, Cell_Coord(Scen.Waypoint[25]));
         break;
 
     case ACTION_WIN:

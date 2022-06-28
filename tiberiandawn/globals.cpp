@@ -118,8 +118,6 @@ char WinMovie4[_MAX_FNAME + _MAX_EXT];
 char LoseMovie[_MAX_FNAME + _MAX_EXT];
 char ActionMovie[_MAX_FNAME + _MAX_EXT];
 char MovieThemeName[_MAX_FNAME + _MAX_EXT];
-char BriefingText[512];
-ThemeType TransitTheme = THEME_NONE;
 
 /***************************************************************************
 **	These are the movie names to use for mission briefing, winning, and losing
@@ -303,19 +301,12 @@ WWKeyboardClass* Keyboard;
 **	This is the scenario data for the currently loaded scenario.
 ** These variables should all be set together.
 */
-HousesType Whom;                          // Initial command line house choice.
-DiffType ScenDifficulty = DIFF_NORMAL;    // For human player.
-DiffType ScenCDifficulty = DIFF_NORMAL;   // For computer players.
-ScenarioPlayerType ScenPlayer;            // GDI, NOD, 2-Player, Multi-Player
-ScenarioDirType ScenDir;                  // East/West
-ScenarioVarType ScenVar;                  // variation A/B/C
-char ScenarioName[_MAX_FNAME + _MAX_EXT]; // name of scenario
-int CarryOverMoney;                       // Carry over money from last scenario.
-int CarryOverPercent;                     // Carry over money percentage control.
-int CarryOverCap;                         // Maxmimum carry over money allowed.
+HousesType Whom;               // Initial command line house choice.
+ScenarioPlayerType ScenPlayer; // GDI, NOD, 2-Player, Multi-Player
+ScenarioDirType ScenDir;       // East/West
+ScenarioVarType ScenVar;       // variation A/B/C
 int ScenarioInit;
 bool SpecialFlag = false;
-RandomClass ScenRandomNumber;
 RandomClass NonCriticalRandomNumber;
 
 /***************************************************************************
@@ -400,15 +391,6 @@ QueueClass<EventClass, (MAX_EVENTS * 8)> DoList;
 */
 DynamicVectorClass<TriggerClass*> CellTriggers;
 DynamicVectorClass<TriggerClass*> HouseTriggers[HOUSE_COUNT];
-
-/***************************************************************************
-**	This is an array of waypoints; each waypoint corresponds to a letter of
-** the alphabet, and points to a cell number.  -1 means unassigned.
-** The CellClass has a bit that tells if that cell has a waypoint attached to
-** it; the only way to find which waypoint it is, is to scan this array.  This
-** shouldn't be needed often; usually, you know the waypoint & you want the CELL.
-*/
-CELL Waypoint[WAYPT_COUNT];
 
 /***************************************************************************
 **	This is the list of BuildingTypes that define the AI's base.

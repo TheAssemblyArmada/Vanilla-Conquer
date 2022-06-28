@@ -61,7 +61,7 @@ extern bool DLLLoad(FileClass& file);
         + sizeof(TeamClass) + sizeof(TeamTypeClass) + sizeof(TemplateClass) + sizeof(TemplateTypeClass)                \
         + sizeof(TerrainClass) + sizeof(TerrainTypeClass) + sizeof(UnitClass) + sizeof(UnitTypeClass)                  \
         + sizeof(MouseClass) + sizeof(CellClass) + sizeof(FactoryClass) + sizeof(BaseClass) + sizeof(LayerClass)       \
-        + sizeof(BriefingText) + sizeof(Waypoint)))
+        + sizeof(Scen.BriefingText) + sizeof(Scen.Waypoint)))
 
 /***************************************************************************
  * Save_Game -- saves a game to disk                                       *
@@ -568,14 +568,14 @@ bool Save_Misc_Values(FileClass& file)
     /*
     **	Save difficulty.
     */
-    if (file.Write(&ScenDifficulty, sizeof(ScenDifficulty)) != sizeof(ScenDifficulty)) {
+    if (file.Write(&Scen.Difficulty, sizeof(Scen.Difficulty)) != sizeof(Scen.Difficulty)) {
         return (false);
     }
 
     /*
     **	Save AI difficulty.
     */
-    if (file.Write(&ScenCDifficulty, sizeof(ScenCDifficulty)) != sizeof(ScenCDifficulty)) {
+    if (file.Write(&Scen.CDifficulty, sizeof(Scen.CDifficulty)) != sizeof(Scen.CDifficulty)) {
         return (false);
     }
     /*
@@ -621,19 +621,19 @@ bool Save_Misc_Values(FileClass& file)
     /*
     **	Save the list of waypoints.
     */
-    if (file.Write(Waypoint, sizeof(Waypoint)) != sizeof(Waypoint)) {
+    if (file.Write(Scen.Waypoint, sizeof(Scen.Waypoint)) != sizeof(Scen.Waypoint)) {
         return (false);
     }
 
     file.Write(&ScenDir, sizeof(ScenDir));
     file.Write(&ScenVar, sizeof(ScenVar));
-    file.Write(&CarryOverMoney, sizeof(CarryOverMoney));
-    file.Write(&CarryOverPercent, sizeof(CarryOverPercent));
+    file.Write(&Scen.CarryOverMoney, sizeof(Scen.CarryOverMoney));
+    file.Write(&Scen.CarryOverPercent, sizeof(Scen.CarryOverPercent));
     file.Write(&BuildLevel, sizeof(BuildLevel));
     file.Write(BriefMovie, sizeof(BriefMovie));
     file.Write(Scen.Views, sizeof(Scen.Views));
     file.Write(&EndCountDown, sizeof(EndCountDown));
-    file.Write(BriefingText, sizeof(BriefingText));
+    file.Write(Scen.BriefingText, sizeof(Scen.BriefingText));
 
     // This is new...
     file.Write(ActionMovie, sizeof(ActionMovie));
@@ -677,14 +677,14 @@ bool Load_Misc_Values(FileClass& file)
     /*
     **	Read difficulty.
     */
-    if (file.Read(&ScenDifficulty, sizeof(ScenDifficulty)) != sizeof(ScenDifficulty)) {
+    if (file.Read(&Scen.Difficulty, sizeof(Scen.Difficulty)) != sizeof(Scen.Difficulty)) {
         return (false);
     }
 
     /*
     **	Read AI difficulty.
     */
-    if (file.Read(&ScenCDifficulty, sizeof(ScenCDifficulty)) != sizeof(ScenCDifficulty)) {
+    if (file.Read(&Scen.CDifficulty, sizeof(Scen.CDifficulty)) != sizeof(Scen.CDifficulty)) {
         return (false);
     }
 
@@ -730,19 +730,19 @@ bool Load_Misc_Values(FileClass& file)
     /*
     **	Save the list of waypoints.
     */
-    if (file.Read(Waypoint, sizeof(Waypoint)) != sizeof(Waypoint)) {
+    if (file.Read(Scen.Waypoint, sizeof(Scen.Waypoint)) != sizeof(Scen.Waypoint)) {
         return (false);
     }
 
     file.Read(&ScenDir, sizeof(ScenDir));
     file.Read(&ScenVar, sizeof(ScenVar));
-    file.Read(&CarryOverMoney, sizeof(CarryOverMoney));
-    file.Read(&CarryOverPercent, sizeof(CarryOverPercent));
+    file.Read(&Scen.CarryOverMoney, sizeof(Scen.CarryOverMoney));
+    file.Read(&Scen.CarryOverPercent, sizeof(Scen.CarryOverPercent));
     file.Read(&BuildLevel, sizeof(BuildLevel));
     file.Read(BriefMovie, sizeof(BriefMovie));
     file.Read(Scen.Views, sizeof(Scen.Views));
     file.Read(&EndCountDown, sizeof(EndCountDown));
-    file.Read(BriefingText, sizeof(BriefingText));
+    file.Read(Scen.BriefingText, sizeof(Scen.BriefingText));
 
     if (file.Seek(0, SEEK_CUR) < file.Size()) {
         file.Read(ActionMovie, sizeof(ActionMovie));
@@ -937,7 +937,7 @@ void Decode_All_Pointers(void)
     if (PlayerPtr->ActLike == HOUSE_JP) {
         ScenPlayer = SCEN_PLAYER_JP;
     }
-    Set_Scenario_Name(ScenarioName, Scen.Scenario, ScenPlayer, ScenDir, ScenVar);
+    Set_Scenario_Name(Scen.ScenarioName, Scen.Scenario, ScenPlayer, ScenDir, ScenVar);
 
     /*
     **	Currently-selected objects.

@@ -254,10 +254,10 @@ extern "C" __declspec(dllexport) int __cdecl CNC_Editor_Load_Map(char* cncdata_d
         variant_enum = SCEN_VAR_A;
     }
 
-    Set_Scenario_Name(ScenarioName, Scen.Scenario, ScenPlayer, ScenDir, variant_enum);
+    Set_Scenario_Name(Scen.ScenarioName, Scen.Scenario, ScenPlayer, ScenDir, variant_enum);
 
     char fname[_MAX_FNAME + _MAX_EXT];
-    sprintf(fname, "%s.INI", ScenarioName);
+    sprintf(fname, "%s.INI", Scen.ScenarioName);
     CCFileClass file(fname);
     CCINIClass ini;
     int result = ini.Load(file, true);
@@ -267,7 +267,7 @@ extern "C" __declspec(dllexport) int __cdecl CNC_Editor_Load_Map(char* cncdata_d
 
     Map.One_Time_Editor();
     Map.Read_INI(ini);
-    if (Map.Read_Binary(ScenarioName, &ScenarioCRC)) {
+    if (Map.Read_Binary(Scen.ScenarioName, &ScenarioCRC)) {
         EditorMapInitialized = true;
         return EDITOR_COMMMAND_SUCCESS;
     } else {

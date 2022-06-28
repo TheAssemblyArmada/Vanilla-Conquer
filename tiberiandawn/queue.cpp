@@ -3286,7 +3286,7 @@ static void Compute_Game_CRC(void)
     //------------------------------------------------------------------------
     //	A random #
     //------------------------------------------------------------------------
-    Add_CRC(&GameCRC, ScenRandomNumber.Seed);
+    Add_CRC(&GameCRC, Scen.RandomNumber.Seed);
 
 } /* end of Compute_Game_CRC */
 
@@ -3580,7 +3580,7 @@ void Print_CRCs(EventClass* ev)
     //------------------------------------------------------------------------
     //	Random # generator, frame #
     //------------------------------------------------------------------------
-    snprintf(buffer, sizeof(buffer), "\nRandom Number:%x\n", ScenRandomNumber.Seed);
+    snprintf(buffer, sizeof(buffer), "\nRandom Number:%x\n", Scen.RandomNumber.Seed);
     fc.Write(buffer, strlen(buffer));
 
     snprintf(buffer, sizeof(buffer), "My Frame:%d\n", Frame);

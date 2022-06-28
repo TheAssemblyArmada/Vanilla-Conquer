@@ -101,7 +101,7 @@ int MapEditClass::New_Scenario(void)
     ScenPlayer = player;
     ScenDir = dir;
     ScenVar = var;
-    Set_Scenario_Name(ScenarioName, scen_num, player, dir, var);
+    Set_Scenario_Name(Scen.ScenarioName, scen_num, player, dir, var);
 
     /*
     ----------------------------- Create houses ------------------------------
@@ -147,13 +147,13 @@ int MapEditClass::New_Scenario(void)
     /*
     ------ Set the Home & Reinforcement Cells to the center of the map -------
     */
-    Waypoint[WAYPT_REINF] = XY_Cell(MapCellX + MapCellWidth / 2, MapCellY + MapCellHeight / 2);
-    Waypoint[WAYPT_HOME] = XY_Cell(MapCellX + MapCellWidth / 2, MapCellY + MapCellHeight / 2);
+    Scen.Waypoint[WAYPT_REINF] = XY_Cell(MapCellX + MapCellWidth / 2, MapCellY + MapCellHeight / 2);
+    Scen.Waypoint[WAYPT_HOME] = XY_Cell(MapCellX + MapCellWidth / 2, MapCellY + MapCellHeight / 2);
     (*this)[Coord_Cell(TacticalCoord)].IsWaypoint = 1;
     Flag_Cell(Coord_Cell(TacticalCoord));
 
     ScenarioInit++;
-    Set_Tactical_Position(Cell_Coord(Waypoint[WAYPT_HOME]));
+    Set_Tactical_Position(Cell_Coord(Scen.Waypoint[WAYPT_HOME]));
     ScenarioInit--;
 
     return (0);
@@ -201,7 +201,7 @@ int MapEditClass::Load_Scenario(void)
     ScenPlayer = player;
     ScenDir = dir;
     ScenVar = var;
-    Set_Scenario_Name(ScenarioName, scen_num, player, dir, var);
+    Set_Scenario_Name(Scen.ScenarioName, scen_num, player, dir, var);
 
     /*------------------------------------------------------------------------
     Read_Scenario_Ini() must be able to set PlayerPtr to the right house:
@@ -232,7 +232,7 @@ int MapEditClass::Load_Scenario(void)
     /*
     ------------------------------ Read the INI ------------------------------
     */
-    if (Read_Scenario_Ini(ScenarioName) == 0) {
+    if (Read_Scenario_Ini(Scen.ScenarioName) == 0) {
         WWMessageBox().Process("Unable to read scenario!");
         HiddenPage.Clear();
         Flag_To_Redraw(true);
@@ -304,7 +304,7 @@ int MapEditClass::Save_Scenario(void)
     ScenPlayer = player;
     ScenDir = dir;
     ScenVar = var;
-    Set_Scenario_Name(ScenarioName, scen_num, player, dir, var);
+    Set_Scenario_Name(Scen.ScenarioName, scen_num, player, dir, var);
 
     /*------------------------------------------------------------------------
     Player may have changed from GDI to NOD, so change playerptr accordingly
@@ -331,7 +331,7 @@ int MapEditClass::Save_Scenario(void)
     /*
     ----------------------------- Write the INI ------------------------------
     */
-    Write_Scenario_Ini(ScenarioName);
+    Write_Scenario_Ini(Scen.ScenarioName);
 
     return (0);
 }
@@ -1237,8 +1237,9 @@ int MapEditClass::Size_Map(int x, int y, int w, int h)
                 /*
                 ...................... Draw Home location .......................
                 */
-                LogicPage->Put_Pixel(
-                    D_BORD_X1 + Cell_X(Waypoint[WAYPT_HOME]) + 1, D_BORD_Y1 + Cell_Y(Waypoint[WAYPT_HOME]) + 1, WHITE);
+                LogicPage->Put_Pixel(D_BORD_X1 + Cell_X(Scen.Waypoint[WAYPT_HOME]) + 1,
+                                     D_BORD_Y1 + Cell_Y(Scen.Waypoint[WAYPT_HOME]) + 1,
+                                     WHITE);
 
                 /*
                 ..................... Erase old coordinates .....................
@@ -1540,20 +1541,20 @@ int MapEditClass::Size_Map(int x, int y, int w, int h)
     /*
     --------------------- Clip Home Cell to new map size ---------------------
     */
-    if (Cell_X(Waypoint[WAYPT_HOME]) < MapCellX) {
-        Waypoint[WAYPT_HOME] = XY_Cell(MapCellX, Cell_Y(Waypoint[WAYPT_HOME]));
+    if (Cell_X(Scen.Waypoint[WAYPT_HOME]) < MapCellX) {
+        Scen.Waypoint[WAYPT_HOME] = XY_Cell(MapCellX, Cell_Y(Scen.Waypoint[WAYPT_HOME]));
     }
 
-    if (Cell_X(Waypoint[WAYPT_HOME]) > MapCellX + MapCellWidth - 1) {
-        Waypoint[WAYPT_HOME] = XY_Cell(MapCellX + MapCellWidth - 1, Cell_Y(Waypoint[WAYPT_HOME]));
+    if (Cell_X(Scen.Waypoint[WAYPT_HOME]) > MapCellX + MapCellWidth - 1) {
+        Scen.Waypoint[WAYPT_HOME] = XY_Cell(MapCellX + MapCellWidth - 1, Cell_Y(Scen.Waypoint[WAYPT_HOME]));
     }
 
-    if (Cell_Y(Waypoint[WAYPT_HOME]) < MapCellY) {
-        Waypoint[WAYPT_HOME] = XY_Cell(Cell_X(Waypoint[WAYPT_HOME]), MapCellY);
+    if (Cell_Y(Scen.Waypoint[WAYPT_HOME]) < MapCellY) {
+        Scen.Waypoint[WAYPT_HOME] = XY_Cell(Cell_X(Scen.Waypoint[WAYPT_HOME]), MapCellY);
     }
 
-    if (Cell_Y(Waypoint[WAYPT_HOME]) > MapCellY + MapCellHeight - 1) {
-        Waypoint[WAYPT_HOME] = XY_Cell(Cell_X(Waypoint[WAYPT_HOME]), MapCellY + MapCellHeight - 1);
+    if (Cell_Y(Scen.Waypoint[WAYPT_HOME]) > MapCellY + MapCellHeight - 1) {
+        Scen.Waypoint[WAYPT_HOME] = XY_Cell(Cell_X(Scen.Waypoint[WAYPT_HOME]), MapCellY + MapCellHeight - 1);
     }
 
     return (0);

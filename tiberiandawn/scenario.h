@@ -48,9 +48,69 @@ public:
     ScenarioClass(void);
 
     /*
+    **	This is the source of the random numbers used in the game. This controls
+    **	the game logic and thus must be in sync with any networked machines.
+    */
+    RandomClass RandomNumber;
+
+    /*
+    **	This is the difficulty setting of the game.
+    */
+    DiffType Difficulty;  // For human player.
+    DiffType CDifficulty; // For computer players.
+
+    /*
+    **	This is an array of waypoints; each waypoint corresponds to a letter of
+    ** the alphabet, and points to a cell number.  -1 means unassigned.
+    ** The CellClass has a bit that tells if that cell has a waypoint attached to
+    ** it; the only way to find which waypoint it is, is to scan this array.  This
+    ** shouldn't be needed often; usually, you know the waypoint & you want the CELL.
+    */
+    CELL Waypoint[WAYPT_COUNT];
+
+    /*
     **	The scenario number.
     */
     int Scenario;
+
+    /*
+    **	The full name of the scenario (as it exists on disk).
+    */
+    char ScenarioName[_MAX_FNAME + _MAX_EXT];
+
+    /*
+    **	This is the full text of the briefing. This text will be
+    **	displayed when the player commands the "restate mission
+    **	objectives" operation.
+    */
+    char BriefingText[512];
+
+    /*
+    **	This is the theme to start playing at the beginning of the action
+    **	movie. A score started in this fashion will continue to play as
+    **	the game progresses.
+    */
+    ThemeType TransitTheme;
+
+    /*
+    **	The percentage of money that is allowed to be carried over into the
+    **	following scenario.
+    */
+    int CarryOverPercent;
+
+    /*
+    **	This is the amount of money that was left over in the previous
+    **	scenario.
+    */
+    int CarryOverMoney;
+
+    /*
+    **	This specifies the maximum amount of money that is allowed to be
+    **	carried over from the previous scenario. This limits the amount
+    **	regardless of what the carry over percentage is set to.
+    */
+    int CarryOverCap;
+
     /*
     **	This records the bookmark view locations the player has recorded.
     */

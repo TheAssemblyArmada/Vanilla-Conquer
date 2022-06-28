@@ -66,8 +66,19 @@ extern int PreserveVQAScreen;
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
 ScenarioClass::ScenarioClass(void)
-    : Scenario(1)
+    : Difficulty(DIFF_NORMAL)
+    , CDifficulty(DIFF_NORMAL)
+    , Scenario(1)
+    , TransitTheme(THEME_NONE)
+    , CarryOverPercent(0)
+    , CarryOverMoney(0)
+    , CarryOverCap(0)
 {
+    for (int index = 0; index < ARRAY_SIZE(Waypoint); index++) {
+        Waypoint[index] = -1;
+    }
+    strcpy(ScenarioName, "");
+    strcpy(BriefingText, "");
     memset(Views, '\0', sizeof(Views));
 }
 
@@ -101,7 +112,7 @@ bool Start_Scenario(char* root, bool briefing)
     if (Is_Demo()) {
         if (briefing) {
             Play_Movie(BriefMovie);
-            Play_Movie(ActionMovie, TransitTheme);
+            Play_Movie(ActionMovie, Scen.TransitTheme);
         }
         Theme.Queue_Song(THEME_AOI);
     } else {
@@ -127,13 +138,13 @@ bool Start_Scenario(char* root, bool briefing)
                 Play_Movie(BriefMovie);
             }
 #endif
-            Play_Movie(ActionMovie, TransitTheme);
-            if (TransitTheme == THEME_NONE) {
+            Play_Movie(ActionMovie, Scen.TransitTheme);
+            if (Scen.TransitTheme == THEME_NONE) {
                 Theme.Queue_Song(THEME_AOI);
             }
         } else {
             Play_Movie(BriefMovie);
-            Play_Movie(ActionMovie, TransitTheme);
+            Play_Movie(ActionMovie, Scen.TransitTheme);
 
 #ifdef NEWMENU
 
@@ -154,12 +165,12 @@ bool Start_Scenario(char* root, bool briefing)
 
                 // TO_FIX - Covert ops missions want to pop up a dialog box. ST - 9/6/2019 1:48PM
 #ifndef REMASTER_BUILD
-                Restate_Mission(ScenarioName, TXT_OK, TXT_NONE);
+                Restate_Mission(Scen.ScenarioName, TXT_OK, TXT_NONE);
 #endif
 
                 InMainLoop = oldinmain;
                 //			Hide_Mouse();
-                if (TransitTheme == THEME_NONE) {
+                if (Scen.TransitTheme == THEME_NONE) {
                     Theme.Queue_Song(THEME_AOI);
                 }
             }
@@ -548,15 +559,15 @@ void Do_Win(void)
         }
     }
 
-    CarryOverMoney = PlayerPtr->Credits;
+    Scen.CarryOverMoney = PlayerPtr->Credits;
 
     int pieces = PlayerPtr->NukePieces;
 
     /*
     ** Generate a new scenario filename
     */
-    Set_Scenario_Name(ScenarioName, Scen.Scenario, ScenPlayer, ScenDir, ScenVar);
-    Start_Scenario(ScenarioName);
+    Set_Scenario_Name(Scen.ScenarioName, Scen.Scenario, ScenPlayer, ScenDir, ScenVar);
+    Start_Scenario(Scen.ScenarioName);
 
     PlayerPtr->NukePieces = pieces;
 
@@ -678,7 +689,7 @@ void Do_Lose(void)
     if (!PlaybackGame && !WWMessageBox().Process(TXT_TO_REPLAY, TXT_YES, TXT_NO)) {
         Hide_Mouse();
         Keyboard->Clear();
-        Start_Scenario(ScenarioName, false);
+        Start_Scenario(Scen.ScenarioName, false);
         Map.Render();
     } else {
         Hide_Mouse();
@@ -714,7 +725,7 @@ void Do_Restart(void)
     WWMessageBox().Process(TXT_RESTARTING, TXT_NONE);
     Map.Set_Default_Mouse(MOUSE_NORMAL);
     Keyboard->Clear();
-    Start_Scenario(ScenarioName, false);
+    Start_Scenario(Scen.ScenarioName, false);
     if (hidden)
         Hide_Mouse();
     Keyboard->Clear();
@@ -774,10 +785,10 @@ bool Restate_Mission(char const* name, int button1, int button2)
         /*
         **	If mission object text was found, then display it.
         */
-        if (strlen(BriefingText)) {
+        if (strlen(Scen.BriefingText)) {
             static char _buff[512];
 
-            strcpy(_buff, BriefingText);
+            strcpy(_buff, Scen.BriefingText);
             //			strcpy(_ShapeBuffer, BriefingText);
 
             bool hidden = Get_Mouse_State();

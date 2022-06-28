@@ -474,7 +474,7 @@ void TeamClass::AI(void)
                 **	Argument can be a waypoint index or a direct target.
                 */
                 if (mission->Argument < WAYPT_COUNT) {
-                    Assign_Mission_Target(::As_Target((CELL)Waypoint[mission->Argument]));
+                    Assign_Mission_Target(::As_Target((CELL)Scen.Waypoint[mission->Argument]));
                 } else {
                     Assign_Mission_Target((TARGET)mission->Argument);
                 }

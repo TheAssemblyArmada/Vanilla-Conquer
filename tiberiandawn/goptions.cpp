@@ -259,7 +259,7 @@ void GameOptionsClass::Process(void)
                              GREEN,
                              TBLACK,
                              TPF_6POINT | TPF_NOSHADOW | TPF_RIGHT,
-                             ScenarioName,
+                             Scen.ScenarioName,
                              VersionText);
 
             buttons->Draw_All();
@@ -370,9 +370,9 @@ void GameOptionsClass::Process(void)
             case BUTTON_RESTATE:
                 display = true;
 #ifdef JAPANESE
-                if (!Restate_Mission(ScenarioName, TXT_VIDEO, TXT_TAB_BUTTON_CONTROLS)) {
+                if (!Restate_Mission(Scen.ScenarioName, TXT_VIDEO, TXT_TAB_BUTTON_CONTROLS)) {
 #else
-                if (!Restate_Mission(ScenarioName, TXT_VIDEO, TXT_OPTIONS)) {
+                if (!Restate_Mission(Scen.ScenarioName, TXT_VIDEO, TXT_OPTIONS)) {
 #endif
                     BreakoutAllowed = true;
                     char buffer[25];

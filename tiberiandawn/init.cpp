@@ -146,7 +146,7 @@ bool Init_Game(int, char*[])
     **	Initialize all the waypoints to invalid values.
     */
     CCDebugString("C&C95 - About to clear waypoints\n");
-    memset(Waypoint, 0xFF, sizeof(Waypoint));
+    memset(Scen.Waypoint, 0xFF, sizeof(Scen.Waypoint));
 
     /*
     **	Setup the keyboard processor in preparation for the game.
@@ -867,32 +867,32 @@ bool Select_Game(bool fade)
             **	Pick an expansion scenario.
             */
             case SEL_NEW_SCENARIO:
-                CarryOverMoney = 0;
+                Scen.CarryOverMoney = 0;
                 if (Expansion_Dialog()) {
                     switch (Fetch_Difficulty()) {
                     case 0:
-                        ScenCDifficulty = DIFF_HARD;
-                        ScenDifficulty = DIFF_EASY;
+                        Scen.CDifficulty = DIFF_HARD;
+                        Scen.Difficulty = DIFF_EASY;
                         break;
 
                     case 1:
-                        ScenCDifficulty = DIFF_HARD;
-                        ScenDifficulty = DIFF_NORMAL;
+                        Scen.CDifficulty = DIFF_HARD;
+                        Scen.Difficulty = DIFF_NORMAL;
                         break;
 
                     case 2:
-                        ScenCDifficulty = DIFF_NORMAL;
-                        ScenDifficulty = DIFF_NORMAL;
+                        Scen.CDifficulty = DIFF_NORMAL;
+                        Scen.Difficulty = DIFF_NORMAL;
                         break;
 
                     case 3:
-                        ScenCDifficulty = DIFF_EASY;
-                        ScenDifficulty = DIFF_NORMAL;
+                        Scen.CDifficulty = DIFF_EASY;
+                        Scen.Difficulty = DIFF_NORMAL;
                         break;
 
                     case 4:
-                        ScenCDifficulty = DIFF_EASY;
-                        ScenDifficulty = DIFF_HARD;
+                        Scen.CDifficulty = DIFF_EASY;
+                        Scen.Difficulty = DIFF_HARD;
                         break;
                     }
 
@@ -949,38 +949,38 @@ bool Select_Game(bool fade)
             */
             case SEL_START_NEW_GAME:
                 if (Special.IsFromInstall) {
-                    ScenCDifficulty = DIFF_NORMAL;
-                    ScenDifficulty = DIFF_NORMAL;
+                    Scen.CDifficulty = DIFF_NORMAL;
+                    Scen.Difficulty = DIFF_NORMAL;
                 } else {
                     switch (Fetch_Difficulty()) {
                     case 0:
-                        ScenCDifficulty = DIFF_HARD;
-                        ScenDifficulty = DIFF_EASY;
+                        Scen.CDifficulty = DIFF_HARD;
+                        Scen.Difficulty = DIFF_EASY;
                         break;
 
                     case 1:
-                        ScenCDifficulty = DIFF_HARD;
-                        ScenDifficulty = DIFF_NORMAL;
+                        Scen.CDifficulty = DIFF_HARD;
+                        Scen.Difficulty = DIFF_NORMAL;
                         break;
 
                     case 2:
-                        ScenCDifficulty = DIFF_NORMAL;
-                        ScenDifficulty = DIFF_NORMAL;
+                        Scen.CDifficulty = DIFF_NORMAL;
+                        Scen.Difficulty = DIFF_NORMAL;
                         break;
 
                     case 3:
-                        ScenCDifficulty = DIFF_EASY;
-                        ScenDifficulty = DIFF_NORMAL;
+                        Scen.CDifficulty = DIFF_EASY;
+                        Scen.Difficulty = DIFF_NORMAL;
                         break;
 
                     case 4:
-                        ScenCDifficulty = DIFF_EASY;
-                        ScenDifficulty = DIFF_HARD;
+                        Scen.CDifficulty = DIFF_EASY;
+                        Scen.Difficulty = DIFF_HARD;
                         break;
                     }
                 }
 
-                CarryOverMoney = 0;
+                Scen.CarryOverMoney = 0;
 
                 if (Is_Demo()) {
                     Hide_Mouse();
@@ -1347,9 +1347,9 @@ bool Select_Game(bool fade)
     */
     if (!gameloaded) {
         if (Debug_Map) {
-            Set_Scenario_Name(ScenarioName, Scen.Scenario, ScenPlayer, ScenDir, SCEN_VAR_A);
+            Set_Scenario_Name(Scen.ScenarioName, Scen.Scenario, ScenPlayer, ScenDir, SCEN_VAR_A);
         } else {
-            Set_Scenario_Name(ScenarioName, Scen.Scenario, ScenPlayer, ScenDir);
+            Set_Scenario_Name(Scen.ScenarioName, Scen.Scenario, ScenPlayer, ScenDir);
         }
 
         /*
@@ -1367,7 +1367,7 @@ bool Select_Game(bool fade)
 
         Special.IsFromInstall = 0;
         CCDebugString("C&C95 - Starting scenario.\n");
-        if (!Start_Scenario(ScenarioName)) {
+        if (!Start_Scenario(Scen.ScenarioName)) {
             return (false);
         }
         CCDebugString("C&C95 - Scenario started OK.\n");
@@ -2494,7 +2494,7 @@ void Init_Random(void)
     //
     if (PlaybackGame) {
         RandNumb = Seed;
-        ScenRandomNumber = Seed;
+        Scen.RandomNumber = Seed;
         return;
     }
 
@@ -2519,6 +2519,6 @@ void Init_Random(void)
     /*
     **	Initialize the random-number generators
     */
-    ScenRandomNumber = Seed;
+    Scen.RandomNumber = Seed;
     RandNumb = Seed;
 }

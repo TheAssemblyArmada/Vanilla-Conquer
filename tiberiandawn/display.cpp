@@ -1332,17 +1332,17 @@ void DisplayClass::Read_INI(CCINIClass& ini)
     for (int i = 0; i < WAYPT_COUNT; i++) {
         char buf[20];
         sprintf(buf, "%d", i);
-        Waypoint[i] = ini.Get_Int("Waypoints", buf, -1);
-        if (Waypoint[i] != -1) {
+        Scen.Waypoint[i] = ini.Get_Int("Waypoints", buf, -1);
+        if (Scen.Waypoint[i] != -1) {
 #ifdef MEGAMAPS
             /*
             ** Convert the waypoints normal cell position to a new big map position.
             */
             if (Map.MapBinaryVersion == MAP_VERSION_NORMAL) {
-                Waypoint[i] = Confine_Old_Cell(Waypoint[i]);
+                Scen.Waypoint[i] = Confine_Old_Cell(Scen.Waypoint[i]);
             }
 #endif
-            (*this)[Waypoint[i]].IsWaypoint = 1;
+            (*this)[Scen.Waypoint[i]].IsWaypoint = 1;
         }
     }
 
@@ -1350,11 +1350,11 @@ void DisplayClass::Read_INI(CCINIClass& ini)
     **	Set the starting position (do this after Init(), which clears the cells'
     **	IsWaypoint flags).
     */
-    if (Waypoint[WAYPT_HOME] == -1) {
-        Waypoint[WAYPT_HOME] = XY_Cell(MapCellX, MapCellY);
+    if (Scen.Waypoint[WAYPT_HOME] == -1) {
+        Scen.Waypoint[WAYPT_HOME] = XY_Cell(MapCellX, MapCellY);
     }
-    Set_Tactical_Position(Cell_Coord(Waypoint[WAYPT_HOME]) & 0xFF00FF00L);
-    Scen.Views[0] = Scen.Views[1] = Scen.Views[2] = Scen.Views[3] = Waypoint[WAYPT_HOME];
+    Set_Tactical_Position(Cell_Coord(Scen.Waypoint[WAYPT_HOME]) & 0xFF00FF00L);
+    Scen.Views[0] = Scen.Views[1] = Scen.Views[2] = Scen.Views[3] = Scen.Waypoint[WAYPT_HOME];
 
     /*
     **	Loop through all CellTrigger entries.
@@ -1440,9 +1440,9 @@ void DisplayClass::Write_INI(CCINIClass& ini)
     static char const* const WAYNAME = "Waypoints";
     ini.Clear(WAYNAME);
     for (int i = 0; i < WAYPT_COUNT; i++) {
-        if (Waypoint[i] != -1) {
+        if (Scen.Waypoint[i] != -1) {
             sprintf(entry, "%d", i);
-            ini.Put_Int(WAYNAME, entry, Waypoint[i]);
+            ini.Put_Int(WAYNAME, entry, Scen.Waypoint[i]);
         }
     }
 
@@ -2835,7 +2835,7 @@ CELL DisplayClass::Calculated_Cell(SourceType dir, HousesType house)
         **	Drop in at a random location.
         */
         case SOURCE_AIR:
-            cell = Waypoint[WAYPT_REINF];
+            cell = Scen.Waypoint[WAYPT_REINF];
             if (cell < 1) {
                 cell = Coord_Cell(TacticalCoord);
                 return (cell);

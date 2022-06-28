@@ -303,8 +303,8 @@ bool Read_Scenario_Ini(char* root, bool fresh)
 #ifdef NEWMENU
         if (Scen.Scenario <= 15) {
             BuildLevel = Scen.Scenario;
-        } else if (_stricmp(ScenarioName, "scg30ea") == 0 || _stricmp(ScenarioName, "scg90ea") == 0
-                   || _stricmp(ScenarioName, "scb22ea") == 0) {
+        } else if (_stricmp(Scen.ScenarioName, "scg30ea") == 0 || _stricmp(Scen.ScenarioName, "scg90ea") == 0
+                   || _stricmp(Scen.ScenarioName, "scb22ea") == 0) {
             // N64 missions require build level 15
             BuildLevel = 15;
         } else {
@@ -326,7 +326,7 @@ bool Read_Scenario_Ini(char* root, bool fresh)
     /*
     **	Fetch the transition theme for this scenario.
     */
-    TransitTheme = ini.Get_ThemeType("Basic", "Theme", THEME_NONE);
+    Scen.TransitTheme = ini.Get_ThemeType("Basic", "Theme", THEME_NONE);
 
     /*
     **	Read in the team-type data. The team types must be created before any
@@ -362,18 +362,18 @@ bool Read_Scenario_Ini(char* root, bool fresh)
     */
     //	if (GameToPlay == GAME_NORMAL && (ScenPlayer == SCEN_PLAYER_GDI || ScenPlayer == SCEN_PLAYER_NOD)) {
     if (GameToPlay == GAME_NORMAL) {
-        CarryOverPercent = ini.Get_Int("Basic", "CarryOverMoney", 100);
-        CarryOverPercent = Cardinal_To_Fixed(100, CarryOverPercent);
-        CarryOverCap = ini.Get_Int("Basic", "CarryOverCap", -1);
+        Scen.CarryOverPercent = ini.Get_Int("Basic", "CarryOverMoney", 100);
+        Scen.CarryOverPercent = Cardinal_To_Fixed(100, Scen.CarryOverPercent);
+        Scen.CarryOverCap = ini.Get_Int("Basic", "CarryOverCap", -1);
 
         PlayerPtr = HouseClass::As_Pointer(ini.Get_HousesType("Basic", "Player", HOUSE_GOOD));
         PlayerPtr->IsHuman = true;
 
         int carryover;
-        if (CarryOverCap != -1) {
-            carryover = MIN((int)Fixed_To_Cardinal(CarryOverMoney, CarryOverPercent), CarryOverCap);
+        if (Scen.CarryOverCap != -1) {
+            carryover = MIN((int)Fixed_To_Cardinal(Scen.CarryOverMoney, Scen.CarryOverPercent), Scen.CarryOverCap);
         } else {
-            carryover = Fixed_To_Cardinal(CarryOverMoney, CarryOverPercent);
+            carryover = Fixed_To_Cardinal(Scen.CarryOverMoney, Scen.CarryOverPercent);
         }
         PlayerPtr->Credits += carryover;
         PlayerPtr->InitialCredits += carryover;
@@ -382,7 +382,7 @@ bool Read_Scenario_Ini(char* root, bool fresh)
             PlayerPtr->ActLike = Whom;
         }
 
-        PlayerPtr->Assign_Handicap(ScenDifficulty);
+        PlayerPtr->Assign_Handicap(Scen.Difficulty);
     } else {
 
 #ifdef OBSOLETE
@@ -469,17 +469,17 @@ bool Read_Scenario_Ini(char* root, bool fresh)
     /*
     **	Read in any briefing text.
     */
-    ini.Get_TextBlock("Briefing", BriefingText, sizeof(BriefingText));
+    ini.Get_TextBlock("Briefing", Scen.BriefingText, sizeof(Scen.BriefingText));
 
     /*
     **	If the briefing text could not be found in the INI file, then search
     **	the mission.ini file.
     */
-    if (BriefingText[0] == '\0') {
+    if (Scen.BriefingText[0] == '\0') {
         INIClass mini;
         CCFileClass missionIniFile("MISSION.INI");
         mini.Load(missionIniFile);
-        mini.Get_TextBlock(root, BriefingText, sizeof(BriefingText));
+        mini.Get_TextBlock(root, Scen.BriefingText, sizeof(Scen.BriefingText));
     }
 
     /*
@@ -498,10 +498,10 @@ bool Read_Scenario_Ini(char* root, bool fresh)
                    - fix repeating airstrike trigger
     **		NOD13C - delete airstrike trigger when radar destroyed
     */
-    if (_stricmp(ScenarioName, "scb07ea") == 0) {
+    if (_stricmp(Scen.ScenarioName, "scb07ea") == 0) {
         Map[(CELL)2795].Override_Land_Type(LAND_ROCK);
     }
-    if (_stricmp(ScenarioName, "scb09ea") == 0) {
+    if (_stricmp(Scen.ScenarioName, "scb09ea") == 0) {
         for (int index = 0; index < Buildings.Count(); ++index) {
             BuildingClass* building = Buildings.Ptr(index);
             if (building != NULL && building->Owner() == HOUSE_GOOD && *building == STRUCT_RADAR) {
@@ -513,10 +513,10 @@ bool Read_Scenario_Ini(char* root, bool fresh)
             }
         }
     }
-    if (_stricmp(ScenarioName, "scb10eb") == 0) {
+    if (_stricmp(Scen.ScenarioName, "scb10eb") == 0) {
         Map[(CELL)2015].Override_Land_Type(LAND_ROCK);
     }
-    if (_stricmp(ScenarioName, "scb13eb") == 0) {
+    if (_stricmp(Scen.ScenarioName, "scb13eb") == 0) {
         TriggerClass* prod = new TriggerClass();
         prod->Set_Name("prod");
         prod->Event = EVENT_PLAYER_ENTERED;
@@ -536,7 +536,7 @@ bool Read_Scenario_Ini(char* root, bool fresh)
         assert(xxxx != NULL);
         xxxx->IsPersistant = TriggerClass::PERSISTANT;
     }
-    if (_stricmp(ScenarioName, "scb13ec") == 0) {
+    if (_stricmp(Scen.ScenarioName, "scb13ec") == 0) {
         for (int index = 0; index < Buildings.Count(); ++index) {
             BuildingClass* building = Buildings.Ptr(index);
             if (building != NULL && building->Owner() == HOUSE_GOOD && *building == STRUCT_RADAR
@@ -634,7 +634,7 @@ bool Read_Scenario_Ini(char* root, bool fresh)
         for (int i = 0; i < ARRAY_SIZE(Scen.Views); ++i) {
             Scen.Views[i] = XY_Cell(start_x, start_y);
         }
-        Waypoint[27] = XY_Cell(start_x, start_y);
+        Scen.Waypoint[27] = XY_Cell(start_x, start_y);
         COORDINATE pos = Cell_Coord(XY_Cell(start_x, start_y));
         Map.Set_Tactical_Position(pos);
 #endif
@@ -735,7 +735,7 @@ bool Read_Scenario_Ini_File(char* scenario_file_name, char* bin_file_name, const
     /*
     **	Fetch the transition theme for this scenario.
     */
-    TransitTheme = ini.Get_ThemeType("Basic", "Theme", THEME_NONE);
+    Scen.TransitTheme = ini.Get_ThemeType("Basic", "Theme", THEME_NONE);
 
     /*
     **	Read in the team-type data. The team types must be created before any
@@ -770,17 +770,17 @@ bool Read_Scenario_Ini_File(char* scenario_file_name, char* bin_file_name, const
     **	Must be done before any TechnoClass objects are created.
     */
     if (GameToPlay == GAME_NORMAL) {
-        CarryOverPercent = ini.Get_Int("Basic", "CarryOverMoney", 100);
-        CarryOverPercent = Cardinal_To_Fixed(100, CarryOverPercent);
-        CarryOverCap = ini.Get_Int("Basic", "CarryOverCap", -1);
+        Scen.CarryOverPercent = ini.Get_Int("Basic", "CarryOverMoney", 100);
+        Scen.CarryOverPercent = Cardinal_To_Fixed(100, Scen.CarryOverPercent);
+        Scen.CarryOverCap = ini.Get_Int("Basic", "CarryOverCap", -1);
 
         PlayerPtr = HouseClass::As_Pointer(ini.Get_HousesType("Basic", "Player", HOUSE_GOOD));
         PlayerPtr->IsHuman = true;
         int carryover;
-        if (CarryOverCap != -1) {
-            carryover = MIN((int)Fixed_To_Cardinal(CarryOverMoney, CarryOverPercent), CarryOverCap);
+        if (Scen.CarryOverCap != -1) {
+            carryover = MIN((int)Fixed_To_Cardinal(Scen.CarryOverMoney, Scen.CarryOverPercent), Scen.CarryOverCap);
         } else {
-            carryover = Fixed_To_Cardinal(CarryOverMoney, CarryOverPercent);
+            carryover = Fixed_To_Cardinal(Scen.CarryOverMoney, Scen.CarryOverPercent);
         }
         PlayerPtr->Credits += carryover;
         PlayerPtr->InitialCredits += carryover;
@@ -863,17 +863,17 @@ bool Read_Scenario_Ini_File(char* scenario_file_name, char* bin_file_name, const
     /*
     **	Read in any briefing text.
     */
-    ini.Get_TextBlock("Briefing", BriefingText, sizeof(BriefingText));
+    ini.Get_TextBlock("Briefing", Scen.BriefingText, sizeof(Scen.BriefingText));
 
     /*
     **	If the briefing text could not be found in the INI file, then search
     **	the mission.ini file.
     */
-    if (BriefingText[0] == '\0') {
+    if (Scen.BriefingText[0] == '\0') {
         INIClass mini;
         CCFileClass missionIniFile("MISSION.INI");
         mini.Load(missionIniFile);
-        mini.Get_TextBlock(root, BriefingText, sizeof(BriefingText));
+        mini.Get_TextBlock(root, Scen.BriefingText, sizeof(Scen.BriefingText));
     }
 
     /*
@@ -1073,7 +1073,7 @@ bool Read_Movies_From_Scenario_Ini(char* root, bool fresh)
     /*
     **	Fetch the transition theme for this scenario.
     */
-    TransitTheme = ini.Get_ThemeType("Basic", "Theme", THEME_NONE);
+    Scen.TransitTheme = ini.Get_ThemeType("Basic", "Theme", THEME_NONE);
 
     /*
     **	Return with flag saying that the scenario file was read.
@@ -1130,10 +1130,10 @@ void Write_Scenario_Ini(char* root)
     ini.Put_String("Basic", "Lose", LoseMovie);
     ini.Put_String("Basic", "Action", ActionMovie);
     ini.Put_String("Basic", "Player", PlayerPtr->Class->IniName);
-    ini.Put_String("Basic", "Theme", Theme.Base_Name(TransitTheme));
+    ini.Put_String("Basic", "Theme", Theme.Base_Name(Scen.TransitTheme));
     ini.Put_Int("Basic", "BuildLevel", BuildLevel);
-    ini.Put_Int("Basic", "CarryOverMoney", Fixed_To_Cardinal(100, CarryOverPercent));
-    ini.Put_Int("Basic", "CarryOverCap", CarryOverCap);
+    ini.Put_Int("Basic", "CarryOverMoney", Fixed_To_Cardinal(100, Scen.CarryOverPercent));
+    ini.Put_Int("Basic", "CarryOverCap", Scen.CarryOverCap);
 
     TeamTypeClass::Write_INI(ini, true);
     TriggerClass::Write_INI(ini, true);
@@ -1149,8 +1149,8 @@ void Write_Scenario_Ini(char* root)
 
     Base.Write_INI(ini);
 
-    if (strlen(BriefingText)) {
-        ini.Put_TextBlock("Briefing", BriefingText);
+    if (strlen(Scen.BriefingText)) {
+        ini.Put_TextBlock("Briefing", Scen.BriefingText);
     }
 
     /*
@@ -1243,7 +1243,7 @@ static void Assign_Houses(void)
             PlayerPtr = housep;
         }
 
-        housep->Assign_Handicap(ScenDifficulty);
+        housep->Assign_Handicap(Scen.Difficulty);
     }
 
     /*
@@ -1278,7 +1278,7 @@ static void Assign_Houses(void)
             housep->IsHuman = false;
             housep->Init_Data(color, pref_house, MPlayerCredits);
 
-            DiffType difficulty = ScenCDifficulty;
+            DiffType difficulty = Scen.CDifficulty;
 
             if (Players.Count() > 1 && Rule.IsCompEasyBonus && difficulty > DIFF_EASY) {
                 difficulty = (DiffType)(difficulty - 1);
@@ -1531,8 +1531,8 @@ static void Create_Units(void)
     First, copy all valid waytpoints into my 'waypts' array
     ........................................................................*/
     for (i = 0; i < 26; i++) {
-        if (Waypoint[i] != -1) {
-            waypts[num_waypts] = Waypoint[i];
+        if (Scen.Waypoint[i] != -1) {
+            waypts[num_waypts] = Scen.Waypoint[i];
             num_waypts++;
         }
     }

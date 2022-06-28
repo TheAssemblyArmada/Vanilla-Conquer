@@ -916,12 +916,12 @@ template <class T> inline T Random_Picky(T a, T b, const char* sfile, int line)
 
 template <class T> inline T Random_Pick(T a, T b)
 {
-    return T(ScenRandomNumber((int)a, (int)b));
+    return T(Scen.RandomNumber((int)a, (int)b));
 };
 
 inline bool Percent_Chance(int percent)
 {
-    return (ScenRandomNumber(0, 99) < percent);
+    return (Scen.RandomNumber(0, 99) < percent);
 }
 
 template <class T> inline T Sim_Random_Pick(T a, T b)
