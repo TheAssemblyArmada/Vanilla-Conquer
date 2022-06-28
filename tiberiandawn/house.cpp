@@ -4321,6 +4321,7 @@ void HouseClass::MPlayer_Defeated(void)
         }
 #endif
 
+#ifdef NETWORKING
         /*---------------------------------------------------------------------
         Destroy all the IPX connections, since we have to go through the rest
         of the Main_Loop() before we detect that the game is over, and we'll
@@ -4334,6 +4335,7 @@ void HouseClass::MPlayer_Defeated(void)
             }
             MPlayerCount = 0;
         }
+#endif
     }
 }
 

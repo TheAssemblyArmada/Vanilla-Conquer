@@ -536,7 +536,9 @@ void Process_Network();
 void WWKeyboardClass::Fill_Buffer_From_System(void)
 {
 #ifdef SDL2_BUILD
+#ifdef NETWORKING
     Process_Network();
+#endif
     SDL_Event event;
 
     while (!Is_Buffer_Full() && SDL_PollEvent(&event)) {

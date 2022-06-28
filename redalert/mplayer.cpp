@@ -103,7 +103,19 @@ GameType Select_MPlayer_Game(void)
         NUM_OF_BUTTONS = 3,
     };
 
-    int num_of_buttons = NUM_OF_BUTTONS - (Ipx.Is_IPX() ? 0 : 1);
+    bool ipx_avail = false;
+
+#ifdef NETWORKING
+    //
+    // If neither IPX or winsock are active then do only the modem serial dialog
+    //
+    if (Ipx.Is_IPX()) {
+        ipx_avail = true;
+    }
+#endif
+
+    int num_of_buttons = NUM_OF_BUTTONS - (ipx_avail ? 0 : 1);
+
     //------------------------------------------------------------------------
     //	Redraw values: in order from "top" to "bottom" layer of the dialog
     //------------------------------------------------------------------------
@@ -135,7 +147,7 @@ GameType Select_MPlayer_Game(void)
     //------------------------------------------------------------------------
     // If IPX not active then do only the modem serial dialog
     //------------------------------------------------------------------------
-    //	if ( !Ipx.Is_IPX() ) {
+    //	if ( !ipx_avail ) {
     //		return( Select_Serial_Dialog() );
     //	}
 
@@ -144,7 +156,7 @@ GameType Select_MPlayer_Game(void)
 
     TextButtonClass ipxbtn(BUTTON_IPX, TXT_NETWORK, TPF_BUTTON, d_ipx_x, d_ipx_y, d_ipx_w, d_ipx_h);
 
-    if (!Ipx.Is_IPX()) {
+    if (!ipx_avail) {
         d_cancel_y = d_ipx_y;
         d_dialog_h -= d_cancel_h;
     }
@@ -161,7 +173,7 @@ GameType Select_MPlayer_Game(void)
     //------------------------------------------------------------------------
     commands = &skirmishbtn;
     //skirmishbtn.Add_Tail(*commands);
-    if (Ipx.Is_IPX()) {
+    if (ipx_avail) {
         ipxbtn.Add_Tail(*commands);
     }
     cancelbtn.Add_Tail(*commands);
@@ -171,7 +183,7 @@ GameType Select_MPlayer_Game(void)
     //------------------------------------------------------------------------
     curbutton = 0;
     buttons[0] = &skirmishbtn;
-    if (Ipx.Is_IPX()) {
+    if (ipx_avail) {
         buttons[1] = &ipxbtn;
         buttons[2] = &cancelbtn;
     } else {
@@ -297,7 +309,7 @@ GameType Select_MPlayer_Game(void)
             buttons[curbutton]->Turn_Off();
             buttons[curbutton]->Flag_To_Redraw();
             curbutton = selection - BUTTON_SKIRMISH;
-            if (selection == BUTTON_CANCEL && !Ipx.Is_IPX())
+            if (selection == BUTTON_CANCEL && !ipx_avail)
                 curbutton--;
             buttons[curbutton]->Turn_On();
             buttons[curbutton]->IsPressed = true;

@@ -46,11 +46,9 @@
 #include "msgbox.h"
 #include "language.h"
 
-#ifdef WINSOCK_IPX
+#ifdef NETWORKING
 #include "wsproto.h"
-#else // WINSOCK_IPX
-#include "common/tcpip.h"
-#endif // WINSOCK_IPX
+#endif // NETWORKING
 #include "common/vqaaudio.h"
 
 void output(short, short)

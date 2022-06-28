@@ -259,7 +259,9 @@ typedef struct
 typedef struct NodeNameTag
 {
     char Name[MPLAYER_NAME_MAX]; // player or game name
+#ifdef NETWORKING
     IPXAddressClass Address;
+#endif
     union
     {
         struct
@@ -626,13 +628,16 @@ public:
 
     char ScenarioRequests[20]; // Which players requested scenario files
     int RequestCount;
+#ifdef NETWORKING
     IPXAddressClass HostAddress;
-
+#endif
     //.....................................................................
     // This is the multiplayer messaging system
     //.....................................................................
     MessageListClass Messages;
+#ifdef NETWORKING
     IPXAddressClass MessageAddress;
+#endif
     char LastMessage[MAX_MESSAGE_LENGTH];
     unsigned WWChat : 1; // 1 = go into special WW Chat mode
 
@@ -665,13 +670,15 @@ public:
     //.....................................................................
     // IPX-specific variables
     //.....................................................................
-    bool NetStealth;                           // makes us invisible
-    bool NetProtect;                           // keeps others from messaging us
-    bool NetOpen;                              // 1 = game is open for joining
-    char GameName[MPLAYER_NAME_MAX];           // game's name
-    GlobalPacketType GPacket;                  // global packet
-    int GPacketlen;                            // global packet length
-    IPXAddressClass GAddress;                  // address of sender
+    bool NetStealth;                 // makes us invisible
+    bool NetProtect;                 // keeps others from messaging us
+    bool NetOpen;                    // 1 = game is open for joining
+    char GameName[MPLAYER_NAME_MAX]; // game's name
+    GlobalPacketType GPacket;        // global packet
+    int GPacketlen;                  // global packet length
+#ifdef NETWORKING
+    IPXAddressClass GAddress; // address of sender
+#endif
     unsigned short GProductID;                 // product ID of sender
     char MetaPacket[MAX_IPX_PACKET_SIZE];      // packet building buffer
     int MetaSize;                              // size of MetaPacket

@@ -53,7 +53,6 @@
 #include "lcwstraw.h"
 #include "vortex.h"
 #include "carry.h"
-#include "common/tcpip.h"
 
 #ifdef REMASTER_BUILD
 extern bool DLLSave(Pipe& file);

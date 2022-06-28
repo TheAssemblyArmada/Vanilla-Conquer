@@ -60,7 +60,6 @@
 
 #include "function.h"
 #include "common/irandom.h"
-#include "common/tcpip.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -340,7 +339,9 @@ void Main_Game(int argc, char* argv[])
                 break;
 
             case GAME_IPX:
+#ifdef NETWORKING
                 Shutdown_Network();
+#endif
                 break;
 
             case GAME_INTERNET:
@@ -871,7 +872,7 @@ static void Message_Input(KeyNumType& input)
                 Map.Flag_To_Redraw(false);
             }
         } else {
-
+#ifdef NETWORKING
             /*
             **	For a network game:
             **	F1-F3 = "To <name> (house):" (only allowed if we're not in ObiWan mode)
@@ -907,6 +908,7 @@ static void Message_Input(KeyNumType& input)
                     }
                 }
             }
+#endif
         }
     }
 
@@ -1220,7 +1222,7 @@ void Call_Back(void)
         Speak_AI();
     }
 
-#ifndef DEMO
+#ifdef NETWORKING
     /*
     **	Network maintenance
     */
