@@ -3971,6 +3971,7 @@ void HouseClass::MPlayer_Defeated(void)
         */
         Tally_Score();
 
+#ifdef NETWORKING
         /*
         **	Destroy all the IPX connections, since we have to go through the rest
         **	of the Main_Loop() before we detect that the game is over, and we'll
@@ -3984,6 +3985,7 @@ void HouseClass::MPlayer_Defeated(void)
             }
             Session.NumPlayers = 0;
         }
+#endif
     }
 }
 

@@ -250,7 +250,9 @@ inline CELL Coord_YCell(COORDINATE coord)
 typedef struct NodeNameTag
 {
     char Name[MPLAYER_NAME_MAX];
+#ifdef NETWORKING
     IPXAddressClass Address;
+#endif
     union
     {
         struct

@@ -70,11 +70,9 @@
 #include "keyframe.h"
 #include "language.h"
 
-#ifdef WINSOCK_IPX
+#ifdef NETWORKING
 #include "wsproto.h"
-#else // WINSOCK_IPX
-#include "common/tcpip.h"
-#endif // WINSOCK_IPX
+#endif // NETWORKING
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -1107,6 +1105,7 @@ static void Message_Input(KeyNumType& input)
                 Map.Flag_To_Redraw(false);
             }
         } else if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && !Session.Messages.Is_Edit()) {
+#ifdef NETWORKING
             /*
             **	For a network game:
             **	F1-F7 = "To <name> (house):" (only allowed if we're not in ObiWan mode)
@@ -1132,6 +1131,7 @@ static void Message_Input(KeyNumType& input)
 
                 Map.Flag_To_Redraw(false);
             }
+#endif
         }
     }
 
@@ -1167,7 +1167,7 @@ static void Message_Input(KeyNumType& input)
     **	Send a message
     */
     if ((rc == 3 || rc == 4) && Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH) {
-#ifndef REMASTER_BUILD
+#ifdef NETWORKING
         /*
         **	Serial game: fill in a SerialPacketType & send it.
         **	(Note: The size of the SerialPacketType.Command must be the same as
@@ -1388,7 +1388,7 @@ void Call_Back(void)
 
 void IPX_Call_Back(void)
 {
-#ifndef REMASTER_BUILD // PG
+#ifdef NETWORKING // PG
     Ipx.Service();
 
     /*

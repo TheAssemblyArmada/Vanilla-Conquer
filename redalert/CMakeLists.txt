@@ -68,9 +68,6 @@ set(REDALERT_SRC
     intro.cpp
     iomap.cpp
     ioobj.cpp
-    ipxconn.cpp
-    ipxgconn.cpp
-    ipxmgr.cpp
     jshell.cpp
     layer.cpp
     list.cpp
@@ -91,7 +88,6 @@ set(REDALERT_SRC
     mplayer.cpp
     msgbox.cpp
     msglist.cpp
-    netdlg.cpp
     nulldlg.cpp
     object.cpp
     odata.cpp
@@ -111,7 +107,6 @@ set(REDALERT_SRC
     scroll.cpp
     sdata.cpp
     seditdlg.cpp
-    sendfile.cpp
     session.cpp
     shapebtn.cpp
     sidebar.cpp
@@ -150,17 +145,18 @@ set(REDALERT_SRC
     warhead.cpp
     weapon.cpp
     winstub.cpp
-    wol_cgam.cpp
-    wol_chat.cpp
-    wol_dnld.cpp
-    wol_gsup.cpp
-    wol_logn.cpp
-    wol_main.cpp
-    wol_opt.cpp
-    wolapiob.cpp
-    woledit.cpp
     wolstrng.cpp
 )
+
+if(NETWORKING)
+    list(APPEND REDALERT_NET_SRC
+        ipxconn.cpp
+        ipxgconn.cpp
+        ipxmgr.cpp
+        netdlg.cpp
+        sendfile.cpp
+    )
+endif()
 
 if(CMAKE_CONFIGURATION_TYPES)
     # Glob all the header files together to add to the project for msvc/xcode.
@@ -243,7 +239,7 @@ if(BUILD_VANILLARA)
     endif()
 
     # A target must include the icon for the custom command to run.
-    add_executable(VanillaRA ${REDALERT_SRC} ${REDALERT_HEADERS} ${VANILLARA_RC} ${VANILLARA_ICON})
+    add_executable(VanillaRA ${REDALERT_SRC} ${REDALERT_NET_SRC} ${REDALERT_HEADERS} ${VANILLARA_RC} ${VANILLARA_ICON})
 
     if(MAKE_BUNDLE)
         set_source_files_properties(${VANILLARA_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
@@ -264,9 +260,6 @@ if(BUILD_VANILLARA)
     set_target_properties(VanillaRA PROPERTIES OUTPUT_NAME vanillara)
     if(MAP_EDITORRA)
         target_compile_definitions(VanillaRA PUBLIC INTERNAL_VERSION)
-    endif()
-    if(NETWORKING)
-        target_compile_definitions(VanillaRA PUBLIC WINSOCK_IPX)
     endif()
     # Control if we auto generate a console and which "main" function we link using MSVC.
     if(MSVC)

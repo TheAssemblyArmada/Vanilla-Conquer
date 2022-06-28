@@ -43,7 +43,6 @@
 #include "function.h"
 #include "loaddlg.h"
 #include "common/gitinfo.h"
-#include "common/tcpip.h"
 #include "common/vqaconfig.h"
 #include "common/wspudp.h"
 #include "common/paths.h"
@@ -1146,7 +1145,6 @@ bool Select_Game(bool fade)
 
                     PacketTransport = new UDPInterfaceClass;
                     assert(PacketTransport != NULL);
-#endif
 
                     DBG_LOG("C&C - About to call Init_Network.\n");
                     if (GameToPlay == GAME_IPX && Init_Network() && Remote_Connect()) {
@@ -1156,14 +1154,15 @@ bool Select_Game(bool fade)
                         process = false;
                         Theme.Fade_Out();
                     } else { // user hit cancel, or init failed
+#endif
                         GameToPlay = GAME_NORMAL;
                         display = true;
                         selection = SEL_NONE;
 #ifdef NETWORKING
                         delete PacketTransport;
                         PacketTransport = NULL;
-#endif
                     }
+#endif
                     break;
                 }
                 break;

@@ -57,9 +57,6 @@ set(TIBDAWN_SRC
     intro.cpp
     iomap.cpp
     ioobj.cpp
-    ipxconn.cpp
-    ipxgconn.cpp
-    ipxmgr.cpp
     jshell.cpp
     layer.cpp
     lib.cpp
@@ -81,7 +78,6 @@ set(TIBDAWN_SRC
     mplayer.cpp
     msgbox.cpp
     msglist.cpp
-    netdlg.cpp
     nulldlg.cpp
     object.cpp
     odata.cpp
@@ -128,6 +124,15 @@ set(TIBDAWN_SRC
     visudlg.cpp
     winstub.cpp
 )
+
+if(NETWORKING)
+    list(APPEND TIBDAWN_NET_SRC
+        ipxconn.cpp
+        ipxgconn.cpp
+        ipxmgr.cpp
+        netdlg.cpp
+    )
+endif()
 
 if(CMAKE_CONFIGURATION_TYPES)
     # Glob all the header files together to add to the project for msvc/xcode.
@@ -210,7 +215,7 @@ if(BUILD_VANILLATD)
     endif()
 
     # A target must include the icon for the custom command to run.
-    add_executable(VanillaTD ${TIBDAWN_SRC} ${TIBDAWN_HEADERS} ${VANILLATD_RC} ${VANILLATD_ICON})
+    add_executable(VanillaTD ${TIBDAWN_SRC} ${TIBDAWN_NET_SRC} ${TIBDAWN_HEADERS} ${VANILLATD_RC} ${VANILLATD_ICON})
 
     if(MAKE_BUNDLE)
         set_source_files_properties(${VANILLATD_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
@@ -231,9 +236,6 @@ if(BUILD_VANILLATD)
     set_target_properties(VanillaTD PROPERTIES OUTPUT_NAME vanillatd)
     if(MAP_EDITORTD)
         target_compile_definitions(VanillaTD PUBLIC INTERNAL_VERSION)
-    endif()
-    if(NETWORKING)
-        target_compile_definitions(VanillaTD PUBLIC WINSOCK_IPX)
     endif()
     # Control if we auto generate a console and which "main" function we link using MSVC.
     if(MSVC)

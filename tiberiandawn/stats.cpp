@@ -38,7 +38,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
-#include "common/tcpip.h"
 #include "common/packet.h"
 #include "common/gitinfo.h"
 

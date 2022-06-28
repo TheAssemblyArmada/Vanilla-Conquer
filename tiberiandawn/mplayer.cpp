@@ -42,7 +42,6 @@
 
 #include "function.h"
 #include "common/irandom.h"
-#include "common/tcpip.h"
 #include "common/ini.h"
 #include "common/framelimit.h"
 #include "common/ini.h"
@@ -156,12 +155,14 @@ GameType Select_MPlayer_Game(void)
     ........................................................................*/
     ControlClass* commands = NULL; // the button list
 
+#ifdef NETWORKING
     //
     // If neither IPX or winsock are active then do only the modem serial dialog
     //
     if (Ipx.Is_IPX()) {
         ipx_avail = true;
     }
+#endif
 
     TextButtonClass skirmishbtn(BUTTON_SKIRMISH,
                                 TXT_SKIRMISH,

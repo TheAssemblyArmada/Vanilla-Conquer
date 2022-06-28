@@ -239,7 +239,9 @@ typedef struct
 typedef struct NodeNameTag
 {
     char Name[MPLAYER_NAME_MAX]; // player or game name
+#ifdef NETWORKING
     IPXAddressClass Address;
+#endif
     union
     {
         struct

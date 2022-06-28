@@ -598,13 +598,14 @@ NullModemClass NullModem(16, // number of send entries
 //	8, 													// # entries in Private Queues
 //	VIRGIN_SOCKET, 									// Socket ID #
 //	IPXGlobalConnClass::COMMAND_AND_CONQUER0);// Product ID #
-
+#ifdef NETWORKING
 IPXManagerClass Ipx(MAX(sizeof(GlobalPacketType), sizeof(RemoteFileTransferType)), // size of Global Channel packets
                     ((546 - sizeof(CommHeaderType)) / sizeof(EventClass)) * sizeof(EventClass),
                     160,                                       // # entries in Global Queue
                     32,                                        // # entries in Private Queues
                     VIRGIN_SOCKET,                             // Socket ID #
                     IPXGlobalConnClass::COMMAND_AND_CONQUER0); // Product ID #
+#endif
 
 /***************************************************************************
 **	This is the random-number seed; it's synchronized between systems for
@@ -684,3 +685,6 @@ bool bAutoSonarPulse = false;
 // ST - 5/14/2019
 bool RunningAsDLL = false;
 bool RunningFromEditor = false;
+
+// OmniBlade - Moves from tcpip.cpp as part of networking cleanup.
+bool Server; // Is this player acting as client or server
