@@ -100,8 +100,8 @@ void const* Beepy6;
 int ControlQ; // cheat key to skip past score/mapsel screens
 bool StillUpdating;
 
-const char* ScreenNames[2] = {"ALIBACKH.PCX", "SOVBACKH.PCX"};
-const char* AnimNames[2] = {"ALI-TRAN.WSA", "SOV-TRAN.WSA"};
+static const char* ScreenNames[2] = {"ALIBACKH.PCX", "SOVBACKH.PCX"};
+static const char* AnimNames[2] = {"ALI-TRAN.WSA", "SOV-TRAN.WSA"};
 
 struct Fame
 {
@@ -347,6 +347,8 @@ void ScoreClass::Presentation(void)
     static int const _bldggy[2] = {138, 138};
     static int const _bldgny[2] = {150, 150};
 
+    bool dosmode = (RESFACTOR == 1);
+
 #ifdef FIXIT_SCORE_CRASH
     /*
     ** Fix for the score screen crash due to uncompressed shape buffer overflow.
@@ -390,8 +392,8 @@ void ScoreClass::Presentation(void)
     unsigned minutes = (unsigned)((ElapsedTime / (int)TIMER_MINUTE)) + 1;
 
     // Load up the shapes for the Nod score screen
-    yellowptr = MFCD::Retrieve("BAR3BHR.SHP");
-    redptr = MFCD::Retrieve("BAR3RHR.SHP");
+    yellowptr = MFCD::Retrieve((dosmode) ? "BAR3BLU.SHP" : "BAR3BHR.SHP");
+    redptr = MFCD::Retrieve((dosmode) ? "BAR3RED.SHP" : "BAR3RHR.SHP");
 
     /* Change to the six-point font for Text_Print */
     oldfont = Set_Font(ScoreFontPtr);
@@ -417,18 +419,20 @@ void ScoreClass::Presentation(void)
     Call_Back();
     Close_Animation(anim);
 
-    Load_Title_Screen(ScreenNames[house], &HidPage, (unsigned char*)ScorePalette.Get_Data());
-    Increase_Palette_Luminance((unsigned char*)ScorePalette.Get_Data(), 30, 30, 30, 63);
-    ScorePalette.Set(0, nullptr);
-    HidPage.Blit(SeenPage);
-    HidPage.Blit(*PseudoSeenBuff);
+    if (!dosmode) {
+        Load_Title_Screen(ScreenNames[house], &HidPage, (unsigned char*)ScorePalette.Get_Data());
+        Increase_Palette_Luminance((unsigned char*)ScorePalette.Get_Data(), 30, 30, 30, 63);
+        ScorePalette.Set(0, nullptr);
+        HidPage.Blit(SeenPage);
+        HidPage.Blit(*PseudoSeenBuff);
+    }
 
     /*
     ** Background's up, so now load various shapes and animations
     */
-    void const* timeshape = MFCD::Retrieve("TIMEHR.SHP");
-    void const* hiscore1shape = MFCD::Retrieve("HISC1-HR.SHP");
-    void const* hiscore2shape = MFCD::Retrieve("HISC2-HR.SHP");
+    void const* timeshape = MFCD::Retrieve((dosmode) ? "TIME.SHP" : "TIMEHR.SHP");
+    void const* hiscore1shape = MFCD::Retrieve((dosmode) ? "HISCORE.SHP" : "HISC1-HR.SHP");
+    void const* hiscore2shape = MFCD::Retrieve((dosmode) ? "HISCORE2.SHP" : "HISC2-HR.SHP");
     ScoreObjs[0] = new ScoreTimeClass(238, 2, timeshape, 30, 4);
     ScoreObjs[1] = new ScoreTimeClass(4, 89, hiscore1shape, 10, 4);
     ScoreObjs[2] = new ScoreTimeClass(4, 180, hiscore2shape, 10, 4);
@@ -1128,7 +1132,14 @@ void ScoreClass::Show_Credits(int house, char const pal[])
     int credobj, i;
     int minval, add;
 
-    void const* credshape = MFCD::Retrieve(house ? "CREDSUHR.SHP" : "CREDSAHR.SHP");
+    bool dosmode = (RESFACTOR == 1);
+    void const* credshape;
+
+    if (dosmode) {
+        credshape = MFCD::Retrieve(house ? "CREDSU.SHP" : "CREDSA.SHP");
+    } else {
+        credshape = MFCD::Retrieve(house ? "CREDSUHR.SHP" : "CREDSAHR.SHP");
+    }
 
     Alloc_Object(new ScorePrintClass(TXT_SCORE_ENDCRED, _credtx[house], _credty[house], pal));
     Call_Back_Delay(15);
