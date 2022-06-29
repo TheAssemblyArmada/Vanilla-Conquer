@@ -1213,63 +1213,6 @@ static UnitTypeClass const UnitSteg(UNIT_STEG,
                                     MISSION_GUARD // ORDERS:		Default order to give new unit.
 );
 
-#ifdef PETROGLYPH_EXAMPLE_MOD
-
-// Nuke tank
-static UnitTypeClass const UnitNukeTank(UNIT_NUKE_TANK,
-                                        TXT_HTANK,      // NAME:			Text name of this unit type.
-                                        "NTNK",         // NAME:			Text name of this unit type.
-                                        ANIM_ART_EXP1,  // EXPLOSION:	Type of explosion when destroyed.
-                                        7,              // Build level.
-                                        STRUCTF_TEMPLE, // Building prerequisite.
-                                        true,           // Can this be a goodie surprise from a crate?
-                                        true,           // Is a leader type?
-                                        false,          // Only has eight facings?
-                                        false,          // Always use the given name for the vehicle?
-                                        false,          //	Is this a typical transport vehicle?
-                                        false,          // Can it be crushed by a heavy vehicle?
-                                        true,           // Can this unit squash infantry?
-                                        false,          // Does this unit harvest Tiberium?
-                                        false,          // Is invisible to radar?
-                                        true,           // Is selectable by player?
-                                        true,           // Can it be a target for attack or move?
-                                        false,          // Is it insignificant (won't be announced)?
-                                        false,          // Is it immune to normal combat damage?
-                                        true,           // Is it equipped with a combat turret?
-                                        false,          // Fires multiple shots in quick succession?
-                                        true,           // Can it be repaired in a repair facility?
-                                        true,           // Can the player construct or order this unit?
-                                        true,           // Is there a crew inside?
-                                        false,          // Does it have a rotating radar dish?
-                                        false,          // Is there an associated firing animation?
-                                        false,          // Must the turret be in a locked down position while moving?
-                                        true,           // Does it lay tracks while moving?
-                                        true,           // Is this a gigundo-rotund-enormous unit?
-                                        false,          // Is the unit's art as "chunky" cardinal facing only?
-                                        false,          // Is the unit capable of cloaking?
-                                        false,          // Does the unit have a constant animation?
-                                        -1,             // AMMO:			Number of shots it has (default).
-                                        600,            // STRENGTH:	Strength (in damage points).
-                                        6,              // SIGHTRANGE:	Range of sighting.
-                                        1500,           // COST:			Cost to build (Credits).
-                                        10,             // SCENARIO:	Starting availability scenario.
-                                        80,
-                                        80, // RISK/RWRD:	Risk/reward rating values.
-                                        HOUSEF_MULTI1 | HOUSEF_MULTI2 | HOUSEF_MULTI3 | HOUSEF_MULTI4 | HOUSEF_MULTI5
-                                            | HOUSEF_MULTI6 | HOUSEF_JP
-                                            | HOUSEF_BAD, // OWNABLE:		Ownable by house (bit field).
-                                        WEAPON_NUKE_LOB,
-                                        WEAPON_NONE,
-                                        ARMOR_STEEL,    // ARMOR:		Armor type
-                                        SPEED_TRACK,    // MOVE:			Locomotion type.
-                                        MPH_KINDA_SLOW, // SPEED:		Miles per hour.
-                                        3,              // ROT:			Rate of turn (degrees per tick).
-                                        0,              // Turret center offset along body centerline.
-                                        MISSION_HUNT    // ORDERS:		Default order to give new unit.
-);
-
-#endif PETROGLYPH_EXAMPLE_MOD
-
 /*
 **	This is the array of pointers to the static data associated with each
 **	vehicle type.
@@ -1297,10 +1240,6 @@ UnitTypeClass const* const UnitTypeClass::Pointers[UNIT_COUNT] = {
     &UnitTrex,      // UNIT_TREX
     &UnitRapt,      // UNIT_RAPT
     &UnitSteg,      // UNIT_STEG
-#ifdef PETROGLYPH_EXAMPLE_MOD
-    &UnitNukeTank, // UNIT_NUKE_TANK
-#endif             // PETROGLYPH_EXAMPLE_MOD
-
 };
 
 /***********************************************************************************************
@@ -1593,16 +1532,6 @@ void UnitTypeClass::One_Time(void)
         //} else {
         //	ptr = NULL;
         //}
-
-#ifdef PETROGLYPH_EXAMPLE_MOD
-        /*
-        ** Need some kind of shape data for our modded unit
-        */
-        if (index == UNIT_NUKE_TANK && ptr == NULL) {
-            _makepath(fullname, NULL, NULL, "HTNK", ".SHP");
-            ptr = MFCD::Retrieve(fullname);
-        }
-#endif // PETROGLYPH_EXAMPLE_MOD
 
         ((void const*&)uclass.ImageData) = ptr;
         if (ptr) {
