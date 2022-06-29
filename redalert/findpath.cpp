@@ -59,11 +59,6 @@
 #define COUNTERCLOCK (FacingType) - 1 // Counterclockwise.
 
 /*
-**	If defined, diagonal moves are allowed, else no diagonals.
-*/
-#define DIAGONAL
-
-/*
 **	This is the marker to signify the end of the path list.
 */
 #define END FACING_NONE
@@ -72,14 +67,6 @@
 **	"- 1" test for bit manipulation.
 */
 #define TEST
-
-/*
-**	If memory is more important than speed, set this define to
-**	true. It will then perform intermediate optimizations to get the most
-**	milage out of a limited movement list staging area. If this value
-**	is true then it figures paths a bit more intelligently.
-*/
-#define SAVEMEM true
 
 /*
 **	Modify this macro so that given two cell values, it will return
@@ -131,9 +118,6 @@ inline FacingType Opposite(FacingType face)
 inline static FacingType Next_Direction(FacingType facing, FacingType dir)
 {
     facing = facing + dir;
-#ifndef DIAGONAL
-    facing = (FacingType)(facing & 0x06);
-#endif
     return (facing);
 }
 
@@ -758,13 +742,11 @@ end_of_list:
         path.Command[path.Length++] = END;
     }
 
-/*
-**	Optimize the move list but only necessary if
-**	diagonal moves are allowed.
-*/
-#ifdef DIAGONAL
+    /*
+    **	Optimize the move list but only necessary if
+    **	diagonal moves are allowed.
+    */
     Optimize_Moves(&path, threshhold);
-#endif
 
     BEnd(BENCH_FINDPATH);
 
@@ -830,17 +812,6 @@ bool FootClass::Follow_Edge(CELL start,
     path->LastOverlap = -1;
     path->LastFixup = -1;
 
-#ifndef DIAGONAL
-    /*
-    **	The edge following algorithm doesn't "do" diagonals. Force initial facing
-    **	to be an even 90 degree value. Adjust it in the direction it should be
-    **	rotating.
-    */
-    if (olddir & 0x01) {
-        olddir = Next_Direction(olddir, search);
-    }
-#endif
-
     newdir = Next_Direction(olddir, search);
     oldcell = start;
     newcell = Adjacent_Cell(oldcell, newdir);
@@ -862,7 +833,6 @@ bool FootClass::Follow_Edge(CELL start,
 
             forcefail = false;
 
-#ifdef DIAGONAL
             /*
             **	Rotate 45/90 degrees in desired direction.
             */
@@ -928,10 +898,6 @@ bool FootClass::Follow_Edge(CELL start,
                     forcefail = false;
                 }
             }
-
-#else
-            newdir = Next_Direction(newdir, search * 2);
-#endif
 
             /*
             **	If we have just checked the same heading we started with,
@@ -1023,18 +989,14 @@ bool FootClass::Follow_Edge(CELL start,
             firstdir = newdir;
         }
 
-/*
-**	Because we moved, our facing is now incorrect. We want to face toward
-**	the impassable edge we are following (well, not actually toward, but
-**	a little past so that we can turn corners). We have to turn 45/90 degrees
-**	more than expected in anticipation of the pending 45/90 degree turn at
-**	the start of this loop.
-*/
-#ifdef DIAGONAL
+        /*
+        **	Because we moved, our facing is now incorrect. We want to face toward
+        **	the impassable edge we are following (well, not actually toward, but
+        **	a little past so that we can turn corners). We have to turn 45/90 degrees
+        **	more than expected in anticipation of the pending 45/90 degree turn at
+        **	the start of this loop.
+        */
         olddir = Next_Direction(newdir, (FacingType)(-(int)search * 3));
-#else
-        olddir = Next_Direction(newdir, (FacingType)(-(int)search * 4));
-#endif
         oldcell = newcell;
     }
 
@@ -1069,25 +1031,17 @@ int FootClass::Optimize_Moves(PathType* path, MoveType threshhold)
     **	the two commands. 0 means no optimization is possible. 3 means backtracking
     **	so eliminate both commands. Any other value adjusts the first command facing.
     */
-#ifdef DIAGONAL
-    static FacingType _trans[FACING_COUNT] = {(FacingType)0,
-                                              (FacingType)0,
-                                              (FacingType)1,
-                                              (FacingType)2,
-                                              (FacingType)3,
-                                              (FacingType)-2,
-                                              (FacingType)-1,
-                                              (FacingType)0}; // Smoothing.
-#else
-    static FacingType _trans[FACING_COUNT] = {(FacingType)0,
-                                              (FacingType)0,
-                                              (FacingType)0,
-                                              (FacingType)2,
-                                              (FacingType)3,
-                                              (FacingType)-2,
-                                              (FacingType)0,
-                                              (FacingType)0};
-#endif
+    static FacingType _trans[FACING_COUNT] = {
+        (FacingType)0,
+        (FacingType)0,
+        (FacingType)1,
+        (FacingType)2,
+        (FacingType)3,
+        (FacingType)-2,
+        (FacingType)-1,
+        (FacingType)0,
+    }; // Smoothing.
+
     FacingType *cmd1,  // Floating first command pointer.
         *cmd2,         // Floating second command pointer.
         newcmd;        // Calculated new optimized command.
