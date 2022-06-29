@@ -138,8 +138,9 @@ extern bool Is_Mission_Counterstrike(char* file_name);
  *=============================================================================================*/
 static void Load_Prolog_Page(void)
 {
+    const char* pict = (RESFACTOR == 1) ? "PROLOG.CPS" : "PROLOG.PCX";
     Hide_Mouse();
-    Load_Title_Screen("PROLOG.PCX", &HidPage, (unsigned char*)CCPalette.Get_Data());
+    Load_Title_Screen(pict, &HidPage, (unsigned char*)CCPalette.Get_Data());
     HidPage.Blit(SeenPage);
     CCPalette.Set();
     Show_Mouse();
