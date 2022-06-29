@@ -69,10 +69,6 @@
 
 #include <time.h>
 
-#ifdef MPEGMOVIE // Denzil 6/25/98
-#include "mpgset.h"
-#endif
-
 #include "ramfile.h"
 #include "common/vqaconfig.h"
 #include "intro.h"
@@ -306,15 +302,6 @@ bool Init_Game(int, char*[])
     */
     Anim_Init();
 
-#ifdef MPEGMOVIE // Denzil 6/15/98
-    if (Using_DVD()) {
-#ifdef MCIMPEG
-        MciMovie = new MCIMovie(MainWindow);
-#endif
-        MpgSettings = new MPGSettings(NULL); // RawFileClass(CONFIG_FILE_NAME));
-    }
-#endif
-
     /*
     **	Play the startup animation.
     */
@@ -458,9 +445,6 @@ bool Select_Game(bool fade)
 #ifndef INTERNET_OFF // Denzil 5/1/98 - Internet play
         SEL_INTERNET,
 #endif
-        //#if defined(MPEGMOVIE) // Denzil 6/25/98
-        //		SEL_MOVIESETTINGS,
-        //#endif
         SEL_LOAD_MISSION,     // load a saved game
         SEL_MULTIPLAYER_GAME, // play modem/null-modem/network game
         SEL_INTRO,            // couch-potato mode
@@ -811,14 +795,6 @@ bool Select_Game(bool fade)
                 Session.Type = GAME_NORMAL;
                 process = false;
                 break;
-
-                //				#if defined(MPEGMOVIE) // Denzil 6/25/98
-                //				case SEL_MOVIESETTINGS:
-                //					MpgSettings->Dialog();
-                //					display = true;
-                //					selection = SEL_NONE;
-                //				break;
-                //				#endif
 
             /*
             **	Load a saved game.

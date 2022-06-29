@@ -469,21 +469,6 @@ bool Send_Remote_File(char* file_name, int gametype);
 bool Get_Scenario_File_From_Host(char* return_name, int gametype);
 bool Find_Local_Scenario(char* description, char* filename, unsigned int length, char* digest, bool official);
 
-#ifdef MPEGMOVIE // Denzil 6/15/98
-#ifdef MCIMPEG
-#include "mcimovie.h"
-extern MCIMovie* MciMovie;
-#endif
-
-#include "mpgset.h"
-#include "remapcontrol.h" // for RemapControlType
-#include "windef.h"       // for HWND
-#include <minwindef.h>    // for HANDLE
-class HouseClass;
-class WWKeyboardClass;
-extern MPGSettings* MpgSettings;
-#endif
-
 extern bool ShareAllyVisibility;
 
 // OmniBlade - Moves from tcpip.cpp as part of networking cleanup.

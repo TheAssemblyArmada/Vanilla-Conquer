@@ -126,12 +126,6 @@ CELL Coord_Cell(COORDINATE coord);
 #include "score.h"    // Scoring system class.
 #include "factory.h"  // Production manager class.
 
-// Denzil 5/18/98 - Mpeg movie playback
-#ifdef MPEGMOVIE
-bool InitDDraw(void);
-bool PlayMpegMovie(const char* name);
-#endif
-
 #include "externs.h"
 
 extern int Get_CD_Drive(void);
