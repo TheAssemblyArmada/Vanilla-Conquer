@@ -101,14 +101,6 @@ public:
     virtual void Decode_Pointers(void);
 
     /*
-    **	Misc routines.
-    */
-    virtual void* Shadow_Address(void)
-    {
-        return (ShadowPage);
-    };
-
-    /*
     **	This points to the buttons that are used for input. All of the derived classes will
     **	attached their specific buttons to this list.
     */
@@ -130,13 +122,6 @@ private:
     **	class can perform it's rendering.
     */
     unsigned IsToUpdate : 1;
-
-    /*
-    **	Pointer to an exact copy of the visible graphic page. This copy is used to speed
-    **	display rendering by using an only-update-changed-pixels algorithm.
-    */
-public:
-    static GraphicBufferClass* ShadowPage;
 
 private:
     /*

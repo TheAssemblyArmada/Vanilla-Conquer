@@ -627,8 +627,6 @@ bool Init_Game(int, char*[])
 //#ifndef NOMEMCHECK
 void Uninit_Game(void)
 {
-    delete Map.ShadowPage;
-    Map.ShadowPage = NULL;
     Map.Free_Cells();
 
     delete[] SpeechBuffer;
