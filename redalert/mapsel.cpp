@@ -262,6 +262,7 @@ char const* Map_Selection(void)
         scenarioname[6] = 'A' + selection;
     }
     Theme.Fade_Out();
+    delete pseudoseenbuff;
     //	Options.Set_Score_Volume(oldvolume);
 
     //	Scen.ScenVar = (ScenarioVarType)selection;
