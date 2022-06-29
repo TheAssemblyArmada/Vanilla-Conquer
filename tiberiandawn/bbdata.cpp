@@ -458,32 +458,6 @@ static BulletTypeClass const ClassTRexBite(BULLET_TREXBITE,
                                            ANIM_NONE        // Explosion to use upon impact.
 );
 
-#ifdef PETROGLYPH_EXAMPLE_MOD
-
-static BulletTypeClass const NukeLob(BULLET_NUKE_LOB,
-                                     "BOMB",          // NAME:			Text name of this unit type.
-                                     true,            // Flies over tall walls?
-                                     false,           // Homes in on target?
-                                     true,            // Projectile arcs to the target?
-                                     false,           // Is this a dropping bomb-like object?
-                                     false,           // Is this projectile invisible?
-                                     false,           // Will it blow up even if it gets just NEAR to target?
-                                     false,           // Does it have flickering flame animation?
-                                     false,           // Can it run out of fuel?
-                                     true,            // Is there no visual difference between projectile facings?
-                                     true,            // Is projectile inherently inaccurate?
-                                     false,           // Translucent colors are used?
-                                     false,           // Good against aircraft?
-                                     0,               // ARMING:		Time to arm projectile after launch.
-                                     0,               // RANGE:		Inherent override range factor.
-                                     MPH_MEDIUM_FAST, // SPEED:		Miles per hour.
-                                     0,               // ROT:			Rate of turn (degrees per tick).
-                                     WARHEAD_HE,      // WARHEAD:		If fires weapon, warhead type
-                                     ANIM_ATOM_BLAST  // Explosion to use upon impact.
-);
-
-#endif // PETROGLYPH_EXAMPLE_MOD
-
 /*
 **	This is the array of pointers to the static data associated with
 **	each bullet (projectile) type.
@@ -508,10 +482,6 @@ BulletTypeClass const* const BulletTypeClass::Pointers[BULLET_COUNT] = {
     &ClassSpreadfire, // BULLET_SPREADFIRE
     &ClassHeadButt,   // BULLET_HEADBUTT
     &ClassTRexBite,   // BULLET_TREXBITE
-#ifdef PETROGLYPH_EXAMPLE_MOD
-    &NukeLob, // BULLET_NUKE_LOB
-#endif        // PETROGLYPH_EXAMPLE_MOD
-
 };
 
 /***********************************************************************************************

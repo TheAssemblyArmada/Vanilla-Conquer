@@ -3972,6 +3972,10 @@ void InfantryClass::Doing_AI(void)
  *=============================================================================================*/
 void InfantryClass::Movement_AI(void)
 {
+    if (!IsActive) {
+        return;
+    }
+
     /*
     **	Special hack check to ensure that infantry will never get stuck in a movement order if
     **	there is no place to go.
