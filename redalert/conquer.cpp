@@ -84,14 +84,6 @@
 #include "common/vqaloader.h"
 #include "common/settings.h"
 
-#ifdef MPEGMOVIE
-#ifdef MCIMPEG
-#include "mcimovie.h"
-#endif
-#include "movie.h"
-MPG_RESPONSE far __stdcall MpegCallback(MPG_CMD cmd, LPVOID data, LPVOID user);
-#endif
-
 int RESFACTOR = 2;
 
 /* Dummy function for Interpolate_2X_Scale in `common` database. */
@@ -2362,14 +2354,6 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
     Play_Movie_GlyphX(name, theme, immediate);
     return;
 #else
-#ifdef MPEGMOVIE
-    // theme = theme;
-    // clrscrn = clrscrn;
-    if (Using_DVD()) {
-        if (PlayMpegMovie(name))
-            return;
-    }
-#endif
 
 #ifdef CHEAT_KEYS
 //	Mono_Printf("Movie: %s\n", name);
@@ -2532,161 +2516,6 @@ void Play_Movie(VQType name, ThemeType theme, bool clrscrn, bool immediate)
         IsVQ640 = false;
     }
 }
-
-// Denzil 5/18/98 - Mpeg movie playback
-#ifdef MPEGMOVIE
-extern LPDIRECTDRAWPALETTE PalettePtr;
-
-bool PlayMpegMovie(const char* name)
-{
-    char path[MAX_PATH];
-    CCFileClass file;
-    const char* filename;
-
-#ifdef CHEAT_KEYS
-    if (bNoMovies)
-        return true;
-#endif
-
-    sprintf(path, "movies\\%.8s.%.3s", name, "mpg");
-    filename = file.Set_Name(path);
-
-    if (!file.Is_Available()) {
-#if (1)
-        VisiblePage.Clear();
-        GamePalette.Set();
-        Show_Mouse();
-        sprintf(path, "Couldn't find %s\n", filename);
-        WWMessageBox().Process(path);
-#endif
-        return false;
-    }
-
-    // Stop theme music
-    if (Misc_Focus_Loss_Function)
-        Misc_Focus_Loss_Function();
-
-    // Release primary surface
-    VisiblePage.Un_Init();
-
-#ifdef MCIMPEG
-    if (MciMovie && MpgSettings && (MpgSettings->GetDeviceName() != NULL)) {
-        DirectDrawObject->SetCooperativeLevel(MainWindow, DDSCL_NORMAL);
-
-        if (!MciMovie->Open(filename, MpgSettings->GetDeviceName())) {
-            WWMessageBox().Process("Couldn't open movie.\n");
-        } else if (!MciMovie->Play(MainWindow)) {
-            WWMessageBox().Process("Couldn't play movie.\n");
-        }
-
-        DirectDrawObject->SetCooperativeLevel(MainWindow, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
-    } else
-#endif
-    {
-        DDSURFACEDESC ddsd;
-        IDirectDrawSurface* primary = NULL;
-        bool modeChange = false;
-        RECT rect;
-
-        if (FAILED(DirectDrawObject->SetDisplayMode(ScreenWidth, ScreenHeight, 16))) {
-            WWMessageBox().Process("Couldn't change display mode.\n");
-        } else {
-            // Create primary surface reference
-            memset(&ddsd, 0, sizeof(ddsd));
-            ddsd.dwSize = sizeof(ddsd);
-            ddsd.dwFlags = DDSD_CAPS;
-            ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-
-            if (FAILED(DirectDrawObject->CreateSurface(&ddsd, &primary, NULL))) {
-                WWMessageBox().Process("Couldn't create primary movie surface.\n");
-            } else {
-                rect.top = rect.left = 0;
-                rect.bottom = ScreenHeight;
-                rect.right = ScreenWidth;
-
-                MpgSetCallback(MpegCallback, NULL);
-                MpgPlay(filename, DirectDrawObject, primary, &rect);
-
-                if (primary)
-                    primary->Release();
-            }
-
-            DirectDrawObject->SetDisplayMode(ScreenWidth, ScreenHeight, 8);
-        }
-    }
-
-    // Restore surfaces
-    VisiblePage.Init(ScreenWidth, ScreenHeight, NULL, 0, (GBC_Enum)(GBC_VISIBLE | GBC_VIDEOMEM));
-    PaletteSurface->SetPalette(PalettePtr);
-    AllSurfaces.Set_Surface_Focus(true);
-    AllSurfaces.Restore_Surfaces();
-    return true;
-}
-
-MPG_RESPONSE far __stdcall MpegCallback(MPG_CMD cmd, LPVOID data, LPVOID user)
-{
-    static IDirectDrawPalette* _palette = NULL;
-
-    user = user;
-
-    switch (cmd) {
-    case MPGCMD_ERROR:
-        WWMessageBox().Process((char const*)data);
-        break;
-
-    case MPGCMD_INIT:
-        VisiblePage.Clear();
-        break;
-
-    case MPGCMD_CLEANUP:
-        VisiblePage.Clear();
-
-        if (_palette != NULL) {
-            PaletteSurface->SetPalette(_palette);
-            _palette->Release();
-            _palette = NULL;
-        }
-        break;
-
-    case MPGCMD_PALETTE:
-        if (FAILED(PaletteSurface->GetPalette(&_palette))) {
-            WWMessageBox().Process("Couldn't get primary palette.\n");
-        } else {
-            if (FAILED(PaletteSurface->SetPalette((IDirectDrawPalette*)data))) {
-                WWMessageBox().Process("Couldn't set movie palette.\n");
-            }
-        }
-        break;
-
-    case MPGCMD_UPDATE:
-        if ((BreakoutAllowed || Debug_Flag) && Keyboard->Check()) {
-            if (Keyboard->Get() == KN_ESC) {
-                Keyboard->Clear();
-                return MPGRES_QUIT;
-            }
-
-            Keyboard->Clear();
-        }
-
-        if (!GameInFocus) {
-            MpgPause();
-
-            while (!GameInFocus) {
-                Check_For_Focus_Loss();
-            }
-
-            MpgResume();
-            return MPGRES_LOSTFOCUS;
-        }
-        break;
-
-    default:
-        break;
-    }
-
-    return MPGRES_CONTINUE;
-}
-#endif
 
 /***********************************************************************************************
  * Unselect_All -- Causes all selected objects to become unselected.                           *

@@ -120,13 +120,6 @@
 #define FIXIT_VERSION_3
 #define DVD
 
-// Define DVD to turn on RADVD additions/changes - Denzil
-#ifdef DVD
-//#define INTERNET_OFF
-//#define MPEGMOVIE	//PG
-//#define MCIMPEG
-#endif
-
 // Test to see if partial object drawing is any faster.
 //#define	PARTIAL
 #define SORTDRAW

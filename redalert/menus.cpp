@@ -487,12 +487,6 @@ int Main_Menu(unsigned int)
 #endif // INTERNET_OFF
 #endif // FIXIT_VERSION_3
 
-    //#if defined(MPEGMOVIE) // Denzil 6/26/98 Video settings
-    //	int	d_movie_w = 118 * RESFACTOR;
-    //	int	d_movie_h = 9 * RESFACTOR;
-    //	int	d_movie_x = 102 * RESFACTOR;
-    //#endif
-
     int d_load_w = 118 * RESFACTOR;
     int d_load_h = 9 * RESFACTOR;
     int d_load_x = 102 * RESFACTOR;
@@ -535,9 +529,6 @@ int Main_Menu(unsigned int)
 #ifndef INTERNET_OFF // Denzil 5/1/98 - No internet play
         BUTTON_INTERNET,
 #endif
-        //#if defined(MPEGMOVIE) // Denzil 6/26/98 Video settings
-        //		BUTTON_MOVIE,
-        //#endif
         BUTTON_LOAD,
         BUTTON_MULTI,
         BUTTON_INTRO,
@@ -649,9 +640,6 @@ int Main_Menu(unsigned int)
     internetbutton.Add_Tail(*commands);
 #endif               // INTERNET_OFF
 #endif               // FIXIT_VERSION_3
-    //#if defined(MPEGMOVIE) // Denzil 6/26/98 Video settings
-    //	moviebutton.Add_Tail(*commands);
-    //#endif
     loadbtn.Add_Tail(*commands);
     multibtn.Add_Tail(*commands);
     if (!Is_Demo()) {
@@ -826,13 +814,6 @@ int Main_Menu(unsigned int)
             break;
 #endif // INTERNET_OFF
 #endif // FIXIT_VERSION_3
-
-            //			#if defined(MPEGMOVIE)
-            //			case (BUTTON_MOVIE | KN_BUTTON):
-            //				retval = (input & 0x7FFF) - BUTTON_EXPAND;
-            //				process = false;
-            //			break;
-            //			#endif
 
         case (BUTTON_LOAD | KN_BUTTON):
             retval = (input & 0x7FFF) - BUTTON_EXPAND;
