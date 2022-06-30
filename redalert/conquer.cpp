@@ -83,6 +83,7 @@
 #include "common/vqatask.h"
 #include "common/vqaloader.h"
 #include "common/settings.h"
+#include "common/winasm.h"
 
 #ifdef MPEGMOVIE
 #ifdef MCIMPEG
@@ -2268,6 +2269,11 @@ int Load_Interpolated_Palettes(char const* filename, bool add)
     int i;
     int start_palette;
 
+    if (!InterpolationTable) {
+        /* DOSMode should not interpolate anything. Don't allocate memory.  */
+        return 0;
+    }
+
     PalettesRead = false;
     CCFileClass file(filename);
 
@@ -2315,6 +2321,11 @@ int Load_Interpolated_Palettes(char const* filename, bool add)
 
 void Free_Interpolated_Palettes(void)
 {
+    if (!InterpolationTable) {
+        /* DOSMode should not interpolate anything.  */
+        return;
+    }
+
     for (int i = 0; i < ARRAY_SIZE(InterpolatedPalettes); i++) {
         if (InterpolatedPalettes[i]) {
             free(InterpolatedPalettes[i]);

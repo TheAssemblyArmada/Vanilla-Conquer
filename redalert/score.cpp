@@ -49,6 +49,7 @@
 #include "common/framelimit.h"
 #include "common/wsa.h"
 #include "common/settings.h"
+#include "common/winasm.h"
 
 #define SCORETEXT_X 184
 #define SCORETEXT_Y 8
@@ -1691,8 +1692,10 @@ void Multi_Score_Presentation(void)
     */
     pseudoseenbuff->Clear();
     Animate_Frame(anim, *pseudoseenbuff, 1);
-    for (int x = 0; x < 256; x++)
-        memset(&PaletteInterpolationTable[x][0], x, 256);
+    if (InterpolationTable) {
+        for (int x = 0; x < 256; x++)
+            memset(&InterpolationTable->PaletteInterpolationTable[x][0], x, 256);
+    }
     Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, 0, Settings.Video.InterpolationMode);
     ScorePalette.Set(FADE_PALETTE_FAST, Call_Back);
 

@@ -46,6 +46,7 @@
 #include "common/vqaconfig.h"
 #include "common/wspudp.h"
 #include "common/paths.h"
+#include "common/winasm.h"
 #include <time.h>
 
 /****************************************
@@ -459,6 +460,11 @@ bool Init_Game(int, char*[])
         Rule.Process(RuleINI);
     }
 
+    /* Initialize the Interpolation Table.  */
+    if (Get_Resolution_Factor()) {
+        InterpolationTable = new struct InterpolationTable();
+    }
+
     /*
     **	Initialize the animation system.
     */
@@ -661,6 +667,11 @@ void Uninit_Game(void)
 
     WWDOS_Shutdown();
     delete[] Palette;
+
+    if (InterpolationTable) {
+        delete InterpolationTable;
+        InterpolationTable = NULL;
+    }
 }
 //#endif
 
