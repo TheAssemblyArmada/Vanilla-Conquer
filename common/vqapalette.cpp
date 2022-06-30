@@ -46,8 +46,10 @@ void VQA_SetPalette(uint8_t* palette, int numbytes, bool slowpal)
 
     Increase_Palette_Luminance(palette, 15, 15, 15, 63);
 
-    if (PalettesRead) {
-        memcpy(PaletteInterpolationTable, InterpolatedPalettes[PaletteCounter++], sizeof(PaletteInterpolationTable));
+    if (PalettesRead && InterpolationTable) {
+        void* paletteinterpol = (void*)&InterpolationTable->PaletteInterpolationTable;
+        size_t table_size = sizeof(InterpolationTable->PaletteInterpolationTable);
+        memcpy(paletteinterpol, InterpolatedPalettes[PaletteCounter++], table_size);
     }
 
     Set_Palette(palette);

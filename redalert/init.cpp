@@ -75,6 +75,7 @@
 
 #include "ramfile.h"
 #include "common/vqaconfig.h"
+#include "common/winasm.h"
 #include "intro.h"
 
 RemapControlType SidebarScheme;
@@ -166,6 +167,7 @@ static void Load_Prolog_Page(void)
 //#include    <locale.h>
 bool Init_Game(int, char*[])
 {
+    bool dosmode = (RESFACTOR == 1);
 /*
 **	Allocate the benchmark tracking objects only if the machine and
 **	compile flags indicate.
@@ -305,6 +307,13 @@ bool Init_Game(int, char*[])
     **	Initialize the animation system.
     */
     Anim_Init();
+
+    /*
+    **>-Initialize the interpolation table
+    */
+    if (!dosmode) {
+        InterpolationTable = new struct InterpolationTable();
+    }
 
 #ifdef MPEGMOVIE // Denzil 6/15/98
     if (Using_DVD()) {
@@ -2912,5 +2921,11 @@ void Free_Heaps(void)
     if (TheaterBuffer) {
         delete TheaterBuffer;
         TheaterBuffer = NULL;
+    }
+
+    /* Deallocate the interpolation table.  */
+    if (InterpolationTable) {
+        delete InterpolationTable;
+        InterpolationTable = NULL;
     }
 }
