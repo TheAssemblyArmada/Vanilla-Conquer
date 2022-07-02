@@ -1695,7 +1695,7 @@ int MapClass::Validate(void)
         /*.....................................................................
         Validate Overlappers
         .....................................................................*/
-        for (i = 0; i < 3; i++) {
+        for (i = 0; i < ARRAY_SIZE((*this)[cell].CellClass::Overlapper); i++) {
             obj = (*this)[cell].Overlapper[i];
             if (obj) {
 
@@ -1762,7 +1762,7 @@ void MapClass::Clean(void)
         /*.....................................................................
         Validate Overlappers
         .....................................................................*/
-        for (i = 0; i < 3; i++) {
+        for (i = 0; i < ARRAY_SIZE((*this)[cell].Overlapper); i++) {
             obj = (*this)[cell].Overlapper[i];
             if (obj) {
 

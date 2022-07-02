@@ -496,7 +496,7 @@ void RadarClass::Draw_It(bool forced)
  *=========================================================================*/
 void RadarClass::Render_Terrain(CELL cell, int x, int y, int size)
 {
-    TerrainClass* list[4];
+    TerrainClass* list[ARRAY_SIZE(Map[(CELL)0].Overlapper) + 1] = {};
     int listidx = 0;
     int lp, lp2;
 
@@ -513,7 +513,7 @@ void RadarClass::Render_Terrain(CELL cell, int x, int y, int size)
     ** Now loop through all the occupiers and add them to the list if they
     ** are terrain type.
     */
-    for (lp = 0; lp < 3; lp++) {
+    for (lp = 0; lp < ARRAY_SIZE(Map[cell].Overlapper); lp++) {
         obj = Map[cell].Overlapper[lp];
         if (obj && obj->IsActive && obj->What_Am_I() == RTTI_TERRAIN)
             list[listidx++] = (TerrainClass*)obj;
