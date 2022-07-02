@@ -84,9 +84,11 @@
  *=============================================================================================*/
 bool CellClass::Should_Save(void) const
 {
+    void* _null_array[ARRAY_SIZE(Overlapper)] = {};
+
     return ((Smudge != SMUDGE_NONE) || (TType != TEMPLATE_NONE) || (Overlay != OVERLAY_NONE) || IsMapped || IsVisible
             || IsMappedByPlayerMask || IsVisibleByPlayerMask || IsTrigger || Flag.Composite || OccupierPtr
-            || Overlapper[0] || Overlapper[1] || Overlapper[2]);
+            || memcmp(Overlapper, _null_array, sizeof(Overlapper)) != 0);
 }
 
 /***********************************************************************************************
@@ -221,7 +223,7 @@ void CellClass::Decode_Pointers(void)
 {
     char bad[128];
 
-    if (OccupierPtr) {
+    if (OccupierPtr != NULL) {
         OccupierPtr = As_Object(TARGET_SAFE_CAST(OccupierPtr), false);
         Check_Ptr((void*)OccupierPtr, __FILE__, __LINE__);
 
@@ -238,25 +240,17 @@ void CellClass::Decode_Pointers(void)
         }
     }
 
-    if (Overlapper[0]) {
-        Overlapper[0] = As_Object(TARGET_SAFE_CAST(Overlapper[0]), false);
-        Check_Ptr((void*)Overlapper[0], __FILE__, __LINE__);
-    }
-
-    if (Overlapper[1]) {
-        Overlapper[1] = As_Object(TARGET_SAFE_CAST(Overlapper[1]), false);
-        Check_Ptr((void*)Overlapper[1], __FILE__, __LINE__);
-    }
-
-    if (Overlapper[2]) {
-        Overlapper[2] = As_Object(TARGET_SAFE_CAST(Overlapper[2]), false);
-        Check_Ptr((void*)Overlapper[2], __FILE__, __LINE__);
+    for (int index = 0; index < ARRAY_SIZE(Overlapper); index++) {
+        if (Overlapper[index] != NULL) {
+            Overlapper[index] = As_Object(TARGET_SAFE_CAST(Overlapper[index]), false);
+            Check_Ptr((void*)Overlapper[index], __FILE__, __LINE__);
+        }
     }
 
     /*
     ** Check for bad overlappers that were saved. ST - 10/3/2019 11:50AM
     */
-    for (int i = 0; i <= 2; i++) {
+    for (int i = 0; i < ARRAY_SIZE(Overlapper); i++) {
         if (Overlapper[i]) {
             ObjectClass* optr = Overlapper[i];
             if (optr->IsActive == false) {

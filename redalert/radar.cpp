@@ -639,7 +639,7 @@ void RadarClass::Draw_It(bool forced)
  *=========================================================================*/
 void RadarClass::Render_Terrain(CELL cell, int x, int y, int size)
 {
-    TerrainClass* list[4] = {0, 0, 0, 0};
+    TerrainClass* list[ARRAY_SIZE(Map[(CELL)0].Overlapper) + 1] = {};
     int listidx = 0;
     int lp, lp2;
 

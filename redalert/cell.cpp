@@ -1642,7 +1642,7 @@ void CellClass::Wall_Update(void)
             **	Build the icon number according to walls located in the adjacent
             **	cells.
             */
-            for (unsigned i = 0; i < 4; i++) {
+            for (unsigned i = 0; i < (sizeof(_offsets) / sizeof(_offsets[0]) - 1); i++) {
                 CellClass* adjcell = newcell->Adjacent_Cell(_offsets[i]);
                 if (adjcell && adjcell->Overlay == newcell->Overlay) {
                     icon |= 1 << i;

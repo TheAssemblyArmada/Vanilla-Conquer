@@ -386,8 +386,7 @@ bool BaseClass::Is_Built(int index)
  *=============================================================================================*/
 BuildingClass* BaseClass::Get_Building(int index)
 {
-    BuildingClass* bldg;
-    ObjectClass* obj[4];
+    ObjectClass* obj[1 + ARRAY_SIZE(Map[(CELL)0].Overlapper)];
 
     /*
     ** Check the location on the map where this building should be; if it's
@@ -396,12 +395,15 @@ BuildingClass* BaseClass::Get_Building(int index)
     CELL cell = Coord_Cell(Nodes[index].Coord);
 
     obj[0] = Map[cell].Cell_Building();
-    obj[1] = Map[cell].Overlapper[0];
-    obj[2] = Map[cell].Overlapper[1];
-    obj[3] = Map[cell].Overlapper[2];
+    int count = 1;
+    for (int xindex = 0; xindex < ARRAY_SIZE(Map[cell].Overlapper); xindex++) {
+        if (Map[cell].Overlapper[xindex] != NULL) {
+            obj[count++] = Map[cell].Overlapper[xindex];
+        }
+    }
 
-    bldg = NULL;
-    for (int i = 0; i < 4; i++) {
+    BuildingClass* bldg = NULL;
+    for (int i = 0; i < count; i++) {
         if (obj[i] && obj[i]->Coord == Nodes[index].Coord && obj[i]->What_Am_I() == RTTI_BUILDING
             && ((BuildingClass*)obj[i])->Class->Type == Nodes[index].Type) {
 
