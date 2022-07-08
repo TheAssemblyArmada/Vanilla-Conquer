@@ -48,6 +48,8 @@
 */
 void const* PowerClass::PowerShape;
 void const* PowerClass::PowerBarShape;
+int PowerClass::POWER_Y;
+int PowerClass::POWER_HEIGHT;
 
 PowerClass::PowerButtonClass PowerClass::PowerButton;
 
@@ -131,6 +133,10 @@ void PowerClass::Init_Clear(void)
 void PowerClass::One_Time(void)
 {
     RadarClass::One_Time();
+
+    bool dosmode = (RESFACTOR == 1);
+    POWER_Y = (dosmode) ? (88 + 9) : (7 + 70 + 13);
+    POWER_HEIGHT = (dosmode) ? (80) : (200 - POWER_Y);
     PowerButton.X = POWER_X * RESFACTOR;
     PowerButton.Y = POWER_Y * RESFACTOR;
     PowerButton.Width = (POWER_WIDTH * RESFACTOR) - 1;
@@ -158,6 +164,7 @@ void PowerClass::One_Time(void)
 void PowerClass::Draw_It(bool complete)
 {
     static int _modtable[] = {0, -1, 0, 1, 0, -1, -2, -1, 0, 1, 2, 1, 0};
+    bool dosmode = (RESFACTOR == 1);
 
     if (complete || IsToRedraw) {
         BStart(BENCH_POWER);
@@ -182,17 +189,19 @@ void PowerClass::Draw_It(bool complete)
                               WINDOW_MAIN,
                               flags | SHAPE_NORMAL | SHAPE_WIN_REL,
                               remap);
-
-                /*
-                ** Hires power strip is too big to fit into a shape so it is in two parts
-                */
-                CC_Draw_Shape(PowerBarShape,
-                              1,
-                              240 * RESFACTOR,
-                              (88 * RESFACTOR) + (56 * RESFACTOR),
-                              WINDOW_MAIN,
-                              flags | SHAPE_NORMAL | SHAPE_WIN_REL,
-                              remap);
+                if (!dosmode) {
+                    /*
+                    ** Hires power strip is too big to fit into a shape so it
+                    ** is in two parts
+                    */
+                    CC_Draw_Shape(PowerBarShape,
+                                  1,
+                                  240 * RESFACTOR,
+                                  (88 * RESFACTOR) + (56 * RESFACTOR),
+                                  WINDOW_MAIN,
+                                  flags | SHAPE_NORMAL | SHAPE_WIN_REL,
+                                  remap);
+                }
                 /*
                 **	Determine how much the power production exceeds or falls short
                 **	of power demands.
@@ -230,8 +239,10 @@ void PowerClass::Draw_It(bool complete)
                     **
                     ** ST - 5/2/96 11:23AM
                     */
-                    power_height = (power_height * (76 * RESFACTOR + 1)) / (53 * RESFACTOR + 1);
-                    drain_height = (drain_height * (76 * RESFACTOR + 1)) / (53 * RESFACTOR + 1);
+                    if (!dosmode) {
+                        power_height = (power_height * (76 * RESFACTOR + 1)) / (53 * RESFACTOR + 1);
+                        drain_height = (drain_height * (76 * RESFACTOR + 1)) / (53 * RESFACTOR + 1);
+                    }
                     bottom = (175 * RESFACTOR) + 1;
 
                     LogicPage->Fill_Rect(245 * RESFACTOR, bottom - power_height, 245 * RESFACTOR + 1, bottom, color2);

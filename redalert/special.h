@@ -106,20 +106,6 @@ public:
     ** New modern balance setting.
     */
     unsigned ModernBalance : 1;
-
-    /*
-    ** Some additional padding in case we need to add data to the class and maintain backwards compatibility for
-    *save/load
-    */
-    // MBL 07.21.2020 - https://jaas.ea.com/browse/TDRA-7537
-    // Loading save files from Live and July Patch 3 Beta versions results in a crash
-    // Fixes issue from Change 738397 2020/07/17 14:06:03
-    //
-    // unsigned char SaveLoadPadding[128]; // Note: Never changed to 127 like TD did
-    //
-    // unsigned char SaveLoadPadding[124]; // Trying 124 like we did with TD - Failed
-    unsigned char SaveLoadPadding[128]; // Works with With last weeks saves (7/16/2020) and newest saves; Skyler says go
-                                        // with this.
 };
 #pragma pack(pop)
 

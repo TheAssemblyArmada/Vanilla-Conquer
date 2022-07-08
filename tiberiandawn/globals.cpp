@@ -575,7 +575,9 @@ char MPlayerNames[MAX_PLAYERS][MPLAYER_NAME_MAX];
 ** sent (for the computer's messages).
 */
 MessageListClass Messages;
+#ifdef NETWORKING
 IPXAddressClass MessageAddress;
+#endif
 char LastMessage[MAX_MESSAGE_LENGTH];
 
 /***************************************************************************
@@ -746,6 +748,7 @@ void* TrapThis = NULL;              // 'this' ptr of object to trap
 CellClass* TrapCell = NULL;         // for trapping a cell
 int TrapCheckHeap = 0;              // start checking the Heap
 
+#ifdef NETWORKING
 /***************************************************************************
 **	This is the network IPX manager class.  It handles multiple remote
 ** connections.  Declaring this class doesn't perform any allocations;
@@ -757,7 +760,7 @@ IPXManagerClass Ipx(sizeof(GlobalPacketType), // size of Global Channel packets
                     8,                                        // # entries in Private Queues
                     VIRGIN_SOCKET,                            // Socket ID #
                     IPXGlobalConnClass::COMMAND_AND_CONQUER); // Product ID #
-
+#endif
 //#if(TIMING_FIX)
 //
 // These values store the min & max frame #'s for when MaxAhead >>increases<<.
@@ -801,9 +804,11 @@ char MPlayerGameName[MPLAYER_NAME_MAX];
 /***************************************************************************
 **	These variables are for servicing the Global Channel.
 */
-GlobalPacketType GPacket;  // Global Channel packet
-int GPacketlen;            // length of incoming packet
-IPXAddressClass GAddress;  // address of sender
+GlobalPacketType GPacket; // Global Channel packet
+int GPacketlen;           // length of incoming packet
+#ifdef NETWORKING
+IPXAddressClass GAddress; // address of sender
+#endif
 unsigned short GProductID; // sender's Product ID
 
 /***************************************************************************
@@ -951,3 +956,6 @@ bool RunningAsDLL = false;
 
 /* Holds the title filename. On 320x200, set to TITLE.CPS, else HTITLE.PCX. */
 char* TitlePicture = NULL;
+
+// OmniBlade - Moves from tcpip.cpp as part of networking cleanup.
+bool Server; // Is this player acting as client or server

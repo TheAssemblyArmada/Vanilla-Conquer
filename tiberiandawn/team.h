@@ -262,7 +262,6 @@ private:
     ** Some additional padding in case we need to add data to the class and maintain backwards compatibility for
     *save/load
     */
-    unsigned char SaveLoadPadding[32];
 
     /*
     **	This records the success of each team type. As the team carries out its

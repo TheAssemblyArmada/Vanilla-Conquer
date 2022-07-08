@@ -373,7 +373,9 @@ void Queue_AI(void)
         case GAME_NULL_MODEM:
         case GAME_IPX:
         case GAME_INTERNET:
+#ifdef NETWORKING
             Queue_AI_Multiplayer();
+#endif
             break;
         }
     }
@@ -441,6 +443,7 @@ static void Queue_AI_Normal(void)
 
 } /* end of Queue_AI_Normal */
 
+#ifdef NETWORKING
 /***************************************************************************
  * Queue_AI_Multiplayer -- Process all queued events.                      *
  *                                                                         *
@@ -3076,6 +3079,7 @@ static int Extract_Compressed_Events(void* buf, int bufsize)
     return (count);
 
 } // end of Extract_Compressed_Events
+#endif
 
 /***************************************************************************
  * Execute_DoList -- Executes commands from the DoList                     *
@@ -3243,6 +3247,7 @@ static int Execute_DoList(int max_houses,
                         //	for that player.  The HousesType for this event is the
                         // connection ID.
                         //............................................................
+#ifdef NETWORKING
                         if (Session.Type == GAME_MODEM || Session.Type == GAME_NULL_MODEM) {
                             // PG Destroy_Null_Connection( house, 0 );
                         } else if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && net) {
@@ -3258,6 +3263,7 @@ static int Execute_DoList(int max_houses,
                                 }
                             }
                         }
+#endif
                         //
                         // Special case for recording playback: turn the house over
                         // to the computer.
@@ -3292,7 +3298,7 @@ static int Execute_DoList(int max_houses,
                         if (CRC[index] != DoList[j].Data.FrameInfo.CRC) {
                             Print_CRCs(&DoList[j]);
 
-#ifndef REMASTER_BUILD
+#ifdef NETWORKING
                             if (WWMessageBox().Process(TXT_OUT_OF_SYNC, TXT_CONTINUE, TXT_STOP) == 0) {
                                 if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && net) {
                                     while (net->Num_Connections()) {

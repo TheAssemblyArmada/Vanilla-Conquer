@@ -60,7 +60,6 @@
 
 #include "function.h"
 #include "common/irandom.h"
-#include "common/tcpip.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -68,6 +67,7 @@
 #include "common/vqatask.h"
 #include "common/vqaloader.h"
 #include "common/settings.h"
+#include "common/winasm.h"
 
 #define SHAPE_TRANS 0x40
 
@@ -340,7 +340,9 @@ void Main_Game(int argc, char* argv[])
                 break;
 
             case GAME_IPX:
+#ifdef NETWORKING
                 Shutdown_Network();
+#endif
                 break;
 
             case GAME_INTERNET:
@@ -871,7 +873,7 @@ static void Message_Input(KeyNumType& input)
                 Map.Flag_To_Redraw(false);
             }
         } else {
-
+#ifdef NETWORKING
             /*
             **	For a network game:
             **	F1-F3 = "To <name> (house):" (only allowed if we're not in ObiWan mode)
@@ -907,6 +909,7 @@ static void Message_Input(KeyNumType& input)
                     }
                 }
             }
+#endif
         }
     }
 
@@ -1220,7 +1223,7 @@ void Call_Back(void)
         Speak_AI();
     }
 
-#ifndef DEMO
+#ifdef NETWORKING
     /*
     **	Network maintenance
     */
@@ -2034,6 +2037,11 @@ int Load_Interpolated_Palettes(char const* filename, bool add)
     int i;
     int start_palette;
 
+    if (!InterpolationTable) {
+        /* DOSMode should not interpolate anything. Don't allocate memory.  */
+        return 0;
+    }
+
     PalettesRead = false;
     CCFileClass file(filename);
 
@@ -2073,6 +2081,11 @@ int Load_Interpolated_Palettes(char const* filename, bool add)
 
 void Free_Interpolated_Palettes(void)
 {
+    if (!InterpolationTable) {
+        /* DOSMode should not interpolate anything.  */
+        return;
+    }
+
     for (int i = 0; i < ARRAY_SIZE(InterpolatedPalettes); i++) {
         if (InterpolatedPalettes[i]) {
             free(InterpolatedPalettes[i]);
@@ -2133,7 +2146,8 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn)
         return;
     }
 
-    memset(&PaletteInterpolationTable[0][0], 0, 65536);
+    if (InterpolationTable)
+        memset(&InterpolationTable->PaletteInterpolationTable[0][0], 0, 65536);
 
     if (name) {
         char fullname[_MAX_FNAME + _MAX_EXT];

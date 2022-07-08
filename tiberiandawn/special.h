@@ -267,9 +267,7 @@ public:
     // Loading save files from Live and July Patch 3 Beta versions results in a crash
     // Fixes issue from Change 738397 2020/07/17 14:06:03
     //
-    // unsigned char SaveLoadPadding[127];
     //
-    unsigned char SaveLoadPadding[124];
 };
 #pragma pack(pop)
 

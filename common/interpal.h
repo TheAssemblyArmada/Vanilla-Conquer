@@ -18,10 +18,8 @@
 class GraphicBufferClass;
 class GraphicViewPortClass;
 
-#define SIZE_OF_PALETTE 256
 extern unsigned char* InterpolationPalette;
 extern bool InterpolationPaletteChanged;
-extern unsigned char PaletteInterpolationTable[SIZE_OF_PALETTE][SIZE_OF_PALETTE];
 
 void Interpolate_2X_Scale(GraphicBufferClass* source,
                           GraphicViewPortClass* dest,

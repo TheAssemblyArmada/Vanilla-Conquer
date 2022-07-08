@@ -64,7 +64,6 @@
 #include "textbtn.h"
 #include "factory.h"
 #include "carry.h"
-#include "common/tcpip.h"
 #include "common/framelimit.h"
 
 extern int PreserveVQAScreen;
@@ -1419,6 +1418,7 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
     const char* b3txt = "MORE";
 #endif
 #endif
+    bool dosmode = (RESFACTOR == 1);
 
     const void* briefsnd = MFCD::Retrieve("BRIEFING.AUD");
 
@@ -1577,9 +1577,9 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
     Hide_Mouse();
 
     PaletteClass temp;
-    const char* filename = "SOVPAPER.PCX";
+    const char* filename = (dosmode) ? "SOVPAPER.CPS" : "SOVPAPER.PCX";
     if (PlayerPtr->Class->House != HOUSE_USSR && PlayerPtr->Class->House != HOUSE_UKRAINE) {
-        filename = "ALIPAPER.PCX";
+        filename = (dosmode) ? "ALIPAPER.CPS" : "ALIPAPER.PCX";
     }
     Load_Title_Screen(filename, &HidPage, (unsigned char*)temp.Get_Data());
     HidPage.Blit(SeenPage);

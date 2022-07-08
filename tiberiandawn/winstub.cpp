@@ -39,7 +39,6 @@
 #include "function.h"
 #include "externs.h"
 #include "common/wsproto.h"
-#include "common/tcpip.h"
 #include "common/vqaaudio.h"
 
 void output(short, short)

@@ -43,10 +43,10 @@
 #include "function.h"
 #include "loaddlg.h"
 #include "common/gitinfo.h"
-#include "common/tcpip.h"
 #include "common/vqaconfig.h"
 #include "common/wspudp.h"
 #include "common/paths.h"
+#include "common/winasm.h"
 #include <time.h>
 
 /****************************************
@@ -460,6 +460,11 @@ bool Init_Game(int, char*[])
         Rule.Process(RuleINI);
     }
 
+    /* Initialize the Interpolation Table.  */
+    if (Get_Resolution_Factor()) {
+        InterpolationTable = new struct InterpolationTable();
+    }
+
     /*
     **	Initialize the animation system.
     */
@@ -628,8 +633,6 @@ bool Init_Game(int, char*[])
 //#ifndef NOMEMCHECK
 void Uninit_Game(void)
 {
-    delete Map.ShadowPage;
-    Map.ShadowPage = NULL;
     Map.Free_Cells();
 
     delete[] SpeechBuffer;
@@ -662,6 +665,11 @@ void Uninit_Game(void)
 
     WWDOS_Shutdown();
     delete[] Palette;
+
+    if (InterpolationTable) {
+        delete InterpolationTable;
+        InterpolationTable = NULL;
+    }
 }
 //#endif
 
@@ -1146,7 +1154,6 @@ bool Select_Game(bool fade)
 
                     PacketTransport = new UDPInterfaceClass;
                     assert(PacketTransport != NULL);
-#endif
 
                     DBG_LOG("C&C - About to call Init_Network.\n");
                     if (GameToPlay == GAME_IPX && Init_Network() && Remote_Connect()) {
@@ -1156,14 +1163,15 @@ bool Select_Game(bool fade)
                         process = false;
                         Theme.Fade_Out();
                     } else { // user hit cancel, or init failed
+#endif
                         GameToPlay = GAME_NORMAL;
                         display = true;
                         selection = SEL_NONE;
 #ifdef NETWORKING
                         delete PacketTransport;
                         PacketTransport = NULL;
-#endif
                     }
+#endif
                     break;
                 }
                 break;

@@ -51,7 +51,6 @@ extern GraphicViewPortClass SeenBuff;
 
 bool InterpolationPaletteChanged = false;
 
-unsigned char PaletteInterpolationTable[SIZE_OF_PALETTE][SIZE_OF_PALETTE] = {0};
 unsigned char* InterpolationPalette = nullptr;
 
 /***********************************************************************************************
@@ -73,9 +72,9 @@ void Read_Interpolation_Palette(char const* palette_file_name)
 {
     CCFileClass palette_file(palette_file_name);
 
-    if (palette_file.Is_Available()) {
+    if (InterpolationTable && palette_file.Is_Available()) {
         palette_file.Open(READ);
-        palette_file.Read(&PaletteInterpolationTable[0][0], 256 * 256);
+        palette_file.Read(&InterpolationTable->PaletteInterpolationTable[0][0], 256 * 256);
         palette_file.Close();
         InterpolationPaletteChanged = false;
     }
@@ -100,9 +99,9 @@ void Write_Interpolation_Palette(char const* palette_file_name)
 {
     CCFileClass palette_file(palette_file_name);
 
-    if (!palette_file.Is_Available()) {
+    if (InterpolationTable && !palette_file.Is_Available()) {
         palette_file.Open(WRITE);
-        palette_file.Write(&PaletteInterpolationTable[0][0], 256 * 256);
+        palette_file.Write(&InterpolationTable->PaletteInterpolationTable[0][0], 256 * 256);
         palette_file.Close();
     }
 }
@@ -121,7 +120,6 @@ void Write_Interpolation_Palette(char const* palette_file_name)
  *=========================================================================*/
 void Create_Palette_Interpolation_Table(void)
 {
-
     // Don't think we need this. ST - 12/20/2018 2:25PM
     // Asm_Create_Palette_Interpolation_Table();
 
@@ -206,7 +204,7 @@ void Create_Palette_Interpolation_Table(void)
                 }
             }
 
-            PaletteInterpolationTable[i][j] = (unsigned char)index_of_closest_color;
+            InterpolationTable->PaletteInterpolationTable[i][j] = (unsigned char)index_of_closest_color;
         }
     }
 

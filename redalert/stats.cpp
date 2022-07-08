@@ -39,7 +39,6 @@
 
 #include "function.h"
 #include "utracker.h"
-#include "common/tcpip.h"
 #include "common/packet.h"
 #include "common/endianness.h"
 #include "common/internet.h"
