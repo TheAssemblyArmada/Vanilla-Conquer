@@ -4,7 +4,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 include(FeatureSummary)
 
 if(NOT DEFINED CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo" FORCE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo" FORCE)
 endif()
 
 project(VanillaConquer CXX)
@@ -68,20 +68,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-if(NOT MSVC)
-    if(WIN32)
-        set(CMAKE_CXX_FLAGS_DEBUG "-gstabs3")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
-        set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
-    else()
-        set(CMAKE_CXX_FLAGS_DEBUG "-g3")
-    endif()
-
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -Wwrite-strings -Werror=write-strings -fcheck-new -fsigned-char -fdata-sections -ffunction-sections -DNOMINMAX")
-else()
-    set(CMAKE_CXX_FLAGS "/Zc:strictStrings")
-endif()
 
 add_definitions(-DENGLISH -DTRUE_FALSE_DEFINED)
 

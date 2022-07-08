@@ -14,7 +14,7 @@ jobs:
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
         
-    - uses: ilammy/msvc-dev-cmd@v1.4.1
+    - uses: ilammy/msvc-dev-cmd@v1.10.0
       with:
         arch: x86
         
@@ -31,11 +31,11 @@ jobs:
         
     - name: Configure Vanilla Conquer
       run: |
-        cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_REMASTERTD=ON -DBUILD_REMASTERRA=ON -DBUILD_VANILLATD=OFF -DBUILD_VANILLARA=OFF -DNETWORKING=OFF -B build
+        cmake --preset cl-remaster
         
     - name: Build Vanilla Conquer
       run: |
-        cmake --build build --config RelWithDebInfo
+        cmake --build build
 
     - name: Create archives
       shell: bash
@@ -78,6 +78,7 @@ jobs:
     strategy:
       matrix:
         platform: [x86, amd64]
+        networking: [net, nonet]
     steps:
     - uses: actions/checkout@v2
       with:
@@ -85,7 +86,7 @@ jobs:
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
         
-    - uses: ilammy/msvc-dev-cmd@v1.4.1
+    - uses: ilammy/msvc-dev-cmd@v1.10.0
       with:
         arch: ${{ matrix.platform }}
         
@@ -123,19 +124,20 @@ jobs:
         
     - name: Configure Vanilla Conquer
       run: |
-        cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_TOOLS=ON -DBUILD_TESTS=ON -DSDL2=ON "-DSDL2_ROOT_DIR=$($Env:TEMP)\SDL2-2.0.12" -DOPENAL=ON "-DOPENAL_ROOT=C:\Program Files (x86)\OpenAL 1.1 SDK" -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON "-DImageMagick_convert_EXECUTABLE=C:\Program Files\ImageMagick-7.0.10-Q16-HDRI\magick.exe" -DImageMagick_convert_FOUND=TRUE -B build
+        cmake --preset cl-vanilla-${{ matrix.networking }}-tests "-DSDL2_ROOT_DIR=$($Env:TEMP)\SDL2-2.0.12" "-DOPENAL_ROOT=C:\Program Files (x86)\OpenAL 1.1 SDK" "-DImageMagick_convert_EXECUTABLE=C:\Program Files\ImageMagick-7.0.10-Q16-HDRI\magick.exe" -DImageMagick_convert_FOUND=TRUE
 
     - name: Build Vanilla Conquer
       run: |
-        cmake --build build --config RelWithDebInfo
+        cmake --build build
 
     - name: Run unit tests
       run: |
         cd build
         Copy-Item -Path "$Env:TEMP\SDL2-2.0.12\lib\${{ steps.vars.outputs.sdl_path }}\SDL2.dll" -Destination . -verbose
-        ctest -C RelWithDebInfo
+        ctest -C Release
         
     - name: Create archives
+      if: ${{ matrix.networking == 'net' }}
       shell: bash
       run: |
         mkdir artifact
@@ -143,13 +145,14 @@ jobs:
         7z a artifact/vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.pdb ./build/vanillara.pdb ./build/vanillamix.pdb
 
     - name: Upload artifact
+      if: ${{ matrix.networking == 'net' }}
       uses: actions/upload-artifact@v2
       with:
         name: vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}
         path: artifact
         
     - name: Upload development release
-      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' }}
+      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' && matrix.networking == 'net' }}
       uses: softprops/action-gh-release@v1
       with:
         name: Development Build
@@ -161,7 +164,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload tagged release
-      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.networking == 'net' }}
       uses: softprops/action-gh-release@v1
       with:
         files: |

@@ -18,10 +18,12 @@ jobs:
         title: "Development Build"
         
   vanilla-linux:
-    runs-on: ubuntu-18.04
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         platform: [clang, gcc]
+        networking: [net, nonet]
+        os: [ubuntu-18.04, ubuntu-20.04]
 
     steps:
     - uses: actions/checkout@v2
@@ -49,14 +51,14 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update -qq > /dev/null
-        sudo apt-get install -qq -y clang-format-10 libsdl2-dev libopenal-dev > /dev/null
+        sudo apt-get install -qq -y clang-format-10 libsdl2-dev libopenal-dev ninja-build > /dev/null
 
     - name: Configure Vanilla Conquer
       env:
           CC: ${{ steps.vars.outputs.cc }}
           CXX: ${{ steps.vars.outputs.cxx }}
       run: |
-        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DBUILD_TOOLS=ON -DBUILD_TESTS=ON -B build
+        cmake --preset ${{ matrix.platform }}-vanilla-${{ matrix.networking }}-tests
 
     - name: Check formatting
       if: ${{ matrix.platform }} == clang
@@ -66,7 +68,7 @@ jobs:
         
     - name: Build Vanilla Conquer
       run: |
-        cmake --build build -- -j 4
+        cmake --build build
         cp ./build/vanillatd ./build/vanillatd.dbg
         cp ./build/vanillara ./build/vanillara.dbg
         cp ./build/vanillamix ./build/vanillamix.dbg
@@ -83,19 +85,21 @@ jobs:
         ctest
 
     - name: Create archives
+      if: ${{ matrix.networking == 'net' }}
       run: |
         mkdir artifact
-        7z a artifact/vanilla-conquer-linux-${{ matrix.platform }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd ./build/vanillara ./build/vanillamix
-        7z a artifact/vanilla-conquer-linux-${{ matrix.platform }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dbg ./build/vanillara.dbg ./build/vanillamix.dbg
+        7z a artifact/vanilla-conquer-linux-${{ matrix.platform }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd ./build/vanillara ./build/vanillamix
+        7z a artifact/vanilla-conquer-linux-${{ matrix.platform }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dbg ./build/vanillara.dbg ./build/vanillamix.dbg
 
     - name: Upload artifact
+      if: ${{ matrix.networking == 'net' }}
       uses: actions/upload-artifact@v2
       with:
-        name: vanilla-conquer-linux-${{ matrix.platform }}-x86_64
+        name: vanilla-conquer-linux-${{ matrix.platform }}-${{ matrix.os }}-x86_64
         path: artifact
         
     - name: Upload development release
-      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' }}
+      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' && matrix.networking == 'net' }}
       uses: softprops/action-gh-release@v1
       with:
         name: Development Build
@@ -107,7 +111,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload tagged release
-      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.networking == 'net' }}
       uses: softprops/action-gh-release@v1
       with:
         files: |
