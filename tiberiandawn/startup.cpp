@@ -210,7 +210,7 @@ int main(int argc, char** argv)
         printf("Zuwenig Hauptspeicher verf?gbar.\n");
 #else
 #ifdef FRENCH
-        printf("M‚moire vive (RAM) insuffisante.\n");
+        printf("Mï¿½moire vive (RAM) insuffisante.\n");
 #else
         printf("Insufficient RAM available.\n");
 #endif
@@ -226,7 +226,13 @@ int main(int argc, char** argv)
     **	Remember the current working directory and drive.
     */
     Paths.Init("vanillatd", "CONQUER.INI", "CONQUER.MIX", args.ArgV[0]);
+
+#ifdef __APPLE__
+    vc_chdir(Paths.User_Path());
+#else
     vc_chdir(Paths.Data_Path());
+#endif
+
     CDFileClass::Refresh_Search_Drives();
 
     if (Parse_Command_Line(args.ArgC, args.ArgV)) {

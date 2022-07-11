@@ -292,7 +292,13 @@ int main(int argc, char* argv[])
     **	Remember the current working directory and drive.
     */
     Paths.Init("vanillara", CONFIG_FILE_NAME, "REDALERT.MIX", args.ArgV[0]);
+
+#ifdef __APPLE__
+    vc_chdir(Paths.User_Path());
+#else
     vc_chdir(Paths.Data_Path());
+#endif
+
     CDFileClass::Refresh_Search_Drives();
 
     if (Parse_Command_Line(args.ArgC, args.ArgV)) {
