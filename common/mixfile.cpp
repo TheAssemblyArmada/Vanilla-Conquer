@@ -47,3 +47,9 @@
 #include "ccfile.h"
 
 template class MixFileClass<CCFileClass>;
+
+/*
+**	This is the pointer to the first mixfile in the list of mixfiles registered
+**	with the mixfile system.
+*/
+template <class T, class TCRC> List<MixFileClass<T, TCRC>> MixFileClass<T, TCRC>::MixList;

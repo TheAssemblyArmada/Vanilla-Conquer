@@ -48,8 +48,6 @@
 
 GadgetClass* GScreenClass::Buttons = 0;
 
-GraphicBufferClass* GScreenClass::ShadowPage = 0;
-
 /***********************************************************************************************
  * GScreenClass::GScreenClass -- Default constructor for GScreenClass.                         *
  *                                                                                             *
@@ -97,16 +95,8 @@ GScreenClass::GScreenClass(void)
  *=============================================================================================*/
 void GScreenClass::One_Time(void)
 {
-    /*
-    **	Allocate the screen shadow page. This page is used to reduce access to the
-    **	actual screen memory. It contains a duplicate of what the SEENPAGE is.
-    */
     Buttons = 0;
-    ShadowPage = new GraphicBufferClass(320, 200);
-    if (ShadowPage) {
-        ShadowPage->Clear();
-        HidPage.Clear();
-    }
+    HidPage.Clear();
 }
 
 /***********************************************************************************************
@@ -156,14 +146,7 @@ void GScreenClass::Init(TheaterType theater)
  *=============================================================================================*/
 void GScreenClass::Init_Clear(void)
 {
-    /*
-    ** Clear the ShadowPage & HidPage to force a complete shadow blit.
-    */
-    if (ShadowPage) {
-        ShadowPage->Clear();
-        HidPage.Clear();
-    }
-
+    HidPage.Clear();
     IsToRedraw = true;
 }
 

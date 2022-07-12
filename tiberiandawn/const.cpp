@@ -92,9 +92,6 @@ WeaponTypeClass const Weapons[WEAPON_COUNT] = {
     {BULLET_HONEST_JOHN, 100, 200, 0x0A00, VOC_ROCKET1, ANIM_NONE}, //	WEAPON_HONEST_JOHN
     {BULLET_HEADBUTT, 100, 30, 0x0180, VOC_DINOATK1, ANIM_NONE},    // WEAPON_STEG
     {BULLET_TREXBITE, 155, 30, 0x0180, VOC_DINOATK1, ANIM_NONE},    // WEAPON_TREX
-#ifdef PETROGLYPH_EXAMPLE_MOD
-    {BULLET_NUKE_LOB, 150, 130, 0x0B00, VOC_NUKE_LOB, ANIM_MUZZLE_FLASH}, //	WEAPON_NUKE_LOB
-#endif                                                                    // PETROGLYPH_EXAMPLE_MOD
 };
 
 /***************************************************************************

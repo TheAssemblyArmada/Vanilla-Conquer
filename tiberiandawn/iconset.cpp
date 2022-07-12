@@ -140,9 +140,11 @@ int Get_Icon_Set_Count(void const* iconset)
 
 void* Get_Icon_Set_Map(void const* iconset)
 {
-    IControl_Type* icontrol;
-    icontrol = (IControl_Type*)iconset;
-    if (icontrol)
-        return (Add_Long_To_Pointer(iconset, (long)icontrol->Map));
+    char* icontrol = (char*)iconset;
+    if (icontrol) {
+        uint32_t icontrol_map;
+        memcpy(&icontrol_map, icontrol + offsetof(IControl_Type, Map), sizeof(uint32_t));
+        return icontrol + icontrol_map;
+    }
     return (NULL);
 }

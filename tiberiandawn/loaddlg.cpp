@@ -451,7 +451,7 @@ int LoadOptionsClass::Process(void)
             game_idx = listbtn.Current_Index();
             game_num = Files[game_idx]->Num;
             if (WWMessageBox().Process(TXT_DELETE_FILE_QUERY, TXT_YES, TXT_NO) == 0) {
-                sprintf(fname, "SAVEGAME.%03d", game_num);
+                sprintf(fname, "savegame.%03d", game_num);
                 Delete_File(fname);
                 Clear_List(&listbtn);
                 Fill_List(&listbtn);
@@ -591,7 +591,7 @@ void LoadOptionsClass::Fill_List(ListClass* list)
     /*
     ** Find all savegame files
     */
-    bool rc = Find_First("SAVEGAME.*", 0, &ff);
+    bool rc = Find_First("savegame.*", 0, &ff);
 
     while (rc) {
         /*

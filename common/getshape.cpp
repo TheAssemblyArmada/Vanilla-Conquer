@@ -43,6 +43,9 @@
 /*
 ********************************* Includes **********************************
 */
+
+#include <cstddef>
+
 #include "wwstd.h"
 #include "shape.h"
 
@@ -164,10 +167,10 @@ unsigned short Get_Shape_Data(void const* shape, unsigned short data)
  *=========================================================================*/
 int Extract_Shape_Count(void const* buffer)
 {
-    ShapeBlock_Type* block = (ShapeBlock_Type*)buffer;
-
-    return (block->NumShapes);
-
+    char const* bbuffer = (char const*)buffer;
+    uint16_t numshapes;
+    memcpy(&numshapes, bbuffer + offsetof(ShapeBlock_Type, NumShapes), sizeof(numshapes));
+    return (int)numshapes;
 } /* end of Extract_Shape_Count */
 
 /***************************************************************************
@@ -192,16 +195,25 @@ void* Extract_Shape(void const* buffer, int shape)
 {
     ShapeBlock_Type* block = (ShapeBlock_Type*)buffer;
     // PG	int numshapes;		// Number of shapes
-    int offset; // Offset of shape data, from start of block
+    uint32_t offset; // Offset of shape data, from start of block
     char* bytebuf = (char*)buffer;
 
     /*
     ----------------------- Return if invalid argument -----------------------
     */
-    if (!buffer || shape < 0 || shape >= block->NumShapes)
+    if (!buffer || shape < 0)
         return (NULL);
 
-    offset = block->Offsets[shape];
+    uint16_t numshapes;
+    memcpy(&numshapes, bytebuf + offsetof(ShapeBlock_Type, NumShapes), sizeof(short));
+
+    if (shape >= numshapes) {
+        return NULL;
+    }
+
+    /*  Same as offset = block->Offsets[shape]; on arch that unaligned access
+        behaves well.  */
+    memcpy(&offset, bytebuf + offsetof(ShapeBlock_Type, Offsets) + shape * sizeof(uint32_t), sizeof(uint32_t));
 
     return (bytebuf + 2 + offset);
 

@@ -204,7 +204,6 @@ inline CELL Coord_YCell(COORDINATE coord)
 #include "tab.h"
 #include "help.h"
 #include "mouse.h"
-//#include	"mapedit.h"
 #include "help.h"
 #include "target.h"
 #include "theme.h"
@@ -239,11 +238,7 @@ inline CELL Coord_YCell(COORDINATE coord)
 #include "combuf.h"
 #include "connect.h"
 #include "connmgr.h"
-#include "noseqcon.h"
 #include "msglist.h"
-//#include	"nullconn.h"
-//#include	"nullmgr.h"
-//#include "phone.h"
 #include "loaddlg.h"
 #include "ipxaddr.h"
 #include "common/miscasm.h"
@@ -255,7 +250,9 @@ inline CELL Coord_YCell(COORDINATE coord)
 typedef struct NodeNameTag
 {
     char Name[MPLAYER_NAME_MAX];
+#ifdef NETWORKING
     IPXAddressClass Address;
+#endif
     union
     {
         struct
@@ -983,7 +980,6 @@ extern unsigned char* InterpolatedPalettes[100];
 extern bool PalettesRead;
 extern unsigned PaletteCounter;
 
-extern unsigned char PaletteInterpolationTable[SIZE_OF_PALETTE][SIZE_OF_PALETTE];
 extern unsigned char* InterpolationPalette;
 
 extern void Free_Interpolated_Palettes(void);

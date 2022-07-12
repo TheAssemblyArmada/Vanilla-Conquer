@@ -38,6 +38,7 @@
 #include "function.h"
 #include "interpal.h"
 #include "common/settings.h"
+#include "common/winasm.h"
 
 void Cycle_Call_Back_Delay(int time, PaletteClass& pal);
 extern int ControlQ;
@@ -152,8 +153,10 @@ char const* Map_Selection(void)
 
     pseudoseenbuff->Clear();
     Animate_Frame(anim, *pseudoseenbuff, 1);
-    for (int x = 0; x < 256; x++)
-        memset(&PaletteInterpolationTable[x][0], x, 256);
+    if (InterpolationTable) {
+        for (int x = 0; x < 256; x++)
+            memset(&InterpolationTable->PaletteInterpolationTable[x][0], x, 256);
+    }
     Interpolate_2X_Scale(pseudoseenbuff, &SeenBuff, NULL, 1);
 
     int frame = 1;
@@ -262,6 +265,7 @@ char const* Map_Selection(void)
         scenarioname[6] = 'A' + selection;
     }
     Theme.Fade_Out();
+    delete pseudoseenbuff;
     //	Options.Set_Score_Volume(oldvolume);
 
     //	Scen.ScenVar = (ScenarioVarType)selection;

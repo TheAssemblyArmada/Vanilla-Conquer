@@ -1,12 +1,7 @@
 #include "winasm.h"
 #include <string.h>
 
-#define SIZE_OF_PALETTE 256
-extern unsigned char PaletteInterpolationTable[SIZE_OF_PALETTE][SIZE_OF_PALETTE];
-
-static unsigned char LineBuffer[1600];
-static unsigned char TopLine[1600];
-static unsigned char BottomLine[1600];
+struct InterpolationTable* InterpolationTable = NULL;
 
 /**
  * Interpolates in X axis, leaves additional lines blank in the Y axis.
@@ -21,7 +16,7 @@ void Asm_Interpolate(void* src, void* dst, int src_height, int src_width, int ds
 
         for (int i = 0; i < src_width - 1; ++i) {
             *wptr++ = *sptr;
-            *wptr++ = PaletteInterpolationTable[sptr[0]][sptr[1]];
+            *wptr++ = InterpolationTable->PaletteInterpolationTable[sptr[0]][sptr[1]];
             ++sptr;
         }
 
@@ -41,13 +36,13 @@ void Asm_Interpolate_Line_Double(void* src, void* dst, int src_height, int src_w
 
     while (src_height--) {
         unsigned char* wptr = dptr;
-        unsigned char* bptr = LineBuffer;
+        unsigned char* bptr = InterpolationTable->LineBuffer;
 
         for (int i = 0; i < src_width - 1; ++i) {
             *wptr++ = *sptr;
             *bptr++ = *sptr;
-            *wptr++ = PaletteInterpolationTable[sptr[0]][sptr[1]];
-            *bptr++ = PaletteInterpolationTable[sptr[0]][sptr[1]];
+            *wptr++ = InterpolationTable->PaletteInterpolationTable[sptr[0]][sptr[1]];
+            *bptr++ = InterpolationTable->PaletteInterpolationTable[sptr[0]][sptr[1]];
             ++sptr;
         }
 
@@ -56,7 +51,7 @@ void Asm_Interpolate_Line_Double(void* src, void* dst, int src_height, int src_w
         *wptr = 0;
         *bptr = 0;
         dptr += dst_pitch / 2;
-        memcpy(dptr, LineBuffer, src_width * 2);
+        memcpy(dptr, InterpolationTable->LineBuffer, src_width * 2);
         dptr += dst_pitch / 2;
     }
 }
@@ -70,7 +65,7 @@ static void Interpolate_X_Axis(void* src, void* dst, int src_width)
 
     for (int i = 0; i < src_width - 1; ++i) {
         *wptr++ = *sptr;
-        *wptr++ = PaletteInterpolationTable[sptr[0]][sptr[1]];
+        *wptr++ = InterpolationTable->PaletteInterpolationTable[sptr[0]][sptr[1]];
         ++sptr;
     }
 
@@ -86,7 +81,7 @@ static void Interpolate_Y_Axis(void* top_line, void* bottom_line, void* middle_l
     int dst_width = 2 * src_width;
 
     for (int i = 0; i < dst_width; ++i) {
-        *mlp++ = PaletteInterpolationTable[*tlp][*blp];
+        *mlp++ = InterpolationTable->PaletteInterpolationTable[*tlp][*blp];
         ++tlp;
         ++blp;
     }
@@ -98,8 +93,8 @@ static void Interpolate_Y_Axis(void* top_line, void* bottom_line, void* middle_l
 void Asm_Interpolate_Line_Interpolate(void* src, void* dst, int src_height, int src_width, int dst_pitch)
 {
     unsigned char* dptr = (unsigned char*)(dst);
-    unsigned char* buff_offset1 = TopLine;
-    unsigned char* buff_offset2 = BottomLine;
+    unsigned char* buff_offset1 = InterpolationTable->TopLine;
+    unsigned char* buff_offset2 = InterpolationTable->BottomLine;
 
     int pitch = dst_pitch / 2;
     Interpolate_X_Axis(src, buff_offset1, src_width);
@@ -113,10 +108,10 @@ void Asm_Interpolate_Line_Interpolate(void* src, void* dst, int src_height, int 
 
     while (lines--) {
         Interpolate_X_Axis(current_line, buff_offset1, src_width);
-        Interpolate_Y_Axis(buff_offset2, buff_offset1, LineBuffer, src_width);
+        Interpolate_Y_Axis(buff_offset2, buff_offset1, InterpolationTable->LineBuffer, src_width);
         memcpy(dptr, buff_offset2, 2 * src_width);
         dptr += pitch;
-        memcpy(dptr, LineBuffer, 2 * src_width);
+        memcpy(dptr, InterpolationTable->LineBuffer, 2 * src_width);
         current_line += src_width;
         dptr += pitch;
 

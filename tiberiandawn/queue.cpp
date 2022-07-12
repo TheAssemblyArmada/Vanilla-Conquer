@@ -73,7 +73,6 @@
  *   Print_Framesync_Values -- displays frame-sync variables               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include "function.h"
-#include "common/tcpip.h"
 #include "common/framelimit.h"
 
 /********************************** Defines *********************************/
@@ -321,7 +320,7 @@ void Queue_AI(void)
 {
 #ifdef DEMO
     Queue_AI_Normal();
-#else  // DEMO
+#else // DEMO
 
     if (PlaybackGame) {
         Queue_Playback();
@@ -340,7 +339,9 @@ void Queue_AI(void)
         case GAME_NULL_MODEM:
         case GAME_IPX:
         case GAME_INTERNET:
+#ifdef NETWORKING
             Queue_AI_Multiplayer();
+#endif
             break;
         }
     }
@@ -407,7 +408,7 @@ static void Queue_AI_Normal(void)
 
 } /* end of Queue_AI_Normal */
 
-#ifndef DEMO
+#ifdef NETWORKING
 
 /***************************************************************************
  * Queue_AI_Multiplayer -- Process all queued events.                      *
@@ -2911,14 +2912,8 @@ static int Execute_DoList(int,
                     // connection ID.
                     //............................................................
                     else if (DoList[j].Type == EventClass::EXIT) {
-                        if (GameToPlay == GAME_MODEM || GameToPlay == GAME_NULL_MODEM) {
-                            //|| GameToPlay == GAME_INTERNET) {
-
-                            // ST - 1/2/2019 5:29PM
-                            // Destroy_Null_Connection( DoList[j].MPlayerID, 0 );
-                        }
-
-                        else if ((GameToPlay == GAME_IPX || GameToPlay == GAME_INTERNET) && net) {
+#ifdef NETWORKING
+                        if ((GameToPlay == GAME_IPX || GameToPlay == GAME_INTERNET) && net) {
                             index = net->Connection_Index(DoList[j].MPlayerID);
                             if (index != -1) {
                                 for (k = index; k < net->Num_Connections() - 1; k++) {
@@ -2927,11 +2922,11 @@ static int Execute_DoList(int,
                                     their_recv[k] = their_recv[k + 1];
                                 }
                                 CCDebugString("C&C95 = Destroying connection due to exit event\n");
-#ifndef DEMO
+
                                 Destroy_Connection(DoList[j].MPlayerID, 0);
-#endif // DEMO
                             }
                         }
+#endif // NETWORKING
                     }
                 }
 
@@ -2942,20 +2937,14 @@ static int Execute_DoList(int,
                 // old.  Ignore these packets.  (This created bogus sync bugs on
                 // the Internet, when packets that were 35 frames old arrived.)
                 //...............................................................
-#ifndef DEMO
+#ifdef NETWORKING
                 else if (DoList[j].Type == EventClass::FRAMEINFO) {
                     if (DoList[j].Frame == Frame && DoList[j].Data.FrameInfo.Delay < 32) {
                         index = ((DoList[j].Frame - DoList[j].Data.FrameInfo.Delay) & 0x001f);
                         if (CRC[index] != DoList[j].Data.FrameInfo.CRC) {
                             Print_CRCs(&DoList[j]);
                             if (WWMessageBox().Process(TXT_OUT_OF_SYNC, TXT_CONTINUE, TXT_STOP) == 0) {
-                                if (GameToPlay == GAME_MODEM || GameToPlay == GAME_NULL_MODEM) {
-#if (0) // ST - 1/2/2019 5:29PM
-                                    Destroy_Null_Connection(DoList[j].MPlayerID, -1);
-                                    Shutdown_Modem();
-#endif
-                                    GameToPlay = GAME_NORMAL;
-                                } else if ((GameToPlay == GAME_IPX || GameToPlay == GAME_INTERNET) && net) {
+                                if ((GameToPlay == GAME_IPX || GameToPlay == GAME_INTERNET) && net) {
                                     CCDebugString("C&C95 = Destroying connections due to bad frame info packet\n");
                                     while (net->Num_Connections()) {
                                         Destroy_Connection(net->Connection_ID(0), -1);
@@ -2969,7 +2958,7 @@ static int Execute_DoList(int,
                         }
                     }
                 }
-#endif // DEMO                                                                                                         \
+#endif // NETWORKING                                                                                                         \
        //...............................................................                                               \
        //	Execute other commands                                                                                       \
        //...............................................................

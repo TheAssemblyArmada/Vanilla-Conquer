@@ -75,6 +75,7 @@
 
 #include "ramfile.h"
 #include "common/vqaconfig.h"
+#include "common/winasm.h"
 #include "intro.h"
 
 RemapControlType SidebarScheme;
@@ -138,8 +139,9 @@ extern bool Is_Mission_Counterstrike(char* file_name);
  *=============================================================================================*/
 static void Load_Prolog_Page(void)
 {
+    const char* pict = (RESFACTOR == 1) ? "PROLOG.CPS" : "PROLOG.PCX";
     Hide_Mouse();
-    Load_Title_Screen("PROLOG.PCX", &HidPage, (unsigned char*)CCPalette.Get_Data());
+    Load_Title_Screen(pict, &HidPage, (unsigned char*)CCPalette.Get_Data());
     HidPage.Blit(SeenPage);
     CCPalette.Set();
     Show_Mouse();
@@ -165,6 +167,7 @@ static void Load_Prolog_Page(void)
 //#include    <locale.h>
 bool Init_Game(int, char*[])
 {
+    bool dosmode = (RESFACTOR == 1);
 /*
 **	Allocate the benchmark tracking objects only if the machine and
 **	compile flags indicate.
@@ -304,6 +307,13 @@ bool Init_Game(int, char*[])
     **	Initialize the animation system.
     */
     Anim_Init();
+
+    /*
+    **>-Initialize the interpolation table
+    */
+    if (!dosmode) {
+        InterpolationTable = new struct InterpolationTable();
+    }
 
 #ifdef MPEGMOVIE // Denzil 6/15/98
     if (Using_DVD()) {
@@ -967,7 +977,6 @@ bool Select_Game(bool fade)
 
                     PacketTransport = new UDPInterfaceClass;
                     assert(PacketTransport != NULL);
-#endif
 
                     WWDebugString("RA95 - About to call Init_Network.\n");
                     if (Session.Type == GAME_IPX && Init_Network() && Remote_Connect()) {
@@ -979,14 +988,15 @@ bool Select_Game(bool fade)
                         process = false;
                         Theme.Fade_Out();
                     } else { // user hit cancel, or init failed
+#endif
                         Session.Type = GAME_NORMAL;
                         display = true;
                         selection = SEL_NONE;
 #ifdef NETWORKING
                         delete PacketTransport;
                         PacketTransport = NULL;
-#endif
                     }
+#endif
                     break;
                 }
                 break;
@@ -2911,5 +2921,11 @@ void Free_Heaps(void)
     if (TheaterBuffer) {
         delete TheaterBuffer;
         TheaterBuffer = NULL;
+    }
+
+    /* Deallocate the interpolation table.  */
+    if (InterpolationTable) {
+        delete InterpolationTable;
+        InterpolationTable = NULL;
     }
 }

@@ -344,7 +344,9 @@ extern CELL CurrentCell;
 
 extern SessionClass Session;
 // extern NullModemClass 			NullModem;
+#ifdef NETWORKING
 extern IPXManagerClass Ipx;
+#endif
 
 #if (TIMING_FIX)
 extern int NewMaxAheadFrame1;
@@ -483,5 +485,8 @@ extern MPGSettings* MpgSettings;
 #endif
 
 extern bool ShareAllyVisibility;
+
+// OmniBlade - Moves from tcpip.cpp as part of networking cleanup.
+extern bool Server; // Is this player acting as client or server
 
 #endif

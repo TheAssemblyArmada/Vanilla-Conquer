@@ -399,13 +399,6 @@ FireDataType TurretClass::Fire_Data(int which) const
         coord = Coord_Move(coord, DIR_N, 0x0030);
         dist = 0x0030;
         break;
-
-#ifdef PETROGLYPH_EXAMPLE_MOD
-    case UNIT_NUKE_TANK:
-        coord = Coord_Move(coord, DIR_N, 0x00A0);
-        dist = 0x00A0;
-        break;
-#endif // PETROGLYPH_EXAMPLE_MOD
     }
 
     return {coord, dist};
@@ -474,13 +467,6 @@ COORDINATE TurretClass::Fire_Coord(int which) const
         coord = Coord_Move(coord, DIR_N, 0x0030);
         dist = 0x0030;
         break;
-
-#ifdef PETROGLYPH_EXAMPLE_MOD
-    case UNIT_NUKE_TANK:
-        coord = Coord_Move(coord, DIR_N, 0x00A0);
-        dist = 0x00A0;
-        break;
-#endif // PETROGLYPH_EXAMPLE_MOD
     }
 
     if (dist) {

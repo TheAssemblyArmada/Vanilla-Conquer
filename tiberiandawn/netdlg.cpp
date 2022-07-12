@@ -91,7 +91,6 @@
 
 #include "function.h"
 #include <time.h>
-#include "common/tcpip.h"
 #include "framelimit.h"
 #define SHOW_MONO 0
 
@@ -2484,15 +2483,10 @@ Get_Join_Responses(JoinStateType* joinstate, ListClass* gamelist, ColorListClass
                 Special.IsTSpread = 0;
             }
 
-            if (Winsock.Get_Connected()) {
-                ScenarioIdx = GPacket.ScenarioInfo.Scenario;
-            } else {
-
-                ScenarioIdx = -1;
-                for (i = 0; i < MPlayerFilenum.Count(); i++) {
-                    if (GPacket.ScenarioInfo.Scenario == MPlayerFilenum[i])
-                        ScenarioIdx = i;
-                }
+            ScenarioIdx = -1;
+            for (i = 0; i < MPlayerFilenum.Count(); i++) {
+                if (GPacket.ScenarioInfo.Scenario == MPlayerFilenum[i])
+                    ScenarioIdx = i;
             }
 
             retcode = EV_GAME_OPTIONS;

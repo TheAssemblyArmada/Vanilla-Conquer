@@ -295,7 +295,7 @@ void SessionClass::Init(void)
  *=========================================================================*/
 int SessionClass::Create_Connections(void)
 {
-#ifndef REMASTER_BUILD
+#ifdef NETWORKING
     int i;
 
     if (Session.Type != GAME_IPX && Session.Type != GAME_INTERNET) {

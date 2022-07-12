@@ -875,8 +875,18 @@ int RawFileClass::Raw_Seek(int pos, int dir)
     } else {
 
         clearerr(Handle);
-        if (fseek(Handle, pos, dir) < 0) {
-            Error(errno, false, Filename);
+
+        /*
+        ** If pos == 0 and dir == SEEK_CUR, fseek should basically do nothing.
+        ** However, some very bad implementations (like the Nintendo DS's libfat)
+        ** just goes back to the beginning of the file and iterate it until it
+        ** finds the current position, which is awful.  So instead of doing that,
+        ** guard this case so that sequential ::Read's do not take too much time.
+        */
+        if (!(pos == 0 && dir == SEEK_CUR)) {
+            if (fseek(Handle, pos, dir) < 0) {
+                Error(errno, false, Filename);
+            }
         }
 
         pos = ftell(Handle);
