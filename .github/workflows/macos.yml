@@ -26,6 +26,7 @@ jobs:
         brew install sdl2
         brew install dylibbundler
         brew install imagemagick
+	brew install openal-soft
 
     - name: Configure Vanilla Conquer
       run: |
