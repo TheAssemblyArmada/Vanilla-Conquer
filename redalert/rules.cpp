@@ -623,9 +623,9 @@ bool RulesClass::Heap_Maximums(CCINIClass& ini)
     }
 
     /*
-    **	Special case: quadruple maximum animations to accommodate lots of action
+    **	Special case: double maximum animations to accommodate lots of action
     */
-    AnimMax = max(AnimMax, 400);
+    AnimMax = max(AnimMax, 200);
 
     /*
     **	Any heaps that use the maximums that were just loaded, must
