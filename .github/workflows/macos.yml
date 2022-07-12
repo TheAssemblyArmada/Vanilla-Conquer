@@ -30,7 +30,7 @@ jobs:
 
     - name: Configure Vanilla Conquer
       run: |
-        cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DBUILD_TOOLS=ON -B build
+        cmake -G Ninja -DOPENAL_LIBRARY=/usr/local/opt/openal-soft/lib/libopenal.dylib -DOPENAL_INCLUDE_DIR=/usr/local/opt/openal-soft/include/AL -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DBUILD_TOOLS=ON -B build
         
     - name: Build Vanilla Conquer
       run: |
