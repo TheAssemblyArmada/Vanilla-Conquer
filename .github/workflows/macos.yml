@@ -7,9 +7,8 @@ on:
 jobs:
   vanilla-macos:
     runs-on: macos-12
-
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: 'true'
         fetch-depth: 0
@@ -20,20 +19,50 @@ jobs:
     - name: Set Git Info
       id: gitinfo
       run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-      
-    - name: Install dependencies
+
+    - name: Setting up Cache-Key
+      run: echo "DEP_CACHE_KEY=$(curl 'https://ports.macports.org/api/v1/ports/dylibbundler/?format=json' | grep -ioE '("version":).[^,]*')-$(curl 'https://ports.macports.org/api/v1/ports/libsdl2/?format=json' | grep -ioE '("version":).[^,]*')-$(curl 'https://ports.macports.org/api/v1/ports/openal-soft/?format=json' | grep -ioE '("version":).[^,]*')" >> $GITHUB_ENV
+
+    - name: Printing Cache-Key
+      run: echo $DEP_CACHE_KEY
+
+    - name: Restore cache
+      id: dep-cache
+      uses: actions/cache@v3
+      env:
+        cache-name: cache-dependencies
+      with:
+        path: ~/macports
+        key: ${{ env.DEP_CACHE_KEY }}
+
+    - if: ${{ steps.dep-cache.outputs.cache-hit != 'true' }}
+      name: Install dependencies
       run: |
-        brew install sdl2
-        brew install dylibbundler
-        brew install imagemagick
-        brew install openal-soft
+        wget -q https://github.com/macports/macports-base/releases/download/v2.7.2/MacPorts-2.7.2-12-Monterey.pkg
+        sudo installer -pkg ./MacPorts-2.7.2-12-Monterey.pkg -target /
+        export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+        sudo port selfupdate -N
+        sudo port install dylibbundler -N
+        sudo port install libsdl2 +universal -N
+        sudo port install openal-soft +universal -N
+        sudo port install imageMagick -N
+        mkdir ~/macports
+        sudo cp -R /opt/local ~/macports
+        sudo chown -R $USER:staff ~/macports
+
+    - if: ${{ steps.dep-cache.outputs.cache-hit == 'true' }}
+      name: Restore dependencies from cache
+      run: |
+        sudo cp -R ~/macports/local /opt
 
     - name: Configure Vanilla Conquer
       run: |
-        cmake -G Ninja -DOPENAL_LIBRARY=/usr/local/opt/openal-soft/lib/libopenal.dylib -DOPENAL_INCLUDE_DIR=/usr/local/opt/openal-soft/include/AL -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DBUILD_TOOLS=ON -B build
+        export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+        cmake -G Ninja -DCMAKE_FIND_FRAMEWORK=LAST -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON -DBUILD_TOOLS=ON -B build
         
     - name: Build Vanilla Conquer
       run: |
+        export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
         cmake --build build
         dsymutil build/vanillatd.app/Contents/MacOS/vanillatd -o build/vanillatd.dSYM
         dsymutil build/vanillara.app/Contents/MacOS/vanillara -o build/vanillara.dSYM
@@ -47,13 +76,13 @@ jobs:
     - name: Create archives
       run: |
         mkdir artifact
-        7z a artifact/vanilla-conquer-macos-clang-x86_64-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd.app ./build/vanillara.app ./build/vanillamix
-        7z a artifact/vanilla-conquer-macos-clang-x86_64-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dSYM ./build/vanillara.dSYM ./build/vanillamix.dSYM
+        7z a artifact/vanilla-conquer-macos-clang-universal2-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd.app ./build/vanillara.app ./build/vanillamix
+        7z a artifact/vanilla-conquer-macos-clang-universal2-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dSYM ./build/vanillara.dSYM ./build/vanillamix.dSYM
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
-        name: vanilla-conquer-macos-clang-x86_64
+        name: vanilla-conquer-macos-clang-universal2
         path: artifact
         
     - name: Upload development release
