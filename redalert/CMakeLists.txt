@@ -280,4 +280,12 @@ if(BUILD_VANILLARA)
                     -g3 -fno-omit-frame-pointer)
             target_link_options(VanillaRA PUBLIC -fsanitize=address)
     endif()
+    if(VITA)
+        include(VitaPackage)
+        generate_vita_package(VanillaRA
+            APP_NAME "VanillaRA"
+            TITLE_ID "VCRA00001"
+            ICON "${CMAKE_SOURCE_DIR}/resources/vanillara_icon.svg"
+        )
+    endif()
 endif()

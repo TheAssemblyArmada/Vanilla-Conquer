@@ -877,6 +877,9 @@ public:
     void Open_Controller();
     void Close_Controller();
     bool Is_Analog_Scroll_Active();
+#ifdef VITA
+    bool Is_Analog_Only_Scroll();
+#endif
     unsigned char Get_Scroll_Direction();
 #elif defined(SDL1_BUILD)
     bool Is_Gamepad_Active()
@@ -947,7 +950,12 @@ private:
 
     enum
     {
+#ifdef VITA
+        CONTROLLER_L_DEADZONE_MOUSE = 4000,
+        CONTROLLER_L_DEADZONE_SCROLL = 6000,
+#else
         CONTROLLER_L_DEADZONE = 4000,
+#endif
         CONTROLLER_R_DEADZONE = 6000,
         CONTROLLER_TRIGGER_R_DEADZONE = 3000
     };
@@ -961,6 +969,19 @@ private:
     float ControllerSpeedBoost = 1;
     bool AnalogScrollActive = false;
     ScrollDirType ScrollDirection = SDIR_NONE;
+
+#ifdef VITA
+    bool AnalogStickMouse = true;
+    void Handle_Touch_Event(const SDL_TouchFingerEvent& event);
+    SDL_FingerID FirstFingerId = 0;
+    int16_t NumTouches = 0;
+
+    static constexpr int REAR_TOUCH_SPEED_MOD = 100;
+    static constexpr int REAR_LMB_DELAY = 250;
+    uint32_t LastRearTouchTime = 0;
+    SDL_FingerID RearFirstFingerId = 0;
+    int16_t RearNumTouches = 0;
+#endif
 #endif
 };
 

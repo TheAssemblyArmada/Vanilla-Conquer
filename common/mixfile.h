@@ -34,6 +34,19 @@
 #include <libgen.h> // For basename()
 #endif
 
+#ifdef VITA
+// TODO Another set of functions to move to a compat lib that tests for the function?
+#define PATH_MAX 256
+#define basename basename_vita
+
+// fails to link due to undefined basename. old newlib?
+static char* basename_vita(const char* filename)
+{
+    char* p = strrchr(filename, '/');
+    return p ? p + 1 : (char*)filename;
+}
+#endif
+
 #ifndef _MAX_PATH
 #define _MAX_PATH PATH_MAX
 #endif

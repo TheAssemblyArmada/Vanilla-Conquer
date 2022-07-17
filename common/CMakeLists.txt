@@ -102,6 +102,8 @@ set(COMMON_SRC
 
 if (WIN32)
     list(APPEND COMMON_SRC file_win.cpp paths_win.cpp)
+elseif(VITA)
+    list(APPEND COMMON_SRC file_posix.cpp paths_vita.cpp)
 else()
     list(APPEND COMMON_SRC file_posix.cpp paths_posix.cpp)
 endif()
@@ -171,6 +173,35 @@ target_include_directories(common PUBLIC .)
 target_compile_definitions(common PRIVATE FIXIT_FAST_LOAD $<$<CONFIG:Debug>:_DEBUG>)
 # Make build check state of git to check for uncommitted changes.
 add_dependencies(common check_git)
+
+if(VITA)
+    target_compile_definitions(common PUBLIC VITA)
+    target_compile_options(common PUBLIC 
+        -O2
+        -mcpu=cortex-a9
+        -mfpu=neon
+        -ffast-math
+        -ftree-vectorize
+        -fno-lto
+    )
+    target_link_libraries(common PUBLIC
+        SceMotion_stub
+        SceTouch_stub
+        SceAudio_stub
+        SceAudioIn_stub
+        SceCtrl_stub
+        SceGxm_stub
+        SceHid_stub
+        SceDisplay_stub
+        SceSysmodule_stub
+        SceCommonDialog_stub
+        ScePower_stub
+        SceAppUtil_stub
+        -Wl,--whole-archive
+        pthread
+        -Wl,--no-whole-archive
+    )
+endif()
 
 if(WIN32)
     if(WIN9X)
