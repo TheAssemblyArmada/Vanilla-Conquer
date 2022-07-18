@@ -63,7 +63,7 @@ public:
     };
 
     static void* operator new(size_t size) noexcept;
-    static void* operator new(size_t, void* ptr) noexcept
+    static void* operator new(size_t, void* ptr)
     {
         return (ptr);
     };
