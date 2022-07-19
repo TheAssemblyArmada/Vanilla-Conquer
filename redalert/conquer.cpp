@@ -3875,16 +3875,16 @@ static bool Change_Local_Dir(int cd)
     static bool _initialised = false;
     static unsigned _detected = 0;
     static const char* _vol_labels[CD_COUNT] = {"allied", "soviet", "counterstrike", "aftermath", "."};
-    char vol_buff[16];
+    char vol_buff[512];
 
     // Detect which if any of the discs have had their data copied to an appropriate local folder.
     if (!_initialised) {
         for (int i = 0; i < CD_COUNT; ++i) {
-            RawFileClass vol(_vol_labels[i]);
+            CCFileClass vol(_vol_labels[i]);
 
             if (vol.Is_Directory()) {
                 CDFileClass::Refresh_Search_Drives();
-                snprintf(vol_buff, sizeof(vol_buff), "%s/", _vol_labels[i]);
+                snprintf(vol_buff, sizeof(vol_buff), "%s/", vol.Filename);
                 CDFileClass::Add_Search_Drive(vol_buff);
                 CCFileClass fc("MAIN.MIX");
 
@@ -3942,12 +3942,12 @@ static bool Change_Local_Dir(int cd)
 
     // If the data from the CD we want was detected, then double check it and set it as though we used the -CD command line.
     if (_detected & (1 << cd)) {
-        RawFileClass vol(_vol_labels[cd]);
+        CCFileClass vol(_vol_labels[cd]);
 
         // Verify that the file is still available and hasn't been deleted out from under us.
         if (vol.Is_Directory()) {
             CDFileClass::Refresh_Search_Drives();
-            snprintf(vol_buff, sizeof(vol_buff), "%s/", _vol_labels[cd]);
+            snprintf(vol_buff, sizeof(vol_buff), "%s/", vol.Filename);
             CDFileClass::Add_Search_Drive(vol_buff);
 
             // The file should be available if we reached this point.

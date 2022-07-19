@@ -54,12 +54,10 @@ void Print_Error_Exit(char* string);
 #ifdef _WIN32
 #include <direct.h>
 #include "common/utf.h"
-#define vc_chdir(x) _wchdir(UTF8To16(x))
 extern void Create_Main_Window(HANDLE instance, int command_show, int width, int height);
 HINSTANCE ProgramInstance;
 #else
 #include <unistd.h>
-#define vc_chdir(x) chdir(x)
 #endif
 extern bool RA95AlreadyRunning;
 void Check_Use_Compressed_Shapes(void);
@@ -292,7 +290,6 @@ int main(int argc, char* argv[])
     **	Remember the current working directory and drive.
     */
     Paths.Init("vanillara", CONFIG_FILE_NAME, "REDALERT.MIX", args.ArgV[0]);
-    vc_chdir(Paths.Data_Path());
     CDFileClass::Refresh_Search_Drives();
 
     if (Parse_Command_Line(args.ArgC, args.ArgV)) {

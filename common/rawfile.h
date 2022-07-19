@@ -107,6 +107,11 @@ public:
     int BiasStart;
     int BiasLength;
 
+    /*
+    **    This points to a copy of the filename as a NULL terminated string.
+    */
+    char* Filename;
+
 protected:
     /*
     **	This function returns the largest size a low level DOS read or write may
@@ -124,11 +129,6 @@ private:
     **	This is the low level DOS handle. A -1 indicates an empty condition.
     */
     FILE* Handle;
-
-    /*
-    **	This points to a copy of the filename as a NULL terminated string.
-    */
-    char* Filename;
 };
 
 /***********************************************************************************************
