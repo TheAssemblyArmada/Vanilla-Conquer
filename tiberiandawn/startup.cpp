@@ -46,12 +46,10 @@ void Print_Error_Exit(char* string);
 #ifdef _WIN32
 #include <direct.h>
 #include "common/utf.h"
-#define vc_chdir(x) _wchdir(UTF8To16(x))
 extern void Create_Main_Window(HANDLE instance, int width, int height);
 HINSTANCE ProgramInstance;
 #else
 #include <unistd.h>
-#define vc_chdir(x) chdir(x)
 #endif
 
 extern int ReadyToQuit;
@@ -226,7 +224,6 @@ int main(int argc, char** argv)
     **	Remember the current working directory and drive.
     */
     Paths.Init("vanillatd", "CONQUER.INI", "CONQUER.MIX", args.ArgV[0]);
-    vc_chdir(Paths.Data_Path());
     CDFileClass::Refresh_Search_Drives();
 
     if (Parse_Command_Line(args.ArgC, args.ArgV)) {
