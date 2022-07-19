@@ -105,7 +105,7 @@ public:
         , Action2(x){};
     virtual ~TriggerTypeClass(void);
 
-    static void* operator new(size_t);
+    static void* operator new(size_t) noexcept;
     static void* operator new(size_t, void* ptr)
     {
         return (ptr);

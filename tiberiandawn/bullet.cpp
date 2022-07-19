@@ -124,7 +124,7 @@ BulletClass::BulletClass(void)
  * HISTORY:                                                                                    *
  *   05/02/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void* BulletClass::operator new(size_t)
+void* BulletClass::operator new(size_t) noexcept
 {
     void* ptr = Bullets.Allocate();
     if (ptr) {

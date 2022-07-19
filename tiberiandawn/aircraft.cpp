@@ -158,7 +158,7 @@ TARGET AircraftClass::As_Target(void) const
  * HISTORY:                                                                                    *
  *   07/26/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void* AircraftClass::operator new(size_t)
+void* AircraftClass::operator new(size_t) noexcept
 {
     void* ptr = Aircraft.Allocate();
     if (ptr) {

@@ -207,7 +207,7 @@ public:
     static void operator delete(void*, void*)
     {
     }
-    static void* operator new(size_t size);
+    static void* operator new(size_t size) noexcept;
     static void* operator new(size_t, void* ptr)
     {
         return (ptr);

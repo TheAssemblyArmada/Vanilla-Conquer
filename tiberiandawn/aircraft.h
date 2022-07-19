@@ -48,7 +48,7 @@ public:
     AircraftTypeClass const* const Class;
 
     //-----------------------------------------------------------------------------
-    void* operator new(size_t);
+    void* operator new(size_t) noexcept;
     void operator delete(void*);
     static void* operator new(size_t, void* ptr)
     {

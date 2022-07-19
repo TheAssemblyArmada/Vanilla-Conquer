@@ -322,7 +322,7 @@ InfantryClass::~InfantryClass(void)
  * HISTORY:                                                                                    *
  *   09/01/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void* InfantryClass::operator new(size_t)
+void* InfantryClass::operator new(size_t) noexcept
 {
     void* ptr = Infantry.Allocate();
     if (ptr) {

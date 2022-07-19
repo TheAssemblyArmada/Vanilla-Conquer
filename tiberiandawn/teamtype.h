@@ -141,7 +141,7 @@ public:
     /*
     **	Overloaded operators
     */
-    void* operator new(size_t);
+    void* operator new(size_t) noexcept;
     static void* operator new(size_t, void* ptr)
     {
         return (ptr);

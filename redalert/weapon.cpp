@@ -120,7 +120,7 @@ WeaponTypeClass::~WeaponTypeClass(void)
  * HISTORY:                                                                                    *
  *   07/17/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void* WeaponTypeClass::operator new(size_t)
+void* WeaponTypeClass::operator new(size_t) noexcept
 {
     return (Weapons.Alloc());
 }

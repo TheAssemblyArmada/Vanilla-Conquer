@@ -46,7 +46,7 @@ public:
     FactoryClass(NoInitClass const& x)
         : StageClass(x){};
     ~FactoryClass(void);
-    static void* operator new(size_t size);
+    static void* operator new(size_t size) noexcept;
     static void* operator new(size_t, void* ptr)
     {
         return (ptr);
