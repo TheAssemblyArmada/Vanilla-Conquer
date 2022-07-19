@@ -218,7 +218,7 @@ SmudgeTypeClass::SmudgeTypeClass(SmudgeType smudge,
  * HISTORY:                                                                                    *
  *   07/09/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void* SmudgeTypeClass::operator new(size_t)
+void* SmudgeTypeClass::operator new(size_t) noexcept
 {
     return (SmudgeTypes.Alloc());
 }

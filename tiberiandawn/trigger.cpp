@@ -1254,7 +1254,7 @@ TriggerClass* TriggerClass::As_Pointer(char const* name)
  * HISTORY:                                                                                    *
  *   11/28/1994 BR : Created.                                                                  *
  *=============================================================================================*/
-void* TriggerClass::operator new(size_t)
+void* TriggerClass::operator new(size_t) noexcept
 {
     void* ptr = Triggers.Allocate();
     if (ptr) {

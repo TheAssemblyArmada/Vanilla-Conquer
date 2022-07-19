@@ -174,7 +174,7 @@ public:
 private:
     IconsetClass& operator=(IconsetClass const&);
     IconsetClass(void);
-    static void* operator new(size_t);
+    static void* operator new(size_t) noexcept;
 };
 
 #endif

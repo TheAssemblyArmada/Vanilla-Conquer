@@ -177,7 +177,7 @@ VesselClass::~VesselClass(void)
  * HISTORY:                                                                                    *
  *   03/14/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void* VesselClass::operator new(size_t)
+void* VesselClass::operator new(size_t) noexcept
 {
     void* ptr = Vessels.Alloc();
     if (ptr != NULL) {

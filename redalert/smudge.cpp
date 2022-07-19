@@ -60,7 +60,7 @@ HousesType SmudgeClass::ToOwn = HOUSE_NONE;
  * HISTORY:                                                                                    *
  *   09/01/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void* SmudgeClass::operator new(size_t)
+void* SmudgeClass::operator new(size_t) noexcept
 {
     void* ptr = Smudges.Allocate();
     if (ptr != NULL) {

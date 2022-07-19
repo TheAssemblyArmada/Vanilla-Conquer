@@ -242,7 +242,7 @@ void TeamClass::Init(void)
  * HISTORY:                                                                                    *
  *   09/21/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void* TeamClass::operator new(size_t)
+void* TeamClass::operator new(size_t) noexcept
 {
     void* ptr = Teams.Allocate();
     if (ptr != NULL) {

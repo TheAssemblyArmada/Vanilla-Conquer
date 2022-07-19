@@ -176,7 +176,7 @@ static bool _Counts_As_Civ_Evac(ObjectClass const* candidate)
  * HISTORY:                                                                                    *
  *   07/26/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void* AircraftClass::operator new(size_t)
+void* AircraftClass::operator new(size_t) noexcept
 {
     void* ptr = Aircraft.Allocate();
     if (ptr) {

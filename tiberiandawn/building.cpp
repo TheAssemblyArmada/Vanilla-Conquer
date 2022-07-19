@@ -1779,7 +1779,7 @@ void BuildingClass::Look(bool)
  *   05/17/1994 JLB : Revamped allocation scheme                                               *
  *   07/29/1994 JLB : Simplified.                                                              *
  *=============================================================================================*/
-void* BuildingClass::operator new(size_t)
+void* BuildingClass::operator new(size_t) noexcept
 {
     void* ptr = Buildings.Allocate();
     if (ptr) {

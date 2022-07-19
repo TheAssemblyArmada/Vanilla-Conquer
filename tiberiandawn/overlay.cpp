@@ -122,7 +122,7 @@ void OverlayClass::Init(void)
  * HISTORY:                                                                                    *
  *   05/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void* OverlayClass::operator new(size_t)
+void* OverlayClass::operator new(size_t) noexcept
 {
     void* ptr = Overlays.Allocate();
     if (ptr) {

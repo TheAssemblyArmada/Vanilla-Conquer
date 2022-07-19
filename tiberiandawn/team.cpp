@@ -117,7 +117,7 @@ void TeamClass::Init(void)
     memset(Success, 0, sizeof(Success));
 }
 
-void* TeamClass::operator new(size_t)
+void* TeamClass::operator new(size_t) noexcept
 {
     void* ptr = Teams.Allocate();
     if (ptr) {
