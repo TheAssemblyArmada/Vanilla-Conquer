@@ -40,7 +40,7 @@
 #include "function.h"
 #include "utracker.h"
 #include "common/packet.h"
-#include "common/endianness.h"
+#include "endianness.h"
 #include "common/internet.h"
 #include "common/gitinfo.h"
 

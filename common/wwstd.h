@@ -258,33 +258,6 @@ inline static void _splitpath(const char* path, char* drive, char* dir, char* fn
     }
 }
 
-inline static char* strupr(char* str)
-{
-    for (int i = 0; i < strlen(str); i++)
-        str[i] = toupper(str[i]);
-    return str;
-}
-
-inline static void strrev(char* str)
-{
-    int len = strlen(str);
-
-    for (int i = 0; i < len / 2; i++) {
-        char c = str[i];
-        str[i] = str[len - i - 1];
-        str[len - i - 1] = c;
-    }
-}
-
-inline static void _strlwr(char* str)
-{
-    int len = strlen(str);
-
-    for (int i = 0; i < len; i++) {
-        str[i] = tolower(str[i]);
-    }
-}
-
 #endif // not _WIN32
 
 #endif // WWSTD_H

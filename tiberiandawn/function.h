@@ -688,7 +688,6 @@ int Fetch_Difficulty(void);
 void Remove_From_List(void** list, int* index, void* ptr);
 void* Conquer_Build_Fading_Table(void const* palette, void* dest, int color, int frac);
 void Fat_Put_Pixel(int x, int y, int color, int size, GraphicViewPortClass&);
-void strtrim(char* buffer);
 long Get_EAX(void);
 
 /*

@@ -12,6 +12,5 @@ int First_False_Bit(void const* array);
 int _Bound(int original, int min, int max);
 #define Bound _Bound
 int Reverse_Long(int number);
-void strtrim(char* buffer);
 
 #endif

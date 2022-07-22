@@ -170,7 +170,7 @@ char const* RawFileClass::Set_Name(char const* filename)
     ** if Resolve_File finds an actual file on-disk we use the real name
     ** instead.
     */
-    _strlwr(Filename);
+    strlwr(Filename);
 
     /*
     ** Try to locate an existing file ignoring case, updates Filename

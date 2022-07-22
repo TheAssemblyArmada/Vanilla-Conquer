@@ -5,7 +5,7 @@
 
 struct __dir
 {
-    struct dirent *entries;
+    struct dirent* entries;
     HANDLE fd;
     long int count;
     long int index;
@@ -15,26 +15,26 @@ static void __seterrno(int value)
 {
 #ifdef _MSC_VER
     _set_errno(value);
-#else /* _MSC_VER */
+#else  /* _MSC_VER */
     errno = value;
 #endif /* _MSC_VER */
 }
 
-int closedir(DIR *dirp)
+int closedir(DIR* dirp)
 {
-    struct __dir *data = NULL;
+    struct __dir* data = NULL;
     if (!dirp) {
         __seterrno(EBADF);
         return -1;
     }
-    data = (struct __dir *)dirp;
+    data = (struct __dir*)dirp;
     CloseHandle((HANDLE)data->fd);
     free(data->entries);
     free(data);
     return 0;
 }
 
-static int __islink(const wchar_t *name, char *buffer)
+static int __islink(const wchar_t* name, char* buffer)
 {
     DWORD io_result = 0;
     DWORD bytes_returned = 0;
@@ -51,7 +51,7 @@ static int __islink(const wchar_t *name, char *buffer)
     if (io_result == 0)
         return 0;
 
-    return ((REPARSE_GUID_DATA_BUFFER *)buffer)->ReparseTag == IO_REPARSE_TAG_SYMLINK;
+    return ((REPARSE_GUID_DATA_BUFFER*)buffer)->ReparseTag == IO_REPARSE_TAG_SYMLINK;
 }
 
 static unsigned long long __inode(const wchar_t* name)
@@ -78,19 +78,19 @@ static unsigned long long __inode(const wchar_t* name)
     return value;
 }
 
-static DIR *__internal_opendir(wchar_t *wname, int size)
+static DIR* __internal_opendir(wchar_t* wname, size_t size)
 {
-    struct __dir *data = NULL;
-    struct dirent *tmp_entries = NULL;
+    struct __dir* data = NULL;
+    struct dirent* tmp_entries = NULL;
     static char default_char = '?';
-    static wchar_t *prefix = L"\\\\?\\";
-    static wchar_t *suffix = L"\\*.*";
-    int extra_prefix = 4; /* use prefix "\\?\" to handle long file names */
+    static wchar_t* prefix = L"\\\\?\\";
+    static wchar_t* suffix = L"\\*.*";
+    int extra_prefix = 4;        /* use prefix "\\?\" to handle long file names */
     static int extra_suffix = 4; /* use suffix "\*.*" to find everything */
-    WIN32_FIND_DATAW w32fd = { 0 };
+    WIN32_FIND_DATAW w32fd = {0};
     HANDLE hFindFile = INVALID_HANDLE_VALUE;
     static int grow_factor = 2;
-    char *buffer = NULL;
+    char* buffer = NULL;
 
     /* Ensure path only uses windows separator, of FindFirstFileW will fail. */
     wchar_t* rep = wname;
@@ -112,7 +112,7 @@ static DIR *__internal_opendir(wchar_t *wname, int size)
         return NULL;
     }
 
-    data = (struct __dir *)malloc(sizeof(struct __dir));
+    data = (struct __dir*)malloc(sizeof(struct __dir));
     if (!data)
         goto out_of_memory;
     wname[extra_prefix + size - 1] = 0;
@@ -120,7 +120,7 @@ static DIR *__internal_opendir(wchar_t *wname, int size)
     wname[extra_prefix + size - 1] = L'\\';
     data->count = 16;
     data->index = 0;
-    data->entries = (struct dirent *)malloc(sizeof(struct dirent) * data->count);
+    data->entries = (struct dirent*)malloc(sizeof(struct dirent) * data->count);
     if (!data->entries)
         goto out_of_memory;
     buffer = malloc(MAXIMUM_REPARSE_DATA_BUFFER_SIZE);
@@ -148,7 +148,7 @@ static DIR *__internal_opendir(wchar_t *wname, int size)
         data->entries[data->index].d_off = 0;
 
         if (++data->index == data->count) {
-            tmp_entries = (struct dirent *)realloc(data->entries, sizeof(struct dirent) * data->count * grow_factor);
+            tmp_entries = (struct dirent*)realloc(data->entries, sizeof(struct dirent) * data->count * grow_factor);
             if (!tmp_entries)
                 goto out_of_memory;
             data->entries = tmp_entries;
@@ -161,7 +161,7 @@ static DIR *__internal_opendir(wchar_t *wname, int size)
 
     data->count = data->index;
     data->index = 0;
-    return (DIR *)data;
+    return (DIR*)data;
 out_of_memory:
     if (data) {
         if (INVALID_HANDLE_VALUE != (HANDLE)data->fd)
@@ -176,9 +176,9 @@ out_of_memory:
     return NULL;
 }
 
-static wchar_t *__get_buffer()
+static wchar_t* __get_buffer()
 {
-    wchar_t *name = malloc(sizeof(wchar_t) * (NTFS_MAX_PATH + NAME_MAX + 8));
+    wchar_t* name = malloc(sizeof(wchar_t) * (NTFS_MAX_PATH + NAME_MAX + 8));
     if (name)
         memcpy(name, L"\\\\?\\", sizeof(wchar_t) * 4);
     return name;
@@ -193,11 +193,11 @@ static int __internal_absolutepath(const char* path)
     return path && (path[1] == ':' || (path[0] == '\\' && path[1] == '\\'));
 }
 
-DIR *opendir(const char *name)
+DIR* opendir(const char* name)
 {
-    DIR *dirp = NULL;
-    wchar_t *wname = __get_buffer();
-    int size = 0;
+    DIR* dirp = NULL;
+    wchar_t* wname = __get_buffer();
+    size_t size = 0;
     if (!wname) {
         __seterrno(ENOMEM);
         return NULL;
@@ -233,10 +233,10 @@ DIR *opendir(const char *name)
     return dirp;
 }
 
-DIR *_wopendir(const wchar_t *name)
+DIR* _wopendir(const wchar_t* name)
 {
-    DIR *dirp = NULL;
-    wchar_t *wname = __get_buffer();
+    DIR* dirp = NULL;
+    wchar_t* wname = __get_buffer();
     int size = 0;
     if (!wname) {
         __seterrno(ENOMEM);
@@ -253,10 +253,10 @@ DIR *_wopendir(const wchar_t *name)
     return dirp;
 }
 
-DIR *fdopendir(int fd)
+DIR* fdopendir(int fd)
 {
-    DIR *dirp = NULL;
-    wchar_t *wname = __get_buffer();
+    DIR* dirp = NULL;
+    wchar_t* wname = __get_buffer();
     int size = 0;
     if (!wname) {
         __seterrno(ENOMEM);
@@ -273,9 +273,9 @@ DIR *fdopendir(int fd)
     return dirp;
 }
 
-struct dirent *readdir(DIR *dirp)
+struct dirent* readdir(DIR* dirp)
 {
-    struct __dir *data = (struct __dir *)dirp;
+    struct __dir* data = (struct __dir*)dirp;
     if (!data) {
         __seterrno(EBADF);
         return NULL;
@@ -286,9 +286,9 @@ struct dirent *readdir(DIR *dirp)
     return NULL;
 }
 
-int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
+int readdir_r(DIR* dirp, struct dirent* entry, struct dirent** result)
 {
-    struct __dir *data = (struct __dir *)dirp;
+    struct __dir* data = (struct __dir*)dirp;
     if (!data) {
         return EBADF;
     }
@@ -302,52 +302,52 @@ int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
     return 0;
 }
 
-void seekdir(DIR *dirp, long int offset)
+void seekdir(DIR* dirp, long int offset)
 {
     if (dirp) {
-        struct __dir *data = (struct __dir *)dirp;
+        struct __dir* data = (struct __dir*)dirp;
         data->index = (offset < data->count) ? offset : data->index;
     }
 }
 
-void rewinddir(DIR *dirp)
+void rewinddir(DIR* dirp)
 {
     seekdir(dirp, 0);
 }
 
-long int telldir(DIR *dirp)
+long int telldir(DIR* dirp)
 {
     if (!dirp) {
         __seterrno(EBADF);
         return -1;
     }
-    return ((struct __dir *)dirp)->count;
+    return ((struct __dir*)dirp)->count;
 }
 
-int dirfd(DIR *dirp)
+int dirfd(DIR* dirp)
 {
     if (!dirp) {
         __seterrno(EINVAL);
         return -1;
     }
-    return (int)(long long)((struct __dir *)dirp)->fd;
+    return (int)(long long)((struct __dir*)dirp)->fd;
 }
 
-int scandir(const char *dirp,
-    struct dirent ***namelist,
-    int (*filter)(const struct dirent *),
-    int (*compar)(const struct dirent **, const struct dirent **))
+int scandir(const char* dirp,
+            struct dirent*** namelist,
+            int (*filter)(const struct dirent*),
+            int (*compar)(const struct dirent**, const struct dirent**))
 {
     struct dirent **entries = NULL, **tmp_entries = NULL;
     long int i = 0, index = 0, count = 16;
-    DIR *d = opendir(dirp);
-    struct __dir *data = (struct __dir *)d;
+    DIR* d = opendir(dirp);
+    struct __dir* data = (struct __dir*)d;
     if (!data) {
         closedir(d);
         __seterrno(ENOENT);
         return -1;
     }
-    entries = (struct dirent **)malloc(sizeof(struct dirent *) * count);
+    entries = (struct dirent**)malloc(sizeof(struct dirent*) * count);
     if (!entries) {
         closedir(d);
         __seterrno(ENOMEM);
@@ -355,7 +355,7 @@ int scandir(const char *dirp,
     }
     for (i = 0; i < data->count; ++i) {
         if (!filter || filter(&data->entries[i])) {
-            entries[index] = (struct dirent *)malloc(sizeof(struct dirent));
+            entries[index] = (struct dirent*)malloc(sizeof(struct dirent));
             if (!entries[index]) {
                 closedir(d);
                 for (i = 0; i < index; ++i)
@@ -366,7 +366,7 @@ int scandir(const char *dirp,
             }
             memcpy(entries[index], &data->entries[i], sizeof(struct dirent));
             if (++index == count) {
-                tmp_entries = (struct dirent **)realloc(entries, sizeof(struct dirent *) * count * 2);
+                tmp_entries = (struct dirent**)realloc(entries, sizeof(struct dirent*) * count * 2);
                 if (!tmp_entries) {
                     closedir(d);
                     for (i = 0; i < index; ++i)
@@ -380,7 +380,7 @@ int scandir(const char *dirp,
             }
         }
     }
-    qsort(entries, index, sizeof(struct dirent *), compar);
+    qsort(entries, index, sizeof(struct dirent*), compar);
     entries[index] = NULL;
     if (namelist)
         *namelist = entries;
@@ -388,22 +388,22 @@ int scandir(const char *dirp,
     return 0;
 }
 
-int alphasort(const void *a, const void *b)
+int alphasort(const void* a, const void* b)
 {
-    struct dirent **dira = (struct dirent **)a, **dirb = (struct dirent **)b;
+    struct dirent **dira = (struct dirent**)a, **dirb = (struct dirent**)b;
     if (!dira || !dirb)
         return 0;
     return strcoll((*dira)->d_name, (*dirb)->d_name);
 }
 
-static int __strverscmp(const char *s1, const char *s2)
+static int __strverscmp(const char* s1, const char* s2)
 {
     return alphasort(s1, s2);
 }
 
-int versionsort(const void *a, const void *b)
+int versionsort(const void* a, const void* b)
 {
-    struct dirent **dira = (struct dirent **)a, **dirb = (struct dirent **)b;
+    struct dirent **dira = (struct dirent**)a, **dirb = (struct dirent**)b;
     if (!dira || !dirb)
         return 0;
     return __strverscmp((*dira)->d_name, (*dirb)->d_name);
