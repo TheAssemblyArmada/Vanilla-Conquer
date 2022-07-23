@@ -156,7 +156,7 @@ extern ThemeClass Theme;
 extern SpecialClass Special;
 extern CCINIClass RuleINI;
 extern RulesClass Rule;
-extern WWKeyboardClass* Keyboard;
+extern WWKeyboardClass* WWKeyboard;
 
 /*
 **	Game object allocation and tracking classes.

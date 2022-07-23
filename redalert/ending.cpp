@@ -95,7 +95,7 @@ void Nod_Ending(void)
     memcpy(SeenBuff.Get_Buffer(), satpic, 64000);
     Show_Mouse();
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     Play_Sample(kanefinl, 255, 128);
     Play_Sample(loopie6m, 255, 128);
 
@@ -111,14 +111,14 @@ void Nod_Ending(void)
             Show_Mouse();
         }
         Call_Back_Delay(1);
-        if (!Keyboard->Check()) {
+        if (!WWKeyboard->Check()) {
             if (!Is_Sample_Playing(loopie6m))
                 Play_Sample(loopie6m, 255, 128);
         } else {
             if (Is_Sample_Playing(kanefinl)) {
                 Clear_KeyBuffer();
             } else {
-                int key = Keyboard->Get();
+                int key = WWKeyboard->Get();
                 if ((key & 0xFF) == KN_LMOUSE && !(key & KN_RLSE_BIT)) {
                     int mousex = MouseQX;
                     int mousey = MouseQY;
@@ -149,7 +149,7 @@ void Nod_Ending(void)
     SeenBuff.Fill_Rect(0, 180, 319, 199, 0);
 
     Hide_Mouse();
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     Set_Font(oldfont);
     FontXSpacing = oldfontxspacing;

@@ -63,7 +63,7 @@
 #include <unistd.h>
 #endif
 
-extern WWKeyboardClass* Keyboard;
+extern WWKeyboardClass* WWKeyboard;
 
 /*
 **	This records the current gadget the the gadget system is "stuck on". Such a
@@ -486,9 +486,9 @@ KeyNumType GadgetClass::Input(void)
     /*
     **	Fetch any pending keyboard input.
     */
-    key = Keyboard->Check();
+    key = WWKeyboard->Check();
     if (key != 0) {
-        key = Keyboard->Get();
+        key = WWKeyboard->Get();
     }
 
 #ifdef WIN32
@@ -527,8 +527,8 @@ KeyNumType GadgetClass::Input(void)
     **	rather the the mouse position at the time we get around to this function.
     */
     if (((key & 0xFF) == KN_LMOUSE) || ((key & 0xFF) == KN_RMOUSE)) {
-        mousex = Keyboard->MouseQX;
-        mousey = Keyboard->MouseQY;
+        mousex = WWKeyboard->MouseQX;
+        mousey = WWKeyboard->MouseQY;
     } else {
         mousex = Get_Mouse_X();
         mousey = Get_Mouse_Y();
@@ -576,12 +576,12 @@ KeyNumType GadgetClass::Input(void)
         **	held down, then we automatically know that it must be up -- set the flag
         **	accordingly.
         */
-        if (Keyboard->Down(KN_LMOUSE)) {
+        if (WWKeyboard->Down(KN_LMOUSE)) {
             flags |= LEFTHELD;
         } else {
             flags |= LEFTUP;
         }
-        if (Keyboard->Down(KN_RMOUSE)) {
+        if (WWKeyboard->Down(KN_RMOUSE)) {
             flags |= RIGHTHELD;
         } else {
             flags |= RIGHTUP;

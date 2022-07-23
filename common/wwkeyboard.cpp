@@ -16,7 +16,7 @@
 /* $Header: /CounterStrike/KEY.CPP 1     3/03/97 10:25a Joe_bostic $ */
 /***********************************************************************************************
  *                                                                                             *
- *                 Project Name : Westwood Keyboard Library                                    *
+ *                 Project Name : Westwood WWKeyboard Library                                    *
  *                                                                                             *
  *                    File Name : KEYBOARD.CPP                                                 *
  *                                                                                             *
@@ -45,7 +45,7 @@
  *   WWKeyboardClass::Peek_Element -- Fetches the next element in the keyboard buffer.         *
  *   WWKeyboardClass::Put -- Logic to insert a key into the keybuffer]                         *
  *   WWKeyboardClass::Put_Element -- Put a keyboard data element into the buffer.              *
- *   WWKeyboardClass::Put_Key_Message -- Translates and inserts wParam into Keyboard Buffer    *
+ *   WWKeyboardClass::Put_Key_Message -- Translates and inserts wParam into WWKeyboard Buffer    *
  *   WWKeyboardClass::To_ASCII -- Convert the key value into an ASCII representation.          *
  *   WWKeyboardClass::Available_Buffer_Room -- Fetch the quantity of free elements in the keybo*
  *   WWKeyboardClass::Put_Mouse_Message -- Stores a mouse type message into the keyboard buffer*
@@ -72,7 +72,7 @@ extern void Focus_Loss();
 extern void Focus_Restore();
 
 /***********************************************************************************************
- * WWKeyboardClass::WWKeyBoardClass -- Construction for Westwood Keyboard Class                *
+ * WWKeyboardClass::WWKeyBoardClass -- Construction for Westwood WWKeyboard Class                *
  *                                                                                             *
  * INPUT:		none							                                                        *
  *                                                                                             *
@@ -199,7 +199,7 @@ bool WWKeyboardClass::Put(unsigned short key)
 }
 
 /***********************************************************************************************
- * WWKeyboardClass::Put_Key_Message -- Translates and inserts wParam into Keyboard Buffer      *
+ * WWKeyboardClass::Put_Key_Message -- Translates and inserts wParam into WWKeyboard Buffer      *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *

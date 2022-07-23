@@ -16,7 +16,7 @@
 /* $Header: /CounterStrike/KEY.H 1     3/03/97 10:25a Joe_bostic $ */
 /***********************************************************************************************
  *                                                                                             *
- *                 Project Name : Westwood Keyboard Library                                    *
+ *                 Project Name : Westwood WWKeyboard Library                                    *
  *                                                                                             *
  *                    File Name : KEYBOARD.H                                                   *
  *                                                                                             *
@@ -750,7 +750,7 @@ public:
     /* Define the base constructor and destructors for the class			*/
     WWKeyboardClass();
 
-    /* Define the functions which work with the Keyboard Class				*/
+    /* Define the functions which work with the WWKeyboard Class				*/
     KeyNumType Check(void) const;
     KeyNumType Get(void);
     bool Put(unsigned short key);
@@ -772,7 +772,7 @@ public:
 #endif
 
     /* Define the public access variables which are used with the			*/
-    /*   Keyboard Class.																	*/
+    /*   WWKeyboard Class.																	*/
     int MouseQX;
     int MouseQY;
 

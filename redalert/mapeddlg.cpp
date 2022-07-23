@@ -615,7 +615,7 @@ int MapEditClass::Load_Scenario(void)
             char second = scen_nump % 36;
             scen_buf[0] = first + 'A';
             // Mono_Printf("picking map, scen# = %d, first = %c, second = %d (numeric)\n",scen_nump,
-            // scen_buf[0],second);Keyboard->Get();Keyboard->Get();
+            // scen_buf[0],second);WWKeyboard->Get();WWKeyboard->Get();
             if (second < 10) {
                 scen_buf[1] = second + '0';
             } else {
@@ -912,7 +912,7 @@ int MapEditClass::Load_Scenario(void)
                 }
             }
             scen_nump = (first * 36) + second;
-            // Mono_Printf("Converted to: %d, %d = %d\n",first, second, scen_nump);Keyboard->Get();Keyboard->Get();
+            // Mono_Printf("Converted to: %d, %d = %d\n",first, second, scen_nump);WWKeyboard->Get();WWKeyboard->Get();
         }
 #else
     scen_nump = atoi(scen_buf);
@@ -1368,12 +1368,12 @@ int MapEditClass::Load_Scenario(void)
                     /*
                     **	Grab top left
                     */
-                    delta1 = abs(Keyboard->MouseQX - map_x1);
-                    delta2 = abs(Keyboard->MouseQY - map_y1);
+                    delta1 = abs(WWKeyboard->MouseQX - map_x1);
+                    delta2 = abs(WWKeyboard->MouseQY - map_y1);
                     if (delta1 < 3 && delta2 < 3) {
                         grabbed = 1;
-                        mx = Keyboard->MouseQX;
-                        my = Keyboard->MouseQY;
+                        mx = WWKeyboard->MouseQX;
+                        my = WWKeyboard->MouseQY;
                         display = REDRAW_MAP;
                         break;
                     }
@@ -1381,12 +1381,12 @@ int MapEditClass::Load_Scenario(void)
                     /*
                     **	Grab top right
                     */
-                    delta1 = abs(Keyboard->MouseQX - map_x2);
-                    delta2 = abs(Keyboard->MouseQY - map_y1);
+                    delta1 = abs(WWKeyboard->MouseQX - map_x2);
+                    delta2 = abs(WWKeyboard->MouseQY - map_y1);
                     if (delta1 < 3 && delta2 < 3) {
                         grabbed = 2;
-                        mx = Keyboard->MouseQX;
-                        my = Keyboard->MouseQY;
+                        mx = WWKeyboard->MouseQX;
+                        my = WWKeyboard->MouseQY;
                         display = REDRAW_MAP;
                         break;
                     }
@@ -1394,12 +1394,12 @@ int MapEditClass::Load_Scenario(void)
                     /*
                     **	Grab bottom right
                     */
-                    delta1 = abs(Keyboard->MouseQX - map_x2);
-                    delta2 = abs(Keyboard->MouseQY - map_y2);
+                    delta1 = abs(WWKeyboard->MouseQX - map_x2);
+                    delta2 = abs(WWKeyboard->MouseQY - map_y2);
                     if (delta1 < 3 && delta2 < 3) {
                         grabbed = 3;
-                        mx = Keyboard->MouseQX;
-                        my = Keyboard->MouseQY;
+                        mx = WWKeyboard->MouseQX;
+                        my = WWKeyboard->MouseQY;
                         display = REDRAW_MAP;
                         break;
                     }
@@ -1407,12 +1407,12 @@ int MapEditClass::Load_Scenario(void)
                     /*
                     **	Grab bottom left
                     */
-                    delta1 = abs(Keyboard->MouseQX - map_x1);
-                    delta2 = abs(Keyboard->MouseQY - map_y2);
+                    delta1 = abs(WWKeyboard->MouseQX - map_x1);
+                    delta2 = abs(WWKeyboard->MouseQY - map_y2);
                     if (delta1 < 3 && delta2 < 3) {
                         grabbed = 4;
-                        mx = Keyboard->MouseQX;
-                        my = Keyboard->MouseQY;
+                        mx = WWKeyboard->MouseQX;
+                        my = WWKeyboard->MouseQY;
                         display = REDRAW_MAP;
                         break;
                     }
@@ -1420,12 +1420,12 @@ int MapEditClass::Load_Scenario(void)
                     /*
                     **	Grab the whole map
                     */
-                    delta1 = abs(Keyboard->MouseQX - ((map_x1 + map_x2) / 2));
-                    delta2 = abs(Keyboard->MouseQY - ((map_y1 + map_y2) / 2));
+                    delta1 = abs(WWKeyboard->MouseQX - ((map_x1 + map_x2) / 2));
+                    delta2 = abs(WWKeyboard->MouseQY - ((map_y1 + map_y2) / 2));
                     if (delta1 < (map_x2 - map_x1) / 4 && delta2 < (map_y2 - map_y1) / 4) {
                         grabbed = 5;
-                        mx = Keyboard->MouseQX;
-                        my = Keyboard->MouseQY;
+                        mx = WWKeyboard->MouseQX;
+                        my = WWKeyboard->MouseQY;
                         display = REDRAW_MAP;
                     }
                     break;

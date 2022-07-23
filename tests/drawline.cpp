@@ -12,7 +12,7 @@ bool GameInFocus;
 int ScreenWidth;
 int WindowList[9][9];
 char* _ShapeBuffer = 0;
-WWKeyboardClass* Keyboard;
+WWKeyboardClass* WWKeyboard;
 
 void Process_Network()
 {

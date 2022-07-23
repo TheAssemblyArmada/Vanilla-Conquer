@@ -248,7 +248,7 @@ int EditClass::Action(unsigned flags, KeyNumType& key)
             flags = 0;
 
         } else {
-            KeyASCIIType ascii = (KeyASCIIType)(Keyboard->To_ASCII(key) & 0xff);
+            KeyASCIIType ascii = (KeyASCIIType)(WWKeyboard->To_ASCII(key) & 0xff);
 
             /*
             ** Allow numeric keypad presses to map to ascii numbers
@@ -270,7 +270,7 @@ int EditClass::Action(unsigned flags, KeyNumType& key)
                     || key == KN_BACKSPACE) {
 
                     if ((!(flags & LEFTRELEASE)) && (!(flags & RIGHTRELEASE))) {
-                        if (Handle_Key(Keyboard->To_ASCII(key))) {
+                        if (Handle_Key(WWKeyboard->To_ASCII(key))) {
                             flags &= ~KEYBOARD;
                             key = KN_NONE;
                         }

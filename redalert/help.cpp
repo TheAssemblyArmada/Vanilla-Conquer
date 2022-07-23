@@ -139,7 +139,7 @@ short const* HelpClass::Overlap_List(void) const
  *    the help system to display the help text the next time the Draw_Help() function is       *
  *    called.                                                                                  *
  *                                                                                             *
- * INPUT:   key   -- Keyboard input code.                                                      *
+ * INPUT:   key   -- WWKeyboard input code.                                                      *
  *                                                                                             *
  *          x,y   -- Mouse coordinates.                                                        *
  *                                                                                             *

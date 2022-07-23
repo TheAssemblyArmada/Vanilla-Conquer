@@ -506,7 +506,7 @@ void Map_Selection(void)
     unsigned char grey2palette[768];
     unsigned char progresspalette[768];
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     oldfont = Set_Font(ScoreFontPtr);
     Set_Font_Palette(_regpal);
     Set_Palette(BlackPalette);
@@ -643,10 +643,10 @@ void Map_Selection(void)
 
     while (CountDownTimer.Time() || Is_Speaking()) {
         Call_Back();
-        //		if (Keyboard->Check()) CountDownTimer.Set(0);
+        //		if (WWKeyboard->Check()) CountDownTimer.Set(0);
     }
 
-    //	Keyboard->Clear();
+    //	WWKeyboard->Clear();
 
     /*
     ** now make the grid appear
@@ -742,7 +742,7 @@ void Map_Selection(void)
         }
 
         Animate_Frame(anim, *PseudoSeenBuff, frame++);
-        Call_Back_Delay(/*Keyboard->Check() ? 0 :*/ 3);
+        Call_Back_Delay(/*WWKeyboard->Check() ? 0 :*/ 3);
     }
 
     TextPrintBuffer->Fill_Rect(0,
@@ -760,7 +760,7 @@ void Map_Selection(void)
 
     Close_Animation(anim);
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     BlitList.Clear();
 
     /*
@@ -1026,13 +1026,13 @@ void Map_Selection(void)
     while (Get_Mouse_State() > 0)
         Show_Mouse();
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     while (!done) {
         Cycle_Call_Back_Delay(1, progresspalette);
 
         // Check for the mouse button
-        if (Keyboard->Check()) {
-            if ((Keyboard->Get() & 0x10FF) == KN_LMOUSE) {
+        if (WWKeyboard->Check()) {
+            if ((WWKeyboard->Get() & 0x10FF) == KN_LMOUSE) {
                 for (selection = 0; selection < CountryArray[scenario].Choices[ScenDir]; selection++) {
                     color = click_map.Get_Pixel(Get_Mouse_X() / factor, Get_Mouse_Y() / factor);
 
@@ -1332,14 +1332,14 @@ void Print_Statistics(int country, int xpos, int ypos)
                 Call_Back_Delay(1);
             }
     }
-    Keyboard->Clear();
-    while (Keyboard->Check()) {
-        Keyboard->Clear();
+    WWKeyboard->Clear();
+    while (WWKeyboard->Check()) {
+        WWKeyboard->Clear();
     }
-    while (!Keyboard->Check() && !ControlQ) {
+    while (!WWKeyboard->Check() && !ControlQ) {
         Call_Back_Delay(1);
     }
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     Set_Font(oldfont);
 }
 

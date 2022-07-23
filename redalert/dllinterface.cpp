@@ -102,7 +102,7 @@ extern char const* Speech[VOX_COUNT];
 */
 #define GAME_TO_PLAY      Session.Type
 #define MULTIPLAYER_COUNT Session.Players.Count()
-#define KEYBOARD          Keyboard
+#define KEYBOARD          WWKeyboard
 
 #define RANDOM_START_POSITION 0x7f
 
@@ -4127,8 +4127,8 @@ extern "C" __declspec(dllexport) void __cdecl CNC_Handle_Input(InputRequestEnum 
         DLLExportClass::Adjust_Internal_View();
         DLLForceMouseX = x1;
         DLLForceMouseY = y1;
-        Keyboard->MouseQX = x1;
-        Keyboard->MouseQY = y1;
+        WWKeyboard->MouseQX = x1;
+        WWKeyboard->MouseQY = y1;
 
         COORDINATE coord = Map.Pixel_To_Coord(x1, y1);
         CELL cell = Coord_Cell(coord);
@@ -4146,8 +4146,8 @@ extern "C" __declspec(dllexport) void __cdecl CNC_Handle_Input(InputRequestEnum 
         DLLExportClass::Adjust_Internal_View();
         DLLForceMouseX = x1;
         DLLForceMouseY = y1;
-        Keyboard->MouseQX = x1;
-        Keyboard->MouseQY = y1;
+        WWKeyboard->MouseQX = x1;
+        WWKeyboard->MouseQY = y1;
 
         COORDINATE coord = Map.Pixel_To_Coord(x1, y1);
         CELL cell = Coord_Cell(coord);
@@ -4168,8 +4168,8 @@ extern "C" __declspec(dllexport) void __cdecl CNC_Handle_Input(InputRequestEnum 
         DLLExportClass::Adjust_Internal_View();
         DLLForceMouseX = x1;
         DLLForceMouseY = y1;
-        Keyboard->MouseQX = x1;
-        Keyboard->MouseQY = y1;
+        WWKeyboard->MouseQX = x1;
+        WWKeyboard->MouseQY = y1;
 
         COORDINATE coord = Map.Pixel_To_Coord(x1, y1);
         CELL cell = Coord_Cell(coord);

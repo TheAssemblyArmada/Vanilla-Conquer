@@ -43,8 +43,8 @@ void GDI_Ending(void)
         Load_Title_Screen("DEMOPIC.CPS", &HidPage, Palette);
         Blit_Hid_Page_To_Seen_Buff();
         Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-        Keyboard->Clear();
-        Keyboard->Get();
+        WWKeyboard->Clear();
+        WWKeyboard->Get();
         Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
         VisiblePage.Clear();
         return;
@@ -70,7 +70,7 @@ void GDI_Ending(void)
         Load_Uncompress(CCFileClass("ATTRACT2.CPS"), SysMemPage, SysMemPage, Palette);
         SysMemPage.Scale(SeenBuff, 0, 0, 0, 0, 320, 199, 640, 398);
         Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-        Keyboard->Clear();
+        WWKeyboard->Clear();
         count.Set(TIMER_SECOND * 3);
         while (count.Time()) {
             Call_Back();
@@ -84,7 +84,7 @@ void GDI_Ending(void)
     Load_Uncompress(CCFileClass("ATTRACT2.CPS"), SysMemPage, SysMemPage, Palette);
     SysMemPage.Scale(SeenBuff, 0, 0, 0, 0, 320, 199, 640, 398);
     Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     //	CountDownTimerClass count;
     count.Set(TIMER_SECOND * 3);
     while (count.Time()) {
@@ -149,7 +149,7 @@ void Nod_Ending(void)
     Read_Interpolation_Palette("SATSELIN.PAL");
     Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "SATSELIN.PAL", Settings.Video.InterpolationMode);
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     Play_Sample(kanefinl, 255, 128);
     Play_Sample(loopie6m, 255, 128);
 
@@ -165,17 +165,17 @@ void Nod_Ending(void)
             Show_Mouse();
         }
         Call_Back_Delay(1);
-        if (!Keyboard->Check()) {
+        if (!WWKeyboard->Check()) {
             if (!Is_Sample_Playing(loopie6m))
                 Play_Sample(loopie6m, 255, 128);
         } else {
             if (Is_Sample_Playing(kanefinl)) {
-                Keyboard->Clear();
+                WWKeyboard->Clear();
             } else {
-                int key = Keyboard->Get();
+                int key = WWKeyboard->Get();
                 if ((key & 0x10FF) == KN_LMOUSE && !(key & KN_RLSE_BIT)) {
-                    int mousex = Keyboard->MouseQX;
-                    int mousey = Keyboard->MouseQY;
+                    int mousex = WWKeyboard->MouseQX;
+                    int mousey = WWKeyboard->MouseQY;
                     if (mousey >= 22 * factor && mousey <= 177 * factor) {
                         done++;
                         if (mousex < 160 * factor && mousey < 100 * factor)
@@ -205,7 +205,7 @@ void Nod_Ending(void)
     TextPrintBuffer->Fill_Rect(0, 180 * 2, 319 * 2, 199 * 2, 0);
 
     Hide_Mouse();
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     Set_Font(oldfont);
     FontXSpacing = oldfontxspacing;
@@ -222,7 +222,7 @@ void Nod_Ending(void)
         Load_Uncompress(CCFileClass("ATTRACT2.CPS"), SysMemPage, SysMemPage, Palette);
         SysMemPage.Scale(SeenBuff, 0, 0, 0, 0, 320, 199, 640, 398);
         Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-        Keyboard->Clear();
+        WWKeyboard->Clear();
         count.Set(TIMER_SECOND * 3);
         while (count.Time()) {
             Call_Back();
@@ -236,7 +236,7 @@ void Nod_Ending(void)
     Load_Uncompress(CCFileClass("ATTRACT2.CPS"), SysMemPage, SysMemPage, Palette);
     SysMemPage.Scale(SeenBuff, 0, 0, 0, 0, 320, 199, 640, 398);
     Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     //	CountDownTimerClass count;
     count.Set(TIMER_SECOND * 3);
     while (count.Time()) {

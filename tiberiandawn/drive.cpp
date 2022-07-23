@@ -682,7 +682,7 @@ bool DriveClass::While_Moving(void)
                             track = newtrack;
 
                             //			Mono_Printf("**Jumping from track %d to track %d. **\n", tracknum,
-                            //track->Track);Keyboard::Get();
+                            //track->Track);WWKeyboard::Get();
 
                             tracknum = track->Track;
                             TrackIndex = RawTracks[tracknum - 1].Entry - 1; // Anticipate increment.

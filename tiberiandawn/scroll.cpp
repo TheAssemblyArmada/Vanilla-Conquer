@@ -103,8 +103,8 @@ void ScrollClass::AI(KeyNumType& input, int x, int y)
         }
 
 #ifdef SDL2_BUILD
-        if (Keyboard->Is_Analog_Scroll_Active()) {
-            unsigned char scrollDirection = Keyboard->Get_Scroll_Direction();
+        if (WWKeyboard->Is_Analog_Scroll_Active()) {
+            unsigned char scrollDirection = WWKeyboard->Get_Scroll_Direction();
             int scrollDistance = (7 - Options.ScrollRate) * 20;
             Scroll_Map((DirType)scrollDirection, scrollDistance, true);
         }
@@ -164,10 +164,10 @@ void ScrollClass::AI(KeyNumType& input, int x, int y)
                 /*
 				**	Increase the scroll rate if the mouse button is held down.
 				*/
-                //			if (Keyboard->Down(KN_LMOUSE)) {
+                //			if (WWKeyboard->Down(KN_LMOUSE)) {
                 //				rate = Bound(rate-3, 0, 4);
                 //			}
-                if (Keyboard->Down(KN_RMOUSE)) {
+                if (WWKeyboard->Down(KN_RMOUSE)) {
                     rate = Bound(rate + 1, 4, (int)(sizeof(_rate) / sizeof(_rate[0])) - 1);
                 }
 
@@ -191,7 +191,7 @@ void ScrollClass::AI(KeyNumType& input, int x, int y)
 					**	If the mouse button is pressed or auto scrolling is active, then scroll
 					**	the map if the delay counter indicates.
 					*/
-                    if (Keyboard->Down(KN_LMOUSE) || IsAutoScroll) {
+                    if (WWKeyboard->Down(KN_LMOUSE) || IsAutoScroll) {
                         distance = _rate[rate];
                         Scroll_Map(direction, distance, true);
 

@@ -47,7 +47,7 @@
 #include "wspudp.h"
 #include "misc.h"
 #include "wwkeyboard.h"
-extern WWKeyboardClass* Keyboard;
+extern WWKeyboardClass* WWKeyboard;
 
 #include <assert.h>
 #include <stdio.h>
@@ -346,7 +346,7 @@ void UDPInterfaceClass::Broadcast(void* buffer, int buffer_len)
         /*
         ** Make sure the message loop gets called.
         */
-        Keyboard->Check();
+        WWKeyboard->Check();
     }
 }
 

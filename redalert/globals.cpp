@@ -247,7 +247,7 @@ RulesClass Rule;
 ** All keyboard input is routed through the object pointed to by this
 **	keyboard class pointer.
 */
-WWKeyboardClass* Keyboard;
+WWKeyboardClass* WWKeyboard;
 
 /***************************************************************************
 **	Remap control array. This is used to hold the remap

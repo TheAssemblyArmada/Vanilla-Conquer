@@ -191,7 +191,7 @@ GameType Select_MPlayer_Game(void)
     }
     buttons[curbutton]->Turn_On();
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     Fancy_Text_Print(TXT_NONE, 0, 0, GadgetClass::Get_Color_Scheme(), TBLACK, TPF_CENTER | TPF_TEXT);
 

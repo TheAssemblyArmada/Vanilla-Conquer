@@ -3521,7 +3521,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             // MBL 04.14.2020 Original code KO, since is still active and can still hit
             //
             if (mission == MISSION_MOVE
-                && (Keyboard->Down(Options.KeyQueueMove1) || Keyboard->Down(Options.KeyQueueMove2))) {
+                && (WWKeyboard->Down(Options.KeyQueueMove1) || WWKeyboard->Down(Options.KeyQueueMove2))) {
                 mission = MISSION_QMOVE;
             }
 #else
@@ -3571,18 +3571,18 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                 return (ACTION_SELF);
             }
 #ifdef REMASTER_BUILD
-            // bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
-            // bool ctrldown = (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
-            // bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
+            // bool altdown = (WWKeyboard->Down(Options.KeyForceMove1) || WWKeyboard->Down(Options.KeyForceMove2));
+            // bool ctrldown = (WWKeyboard->Down(Options.KeyForceAttack1) || WWKeyboard->Down(Options.KeyForceAttack2));
+            // bool shiftdown = (WWKeyboard->Down(Options.KeySelect1) || WWKeyboard->Down(Options.KeySelect2));
             // Added for getting the input for special character keys from the client
             // - 6/26/2019 JAS
             bool altdown = DLL_Export_Get_Input_Key_State(KN_LALT);
             bool ctrldown = DLL_Export_Get_Input_Key_State(KN_LCTRL);
             bool shiftdown = DLL_Export_Get_Input_Key_State(KN_LSHIFT);
 #else
-        bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
-        bool ctrldown = (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
-        bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
+        bool altdown = (WWKeyboard->Down(Options.KeyForceMove1) || WWKeyboard->Down(Options.KeyForceMove2));
+        bool ctrldown = (WWKeyboard->Down(Options.KeyForceAttack1) || WWKeyboard->Down(Options.KeyForceAttack2));
+        bool shiftdown = (WWKeyboard->Down(Options.KeySelect1) || WWKeyboard->Down(Options.KeySelect2));
 #endif
             /*
             **	Special guard area mission is possible if both the control and the
@@ -3701,18 +3701,18 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         CellClass const* cellptr = &Map[cell];
         OverlayTypeClass const* optr = NULL;
 #ifdef REMASTER_BUILD
-        // bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
-        // bool ctrldown = (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
-        // bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
+        // bool altdown = (WWKeyboard->Down(Options.KeyForceMove1) || WWKeyboard->Down(Options.KeyForceMove2));
+        // bool ctrldown = (WWKeyboard->Down(Options.KeyForceAttack1) || WWKeyboard->Down(Options.KeyForceAttack2));
+        // bool shiftdown = (WWKeyboard->Down(Options.KeySelect1) || WWKeyboard->Down(Options.KeySelect2));
         // Added for getting the input for special character keys from the client
         // - 6/26/2019 JAS
         bool altdown = DLL_Export_Get_Input_Key_State(KN_LALT);
         bool ctrldown = DLL_Export_Get_Input_Key_State(KN_LCTRL);
         bool shiftdown = DLL_Export_Get_Input_Key_State(KN_LSHIFT);
 #else
-    bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
-    bool ctrldown = (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
-    bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
+    bool altdown = (WWKeyboard->Down(Options.KeyForceMove1) || WWKeyboard->Down(Options.KeyForceMove2));
+    bool ctrldown = (WWKeyboard->Down(Options.KeyForceAttack1) || WWKeyboard->Down(Options.KeyForceAttack2));
+    bool shiftdown = (WWKeyboard->Down(Options.KeySelect1) || WWKeyboard->Down(Options.KeySelect2));
 #endif
         /*
         **	Disable recognizing the <CTRL> key forced fire option when dealing with buildings.
@@ -7070,7 +7070,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             MaxPassengers = ini.Get_Int(Name(), "Passengers", MaxPassengers);
             // Mono_Printf("before image=: %s\n",GraphicName);
             ini.Get_String(Name(), "Image", GraphicName, GraphicName, sizeof(GraphicName));
-            // Mono_Printf("after image=: %s\n",GraphicName);if(Random_Pick(0,4)) Keyboard->Get();
+            // Mono_Printf("after image=: %s\n",GraphicName);if(Random_Pick(0,4)) WWKeyboard->Get();
 
             IsLeader = false;
             if (PrimaryWeapon != NULL && PrimaryWeapon->Attack > 0) {

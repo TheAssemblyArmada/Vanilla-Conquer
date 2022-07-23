@@ -232,7 +232,7 @@ GameType Select_MPlayer_Game(void)
 
     buttons[curbutton]->Turn_On();
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     Fancy_Text_Print(TXT_NONE, 0, 0, CC_GREEN, TBLACK, TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
 

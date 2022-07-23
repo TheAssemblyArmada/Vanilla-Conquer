@@ -960,7 +960,7 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
     case ((int)KN_Y | (int)KN_ALT_BIT):
     case ((int)KN_Z | (int)KN_ALT_BIT):
         if (CurrentCell != 0) {
-            waypt_idx = Keyboard->To_ASCII(input & 0xff) - KA_a;
+            waypt_idx = WWKeyboard->To_ASCII(input & 0xff) - KA_a;
             /*...............................................................
             Unflag cell for this waypoint if there is one
             ...............................................................*/
@@ -989,7 +989,7 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
         If there's a current cell, place the flag & waypoint there.
         ------------------------------------------------------------------*/
         if (CurrentCell != 0) {
-            waypt_idx = (Keyboard->To_ASCII(input & 0xff) - KA_1);
+            waypt_idx = (WWKeyboard->To_ASCII(input & 0xff) - KA_1);
             house = (HousesType)(HOUSE_MULTI1 + waypt_idx);
             if (HouseClass::As_Pointer(house)) {
                 HouseClass::As_Pointer(house)->Flag_Attach(CurrentCell, true);
@@ -1000,7 +1000,7 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
             waypoint.
             ------------------------------------------------------------------*/
             if (CurrentObject[0] != 0) {
-                waypt_idx = (Keyboard->To_ASCII(input & 0xff) - KA_1);
+                waypt_idx = (WWKeyboard->To_ASCII(input & 0xff) - KA_1);
                 house = (HousesType)(HOUSE_MULTI1 + waypt_idx);
                 if (HouseClass::As_Pointer(house) && CurrentObject[0]->What_Am_I() == RTTI_UNIT) {
                     HouseClass::As_Pointer(house)->Flag_Attach((UnitClass*)CurrentObject[0], true);
@@ -1073,7 +1073,7 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
         /*
         ------------------------- Left Button DOWN -------------------------
         */
-        if (Keyboard->Down(KN_LMOUSE)) {
+        if (WWKeyboard->Down(KN_LMOUSE)) {
             LMouseDown = 1;
             /*
             ............... Placement mode: place an object .................
@@ -1109,7 +1109,7 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
                             /*
                             ................ No object: select the cell ..................
                             */
-                            CurrentCell = Click_Cell_Calc(Keyboard->MouseQX, Keyboard->MouseQY);
+                            CurrentCell = Click_Cell_Calc(WWKeyboard->MouseQX, WWKeyboard->MouseQY);
                             HiddenPage.Clear();
                             Flag_To_Redraw(true);
                             Render();

@@ -193,7 +193,7 @@ void Setup_Menu(int menu, char const* text[], unsigned int field, int index, int
     }
     MenuSkip = skip;
     Show_Mouse();
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 }
 
 /*=========================================================================*/
@@ -233,9 +233,9 @@ int Check_Menu(int menu, char const* text[], char*, int field, int index)
     */
     key = 0;
     UnknownKey = 0;
-    if (Keyboard->Check()) {
+    if (WWKeyboard->Check()) {
         /* mask off all but release bit	*/
-        key = (Keyboard->Get() & ~(WWKEY_SHIFT_BIT | WWKEY_ALT_BIT | WWKEY_CTRL_BIT));
+        key = (WWKeyboard->Get() & ~(WWKEY_SHIFT_BIT | WWKEY_ALT_BIT | WWKEY_CTRL_BIT));
     }
 
     /*
@@ -281,8 +281,8 @@ int Check_Menu(int menu, char const* text[], char*, int field, int index)
     */
     case KN_RMOUSE:
     case KN_LMOUSE:
-        if (Coordinates_In_Region(Keyboard->MouseQX, Keyboard->MouseQY, mx1, my1, mx2, my2)) {
-            newitem = (Keyboard->MouseQY - my1) / menuskip;
+        if (Coordinates_In_Region(WWKeyboard->MouseQX, WWKeyboard->MouseQY, mx1, my1, mx2, my2)) {
+            newitem = (WWKeyboard->MouseQY - my1) / menuskip;
         } else {
             UnknownKey = key; //	Pass the unprocessed button click back.
             break;
@@ -311,7 +311,7 @@ int Check_Menu(int menu, char const* text[], char*, int field, int index)
     default:
         for (idx = 0; idx < menuptr[ITEMSHIGH]; idx++) {
             if (toupper(*(text[Select_To_Entry(idx, field, index)]))
-                == toupper(Keyboard->To_ASCII((KeyNumType)(key & 0x0FF)))) {
+                == toupper(WWKeyboard->To_ASCII((KeyNumType)(key & 0x0FF)))) {
                 newitem = select = idx;
                 break;
             }
@@ -378,7 +378,7 @@ int Do_Menu(char const** strings, bool)
     if (!strings)
         return (-1);
     Set_Logic_Page(SeenBuff);
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     /*
     **	Determine the number of entries in this string.
@@ -421,7 +421,7 @@ int Do_Menu(char const** strings, bool)
     Window_Box(WINDOW_MENU, BOXSTYLE_RAISED);
     Setup_Menu(0, strings, 0xFFFFL, 0, 0);
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     selection = -1;
     UnknownKey = 0;
     while (selection == -1) {
@@ -432,7 +432,7 @@ int Do_Menu(char const** strings, bool)
 
         Frame_Limiter();
     }
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     Hide_Mouse();
 
     HidPage.Blit(SeenPage);
@@ -629,7 +629,7 @@ int Main_Menu(unsigned int)
         Force_CD_Available(RequiredCD);
     }
     Set_Logic_Page(SeenBuff);
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     starttime = TickCount;
 
     /*
@@ -690,7 +690,7 @@ int Main_Menu(unsigned int)
 
     buttons[curbutton]->Turn_On();
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     Fancy_Text_Print(TXT_NONE,
                      0,
@@ -935,8 +935,8 @@ int Main_Menu(unsigned int)
             break;
 
         case KN_LMOUSE:
-            if (Coordinates_In_Region(Keyboard->MouseQX,
-                                      Keyboard->MouseQY,
+            if (Coordinates_In_Region(WWKeyboard->MouseQX,
+                                      WWKeyboard->MouseQY,
 
                                       9 * RESFACTOR,
                                       10 * RESFACTOR,
@@ -952,9 +952,9 @@ int Main_Menu(unsigned int)
 #ifdef FIXIT_PATCH_108
             if (Is_Counterstrike_Installed() == true) {
 #endif
-                if ((Keyboard->Down(KN_LSHIFT) || Keyboard->Down(KN_RSHIFT))
+                if ((WWKeyboard->Down(KN_LSHIFT) || WWKeyboard->Down(KN_RSHIFT))
                     && Coordinates_In_Region(
-                        Keyboard->MouseQX, Keyboard->MouseQY, 260 * RESFACTOR, 0, 320 * RESFACTOR, 50 * RESFACTOR)) {
+                        WWKeyboard->MouseQX, WWKeyboard->MouseQY, 260 * RESFACTOR, 0, 320 * RESFACTOR, 50 * RESFACTOR)) {
                     AntsEnabled = true;
                     process = false;
 #ifdef FIXIT_VERSION_3

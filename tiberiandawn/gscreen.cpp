@@ -249,7 +249,7 @@ void GScreenClass::Flag_To_Redraw(bool complete)
  *=============================================================================================*/
 void GScreenClass::Input(KeyNumType& key, int& x, int& y)
 {
-    key = Keyboard->Check();
+    key = WWKeyboard->Check();
 
     x = Get_Mouse_X();
     y = Get_Mouse_Y();
@@ -273,7 +273,7 @@ void GScreenClass::Input(KeyNumType& key, int& x, int& y)
 
     } else {
         if (key) {
-            key = Keyboard->Get();
+            key = WWKeyboard->Get();
         }
     }
     AI(key, x, y);

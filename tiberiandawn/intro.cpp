@@ -177,7 +177,7 @@ void Choose_Side(void)
     Alloc_Object(new ScorePrintClass(TXT_SEL_TRANS, 103, 190, _graypal));
 #endif
 #endif
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     while (Get_Mouse_State())
         Show_Mouse();
@@ -213,10 +213,10 @@ void Choose_Side(void)
         }
         if (frame >= Get_Animation_Frame_Count(anim))
             frame = 0;
-        if (Keyboard->Check() && endframe == 255) {
-            if ((Keyboard->Get() & 0x10FF) == KN_LMOUSE) {
-                if ((Keyboard->MouseQY > 48 * scale_factor) && (Keyboard->MouseQY < 150 * scale_factor)) {
-                    if ((Keyboard->MouseQX > 18 * scale_factor) && (Keyboard->MouseQX < 148 * scale_factor)) {
+        if (WWKeyboard->Check() && endframe == 255) {
+            if ((WWKeyboard->Get() & 0x10FF) == KN_LMOUSE) {
+                if ((WWKeyboard->MouseQY > 48 * scale_factor) && (WWKeyboard->MouseQY < 150 * scale_factor)) {
+                    if ((WWKeyboard->MouseQX > 18 * scale_factor) && (WWKeyboard->MouseQX < 148 * scale_factor)) {
                         // Chose GDI
                         Whom = HOUSE_GOOD;
                         ScenPlayer = SCEN_PLAYER_GDI;
@@ -224,7 +224,7 @@ void Choose_Side(void)
                         speechhandle = Play_Sample(speechg);
                         speechplaying = true;
                         speech = speechg;
-                    } else if ((Keyboard->MouseQX > 160 * scale_factor) && (Keyboard->MouseQX < 300 * scale_factor)) {
+                    } else if ((WWKeyboard->MouseQX > 160 * scale_factor) && (WWKeyboard->MouseQX < 300 * scale_factor)) {
                         // Chose Nod
                         selection = 1;
                         endframe = 14;
@@ -247,7 +247,7 @@ void Choose_Side(void)
     PseudoSeenBuff->Fill_Rect(0, 180, 319, 199, 0);
     SeenBuff.Fill_Rect(0, 180 * scale_factor, 319 * scale_factor, 199 * scale_factor, 0);
     Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, "SIDES.PAL", Settings.Video.InterpolationMode);
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     SysMemPage.Clear();
 
     /*

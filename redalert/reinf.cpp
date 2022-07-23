@@ -201,7 +201,7 @@ static FootClass* _Create_Group(TeamTypeClass const* teamtype)
                 if (team != NULL) {
                     ScenarioInit++;
                     bool ok = team->Add(temp);
-                    // Mono_Printf("Added to team = %d.\n", ok);Keyboard->Get();
+                    // Mono_Printf("Added to team = %d.\n", ok);WWKeyboard->Get();
 
                     ScenarioInit--;
                     temp->IsInitiated = true;
@@ -393,7 +393,7 @@ bool Do_Reinforcements(TeamTypeClass const* teamtype)
     FootClass* object = _Create_Group(teamtype);
 
     // Mono_Printf("%d-%s (object=%p, team=%d).\n", __LINE__, __FILE__, object,
-    // object->Team.Is_Valid());Keyboard->Get();
+    // object->Team.Is_Valid());WWKeyboard->Get();
 
     /*
     **	Bail on this reinforcement if no reinforcements could be created.

@@ -454,7 +454,7 @@ void ScoreClass::Presentation(void)
 
     int scorecounter = 0;
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     /*
     **	Determine leadership rating.
@@ -527,7 +527,7 @@ void ScoreClass::Presentation(void)
         total = -9999;
     total = min(total, 99999);
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     for (i = 0; i <= 130; i++) {
         Set_Font_Palette(_greenpal);
         int lead = (leadership * i) / 100;
@@ -541,7 +541,7 @@ void ScoreClass::Presentation(void)
         Play_Sample(Beepy6, 255, Options.Normalize_Volume(100));
         if ((i >= 30) && (i >= leadership) && ((i - 30) >= economy))
             break;
-        // BG		if (Keyboard->Check()) break;
+        // BG		if (WWKeyboard->Check()) break;
     }
     Count_Up_Print("%3d%%", leadership, leadership, 244, 26);
     Count_Up_Print("%3d%%", economy, economy, 244, 38);
@@ -558,14 +558,14 @@ void ScoreClass::Presentation(void)
     sprintf(buffer, "%5d", total);
     Alloc_Object(new ScorePrintClass(buffer, 286, 50, _greenpal));
 
-    // BG	if (!Keyboard->Check()) {
+    // BG	if (!WWKeyboard->Check()) {
     Call_Back_Delay(60);
     // BG	}
 
     if (house)
         Show_Credits(house, (const char*)_greenpal);
 
-    /*BG	if (!Keyboard->Check()) */ Call_Back_Delay(60);
+    /*BG	if (!WWKeyboard->Check()) */ Call_Back_Delay(60);
 
     /*
     ** Show stats on # of units killed
@@ -610,7 +610,7 @@ void ScoreClass::Presentation(void)
         Call_Back_Delay(1);
     }
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     if (!house)
         Show_Credits(house, (const char*)_greenpal);
@@ -696,7 +696,7 @@ void ScoreClass::Presentation(void)
     /*
     ** If the player's on the hall of fame, have him enter his name now
     */
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     if (index < NUMFAMENAMES) {
         pal = hallfame[index].side ? _redpal : _bluepal;
@@ -713,7 +713,7 @@ void ScoreClass::Presentation(void)
         Cycle_Wait_Click();
     }
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     /* get rid of all the animating objects */
     for (i = 0; i < MAXSCOREOBJS; i++)
@@ -758,8 +758,8 @@ void Cycle_Wait_Click(bool cycle)
     // PG SerialPacketType receivepacket;
     // PG int packetlen;
 
-    Keyboard->Clear();
-    while (minclicks || (!Keyboard->Check() && !ControlQ)) {
+    WWKeyboard->Clear();
+    while (minclicks || (!WWKeyboard->Check() && !ControlQ)) {
 #if (0) // PG
         if (Session.Type == GAME_NULL_MODEM || Session.Type == GAME_MODEM) {
 
@@ -787,7 +787,7 @@ void Cycle_Wait_Click(bool cycle)
         Call_Back_Delay(1);
         if (minclicks) {
             minclicks--;
-            Keyboard->Clear();
+            WWKeyboard->Clear();
         }
 
         if (cycle) {
@@ -802,7 +802,7 @@ void Cycle_Wait_Click(bool cycle)
             }
         }
     }
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 }
 
 void ScoreClass::Do_Nod_Buildings_Graph(void)
@@ -887,7 +887,7 @@ void ScoreClass::Do_Nod_Buildings_Graph(void)
                       ColorRemaps[PCOLOR_RED].RemapTable,
                       DisplayClass::UnitShadow);
         HidPage.Blit(SeenPage, 0, 0, BUILDING_X, BUILDING_Y, 320 - BUILDING_X, 48);
-        /*BG		if (!Keyboard->Check()) */ Call_Back_Delay(1);
+        /*BG		if (!WWKeyboard->Check()) */ Call_Back_Delay(1);
     }
 
     i = max(GBKilled, NBKilled);
@@ -896,7 +896,7 @@ void ScoreClass::Do_Nod_Buildings_Graph(void)
         Count_Up_Print("%d", q, NBKilled, BUILDING_X + 16, BUILDING_Y + 10);
         Set_Font_Palette(_bluepal);
         Count_Up_Print("%d", q, GBKilled, BUILDING_X + 16, BUILDING_Y + 22);
-        // BG		if (!Keyboard->Check()) {
+        // BG		if (!WWKeyboard->Check()) {
         Play_Sample(Beepy6, 255, Options.Normalize_Volume(150));
         Call_Back_Delay(1);
         // BG		}
@@ -974,7 +974,7 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
         }
         Set_Font_Palette(issovietplayer ? _redpal : _bluepal);
         Count_Up_Print("%d", (i * gkilled) / maxval, gkilled, 297, ypos + 2);
-        // BG		if (!Keyboard->Check()) {
+        // BG		if (!WWKeyboard->Check()) {
         Play_Sample(Beepy6, 255, Options.Normalize_Volume(150));
         Call_Back_Delay(2);
         // BG		}
@@ -984,7 +984,7 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
     CC_Draw_Shape(yellowptr, gdikilled, xpos * RESFACTOR, ypos * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
     Set_Logic_Page(SeenBuff);
     Count_Up_Print("%d", gkilled, gkilled, 297, ypos + 2);
-    /*BG	if (!Keyboard->Check()) */ Call_Back_Delay(40);
+    /*BG	if (!WWKeyboard->Check()) */ Call_Back_Delay(40);
 
     Set_Font_Palette(issovietplayer ? _bluepal : _redpal);
     for (i = 1; i <= nodkilled; i++) {
@@ -1006,13 +1006,13 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
         }
 
         Count_Up_Print("%d", (i * nkilled) / maxval, nkilled, 297, ypos + 14);
-        // BG		if (!Keyboard->Check()) {
+        // BG		if (!WWKeyboard->Check()) {
         Play_Sample(Beepy6, 255, Options.Normalize_Volume(150));
         Call_Back_Delay(2);
         // BG		}
     }
 
-    //	if (Keyboard::Check()) Keyboard::Clear();
+    //	if (WWKeyboard::Check()) WWKeyboard::Clear();
 
     /*
     ** Make sure accurate count is printed at end
@@ -1022,7 +1022,7 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
     Set_Logic_Page(SeenBuff);
     CC_Draw_Shape(redptr, nodkilled, xpos * RESFACTOR, (ypos + 12) * RESFACTOR, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
     Count_Up_Print("%d", nkilled, nkilled, 297, ypos + 14);
-    /*BG	if (!Keyboard->Check()) */ Call_Back_Delay(40);
+    /*BG	if (!WWKeyboard->Check()) */ Call_Back_Delay(40);
 }
 
 void ScoreClass::Do_Nod_Casualties_Graph(void)
@@ -1082,11 +1082,11 @@ void ScoreClass::Do_Nod_Casualties_Graph(void)
             Count_Up_Print("%d", (i * NKilled) / maxval, NKilled, SCORETEXT_X + 64, CASUALTY_Y + 2);
             Set_Font_Palette(_bluepal);
             Count_Up_Print("%d", (i * GKilled) / maxval, GKilled, SCORETEXT_X + 64, CASUALTY_Y + 14);
-            /*BG			if (!Keyboard->Check()) */ Call_Back_Delay(3);
+            /*BG			if (!WWKeyboard->Check()) */ Call_Back_Delay(3);
         }
         Play_Sample(Beepy6, 255, Options.Normalize_Volume(150));
     }
-    // BG	if (Keyboard->Check()) Keyboard->Clear();
+    // BG	if (WWKeyboard->Check()) WWKeyboard->Clear();
 
     /*
     ** Make sure accurate count is printed at end
@@ -1171,9 +1171,9 @@ void ScoreClass::Show_Credits(int house, char const pal[])
         Set_Font_Palette(pal);
         Count_Up_Print("%d", i, PlayerPtr->Available_Money(), _credpx[house], _credpy[house]);
         Call_Back_Delay(2);
-        /*BG		if (Keyboard->Check()) {
+        /*BG		if (WWKeyboard->Check()) {
                     Count_Up_Print("%d", PlayerPtr->Available_Money(), PlayerPtr->Available_Money(), _credpx[house],
-           _credpy[house]); Keyboard->Clear(); break;
+           _credpy[house]); WWKeyboard->Clear(); break;
                 }*/
     } while (i < PlayerPtr->Available_Money());
 
@@ -1279,13 +1279,13 @@ void ScoreClass::Input_Name(char str[], int xpos, int ypos, char const pal[])
         Call_Back();
         Animate_Score_Objs();
         Animate_Cursor(index, ypos);
-        if (Keyboard->Check()) {
-            key = Keyboard->To_ASCII(Keyboard->Get()) & 0xFF;
+        if (WWKeyboard->Check()) {
+            key = WWKeyboard->To_ASCII(WWKeyboard->Get()) & 0xFF;
             Call_Back();
 
             if (index == MAX_FAMENAME_LENGTH - 2) {
-                while (Keyboard->Check()) {
-                    Keyboard->Get();
+                while (WWKeyboard->Check()) {
+                    WWKeyboard->Get();
                 }
             }
 
@@ -1619,9 +1619,9 @@ void Call_Back_Delay(int time)
     CDTimerClass<SystemTimerClass> cd;
 
     if (!ControlQ) {
-        if (Keyboard->Down(KN_LCTRL) && Keyboard->Down(KN_Q)) {
+        if (WWKeyboard->Down(KN_LCTRL) && WWKeyboard->Down(KN_Q)) {
             ControlQ = 1;
-            Keyboard->Clear();
+            WWKeyboard->Clear();
         }
     }
     if (ControlQ)

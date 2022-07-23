@@ -713,7 +713,7 @@ void Show_Who_Was_Responsible(void)
     /*
     ** Go away nasty keyboard.
     */
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     Set_Logic_Page(HidPage);
 
@@ -816,7 +816,7 @@ void Show_Who_Was_Responsible(void)
         /*
         ** Kill any spare time before blitting the hid page forward.
         */
-        while (TickCount - time < unsigned(frame * speed) && !Keyboard->Check()) {
+        while (TickCount - time < unsigned(frame * speed) && !WWKeyboard->Check()) {
             ms_sleep(1);
         }
 
@@ -851,8 +851,8 @@ void Show_Who_Was_Responsible(void)
         ** If user hits escape then break.
         */
         key = KN_NONE;
-        if (Keyboard->Check()) {
-            key = Keyboard->Get();
+        if (WWKeyboard->Check()) {
+            key = WWKeyboard->Get();
             if (key == KN_ESC) {
                 break;
             }
@@ -896,7 +896,7 @@ void Show_Who_Was_Responsible(void)
             /*
             ** Kill any spare time
             */
-            while (TickCount - time < unsigned(frame * speed) && !Keyboard->Check()) {
+            while (TickCount - time < unsigned(frame * speed) && !WWKeyboard->Check()) {
                 ms_sleep(1);
             }
         }

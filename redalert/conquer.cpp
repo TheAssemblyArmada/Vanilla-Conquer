@@ -219,7 +219,7 @@ void Main_Game(int argc, char* argv[])
         **	told the map to draw itself.
         */
         GamePalette.Set(FADE_PALETTE_MEDIUM);
-        Keyboard->Clear();
+        WWKeyboard->Clear();
         /*
         ** Only show the mouse if we're not playing back a recording.
         */
@@ -2441,7 +2441,7 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
             BlackPalette.Set();
         }
         PreserveVQAScreen = 0;
-        Keyboard->Clear();
+        WWKeyboard->Clear();
 
         VQAHandle* vqa = NULL;
 
@@ -2670,13 +2670,13 @@ MPG_RESPONSE far __stdcall MpegCallback(MPG_CMD cmd, LPVOID data, LPVOID user)
         break;
 
     case MPGCMD_UPDATE:
-        if ((BreakoutAllowed || Debug_Flag) && Keyboard->Check()) {
-            if (Keyboard->Get() == KN_ESC) {
-                Keyboard->Clear();
+        if ((BreakoutAllowed || Debug_Flag) && WWKeyboard->Check()) {
+            if (WWKeyboard->Get() == KN_ESC) {
+                WWKeyboard->Clear();
                 return MPGRES_QUIT;
             }
 
-            Keyboard->Clear();
+            WWKeyboard->Clear();
         }
 
         if (!GameInFocus) {
@@ -3358,9 +3358,9 @@ int VQ_Call_Back(unsigned char*, int)
     return 0;
 #else
     int key = 0;
-    if (Keyboard->Check()) {
-        key = Keyboard->Get();
-        Keyboard->Clear();
+    if (WWKeyboard->Check()) {
+        key = WWKeyboard->Get();
+        WWKeyboard->Clear();
     }
     Check_VQ_Palette_Set();
 #ifdef MOVIE640
@@ -3375,7 +3375,7 @@ int VQ_Call_Back(unsigned char*, int)
     Frame_Limiter();
 
     if ((BreakoutAllowed || Debug_Flag) && key == KN_ESC) {
-        Keyboard->Clear();
+        WWKeyboard->Clear();
         Brokeout = true;
         return (true);
     }
@@ -4291,7 +4291,7 @@ bool Force_CD_Available(int cd)
                 GamePalette.Set();
             }
 
-            Keyboard->Clear();
+            WWKeyboard->Clear();
 
             while (Get_Mouse_State())
                 Show_Mouse();
