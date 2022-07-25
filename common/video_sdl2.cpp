@@ -334,7 +334,7 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     ** Set requested scaling algorithm.
     */
     DBG_INFO("  scaler set to '%s'", Settings.Video.Scaler.c_str());
-    if (Settings.Video.Scaler != "sharp-linear") {
+    if (Settings.Video.Scaler.compare("sharp-linear") == 0) {
         if (!SDL_SetHintWithPriority(SDL_HINT_RENDER_SCALE_QUALITY, Settings.Video.Scaler.c_str(), SDL_HINT_OVERRIDE)) {
             DBG_WARN("  scaler '%s' is unsupported", Settings.Video.Scaler.c_str());
         }
@@ -712,7 +712,7 @@ public:
         if (flags & GBC_VISIBLE) {
             windowSurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(pixel_format), pixel_format);
 
-            if (Settings.Video.Scaler == "sharp-linear") {
+            if (Settings.Video.Scaler.compare("sharp-linear") == 0) {
                 this->RecalculateRenderTarget();
             }
 
@@ -911,7 +911,7 @@ void Toggle_Video_Fullscreen()
         SDL_SetWindowSize(window, Settings.Video.WindowWidth, Settings.Video.WindowHeight);
     }
 
-    if (frontSurface && Settings.Video.Scaler == "sharp-linear") {
+    if (frontSurface && Settings.Video.Scaler.compare("sharp-linear") == 0) {
         frontSurface->RecalculateRenderTarget();
     }
 
