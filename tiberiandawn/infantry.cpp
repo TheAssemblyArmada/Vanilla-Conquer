@@ -509,7 +509,7 @@ ResultType InfantryClass::Take_Damage(int& damage, int distance, WarheadType war
     **	When infantry gets hit, it gets scared.
     */
     if (res != RESULT_DESTROYED) {
-        COORDINATE c4 = (source) ? source->Coord : NULL;
+        COORDINATE c4 = (source) ? source->Coord : 0;
         if (source) {
             Scatter(c4);
         }
@@ -1972,7 +1972,7 @@ void InfantryClass::Random_Animate(void)
         **		"When in darkness or in doubt, run in circles, scream, and shout!"
         */
         if (Class->IsFraidyCat && !House->IsHuman && Fear > FEAR_ANXIOUS) {
-            Scatter(NULL, true);
+            Scatter(0, true);
             return;
         }
 
@@ -2049,7 +2049,7 @@ void InfantryClass::Random_Animate(void)
         case 8:
         case 9:
             if (!House->IsHuman && Class->IsFraidyCat) {
-                Scatter(NULL, true);
+                Scatter(0, true);
             }
             break;
         }
@@ -2466,7 +2466,7 @@ bool InfantryClass::Unlimbo(COORDINATE coord, DirType facing)
     **	Make sure that the infantry start in a legal position on the map.
     */
     coord = Map[Coord_Cell(coord)].Closest_Free_Spot(coord, ScenarioInit);
-    if (coord == NULL) {
+    if (coord == 0) {
         return (false);
     }
 

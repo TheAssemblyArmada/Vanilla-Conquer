@@ -1708,7 +1708,7 @@ COORDINATE CellClass::Closest_Free_Spot(COORDINATE coord, bool any) const
     **	Cells occupied by buildings or vehicles don't have any free spots.
     */
     if (!any && (Flag.Occupy.Vehicle || Flag.Occupy.Monolith)) {
-        return (NULL);
+        return (0);
     }
 
     /*

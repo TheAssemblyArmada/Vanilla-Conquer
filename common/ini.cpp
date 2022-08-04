@@ -653,7 +653,7 @@ bool INIClass::Put_TextBlock(char const* section, char const* text)
     Clear(section);
 
     int index = 1;
-    while (text != NULL && *text != NULL) {
+    while (text != NULL && *text != '\0') {
 
         char buffer[MAX_LINE_LENGTH];
 

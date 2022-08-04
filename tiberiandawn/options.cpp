@@ -277,7 +277,7 @@ void OptionsClass::Set_Sound_Volume(int volume, int feedback)
     volume = Bound(volume, 0, 255);
     Volume = volume;
     if (feedback) {
-        Sound_Effect(VOC_BLEEPY3, NULL);
+        Sound_Effect(VOC_BLEEPY3);
     }
 }
 

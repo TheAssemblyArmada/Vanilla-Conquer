@@ -843,7 +843,7 @@ int Com_Scenario_Dialog(void)
                     transmittime = 0;
 
                 } else {
-                    WWMessageBox().Process(TXT_ONLY_ONE, TXT_OOPS, NULL);
+                    WWMessageBox().Process(TXT_ONLY_ONE, TXT_OOPS);
                     display = REDRAW_ALL;
                 }
             }

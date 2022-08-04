@@ -349,7 +349,7 @@ public:
     */
     virtual void Random_Animate(void);
     virtual void Assign_Destination(TARGET target);
-    virtual void Scatter(COORDINATE source = NULL, bool forced = false, bool nokidding = false);
+    virtual void Scatter(COORDINATE source = 0, bool forced = false, bool nokidding = false);
     virtual void Per_Cell_Process(bool);
     virtual void Enter_Idle_Mode(bool initial = false);
 

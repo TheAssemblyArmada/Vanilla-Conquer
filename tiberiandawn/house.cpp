@@ -5080,7 +5080,7 @@ COORDINATE HouseClass::Find_Build_Location(BuildingClass* building) const
             return (zcell);
     }
 
-    return (NULL);
+    return (0);
 }
 
 /***********************************************************************************************
