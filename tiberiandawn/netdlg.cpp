@@ -3443,7 +3443,7 @@ static int Net_New_Dialog(void)
                 rc = true;
                 process = false;
             } else {
-                WWMessageBox().Process(TXT_ONLY_ONE, TXT_OOPS, NULL);
+                WWMessageBox().Process(TXT_ONLY_ONE, TXT_OOPS);
                 display = REDRAW_ALL;
             }
             break;
@@ -4569,7 +4569,7 @@ static int Net_Fake_New_Dialog(void)
                     rc = true;
                     process = false;
                 } else {
-                    WWMessageBox().Process(TXT_ONLY_ONE, TXT_OOPS, NULL);
+                    WWMessageBox().Process(TXT_ONLY_ONE, TXT_OOPS);
                     display = REDRAW_ALL;
                 }
             }
