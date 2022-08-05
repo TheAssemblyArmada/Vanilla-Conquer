@@ -47,6 +47,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "common/paths.h"
 #include <time.h> // for station ID computation
 
 //#include "WolDebug.h"
@@ -769,25 +770,34 @@ void SessionClass::Read_Scenario_Descriptions(void)
     /*
     ** Fetch any scenario packet lists and apply them first.
     */
-    ffd = nullptr;
-    found = Find_First("*.MPR", 0, &ffd);
-    while (found) {
-        CCFileClass file(ffd->GetName());
-        INIClass ini;
-        ini.Load(file);
+    int i = 0;
+    const char* searchPath = CDFileClass::Get_Search_Path(i);
+    while (searchPath != nullptr) {
+        ffd = nullptr;
+        std::string search_pattern = searchPath;
+        search_pattern += Paths.SEP;
+        search_pattern += "*.MPR";
+        found = Find_First(search_pattern.c_str(), 0, &ffd);
+        while (found) {
+            CCFileClass file(ffd->GetName());
+            INIClass ini;
+            ini.Load(file);
 
-        int count = ini.Entry_Count("Missions");
-        for (int index = 0; index < count; index++) {
-            char const* fname = ini.Get_Entry("Missions", index);
-            char buffer[128];
-            ini.Get_String("Missions", fname, "", buffer, sizeof(buffer));
-            Scenarios.Add(new MultiMission(fname, buffer, NULL, true, Is_Mission_Counterstrike((char*)fname)));
+            int count = ini.Entry_Count("Missions");
+            for (int index = 0; index < count; index++) {
+                char const* fname = ini.Get_Entry("Missions", index);
+                char buffer[128];
+                ini.Get_String("Missions", fname, "", buffer, sizeof(buffer));
+                Scenarios.Add(new MultiMission(fname, buffer, NULL, true, Is_Mission_Counterstrike((char*)fname)));
+            }
+
+            found = Find_Next(ffd);
         }
-
-        found = Find_Next(ffd);
-    }
-    if (ffd) {
-        Find_Close(ffd);
+        if (ffd) {
+            Find_Close(ffd);
+        }
+        i++;
+        searchPath = CDFileClass::Get_Search_Path(i);
     }
 
     /*
@@ -835,25 +845,34 @@ void SessionClass::Read_Scenario_Descriptions(void)
     ** Scan the current directory for any loose .MPR files and build the appropriate entries
     ** into the scenario list list
     */
-    ffd = nullptr;
-    found = Find_First("*.MPR", 0, &ffd);
-    while (found) {
-        char name_buffer[128];
-        char digest_buffer[32];
+    i = 0;
+    searchPath = CDFileClass::Get_Search_Path(i);
+    while (searchPath != nullptr) {
+        ffd = nullptr;
+        std::string search_pattern = searchPath;
+        search_pattern += Paths.SEP;
+        search_pattern += "*.MPR";
+        found = Find_First(search_pattern.c_str(), 0, &ffd);
+        while (found) {
+            char name_buffer[128];
+            char digest_buffer[32];
 
-        CCFileClass file(ffd->GetName());
-        INIClass ini;
-        ini.Load(file);
+            CCFileClass file(ffd->GetName());
+            INIClass ini;
+            ini.Load(file);
 
-        ini.Get_String("Basic", "Name", "No Name", name_buffer, sizeof(name_buffer));
-        ini.Get_String("Digest", "1", "No Digest", digest_buffer, sizeof(digest_buffer));
-        Scenarios.Add(new MultiMission(
-            ffd->GetName(), name_buffer, digest_buffer, ini.Get_Bool("Basic", "Official", false), false));
+            ini.Get_String("Basic", "Name", "No Name", name_buffer, sizeof(name_buffer));
+            ini.Get_String("Digest", "1", "No Digest", digest_buffer, sizeof(digest_buffer));
+            Scenarios.Add(new MultiMission(
+                ffd->GetName(), name_buffer, digest_buffer, ini.Get_Bool("Basic", "Official", false), false));
 
-        found = Find_Next(ffd);
-    }
-    if (ffd) {
-        Find_Close(ffd);
+            found = Find_Next(ffd);
+        }
+        if (ffd) {
+            Find_Close(ffd);
+        }
+        i++;
+        searchPath = CDFileClass::Get_Search_Path(i);
     }
 }
 
