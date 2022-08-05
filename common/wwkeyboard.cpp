@@ -16,7 +16,7 @@
 /* $Header: /CounterStrike/KEY.CPP 1     3/03/97 10:25a Joe_bostic $ */
 /***********************************************************************************************
  *                                                                                             *
- *                 Project Name : Westwood Keyboard Library                                    *
+ *                 Project Name : Westwood WWKeyboard Library                                    *
  *                                                                                             *
  *                    File Name : KEYBOARD.CPP                                                 *
  *                                                                                             *
@@ -45,7 +45,7 @@
  *   WWKeyboardClass::Peek_Element -- Fetches the next element in the keyboard buffer.         *
  *   WWKeyboardClass::Put -- Logic to insert a key into the keybuffer]                         *
  *   WWKeyboardClass::Put_Element -- Put a keyboard data element into the buffer.              *
- *   WWKeyboardClass::Put_Key_Message -- Translates and inserts wParam into Keyboard Buffer    *
+ *   WWKeyboardClass::Put_Key_Message -- Translates and inserts wParam into WWKeyboard Buffer    *
  *   WWKeyboardClass::To_ASCII -- Convert the key value into an ASCII representation.          *
  *   WWKeyboardClass::Available_Buffer_Room -- Fetch the quantity of free elements in the keybo*
  *   WWKeyboardClass::Put_Mouse_Message -- Stores a mouse type message into the keyboard buffer*
@@ -61,6 +61,9 @@
 #include <SDL.h>
 #include "sdl_keymap.h"
 #endif
+#ifdef _NDS
+#include <nds.h>
+#endif
 #include "settings.h"
 
 #define ARRAY_SIZE(x) int(sizeof(x) / sizeof(x[0]))
@@ -72,7 +75,7 @@ extern void Focus_Loss();
 extern void Focus_Restore();
 
 /***********************************************************************************************
- * WWKeyboardClass::WWKeyBoardClass -- Construction for Westwood Keyboard Class                *
+ * WWKeyboardClass::WWKeyBoardClass -- Construction for Westwood WWKeyboard Class                *
  *                                                                                             *
  * INPUT:		none							                                                        *
  *                                                                                             *
@@ -199,7 +202,7 @@ bool WWKeyboardClass::Put(unsigned short key)
 }
 
 /***********************************************************************************************
- * WWKeyboardClass::Put_Key_Message -- Translates and inserts wParam into Keyboard Buffer      *
+ * WWKeyboardClass::Put_Key_Message -- Translates and inserts wParam into WWKeyboard Buffer      *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -533,6 +536,16 @@ bool WWKeyboardClass::Is_Buffer_Empty(void) const
  *=============================================================================================*/
 void Process_Network();
 
+#ifdef _NDS
+void DS_SeenBuff_ZoomIn();
+
+void DS_SeenBuff_ZoomOut();
+
+void DS_SeenBuff_SwitchZoom();
+
+void Set_Video_Mouse(int, int);
+#endif
+
 void WWKeyboardClass::Fill_Buffer_From_System(void)
 {
 #ifdef SDL2_BUILD
@@ -645,6 +658,118 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
             TranslateMessage(&msg);
             DispatchMessageA(&msg);
         }
+    }
+#elif defined(_NDS)
+    if (!Is_Buffer_Full()) {
+        static touchPosition position_old = {0};
+        static uint32_t keys_old = 0;
+
+        touchPosition position_now;
+
+        uint32_t keys_current = keysCurrent();
+        uint32_t keys_down = keys_current & ~keys_old;
+        uint32_t keys_up = (keys_current ^ keys_old) & (~keys_current);
+        keys_old = keys_current;
+
+        // Read new touch screen position.
+        touchRead(&position_now);
+
+        // Raw contains touch position without any kind of system correction
+        // with regard to touch position.  Use that to know if the user is
+        // touching something.
+        bool was_touching = position_old.rawx | position_old.rawy;
+        bool is_touching = position_now.rawx | position_now.rawy;
+
+        if (is_touching) {
+            Set_Video_Mouse(position_now.px, position_now.py);
+
+            if (!was_touching) {
+                int x, y;
+                Get_Video_Mouse(x, y);
+
+                Put_Mouse_Message(VK_LBUTTON, x, y, false);
+            }
+        } else /* !is_touching */ {
+            if (was_touching) {
+                int x, y;
+                // Get scaled cursor position.
+                Get_Video_Mouse(x, y);
+                Put_Mouse_Message(VK_LBUTTON, x, y, true);
+            }
+        }
+
+        if (keys_down & KEY_L && !(keys_current & KEY_B)) {
+            int x, y;
+            Get_Video_Mouse(x, y);
+            Put_Mouse_Message(VK_RBUTTON, x, y, false);
+        } else if (keys_up & KEY_L && !(keys_current & KEY_B)) {
+            int x, y;
+            Get_Video_Mouse(x, y);
+            Put_Mouse_Message(VK_RBUTTON, x, y, true);
+        }
+
+        if (keys_down & KEY_B) {
+            Put_Key_Message(VK_CONTROL, false);
+        } else if (keys_up & KEY_B) {
+            Put_Key_Message(VK_CONTROL, true);
+        }
+
+        if (keys_current & KEY_L || keys_current & KEY_B) {
+            if (keys_down & KEY_UP) {
+                Put_Key_Message(VK_1, false);
+            } else if (keys_up & KEY_UP) {
+                Put_Key_Message(VK_1, true);
+            }
+            if (keys_down & KEY_RIGHT) {
+                Put_Key_Message(VK_2, false);
+            } else if (keys_up & KEY_RIGHT) {
+                Put_Key_Message(VK_2, true);
+            }
+            if (keys_down & KEY_DOWN) {
+                Put_Key_Message(VK_3, false);
+            } else if (keys_up & KEY_DOWN) {
+                Put_Key_Message(VK_3, true);
+            }
+            if (keys_down & KEY_LEFT) {
+                Put_Key_Message(VK_4, false);
+            } else if (keys_up & KEY_LEFT) {
+                Put_Key_Message(VK_4, true);
+            }
+        }
+        if (keys_down & KEY_START) {
+            Put_Key_Message(VK_ESCAPE, false);
+        } else if (keys_up & KEY_START) {
+            Put_Key_Message(VK_ESCAPE, true);
+        }
+
+        if (keys_down & KEY_X) {
+            Put_Key_Message(VK_G, false);
+        } else if (keys_up & KEY_START) {
+            Put_Key_Message(VK_G, true);
+        }
+
+        if (keys_down & KEY_Y) {
+            Put_Key_Message(VK_X, false);
+        } else if (keys_up & KEY_START) {
+            Put_Key_Message(VK_X, true);
+        }
+
+        if (keys_down & KEY_A) {
+            Put_Key_Message(VK_ALT, false);
+        } else if (keys_up & KEY_A) {
+            Put_Key_Message(VK_ALT, true);
+        }
+        if (keys_down & KEY_R) {
+            Put_Key_Message(VK_H, false);
+        } else if (keys_up & KEY_R) {
+            Put_Key_Message(VK_H, true);
+        }
+
+        if (keys_down & KEY_SELECT) {
+            DS_SeenBuff_SwitchZoom();
+        }
+
+        position_old = position_now;
     }
 #endif
 }

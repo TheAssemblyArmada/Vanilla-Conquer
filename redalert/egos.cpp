@@ -66,10 +66,12 @@ DynamicVectorClass<EgoClass*> EgoList;
 */
 #define FADE_DELAY 37
 
+#define MAX_SLIDE_CHARS 13
+
 /*
 ** Names of slideshow pictures to play behind the text
 */
-char SlideNames[NUM_SLIDES][13] = {
+char SlideNames[NUM_SLIDES][MAX_SLIDE_CHARS] = {
 
     "aftr_hi.pcx",
     "aly1.pcx",
@@ -92,23 +94,23 @@ char SlideNames[NUM_SLIDES][13] = {
 /*
 ** Names of low res slideshow pictures to play behind the text
 */
-char LoresSlideNames[NUM_SLIDES][13] = {"malo0107.cps",
-                                        "mig_lo.cps",
-                                        "mtfactlo.cps",
-                                        "needl-lo.cps",
-                                        "sov2-lo.cps",
-                                        "spy-lo.cps",
-                                        "staln-lo.cps",
-                                        "tent-lo.cps",
-                                        "aftr_lo.cps",
-                                        "aly1-lo.cps",
-                                        "apc_lo.cps",
-                                        "aplo0049.cps",
-                                        "bnlo0020.cps",
-                                        "dclo0040.cps",
-                                        "frlo0166.cps",
-                                        "lab-lo.cps",
-                                        "lands-lo.cps"};
+char LoresSlideNames[NUM_SLIDES][MAX_SLIDE_CHARS] = {"malo0107.cps",
+                                                     "mig_lo.cps",
+                                                     "mtfactlo.cps",
+                                                     "needl-lo.cps",
+                                                     "sov2-lo.cps",
+                                                     "spy-lo.cps",
+                                                     "staln-lo.cps",
+                                                     "tent-lo.cps",
+                                                     "aftr_lo.cps",
+                                                     "aly1-lo.cps",
+                                                     "apc_lo.cps",
+                                                     "aplo0049.cps",
+                                                     "bnlo0020.cps",
+                                                     "dclo0040.cps",
+                                                     "frlo0166.cps",
+                                                     "lab-lo.cps",
+                                                     "lands-lo.cps"};
 
 /*
 ** Array of all the palettes required for the slides
@@ -695,10 +697,12 @@ void Show_Who_Was_Responsible(void)
     /*
     ** Loop through and load up all the slideshow pictures
     */
+    bool dosmod = (RESFACTOR == 1) ? true : false;
+    const char(*slide_names)[MAX_SLIDE_CHARS] = (dosmod) ? LoresSlideNames : SlideNames;
     for (int index = 0; index < NUM_SLIDES; index++) {
         SlideBuffers[index] = new GraphicBufferClass;
         SlideBuffers[index]->Init(SeenBuff.Get_Width(), SeenBuff.Get_Height(), NULL, 0, (GBC_Enum)0);
-        Load_Title_Screen(&SlideNames[index][0], SlideBuffers[index], (unsigned char*)&SlidePals[index][0]);
+        Load_Title_Screen(&slide_names[index][0], SlideBuffers[index], (unsigned char*)&SlidePals[index][0]);
     }
 
     /*
@@ -713,7 +717,7 @@ void Show_Who_Was_Responsible(void)
     /*
     ** Go away nasty keyboard.
     */
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     Set_Logic_Page(HidPage);
 
@@ -816,7 +820,7 @@ void Show_Who_Was_Responsible(void)
         /*
         ** Kill any spare time before blitting the hid page forward.
         */
-        while (TickCount - time < unsigned(frame * speed) && !Keyboard->Check()) {
+        while (TickCount - time < unsigned(frame * speed) && !WWKeyboard->Check()) {
             ms_sleep(1);
         }
 
@@ -851,8 +855,8 @@ void Show_Who_Was_Responsible(void)
         ** If user hits escape then break.
         */
         key = KN_NONE;
-        if (Keyboard->Check()) {
-            key = Keyboard->Get();
+        if (WWKeyboard->Check()) {
+            key = WWKeyboard->Get();
             if (key == KN_ESC) {
                 break;
             }
@@ -896,7 +900,7 @@ void Show_Who_Was_Responsible(void)
             /*
             ** Kill any spare time
             */
-            while (TickCount - time < unsigned(frame * speed) && !Keyboard->Check()) {
+            while (TickCount - time < unsigned(frame * speed) && !WWKeyboard->Check()) {
                 ms_sleep(1);
             }
         }

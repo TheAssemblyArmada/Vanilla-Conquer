@@ -301,7 +301,7 @@ int main(int argc, char* argv[])
 
         CCFileClass cfile(CONFIG_FILE_NAME);
 
-        Keyboard = new WWKeyboardClass();
+        WWKeyboard = new WWKeyboardClass();
 
         /*
         ** If there is loads of memory then use uncompressed shapes
@@ -331,6 +331,9 @@ int main(int argc, char* argv[])
         Read_Setup_Options(&cfile);
 
 #ifndef REMASTER_BUILD
+#ifdef _NDS
+        Settings.Video.DOSMode = true;
+#endif
         /* If DOSMode is enabled, adjust resolution accordingly. */
         if (Settings.Video.DOSMode) {
             RESFACTOR = 1;
@@ -509,7 +512,7 @@ int main(int argc, char* argv[])
         ** Wait until the message handler has dealt with the message
         */
         do {
-            Keyboard->Check();
+            WWKeyboard->Check();
         } while (ReadyToQuit == 1);
 #endif
 
@@ -706,7 +709,7 @@ void Emergency_Exit(int code)
     ** Wait until the message handler has dealt with the message
     */
     do {
-        Keyboard->Check();
+        WWKeyboard->Check();
     } while (ReadyToQuit == 3);
 
     exit(code);

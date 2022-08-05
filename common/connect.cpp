@@ -50,6 +50,13 @@
 
 //#include "WolDebug.h"
 
+#ifdef _NDS
+int ftime(struct timeb* tb)
+{
+    return 0;
+}
+#endif
+
 /*
 ********************************* Globals ***********************************
 */

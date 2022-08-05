@@ -342,8 +342,7 @@ int Sound_Effect(VocType voc, VolType volume, int variation, signed short pan_va
     **	If the sound data pointer is not null, then presume that it is valid.
     */
     if (ptr) {
-        return (
-            Play_Sample(ptr, Fixed_To_Cardinal(SoundEffectName[voc].Priority, (int)volume), (int)volume, pan_value));
+        return Play_Sample(ptr, Fixed_To_Cardinal(SoundEffectName[voc].Priority, (int)volume), (int)volume, pan_value);
     }
     return (-1);
 }

@@ -242,6 +242,11 @@ int LoadOptionsClass::Process(void)
                       -1,
                       EditClass::ALPHANUMERIC);
 
+#ifdef _NDS
+    // Nintendo DS doesn't have a keyboard, so we hack a name for the user.
+    strcpy(game_descr, Scen.ScenarioName);
+#endif
+
     /*
     ** Initialize.
     */
@@ -435,6 +440,11 @@ int LoadOptionsClass::Process(void)
             }
 
             game_num = Files[game_idx]->Num;
+#ifdef _NDS
+            // Append game_num to the file so we can have multiple saves of the
+            // same mission.
+            snprintf(game_descr, 40, "%s_%03d", Scen.ScenarioName, game_num);
+#endif
             if (!Save_Game(game_num, game_descr)) {
                 WWMessageBox().Process(TXT_ERROR_SAVING_GAME);
             } else {

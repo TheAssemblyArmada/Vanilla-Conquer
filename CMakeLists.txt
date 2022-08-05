@@ -7,7 +7,7 @@ if(NOT DEFINED CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo" FORCE)
 endif()
 
-project(VanillaConquer CXX)
+project(VanillaConquer CXX ASM)
 
 option(BUILD_REMASTERTD "Build Tiberian Dawn remaster dll." OFF)
 option(BUILD_REMASTERRA "Build Red Alert remaster dll." OFF)
@@ -34,13 +34,19 @@ if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
     add_feature_info(DirectDraw DDRAW "DirectDraw video backend (deprecated)")
     add_feature_info(SDL2 SDL2 "SDL2 video backend")
     add_feature_info(OpenAL OPENAL "OpenAL audio backend")
+elseif(NDS)
+    set(SDL2 FALSE)
+    set(OPENAL FALSE)
+    set(DSOUND FALSE)
+    set(DDRAW FALSE)
+    set(NETWORKING FALSE)
 else()
     set(SDL2 TRUE)
     set(OPENAL TRUE)
 endif()
 
 if(APPLE OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    option(MAKE_BUNDLE "Create a standard app bundle rather than command line program." ON)   
+    option(MAKE_BUNDLE "Create a standard app bundle rather than command line program." ON)
     add_feature_info(MakeBundle MAKE_BUNDLE "App bundles will be generated")
     if(MAKE_BUNDLE)
         set(MAKE_BUNDLE_OPTION MACOSX_BUNDLE)
@@ -74,6 +80,10 @@ if(NOT MSVC)
         set(CMAKE_CXX_FLAGS_DEBUG "-gstabs3")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
         set(STATIC_LIBS "-static-libstdc++ -static-libgcc")
+    elseif(NDS)
+        # We need to enable optimizations, else the code doesn't fit in
+        # correct address region.
+        set(CMAKE_CXX_FLAGS_DEBUG "-O2 -g3")
     else()
         set(CMAKE_CXX_FLAGS_DEBUG "-g3")
         set(CMAKE_FIND_FRAMEWORK "LAST")
@@ -132,6 +142,25 @@ if(OPENAL)
     find_package(OpenAL REQUIRED)
     list(APPEND VANILLA_LIBS OpenAL::OpenAL)
     set(DSOUND OFF)
+endif()
+
+if(NDS)
+    # This directory contains code that will run on the ARM7 chip. So we don't
+    # define the arch variables until this directory has already been compiled.
+    add_subdirectory(arm7)
+
+    # The code below will run on ARM9 chip.
+    add_definitions(-DARM9)
+
+    set(ARCH "-mthumb -mthumb-interwork -mcpu=arm946e-s -mtune=arm946e-s")
+    set(CMAKE_C_FLAGS "${ARCH} ${CMAKE_C_CFLAGS} -fomit-frame-pointer -fno-rtti -fno-exceptions -ffast-math -fno-unwind-tables")
+    set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -specs=ds_arm9.specs -mthumb -mthumb-interwork -Wl,-Map,vanilla.map")
+
+    # Link with those libraries.
+    link_libraries("-lc")    # C library
+    link_libraries("-lfat")
+    link_libraries("-lnds9")
 endif()
 
 if(BUILD_TESTS)

@@ -80,6 +80,7 @@
 
 #include "function.h"
 #include "ccini.h"
+#include "wwstd.h"
 
 int const InfantryClass::HumanShape[32] = {0, 0, 7, 7, 7, 7, 6, 6, 6, 6, 5, 5, 5, 5, 5, 4,
                                            4, 4, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 0};
@@ -262,10 +263,11 @@ InfantryClass::InfantryClass(InfantryType classid, HousesType house)
     /*
     ** Keep count of the number of units created. Dont track civilians.
     */
+#ifndef _NDS
     if (!Class->IsCivilian && GameToPlay == GAME_INTERNET) {
         House->InfantryTotals.Increment_Unit_Total((int)classid);
     }
-
+#endif
 #ifdef USE_RA_AI
     //
     // Added for RA AI in TD. ST - 7/26/2019 9:12AM
@@ -1580,7 +1582,7 @@ MoveBitType InfantryClass::Blocking_Object(TechnoClass const* techno, CELL cell)
  * HISTORY:                                                                                    *
  *   09/01/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-MoveType InfantryClass::Can_Enter_Cell(CELL cell, FacingType) const
+MoveType OPTIMIZE_AGGRESSIVELY InfantryClass::Can_Enter_Cell(CELL cell, FacingType) const
 {
     Validate();
     /*

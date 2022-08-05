@@ -1013,7 +1013,7 @@ bool Select_Game(bool fade)
                     VisiblePage.Clear();
                     Show_Mouse();
                     Play_Movie(VQ_INTRO_MOVIE, THEME_NONE, true); // no transition picture to briefing
-                    Keyboard->Clear();
+                    WWKeyboard->Clear();
                     Play_Movie(VQ_SIZZLE, THEME_NONE, true);
                     Play_Movie(VQ_SIZZLE2, THEME_NONE, true);
                     //						Play_Movie(VQ_INTRO_MOVIE, THEME_NONE, false);		// has transitino picture to
@@ -1070,7 +1070,7 @@ bool Select_Game(bool fade)
     /*
     **	Don't carry stray keystrokes into game.
     */
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     /*
     ** Initialize the random number generator(s)
@@ -1229,7 +1229,7 @@ static void Play_Intro(bool sequenced)
 {
     static VQType _counter = VQ_FIRST;
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     if (sequenced) {
         if (_counter <= VQ_FIRST)
             _counter = VQ_COUNT;
@@ -2434,7 +2434,7 @@ static void Bootstrap(void)
     */
 #ifndef REMASTER_BUILD
     do {
-        Keyboard->Check();
+        WWKeyboard->Check();
     } while (!GameInFocus);
     AllSurfaces.SurfacesRestored = false;
 
@@ -2459,7 +2459,7 @@ static void Bootstrap(void)
     /*
     **	Setup the keyboard processor in preparation for the game.
     */
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     /*
     **	This is the shape staging buffer. It must always be available, so it is
@@ -2731,7 +2731,7 @@ static void Init_Bulk_Data(void)
  *=============================================================================================*/
 static void Init_Keys(void)
 {
-    RAMFileClass file((void*)Keys, strlen(Keys));
+    RAMFileClass file((void*)WWKeys, strlen(WWKeys));
     INIClass ini;
     ini.Load(file);
 

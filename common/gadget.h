@@ -110,7 +110,7 @@ public:
         RIGHTHELD = 0x0020,    // Right mouse button is being held down.
         RIGHTRELEASE = 0x0040, // Right mouse button released.
         RIGHTUP = 0x0080,      // Right mouse button is being held up.
-        KEYBOARD = 0x0100      // Keyboard input processing (maybe).
+        KEYBOARD = 0x0100      // WWKeyboard input processing (maybe).
     } FlagEnum;
 
     GadgetClass(int x, int y, int w, int h, unsigned flags, int sticky = false);

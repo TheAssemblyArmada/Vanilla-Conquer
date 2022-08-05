@@ -189,7 +189,7 @@ int AllDone;
 **	This is true if the game is the currently in focus windows app
 **
 */
-#ifdef SDL2_BUILD
+#if defined(SDL2_BUILD) || defined(_NDS)
 bool GameInFocus = true;
 #else
 bool GameInFocus = false;
@@ -247,7 +247,7 @@ RulesClass Rule;
 ** All keyboard input is routed through the object pointed to by this
 **	keyboard class pointer.
 */
-WWKeyboardClass* Keyboard;
+WWKeyboardClass* WWKeyboard;
 
 /***************************************************************************
 **	Remap control array. This is used to hold the remap

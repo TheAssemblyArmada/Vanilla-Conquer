@@ -163,11 +163,11 @@ public:
     unsigned int Get_System_Tick_Count();
     unsigned int Get_User_Tick_Count();
 
+    static unsigned long long Now();
+
 private:
     unsigned int Frequency; // Frequency of our windows timer in ticks per second
     unsigned long long Start;
-
-    static unsigned long long Now();
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////

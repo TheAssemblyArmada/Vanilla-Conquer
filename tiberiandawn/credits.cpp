@@ -98,7 +98,6 @@ void CreditClass::Graphic_Logic(bool forced)
                 Sound_Effect(VOC_DOWN, VOL_1);
             }
         }
-
         /*
         **	Display the new current value.
         */

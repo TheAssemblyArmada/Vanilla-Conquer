@@ -41,13 +41,15 @@
  * TMC::Message_Handler -- Message handler function for Winsock related messages               *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#ifdef NETWORKING
+
 #include "internet.h"
 #include "endianness.h"
 #include "debugstring.h"
 #include "wspudp.h"
 #include "misc.h"
 #include "wwkeyboard.h"
-extern WWKeyboardClass* Keyboard;
+extern WWKeyboardClass* WWKeyboard;
 
 #include <assert.h>
 #include <stdio.h>
@@ -56,8 +58,6 @@ extern WWKeyboardClass* Keyboard;
 #ifndef _WIN32
 #include <ifaddrs.h>
 #endif
-
-#ifdef NETWORKING
 
 /***********************************************************************************************
  * UDPInterfaceClass::UDPInterfaceClass -- Class constructor.                                  *
@@ -346,7 +346,7 @@ void UDPInterfaceClass::Broadcast(void* buffer, int buffer_len)
         /*
         ** Make sure the message loop gets called.
         */
-        Keyboard->Check();
+        WWKeyboard->Check();
     }
 }
 

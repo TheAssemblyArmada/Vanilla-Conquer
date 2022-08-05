@@ -295,7 +295,7 @@ RulesClass Rule;
 ** All keyboard input is routed through the object pointed to by this
 **	keyboard class pointer.
 */
-WWKeyboardClass* Keyboard;
+WWKeyboardClass* WWKeyboard;
 
 /***************************************************************************
 **	This is the scenario data for the currently loaded scenario.

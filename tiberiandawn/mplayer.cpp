@@ -46,6 +46,10 @@
 #include "common/framelimit.h"
 #include "common/ini.h"
 
+#ifdef _NDS
+#include <nds.h>
+#endif
+
 static void Garble_Message(char* buf);
 
 int Choose_Internet_Game(void);
@@ -232,7 +236,7 @@ GameType Select_MPlayer_Game(void)
 
     buttons[curbutton]->Turn_On();
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     Fancy_Text_Print(TXT_NONE, 0, 0, CC_GREEN, TBLACK, TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
 
@@ -527,8 +531,17 @@ void Read_MultiPlayer_Settings(void)
     if (ini.Load(file)) {
 
         //	Get the player's last-used Handle
+#ifdef _NDS
+        // Get DS user name as player name.
+        int i;
+        for (i = 0; i < PersonalData->nameLen; i++) {
+            MPlayerName[i] = PersonalData->name[i] & 0xFF;
+        }
+        // Ensure that our string is null-terminated.
+        MPlayerName[i] = '\0';
+#else
         ini.Get_String("MultiPlayer", "Handle", "Noname", MPlayerName, sizeof(MPlayerName));
-
+#endif
         //	Get the player's last-used Color
         MPlayerPrefColor = (PlayerColorType)ini.Get_Int("MultiPlayer", "Color", 0);
 

@@ -40,6 +40,7 @@
 #include "memflag.h"
 #include "keyframe.h"
 #include "debugstring.h"
+#include "wwstd.h"
 
 #include <string.h>
 
@@ -59,12 +60,13 @@ typedef struct
     unsigned short largest_frame_size;
     short flags;
 } KeyFrameHeaderType;
-
 #pragma pack(pop)
 
 #define INITIAL_BIG_SHAPE_BUFFER_SIZE 12000 * 1024
 #define THEATER_BIG_SHAPE_BUFFER_SIZE 2000 * 1024
 #define UNCOMPRESS_MAGIC_NUMBER       56789
+
+bool UseOldShapeDraw = false;
 
 static unsigned short CurrentUncompressMagicNum = UNCOMPRESS_MAGIC_NUMBER;
 static int BigShapeBufferLength = INITIAL_BIG_SHAPE_BUFFER_SIZE;
@@ -166,6 +168,7 @@ void Reallocate_Big_Shape_Buffer()
         ** It may still be possible to continue with compressed shapes
         */
         if (!BigShapeBufferStart) {
+            DBG_LOG("Out of Memory: disabling BigShapeBuffer");
             UseBigShapeBuffer = false;
             return;
         }
@@ -175,6 +178,7 @@ void Reallocate_Big_Shape_Buffer()
         // is flushing and refilling it in the hope of discarding shapes not
         // very often used, like enemy building animations, radar animations,
         // and so on.
+        DBG_LOG("BigShpBuffer memory depleted. Rebuilding...");
         Reset_Theater_Shapes();
         Reset_BigShapeBuffer();
         CurrentUncompressMagicNum++;
@@ -189,6 +193,7 @@ void Check_Use_Compressed_Shapes()
     // Uncompressed shapes enabled for performance reasons. We don't need to worry about memory.
     // Uncompressed shapes don't seem to work in RA for rotated/scaled objects so wherever scale/rotate is used,
     // we will need to disable it (like in Techno_Draw_Object). ST - 11/6/2019 2:09PM
+
     UseBigShapeBuffer = true;
     OriginalUseBigShapeBuffer = true;
 }
@@ -275,6 +280,55 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
         **
         */
         if (!BigShapeBufferStart) {
+            /* Check how much RAM we have to decide the length of our buffers.  */
+            size_t eps;
+
+            if (Get_Running_Game() == GAME_TD) {
+                /* TD for some reason requires more memory to run when loading
+                   maps and score screen.  */
+                eps = 600 * 1024;
+            } else {
+                /* Game is RA.  It can run with less free memory.  */
+                eps = 300 * 1024;
+            }
+
+            size_t ram_free = Ram_Free(MEM_NORMAL);
+
+            /* In case we REALLY are near our limit, to avoid underflow.  */
+            if (ram_free > eps) {
+                ram_free -= eps;
+            }
+
+            if (ram_free > INITIAL_BIG_SHAPE_BUFFER_SIZE + THEATER_BIG_SHAPE_BUFFER_SIZE) {
+                BigShapeBufferLength = INITIAL_BIG_SHAPE_BUFFER_SIZE;
+                TheaterShapeBufferLength = THEATER_BIG_SHAPE_BUFFER_SIZE;
+            } else if (ram_free > 768 * 1024) {
+                /* Try to distribute the memory we have between the two buffers.
+                   BigShapeBuffer is more used and require more memory.  This formula
+                   has been archived by linear interpolating the two BigShapeBuffer
+                   sizes from the TD and RA ports of Nintendo DS:
+
+                      f(7500) = 6800;
+                      f(1500) = 1200;
+
+                 */
+
+                BigShapeBufferLength = ((ram_free * 56) / 60 - (200 * 1024)) & (~0x1FFUL);
+                TheaterShapeBufferLength = ram_free - BigShapeBufferLength;
+
+                DBG_LOG("BigShape: %ldk\n", BigShapeBufferLength / 1024);
+                DBG_LOG("TheaterShape: %ldk\n", TheaterShapeBufferLength / 1024);
+            } else {
+
+                /* Too little memory available.  Disable BigShapeBuffers to avoid
+                 constant flushing of buffers.  */
+
+                UseBigShapeBuffer = false;
+                OriginalUseBigShapeBuffer = false;
+
+                goto skip_bigshp_allocation;
+            }
+
             BigShapeBufferStart = (char*)Alloc(BigShapeBufferLength, MEM_NORMAL);
             BigShapeBufferPtr = BigShapeBufferStart;
 
@@ -322,6 +376,8 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
             }
         }
     }
+
+skip_bigshp_allocation:
 
     // calc buff size
     buffsize = keyfr.width * keyfr.height;

@@ -16,6 +16,11 @@
 #include <stdarg.h>
 #include <stdint.h>
 
+#ifdef _NDS
+#pragma GCC optimize("Ofast,unroll-loops")
+#pragma GCC target("arm")
+#endif
+
 #define SHP_HAS_PAL            0x0001
 #define SHP_LCW_FRAME          0x80
 #define SHP_XOR_FAR_FRAME      0x40
@@ -1219,7 +1224,7 @@ void Buffer_Frame_To_Page(int x,
                           int flags,
                           ...)
 {
-    bool use_old_drawer = true; // false; New draw system not supported in TD.
+    bool use_old_drawer = false; //true; // false; New draw system not supported in TD.
     int fade_count = 0;
     ShapeHeaderType* draw_header = nullptr;
     unsigned char* fade_table = nullptr;
@@ -1269,7 +1274,7 @@ void Buffer_Frame_To_Page(int x,
         ghost_table = ghost_lookup + 256;
     }
 
-    if (!UseBigShapeBuffer /*|| UseOldShapeDraw */) {
+    if (!UseBigShapeBuffer || UseOldShapeDraw) {
         use_old_drawer = true;
     }
 

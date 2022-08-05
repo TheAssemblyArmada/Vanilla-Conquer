@@ -224,7 +224,7 @@ bool MouseClass::Override_Mouse_Shape(MouseType mouse, bool wsmall)
  *    This routine will is to be called once per game tick and is passed the player keyboard   *
  *    or mouse input code. It processes this code and updates the mouse shape as appropriate.  *
  *                                                                                             *
- * INPUT:   input -- The player input code as returned from Keyboard->Get().                   *
+ * INPUT:   input -- The player input code as returned from WWKeyboard->Get().                   *
  *                                                                                             *
  *          x,y   -- The mouse coordinate values to use.                                       *
  *                                                                                             *

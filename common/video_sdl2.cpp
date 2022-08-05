@@ -47,7 +47,7 @@
 
 #include <SDL.h>
 
-extern WWKeyboardClass* Keyboard;
+extern WWKeyboardClass* WWKeyboard;
 static SDL_Window* window;
 static SDL_Renderer* renderer;
 static SDL_Palette* palette;
@@ -357,7 +357,7 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     */
     if (Settings.Mouse.ControllerEnabled) {
         SDL_Init(SDL_INIT_GAMECONTROLLER);
-        Keyboard->Open_Controller();
+        WWKeyboard->Open_Controller();
     }
 
     return true;
@@ -427,7 +427,7 @@ void Set_Video_Cursor_Clip(bool clipped)
 
 void Move_Video_Mouse(float xrel, float yrel)
 {
-    if (Keyboard->Is_Gamepad_Active() || hwcursor.Clip || !Settings.Video.Windowed) {
+    if (WWKeyboard->Is_Gamepad_Active() || hwcursor.Clip || !Settings.Video.Windowed) {
         hwcursor.X += xrel * (Settings.Mouse.Sensitivity / 100.0f);
         hwcursor.Y += yrel * (Settings.Mouse.Sensitivity / 100.0f);
     }
@@ -447,7 +447,7 @@ void Move_Video_Mouse(float xrel, float yrel)
 
 void Get_Video_Mouse(int& x, int& y)
 {
-    if (Keyboard->Is_Gamepad_Active() || (Settings.Mouse.RawInput && (hwcursor.Clip || !Settings.Video.Windowed))) {
+    if (WWKeyboard->Is_Gamepad_Active() || (Settings.Mouse.RawInput && (hwcursor.Clip || !Settings.Video.Windowed))) {
         x = hwcursor.X;
         y = hwcursor.Y;
     } else {
@@ -497,7 +497,7 @@ void Reset_Video_Mode(void)
     SDL_DestroyWindow(window);
     window = nullptr;
 
-    Keyboard->Close_Controller();
+    WWKeyboard->Close_Controller();
 }
 
 static void Update_HWCursor()

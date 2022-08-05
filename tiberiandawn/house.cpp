@@ -356,6 +356,7 @@ HouseClass::HouseClass(HousesType house)
     , IonCannon(ION_CANNON_GONE_TIME, VOX_ION_READY, VOX_ION_CHARGING, VOX_ION_CHARGING, VOX_NO_POWER)
     , AirStrike(AIR_CANNON_GONE_TIME, VOX_AIRSTRIKE_READY, VOX_NONE, VOX_NOT_READY, VOX_NOT_READY)
     , NukeStrike(NUKE_GONE_TIME, VOX_NUKE_AVAILABLE, VOX_NONE, VOX_NOT_READY, VOX_NO_POWER)
+#ifndef _NDS
     , AircraftTotals()
     , InfantryTotals()
     , UnitTotals()
@@ -366,6 +367,7 @@ HouseClass::HouseClass(HousesType house)
     , DestroyedBuildings()
     , CapturedBuildings()
     , TotalCrates()
+#endif
 {
 
     for (HousesType i = HOUSE_FIRST; i < HOUSE_COUNT; i++) {
@@ -4852,18 +4854,19 @@ void HouseClass::Check_Pertinent_Structures(void)
  *=============================================================================================*/
 void HouseClass::Init_Unit_Trackers(void)
 {
+
+#ifndef _NDS
     AircraftTotals.Init();
     InfantryTotals.Init();
     UnitTotals.Init();
     BuildingTotals.Init();
-
     DestroyedAircraft.Init();
     DestroyedInfantry.Init();
     DestroyedUnits.Init();
     DestroyedBuildings.Init();
-
     CapturedBuildings.Init();
     TotalCrates.Init(); // 15 crate types
+#endif
 }
 
 #ifdef USE_RA_AI

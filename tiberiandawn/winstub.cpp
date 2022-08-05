@@ -40,6 +40,11 @@
 #include "externs.h"
 #include "common/wsproto.h"
 #include "common/vqaaudio.h"
+#include "debugstring.h"
+
+#ifdef _NDS
+#include <nds.h>
+#endif
 
 void output(short, short)
 {
@@ -119,7 +124,7 @@ void Focus_Restore(void)
 void Check_For_Focus_Loss(void)
 {
 #if defined(SDL2_BUILD)
-    Keyboard->Check();
+    WWKeyboard->Check();
 #elif !defined(REMASTER_BUILD) && defined(_WIN32)
     static BOOL focus_last_time = 1;
     MSG msg;
@@ -184,7 +189,7 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
     **	was processed and requires no further action, then return with
     **	this information.
     */
-    if (Keyboard->Message_Handler(hwnd, message, wParam, lParam)) {
+    if (WWKeyboard->Message_Handler(hwnd, message, wParam, lParam)) {
         return (1);
     }
 
@@ -433,6 +438,14 @@ bool Any_Locked()
  *=============================================================================================*/
 void Memory_Error_Handler(void)
 {
+
+#ifdef _NDS
+    DBG_LOG("Error - out of memory");
+    swiWaitForVBlank();
+    while (1)
+        ;
+#endif
+
     GlyphX_Debug_Print("Error - out of memory.");
     VisiblePage.Clear();
     Set_Palette(GamePalette);

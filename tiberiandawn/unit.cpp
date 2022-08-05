@@ -1166,13 +1166,14 @@ UnitClass::UnitClass(UnitType classid, HousesType house)
     if (Class->IsAnimating)
         Set_Rate(Options.Normalize_Delay(3));
 
-    /*
+        /*
     ** Keep count of the number of units created.
     */
+#ifndef _NDS
     if (GameToPlay == GAME_INTERNET) {
         House->UnitTotals.Increment_Unit_Total((int)classid);
     }
-
+#endif
 #ifdef USE_RA_AI
     //
     // Added for RA AI in TD. ST - 7/26/2019 9:12AM

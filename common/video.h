@@ -61,9 +61,14 @@ public:
 extern SurfaceMonitorClass& AllSurfaces; // List of all surfaces
 
 bool Set_Video_Mode(int w, int h, int bits_per_pixel);
-void Get_Video_Scale(float& x, float& y);
 void Set_Video_Cursor_Clip(bool clipped);
+#ifdef _NDS /* Nintendo DS doesn't have FPU unit.  */
+void Get_Video_Scale(int& x, int& y);
+void Move_Video_Mouse(int xrel, int yrel);
+#else
+void Get_Video_Scale(float& x, float& y);
 void Move_Video_Mouse(float xrel, float yrel);
+#endif
 void Get_Video_Mouse(int& x, int& y);
 void Toggle_Video_Fullscreen();
 void Reset_Video_Mode();

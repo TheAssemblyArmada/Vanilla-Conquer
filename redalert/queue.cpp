@@ -953,7 +953,7 @@ static RetcodeType Wait_For_Players(int first_time,
     timeout_timer = timeout;    // time to bail out
 
     while (true) {
-        Keyboard->Check();
+        WWKeyboard->Check();
 
         Update_Queue_Mono(net, 2);
 
@@ -1093,7 +1093,7 @@ static RetcodeType Wait_For_Players(int first_time,
 
         while ((messages_this_loop++ < message_limit) && net->Get_Private_Message(multi_packet_buf, &packetlen, &id)) {
 
-            Keyboard->Check();
+            WWKeyboard->Check();
 
             Update_Queue_Mono(net, 5);
 
@@ -1634,7 +1634,7 @@ static int Send_Packets(ConnManClass* net, char* multi_packet_buf, int multi_pac
     //	Build our meta-packet & transmit it.
     //------------------------------------------------------------------------
     while (true) {
-        Keyboard->Check();
+        WWKeyboard->Check();
 
         Update_Queue_Mono(net, 1);
 
@@ -2157,8 +2157,8 @@ static int Process_Reconnect_Dialog(CDTimerClass<SystemTimerClass>* timeout_time
     //........................................................................
     //	If user hits ESC, bail out
     //........................................................................
-    if (Keyboard->Check()) {
-        if (Keyboard->Get() == KN_ESC) {
+    if (WWKeyboard->Check()) {
+        if (WWKeyboard->Get() == KN_ESC) {
             return (1);
         }
     }
@@ -2428,7 +2428,7 @@ static int Add_Uncompressed_Events(void* buf, int bufsize, int frame_delay, int 
     //------------------------------------------------------------------------
     while (OutList.Count && (num < cap)) {
 
-        Keyboard->Check();
+        WWKeyboard->Check();
 
         if (OutList.First().Type == EventClass::ADDPLAYER) {
             ev_size = sizeof(EventClass) + OutList.First().Data.Variable.Size;
@@ -2528,7 +2528,7 @@ static int Add_Compressed_Events(void* buf, int bufsize, int frame_delay, int si
     //------------------------------------------------------------------------
     while (OutList.Count && (num < cap)) {
 
-        Keyboard->Check();
+        WWKeyboard->Check();
 
         eventtype = OutList.First().Type;
         datasize = EventClass::EventLength[eventtype];
@@ -2846,7 +2846,7 @@ static int Extract_Uncompressed_Events(void* buf, int bufsize)
     //------------------------------------------------------------------------
     while (leftover >= sizeof(EventClass)) {
 
-        Keyboard->Check();
+        WWKeyboard->Check();
 
         event = (EventClass*)(((char*)buf) + pos);
 
@@ -2932,7 +2932,7 @@ static int Extract_Compressed_Events(void* buf, int bufsize)
 
     while (leftover >= (datasize + (int)sizeof(EventClass::EventType))) {
 
-        Keyboard->Check();
+        WWKeyboard->Check();
 
         //.....................................................................
         // add event to the DoList, only if it's not a FRAMESYNC
@@ -2998,7 +2998,7 @@ static int Extract_Compressed_Events(void* buf, int bufsize)
 
                     while (numunits) {
 
-                        Keyboard->Check();
+                        WWKeyboard->Check();
 
                         if (!DoList.Add(eventdata)) {
                             return (-1);
@@ -3302,7 +3302,7 @@ static int Execute_DoList(int max_houses,
                             if (WWMessageBox().Process(TXT_OUT_OF_SYNC, TXT_CONTINUE, TXT_STOP) == 0) {
                                 if ((Session.Type == GAME_IPX || Session.Type == GAME_INTERNET) && net) {
                                     while (net->Num_Connections()) {
-                                        Keyboard->Check();
+                                        WWKeyboard->Check();
                                         Destroy_Connection(net->Connection_ID(0), -1);
                                     }
                                 }
@@ -3361,7 +3361,7 @@ static void Clean_DoList(ConnManClass* net)
 {
     while (DoList.Count) {
 
-        Keyboard->Check();
+        WWKeyboard->Check();
 
         if (net)
             Update_Queue_Mono(net, 7);
@@ -3467,8 +3467,8 @@ static void Queue_Playback(void)
     //------------------------------------------------------------------------
     //	If the user hits ESC, stop the playback
     //------------------------------------------------------------------------
-    if (Keyboard->Check()) {
-        key = Keyboard->Get();
+    if (WWKeyboard->Check()) {
+        key = WWKeyboard->Get();
         if (key == KN_ESC || Session.Attract) {
             GameActive = false;
             return;

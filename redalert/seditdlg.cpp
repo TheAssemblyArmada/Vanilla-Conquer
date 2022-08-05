@@ -241,7 +241,7 @@ const char* SimpleEditDlgClass::Show()
     /*
     **	Main Processing Loop.
     */
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     bool firsttime = true;
     bool display = true;
     bool process = true;

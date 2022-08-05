@@ -253,7 +253,7 @@ void GameOptionsClass::Process(void)
                       GadgetClass::LEFTPRESS | GadgetClass::RIGHTPRESS))
         ->Add_Tail(*buttons);
 
-    Keyboard->Clear();
+    WWKeyboard->Clear();
 
     Fancy_Text_Print(TXT_NONE, 0, 0, GadgetClass::Get_Color_Scheme(), TBLACK, TPF_CENTER | TPF_TEXT);
 
@@ -418,7 +418,7 @@ void GameOptionsClass::Process(void)
             buttonsel[curbutton - 1]->Draw_Me(true);
             selection = curbutton;
             pressed = true;
-            Keyboard->Clear();
+            WWKeyboard->Clear();
             break;
 
         default:
@@ -577,7 +577,7 @@ void GameOptionsClass::Process(void)
     /*
     **	Redraw the map.
     */
-    Keyboard->Clear();
+    WWKeyboard->Clear();
     HidPage.Clear();
     Map.Flag_To_Redraw(true);
     Map.Render();

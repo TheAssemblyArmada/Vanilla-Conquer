@@ -128,8 +128,24 @@
 #endif
 
 // Test to see if partial object drawing is any faster.
-//#define	PARTIAL
+#ifndef REMASTER_BUILD
+#define PARTIAL
+#endif
+
+// SORTDRAW is used to synchronize object drawing across machines. Since this
+// consumes CPU for sorting and memory to keep 4 more pointers in the
+// CellClass, we can disable this when NETWORKING is disabled to save RAM.
+#ifdef NETWORKING
 #define SORTDRAW
+#endif
+
+/**********************************************************************
+**	Enable smoother flying aircraft rotation by generating frames
+**	procedurally in exchange of performance.
+*/
+#ifndef _NDS
+#define ENABLE_SHAPE_ROTATION
+#endif
 
 /**********************************************************************
 **	If the scenario editor to to be active in this build then uncomment
@@ -3537,7 +3553,9 @@ typedef enum WaypointEnum : unsigned char
 /****************************************************************************
 **	This is the max number of events supported on one frame.
 */
-#define MAX_EVENTS 256
+// 06/27/2022: Changed by PG to 256. Original seems to be 64.
+//#define MAX_EVENTS 256
+#define MAX_EVENTS 64
 
 /*
 ** New Config structure for .CFG files

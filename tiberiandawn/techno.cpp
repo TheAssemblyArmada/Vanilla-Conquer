@@ -2577,18 +2577,18 @@ ActionType TechnoClass::What_Action(ObjectClass* object) const
             return (ACTION_SELF);
         }
 #ifdef REMASTER_BUILD
-        // bool altdown = (Keyboard->Down(KN_LALT) || Keyboard->Down(KN_RALT));
-        // bool ctrldown = (Keyboard->Down(KN_LCTRL) || Keyboard->Down(KN_RCTRL));
-        // bool shiftdown = (Keyboard->Down(KN_LSHIFT) || Keyboard->Down(KN_RSHIFT));
+        // bool altdown = (WWKeyboard->Down(KN_LALT) || WWKeyboard->Down(KN_RALT));
+        // bool ctrldown = (WWKeyboard->Down(KN_LCTRL) || WWKeyboard->Down(KN_RCTRL));
+        // bool shiftdown = (WWKeyboard->Down(KN_LSHIFT) || WWKeyboard->Down(KN_RSHIFT));
         // Added for getting the input for special character keys from the client
         // - 6/26/2019 JAS
         bool altdown = DLL_Export_Get_Input_Key_State(KN_LALT);
         bool ctrldown = DLL_Export_Get_Input_Key_State(KN_LCTRL);
         bool shiftdown = DLL_Export_Get_Input_Key_State(KN_LSHIFT);
 #else
-        bool altdown = (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2));
-        bool ctrldown = (Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2));
-        bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
+        bool altdown = (WWKeyboard->Down(Options.KeyForceMove1) || WWKeyboard->Down(Options.KeyForceMove2));
+        bool ctrldown = (WWKeyboard->Down(Options.KeyForceAttack1) || WWKeyboard->Down(Options.KeyForceAttack2));
+        bool shiftdown = (WWKeyboard->Down(Options.KeySelect1) || WWKeyboard->Down(Options.KeySelect2));
 #endif
         /*
         **	Special guard area mission is possible if both the control and the
@@ -2694,18 +2694,18 @@ ActionType TechnoClass::What_Action(CELL cell) const
     CellClass const* cellptr = &Map[cell];
     OverlayTypeClass const* optr = NULL;
 #ifdef REMASTER_BUILD
-    // bool ctrldown = Keyboard->Down(KN_LCTRL) || Keyboard->Down(KN_RCTRL);
-    // bool shiftdown = Keyboard->Down(KN_LSHIFT) || Keyboard->Down(KN_RSHIFT);
-    // bool altdown = (Keyboard->Down(KN_LALT) || Keyboard->Down(KN_RALT));
+    // bool ctrldown = WWKeyboard->Down(KN_LCTRL) || WWKeyboard->Down(KN_RCTRL);
+    // bool shiftdown = WWKeyboard->Down(KN_LSHIFT) || WWKeyboard->Down(KN_RSHIFT);
+    // bool altdown = (WWKeyboard->Down(KN_LALT) || WWKeyboard->Down(KN_RALT));
     // Added for getting the input for special character keys from the client
     // - 6/26/2019 JAS
     bool altdown = DLL_Export_Get_Input_Key_State(KN_LALT);
     bool ctrldown = DLL_Export_Get_Input_Key_State(KN_LCTRL);
     bool shiftdown = DLL_Export_Get_Input_Key_State(KN_LSHIFT);
 #else
-    bool altdown = Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2);
-    bool ctrldown = Keyboard->Down(Options.KeyForceAttack1) || Keyboard->Down(Options.KeyForceAttack2);
-    bool shiftdown = (Keyboard->Down(Options.KeySelect1) || Keyboard->Down(Options.KeySelect2));
+    bool altdown = WWKeyboard->Down(Options.KeyForceMove1) || WWKeyboard->Down(Options.KeyForceMove2);
+    bool ctrldown = WWKeyboard->Down(Options.KeyForceAttack1) || WWKeyboard->Down(Options.KeyForceAttack2);
+    bool shiftdown = (WWKeyboard->Down(Options.KeySelect1) || WWKeyboard->Down(Options.KeySelect2));
 #endif
     /*
     **	Disable recognizing the <CTRL> key forced fire option when dealing with buildings.
@@ -3176,9 +3176,11 @@ void TechnoClass::Record_The_Kill(TechnoClass* source)
             House->BuildingsLost++;
         }
         if (source) {
+#ifndef _NDS
             if (GameToPlay == GAME_INTERNET) {
                 source->House->DestroyedBuildings.Increment_Unit_Total(((BuildingClass*)this)->Class->Type);
             }
+#endif
             source->House->BuildingsKilled[Owner()]++;
         }
 
@@ -3194,9 +3196,11 @@ void TechnoClass::Record_The_Kill(TechnoClass* source)
     case RTTI_AIRCRAFT:
         House->UnitsLost++;
         if (source) {
+#ifndef _NDS
             if (GameToPlay == GAME_INTERNET) {
                 source->House->DestroyedAircraft.Increment_Unit_Total(((AircraftClass*)this)->Class->Type);
             }
+#endif
             source->House->UnitsKilled[Owner()]++;
         }
         /*
@@ -3211,9 +3215,11 @@ void TechnoClass::Record_The_Kill(TechnoClass* source)
     case RTTI_INFANTRY:
         House->UnitsLost++;
         if (source) {
+#ifndef _NDS
             if (GameToPlay == GAME_INTERNET) {
                 source->House->DestroyedInfantry.Increment_Unit_Total(((InfantryClass*)this)->Class->Type);
             }
+#endif
             source->House->UnitsKilled[Owner()]++;
         }
         /*
@@ -3228,9 +3234,11 @@ void TechnoClass::Record_The_Kill(TechnoClass* source)
     case RTTI_UNIT:
         House->UnitsLost++;
         if (source) {
+#ifndef _NDS
             if (GameToPlay == GAME_INTERNET) {
                 source->House->DestroyedUnits.Increment_Unit_Total(((UnitClass*)this)->Class->Type);
             }
+#endif
             source->House->UnitsKilled[Owner()]++;
         }
 

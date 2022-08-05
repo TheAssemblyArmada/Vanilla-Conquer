@@ -48,6 +48,9 @@
 
 #include "function.h"
 #include <time.h> // for station ID computation
+#ifdef _NDS
+#include <nds.h>
+#endif
 
 //#include "WolDebug.h"
 
@@ -574,9 +577,18 @@ void SessionClass::Read_MultiPlayer_Settings(void)
     CDFileClass file(CONFIG_FILE_NAME);
     if (ini.Load(file)) {
 
+#ifdef _NDS
+        // Get DS user name as player name.
+        int i;
+        for (i = 0; i < PersonalData->nameLen; i++) {
+            Handle[i] = PersonalData->name[i] & 0xFF;
+        }
+        // Ensure that our string is null-terminated.
+        Handle[i] = '\0';
+#else
         //	Get the player's last-used Handle
         ini.Get_String("MultiPlayer", "Handle", "Noname", Handle, sizeof(Handle));
-
+#endif
         //	Get the player's last-used Color
         PrefColor = (PlayerColorType)ini.Get_Int("MultiPlayer", "Color", 0);
 #ifdef FIXIT_VERSION_3

@@ -101,6 +101,12 @@ int Get_Resolution_Factor(void)
     return RESFACTOR - 1;
 }
 
+/* Function used by common lib to get which game is running.  */
+game_t Get_Running_Game(void)
+{
+    return GAME_RA;
+}
+
 #define SHAPE_TRANS 0x40
 
 void* Get_Shape_Header_Data(void* ptr);
@@ -129,8 +135,6 @@ void Keyboard_Process(KeyNumType& input);
 static void Message_Input(KeyNumType& input);
 void Color_Cycle(void);
 bool Map_Edit_Loop(void);
-
-bool UseOldShapeDraw = false;
 
 #ifdef CHEAT_KEYS
 void Dump_Heap_Pointers(void);
@@ -219,7 +223,7 @@ void Main_Game(int argc, char* argv[])
         **	told the map to draw itself.
         */
         GamePalette.Set(FADE_PALETTE_MEDIUM);
-        Keyboard->Clear();
+        WWKeyboard->Clear();
         /*
         ** Only show the mouse if we're not playing back a recording.
         */
@@ -2441,7 +2445,7 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
             BlackPalette.Set();
         }
         PreserveVQAScreen = 0;
-        Keyboard->Clear();
+        WWKeyboard->Clear();
 
         VQAHandle* vqa = NULL;
 
@@ -2670,13 +2674,13 @@ MPG_RESPONSE far __stdcall MpegCallback(MPG_CMD cmd, LPVOID data, LPVOID user)
         break;
 
     case MPGCMD_UPDATE:
-        if ((BreakoutAllowed || Debug_Flag) && Keyboard->Check()) {
-            if (Keyboard->Get() == KN_ESC) {
-                Keyboard->Clear();
+        if ((BreakoutAllowed || Debug_Flag) && WWKeyboard->Check()) {
+            if (WWKeyboard->Get() == KN_ESC) {
+                WWKeyboard->Clear();
                 return MPGRES_QUIT;
             }
 
-            Keyboard->Clear();
+            WWKeyboard->Clear();
         }
 
         if (!GameInFocus) {
@@ -3055,11 +3059,13 @@ void CC_Draw_Shape(void const* shapefile,
         fadingdata = DisplayClass::FadingShade;
     }
 
+#ifdef ENABLE_SHAPE_ROTATION
     static unsigned char* _xbuffer = 0;
 
     if (!_xbuffer) {
         _xbuffer = new unsigned char[SHAPE_BUFFER_SIZE];
     }
+#endif
 
     if (shapefile != NULL && shapenum != -1) {
 
@@ -3105,6 +3111,8 @@ void CC_Draw_Shape(void const* shapefile,
             unsigned char* buffer = (unsigned char*)shape_pointer; // Get_Shape_Header_Data((void*)shape_pointer);
 
             UseOldShapeDraw = false;
+
+#ifdef ENABLE_SHAPE_ROTATION
             /*
             **	Rotation handler.
             */
@@ -3125,6 +3133,10 @@ void CC_Draw_Shape(void const* shapefile,
                 gb.Scale_Rotate(bm, pt, 0x0100, (256 - (rotation - 64)));
                 buffer = _xbuffer;
             }
+#else
+            /* If rotation is disabled then force to always be north.  */
+            rotation = DIR_N;
+#endif //ENABLE_SHAPE_ROTATION
 
             /*
             **	Special shadow drawing code (used for aircraft and bullets).
@@ -3358,9 +3370,9 @@ int VQ_Call_Back(unsigned char*, int)
     return 0;
 #else
     int key = 0;
-    if (Keyboard->Check()) {
-        key = Keyboard->Get();
-        Keyboard->Clear();
+    if (WWKeyboard->Check()) {
+        key = WWKeyboard->Get();
+        WWKeyboard->Clear();
     }
     Check_VQ_Palette_Set();
 #ifdef MOVIE640
@@ -3374,8 +3386,8 @@ int VQ_Call_Back(unsigned char*, int)
 #endif
     Frame_Limiter();
 
-    if ((BreakoutAllowed || Debug_Flag) && key == KN_ESC) {
-        Keyboard->Clear();
+    if ((BreakoutAllowed || Debug_Flag) && (key == KN_ESC || key == VK_LBUTTON)) {
+        WWKeyboard->Clear();
         Brokeout = true;
         return (true);
     }
@@ -4291,7 +4303,7 @@ bool Force_CD_Available(int cd)
                 GamePalette.Set();
             }
 
-            Keyboard->Clear();
+            WWKeyboard->Clear();
 
             while (Get_Mouse_State())
                 Show_Mouse();

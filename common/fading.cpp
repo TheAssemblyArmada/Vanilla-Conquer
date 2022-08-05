@@ -10,6 +10,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 #include "fading.h"
+#include <string.h>
 
 void* Build_Fading_Table(void const* palette, void* dest, int color, int frac)
 {

@@ -302,6 +302,9 @@ public:
     */
     unsigned IGaveUp : 1;
 
+    // UnitTracker has a leak and is only used for internet games, which we
+    // don't support for NDS.
+#ifndef _NDS
     /*
     ** Stuff to keep track of the total number of units built by this house.
     */
@@ -317,6 +320,7 @@ public:
     UnitTrackerClass<INFANTRY_COUNT> DestroyedInfantry;
     UnitTrackerClass<UNIT_COUNT> DestroyedUnits;
     UnitTrackerClass<STRUCT_COUNT> DestroyedBuildings;
+#endif
 
     /*
     ** Total number of enemy buildings captured by this house

@@ -244,7 +244,7 @@ void GScreenClass::Flag_To_Redraw(bool complete)
  *=============================================================================================*/
 void GScreenClass::Input(KeyNumType& key, int& x, int& y)
 {
-    key = Keyboard->Check();
+    key = WWKeyboard->Check();
 
     x = Get_Mouse_X();
     y = Get_Mouse_Y();
@@ -269,7 +269,7 @@ void GScreenClass::Input(KeyNumType& key, int& x, int& y)
     } else {
 
         if (key != 0) {
-            key = Keyboard->Get();
+            key = WWKeyboard->Get();
         }
     }
 
@@ -419,11 +419,17 @@ void GScreenClass::Render(void)
  *=============================================================================================*/
 void ModeX_Blit(GraphicBufferClass* source);
 
+void DS_Blit_Display(GraphicViewPortClass& HidPage, GraphicViewPortClass& SeenPage);
+
 void GScreenClass::Blit_Display(void)
 {
     BStart(BENCH_BLIT_DISPLAY);
+#ifndef _NDS
     WWMouse->Draw_Mouse(&HidPage);
     HidPage.Blit(SeenBuff, 0, 0, 0, 0, HidPage.Get_Width(), HidPage.Get_Height(), false);
     WWMouse->Erase_Mouse(&HidPage, false);
+#else
+    DS_Blit_Display(HidPage, SeenPage);
+#endif
     BEnd(BENCH_BLIT_DISPLAY);
 }
