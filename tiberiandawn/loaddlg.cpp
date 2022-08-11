@@ -43,6 +43,7 @@
 #include "loaddlg.h"
 #include "common/file.h"
 #include "common/framelimit.h"
+#include "common/paths.h"
 
 /***********************************************************************************************
  * LoadOptionsClass::LoadOptionsClass -- class constructor                                     *
@@ -481,6 +482,22 @@ int LoadOptionsClass::Process(void)
                 */
                 if (game_idx != 0) {
                     strcpy(game_descr, listbtn.Get_Item(game_idx));
+
+                    /*
+                    ** Strip any leading parenthesis off of the description.
+                    */
+                    if (game_descr[0] == '(') {
+                        char* ptr = strchr(game_descr, ')');
+                        if (ptr != NULL) {
+                            char* dst = game_descr;
+                            const char* src = ptr + 1; // Skip ')'
+
+                            // Don't use strcpy, as the memory regions overlap.
+                            while ((*dst++ = *src++) != '\0')
+                                ; // Copy string
+                            strtrim(game_descr);
+                        }
+                    }
                 } else {
                     game_descr[0] = 0;
                 }
@@ -568,10 +585,13 @@ void LoadOptionsClass::Fill_List(ListClass* list)
 {
     FileEntryClass* fdata; // for adding entries to 'Files'
     char descr[DESCRIP_MAX];
+    char scan_path[_MAX_PATH];
+    char sep[2] = {0};
     unsigned scenario; // scenario #
     HousesType house;  // house
     Find_File_Data* ff = nullptr;
     int id;
+    bool found;
 
     /*
     ** Make sure the list is empty
@@ -591,38 +611,52 @@ void LoadOptionsClass::Fill_List(ListClass* list)
     /*
     ** Find all savegame files
     */
-    bool rc = Find_First("savegame.*", 0, &ff);
+    sep[0] = PathsClass::SEP;
+    snprintf(scan_path, sizeof(scan_path), "%s%s%s", Paths.User_Path(), sep, "SAVEGAME.*");
 
-    while (rc) {
-        /*
-        ** Extract the game ID from the filename
-        */
-        id = Num_From_Ext(ff->GetName());
+    found = Find_First(scan_path, 0, &ff);
+    while (found) {
+        if (stricmp(ff->GetName(), NET_SAVE_FILE_NAME) != 0) {
+            /*
+            ** Extract the game ID from the filename
+            */
+            id = Num_From_Ext(ff->GetName());
 
-        /*
-        ** get the game's info; if success, add it to the list
-        */
-        bool ok = Get_Savefile_Info(id, descr, &scenario, &house);
+            /*
+            ** get the game's info; if success, add it to the list
+            */
+            bool ok = Get_Savefile_Info(id, descr, &scenario, &house);
 
-        fdata = new FileEntryClass;
+            fdata = new FileEntryClass;
 
-        fdata->Descr[0] = '\0';
-        if (!ok)
-            strcpy(fdata->Descr, Text_String(TXT_OLD_GAME));
-        strncat(fdata->Descr, descr, (sizeof(fdata->Descr) - strlen(fdata->Descr)) - 1);
-        fdata->Valid = ok;
-        fdata->Scenario = scenario;
-        fdata->House = house;
-        fdata->Num = id;
-        fdata->DateTime = ff->GetTime();
-        Files.Add(fdata);
+            fdata->Descr[0] = '\0';
+            if (!ok) {
+                strcpy(fdata->Descr, Text_String(TXT_OLD_GAME));
+            } else {
+                if (house == HOUSE_BAD) {
+                    sprintf(fdata->Descr, "(%s) ", Text_String(TXT_N_O_D));
+                } else {
+                    sprintf(fdata->Descr, "(%s) ", Text_String(TXT_G_D_I));
+                }
+            }
+            strncat(fdata->Descr, descr, (sizeof(fdata->Descr) - strlen(fdata->Descr)) - 1);
+            fdata->Valid = ok;
+            fdata->Scenario = scenario;
+            fdata->House = house;
+            fdata->Num = id;
+            fdata->DateTime = ff->GetTime();
+            Files.Add(fdata);
+        }
 
         /*
         ** Find the next file
         */
-        rc = Find_Next(ff);
+        found = Find_Next(ff);
     }
-    Find_Close(ff);
+
+    if (ff) {
+        Find_Close(ff);
+    }
 
     /*
     ** If saving a game, determine a unique file ID for the empty slot
