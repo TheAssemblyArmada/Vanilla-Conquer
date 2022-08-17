@@ -48,6 +48,7 @@
 
 #include "wwstd.h"
 #include "shape.h"
+#include "endianness.h"
 
 /***************************************************************************
  * Get_Shape_Size -- Fetch the size of the shape in memory.                *
@@ -81,7 +82,7 @@ int Get_Shape_Size(void const* shape)
     /*
     -------------------------- Returns shape's size --------------------------
     */
-    return (shp->ShapeSize);
+    return le16toh(shp->ShapeSize);
 
 } /* end of Get_Shape_Size */
 
@@ -106,7 +107,7 @@ int Get_Shape_Uncomp_Size(void const* shape)
 {
     Shape_Type* shp = (Shape_Type*)shape;
 
-    return (shp->DataLength);
+    return le16toh(shp->DataLength);
 
 } /* end of Get_Shape_Uncomp_Size */
 
@@ -206,6 +207,7 @@ void* Extract_Shape(void const* buffer, int shape)
 
     uint16_t numshapes;
     memcpy(&numshapes, bytebuf + offsetof(ShapeBlock_Type, NumShapes), sizeof(short));
+    numshapes = le16toh(numshapes);
 
     if (shape >= numshapes) {
         return NULL;
@@ -214,6 +216,7 @@ void* Extract_Shape(void const* buffer, int shape)
     /*  Same as offset = block->Offsets[shape]; on arch that unaligned access
         behaves well.  */
     memcpy(&offset, bytebuf + offsetof(ShapeBlock_Type, Offsets) + shape * sizeof(uint32_t), sizeof(uint32_t));
+    offset = le32toh(offset);
 
     return (bytebuf + 2 + offset);
 
@@ -265,7 +268,7 @@ int Get_Shape_Height(void const* shape)
 {
     Shape_Type* shp = (Shape_Type*)shape;
 
-    return (shp->Height);
+    return le16toh(shp->Height);
 
 } /* end of Get_Shape_Height */
 

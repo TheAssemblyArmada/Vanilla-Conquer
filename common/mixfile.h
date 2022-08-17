@@ -324,6 +324,17 @@ MixFileClass<T, TCRC>::MixFileClass(char const* filename)
         return;
     straw->Get(HeaderBuffer, Count * sizeof(SubBlock));
 
+#if __BIG_ENDIAN__
+    /* We have to fix the mixfile sublock on big endian machines.  */
+    for (int i = 0; i < Count; i++) {
+        struct SubBlock* subblock = &HeaderBuffer[i];
+
+        subblock->CRC = le32toh(subblock->CRC);
+        subblock->Offset = le32toh(subblock->Offset);
+        subblock->Size = le32toh(subblock->Size);
+    }
+#endif
+
     /*
     **	The start of the embedded mixfile data will be at the current file offset.
     **	This should be true even if the file header has been encrypted because the file
@@ -434,8 +445,8 @@ MixFileClass<T, TCRC>::MixFileClass(char const* filename, PKey const* key)
         straw->Get(((char*)&fileheader) + sizeof(alternate), sizeof(fileheader) - sizeof(alternate));
     }
 
-    Count = fileheader.count;
-    DataSize = fileheader.size;
+    Count = le16toh(fileheader.count);
+    DataSize = le32toh(fileheader.size);
     // BGMono_Printf("Mixfileclass %s DataSize: %08x   \n",filename,DataSize);Get_Key();
     /*
     **	Load up the offset control array. If RAM is exhausted, then the mixfile is invalid.

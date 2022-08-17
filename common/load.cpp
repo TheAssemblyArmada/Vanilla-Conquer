@@ -227,6 +227,7 @@ unsigned int Load_Uncompress(char const* file, BufferClass& uncomp_buff, BufferC
 
     fd = Open_File(file, READ);       // Open up the file to read from
     Read_File(fd, (char*)&isize, 2L); // Read the file size
+    isize = le32toh(isize);           // Fix size on Big Endian machines.
     Read_File(fd, uncomp_ptr, 8L);    // Read the header bytes in.
     isize -= 8;                       // Remaining data in file.
 
@@ -234,7 +235,7 @@ unsigned int Load_Uncompress(char const* file, BufferClass& uncomp_buff, BufferC
     /* Check for and read in the skip data block.									*/
     /*======================================================================*/
 
-    skipsize = *(((short*)uncomp_ptr) + 3);
+    skipsize = le16toh(*(((short*)uncomp_ptr) + 3));
 
     if (reserved_data && skipsize) {
         Read_File(fd, reserved_data, (unsigned int)skipsize);
@@ -303,12 +304,12 @@ unsigned int Uncompress_Data(void const* src, void* dst)
     **	compression method, size, and skip data amount.
     */
     uncomp_size = ((CompHeaderType*)src)->Size;
-#if (AMIGA)
-    uncomp_size = Reverse_Long(uncomp_size);
+#if (__BIG_ENDIAN__)
+    uncomp_size = bswap32(uncomp_size);
 #endif
     skip = ((CompHeaderType*)src)->Skip;
-#if (AMIGA)
-    skip = Reverse_Word(skip);
+#if (__BIG_ENDIAN__)
+    skip = bswap16(skip);
 #endif
     method = (CompressionType)((CompHeaderType*)src)->Method;
     src = Add_Long_To_Pointer((void*)src, (int)sizeof(CompHeaderType) + (int)skip);

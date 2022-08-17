@@ -164,11 +164,19 @@ extern int LParam;
 extern int Frame;
 inline CELL Coord_XCell(COORDINATE coord)
 {
-    return (CELL)(*(((unsigned char*)&coord) + 1));
+#ifdef __BIG_ENDIAN__
+    return ((CELL)(*(((unsigned char*)&coord) + 2)));
+#else
+    return ((CELL)(*(((unsigned char*)&coord) + 1)));
+#endif
 }
 inline CELL Coord_YCell(COORDINATE coord)
 {
-    return (CELL)(*(((unsigned char*)&coord) + 3));
+#ifdef __BIG_ENDIAN__
+    return ((CELL)(*(((unsigned char*)&coord) + 0)));
+#else
+    return ((CELL)(*(((unsigned char*)&coord) + 3)));
+#endif
 }
 
 #include "miscasm.h"
@@ -765,18 +773,31 @@ inline int Cell_Y(CELL cell)
 
 inline CELL Coord_XLepton(COORDINATE coord)
 {
+#ifdef __BIG_ENDIAN__
+    return ((CELL)(*(((unsigned char*)&coord) + 3)));
+#else
     return (CELL)(*((unsigned char*)&coord));
+#endif
 }
 
 inline CELL Coord_YLepton(COORDINATE coord)
 {
+#ifdef __BIG_ENDIAN__
+    return ((CELL)(*(((unsigned char*)&coord) + 1)));
+#else
     return (CELL)(*(((unsigned char*)&coord) + 2));
+#endif
 }
 
 inline COORDINATE Coord_Add(COORDINATE coord1, COORDINATE coord2)
 {
+#ifdef __BIG_ENDIAN__
+    return (COORDINATE)MAKE_LONG((*((short*)(&coord1)) + *((short*)(&coord2))),
+                                 (*((short*)(&coord1) + 1) + *((short*)(&coord2) + 1)));
+#else
     return (COORDINATE)MAKE_LONG((*((short*)(&coord1) + 1) + *((short*)(&coord2) + 1)),
                                  (*((short*)(&coord1)) + *((short*)(&coord2))));
+#endif
 }
 
 inline COORDINATE Coord_Sub(COORDINATE coord1, COORDINATE coord2)
@@ -787,8 +808,13 @@ inline COORDINATE Coord_Sub(COORDINATE coord1, COORDINATE coord2)
 
 inline COORDINATE Coord_Snap(COORDINATE coord)
 {
+#if defined(__BIG_ENDIAN__)
+    return (COORDINATE)MAKE_LONG((((*((unsigned short*)&coord)) & 0xFF00) | 0x80),
+                                 (((*(((unsigned short*)&coord) + 1)) & 0xFF00) | 0x80));
+#else
     return (COORDINATE)MAKE_LONG((((*(((unsigned short*)&coord) + 1)) & 0xFF00) | 0x80),
                                  (((*((unsigned short*)&coord)) & 0xFF00) | 0x80));
+#endif
 }
 
 inline COORDINATE Coord_Mid(COORDINATE coord1, COORDINATE coord2)

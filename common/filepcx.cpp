@@ -97,6 +97,10 @@ GraphicBufferClass* Read_PCX_File(const char* name, char* palette, void* Buff, i
 
     file_handle.Read(&header, sizeof(PCX_HEADER));
 
+    /* PCX header is on little endian format.  */
+    header.width = le16toh(header.width);
+    header.height = le16toh(header.height);
+
     if (header.id != 10 && header.version != 5 && header.pixelsize != 8)
         return NULL;
 
@@ -119,6 +123,8 @@ GraphicBufferClass* Read_PCX_File(const char* name, char* palette, void* Buff, i
     buffer = (char*)pic->Get_Buffer();
     file_ptr = pool;
     file_handle.Read(pool, POOL_SIZE);
+
+    header.byte_per_line = le16toh(header.byte_per_line);
 
     if (header.byte_per_line != width) {
 

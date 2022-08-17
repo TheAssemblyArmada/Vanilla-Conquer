@@ -40,6 +40,7 @@
 #include "memflag.h"
 #include "keyframe.h"
 #include "debugstring.h"
+#include "endianness.h"
 
 #include <string.h>
 
@@ -265,6 +266,16 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
     //
     memcpy(&keyfr, dataptr, sizeof(keyfr));
 
+    /* Fix keyfr data on BE machines.  */
+#if __BIG_ENDIAN__
+    keyfr.flags = le16toh(keyfr.flags);
+    keyfr.frames = le16toh(keyfr.frames);
+    keyfr.x = le16toh(keyfr.x);
+    keyfr.y = le16toh(keyfr.y);
+    keyfr.width = le16toh(keyfr.width);
+    keyfr.height = le16toh(keyfr.height);
+#endif
+
     if (framenumber >= keyfr.frames) {
         return (0);
     }
@@ -299,9 +310,15 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
                 keyfr.y = TotalSlotsUsed;
                 TotalSlotsUsed++;
             }
+            /* On Big Endian machines we need to swap back the values before
+               writing, else it will read swapped again later.  */
+
+            unsigned short x = le16toh(keyfr.x);
+            unsigned short y = le16toh(keyfr.y);
+
             // Commit back to the original pointer.
-            memcpy(Add_Long_To_Pointer(dataptr, offsetof(KeyFrameHeaderType, x)), &keyfr.x, sizeof(unsigned short));
-            memcpy(Add_Long_To_Pointer(dataptr, offsetof(KeyFrameHeaderType, y)), &keyfr.y, sizeof(unsigned short));
+            memcpy(Add_Long_To_Pointer(dataptr, offsetof(KeyFrameHeaderType, x)), &x, sizeof(unsigned short));
+            memcpy(Add_Long_To_Pointer(dataptr, offsetof(KeyFrameHeaderType, y)), &y, sizeof(unsigned short));
 
             /*
             ** Allocate and clear the memory for the shape info
@@ -329,11 +346,15 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
     // get offset into data
     ptr = (char*)Add_Long_To_Pointer(dataptr, (((unsigned int)framenumber << 3) + sizeof(KeyFrameHeaderType)));
     Mem_Copy(ptr, &offset[0], 12L);
+#if __BIG_ENDIAN__
+    frameflags = (char)(offset[0]);
+#else
     frameflags = (char)(offset[0] >> 24);
+#endif
 
     if ((frameflags & KF_KEYFRAME)) {
 
-        ptr = (char*)Add_Long_To_Pointer(dataptr, (offset[0] & 0x00FFFFFFL));
+        ptr = (char*)Add_Long_To_Pointer(dataptr, (le32toh(offset[0]) & 0x00FFFFFFL));
 
         if (keyfr.flags & 1) {
             ptr = (char*)Add_Long_To_Pointer(ptr, 768L);
@@ -342,17 +363,17 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
     } else { // key delta or delta
 
         if ((frameflags & KF_DELTA)) {
-            currframe = (unsigned short)offset[1];
+            currframe = (unsigned short)le32toh(offset[1]);
 
             ptr = (char*)Add_Long_To_Pointer(dataptr, (((unsigned int)currframe << 3) + sizeof(KeyFrameHeaderType)));
             Mem_Copy(ptr, &offset[0], (int)(SUBFRAMEOFFS * sizeof(uint32_t)));
         }
 
         // key frame
-        offcurr = offset[1] & 0x00FFFFFFL;
+        offcurr = le32toh(offset[1]) & 0x00FFFFFFL;
 
         // key delta
-        offdiff = (offset[0] & 0x00FFFFFFL) - offcurr;
+        offdiff = (le32toh(offset[0]) & 0x00FFFFFFL) - offcurr;
 
         ptr = (char*)Add_Long_To_Pointer(dataptr, offcurr);
 
@@ -522,10 +543,16 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
  *=============================================================================================*/
 unsigned short Get_Build_Frame_Count(void const* dataptr)
 {
+    /* Original amiga port compared if `frames` variable was larger than 100,
+       and on true it swapped that.  That is because the author choose to swap
+       the shape header and commit back to the source datastructure.  We avoid
+       doing that.  */
+
     if (dataptr) {
         char* bdataptr = (char*)dataptr;
         unsigned short var;
         memcpy(&var, bdataptr + offsetof(KeyFrameHeaderType, frames), sizeof(var));
+        var = le16toh(var);
         return var;
     }
     return (0);
@@ -537,6 +564,7 @@ unsigned short Get_Build_Frame_X(void const* dataptr)
         char* bdataptr = (char*)dataptr;
         unsigned short var;
         memcpy(&var, bdataptr + offsetof(KeyFrameHeaderType, x), sizeof(var));
+        var = le16toh(var);
         return var;
     }
     return (0);
@@ -548,6 +576,7 @@ unsigned short Get_Build_Frame_Y(void const* dataptr)
         char* bdataptr = (char*)dataptr;
         unsigned short var;
         memcpy(&var, bdataptr + offsetof(KeyFrameHeaderType, y), sizeof(var));
+        var = le16toh(var);
         return var;
     }
     return (0);
@@ -574,6 +603,7 @@ unsigned short Get_Build_Frame_Width(void const* dataptr)
         char* bdataptr = (char*)dataptr;
         unsigned short var;
         memcpy(&var, bdataptr + offsetof(KeyFrameHeaderType, width), sizeof(var));
+        var = le16toh(var);
         return var;
     }
     return (0);
@@ -600,6 +630,7 @@ unsigned short Get_Build_Frame_Height(void const* dataptr)
         char* bdataptr = (char*)dataptr;
         unsigned short var;
         memcpy(&var, bdataptr + offsetof(KeyFrameHeaderType, height), sizeof(var));
+        var = le16toh(var);
         return var;
     }
     return (0);
@@ -613,6 +644,8 @@ bool Get_Build_Frame_Palette(void const* dataptr, void* palette)
         unsigned short frames;
         memcpy(&flags, bdataptr + offsetof(KeyFrameHeaderType, flags), sizeof(flags));
         memcpy(&frames, bdataptr + offsetof(KeyFrameHeaderType, frames), sizeof(frames));
+        frames = le16toh(frames);
+        flags = le16toh(flags);
         if (flags & 1) {
             char const* ptr = (char const*)Add_Long_To_Pointer(
                 dataptr, ((((long)sizeof(unsigned long) << 1) * frames + 16 + sizeof(KeyFrameHeaderType))));

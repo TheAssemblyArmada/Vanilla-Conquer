@@ -37,6 +37,7 @@
 #include "gbuffer.h"
 #include "file.h"
 #include "memflag.h"
+#include "endianness.h"
 
 #include <errno.h>
 #include <string.h>
@@ -100,8 +101,13 @@ void* Set_Font(void const* fontptr)
         unsigned short fontwidthblock;
         unsigned short fontinfoblock;
 
+        /* Unaligned ARM access...  */
         memcpy(&fontwidthblock, (char*)fontptr + FONTWIDTHBLOCK, sizeof(short));
         memcpy(&fontinfoblock, (char*)fontptr + FONTINFOBLOCK, sizeof(short));
+
+        /* Big Endian machines...  */
+        fontwidthblock = le16toh(fontwidthblock);
+        fontinfoblock = le16toh(fontinfoblock);
 
         FontWidthBlockPtr = (char*)fontptr + fontwidthblock;
         char const* blockptr = (char*)fontptr + fontinfoblock;
@@ -335,11 +341,12 @@ int Buffer_Print(void* thisptr, const char* string, int x, int y, int fground, i
     int base_x = x;
 
     if (FontPtr != nullptr) {
-        const unsigned short* datalist = reinterpret_cast<const unsigned short*>(reinterpret_cast<const char*>(FontPtr)
-                                                                                 + fntheader->OffsetBlockOffset);
-        const unsigned char* widthlist = reinterpret_cast<const unsigned char*>(FontPtr) + fntheader->WidthBlockOffset;
-        const unsigned short* linelist =
-            reinterpret_cast<const unsigned short*>(reinterpret_cast<const char*>(FontPtr) + fntheader->HeightOffset);
+        const unsigned short* datalist = reinterpret_cast<const unsigned short*>(
+            reinterpret_cast<const char*>(FontPtr) + le16toh(fntheader->OffsetBlockOffset));
+        const unsigned char* widthlist =
+            reinterpret_cast<const unsigned char*>(FontPtr) + le16toh(fntheader->WidthBlockOffset);
+        const unsigned short* linelist = reinterpret_cast<const unsigned short*>(reinterpret_cast<const char*>(FontPtr)
+                                                                                 + le16toh(fntheader->HeightOffset));
 
         int fntheight = fntheader->MaxHeight;
         int ydisplace = FontYSpacing + fntheight;
@@ -411,9 +418,11 @@ int Buffer_Print(void* thisptr, const char* string, int x, int y, int fground, i
                 int next_line = pitch - char_width;
                 unsigned short dlist;
                 memcpy(&dlist, datalist + char_num, sizeof(unsigned short));
+                dlist = le16toh(dlist);
                 const unsigned char* char_data = reinterpret_cast<const unsigned char*>(FontPtr) + dlist;
                 short char_lle;
                 memcpy(&char_lle, linelist + char_num, sizeof(short));
+                char_lle = le16toh(char_lle);
                 int char_ypos = char_lle & 0xFF;
                 int char_lines = char_lle >> 8;
                 int char_height = fntheight - (char_ypos + char_lines);

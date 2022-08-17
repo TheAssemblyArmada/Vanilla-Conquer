@@ -101,8 +101,11 @@ template <class T> T MAX(T a, T b)
 #define HIGH_WORD(a) ((unsigned int)(a) >> 16)
 
 // Merges to shorts to become a long
+#ifdef __BIG_ENDIAN__
+#define MAKE_LONG(a, b) ((int)((b)&0x0000FFFFL)) | ((int)(a) << 16)
+#else
 #define MAKE_LONG(a, b) (((int)(a) << 16) | (int)((b)&0x0000FFFFL))
-
+#endif
 /*
 ** Macro allows our routines to act like
 ** sprintf etc..

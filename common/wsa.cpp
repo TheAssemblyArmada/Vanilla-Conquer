@@ -192,6 +192,22 @@ void* Open_Animation(char const* file_name,
     Read_File(fh, (char*)&file_header, sizeof(WSA_FileHeaderType));
 
     /*======================================================================*/
+    /* Fix headers on Big Endian									*/
+    /*======================================================================*/
+
+#if __BIG_ENDIAN__
+    file_header.largest_frame_size = le16toh(file_header.largest_frame_size);
+    file_header.total_frames = le16toh(file_header.total_frames);
+    file_header.pixel_x = le16toh(file_header.pixel_x);
+    file_header.pixel_y = le16toh(file_header.pixel_y);
+    file_header.pixel_width = le16toh(file_header.pixel_width);
+    file_header.pixel_height = le16toh(file_header.pixel_height);
+    file_header.flags = (int16_t)le16toh(file_header.flags);
+    file_header.frame0_offset = le32toh(file_header.frame0_offset);
+    file_header.frame0_end = le32toh(file_header.frame0_end);
+#endif
+
+    /*======================================================================*/
     /* If the file has an attached palette then if we have a valid palette	*/
     /*		pointer we need to read it in.												*/
     /*======================================================================*/
@@ -467,6 +483,16 @@ bool Animate_Frame(void* handle,
     char* frame_buffer;            // our destination.
     bool direct_to_dest;           // are we going directly to the destination?
     int dest_width;                // the width of the destination buffer or page.
+
+    /* FIXME: Copy header to a temporary buffer instead of this hack.  */
+    if (sys_header->total_frames > 700) {
+        sys_header->current_frame = le16toh(sys_header->current_frame);
+        sys_header->total_frames = le16toh(sys_header->total_frames);
+        sys_header->pixel_x = le16toh(sys_header->pixel_x);
+        sys_header->pixel_y = le16toh(sys_header->pixel_y);
+        sys_header->pixel_width = le16toh(sys_header->pixel_width);
+        sys_header->pixel_height = le16toh(sys_header->pixel_height);
+    }
 
     // Assign local pointer to the beginning of the buffer where the system information
     // resides
@@ -1028,6 +1054,8 @@ static unsigned int Get_Resident_Frame_Offset(char* file_buffer, int frame)
     uint32_t x1, x0;
     memcpy(&x0, lptr, sizeof(uint32_t));
     memcpy(&x1, lptr + 1, sizeof(uint32_t));
+    x0 = le32toh(x0);
+    x1 = le32toh(x1);
 
     if (x0) {
         frame0_size = x1 - x0;
@@ -1038,6 +1066,7 @@ static unsigned int Get_Resident_Frame_Offset(char* file_buffer, int frame)
     // Return the offset into RAM for the frame.
     lptr += frame;
     memcpy(&x0, lptr, sizeof(uint32_t));
+    x0 = le32toh(x0);
     if (x0)
         return (x0 - (frame0_size + WSA_FILE_HEADER_SIZE));
     else
@@ -1066,6 +1095,7 @@ static unsigned int Get_File_Frame_Offset(int file_handle, int frame, int palett
     if (Read_File(file_handle, (char*)&offset, sizeof(uint32_t)) != sizeof(uint32_t)) {
         offset = 0L;
     }
+    offset = le32toh(offset);
     offset += palette_adjust;
     return (offset);
 }

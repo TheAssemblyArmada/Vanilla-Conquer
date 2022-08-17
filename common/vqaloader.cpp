@@ -1184,6 +1184,21 @@ VQAData* VQA_AllocBuffers(VQAHeader* header, VQAConfig* config)
     if (data == nullptr) {
         return nullptr;
     }
+#if __BIG_ENDIAN__
+    /* Fix header on Big Endian.  */
+    header->Frames = le16toh(header->Frames);
+    header->Flags = le16toh(header->Flags);
+    header->Version = le16toh(header->Version);
+    header->SampleRate = le16toh(header->SampleRate);
+    header->AltSampleRate = le16toh(header->AltSampleRate); //?
+    header->ImageWidth = le16toh(header->ImageWidth);
+    header->ImageHeight = le16toh(header->ImageHeight);
+    header->Num1Colors = le16toh(header->Num1Colors);
+    header->CBentries = le16toh(header->CBentries);
+    header->Xpos = le16toh(header->Xpos); //?
+    header->Ypos = le16toh(header->Ypos); //?
+    header->MaxFramesize = le16toh(header->MaxFramesize);
+#endif
 
     memset(data, 0, sizeof(VQAData));
     data->MemUsed = sizeof(VQAData);
