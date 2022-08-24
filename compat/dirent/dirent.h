@@ -23,11 +23,7 @@ SOFTWARE.
 #ifndef MINIPOSIX_DIRENT_H
 #define MINIPOSIX_DIRENT_H
 
-#ifndef _WIN32
-
-#pragma message("this dirent.h implementation is for Windows only!")
-
-#else
+#ifdef _WIN32
 
 #ifdef __cplusplus
 extern "C" {

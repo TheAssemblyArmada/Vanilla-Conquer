@@ -26,14 +26,14 @@
 #include <string.h>
 #include <wchar.h>
 
-char *basename(char *path)
+char* basename(char* path)
 {
-    static char *retfail = NULL;
+    static char* retfail = NULL;
     size_t len;
     /* to handle path names for files in multibyte character locales,
      * we need to set up LC_CTYPE to match the host file system locale
      */
-    char *locale = setlocale(LC_CTYPE, NULL);
+    char* locale = setlocale(LC_CTYPE, NULL);
 
     if (locale != NULL)
         locale = strdup(locale);
@@ -44,11 +44,11 @@ char *basename(char *path)
          * in which to create a wide character reference copy of path
          */
         len = mbstowcs(NULL, path, 0);
-        wchar_t *refcopy = malloc(sizeof(wchar_t) * (1 + len));
+        wchar_t* refcopy = malloc(sizeof(wchar_t) * (1 + len));
         /* create the wide character reference copy of path,
          * and step over the drive designator, if present ...
          */
-        wchar_t *refpath = refcopy;
+        wchar_t* refpath = refcopy;
 
         if ((len = mbstowcs(refpath, path, len)) > 1 && refpath[1] == L':') {
             /* FIXME: maybe should confirm *refpath is a valid drive designator */
@@ -60,7 +60,7 @@ char *basename(char *path)
         if (*refpath) {
             /* and, when we do, process it in the wide character domain ...
              * scanning from left to right, to the char after the final dir separator.  */
-            wchar_t *refname;
+            wchar_t* refname;
 
             for (refname = refpath; *refpath; ++refpath) {
                 if (*refpath == L'/' || *refpath == L'\\') {
@@ -124,13 +124,13 @@ char *basename(char *path)
     return retfail;
 }
 
-char *dirname(char *path)
+char* dirname(char* path)
 {
-    static char *retfail = NULL;
+    static char* retfail = NULL;
     size_t len;
     /* to handle path names for files in multibyte character locales,
      * we need to set up LC_CTYPE to match the host file system locale.  */
-    char *locale = setlocale(LC_CTYPE, NULL);
+    char* locale = setlocale(LC_CTYPE, NULL);
 
     if (locale != NULL)
         locale = strdup(locale);
@@ -140,9 +140,9 @@ char *dirname(char *path)
         /* allocate sufficient local storage space,
          * in which to create a wide character reference copy of path.  */
         len = mbstowcs(NULL, path, 0);
-        wchar_t *refcopy = malloc(sizeof(wchar_t) * (1 + len));
+        wchar_t* refcopy = malloc(sizeof(wchar_t) * (1 + len));
         /* create the wide character reference copy of path */
-        wchar_t *refpath = refcopy;
+        wchar_t* refpath = refcopy;
 
         len = mbstowcs(refpath, path, len);
         refcopy[len] = L'\0';

@@ -1,0 +1,52 @@
+#ifndef STRINGCOMPAT_H
+#define STRINGCOMPAT_H
+
+#cmakedefine HAVE_STRTRIM
+#cmakedefine HAVE_STRLWR
+#cmakedefine HAVE_STRUPR
+#cmakedefine HAVE_STRREV
+#cmakedefine HAVE_STRLCAT
+#cmakedefine HAVE_STRLCPY
+
+#include <ctype.h>
+
+/* Vodoo to extend platform string.h file. */
+#ifdef _MSC_VER
+#include <../ucrt/string.h>
+#else
+#include_next <string.h>
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifndef HAVE_STRTRIM
+char *strtrim(char *str);
+#endif
+
+#ifndef HAVE_STRLWR
+char *strlwr(char *str);
+#endif
+
+#ifndef HAVE_STRUPR
+char *strupr(char *str);
+#endif
+
+#ifndef HAVE_STRREV
+char *strrev(char *str);
+#endif
+
+#ifndef HAVE_STRLCAT
+size_t strlcat(char *dst, const char *src, size_t dsize);
+#endif
+
+#ifndef HAVE_STRLCPY
+size_t strlcpy(char *dst, const char *src, size_t dsize);
+#endif
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
+#endif

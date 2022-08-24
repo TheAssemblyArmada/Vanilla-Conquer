@@ -8,6 +8,8 @@ if(CLANG_FORMAT_FOUND)
     endif()
 
     set(GLOB_PATTERNS
+        compat/*.c
+        compat/*.h
         common/*.cpp
         common/*.h
         tiberiandawn/*.cpp

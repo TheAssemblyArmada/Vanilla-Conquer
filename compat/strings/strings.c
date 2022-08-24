@@ -19,7 +19,7 @@ SOFTWARE.
 */
 #include <strings.h>
 
-extern inline void explicit_bzero(void *s, size_t n);
+extern inline void explicit_bzero(void* s, size_t n);
 extern inline int ffs(int i);
 extern inline int ffsl(long i);
 extern inline int ffsll(long long i);

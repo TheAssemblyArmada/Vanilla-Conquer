@@ -7,7 +7,7 @@ if(NOT DEFINED CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo" FORCE)
 endif()
 
-project(VanillaConquer CXX)
+project(VanillaConquer C CXX)
 
 option(BUILD_REMASTERTD "Build Tiberian Dawn remaster dll." OFF)
 option(BUILD_REMASTERRA "Build Red Alert remaster dll." OFF)
@@ -140,6 +140,7 @@ if(BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
+add_subdirectory(compat)
 add_subdirectory(common)
 add_subdirectory(tiberiandawn)
 add_subdirectory(redalert)
