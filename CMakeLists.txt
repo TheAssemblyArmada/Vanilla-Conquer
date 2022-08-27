@@ -29,6 +29,7 @@ option(BUILD_WITH_ASAN "Build with address sanitizer" OFF)
 if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
     option(DSOUND "Enable DirectSound audio. (deprecated)" OFF)
     option(DDRAW "Enable DirectDraw video backend. (deprecated)" OFF)
+    option(SDL1 "Enable SDL1 video backend." OFF)
     option(SDL2 "Enable SDL2 video backend." ON)
     option(OPENAL "Enable OpenAL audio backend." ON)
     add_feature_info(DirectSound DSOUND "DirectSound audio backend (deprecated)")
@@ -125,21 +126,19 @@ if(SDL1)
     find_package(SDL REQUIRED)
     list(APPEND VANILLA_LIBS ${SDL_LIBRARY})
     include_directories(${SDL_INCLUDE_DIR})
-    add_definitions(-DSDL_BUILD -DSDL1_BUILD)
 
     # winuser.h defines VK_ macros but it can be prevented
     if(WIN32)
         add_definitions(-DNOVIRTUALKEYCODES)
     endif()
-
     set(DDRAW OFF)
+    set(SDL2 OFF)
 endif()
 
 if(SDL2)
     find_package(SDL2 REQUIRED)
     list(APPEND VANILLA_LIBS ${SDL2_LIBRARY})
     include_directories(${SDL2_INCLUDE_DIR})
-    add_definitions(-DSDL_BUILD)
 
     # winuser.h defines VK_ macros but it can be prevented
     if(WIN32)
