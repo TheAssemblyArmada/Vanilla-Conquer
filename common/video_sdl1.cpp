@@ -48,10 +48,8 @@
 #include <SDL.h>
 
 extern WWKeyboardClass* Keyboard;
-#include "video_sdl1.h"
 static SDL_Surface* window;
-static SDL_Surface* windowSurface;
-static SDL_Palette* palette;
+static SDL_Color logpal[256], physpal[256];
 static Uint32 pixel_format;
 static SDL_Rect render_dst;
 
@@ -173,10 +171,11 @@ SurfaceMonitorClass& AllSurfaces = AllSurfacesDummy; // List of all direct draw 
 bool Set_Video_Mode(int w, int h, int bits_per_pixel)
 {
     SDL_Init(SDL_INIT_VIDEO);
+    SDL_ShowCursor(SDL_DISABLE);
 
     int win_w = w;
     int win_h = h;
-    int win_flags = SDL_HWSURFACE;
+    int win_flags = SDL_HWSURFACE | SDL_HWPALETTE;
 
     if (!Settings.Video.Windowed) {
         /*
@@ -185,11 +184,11 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
         if (Settings.Video.Width < w || Settings.Video.Height < h) {
             win_w = Settings.Video.Width = 0;
             win_h = Settings.Video.Height = 0;
-            win_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+            win_flags |= SDL_FULLSCREEN;
         } else {
             win_w = Settings.Video.Width;
             win_h = Settings.Video.Height;
-            win_flags |= SDL_WINDOW_FULLSCREEN;
+            win_flags |= SDL_FULLSCREEN;
         }
     } else if (Settings.Video.WindowWidth > w || Settings.Video.WindowHeight > h) {
         win_w = Settings.Video.WindowWidth;
@@ -199,21 +198,17 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
         Settings.Video.WindowHeight = win_h;
     }
 
-    const SDL_VideoInfo* video_info = SDL_GetVideoInfo();
-    window = SDL_SetVideoMode(win_w, win_h, video_info->vfmt->BitsPerPixel, win_flags);
+    window = SDL_SetVideoMode(win_w, win_h, 8, win_flags);
     if (window == nullptr) {
         DBG_ERROR("SDL_SetVideoMode failed: %s", SDL_GetError());
         Reset_Video_Mode();
         return false;
     }
 
+    SDL_SetPalette(window, SDL_LOGPAL, logpal, 0, 256);
     SDL_WM_SetCaption("Vanilla Conquer", NULL);
 
-    DBG_INFO("Created SDL1 %s window in %dx%d@%dbpp", (win_flags & SDL_FULLSCREEN ? "fullscreen" : "windowed"), win_w, win_h, video_info->vfmt->BitsPerPixel);
-
-    if (palette == nullptr) {
-        palette = SDL_AllocPalette(256);
-    }
+    DBG_INFO("Created SDL1 %s window in %dx%d@%dbpp", (window->flags & SDL_FULLSCREEN ? "fullscreen" : "windowed"), window->w, window->h, window->format->BitsPerPixel);
 
     /*
     ** Set mouse scaling options.
@@ -316,9 +311,6 @@ void Reset_Video_Mode(void)
         SDL_FreeSurface(hwcursor.Surface);
         hwcursor.Surface = nullptr;
     }
-
-    SDL_FreePalette(palette);
-    palette = nullptr;
 
     if (window) {
         SDL_FreeSurface(window);
@@ -461,16 +453,14 @@ void Wait_Vert_Blank(void)
  *=============================================================================================*/
 void Set_DD_Palette(void* rpalette)
 {
-    SDL_Color colors[256];
-
     unsigned char* rcolors = (unsigned char*)rpalette;
     for (int i = 0; i < 256; i++) {
-        colors[i].r = (unsigned char)rcolors[i * 3] << 2;
-        colors[i].g = (unsigned char)rcolors[i * 3 + 1] << 2;
-        colors[i].b = (unsigned char)rcolors[i * 3 + 2] << 2;
+        physpal[i].r = (unsigned char)rcolors[i * 3] << 2;
+        physpal[i].g = (unsigned char)rcolors[i * 3 + 1] << 2;
+        physpal[i].b = (unsigned char)rcolors[i * 3 + 2] << 2;
     }
 
-    SDL_SetPaletteColors(palette, colors, 0, 256);
+    SDL_SetPalette(window, SDL_PHYSPAL, physpal, 0, 256);
 
     /*
     ** Cursor needs to be updated when palette changes.
@@ -516,7 +506,6 @@ SurfaceMonitorClass::SurfaceMonitorClass()
 {
     SurfacesRestored = false;
 }
-
 /*
 ** VideoSurfaceDDraw
 */
@@ -528,15 +517,11 @@ class VideoSurfaceSDL1 : public VideoSurface
 public:
     VideoSurfaceSDL1(int w, int h, GBC_Enum flags)
         : flags(flags)
-        , windowSurface(nullptr)
     {
-        surface = SDL_CreateRGBSurface(0, w, h, 8, 0, 0, 0, 0);
-        SDL_SetSurfacePalette(surface, palette);
+        surface = SDL_CreateRGBSurface(SDL_HWSURFACE, w, h, 8, 0, 0, 0, 0);
+        SDL_SetPalette(surface, SDL_LOGPAL, logpal, 0, 256);
 
         if (flags & GBC_VISIBLE) {
-            windowSurface = SDL_CreateRGBSurface(0, w, h, window->format->BitsPerPixel,
-                                                 window->format->Rmask, window->format->Gmask,
-                                                 window->format->Bmask, window->format->Amask);
             frontSurface = this;
         }
     }
@@ -548,10 +533,6 @@ public:
         }
 
         SDL_FreeSurface(surface);
-
-        if (windowSurface) {
-            SDL_FreeSurface(windowSurface);
-        }
     }
 
     virtual void* GetData() const
@@ -596,15 +577,14 @@ public:
 
     virtual void FillRect(const Rect& rect, unsigned char color)
     {
-        SDL_FillRect(surface, (SDL_Rect*)(&rect), color);
+        SDL_Rect rectSDL = { rect.X, rect.Y, rect.Width, rect.Height };
+        SDL_FillRect(surface, &rectSDL, color);
     }
 
     void RenderSurface()
     {
-        void* pixels;
-        int pitch;
+        SDL_BlitSurface(surface, NULL, window, NULL);
 
-        SDL_BlitSurface(surface, NULL, windowSurface, NULL);
 
         if (Settings.Video.HardwareCursor) {
             /*
@@ -639,16 +619,14 @@ public:
             dst.w = hwcursor.Surface->w;
             dst.h = hwcursor.Surface->h;
 
-            SDL_BlitSurface(hwcursor.Surface, nullptr, windowSurface, &dst);
+            SDL_BlitSurface(hwcursor.Surface, nullptr, window, &dst);
         }
 
-        SDL_BlitSurface(surface, NULL, window, NULL);
         SDL_Flip(window);
     }
 
 private:
     SDL_Surface* surface;
-    SDL_Surface* windowSurface;
     GBC_Enum flags;
 };
 
