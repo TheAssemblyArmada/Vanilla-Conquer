@@ -48,14 +48,9 @@
 #include <SDL.h>
 
 extern WWKeyboardClass* Keyboard;
-#ifndef SDL2_BUILD
 #include "video_sdl1.h"
 static SDL_Surface* window;
 static SDL_Surface* windowSurface;
-#else
-static SDL_Window* window;
-static SDL_Renderer* renderer;
-#endif
 static SDL_Palette* palette;
 static Uint32 pixel_format;
 static SDL_Rect render_dst;
@@ -79,51 +74,6 @@ static struct
     SDL_Surface* Surface;
 } hwcursor;
 
-#define ARRAY_SIZE(x) int(sizeof(x) / sizeof(x[0]))
-#ifdef SDL2_BUILD
-#define MAKEFORMAT(f)                                                                                                  \
-    {                                                                                                                  \
-        SDL_PIXELFORMAT_##f, #f                                                                                        \
-    }
-Uint32 SettingsPixelFormat()
-{
-    /*
-    ** Known good RGB formats for both the surface and texture.
-    */
-    static struct
-    {
-        Uint32 format;
-        std::string name;
-    } formats[] = {
-        MAKEFORMAT(ARGB8888),
-        MAKEFORMAT(RGBA8888),
-        MAKEFORMAT(ABGR8888),
-        MAKEFORMAT(BGRA8888),
-        MAKEFORMAT(RGB24),
-        MAKEFORMAT(BGR24),
-        MAKEFORMAT(RGB888),
-        MAKEFORMAT(BGR888),
-        MAKEFORMAT(RGB555),
-        MAKEFORMAT(BGR555),
-        MAKEFORMAT(RGB565),
-        MAKEFORMAT(BGR565),
-    };
-
-    std::string str = Settings.Video.PixelFormat;
-
-    for (auto& c : str) {
-        c = toupper(c);
-    }
-
-    for (int i = 0; i < ARRAY_SIZE(formats); i++) {
-        if (str.compare(formats[i].name) == 0) {
-            return formats[i].format;
-        }
-    }
-
-    return SDL_PIXELFORMAT_UNKNOWN;
-}
-#endif
 static void Update_HWCursor();
 
 static void Update_HWCursor_Settings()
@@ -132,14 +82,8 @@ static void Update_HWCursor_Settings()
     ** Update mouse scaling settings.
     */
     int win_w, win_h;
-#ifdef SDL2_BUILD
-    SDL_GetRendererOutputSize(renderer, &win_w, &win_h);
-    hwcursor.ScaleX = win_w / (float)hwcursor.GameW;
-    hwcursor.ScaleY = win_h / (float)hwcursor.GameH;
-#else
     win_w = Settings.Video.Width;
     win_h = Settings.Video.Height;
-#endif
 
     /*
     ** Update screen boxing settings.
@@ -229,17 +173,11 @@ SurfaceMonitorClass& AllSurfaces = AllSurfacesDummy; // List of all direct draw 
 bool Set_Video_Mode(int w, int h, int bits_per_pixel)
 {
     SDL_Init(SDL_INIT_VIDEO);
-#ifdef SDL2_BUILD
-    SDL_ShowCursor(SDL_DISABLE);
-#endif
+
     int win_w = w;
     int win_h = h;
-    int win_flags = 0;
-#ifdef SDL2_BUILD
-    Uint32 requested_pixel_format = SettingsPixelFormat();
-#else
-    win_flags = SDL_HWSURFACE;
-#endif
+    int win_flags = SDL_HWSURFACE;
+
     if (!Settings.Video.Windowed) {
         /*
         ** Native fullscreen if no proper width and height set.
@@ -261,7 +199,6 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
         Settings.Video.WindowHeight = win_h;
     }
 
-#ifndef SDL2_BUILD
     const SDL_VideoInfo* video_info = SDL_GetVideoInfo();
     window = SDL_SetVideoMode(win_w, win_h, video_info->vfmt->BitsPerPixel, win_flags);
     if (window == nullptr) {
@@ -273,101 +210,7 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     SDL_WM_SetCaption("Vanilla Conquer", NULL);
 
     DBG_INFO("Created SDL1 %s window in %dx%d@%dbpp", (win_flags & SDL_FULLSCREEN ? "fullscreen" : "windowed"), win_w, win_h, video_info->vfmt->BitsPerPixel);
-#else
-    window =
-        SDL_CreateWindow("Vanilla Conquer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, win_w, win_h, win_flags);
-    if (window == nullptr) {
-        DBG_ERROR("SDL_CreateWindow failed: %s", SDL_GetError());
-        Reset_Video_Mode();
-        return false;
-    }
 
-    DBG_INFO("Created SDL2 %s window in %dx%d", (win_flags ? "fullscreen" : "windowed"), win_w, win_h);
-
-    pixel_format = SDL_GetWindowPixelFormat(window);
-    if (pixel_format == SDL_PIXELFORMAT_UNKNOWN || SDL_BITSPERPIXEL(pixel_format) < 16) {
-        DBG_ERROR("SDL2 window pixel format unsupported: %s (%d bpp)",
-                  SDL_GetPixelFormatName(pixel_format),
-                  SDL_BITSPERPIXEL(pixel_format));
-        Reset_Video_Mode();
-        return false;
-    }
-
-    DBG_INFO("  pixel format: %s (%d bpp)", SDL_GetPixelFormatName(pixel_format), SDL_BITSPERPIXEL(pixel_format));
-
-    DBG_INFO("SDL2 drivers available: (user preference '%s')", Settings.Video.Driver.c_str());
-    int renderer_index = -1;
-    for (int i = 0; i < SDL_GetNumRenderDrivers(); i++) {
-        SDL_RendererInfo info;
-        if (SDL_GetRenderDriverInfo(i, &info) == 0) {
-            if (Settings.Video.Driver.compare(info.name) == 0) {
-                renderer_index = i;
-            }
-
-            DBG_INFO(" %s%s", info.name, (i == renderer_index ? " (selected)" : ""));
-        }
-    }
-
-    renderer = SDL_CreateRenderer(window, renderer_index, SDL_RENDERER_TARGETTEXTURE);
-    if (renderer == nullptr) {
-        DBG_ERROR("SDL_CreateRenderer failed: %s", SDL_GetError());
-        Reset_Video_Mode();
-        return false;
-    }
-
-    SDL_RendererInfo info;
-    if (SDL_GetRendererInfo(renderer, &info) != 0) {
-        DBG_ERROR("SDL_GetRendererInfo failed: %s", SDL_GetError());
-        Reset_Video_Mode();
-        return false;
-    }
-
-    DBG_INFO("Initialized SDL2 driver '%s'", info.name);
-    DBG_INFO("  flags:");
-    if (info.flags & SDL_RENDERER_SOFTWARE) {
-        DBG_INFO("    SDL_RENDERER_SOFTWARE");
-    }
-    if (info.flags & SDL_RENDERER_ACCELERATED) {
-        DBG_INFO("    SDL_RENDERER_ACCELERATED");
-    }
-    if (info.flags & SDL_RENDERER_PRESENTVSYNC) {
-        DBG_INFO("    SDL_RENDERER_PRESENT_VSYNC");
-    }
-    if (info.flags & SDL_RENDERER_TARGETTEXTURE) {
-        DBG_INFO("    SDL_RENDERER_TARGETTEXTURE");
-    }
-
-    DBG_INFO("  max texture size: %dx%d", info.max_texture_width, info.max_texture_height);
-
-    DBG_INFO("  %d texture formats supported: (user preference '%s')",
-             info.num_texture_formats,
-             SDL_GetPixelFormatName(requested_pixel_format));
-
-    /*
-    ** Pick the first pixel format or the user requested one. It better be RGB.
-    */
-    pixel_format = SDL_PIXELFORMAT_UNKNOWN;
-    for (int i = 0; i < info.num_texture_formats; i++) {
-        if ((pixel_format == SDL_PIXELFORMAT_UNKNOWN && i == 0) || info.texture_formats[i] == requested_pixel_format) {
-            pixel_format = info.texture_formats[i];
-        }
-    }
-
-    for (int i = 0; i < info.num_texture_formats; i++) {
-        DBG_INFO("    %s%s",
-                 SDL_GetPixelFormatName(info.texture_formats[i]),
-                 (pixel_format == info.texture_formats[i] ? " (selected)" : ""));
-    }
-
-    /*
-    ** Set requested scaling algorithm.
-    */
-    if (!SDL_SetHintWithPriority(SDL_HINT_RENDER_SCALE_QUALITY, Settings.Video.Scaler.c_str(), SDL_HINT_OVERRIDE)) {
-        DBG_WARN("  scaler '%s' is unsupported");
-    } else {
-        DBG_INFO("  scaler set to '%s'", Settings.Video.Scaler.c_str());
-    }
-#endif
     if (palette == nullptr) {
         palette = SDL_AllocPalette(256);
     }
@@ -381,35 +224,13 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     hwcursor.Y = h / 2;
     Update_HWCursor_Settings();
 
-#ifdef SDL2_BUILD
-    /*
-    ** Init gamepad.
-    */
-    if (Settings.Mouse.ControllerEnabled) {
-        SDL_Init(SDL_INIT_GAMECONTROLLER);
-        Keyboard->Open_Controller();
-    }
-#endif
-
     return true;
 }
 
 void Toggle_Video_Fullscreen()
 {
     Settings.Video.Windowed = !Settings.Video.Windowed;
-#ifdef SDL2_BUILD
-    if (!Settings.Video.Windowed) {
-        if (Settings.Video.Width == 0 || Settings.Video.Height == 0) {
-            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-        } else {
-            SDL_SetWindowSize(window, Settings.Video.Width, Settings.Video.Height);
-            SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-        }
-    } else {
-        SDL_SetWindowFullscreen(window, 0);
-        SDL_SetWindowSize(window, Settings.Video.WindowWidth, Settings.Video.WindowHeight);
-    }
-#endif
+
     Update_HWCursor_Settings();
 }
 
@@ -424,33 +245,8 @@ void Set_Video_Cursor_Clip(bool clipped)
     hwcursor.Clip = clipped;
 
     if (window) {
-        int relative;
-#ifdef SDL2_BUILD
-        if (Settings.Video.Windowed) {
-            SDL_SetWindowGrab(window, hwcursor.Clip ? SDL_TRUE : SDL_FALSE);
-            relative = SDL_SetRelativeMouseMode(
-                Settings.Mouse.ControllerEnabled || (Settings.Mouse.RawInput && hwcursor.Clip) ? SDL_TRUE : SDL_FALSE);
+        int relative = -1;
 
-            /*
-            ** When grabbing with raw input, move in-game cursor where the real cursor was and vice versa.
-            */
-            if (Settings.Mouse.RawInput) {
-                if (hwcursor.Clip) {
-                    int x, y;
-                    SDL_GetMouseState(&x, &y);
-                    hwcursor.X = x / hwcursor.ScaleX;
-                    hwcursor.Y = y / hwcursor.ScaleY;
-                } else {
-                    SDL_WarpMouseInWindow(window, hwcursor.X * hwcursor.ScaleX, hwcursor.Y * hwcursor.ScaleY);
-                }
-            }
-        } else {
-            SDL_SetWindowGrab(window, SDL_TRUE);
-            relative = SDL_SetRelativeMouseMode(Settings.Mouse.RawInput ? SDL_TRUE : SDL_FALSE);
-        }
-#else
-        relative = -1;
-#endif
         if (relative < 0) {
             DBG_ERROR("Raw input not supported, disabling.");
             Settings.Mouse.RawInput = false;
@@ -520,23 +316,14 @@ void Reset_Video_Mode(void)
         SDL_FreeSurface(hwcursor.Surface);
         hwcursor.Surface = nullptr;
     }
-#ifdef SDL2_BUILD
-    SDL_DestroyRenderer(renderer);
-    renderer = nullptr;
 
-    SDL_DestroyWindow(window);
-    window = nullptr;
+    SDL_FreePalette(palette);
+    palette = nullptr;
 
-    Keyboard->Close_Controller();
-#else
     if (window) {
         SDL_FreeSurface(window);
         window = nullptr;
     }
-#endif
-
-    SDL_FreePalette(palette);
-    palette = nullptr;
 }
 
 static void Update_HWCursor()
@@ -567,21 +354,10 @@ static void Update_HWCursor()
         /*
         ** Real HW cursor needs to be scaled up. Emulated can use original cursor data.
         */
-#ifdef SDL2_BUILD
-        if (Settings.Video.HardwareCursor) {
-            hwcursor.Surface = SDL_CreateRGBSurfaceWithFormat(0, scaled_w, scaled_h, 8, SDL_PIXELFORMAT_INDEX8);
-        } else
-#endif
-        {
-            hwcursor.Surface =
-                SDL_CreateRGBSurfaceFrom(hwcursor.Raw, hwcursor.W, hwcursor.H, 8, hwcursor.W, 0, 0, 0, 0);
-        }
-#ifdef SDL2_BUILD
-        SDL_SetSurfacePalette(hwcursor.Surface, palette);
-        SDL_SetColorKey(hwcursor.Surface, SDL_TRUE, 0);
-#else
+        hwcursor.Surface =
+            SDL_CreateRGBSurfaceFrom(hwcursor.Raw, hwcursor.W, hwcursor.H, 8, hwcursor.W, 0, 0, 0, 0);
+
         SDL_SetColorKey(hwcursor.Surface, SDL_SRCCOLORKEY, 0);
-#endif
     }
 
     /*
@@ -602,14 +378,6 @@ static void Update_HWCursor()
         if (hwcursor.Pending) {
             SDL_FreeCursor(hwcursor.Pending);
         }
-
-        /*
-        ** Queue new cursor to be set during frame flip.
-        */
-#ifdef SDL2_BUILD
-        hwcursor.Pending =
-            SDL_CreateColorCursor(hwcursor.Surface, hwcursor.HotX * hwcursor.ScaleX, hwcursor.HotY * hwcursor.ScaleY);
-#endif
     }
 }
 
@@ -700,18 +468,7 @@ void Set_DD_Palette(void* rpalette)
         colors[i].r = (unsigned char)rcolors[i * 3] << 2;
         colors[i].g = (unsigned char)rcolors[i * 3 + 1] << 2;
         colors[i].b = (unsigned char)rcolors[i * 3 + 2] << 2;
-#ifdef SDL2_BUILD
-        colors[i].a = 0xFF;
-#endif
     }
-
-    /*
-    ** First color is transparent. This needs to be set so that hardware cursor has transparent
-    ** surroundings when converting from 8-bit to 32-bit.
-    */
-#ifdef SDL2_BUILD
-    colors[0].a = 0;
-#endif
 
     SDL_SetPaletteColors(palette, colors, 0, 256);
 
@@ -763,47 +520,35 @@ SurfaceMonitorClass::SurfaceMonitorClass()
 /*
 ** VideoSurfaceDDraw
 */
-class VideoSurfaceSDL;
-static VideoSurfaceSDL* frontSurface = nullptr;
+class VideoSurfaceSDL1;
+static VideoSurfaceSDL1* frontSurface = nullptr;
 
-class VideoSurfaceSDL : public VideoSurface
+class VideoSurfaceSDL1 : public VideoSurface
 {
 public:
-    VideoSurfaceSDL(int w, int h, GBC_Enum flags)
+    VideoSurfaceSDL1(int w, int h, GBC_Enum flags)
         : flags(flags)
         , windowSurface(nullptr)
-#ifdef SDL2_BUILD
-        , texture(nullptr)
-#endif
     {
         surface = SDL_CreateRGBSurface(0, w, h, 8, 0, 0, 0, 0);
         SDL_SetSurfacePalette(surface, palette);
 
         if (flags & GBC_VISIBLE) {
-#ifdef SDL2_BUILD
-            windowSurface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(pixel_format), pixel_format);
-            texture = SDL_CreateTexture(renderer, windowSurface->format->format, SDL_TEXTUREACCESS_STREAMING, w, h);
-#else
             windowSurface = SDL_CreateRGBSurface(0, w, h, window->format->BitsPerPixel,
                                                  window->format->Rmask, window->format->Gmask,
                                                  window->format->Bmask, window->format->Amask);
-#endif
             frontSurface = this;
         }
     }
 
-    virtual ~VideoSurfaceSDL()
+    virtual ~VideoSurfaceSDL1()
     {
         if (frontSurface == this) {
             frontSurface = nullptr;
         }
 
         SDL_FreeSurface(surface);
-#ifdef SDL2_BUILD
-        if (texture) {
-            SDL_DestroyTexture(texture);
-        }
-#endif
+
         if (windowSurface) {
             SDL_FreeSurface(windowSurface);
         }
@@ -846,7 +591,7 @@ public:
     {
         SDL_Rect srcRectSDL = { srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height };
         SDL_Rect destRectSDL = { destRect.X, destRect.Y, destRect.Width, destRect.Height };
-        SDL_BlitSurface(((VideoSurfaceSDL*)src)->surface, &srcRectSDL, surface, &destRectSDL);
+        SDL_BlitSurface(((VideoSurfaceSDL1*)src)->surface, &srcRectSDL, surface, &destRectSDL);
     }
 
     virtual void FillRect(const Rect& rect, unsigned char color)
@@ -896,23 +641,14 @@ public:
 
             SDL_BlitSurface(hwcursor.Surface, nullptr, windowSurface, &dst);
         }
-#ifdef SDL2_BUILD
-        SDL_UpdateTexture(texture, NULL, windowSurface->pixels, windowSurface->pitch);
-        SDL_RenderClear(renderer);
-        SDL_RenderCopy(renderer, texture, NULL, &render_dst);
-        SDL_RenderPresent(renderer);
-#else
+
         SDL_BlitSurface(surface, NULL, window, NULL);
         SDL_Flip(window);
-#endif
     }
 
 private:
     SDL_Surface* surface;
     SDL_Surface* windowSurface;
-#ifdef SDL2_BUILD
-    SDL_Texture* texture;
-#endif
     GBC_Enum flags;
 };
 
@@ -943,5 +679,5 @@ Video& Video::Shared()
 
 VideoSurface* Video::CreateSurface(int w, int h, GBC_Enum flags)
 {
-    return new VideoSurfaceSDL(w, h, flags);
+    return new VideoSurfaceSDL1(w, h, flags);
 }
