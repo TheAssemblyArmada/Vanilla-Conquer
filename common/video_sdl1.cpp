@@ -50,16 +50,12 @@
 extern WWKeyboardClass* Keyboard;
 static SDL_Surface* window;
 static SDL_Color logpal[256], physpal[256];
-static Uint32 pixel_format;
-static SDL_Rect render_dst;
 
 static struct
 {
     int GameW;
     int GameH;
     bool Clip;
-    float ScaleX{1.0f};
-    float ScaleY{1.0f};
     void* Raw;
     int W;
     int H;
@@ -67,70 +63,10 @@ static struct
     int HotY;
     float X;
     float Y;
-    SDL_Cursor* Pending;
-    SDL_Cursor* Current;
     SDL_Surface* Surface;
 } hwcursor;
 
 static void Update_HWCursor();
-
-static void Update_HWCursor_Settings()
-{
-    /*
-    ** Update mouse scaling settings.
-    */
-    int win_w, win_h;
-    win_w = Settings.Video.Width;
-    win_h = Settings.Video.Height;
-
-    /*
-    ** Update screen boxing settings.
-    */
-    float ar = (float)hwcursor.GameW / hwcursor.GameH;
-    if (Settings.Video.Boxing) {
-        size_t colonPos = Settings.Video.BoxingAspectRatio.find(":");
-        std::string arW;
-        std::string arH;
-
-        /*
-        ** If we don't have a valid string for aspect ratio, default back to 4:3.
-        */
-        if (colonPos == std::string::npos) {
-            arW = "4";
-            arH = "3";
-        } else {
-            size_t arLen = Settings.Video.BoxingAspectRatio.length();
-            arW = Settings.Video.BoxingAspectRatio.substr(0, colonPos);
-            arH = Settings.Video.BoxingAspectRatio.substr(colonPos + 1, arLen - colonPos);
-        }
-
-        ar = std::stof(arW) / std::stof(arH);
-
-        render_dst.w = win_w;
-        render_dst.h = render_dst.w / ar;
-        if (render_dst.h > win_h) {
-            render_dst.h = win_h;
-            render_dst.w = render_dst.h * ar;
-        }
-        render_dst.x = (win_w - render_dst.w) / 2;
-        render_dst.y = (win_h - render_dst.h) / 2;
-    } else {
-        render_dst.w = win_w;
-        render_dst.h = win_h;
-        render_dst.x = 0;
-        render_dst.y = 0;
-    }
-
-    /*
-    ** Ensure cursor clip is in the desired state.
-    */
-    Set_Video_Cursor_Clip(hwcursor.Clip);
-
-    /*
-    ** Update visible cursor scaling.
-    */
-    Update_HWCursor();
-}
 
 class SurfaceMonitorClassDummy : public SurfaceMonitorClass
 {
@@ -178,27 +114,10 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     int win_flags = SDL_HWSURFACE | SDL_HWPALETTE;
 
     if (!Settings.Video.Windowed) {
-        /*
-        ** Native fullscreen if no proper width and height set.
-        */
-        if (Settings.Video.Width < w || Settings.Video.Height < h) {
-            win_w = Settings.Video.Width = 0;
-            win_h = Settings.Video.Height = 0;
-            win_flags |= SDL_FULLSCREEN;
-        } else {
-            win_w = Settings.Video.Width;
-            win_h = Settings.Video.Height;
-            win_flags |= SDL_FULLSCREEN;
-        }
-    } else if (Settings.Video.WindowWidth > w || Settings.Video.WindowHeight > h) {
-        win_w = Settings.Video.WindowWidth;
-        win_h = Settings.Video.WindowHeight;
-    } else {
-        Settings.Video.WindowWidth = win_w;
-        Settings.Video.WindowHeight = win_h;
+        win_flags |= SDL_FULLSCREEN;
     }
 
-    window = SDL_SetVideoMode(win_w, win_h, 8, win_flags);
+    window = SDL_SetVideoMode(w, h, 8, win_flags);
     if (window == nullptr) {
         DBG_ERROR("SDL_SetVideoMode failed: %s", SDL_GetError());
         Reset_Video_Mode();
@@ -217,7 +136,16 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     hwcursor.GameH = h;
     hwcursor.X = w / 2;
     hwcursor.Y = h / 2;
-    Update_HWCursor_Settings();
+
+    /*
+    ** Ensure cursor clip is in the desired state.
+    */
+    Set_Video_Cursor_Clip(hwcursor.Clip);
+
+    /*
+    ** Update visible cursor scaling.
+    */
+    Update_HWCursor();
 
     return true;
 }
@@ -225,14 +153,12 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
 void Toggle_Video_Fullscreen()
 {
     Settings.Video.Windowed = !Settings.Video.Windowed;
-
-    Update_HWCursor_Settings();
 }
 
 void Get_Video_Scale(float& x, float& y)
 {
-    x = hwcursor.ScaleX;
-    y = hwcursor.ScaleY;
+    x = 1.0f;
+    y = 1.0f;
 }
 
 void Set_Video_Cursor_Clip(bool clipped)
@@ -275,11 +201,7 @@ void Get_Video_Mouse(int& x, int& y)
         x = hwcursor.X;
         y = hwcursor.Y;
     } else {
-        float scale_x, scale_y;
-        Get_Video_Scale(scale_x, scale_y);
         SDL_GetMouseState(&x, &y);
-        x /= scale_x;
-        y /= scale_y;
     }
 }
 
@@ -297,16 +219,6 @@ void Get_Video_Mouse(int& x, int& y)
  *=============================================================================================*/
 void Reset_Video_Mode(void)
 {
-    if (hwcursor.Pending) {
-        SDL_FreeCursor(hwcursor.Pending);
-        hwcursor.Pending = nullptr;
-    }
-
-    if (hwcursor.Current) {
-        SDL_FreeCursor(hwcursor.Current);
-        hwcursor.Current = nullptr;
-    }
-
     if (hwcursor.Surface) {
         SDL_FreeSurface(hwcursor.Surface);
         hwcursor.Surface = nullptr;
@@ -320,25 +232,10 @@ void Reset_Video_Mode(void)
 
 static void Update_HWCursor()
 {
-    float scale_x = 1.0f;
-    float scale_y = 1.0f;
-    int scaled_w = hwcursor.W;
-    int scaled_h = hwcursor.H;
-
-    /*
-    ** Pre-scale cursor *only* if we are not emulating a hw cursor.
-    */
-    if (Settings.Video.HardwareCursor) {
-        scale_x = hwcursor.ScaleX;
-        scale_y = hwcursor.ScaleY;
-        scaled_w *= scale_x;
-        scaled_h *= scale_y;
-    }
-
     /*
     ** Allocate or reallocate surface if it has the wrong size.
     */
-    if (hwcursor.Surface == nullptr || hwcursor.Surface->w != scaled_w || hwcursor.Surface->h != scaled_h) {
+    if (hwcursor.Surface == nullptr || hwcursor.Surface->w != hwcursor.W || hwcursor.Surface->h != hwcursor.H) {
         if (hwcursor.Surface) {
             SDL_FreeSurface(hwcursor.Surface);
         }
@@ -350,26 +247,6 @@ static void Update_HWCursor()
             SDL_CreateRGBSurfaceFrom(hwcursor.Raw, hwcursor.W, hwcursor.H, 8, hwcursor.W, 0, 0, 0, 0);
 
         SDL_SetColorKey(hwcursor.Surface, SDL_SRCCOLORKEY, 0);
-    }
-
-    /*
-    ** Prepare HW cursor by scaling up and creating the SDL version.
-    */
-    if (Settings.Video.HardwareCursor) {
-        uint8_t* src = (uint8_t*)hwcursor.Raw;
-        uint8_t* dst = (uint8_t*)hwcursor.Surface->pixels;
-        int src_pitch = hwcursor.W;
-        int dst_pitch = hwcursor.Surface->pitch;
-
-        for (int y = 0; y < scaled_h; y++) {
-            for (int x = 0; x < scaled_w; x++) {
-                dst[dst_pitch * y + x] = src[src_pitch * (int)(y / scale_y) + (int)(x / scale_x)];
-            }
-        }
-
-        if (hwcursor.Pending) {
-            SDL_FreeCursor(hwcursor.Pending);
-        }
     }
 }
 
@@ -585,27 +462,7 @@ public:
     {
         SDL_BlitSurface(surface, NULL, window, NULL);
 
-
-        if (Settings.Video.HardwareCursor) {
-            /*
-            ** Swap cursor before a frame is drawn. This reduces flickering when it's done only once per frame.
-            */
-            if (hwcursor.Pending) {
-                SDL_SetCursor(hwcursor.Pending);
-
-                if (hwcursor.Current) {
-                    SDL_FreeCursor(hwcursor.Current);
-                }
-
-                hwcursor.Current = hwcursor.Pending;
-                hwcursor.Pending = nullptr;
-            }
-
-            /*
-            ** Update hardware cursor visibility.
-            */
-            SDL_ShowCursor(!Get_Mouse_State());
-        } else if (!Get_Mouse_State() && hwcursor.Surface != nullptr) {
+        if (!Get_Mouse_State() && hwcursor.Surface != nullptr) {
             /*
             ** Draw software emulated cursor.
             */
