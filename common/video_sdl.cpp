@@ -134,12 +134,12 @@ static void Update_HWCursor_Settings()
     int win_w, win_h;
 #ifdef SDL2_BUILD
     SDL_GetRendererOutputSize(renderer, &win_w, &win_h);
+    hwcursor.ScaleX = win_w / (float)hwcursor.GameW;
+    hwcursor.ScaleY = win_h / (float)hwcursor.GameH;
 #else
     win_w = Settings.Video.Width;
     win_h = Settings.Video.Height;
 #endif
-    hwcursor.ScaleX = win_w / (float)hwcursor.GameW;
-    hwcursor.ScaleY = win_h / (float)hwcursor.GameH;
 
     /*
     ** Update screen boxing settings.

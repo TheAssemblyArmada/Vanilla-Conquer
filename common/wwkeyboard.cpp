@@ -548,17 +548,22 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
             exit(0);
             break;
         case SDL_KEYDOWN:
+#ifdef SDL2_BUILD
             Put_Key_Message(event.key.keysym.scancode, false);
+#else
+            Put_Key_Message(event.key.keysym.sym, false);
+#endif
             break;
         case SDL_KEYUP:
 #ifdef SDL2_BUILD
             if (event.key.keysym.scancode == SDL_SCANCODE_RETURN && Down(VK_MENU)) {
                 Toggle_Video_Fullscreen();
-            } else
-#endif
-            {
+            } else {
                 Put_Key_Message(event.key.keysym.scancode, true);
             }
+#else
+            Put_Key_Message(event.key.keysym.sym, true);
+#endif
             break;
         case SDL_MOUSEMOTION:
             Move_Video_Mouse(static_cast<float>(event.motion.xrel), static_cast<float>(event.motion.yrel));
