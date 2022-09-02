@@ -96,6 +96,15 @@ public:
 private:
     char* m_buffer;
 };
+
+#ifdef _UNICODE
+#define TCHARToUTF8(str) UTF16To8(str)
+#define UTF8ToTCHAR(str) UTF8To16(str)
+#else
+#define TCHARToUTF8(str) (str)
+#define UTF8ToTCHAR(str) (str)
+#endif
+
 #endif // _WIN32
 
 #endif // COMMON_UTF_H

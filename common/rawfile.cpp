@@ -63,8 +63,9 @@
 #define _unlink         unlink
 #define raw_fopen(x, y) fopen(x, y)
 #else
+#include <tchar.h>
 #include "utf.h"
-#define raw_fopen(x, y) _wfopen(UTF8To16(x), UTF8To16(y))
+#define raw_fopen(x, y) _tfopen(UTF8ToTCHAR(x), UTF8ToTCHAR(y))
 #endif
 
 #include <sys/stat.h>

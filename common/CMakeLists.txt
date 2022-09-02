@@ -172,6 +172,14 @@ target_compile_definitions(common PRIVATE FIXIT_FAST_LOAD $<$<CONFIG:Debug>:_DEB
 # Make build check state of git to check for uncommitted changes.
 add_dependencies(common check_git)
 
+if(WIN32)
+    if(WIN9X)
+        target_compile_definitions(common PUBLIC _WIN32_WINNT=0x400)
+    else()
+        target_compile_definitions(common PUBLIC UNICODE _UNICODE _WIN32_WINNT=0x501)
+    endif()
+endif()
+
 if(BUILD_REMASTERTD OR BUILD_REMASTERRA)
     add_library(commonr STATIC ${COMMONR_SRC})
     target_compile_definitions(commonr PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${REMASTER_DEFS})
