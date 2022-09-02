@@ -78,7 +78,7 @@ unsigned int CCFocusMessage = WM_USER + 50; // Private message for receiving app
 
 void Focus_Loss(void)
 {
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
     GameInFocus = false;
     VQA_PauseAudio();
 #endif
@@ -88,14 +88,14 @@ void Focus_Loss(void)
 
 void Focus_Restore(void)
 {
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
     GameInFocus = true;
     VQA_ResumeAudio();
 #endif
     Map.Flag_To_Redraw(true);
     Start_Primary_Sound_Buffer(true);
 
-#ifndef SDL2_BUILD
+#ifndef SDL_BUILD
     VisiblePage.Clear();
     HiddenPage.Clear();
 #endif
@@ -118,7 +118,7 @@ void Focus_Restore(void)
 
 void Check_For_Focus_Loss(void)
 {
-#if defined(SDL2_BUILD)
+#if defined(SDL_BUILD)
     Keyboard->Check();
 #elif defined(_WIN32) && !defined(REMASTER_BUILD) // PG
     static BOOL focus_last_time = 1;
@@ -164,7 +164,7 @@ void Check_For_Focus_Loss(void)
 }
 
 extern bool InMovie;
-#if !defined(REMASTER_BUILD) && defined(_WIN32) && !defined(SDL2_BUILD)
+#if !defined(REMASTER_BUILD) && defined(_WIN32) && !defined(SDL_BUILD)
 long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 {
 
@@ -381,7 +381,7 @@ HANDLE DebugFile = INVALID_HANDLE_VALUE;
 #define WINDOW_NAME "Alarmstufe Rot"
 #endif
 
-#if defined(_WIN32) && !defined(SDL2_BUILD)
+#if defined(_WIN32) && !defined(SDL_BUILD)
 void Create_Main_Window(HANDLE instance, int command_show, int width, int height)
 
 {

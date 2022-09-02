@@ -337,7 +337,7 @@ void UDPInterfaceClass::Broadcast(void* buffer, int buffer_len)
         */
         OutBuffers.Add(packet);
 
-#if defined _WIN32 && !defined SDL2_BUILD
+#if defined _WIN32 && !defined SDL_BUILD
         /*
         ** Send a message to ourselves so that we can initiate a write if Winsock is idle.
         */
@@ -364,7 +364,7 @@ void UDPInterfaceClass::Broadcast(void* buffer, int buffer_len)
  * HISTORY:                                                                                    *
  *    3/20/96 3:05PM ST : Created                                                              *
  *=============================================================================================*/
-#if defined _WIN32 && !defined SDL2_BUILD
+#if defined _WIN32 && !defined SDL_BUILD
 int UDPInterfaceClass::Message_Handler(HWND, UINT message, UINT, LONG lParam)
 {
     struct sockaddr_in addr;

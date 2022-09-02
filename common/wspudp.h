@@ -48,7 +48,7 @@ public:
     UDPInterfaceClass(void);
     virtual ~UDPInterfaceClass(void);
 
-#if defined _WIN32 && !defined SDL2_BUILD
+#if defined _WIN32 && !defined SDL_BUILD
     virtual int Message_Handler(HWND window, UINT message, UINT wParam, LONG lParam);
 #else
     virtual int Message_Handler();

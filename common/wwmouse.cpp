@@ -34,7 +34,7 @@
 #include "lcw.h"
 #include "settings.h"
 #include <string.h>
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
 #include <SDL.h>
 #endif
 
@@ -42,7 +42,7 @@
 #define min(x, y) (x <= y ? x : y)
 #endif
 
-#if defined(_WIN32) && !defined(SDL2_BUILD)
+#if defined(_WIN32) && !defined(SDL_BUILD)
 #include <mmsystem.h>
 void CALLBACK Process_Mouse(UINT event_id, UINT res1, DWORD user, DWORD res2, DWORD res3);
 #endif
@@ -85,7 +85,7 @@ WWMouseClass::WWMouseClass(GraphicViewPortClass* scr, int mouse_max_width, int m
     PrevCursor = nullptr;
     MouseUpdate = 0;
     State = 1;
-#if defined(_WIN32) && !defined(SDL2_BUILD)
+#if defined(_WIN32) && !defined(SDL_BUILD)
     timeBeginPeriod(1000 / 60);
 
     InitializeCriticalSection(&MouseCriticalSection);
@@ -105,7 +105,7 @@ WWMouseClass::WWMouseClass(GraphicViewPortClass* scr, int mouse_max_width, int m
 
     // Add TIME_KILL_SYNCHRONOUS flag. ST - 2/13/2019 5:07PM
     // TimerHandle = timeSetEvent( 1000/60 , 1 , ::Process_Mouse, 0 , TIME_PERIODIC);
-#if defined(_WIN32) && !defined(REMASTER_BUILD) && !defined(SDL2_BUILD)
+#if defined(_WIN32) && !defined(REMASTER_BUILD) && !defined(SDL_BUILD)
     TimerHandle = timeSetEvent(1000 / 60, 1, ::Process_Mouse, 0, TIME_PERIODIC | TIME_KILL_SYNCHRONOUS);
 #endif
     // Removed. ST - 2/13/2019 5:12PM
@@ -119,7 +119,7 @@ WWMouseClass::~WWMouseClass()
         delete[] MouseCursor;
     if (MouseBuffer)
         delete[] MouseBuffer;
-#if defined(_WIN32) && !defined(SDL2_BUILD)
+#if defined(_WIN32) && !defined(SDL_BUILD)
     if (TimerHandle) {
         timeKillEvent(TimerHandle);
         TimerHandle = 0; // ST - 2/13/2019 5:12PM
@@ -146,7 +146,7 @@ void Unblock_Mouse(GraphicBufferClass* buffer)
 void WWMouseClass::Block_Mouse(GraphicBufferClass* buffer)
 {
     if (buffer == Screen->Get_Graphic_Buffer()) {
-#if defined(_WIN32) && !defined(SDL2_BUILD)
+#if defined(_WIN32) && !defined(SDL_BUILD)
         EnterCriticalSection(&MouseCriticalSection);
 #endif
     }
@@ -155,7 +155,7 @@ void WWMouseClass::Block_Mouse(GraphicBufferClass* buffer)
 void WWMouseClass::Unblock_Mouse(GraphicBufferClass* buffer)
 {
     if (buffer == Screen->Get_Graphic_Buffer()) {
-#if defined(_WIN32) && !defined(SDL2_BUILD)
+#if defined(_WIN32) && !defined(SDL_BUILD)
         LeaveCriticalSection(&MouseCriticalSection);
 #endif
     }
@@ -163,7 +163,7 @@ void WWMouseClass::Unblock_Mouse(GraphicBufferClass* buffer)
 
 void WWMouseClass::Process_Mouse(void)
 {
-#if !defined(REMASTER_BUILD) && !defined(SDL2_BUILD)
+#if !defined(REMASTER_BUILD) && !defined(SDL_BUILD)
     int x, y;
 
     //
@@ -287,7 +287,7 @@ void* WWMouseClass::Set_Cursor(int xhotspot, int yhotspot, void* cursor)
 void WWMouseClass::Low_Hide_Mouse()
 {
 // ST - 1/3/2019 10:50AM
-#if !defined(REMASTER_BUILD) && !defined(SDL2_BUILD)
+#if !defined(REMASTER_BUILD) && !defined(SDL_BUILD)
     if (!State) {
         if (MouseBuffX != -1 || MouseBuffY != -1) {
             if (Screen->Lock()) {
@@ -321,7 +321,7 @@ void WWMouseClass::Low_Show_Mouse(int x, int y)
     State--;
 
 // ST - 1/3/2019 10:50AM
-#if !defined(REMASTER_BUILD) && !defined(SDL2_BUILD)
+#if !defined(REMASTER_BUILD) && !defined(SDL_BUILD)
 
     //
     //	If the mouse is completely visible then draw it at its current
@@ -449,7 +449,7 @@ void WWMouseClass::Conditional_Show_Mouse(void)
 
 void WWMouseClass::Draw_Mouse(GraphicViewPortClass* scr)
 {
-#if defined(REMASTER_BUILD) || defined(SDL2_BUILD)
+#if defined(REMASTER_BUILD) || defined(SDL_BUILD)
     scr;
     return;
 // ST - 1/3/2019 10:50AM
@@ -510,7 +510,7 @@ void WWMouseClass::Draw_Mouse(GraphicViewPortClass* scr)
 
 void WWMouseClass::Erase_Mouse(GraphicViewPortClass* scr, int forced)
 {
-#if defined(REMASTER_BUILD) || defined(SDL2_BUILD)
+#if defined(REMASTER_BUILD) || defined(SDL_BUILD)
     // ST - 1/3/2019 10:50AM
     scr;
     forced;
@@ -617,7 +617,7 @@ int WWMouseClass::Get_Mouse_Y(void)
  *=============================================================================================*/
 void WWMouseClass::Get_Mouse_XY(int& x, int& y)
 {
-#if defined(SDL2_BUILD)
+#if defined(SDL_BUILD)
     Get_Video_Mouse(x, y);
 #elif defined(_WIN32)
     POINT pt;
@@ -851,7 +851,7 @@ void* WWMouseClass::Set_Mouse_Cursor(int hotspotx, int hotspoty, Cursor* cursor)
     result = PrevCursor;
     PrevCursor = cursor;
 
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
     Set_Video_Cursor(MouseCursor, CursorWidth, CursorHeight, MouseXHot, MouseYHot);
 #endif
 

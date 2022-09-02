@@ -46,7 +46,7 @@ bool Read_Private_Config_Struct(FileClass& file, NewConfigType* config);
 void Print_Error_End_Exit(char* string);
 void Print_Error_Exit(char* string);
 
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #endif
@@ -337,7 +337,7 @@ int main(int argc, char* argv[])
 #endif
         Set_Resfactor_Globals(RESFACTOR);
 
-#if defined(_WIN32) && !defined(SDL2_BUILD)
+#if defined(_WIN32) && !defined(SDL_BUILD)
         /* WinMain seems to pass command_show to Create_Main_Window, but since we
         ** are not using WinMain anymore, we simply pass 0 to it. */
         Create_Main_Window(ProgramInstance, 0, ScreenWidth, ScreenHeight);
@@ -487,7 +487,7 @@ int main(int argc, char* argv[])
         HiddenPage.Clear();
         Memory_Error_Exit = Print_Error_Exit;
 
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
         Reset_Video_Mode();
 #endif
 
@@ -499,7 +499,7 @@ int main(int argc, char* argv[])
         /*
         ** Post a message to our message handler to tell it to clean up.
         */
-#if defined(_WIN32) && !defined(SDL2_BUILD)
+#if defined(_WIN32) && !defined(SDL_BUILD)
         PostMessage(MainWindow, WM_DESTROY, 0, 0);
 
         /*
@@ -691,7 +691,7 @@ void Emergency_Exit(int code)
     /*
     ** Post a message to our message handler to tell it to clean up.
     */
-#ifdef SDL2_BUILD
+#ifdef SDL_BUILD
     SDL_Event sdlevent;
     sdlevent.type = SDL_QUIT;
     SDL_PushEvent(&sdlevent);

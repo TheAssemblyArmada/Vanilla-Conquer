@@ -2533,7 +2533,7 @@ static void Init_Mouse(void)
     ** Since there is no mouse shape currently available we need
     ** to set one of our own.
     */
-#if defined(_WIN32) && !defined(SDL2_BUILD)
+#if defined(_WIN32) && !defined(SDL_BUILD)
     ShowCursor(false);
 #endif
     if (MouseInstalled) {

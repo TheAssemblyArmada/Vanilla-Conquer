@@ -297,7 +297,7 @@ int main(int argc, char** argv)
         }
 #endif
 
-#if defined(_WIN32) && !defined(SDL2_BUILD)
+#if defined(_WIN32) && !defined(SDL_BUILD)
         Create_Main_Window(ProgramInstance, ScreenWidth, ScreenHeight);
 #endif
 
@@ -469,7 +469,7 @@ int main(int argc, char** argv)
         CCDebugString("C&C95 - About to exit.\n");
         ReadyToQuit = 1;
 
-#if defined(SDL2_BUILD)
+#if defined(SDL_BUILD)
         Reset_Video_Mode();
 #elif defined(_WIN32)
         PostMessageA(MainWindow, WM_DESTROY, 0, 0);
