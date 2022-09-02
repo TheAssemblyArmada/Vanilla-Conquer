@@ -6,7 +6,9 @@
 #ifndef MSSLEEP_H
 #define MSSLEEP_H
 
-#ifdef _WIN32
+#if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
+#include <winbase.h>
+#elif defined(_WIN32)
 #include <synchapi.h>
 #else /* Assuming recent posix*/
 #define __USE_POSIX199309
