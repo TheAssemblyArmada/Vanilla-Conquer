@@ -16,7 +16,7 @@ public:
         : File(nullptr)
     {
         /* Windows doesn't attach to the console by default so printing to stderr does nothing. */
-#ifdef _WIN32
+#if defined(_WIN32) && _WIN32_WINNT >= 0x0501
         /* Attach to the console that started us if any */
         if (AttachConsole(ATTACH_PARENT_PROCESS)) {
             /* We attached successfully, lets redirect IO to the consoles handles if not already redirected */
