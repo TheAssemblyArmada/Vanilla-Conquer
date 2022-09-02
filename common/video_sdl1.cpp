@@ -127,7 +127,11 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     SDL_SetPalette(window, SDL_LOGPAL, logpal, 0, 256);
     SDL_WM_SetCaption("Vanilla Conquer", NULL);
 
-    DBG_INFO("Created SDL1 %s window in %dx%d@%dbpp", (window->flags & SDL_FULLSCREEN ? "fullscreen" : "windowed"), window->w, window->h, window->format->BitsPerPixel);
+    DBG_INFO("Created SDL1 %s window in %dx%d@%dbpp",
+             (window->flags & SDL_FULLSCREEN ? "fullscreen" : "windowed"),
+             window->w,
+             window->h,
+             window->format->BitsPerPixel);
 
     /*
     ** Set mouse scaling options.
@@ -243,8 +247,7 @@ static void Update_HWCursor()
         /*
         ** Real HW cursor needs to be scaled up. Emulated can use original cursor data.
         */
-        hwcursor.Surface =
-            SDL_CreateRGBSurfaceFrom(hwcursor.Raw, hwcursor.W, hwcursor.H, 8, hwcursor.W, 0, 0, 0, 0);
+        hwcursor.Surface = SDL_CreateRGBSurfaceFrom(hwcursor.Raw, hwcursor.W, hwcursor.H, 8, hwcursor.W, 0, 0, 0, 0);
 
         SDL_SetColorKey(hwcursor.Surface, SDL_SRCCOLORKEY, 0);
     }
@@ -447,14 +450,14 @@ public:
 
     virtual void Blt(const Rect& destRect, VideoSurface* src, const Rect& srcRect, bool mask)
     {
-        SDL_Rect srcRectSDL = { srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height };
-        SDL_Rect destRectSDL = { destRect.X, destRect.Y, destRect.Width, destRect.Height };
+        SDL_Rect srcRectSDL = {srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height};
+        SDL_Rect destRectSDL = {destRect.X, destRect.Y, destRect.Width, destRect.Height};
         SDL_BlitSurface(((VideoSurfaceSDL1*)src)->surface, &srcRectSDL, surface, &destRectSDL);
     }
 
     virtual void FillRect(const Rect& rect, unsigned char color)
     {
-        SDL_Rect rectSDL = { rect.X, rect.Y, rect.Width, rect.Height };
+        SDL_Rect rectSDL = {rect.X, rect.Y, rect.Width, rect.Height};
         SDL_FillRect(surface, &rectSDL, color);
     }
 
