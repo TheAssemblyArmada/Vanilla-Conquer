@@ -313,7 +313,7 @@ void Create_Main_Window(HANDLE instance, int width, int height)
     return;
 #else
     HWND hwnd;
-    WNDCLASS wndclass;
+    WNDCLASSA wndclass;
 
     STARTUPINFOA sinfo;
     int command_show;
@@ -336,13 +336,13 @@ void Create_Main_Window(HANDLE instance, int width, int height)
     wndclass.cbClsExtra = 0;
     wndclass.cbWndExtra = 0;
     wndclass.hInstance = (HINSTANCE)instance;
-    wndclass.hIcon = LoadIconA((HINSTANCE)instance, MAKEINTRESOURCE(CC_ICON));
+    wndclass.hIcon = LoadIconA((HINSTANCE)instance, MAKEINTRESOURCEA(CC_ICON));
     wndclass.hCursor = NULL;
     wndclass.hbrBackground = NULL;
     wndclass.lpszMenuName = "Command & Conquer"; // NULL
     wndclass.lpszClassName = "Command & Conquer";
 
-    RegisterClass(&wndclass);
+    RegisterClassA(&wndclass);
 
     //
     // Create our main window

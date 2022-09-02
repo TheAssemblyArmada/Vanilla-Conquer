@@ -346,7 +346,7 @@ bool WinsockInterfaceClass::Init(void)
     if (rc != 0) {
         char out[128];
         sprintf(out, "TS: Winsock failed to initialise - error code %d.\n", GetLastError());
-        OutputDebugString(out);
+        OutputDebugStringA(out);
         return (false);
     }
 #endif
