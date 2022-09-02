@@ -214,6 +214,7 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
             ReadyToQuit = 2;
         } else {
             CCDebugString("C&C95 - Emergency shutdown.\n");
+#ifdef NETWORKING
             CCDebugString("C&C95 - Shut down the network stuff.\n");
 #ifndef DEMO
             Shutdown_Network();
@@ -221,6 +222,7 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
             CCDebugString("C&C95 - Kill the Winsock stuff.\n");
             if (Winsock.Get_Connected())
                 Winsock.Close();
+#endif // NETWORKING
             CCDebugString("C&C95 - Call ExitProcess.\n");
             ExitProcess(0);
         }

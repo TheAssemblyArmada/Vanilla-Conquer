@@ -64,6 +64,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "common/framelimit.h"
+#include "common/paths.h"
 #include "common/vqatask.h"
 #include "common/vqaloader.h"
 #include "common/settings.h"
@@ -3505,22 +3506,27 @@ static bool Change_Local_Dir(int cd)
     static bool _initialised = false;
     static unsigned _detected = 0;
     static const char* _vol_labels[CD_COUNT] = {"gdi", "nod", "covertops", "."};
-    char vol_buff[512];
+    std::string paths[3] = {Paths.User_Path(), Paths.Data_Path(), Paths.Program_Path()};
 
     // Detect which if any of the discs have had their data copied to an appropriate local folder.
     if (!_initialised) {
         for (int i = 0; i < CD_COUNT; ++i) {
-            CCFileClass vol(_vol_labels[i]);
+            for (int j = 0; j < 3; ++j) {
+                std::string path = paths[j] + PathsClass::SEP + _vol_labels[i];
+                RawFileClass vol(path.c_str());
 
-            if (vol.Is_Directory()) {
-                CDFileClass::Refresh_Search_Drives();
-                snprintf(vol_buff, sizeof(vol_buff), "%s/", vol.Filename);
-                CDFileClass::Add_Search_Drive(vol_buff);
-                CCFileClass fc("GENERAL.MIX");
+                if (vol.Is_Directory()) {
+                    CDFileClass::Refresh_Search_Drives();
+                    path += PathsClass::SEP;
+                    CDFileClass::Add_Search_Drive(path.c_str());
+                    CCFileClass fc("GENERAL.MIX");
 
-                // Populate _detected as a bitfield for which discs we found a local copy of.
-                if (fc.Is_Available()) {
-                    _detected |= 1 << i;
+                    // Populate _detected as a bitfield for which discs we found a local copy of.
+                    if (fc.Is_Available()) {
+                        _detected |= 1 << i;
+                    }
+
+                    break;
                 }
             }
         }
@@ -3562,23 +3568,25 @@ static bool Change_Local_Dir(int cd)
 
     // If the data from the CD we want was detected, then double check it and set it as though we used the -CD command line.
     if (_detected & (1 << cd)) {
-        CCFileClass vol(_vol_labels[cd]);
+        for (int j = 0; j < 3; ++j) {
+            std::string path = paths[j] + PathsClass::SEP + _vol_labels[cd];
+            RawFileClass vol(path.c_str());
 
-        // Verify that the file is still available and hasn't been deleted out from under us.
-        if (vol.Is_Directory()) {
-            CDFileClass::Refresh_Search_Drives();
-            snprintf(vol_buff, sizeof(vol_buff), "%s/", vol.Filename);
-            CDFileClass::Add_Search_Drive(vol_buff);
+            if (vol.Is_Directory()) {
+                CDFileClass::Refresh_Search_Drives();
+                path += PathsClass::SEP;
+                CDFileClass::Add_Search_Drive(path.c_str());
 
-            // The file should be available if we reached this point.
-            assert(CCFileClass("GENERAL.MIX").Is_Available());
+                // The file should be available if we reached this point.
+                assert(CCFileClass("GENERAL.MIX").Is_Available());
 
-            LastCD = cd;
-            Theme.Stop();
-            Reinit_Secondary_Mixfiles();
-            ThemeClass::Scan();
+                LastCD = cd;
+                Theme.Stop();
+                Reinit_Secondary_Mixfiles();
+                ThemeClass::Scan();
 
-            return true;
+                return true;
+            }
         }
     }
 

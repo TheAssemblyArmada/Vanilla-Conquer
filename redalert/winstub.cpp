@@ -247,6 +247,7 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
             break;
 
         case 0:
+#ifdef NETWORKING
             // Stubbed out until further work done to restore network stuff. - OmniBlade
             // Shutdown_Network();
 #ifndef WINSOCK_IPX
@@ -257,9 +258,11 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
             */
             Unload_IPX_Dll();
 #endif // WINSOCK_IPX
+#endif // NETWORKING
             ExitProcess(0);
             break;
         case 3:
+#ifdef NETWORKING
             // Stubbed out until further work done to restore network stuff. - OmniBlade
             // Shutdown_Network();
 #ifndef WINSOCK_IPX
@@ -281,6 +284,7 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
             if (Winsock.Get_Connected())
                 Winsock.Close();
 #endif // WINSOCK_IPX
+#endif // NETWORKING
             ReadyToQuit = 2;
             break;
         }
@@ -327,6 +331,7 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
         }
         break;
 
+#ifdef NETWORKING
 #ifndef WINSOCK_IPX
     case WM_ACCEPT:
     case WM_HOSTBYADDRESS:
@@ -336,6 +341,7 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
         Winsock.Message_Handler(hwnd, message, wParam, lParam);
         return (0);
 #endif // WINSOCK_IPX
+#endif // NETWORKING
     }
 
     return DefWindowProc(hwnd, message, wParam, lParam);
