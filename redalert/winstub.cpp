@@ -390,7 +390,7 @@ void Create_Main_Window(HANDLE instance, int command_show, int width, int height
     return;
 #else // PG
     HWND hwnd;
-    WNDCLASS wndclass;
+    WNDCLASSA wndclass;
     //
     // Register the window class
     //
@@ -400,7 +400,7 @@ void Create_Main_Window(HANDLE instance, int command_show, int width, int height
     wndclass.cbClsExtra = 0;
     wndclass.cbWndExtra = 0;
     wndclass.hInstance = (HINSTANCE)instance;
-    wndclass.hIcon = LoadIconA((HINSTANCE)instance, MAKEINTRESOURCE(CC_ICON));
+    wndclass.hIcon = LoadIconA((HINSTANCE)instance, MAKEINTRESOURCEA(CC_ICON));
     wndclass.hCursor = NULL;
     wndclass.hbrBackground = NULL;
     wndclass.lpszMenuName = WINDOW_NAME; // NULL
