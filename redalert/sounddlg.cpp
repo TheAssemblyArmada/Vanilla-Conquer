@@ -326,12 +326,8 @@ void SoundControlsClass::Process(void)
                              TPF_TEXT | TPF_RIGHT);
 
 #if defined(GERMAN) || defined(FRENCH)
-            Fancy_Text_Print(TXT_SHUFFLE,
-                             Option_X + 4 + Shuffle_X - 10,
-                             Option_Y + Shuffle_Y + 2,
-                             scheme,
-                             TBLACK,
-                             TPF_TEXT | TPF_RIGHT);
+            Fancy_Text_Print(
+                TXT_SHUFFLE, OptionX + 4 + ShuffleX - 10, OptionY + ShuffleY + 2, scheme, TBLACK, TPF_TEXT | TPF_RIGHT);
 #else
             Fancy_Text_Print(
                 TXT_SHUFFLE, OptionX + ShuffleX - 10, OptionY + ShuffleY + 2, scheme, TBLACK, TPF_TEXT | TPF_RIGHT);
