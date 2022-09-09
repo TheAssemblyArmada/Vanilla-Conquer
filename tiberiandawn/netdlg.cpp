@@ -1553,8 +1553,8 @@ static int Net_Join_Dialog(void)
                 work properly.
                 ...............................................................*/
                 if (input == (BUTTON_SEND | KN_BUTTON)) {
-                input = KN_RETURN;
-            }
+                    input = KN_RETURN;
+                }
 
             /*...............................................................
             Manage the message system (get rid of old messages)
@@ -1744,27 +1744,27 @@ static int Net_Join_Dialog(void)
             automatically send out a player query for that game.
             .....................................................................*/
             if (event == EV_NEW_GAME && gamelist.Count() == 1) {
-            gamelist.Set_Selected_Index(0);
-            game_index = gamelist.Current_Index();
-            Send_Join_Queries(game_index, 0, 1);
-        } else
+                gamelist.Set_Selected_Index(0);
+                game_index = gamelist.Current_Index();
+                Send_Join_Queries(game_index, 0, 1);
+            } else
 
-            /*.....................................................................
+                /*.....................................................................
             If the game options have changed, print them.
             .....................................................................*/
-            if (event == EV_GAME_OPTIONS) {
-            parms_received = 1;
-            display = REDRAW_MESSAGE;
-        } else
+                if (event == EV_GAME_OPTIONS) {
+                    parms_received = 1;
+                    display = REDRAW_MESSAGE;
+                } else
 
-            /*.....................................................................
+                    /*.....................................................................
             Draw an incoming message
             .....................................................................*/
-            if (event == EV_MESSAGE) {
-            display = REDRAW_MESSAGE;
-        } else
+                    if (event == EV_MESSAGE) {
+                        display = REDRAW_MESSAGE;
+                    } else
 
-            /*.....................................................................
+                        /*.....................................................................
             A game before the one I've selected is gone, so we have a new index now.
             'game_index' must be kept set to the currently-selected list item, so
             we send out queries for the currently-selected game.  It's therefore
@@ -1772,18 +1772,18 @@ static int Net_Join_Dialog(void)
             If we're joined in a game, we must decrement our game_index to keep
             it aligned with the game we're joined to.
             .....................................................................*/
-            if (event == EV_GAME_SIGNOFF) {
-            if (joinstate == JOIN_CONFIRMED) {
-                game_index--;
-                join_index--;
-                gamelist.Set_Selected_Index(join_index);
-            } else {
-                gamelist.Flag_To_Redraw();
-                Clear_Player_List(&playerlist);
-                game_index = gamelist.Current_Index();
-                Send_Join_Queries(game_index, 0, 1);
-            }
-        }
+                        if (event == EV_GAME_SIGNOFF) {
+                            if (joinstate == JOIN_CONFIRMED) {
+                                game_index--;
+                                join_index--;
+                                gamelist.Set_Selected_Index(join_index);
+                            } else {
+                                gamelist.Flag_To_Redraw();
+                                Clear_Player_List(&playerlist);
+                                game_index = gamelist.Current_Index();
+                                Send_Join_Queries(game_index, 0, 1);
+                            }
+                        }
 
         /*---------------------------------------------------------------------
         Service the Ipx connections
@@ -3865,7 +3865,7 @@ static JoinEventType Get_NewGame_Responses(ColorListClass* playerlist)
         NET_QUERY_JOIN:
         ------------------------------------------------------------------------*/
         if (GPacket.Command == NET_QUERY_JOIN) {
-        /*.....................................................................
+            /*.....................................................................
         See if this name is unique:
         - If the name matches, but the address is different, reject this player
         - If the name & address match, this packet must be a re-send of a
@@ -3873,133 +3873,133 @@ static JoinEventType Get_NewGame_Responses(ColorListClass* playerlist)
           received my CONFIRM_JOIN packet (since it was sent with an ACK
           required), so we can ignore this resend.
         .....................................................................*/
-        found = 0;
-        resend = 0;
-        for (i = 0; i < Players.Count(); i++) {
-            if (!strcmp(Players[i]->Name, GPacket.Name)) {
-                if (Players[i]->Address != GAddress) {
-                    found = 1;
-                } else {
-                    resend = 1;
+            found = 0;
+            resend = 0;
+            for (i = 0; i < Players.Count(); i++) {
+                if (!strcmp(Players[i]->Name, GPacket.Name)) {
+                    if (Players[i]->Address != GAddress) {
+                        found = 1;
+                    } else {
+                        resend = 1;
+                    }
+                    break;
                 }
-                break;
             }
-        }
-        if (!strcmp(MPlayerName, GPacket.Name)) {
-            found = 1;
-        }
+            if (!strcmp(MPlayerName, GPacket.Name)) {
+                found = 1;
+            }
 
-        /*.....................................................................
+            /*.....................................................................
         Reject if name is a duplicate, or if there are too many players:
         .....................................................................*/
-        if (found || (Players.Count() >= (MPlayerMax - 1) && !resend)) {
-            memset(&GPacket, 0, sizeof(GlobalPacketType));
+            if (found || (Players.Count() >= (MPlayerMax - 1) && !resend)) {
+                memset(&GPacket, 0, sizeof(GlobalPacketType));
 
-            GPacket.Command = NET_REJECT_JOIN;
+                GPacket.Command = NET_REJECT_JOIN;
 
-            Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 1, &GAddress);
-        }
+                Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 1, &GAddress);
+            }
 
-        /*.....................................................................
+            /*.....................................................................
         If this packet is NOT a resend, accept the player.  Grant him the
         requested color if possible.
         .....................................................................*/
-        else if (!resend) {
-            /*..................................................................
+            else if (!resend) {
+                /*..................................................................
             Add node to the Vector list
             ..................................................................*/
-            who = new NodeNameType;
-            strcpy(who->Name, GPacket.Name);
-            who->Address = GAddress;
-            who->Player.House = GPacket.PlayerInfo.House;
-            Players.Add(who);
+                who = new NodeNameType;
+                strcpy(who->Name, GPacket.Name);
+                who->Address = GAddress;
+                who->Player.House = GPacket.PlayerInfo.House;
+                Players.Add(who);
 
-            /*..................................................................
+                /*..................................................................
             Set player's color; if requested color isn't used, give it to him;
             otherwise, give him the 1st available color.  Mark the color we
             give him as used.
             ..................................................................*/
-            if (ColorUsed[GPacket.PlayerInfo.Color] == 0) {
-                who->Player.Color = GPacket.PlayerInfo.Color;
-            } else {
-                for (i = 0; i < MAX_MPLAYER_COLORS; i++) {
-                    if (ColorUsed[i] == 0) {
-                        who->Player.Color = i;
-                        break;
+                if (ColorUsed[GPacket.PlayerInfo.Color] == 0) {
+                    who->Player.Color = GPacket.PlayerInfo.Color;
+                } else {
+                    for (i = 0; i < MAX_MPLAYER_COLORS; i++) {
+                        if (ColorUsed[i] == 0) {
+                            who->Player.Color = i;
+                            break;
+                        }
                     }
                 }
-            }
-            ColorUsed[who->Player.Color] = 1;
+                ColorUsed[who->Player.Color] = 1;
 
-            /*..................................................................
+                /*..................................................................
             Add player name to the list box
             ..................................................................*/
-            item = new char[MPLAYER_NAME_MAX + 4];
-            if (GPacket.PlayerInfo.House == HOUSE_GOOD) {
-                sprintf(item, "%s\t%s", GPacket.Name, Text_String(TXT_G_D_I));
-            } else {
-                sprintf(item, "%s\t%s", GPacket.Name, Text_String(TXT_N_O_D));
-            }
-            playerlist->Add_Item(item, MPlayerTColors[who->Player.Color]);
+                item = new char[MPLAYER_NAME_MAX + 4];
+                if (GPacket.PlayerInfo.House == HOUSE_GOOD) {
+                    sprintf(item, "%s\t%s", GPacket.Name, Text_String(TXT_G_D_I));
+                } else {
+                    sprintf(item, "%s\t%s", GPacket.Name, Text_String(TXT_N_O_D));
+                }
+                playerlist->Add_Item(item, MPlayerTColors[who->Player.Color]);
 
-            /*..................................................................
+                /*..................................................................
             Send a confirmation packet
             ..................................................................*/
-            memset(&GPacket, 0, sizeof(GlobalPacketType));
+                memset(&GPacket, 0, sizeof(GlobalPacketType));
 
-            GPacket.Command = NET_CONFIRM_JOIN;
-            strcpy(GPacket.Name, MPlayerName);
-            GPacket.PlayerInfo.House = who->Player.House;
-            GPacket.PlayerInfo.Color = who->Player.Color;
+                GPacket.Command = NET_CONFIRM_JOIN;
+                strcpy(GPacket.Name, MPlayerName);
+                GPacket.PlayerInfo.House = who->Player.House;
+                GPacket.PlayerInfo.Color = who->Player.Color;
 
-            Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 1, &GAddress);
+                Ipx.Send_Global_Message(&GPacket, sizeof(GlobalPacketType), 1, &GAddress);
 
-            retval = EV_NEW_PLAYER;
+                retval = EV_NEW_PLAYER;
+            }
         }
-    }
 
-    /*------------------------------------------------------------------------
+        /*------------------------------------------------------------------------
     NET_SIGN_OFF: Another system is signing off: search for that system in
     the player list, & remove it if found
     ------------------------------------------------------------------------*/
-    else if (GPacket.Command == NET_SIGN_OFF) {
-        for (i = 0; i < Players.Count(); i++) {
-            /*
+        else if (GPacket.Command == NET_SIGN_OFF) {
+            for (i = 0; i < Players.Count(); i++) {
+                /*
             ....................... Name found; remove it ......................
             */
-            if (!strcmp(Players[i]->Name, GPacket.Name) && Players[i]->Address == GAddress) {
-                /*...............................................................
+                if (!strcmp(Players[i]->Name, GPacket.Name) && Players[i]->Address == GAddress) {
+                    /*...............................................................
                 Remove from the list box
                 ...............................................................*/
-                item = (char*)(playerlist->Get_Item(i + 1));
-                playerlist->Remove_Item(item);
-                playerlist->Flag_To_Redraw();
-                delete[] item;
-                /*...............................................................
+                    item = (char*)(playerlist->Get_Item(i + 1));
+                    playerlist->Remove_Item(item);
+                    playerlist->Flag_To_Redraw();
+                    delete[] item;
+                    /*...............................................................
                 Mark his color as available
                 ...............................................................*/
-                ColorUsed[Players[i]->Player.Color] = 0;
-                /*...............................................................
+                    ColorUsed[Players[i]->Player.Color] = 0;
+                    /*...............................................................
                 Delete from the Vector list
                 ...............................................................*/
-                Players.Delete(Players[i]);
-                break;
+                    Players.Delete(Players[i]);
+                    break;
+                }
             }
         }
-    }
 
-    /*------------------------------------------------------------------------
+        /*------------------------------------------------------------------------
     NET_MESSAGE: Someone is sending us a message
     ------------------------------------------------------------------------*/
-    else if (GPacket.Command == NET_MESSAGE) {
-        sprintf(txt, Text_String(TXT_FROM), GPacket.Name, GPacket.Message.Buf);
-        magic_number = *((unsigned short*)(GPacket.Message.Buf + COMPAT_MESSAGE_LENGTH - 4));
-        crc = *((unsigned short*)(GPacket.Message.Buf + COMPAT_MESSAGE_LENGTH - 2));
-        color = MPlayerID_To_ColorIndex(GPacket.Message.ID);
-        Messages.Add_Message(
-            txt, MPlayerTColors[color], TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW, 1200, magic_number, crc);
-        retval = EV_MESSAGE;
-    }
+        else if (GPacket.Command == NET_MESSAGE) {
+            sprintf(txt, Text_String(TXT_FROM), GPacket.Name, GPacket.Message.Buf);
+            magic_number = *((unsigned short*)(GPacket.Message.Buf + COMPAT_MESSAGE_LENGTH - 4));
+            crc = *((unsigned short*)(GPacket.Message.Buf + COMPAT_MESSAGE_LENGTH - 2));
+            color = MPlayerID_To_ColorIndex(GPacket.Message.ID);
+            Messages.Add_Message(
+                txt, MPlayerTColors[color], TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_FULLSHADOW, 1200, magic_number, crc);
+            retval = EV_MESSAGE;
+        }
 
     return (retval);
 }
@@ -5216,27 +5216,27 @@ static int Net_Fake_Join_Dialog(void)
             automatically send out a player query for that game.
             .....................................................................*/
             if (event == EV_NEW_GAME && gamelist.Count() == 1) {
-            gamelist.Set_Selected_Index(0);
-            game_index = gamelist.Current_Index();
-            Send_Join_Queries(game_index, 0, 1);
-        } else
+                gamelist.Set_Selected_Index(0);
+                game_index = gamelist.Current_Index();
+                Send_Join_Queries(game_index, 0, 1);
+            } else
 
-            /*.....................................................................
+                /*.....................................................................
             If the game options have changed, print them.
             .....................................................................*/
-            if (event == EV_GAME_OPTIONS) {
-            parms_received = 1;
-            display = REDRAW_MESSAGE;
-        } else
+                if (event == EV_GAME_OPTIONS) {
+                    parms_received = 1;
+                    display = REDRAW_MESSAGE;
+                } else
 
-            /*.....................................................................
+                    /*.....................................................................
             Draw an incoming message
             .....................................................................*/
-            if (event == EV_MESSAGE) {
-            display = REDRAW_MESSAGE;
-        } else
+                    if (event == EV_MESSAGE) {
+                        display = REDRAW_MESSAGE;
+                    } else
 
-            /*.....................................................................
+                        /*.....................................................................
             A game before the one I've selected is gone, so we have a new index now.
             'game_index' must be kept set to the currently-selected list item, so
             we send out queries for the currently-selected game.  It's therefore
@@ -5244,18 +5244,18 @@ static int Net_Fake_Join_Dialog(void)
             If we're joined in a game, we must decrement our game_index to keep
             it aligned with the game we're joined to.
             .....................................................................*/
-            if (event == EV_GAME_SIGNOFF) {
-            if (joinstate == JOIN_CONFIRMED) {
-                game_index--;
-                join_index--;
-                gamelist.Set_Selected_Index(join_index);
-            } else {
-                gamelist.Flag_To_Redraw();
-                Clear_Player_List(&playerlist);
-                game_index = gamelist.Current_Index();
-                Send_Join_Queries(game_index, 0, 1);
-            }
-        }
+                        if (event == EV_GAME_SIGNOFF) {
+                            if (joinstate == JOIN_CONFIRMED) {
+                                game_index--;
+                                join_index--;
+                                gamelist.Set_Selected_Index(join_index);
+                            } else {
+                                gamelist.Flag_To_Redraw();
+                                Clear_Player_List(&playerlist);
+                                game_index = gamelist.Current_Index();
+                                Send_Join_Queries(game_index, 0, 1);
+                            }
+                        }
 
         /*---------------------------------------------------------------------
         Service the Ipx connections
