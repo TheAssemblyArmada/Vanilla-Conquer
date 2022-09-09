@@ -6,7 +6,7 @@ on:
 
 jobs:
   create_dev_release:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
     - name: Create Development release
       if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' }}
@@ -18,7 +18,7 @@ jobs:
         title: "Development Build"
         
   vanilla-linux:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         platform: [clang, gcc]
@@ -49,7 +49,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update -qq > /dev/null
-        sudo apt-get install -qq -y clang-format-10 libsdl2-dev libopenal-dev > /dev/null
+        sudo apt-get install -qq -y clang-format-12 libsdl2-dev libopenal-dev > /dev/null
 
     - name: Configure Vanilla Conquer
       env:
