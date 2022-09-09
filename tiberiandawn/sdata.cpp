@@ -180,21 +180,21 @@ volatile SmudgeTypeClass const Bibx3(SMUDGE_BIB3,
 **	smudge type object pointer.
 */
 SmudgeTypeClass const* const SmudgeTypeClass::Pointers[SMUDGE_COUNT] = {
-    &Crater1,                              // SMUDGE_CRATER1
-    &Crater2,                              // SMUDGE_CRATER2
-    &Crater3,                              // SMUDGE_CRATER3
-    &Crater4,                              // SMUDGE_CRATER4
-    &Crater5,                              // SMUDGE_CRATER5
-    &Crater6,                              // SMUDGE_CRATER6
-    &Scorch1,                              // SMUDGE_SCORCH1
-    &Scorch2,                              // SMUDGE_SCORCH2
-    &Scorch3,                              // SMUDGE_SCORCH3
-    &Scorch4,                              // SMUDGE_SCORCH4
-    &Scorch5,                              // SMUDGE_SCORCH5
-    &Scorch6,                              // SMUDGE_SCORCH6
-    &Bibx1,                                // SMUDGE_BIB1
-    &Bibx2,                                //	SMUDGE_BIB2
-    (SmudgeTypeClass const* const) & Bibx3 // SMUDGE_BIB3
+    &Crater1,                            // SMUDGE_CRATER1
+    &Crater2,                            // SMUDGE_CRATER2
+    &Crater3,                            // SMUDGE_CRATER3
+    &Crater4,                            // SMUDGE_CRATER4
+    &Crater5,                            // SMUDGE_CRATER5
+    &Crater6,                            // SMUDGE_CRATER6
+    &Scorch1,                            // SMUDGE_SCORCH1
+    &Scorch2,                            // SMUDGE_SCORCH2
+    &Scorch3,                            // SMUDGE_SCORCH3
+    &Scorch4,                            // SMUDGE_SCORCH4
+    &Scorch5,                            // SMUDGE_SCORCH5
+    &Scorch6,                            // SMUDGE_SCORCH6
+    &Bibx1,                              // SMUDGE_BIB1
+    &Bibx2,                              //	SMUDGE_BIB2
+    (SmudgeTypeClass const* const)&Bibx3 // SMUDGE_BIB3
 };
 
 /***********************************************************************************************
