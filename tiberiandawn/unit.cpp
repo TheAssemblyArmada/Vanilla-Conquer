@@ -1331,9 +1331,14 @@ void UnitClass::Enter_Idle_Mode(bool initial)
                     }
 
 #endif
-                    //} else {
-                    //	order = MISSION_HUNT;
-                    //}
+
+                    // GB 2022 improvement by TobiasKarnat
+                    // This shuffles build units around the base which gives AI
+                    // more space for buildings and reduces risk that unit blocks
+                    // refinery, by screaming_chicken (more simplified).
+                    if (initial && Frame > 1000) {
+                        this->ArchiveTarget = ::As_Target(House->Where_To_Go((FootClass*)this));
+                    }
                 }
             }
         }

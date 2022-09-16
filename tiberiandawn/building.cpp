@@ -1171,7 +1171,12 @@ void BuildingClass::AI(void)
             if (House->Available_Money() >= REPAIR_THRESHHOLD) {
                 Repair(1);
             } else {
-                if (IsTickedOff && (int)Scen.Scenario > 2 && Random_Pick(0, 50) < (int)Scen.Scenario && !Trigger) {
+
+                // GB 2022 improvement by TobiasKarnat, This on top would improve
+                // skirmish by randomizing building choice, prioritizing power and
+                // sell off later [TD].
+                if (IsTickedOff && (int)Scen.Scenario > 2 && Random_Pick(0, 50) < (int)Scen.Scenario && !Trigger
+                    && *this != STRUCT_CONST && Health_Ratio() < (unsigned)(0x0040)) {
                     if (GameToPlay != GAME_NORMAL || Scen.Scenario != 15 || PlayerPtr->ActLike != HOUSE_GOOD
                         || *this != STRUCT_TEMPLE) {
                         Sell_Back(1);
