@@ -95,17 +95,6 @@ public:
 
     /*
     **	This specifies the percentage of the base (by building quantity) that should
-    **	be composed of airstrips.
-    */
-    fixed AirstripRatio;
-
-    /*
-    **	Limit the number of airstrips to this amount.
-    */
-    int AirstripLimit;
-
-    /*
-    **	This specifies the percentage of the base (by building quantity) that should
     **	be composed of helipads.
     */
     fixed HelipadRatio;

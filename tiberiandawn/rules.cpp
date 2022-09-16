@@ -89,22 +89,20 @@ RulesClass::RulesClass(void)
     : AttackInterval(3)
     , AttackDelay(5)
     , PowerEmergencyFraction(3, 4)
-    , AirstripRatio(".12")
-    , AirstripLimit(5)
     , HelipadRatio(".12")
-    , HelipadLimit(5)
-    , TeslaRatio(".16")
-    , TeslaLimit(10)
+    , HelipadLimit(6)
+    , TeslaRatio(".8")
+    , TeslaLimit(5)
     , AARatio(".14")
     , AALimit(10)
     , DefenseRatio(".5")
-    , DefenseLimit(40)
+    , DefenseLimit(25)
     , WarRatio(".1")
-    , WarLimit(2)
+    , WarLimit(3)
     , BarracksRatio(".16")
     , BarracksLimit(2)
-    , RefineryLimit(4)
-    , RefineryRatio(".16")
+    , RefineryLimit(7)
+    , RefineryRatio(".18")
     , BaseSizeAdd(3)
     , PowerSurplus(50)
     , MaxIQ(5)
@@ -126,15 +124,20 @@ RulesClass::RulesClass(void)
     , AllowSuperWeapons(true)
 {
 #ifndef REMASTER_BUILD
-    Diff[DIFF_EASY].FirepowerBias = "1.2";
-    Diff[DIFF_EASY].GroundspeedBias = "1.2";
-    Diff[DIFF_EASY].AirspeedBias = "1.2";
-    Diff[DIFF_EASY].ArmorBias = "0.3";
+
+    /* giulianob: Bump FirepowerBias just a little, else the enemy do too much damage. */
+    Diff[DIFF_EASY].FirepowerBias = "1.1";
+    /* giulianob: Same thing with speed. */
+    Diff[DIFF_EASY].GroundspeedBias = "1.1";
+    Diff[DIFF_EASY].AirspeedBias = "1.1";
+    /* giulianob: Don't bump the ArmorBias, else enemy units on hard becomes
+       undestroyable.  */
+    Diff[DIFF_EASY].ArmorBias = 1;
     Diff[DIFF_EASY].ROFBias = "0.8";
     Diff[DIFF_EASY].CostBias = "0.8";
     Diff[DIFF_EASY].BuildSpeedBias = "0.6";
     Diff[DIFF_EASY].RepairDelay = "0.001";
-    Diff[DIFF_EASY].BuildDelay = "0.001";
+    Diff[DIFF_EASY].BuildDelay = "0.002";
     Diff[DIFF_EASY].IsBuildSlowdown = false;
     Diff[DIFF_EASY].IsWallDestroyer = true;
     Diff[DIFF_EASY].IsContentScan = true;
@@ -322,8 +325,6 @@ bool RulesClass::AI(CCINIClass& ini)
         TeslaLimit = ini.Get_Int(AI, "ObeliskLimit", TeslaLimit);
         HelipadRatio = ini.Get_Fixed(AI, "HelipadRatio", HelipadRatio);
         HelipadLimit = ini.Get_Int(AI, "HelipadLimit", HelipadLimit);
-        AirstripRatio = ini.Get_Fixed(AI, "AirstripRatio", AirstripRatio);
-        AirstripLimit = ini.Get_Int(AI, "AirstripLimit", AirstripLimit);
         IsCompEasyBonus = ini.Get_Bool(AI, "CompEasyBonus", IsCompEasyBonus);
         IsComputerParanoid = ini.Get_Bool(AI, "Paranoid", IsComputerParanoid);
         PowerEmergencyFraction = ini.Get_Fixed(AI, "PowerEmergency", PowerEmergencyFraction);
@@ -370,8 +371,6 @@ bool RulesClass::Export_AI(CCINIClass& ini)
     ini.Put_Int(AI, "ObeliskLimit", TeslaLimit);
     ini.Put_Fixed(AI, "HelipadRatio", HelipadRatio);
     ini.Put_Int(AI, "HelipadLimit", HelipadLimit);
-    ini.Put_Fixed(AI, "AirstripRatio", AirstripRatio);
-    ini.Put_Int(AI, "AirstripLimit", AirstripLimit);
     ini.Put_Bool(AI, "CompEasyBonus", IsCompEasyBonus);
     ini.Put_Bool(AI, "Paranoid", IsComputerParanoid);
     ini.Put_Fixed(AI, "PowerEmergency", PowerEmergencyFraction);

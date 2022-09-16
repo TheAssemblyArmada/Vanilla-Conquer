@@ -354,11 +354,14 @@ int Com_Scenario_Dialog(void)
     Init scenario values, only the first time through
     ........................................................................*/
     if (first_time) {
-        MPlayerCredits = 3000; // init credits & credit buffer
-        MPlayerBases = 1;      // init scenario parameters
-        MPlayerTiberium = 0;
+        // GB 2022 set defaults for skirmish also:
+        BuildLevel = 7;
+
+        MPlayerCredits = 10000; // init credits & credit buffer
+        MPlayerBases = 1;       // init scenario parameters
+        MPlayerTiberium = 1;
         MPlayerGoodies = 0;
-        MPlayerGhosts = 0;
+        MPlayerGhosts = 1;
         Special.IsCaptureTheFlag = 0;
         MPlayerUnitCount = (MPlayerCountMax[MPlayerBases] + MPlayerCountMin[MPlayerBases]) / 2;
         first_time = false;
