@@ -4130,7 +4130,7 @@ int BuildingClass::Mission_Deconstruction(void)
                         /* extra check to prevent building crew for Obelisk or AGT spawning
                            one cell above building foundation */
                         if (*this == STRUCT_ATOWER || *this == STRUCT_OBELISK) {
-                            coord = Map[coord].Adjacent_Cell(FACING_S)->Cell_Coord();
+                            coord = Map[Coord_Cell(coord)].Adjacent_Cell(FACING_S)->Cell_Coord();
                         }
                         coord = Map[Coord_Cell(coord)].Closest_Free_Spot(coord, false);
 
