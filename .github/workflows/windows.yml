@@ -108,7 +108,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        choco install imagemagick.app --no-progress --version 7.0.10.56
+        choco install imagemagick.app --no-progress --version 7.0.10.56 --side-by-side
         choco install openalsdk --no-progress
         Invoke-WebRequest -Uri https://www.libsdl.org/release/SDL2-devel-2.0.12-VC.zip -OutFile $Env:TEMP\SDL2-devel.zip
         Invoke-WebRequest -Uri https://github.com/ninja-build/ninja/releases/download/v1.10.1/ninja-win.zip -OutFile $Env:TEMP\ninja-win.zip
