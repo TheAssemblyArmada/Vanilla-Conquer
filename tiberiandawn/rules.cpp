@@ -134,6 +134,9 @@ RulesClass::RulesClass(void)
     , AllowSuperWeapons(true)
     , IsThreePoint(false)
     , IsBoxing(false)
+    , NukeTime(14)
+    , IonTime(10)
+    , AirStrikeTime(8)
 {
 #ifndef REMASTER_BUILD
     Diff[DIFF_EASY].FirepowerBias = "1.2";
@@ -264,6 +267,7 @@ static void Difficulty_Put(CCINIClass& ini, DifficultyClass& diff, char const* s
 bool RulesClass::Process(CCINIClass& ini)
 {
     General(ini);
+    Recharge(ini);
     AI(ini);
     IQ(ini);
     Difficulty(ini);
@@ -288,6 +292,7 @@ bool RulesClass::Process(CCINIClass& ini)
 bool RulesClass::Export(CCINIClass& ini)
 {
     Export_General(ini);
+    Export_Recharge(ini);
     Export_AI(ini);
     Export_IQ(ini);
     Export_Difficulty(ini);
@@ -332,6 +337,43 @@ bool RulesClass::General(CCINIClass& ini)
     }
 
     return (false);
+}
+
+/***********************************************************************************************
+ * RulesClass::Recharge -- Process the super weapon recharge statistics.                       *
+ *                                                                                             *
+ *    Use this to set the recharge times for the various super weapons available.              *
+ *                                                                                             *
+ * INPUT:   ini   -- Reference to the database.                                                *
+ *                                                                                             *
+ * OUTPUT:  bool; Was the recharge section found and processed?                                *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/08/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+bool RulesClass::Recharge(CCINIClass& ini)
+{
+    static char const* const RECHARGE = "Recharge";
+    if (ini.Is_Present(RECHARGE)) {
+        AirStrikeTime = ini.Get_Fixed(RECHARGE, "AirStrike", AirStrikeTime);
+        IonTime = ini.Get_Fixed(RECHARGE, "IonCannon", IonTime);
+        NukeTime = ini.Get_Fixed(RECHARGE, "Nuke", NukeTime);
+        return (true);
+    }
+    return (false);
+}
+
+bool RulesClass::Export_Recharge(CCINIClass& ini)
+{
+    static char const RECHARGE[] = "Recharge";
+
+    ini.Put_Fixed(RECHARGE, "AirStrike", AirStrikeTime);
+    ini.Put_Fixed(RECHARGE, "IonCannon", IonTime);
+    ini.Put_Fixed(RECHARGE, "Nuke", NukeTime);
+
+    return (true);
 }
 
 /***********************************************************************************************

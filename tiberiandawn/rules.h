@@ -67,11 +67,13 @@ public:
 
     bool Process(CCINIClass& file);
     bool General(CCINIClass& ini);
+    bool Recharge(CCINIClass& ini);
     bool AI(CCINIClass& ini);
     bool IQ(CCINIClass& ini);
     bool Difficulty(CCINIClass& ini);
     bool Export(CCINIClass& file);
     bool Export_General(CCINIClass& ini);
+    bool Export_Recharge(CCINIClass& ini);
     bool Export_AI(CCINIClass& ini);
     bool Export_IQ(CCINIClass& ini);
     bool Export_Difficulty(CCINIClass& ini);
@@ -351,6 +353,10 @@ public:
     **	this flag is true.
     */
     bool IsBoxing;
+
+    fixed NukeTime;
+    fixed IonTime;
+    fixed AirStrikeTime;
 };
 
 bool Is_MCV_Deploy();
