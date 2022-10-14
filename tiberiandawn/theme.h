@@ -54,6 +54,7 @@ private:
         bool Variation;   // Is there a variation to the score?
         bool Repeat;      // Always repeat this score?
         bool Available;   // Is the score available?
+        int Owner;        // What houses are allowed to play this theme (bit field)?
     } ThemeControl;
 
     static ThemeControl _themes[THEME_COUNT];
@@ -89,8 +90,19 @@ public:
     };
     int Still_Playing(void);
     ThemeType Next_Song(ThemeType index);
+    void Set_Theme_Data(ThemeType theme, int scenario, int owners);
     bool Is_Allowed(ThemeType index) const;
     static void /*_pascal*/ Scan(void);
+
+    static int Scenario(ThemeType index)
+    {
+        return _themes[index].Scenario;
+    }
+
+    static int Owner(ThemeType index)
+    {
+        return _themes[index].Owner;
+    }
 };
 
 #endif

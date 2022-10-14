@@ -69,12 +69,14 @@ public:
     bool General(CCINIClass& ini);
     bool Recharge(CCINIClass& ini);
     bool AI(CCINIClass& ini);
+    bool Themes(CCINIClass& ini);
     bool IQ(CCINIClass& ini);
     bool Difficulty(CCINIClass& ini);
     bool Export(CCINIClass& file);
     bool Export_General(CCINIClass& ini);
     bool Export_Recharge(CCINIClass& ini);
     bool Export_AI(CCINIClass& ini);
+    bool Export_Themes(CCINIClass& ini);
     bool Export_IQ(CCINIClass& ini);
     bool Export_Difficulty(CCINIClass& ini);
 

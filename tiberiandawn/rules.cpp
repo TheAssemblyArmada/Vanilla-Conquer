@@ -505,6 +505,82 @@ bool RulesClass::Export_AI(CCINIClass& ini)
     ini.Put_Fixed(AI, "PowerEmergency", PowerEmergencyFraction);
     return (true);
 }
+/***********************************************************************************************
+ * RulesClass::Themes -- Fetches the theme control values from the INI database.               *
+ *                                                                                             *
+ *    The musical theme availability is controlled by the scenario and the player's house      *
+ *    choice. These controls can be specified in the theme control section of the INI          *
+ *    database.                                                                                *
+ *                                                                                             *
+ * INPUT:   ini   -- Reference to the INI database to process.                                 *
+ *                                                                                             *
+ * OUTPUT:  bool; Was the theme section found and processed?                                   *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+bool RulesClass::Themes(CCINIClass& ini)
+{
+    static char const* const THEMECONTROL = "ThemeControl";
+
+    if (ini.Is_Present(THEMECONTROL)) {
+        for (ThemeType theme = THEME_FIRST; theme < THEME_COUNT; theme++) {
+            if (ini.Is_Present(THEMECONTROL, Theme.Base_Name(theme))) {
+
+                char buffer[128];
+                int scen = 1;
+                int owners = HOUSEF_GOOD | HOUSEF_BAD | HOUSEF_OTHERS;
+
+                ini.Get_String(THEMECONTROL, Theme.Base_Name(theme), "", buffer, sizeof(buffer));
+                char const* token = strtok(buffer, ",");
+                if (token != NULL) {
+                    scen = atoi(token);
+                }
+
+                token = strtok(NULL, ",");
+                if (token != NULL) {
+                    owners = Owner_From_Name(token);
+                }
+
+                Theme.Set_Theme_Data(theme, scen, owners);
+            }
+        }
+        return (true);
+    }
+    return (false);
+}
+
+bool RulesClass::Export_Themes(CCINIClass& ini)
+{
+    static char const* const THEMECONTROL = "ThemeControl";
+
+    for (ThemeType theme = THEME_FIRST; theme < THEME_COUNT; theme++) {
+
+        char buffer[128];
+        int scen = Theme.Scenario(theme);
+        int owners = Theme.Owner(theme);
+
+        const char* owner_name;
+        switch (owners) {
+        case HOUSEF_GOOD:
+            owner_name = ",GDI";
+            break;
+        case HOUSEF_BAD:
+            owner_name = ",Nod";
+            break;
+        default:
+            owner_name = "";
+            break;
+        }
+
+        snprintf(buffer, sizeof(buffer), "%d,%s", scen, owner_name);
+        ini.Put_String(THEMECONTROL, Theme.Base_Name(theme), buffer);
+    }
+
+    return true;
+}
 
 /***********************************************************************************************
  * RulesClass::IQ -- Fetches the IQ control values from the INI database.                      *

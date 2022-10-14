@@ -300,6 +300,7 @@ void Explosion_Damage(COORDINATE coord, unsigned strength, TechnoClass* source, 
 /*
 **	CONQUER.CPP
 */
+int Owner_From_Name(char const* text);
 void Center_About_Objects(void);
 bool Force_CD_Available(int cd);
 void Handle_View(int view, int action = 0);
