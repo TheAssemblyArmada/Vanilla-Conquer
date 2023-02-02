@@ -211,7 +211,7 @@ TechnoClass* CellClass::Cell_Techno(int x, int y) const
                 COORDINATE coord; // Coordinate relative to cell corner.
                 int dist;
 
-                coord = object->Center_Coord() & 0x00FF00FFL;
+                coord = Coord_Fraction(object->Center_Coord());
                 dist = Distance(coord, click);
                 if (!close || dist < distance) {
                     close = (TechnoClass*)object;
@@ -1629,7 +1629,7 @@ TriggerClass* CellClass::Get_Trigger(void) const
  *=============================================================================================*/
 int CellClass::Spot_Index(COORDINATE coord)
 {
-    COORDINATE rel = coord & 0x00FF00FFL; // Sub coordinate value within cell.
+    COORDINATE rel = Coord_Fraction(coord); // Sub coordinate value within cell.
 
     /*
     **	If the coordinate is close enough to the center of the cell, then return
@@ -1702,7 +1702,7 @@ COORDINATE CellClass::Closest_Free_Spot(COORDINATE coord, bool any) const
         {3, 4, 1, 2},
         {4, 1, 2, 3},
     };
-    coord &= 0xFF00FF00L;
+    coord &= Coord_Whole(coord);
 
     /*
     **	Cells occupied by buildings or vehicles don't have any free spots.

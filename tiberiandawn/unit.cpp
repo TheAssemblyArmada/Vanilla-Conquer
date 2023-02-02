@@ -1439,7 +1439,7 @@ bool UnitClass::Unload_Hovercraft_Process(void)
                         **	Place the unit on the map and start it heading in the right direction.
                         */
                         ScenarioInit++;
-                        if (u->Unlimbo(Coord_Add(Coord & 0xFF00FF00L, StoppingCoordAbs[count]), DIR_N)) {
+                        if (u->Unlimbo(Coord_Add(Coord_Whole(Coord), StoppingCoordAbs[count]), DIR_N)) {
                             u->Assign_Mission(MISSION_MOVE);
                             u->NavCom = ::As_Target(cell);
                             u->Path[0] = Dir_Facing(u->PrimaryFacing.Current());

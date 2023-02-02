@@ -1353,7 +1353,7 @@ void DisplayClass::Read_INI(CCINIClass& ini)
     if (Scen.Waypoint[WAYPT_HOME] == -1) {
         Scen.Waypoint[WAYPT_HOME] = XY_Cell(MapCellX, MapCellY);
     }
-    Set_Tactical_Position(Cell_Coord(Scen.Waypoint[WAYPT_HOME]) & 0xFF00FF00L);
+    Set_Tactical_Position(Coord_Whole(Cell_Coord(Scen.Waypoint[WAYPT_HOME])));
     Scen.Views[0] = Scen.Views[1] = Scen.Views[2] = Scen.Views[3] = Scen.Waypoint[WAYPT_HOME];
 
     /*
@@ -2449,7 +2449,7 @@ void DisplayClass::Redraw_Icons(int draw_flags)
         for (int x = -Coord_XLepton(TacticalCoord); x <= TacLeptonWidth; x += CELL_LEPTON_W) {
             COORDINATE coord = Coord_Add(TacticalCoord, XY_Coord(x, y));
             CELL cell = Coord_Cell(coord);
-            coord = Cell_Coord(cell) & 0xFF00FF00L;
+            coord = Coord_Whole(Cell_Coord(cell));
 
             /*
             **	Only cells flagged to be redraw are examined.
@@ -2993,7 +2993,7 @@ static bool should_exclude_from_selection(ObjectClass* obj)
 
 void DisplayClass::Select_These(COORDINATE coord1, COORDINATE coord2, bool additive)
 {
-    COORDINATE tcoord = TacticalCoord; // Cell_Coord(TacticalCell) & 0xFF00FF00L;
+    COORDINATE tcoord = TacticalCoord; // Coord_Whole(Cell_Coord(TacticalCell));
 
     coord1 = Coord_Add(tcoord, coord1);
     coord2 = Coord_Add(tcoord, coord2);
@@ -4302,8 +4302,8 @@ void DisplayClass::Repair_Mode_Control(int control)
  *=============================================================================================*/
 bool DisplayClass::In_View(register CELL cell)
 {
-    COORDINATE coord = Cell_Coord(cell) & 0xFF00FF00L;
-    COORDINATE tcoord = TacticalCoord & 0xFF00FF00L;
+    COORDINATE coord = Coord_Whole(Cell_Coord(cell));
+    COORDINATE tcoord = Coord_Whole(TacticalCoord);
 
     if ((Coord_X(coord) - Coord_X(tcoord)) > TacLeptonWidth + 255)
         return (false);

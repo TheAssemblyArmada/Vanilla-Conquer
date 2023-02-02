@@ -877,3 +877,24 @@ void OverlayTypeClass::Init(TheaterType theater)
         }
     }
 }
+
+/***********************************************************************************************
+ * OverlayTypeClass::Coord_Fixup -- Adjust the coord to be legal for assignment.               *
+ *                                                                                             *
+ *    This will adjust the coordinate specified so that it will be of legal format to          *
+ *    assign as the coordinate of an overlay. Overlays are always relative to the upper left   *
+ *    corner of the cell, so this routine drops the fractional cell components.                *
+ *                                                                                             *
+ * INPUT:   coord -- The coordinate to fixup to be legal for assignment.                       *
+ *                                                                                             *
+ * OUTPUT:  Returns with a properly fixed up coordinate.                                       *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/14/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+COORDINATE OverlayTypeClass::Coord_Fixup(COORDINATE coord) const
+{
+    return Coord_Whole(coord);
+}

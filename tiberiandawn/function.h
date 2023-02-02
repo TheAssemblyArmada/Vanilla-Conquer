@@ -164,11 +164,12 @@ extern int LParam;
 extern int Frame;
 inline CELL Coord_XCell(COORDINATE coord)
 {
-    return (CELL)(*(((unsigned char*)&coord) + 1));
+    return (((COORD_COMPOSITE&)coord).Sub.X.Sub.Cell);
 }
+
 inline CELL Coord_YCell(COORDINATE coord)
 {
-    return (CELL)(*(((unsigned char*)&coord) + 3));
+    return (((COORD_COMPOSITE&)coord).Sub.Y.Sub.Cell);
 }
 
 #include "miscasm.h"
@@ -737,64 +738,103 @@ inline int Lepton_To_Cell(int lepton)
 
 inline CELL XY_Cell(int x, int y)
 {
-    return ((CELL)(((y) << MAP_CELL_MAX_X_BITS) | (x)));
+    CELL_COMPOSITE cell;
+    cell.Cell = 0;
+    cell.Sub.X = x;
+    cell.Sub.Y = y;
+    return (cell.Cell);
 }
 
 inline COORDINATE XY_Coord(int x, int y)
 {
-    return ((COORDINATE)MAKE_LONG(y, x));
+    COORD_COMPOSITE coord;
+
+    coord.Sub.X.Raw = x;
+    coord.Sub.Y.Raw = y;
+    return (coord.Coord);
 }
+
 inline int Coord_X(COORDINATE coord)
 {
-    return (short)(LOW_WORD(coord));
+    return (((COORD_COMPOSITE&)coord).Sub.X.Raw);
 }
 inline int Coord_Y(COORDINATE coord)
 {
-    return (short)(HIGH_WORD(coord));
+    return (((COORD_COMPOSITE&)coord).Sub.Y.Raw);
 }
 
 inline int Cell_X(CELL cell)
 {
-    return (int)(((unsigned)cell) & MAP_CELL_X_MASK);
+    return (((CELL_COMPOSITE&)cell).Sub.X);
 }
 
 inline int Cell_Y(CELL cell)
 {
-    return (int)(((unsigned)cell) >> MAP_CELL_MAX_X_BITS);
+    return (((CELL_COMPOSITE&)cell).Sub.Y);
 }
 
 inline CELL Coord_XLepton(COORDINATE coord)
 {
-    return (CELL)(*((unsigned char*)&coord));
+    return (CELL)(((COORD_COMPOSITE&)coord).Sub.X.Sub.Lepton);
 }
 
 inline CELL Coord_YLepton(COORDINATE coord)
 {
-    return (CELL)(*(((unsigned char*)&coord) + 2));
+    return (CELL)(((COORD_COMPOSITE&)coord).Sub.Y.Sub.Lepton);
+}
+
+inline COORDINATE Coord_Whole(COORDINATE coord)
+{
+    ((COORD_COMPOSITE&)coord).Sub.X.Sub.Lepton = 0;
+    ((COORD_COMPOSITE&)coord).Sub.Y.Sub.Lepton = 0;
+    return (coord);
+}
+
+inline COORDINATE Coord_Fraction(COORDINATE coord)
+{
+    ((COORD_COMPOSITE&)coord).Sub.X.Sub.Cell = 0;
+    ((COORD_COMPOSITE&)coord).Sub.Y.Sub.Cell = 0;
+    return (coord);
 }
 
 inline COORDINATE Coord_Add(COORDINATE coord1, COORDINATE coord2)
 {
-    return (COORDINATE)MAKE_LONG((*((short*)(&coord1) + 1) + *((short*)(&coord2) + 1)),
-                                 (*((short*)(&coord1)) + *((short*)(&coord2))));
+    COORD_COMPOSITE coord;
+
+    coord.Sub.X.Raw =
+        (LEPTON)((int)(short)((COORD_COMPOSITE&)coord1).Sub.X.Raw + (int)(short)((COORD_COMPOSITE&)coord2).Sub.X.Raw);
+    coord.Sub.Y.Raw =
+        (LEPTON)((int)(short)((COORD_COMPOSITE&)coord1).Sub.Y.Raw + (int)(short)((COORD_COMPOSITE&)coord2).Sub.Y.Raw);
+    return (coord.Coord);
 }
 
 inline COORDINATE Coord_Sub(COORDINATE coord1, COORDINATE coord2)
 {
-    return (COORDINATE)MAKE_LONG((*((short*)(&coord1) + 1) - *((short*)(&coord2) + 1)),
-                                 (*((short*)(&coord1)) - *((short*)(&coord2))));
+    COORD_COMPOSITE coord;
+
+    coord.Sub.X.Raw =
+        (LEPTON)((int)(short)((COORD_COMPOSITE&)coord1).Sub.X.Raw - (int)(short)((COORD_COMPOSITE&)coord2).Sub.X.Raw);
+    coord.Sub.Y.Raw =
+        (LEPTON)((int)(short)((COORD_COMPOSITE&)coord1).Sub.Y.Raw - (int)(short)((COORD_COMPOSITE&)coord2).Sub.Y.Raw);
+    return (coord.Coord);
 }
 
 inline COORDINATE Coord_Snap(COORDINATE coord)
 {
-    return (COORDINATE)MAKE_LONG((((*(((unsigned short*)&coord) + 1)) & 0xFF00) | 0x80),
-                                 (((*((unsigned short*)&coord)) & 0xFF00) | 0x80));
+    ((COORD_COMPOSITE&)coord).Sub.X.Sub.Lepton = CELL_LEPTON_W / 2;
+    ((COORD_COMPOSITE&)coord).Sub.Y.Sub.Lepton = CELL_LEPTON_W / 2;
+    return (coord);
 }
 
 inline COORDINATE Coord_Mid(COORDINATE coord1, COORDINATE coord2)
 {
-    return (COORDINATE)MAKE_LONG((*((unsigned short*)(&coord1) + 1) + *((unsigned short*)(&coord2) + 1)) >> 1,
-                                 (*((unsigned short*)(&coord1)) + *((unsigned short*)(&coord2))) >> 1);
+    COORD_COMPOSITE coord;
+
+    coord.Sub.X.Raw =
+        (LEPTON)(((int)((COORD_COMPOSITE&)coord1).Sub.X.Raw + (int)((COORD_COMPOSITE&)coord2).Sub.X.Raw) / 2);
+    coord.Sub.Y.Raw =
+        (LEPTON)(((int)((COORD_COMPOSITE&)coord1).Sub.Y.Raw + (int)((COORD_COMPOSITE&)coord2).Sub.Y.Raw) / 2);
+    return (coord.Coord);
 }
 
 inline COORDINATE XYPixel_Coord(int x, int y)
@@ -815,19 +855,14 @@ inline int Pixel_To_Lepton(int pixel)
 
 inline COORDINATE XYP_Coord(int x, int y)
 {
-    return XY_Coord(Pixel_To_Lepton(x), Pixel_To_Lepton(y));
-};
+    COORD_COMPOSITE coord;
 
-#ifdef MEGAMAPS
-/*
-**   Added copies for mega maps.
-**   Cell_Coord - 0x0FC0 to 0x3F80, 0x003F to 0x007F
-*/
-inline COORDINATE Cell_Coord(CELL cell)
-{
-    return (COORDINATE)MAKE_LONG((((cell & 0x3F80) << 1) | 0x80), ((((cell & 0x007F) << 1) + 1) << 7));
+    coord.Sub.X.Raw = Pixel_To_Lepton(x);
+    coord.Sub.Y.Raw = Pixel_To_Lepton(y);
+    return (coord.Coord);
 }
 
+#ifdef MEGAMAPS
 /*
 **	Takes a old cell value (that assumes a map of 64x64) and adjusts it within 
 **  the new enlarged map array (128x128). All old maps are aligned to the top left
@@ -837,13 +872,18 @@ inline CELL Confine_Old_Cell(CELL cell)
 {
     return (cell % 64) + (cell / 64) * 128;
 }
+#endif //MEGAMAPS
 
-#else  // MEGAMAPS
 inline COORDINATE Cell_Coord(CELL cell)
 {
-    return (COORDINATE)MAKE_LONG((((cell & 0x0FC0) << 2) | 0x80), ((((cell & 0x003F) << 1) + 1) << 7));
+    COORD_COMPOSITE coord;
+
+    coord.Sub.X.Sub.Cell = (unsigned char)(((CELL_COMPOSITE&)cell).Sub.X);
+    coord.Sub.X.Sub.Lepton = (unsigned char)(CELL_LEPTON_W / 2);
+    coord.Sub.Y.Sub.Cell = (unsigned char)(((CELL_COMPOSITE&)cell).Sub.Y);
+    coord.Sub.Y.Sub.Lepton = (unsigned char)(CELL_LEPTON_W / 2);
+    return (coord.Coord);
 }
-#endif //MEGAMAPS
 
 inline int Dir_Diff(DirType dir1, DirType dir2)
 {

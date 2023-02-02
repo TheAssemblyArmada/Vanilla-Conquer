@@ -835,10 +835,7 @@ public:
 
     virtual int Cost_Of(void) const;
     virtual int Full_Name(void) const;
-    virtual COORDINATE Coord_Fixup(COORDINATE coord) const
-    {
-        return coord & 0xFF00FF00L;
-    }
+    virtual COORDINATE Coord_Fixup(COORDINATE coord) const;
     virtual int Max_Pips(void) const;
     virtual void Dimensions(int& width, int& height) const;
     virtual int Legal_Placement(CELL pos) const;
@@ -1506,10 +1503,7 @@ public:
     static void One_Time(void){};
     static void Prep_For_Add(void);
 
-    virtual COORDINATE Coord_Fixup(COORDINATE coord) const
-    {
-        return coord & 0xFF00FF00L;
-    }
+    virtual COORDINATE Coord_Fixup(COORDINATE coord) const;
     virtual bool Create_And_Place(CELL cell, HousesType house) const;
     virtual ObjectClass* Create_One_Of(HouseClass*) const;
     virtual short const* Occupy_List(bool placement = false) const;
@@ -1592,10 +1586,7 @@ public:
     static void One_Time(void);
     static void Prep_For_Add(void);
 
-    virtual COORDINATE Coord_Fixup(COORDINATE coord) const
-    {
-        return coord & 0xFF00FF00L;
-    }
+    virtual COORDINATE Coord_Fixup(COORDINATE coord) const;
     virtual bool Create_And_Place(CELL cell, HousesType house = HOUSE_NONE) const;
     virtual ObjectClass* Create_One_Of(HouseClass*) const;
     virtual short const* Occupy_List(bool placement = false) const;
@@ -2041,10 +2032,7 @@ public:
     static void One_Time(void);
     static void Prep_For_Add(void);
 
-    virtual COORDINATE Coord_Fixup(COORDINATE coord) const
-    {
-        return coord & 0xFF00FF00L;
-    }
+    virtual COORDINATE Coord_Fixup(COORDINATE coord) const;
     virtual bool Create_And_Place(CELL cell, HousesType house = HOUSE_NONE) const;
     virtual ObjectClass* Create_One_Of(HouseClass*) const;
     virtual short const* Occupy_List(bool placement = false) const;

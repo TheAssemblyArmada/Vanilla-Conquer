@@ -493,7 +493,7 @@ int MapEditClass::Move_Grabbed_Object(void)
 
         if (GrabbedObject->What_Am_I() == RTTI_BUILDING || GrabbedObject->What_Am_I() == RTTI_TERRAIN) {
 
-            new_coord &= 0xFF00FF00L;
+            new_coord = Coord_Whole(new_coord);
         }
 
         /*
