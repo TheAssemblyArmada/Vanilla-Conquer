@@ -37,6 +37,7 @@
 #include "ccfile.h"
 #include "wwmem.h"
 #include "gbuffer.h"
+#include "endianness.h"
 
 /***************************************************************************
  * READ_PCX_FILE -- read a pcx file into a Graphic Buffer                  *
@@ -96,6 +97,14 @@ GraphicBufferClass* Read_PCX_File(const char* name, char* palette, void* Buff, i
     file_handle.Open(READ);
 
     file_handle.Read(&header, sizeof(PCX_HEADER));
+    header.x = le16toh(header.x);
+    header.y = le16toh(header.y);
+    header.width = le16toh(header.width);
+    header.height = le16toh(header.height);
+    header.xres = le16toh(header.xres);
+    header.yres = le16toh(header.yres);
+    header.byte_per_line = le16toh(header.byte_per_line);
+    header.palette_type = le16toh(header.palette_type);
 
     if (header.id != 10 && header.version != 5 && header.pixelsize != 8)
         return NULL;
