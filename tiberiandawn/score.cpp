@@ -49,6 +49,7 @@
 #include "common/irandom.h"
 #include "common/framelimit.h"
 #include "common/settings.h"
+#include "endianness.h"
 
 #define SCORETEXT_X 184
 #define SCORETEXT_Y 8
@@ -914,6 +915,8 @@ void ScoreClass::Presentation(void)
     file.Open(READ);
     for (i = 0; i < NUMFAMENAMES; i++) {
         file.Read(&hallfame[i], sizeof(struct Fame));
+        hallfame[i].score = le32toh(hallfame[i].score);
+        hallfame[i].level = le32toh(hallfame[i].level);
     }
     file.Close();
 
@@ -973,6 +976,8 @@ void ScoreClass::Presentation(void)
 
         file.Open(WRITE);
         for (i = 0; i < NUMFAMENAMES; i++) {
+            hallfame[i].score = htole32(hallfame[i].score);
+            hallfame[i].level = htole32(hallfame[i].level);
             file.Write(&hallfame[i], sizeof(struct Fame));
         }
         file.Close();
