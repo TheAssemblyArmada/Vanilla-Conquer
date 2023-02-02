@@ -228,7 +228,7 @@ void FootClass::Set_Speed(int speed)
     assert(IsActive);
 
     speed &= 0xFF;
-    ((unsigned char&)Speed) = speed;
+    Speed = (Speed & 0xffffff00) | speed;
 }
 
 /***********************************************************************************************
