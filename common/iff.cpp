@@ -154,9 +154,7 @@ unsigned int Get_Iff_Chunk_Size(int fh, int id)
         if (Read_File(fh, (char*)&chunksize, 4L) != 4L && !first_iteration)
             break;
 
-#if (IBM)
-        chunksize = Reverse_Long(chunksize);
-#endif
+        chunksize = le32toh(chunksize);
 
         if (id == form) {
             Seek_File(fh, -8L, SEEK_CUR); // Seek back to the start of
