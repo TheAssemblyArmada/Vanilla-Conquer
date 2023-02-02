@@ -35,6 +35,8 @@
 #ifndef CRC_H
 #define CRC_H
 
+#include "endianness.h"
+
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -88,7 +90,7 @@ protected:
     int32_t Value(void) const
     {
         if (Buffer_Needs_Data()) {
-            return (lrotl(CRC, 1) + StagingBuffer.Composite);
+            return (lrotl(CRC, 1) + le32toh(StagingBuffer.Composite));
         }
         return (CRC);
     };
