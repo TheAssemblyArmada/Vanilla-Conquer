@@ -363,16 +363,11 @@ short const* Coord_Spillage_List(COORDINATE coord, Rect const& rect, bool nocent
  *=============================================================================================*/
 COORDINATE Coord_Move(COORDINATE start, register DirType dir, unsigned short distance)
 {
-#ifdef NEVER
     short x = Coord_X(start);
     short y = Coord_Y(start);
 
     Move_Point(x, y, dir, distance);
     return (XY_Coord(x, y));
-#endif
-
-    Move_Point(*(short*)&start, *(((short*)&start) + 1), dir, distance);
-    return (start);
 }
 
 /***********************************************************************************************
