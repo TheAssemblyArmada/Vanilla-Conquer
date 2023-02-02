@@ -33,6 +33,7 @@
 #include "wwmouse.h"
 #include "lcw.h"
 #include "settings.h"
+#include "endianness.h"
 #include <string.h>
 #ifdef SDL_BUILD
 #include <SDL.h>
@@ -753,6 +754,7 @@ void* WWMouseClass::Set_Mouse_Cursor(int hotspotx, int hotspoty, Cursor* cursor)
     int height;
     int width;
     int uncompsz;
+    unsigned short shapetype;
 
     // Get the dimensions of our frame, mouse shp format can have variable
     // dimensions for each frame.
@@ -763,14 +765,15 @@ void* WWMouseClass::Set_Mouse_Cursor(int hotspotx, int hotspoty, Cursor* cursor)
     if (width <= MaxWidth && height <= MaxHeight) {
         cursor_buff = (unsigned char*)MouseCursor;
         data_buff = (unsigned char*)(cursor);
-        frame_flags = cursor->ShapeType;
+        shapetype = le16toh(cursor->ShapeType);
+        frame_flags = shapetype;
 
         // Flag bit 2 is flag for no compression on frame, decompress to
         // intermediate buffer if flag is clear
-        if (!(cursor->ShapeType & 2)) {
+        if (!(shapetype & 2)) {
             decmp_buff = (unsigned char*)_ShapeBuffer;
             lcw_buff = (unsigned char*)(cursor);
-            frame_flags = cursor->ShapeType | 2;
+            frame_flags = shapetype | 2;
 
             memcpy(decmp_buff, lcw_buff, sizeof(Cursor));
             decmp_buff += sizeof(Cursor);
