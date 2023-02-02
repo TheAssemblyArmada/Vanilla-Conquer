@@ -1995,3 +1995,8 @@ ObjectClass* TemplateTypeClass::Create_One_Of(HouseClass*) const
 void TemplateTypeClass::One_Time(void)
 {
 }
+
+COORDINATE TemplateTypeClass::Coord_Fixup(COORDINATE coord) const
+{
+    return Coord_Whole(coord);
+}

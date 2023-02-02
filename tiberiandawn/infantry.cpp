@@ -2114,7 +2114,7 @@ void InfantryClass::Scatter(COORDINATE threat, bool forced, bool nokidding)
             toface = Dir_Facing(Direction8(threat, Coord));
             toface = toface + (Random_Pick(0, 4) - 2);
         } else {
-            COORDINATE coord = Coord & 0x00FF00FFL;
+            COORDINATE coord = Coord_Fraction(Center_Coord());
 
             if (coord != 0x00800080L) {
                 toface = Dir_Facing((DirType)Desired_Facing8(0x0080, 0x0080, Coord_X(coord), Coord_Y(coord)));
@@ -3007,7 +3007,7 @@ void InfantryClass::Read_INI(CCINIClass& ini)
                         /*
                         **	5th token: cell sub-location.
                         */
-                        coord = Coord_Add(coord & 0xFF00FF00L, StoppingCoordAbs[atoi(strtok(NULL, ","))]);
+                        coord = Coord_Add(Coord_Whole(coord), StoppingCoordAbs[atoi(strtok(NULL, ","))]);
 
                         /*
                         **	Fetch the mission and facing.

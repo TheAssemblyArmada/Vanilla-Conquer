@@ -961,3 +961,8 @@ short const* TerrainTypeClass::Overlap_List(void) const
     static short const _simple[1] = {REFRESH_EOL};
     return (&_simple[0]);
 }
+
+COORDINATE TerrainTypeClass::Coord_Fixup(COORDINATE coord) const
+{
+    return Coord_Whole(coord);
+}

@@ -1644,8 +1644,65 @@ typedef enum RadioMessageType : unsigned char
 **	with cell resolution. The COORD type is used for map coordinates that
 **	have a lepton resolution.
 */
+typedef unsigned short LEPTON;
+typedef union
+{
+    LEPTON Raw;
+    struct
+    {
+#ifdef __BIG_ENDIAN__
+        unsigned char Cell;
+        unsigned char Lepton;
+#else
+        unsigned char Lepton;
+        unsigned char Cell;
+#endif
+    } Sub;
+} LEPTON_COMPOSITE;
+
 typedef unsigned COORDINATE;
+typedef union
+{
+    COORDINATE Coord;
+    struct
+    {
+#ifdef __BIG_ENDIAN__
+        LEPTON_COMPOSITE Y;
+        LEPTON_COMPOSITE X;
+#else
+        LEPTON_COMPOSITE X;
+        LEPTON_COMPOSITE Y;
+#endif
+    } Sub;
+} COORD_COMPOSITE;
+
 typedef signed short CELL;
+#ifdef __BIG_ENDIAN__
+#warning "FIXME"
+//#define SLUFF_BITS (sizeof(CELL) * CHAR_BIT) - (14)
+#endif
+
+typedef union
+{
+    CELL Cell;
+    struct
+    {
+#ifdef __BIG_ENDIAN__
+#if SLUFF_BITS
+        /*
+        **	Unused upper bits will cause problems on a big-endian machine unless they
+        **	are deliberately accounted for.
+        */
+        unsigned sluff : SLUF_BITS;
+#endif
+        unsigned Y : MAP_CELL_MAX_Y_BITS;
+        unsigned X : MAP_CELL_MAX_X_BITS;
+#else
+        unsigned X : MAP_CELL_MAX_X_BITS;
+        unsigned Y : MAP_CELL_MAX_Y_BITS;
+#endif
+    } Sub;
+} CELL_COMPOSITE;
 
 /**********************************************************************
 **	This is the target composit information. Notice that with an RTTI_NONE

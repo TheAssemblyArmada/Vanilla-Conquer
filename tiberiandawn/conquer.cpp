@@ -3138,7 +3138,7 @@ void Handle_View(int view, int action)
 {
     if ((unsigned)view < sizeof(Scen.Views) / sizeof(Scen.Views[0])) {
         if (action == 0) {
-            Map.Set_Tactical_Position(Cell_Coord(Scen.Views[view]) & 0xFF00FF00L);
+            Map.Set_Tactical_Position(Coord_Whole(Cell_Coord(Scen.Views[view])));
             Map.Flag_To_Redraw(true);
         } else {
             Scen.Views[view] = Coord_Cell(Map.TacticalCoord);
