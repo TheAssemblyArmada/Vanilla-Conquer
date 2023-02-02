@@ -164,11 +164,11 @@ extern int LParam;
 extern int Frame;
 inline CELL Coord_XCell(COORDINATE coord)
 {
-    return (CELL)(*(((unsigned char*)&coord) + 1));
+    return (CELL)((coord>>8)&0xff);
 }
 inline CELL Coord_YCell(COORDINATE coord)
 {
-    return (CELL)(*(((unsigned char*)&coord) + 3));
+    return (CELL)((coord>>24)&0xff);
 }
 
 #include "miscasm.h"
@@ -765,36 +765,68 @@ inline int Cell_Y(CELL cell)
 
 inline CELL Coord_XLepton(COORDINATE coord)
 {
-    return (CELL)(*((unsigned char*)&coord));
+    return (CELL)((coord>>0)&0xff);
 }
 
 inline CELL Coord_YLepton(COORDINATE coord)
 {
-    return (CELL)(*(((unsigned char*)&coord) + 2));
+    return (CELL)((coord>>16)&0xff);
 }
 
 inline COORDINATE Coord_Add(COORDINATE coord1, COORDINATE coord2)
 {
-    return (COORDINATE)MAKE_LONG((*((short*)(&coord1) + 1) + *((short*)(&coord2) + 1)),
-                                 (*((short*)(&coord1)) + *((short*)(&coord2))));
+    unsigned short coord1low;
+    unsigned short coord1high;
+    unsigned short coord2low;
+    unsigned short coord2high;
+
+    coord1low = (coord1>>0)&0xffff;
+    coord1high = (coord1>>16)&0xffff;
+    coord2low = (coord2>>0)&0xffff;
+    coord2high = (coord2>>16)&0xffff;
+
+    return (COORDINATE)MAKE_LONG(coord1high + coord2high, coord1low + coord2low);
 }
 
 inline COORDINATE Coord_Sub(COORDINATE coord1, COORDINATE coord2)
 {
-    return (COORDINATE)MAKE_LONG((*((short*)(&coord1) + 1) - *((short*)(&coord2) + 1)),
-                                 (*((short*)(&coord1)) - *((short*)(&coord2))));
+    unsigned short coord1low;
+    unsigned short coord1high;
+    unsigned short coord2low;
+    unsigned short coord2high;
+
+    coord1low = (coord1>>0)&0xffff;
+    coord1high = (coord1>>16)&0xffff;
+    coord2low = (coord2>>0)&0xffff;
+    coord2high = (coord2>>16)&0xffff;
+
+    return (COORDINATE)MAKE_LONG(coord1high - coord2high, coord1low - coord2low);
 }
 
 inline COORDINATE Coord_Snap(COORDINATE coord)
 {
-    return (COORDINATE)MAKE_LONG((((*(((unsigned short*)&coord) + 1)) & 0xFF00) | 0x80),
-                                 (((*((unsigned short*)&coord)) & 0xFF00) | 0x80));
+    unsigned short coordlow;
+    unsigned short coordhigh;
+
+    coordlow = (coord>>0)&0xffff;
+    coordhigh = (coord>>16)&0xffff;
+
+    return (COORDINATE)MAKE_LONG(((coordhigh & 0xFF00) | 0x80), ((coordlow & 0xFF00) | 0x80));
 }
 
 inline COORDINATE Coord_Mid(COORDINATE coord1, COORDINATE coord2)
 {
-    return (COORDINATE)MAKE_LONG((*((unsigned short*)(&coord1) + 1) + *((unsigned short*)(&coord2) + 1)) >> 1,
-                                 (*((unsigned short*)(&coord1)) + *((unsigned short*)(&coord2))) >> 1);
+    unsigned short coord1low;
+    unsigned short coord1high;
+    unsigned short coord2low;
+    unsigned short coord2high;
+
+    coord1low = (coord1>>0)&0xffff;
+    coord1high = (coord1>>16)&0xffff;
+    coord2low = (coord2>>0)&0xffff;
+    coord2high = (coord2>>16)&0xffff;
+
+    return (COORDINATE)MAKE_LONG((coord1high + coord2high + 1) >> 1, (coord1low + coord2low) >> 1);
 }
 
 inline COORDINATE XYPixel_Coord(int x, int y)
