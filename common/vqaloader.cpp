@@ -21,6 +21,24 @@
 #include <stdlib.h>
 #include <string.h>
 
+void Flip_VQAHeader(VQAHeader *header)
+{
+    header->Version = le16toh(header->Version);
+    header->Flags = le16toh(header->Flags);
+    header->Frames = le16toh(header->Frames);
+    header->ImageWidth = le16toh(header->ImageWidth);
+    header->ImageHeight = le16toh(header->ImageHeight);
+    header->Num1Colors = le16toh(header->Num1Colors);
+    header->CBentries = le16toh(header->CBentries);
+    header->Xpos = le16toh(header->Xpos);
+    header->Ypos = le16toh(header->Ypos);
+    header->MaxFramesize = le16toh(header->MaxFramesize);
+    header->SampleRate = le16toh(header->SampleRate);
+    header->AltSampleRate = le16toh(header->AltSampleRate);
+    header->MaxCompressedCBSize = le32toh(header->MaxCompressedCBSize);
+    header->field_26 = le32toh(header->field_26);
+}
+
 int VQA_Load_FINF(VQAHandle* handle, unsigned iffsize)
 {
     VQAData* data = handle->VQABuf;
@@ -579,20 +597,7 @@ int VQA_Open(VQAHandle* handle, const char* filename, VQAConfig* config)
                 return VQAERR_READ;
             }
 
-            header->Version = le16toh(header->Version);
-            header->Flags = le16toh(header->Flags);
-            header->Frames = le16toh(header->Frames);
-            header->ImageWidth = le16toh(header->ImageWidth);
-            header->ImageHeight = le16toh(header->ImageHeight);
-            header->Num1Colors = le16toh(header->Num1Colors);
-            header->CBentries = le16toh(header->CBentries);
-            header->Xpos = le16toh(header->Xpos);
-            header->Ypos = le16toh(header->Ypos);
-            header->MaxFramesize = le16toh(header->MaxFramesize);
-            header->SampleRate = le16toh(header->SampleRate);
-            header->AltSampleRate = le16toh(header->AltSampleRate);
-            header->MaxCompressedCBSize = le32toh(header->MaxCompressedCBSize);
-            header->field_26 = le32toh(header->field_26);
+            Flip_VQAHeader(header);
 
             // in LOLG VQAs Groupsize is 0 because it only has one codebook chunk so forcing it to common default here,
             // allows LOLG VQAs to be played
