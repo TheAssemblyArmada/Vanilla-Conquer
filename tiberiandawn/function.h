@@ -775,58 +775,22 @@ inline CELL Coord_YLepton(COORDINATE coord)
 
 inline COORDINATE Coord_Add(COORDINATE coord1, COORDINATE coord2)
 {
-    unsigned short coord1low;
-    unsigned short coord1high;
-    unsigned short coord2low;
-    unsigned short coord2high;
-
-    coord1low = (coord1>>0)&0xffff;
-    coord1high = (coord1>>16)&0xffff;
-    coord2low = (coord2>>0)&0xffff;
-    coord2high = (coord2>>16)&0xffff;
-
-    return (COORDINATE)MAKE_LONG(coord1high + coord2high, coord1low + coord2low);
+    return (COORDINATE)MAKE_LONG(Coord_Y(coord1) + Coord_Y(coord2), Coord_X(coord1) + Coord_X(coord2));
 }
 
 inline COORDINATE Coord_Sub(COORDINATE coord1, COORDINATE coord2)
 {
-    unsigned short coord1low;
-    unsigned short coord1high;
-    unsigned short coord2low;
-    unsigned short coord2high;
-
-    coord1low = (coord1>>0)&0xffff;
-    coord1high = (coord1>>16)&0xffff;
-    coord2low = (coord2>>0)&0xffff;
-    coord2high = (coord2>>16)&0xffff;
-
-    return (COORDINATE)MAKE_LONG(coord1high - coord2high, coord1low - coord2low);
+    return (COORDINATE)MAKE_LONG(Coord_Y(coord1) - Coord_Y(coord2), Coord_X(coord1) - Coord_X(coord2));
 }
 
 inline COORDINATE Coord_Snap(COORDINATE coord)
 {
-    unsigned short coordlow;
-    unsigned short coordhigh;
-
-    coordlow = (coord>>0)&0xffff;
-    coordhigh = (coord>>16)&0xffff;
-
-    return (COORDINATE)MAKE_LONG(((coordhigh & 0xFF00) | 0x80), ((coordlow & 0xFF00) | 0x80));
+    return (COORDINATE)MAKE_LONG(((Coord_Y(coord) & 0xFF00) | 0x80), ((Coord_X(coord) & 0xFF00) | 0x80));
 }
 
 inline COORDINATE Coord_Mid(COORDINATE coord1, COORDINATE coord2)
 {
-    unsigned short coord1low;
-    unsigned short coord1high;
-    unsigned short coord2low;
-    unsigned short coord2high;
-
-    coord1low = (coord1>>0)&0xffff;
-    coord1high = (coord1>>16)&0xffff;
-    coord2low = (coord2>>0)&0xffff;
-    coord2high = (coord2>>16)&0xffff;
-
-    return (COORDINATE)MAKE_LONG((coord1high + coord2high + 1) >> 1, (coord1low + coord2low) >> 1);
+    return (COORDINATE)MAKE_LONG((Coord_Y(coord1) + Coord_Y(coord2)) >> 1, (Coord_X(coord1) + Coord_X(coord2)) >> 1);
 }
 
 inline COORDINATE XYPixel_Coord(int x, int y)
