@@ -774,9 +774,7 @@ void SessionClass::Read_Scenario_Descriptions(void)
     const char* searchPath = CDFileClass::Get_Search_Path(i);
     while (searchPath != nullptr) {
         ffd = nullptr;
-        std::string search_pattern = searchPath;
-        search_pattern += Paths.SEP;
-        search_pattern += "*.MPR";
+        std::string search_pattern = Paths.Concatenate_Paths(searchPath, "*.MPR");
         found = Find_First(search_pattern.c_str(), 0, &ffd);
         while (found) {
             CCFileClass file(ffd->GetName());
@@ -849,9 +847,7 @@ void SessionClass::Read_Scenario_Descriptions(void)
     searchPath = CDFileClass::Get_Search_Path(i);
     while (searchPath != nullptr) {
         ffd = nullptr;
-        std::string search_pattern = searchPath;
-        search_pattern += Paths.SEP;
-        search_pattern += "*.MPR";
+        std::string search_pattern = Paths.Concatenate_Paths(searchPath, "*.MPR");
         found = Find_First(search_pattern.c_str(), 0, &ffd);
         while (found) {
             char name_buffer[128];
