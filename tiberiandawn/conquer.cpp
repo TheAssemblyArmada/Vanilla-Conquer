@@ -3512,7 +3512,7 @@ static bool Change_Local_Dir(int cd)
     if (!_initialised) {
         for (int i = 0; i < CD_COUNT; ++i) {
             for (int j = 0; j < 3; ++j) {
-                std::string path = paths[j] + PathsClass::SEP + _vol_labels[i];
+                std::string path = Paths.Concatenate_Paths(paths[j].c_str(), _vol_labels[i]);
                 RawFileClass vol(path.c_str());
 
                 if (vol.Is_Directory()) {
@@ -3569,7 +3569,7 @@ static bool Change_Local_Dir(int cd)
     // If the data from the CD we want was detected, then double check it and set it as though we used the -CD command line.
     if (_detected & (1 << cd)) {
         for (int j = 0; j < 3; ++j) {
-            std::string path = paths[j] + PathsClass::SEP + _vol_labels[cd];
+            std::string path = Paths.Concatenate_Paths(paths[j].c_str(), _vol_labels[cd]);
             RawFileClass vol(path.c_str());
 
             if (vol.Is_Directory()) {

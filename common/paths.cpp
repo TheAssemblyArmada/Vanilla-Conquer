@@ -55,16 +55,16 @@ void PathsClass::Init(const char* suffix, const char* ini_name, const char* data
     bool use_prog_path = false;
 
     if (ini_name != nullptr) {
-        if (!argv_path.empty() && RawFileClass((argv_path + SEP + ini_name).c_str()).Is_Available()) {
-            file.Set_Name((argv_path + SEP + ini_name).c_str());
+        if (!argv_path.empty() && RawFileClass(Concatenate_Paths(argv_path.c_str(), ini_name).c_str()).Is_Available()) {
+            file.Set_Name(Concatenate_Paths(argv_path.c_str(), ini_name).c_str());
             use_argv_path = true;
-        } else if (RawFileClass((ProgramPath + SEP + ini_name).c_str()).Is_Available()) {
-            file.Set_Name((ProgramPath + SEP + ini_name).c_str());
+        } else if (RawFileClass(Concatenate_Paths(ProgramPath.c_str(), ini_name).c_str()).Is_Available()) {
+            file.Set_Name(Concatenate_Paths(ProgramPath.c_str(), ini_name).c_str());
             use_prog_path = true;
-        } else if (RawFileClass((UserPath + SEP + ini_name).c_str()).Is_Available()) {
-            file.Set_Name((UserPath + SEP + ini_name).c_str());
-        } else if (RawFileClass((DataPath + SEP + ini_name).c_str()).Is_Available()) {
-            file.Set_Name((DataPath + SEP + ini_name).c_str());
+        } else if (RawFileClass(Concatenate_Paths(UserPath.c_str(), ini_name).c_str()).Is_Available()) {
+            file.Set_Name(Concatenate_Paths(UserPath.c_str(), ini_name).c_str());
+        } else if (RawFileClass(Concatenate_Paths(DataPath.c_str(), ini_name).c_str()).Is_Available()) {
+            file.Set_Name(Concatenate_Paths(DataPath.c_str(), ini_name).c_str());
         }
     }
 
@@ -73,9 +73,9 @@ void PathsClass::Init(const char* suffix, const char* ini_name, const char* data
     bool have_prog_data = false;
 
     if (data_name != nullptr) {
-        if (!argv_path.empty() && RawFileClass((argv_path + SEP + data_name).c_str()).Is_Available()) {
+        if (!argv_path.empty() && RawFileClass(Concatenate_Paths(argv_path.c_str(), data_name).c_str()).Is_Available()) {
             have_argv_data = true;
-        } else if (RawFileClass((ProgramPath + SEP + data_name).c_str()).Is_Available()) {
+        } else if (RawFileClass(Concatenate_Paths(ProgramPath.c_str(), data_name).c_str()).Is_Available()) {
             have_prog_data = true;
         }
     }

@@ -122,9 +122,7 @@ int CDFileClass::Open(int rights)
     ** Otherwise it will try and write it to the working directory, probably the binary dir.
     */
     if ((rights & WRITE) && !PathsClass::Is_Absolute(File_Name())) {
-        path = Paths.User_Path();
-        path += PathsClass::SEP;
-        path += File_Name();
+        path = Paths.Concatenate_Paths(Paths.User_Path(), File_Name());
         BufferIOFileClass::Set_Name(path.c_str());
     }
 
@@ -391,9 +389,7 @@ char const* CDFileClass::Set_Name(char const* filename)
         /*
         **	Build a pathname to search for.
         */
-        std::string path = srch->Path;
-        path += PathsClass::SEP;
-        path += filename;
+        std::string path = Paths.Concatenate_Paths(srch->Path, filename);
 
         /*
         **	Check to see if the file could be found. The low level Is_Available logic will
@@ -438,9 +434,7 @@ int CDFileClass::Is_Available(int forced)
         /*
         **	Build a pathname to search for.
         */
-        std::string path = srch->Path;
-        path += PathsClass::SEP;
-        path += filename;
+        std::string path = Paths.Concatenate_Paths(srch->Path, filename.c_str());
 
         /*
         **	Check to see if the file could be found. The low level Is_Available logic will
@@ -509,9 +503,7 @@ int CDFileClass::Open(char const* filename, int rights)
     }
 
     if ((rights & WRITE)) {
-        std::string write_path = Paths.User_Path();
-        write_path += PathsClass::SEP;
-        write_path += filename;
+        std::string write_path = Paths.Concatenate_Paths(Paths.User_Path(), filename);
         BufferIOFileClass::Set_Name(write_path.c_str());
         return (BufferIOFileClass::Open(rights));
     }
