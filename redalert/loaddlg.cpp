@@ -771,9 +771,9 @@ void LoadOptionsClass::Fill_List(ListClass* list)
  *=============================================================================================*/
 int LoadOptionsClass::Num_From_Ext(const char* fname)
 {
-    char ext[_MAX_EXT];
+    const char* ext;
 
-    _splitpath(fname, NULL, NULL, NULL, ext);
+    ext = strrchr(fname, '.');
     int num = atoi(ext + 1); // skip the '.'
     return (num);
 }
