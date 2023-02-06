@@ -73,7 +73,8 @@ void PathsClass::Init(const char* suffix, const char* ini_name, const char* data
     bool have_prog_data = false;
 
     if (data_name != nullptr) {
-        if (!argv_path.empty() && RawFileClass(Concatenate_Paths(argv_path.c_str(), data_name).c_str()).Is_Available()) {
+        if (!argv_path.empty()
+            && RawFileClass(Concatenate_Paths(argv_path.c_str(), data_name).c_str()).Is_Available()) {
             have_argv_data = true;
         } else if (RawFileClass(Concatenate_Paths(ProgramPath.c_str(), data_name).c_str()).Is_Available()) {
             have_prog_data = true;

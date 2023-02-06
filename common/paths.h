@@ -39,7 +39,7 @@ public:
 
     static bool Create_Directory(const char* path);
     static bool Is_Absolute(const char* path);
-    static std::string Concatenate_Paths(const char *path1, const char *path2);
+    static std::string Concatenate_Paths(const char* path1, const char* path2);
 
 #ifdef _WIN32
     constexpr static char SEP = '\\';
