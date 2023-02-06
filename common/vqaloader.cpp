@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void Flip_VQAHeader(VQAHeader *header)
+void Flip_VQAHeader(VQAHeader* header)
 {
     header->Version = le16toh(header->Version);
     header->Flags = le16toh(header->Flags);
@@ -49,8 +49,7 @@ int VQA_Load_FINF(VQAHandle* handle, unsigned iffsize)
             return VQAERR_READ;
         }
 
-        for(i=0;i<iffsize/4;i++)
-        {
+        for (i = 0; i < iffsize / 4; i++) {
             data->Foff[i] = le32toh(data->Foff[i]);
         }
     } else if (handle->StreamHandler(handle, VQACMD_SEEK, (void*)SEEK_CUR, (iffsize + 1) & (~1))) {
