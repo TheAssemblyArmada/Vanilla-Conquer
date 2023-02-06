@@ -1677,10 +1677,6 @@ typedef union
 } COORD_COMPOSITE;
 
 typedef signed short CELL;
-#ifdef __BIG_ENDIAN__
-#warning "FIXME"
-//#define SLUFF_BITS (sizeof(CELL) * CHAR_BIT) - (14)
-#endif
 
 typedef union
 {
@@ -1688,18 +1684,16 @@ typedef union
     struct
     {
 #ifdef __BIG_ENDIAN__
-#if SLUFF_BITS
         /*
         **	Unused upper bits will cause problems on a big-endian machine unless they
         **	are deliberately accounted for.
         */
-        unsigned sluff : SLUF_BITS;
-#endif
-        unsigned Y : MAP_CELL_MAX_Y_BITS;
-        unsigned X : MAP_CELL_MAX_X_BITS;
+        unsigned short sluff : 16 - (MAP_CELL_MAX_X_BITS + MAP_CELL_MAX_Y_BITS);
+        unsigned short Y : MAP_CELL_MAX_Y_BITS;
+        unsigned short X : MAP_CELL_MAX_X_BITS;
 #else
-        unsigned X : MAP_CELL_MAX_X_BITS;
-        unsigned Y : MAP_CELL_MAX_Y_BITS;
+        unsigned short X : MAP_CELL_MAX_X_BITS;
+        unsigned short Y : MAP_CELL_MAX_Y_BITS;
 #endif
     } Sub;
 } CELL_COMPOSITE;
