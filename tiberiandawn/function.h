@@ -164,11 +164,11 @@ extern int LParam;
 extern int Frame;
 inline CELL Coord_XCell(COORDINATE coord)
 {
-    return (CELL)((coord>>8)&0xff);
+    return (CELL)((coord >> 8) & 0xff);
 }
 inline CELL Coord_YCell(COORDINATE coord)
 {
-    return (CELL)((coord>>24)&0xff);
+    return (CELL)((coord >> 24) & 0xff);
 }
 
 #include "miscasm.h"
@@ -765,12 +765,12 @@ inline int Cell_Y(CELL cell)
 
 inline CELL Coord_XLepton(COORDINATE coord)
 {
-    return (CELL)((coord>>0)&0xff);
+    return (CELL)((coord >> 0) & 0xff);
 }
 
 inline CELL Coord_YLepton(COORDINATE coord)
 {
-    return (CELL)((coord>>16)&0xff);
+    return (CELL)((coord >> 16) & 0xff);
 }
 
 inline COORDINATE Coord_Add(COORDINATE coord1, COORDINATE coord2)
