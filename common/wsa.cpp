@@ -67,6 +67,7 @@
 #include "iff.h"
 #include "lcw.h"
 #include "xordelta.h"
+#include "endianness.h"
 #include <string.h>
 
 //
@@ -190,6 +191,16 @@ void* Open_Animation(char const* file_name,
     anim_flags = 0;
     fh = Open_File(file_name, READ);
     Read_File(fh, (char*)&file_header, sizeof(WSA_FileHeaderType));
+
+    file_header.total_frames = le16toh(file_header.total_frames);
+    file_header.pixel_x = le16toh(file_header.pixel_x);
+    file_header.pixel_y = le16toh(file_header.pixel_y);
+    file_header.pixel_width = le16toh(file_header.pixel_width);
+    file_header.pixel_height = le16toh(file_header.pixel_height);
+    file_header.largest_frame_size = le16toh(file_header.largest_frame_size);
+    file_header.flags = le16toh(file_header.flags);
+    file_header.frame0_offset = le32toh(file_header.frame0_offset);
+    file_header.frame0_end = le32toh(file_header.frame0_end);
 
     /*======================================================================*/
     /* If the file has an attached palette then if we have a valid palette	*/
@@ -1029,6 +1040,9 @@ static unsigned int Get_Resident_Frame_Offset(char* file_buffer, int frame)
     memcpy(&x0, lptr, sizeof(uint32_t));
     memcpy(&x1, lptr + 1, sizeof(uint32_t));
 
+    x0 = le32toh(x0);
+    x1 = le32toh(x1);
+
     if (x0) {
         frame0_size = x1 - x0;
     } else {
@@ -1038,6 +1052,7 @@ static unsigned int Get_Resident_Frame_Offset(char* file_buffer, int frame)
     // Return the offset into RAM for the frame.
     lptr += frame;
     memcpy(&x0, lptr, sizeof(uint32_t));
+    x0 = le32toh(x0);
     if (x0)
         return (x0 - (frame0_size + WSA_FILE_HEADER_SIZE));
     else
@@ -1066,6 +1081,7 @@ static unsigned int Get_File_Frame_Offset(int file_handle, int frame, int palett
     if (Read_File(file_handle, (char*)&offset, sizeof(uint32_t)) != sizeof(uint32_t)) {
         offset = 0L;
     }
+    offset = le32toh(offset);
     offset += palette_adjust;
     return (offset);
 }
