@@ -2302,6 +2302,7 @@ int Load_Interpolated_Palettes(char const* filename, bool add)
 
         file.Open(READ);
         file.Read(&num_palettes, 4);
+        num_palettes = le32toh(num_palettes);
 
         for (i = 0; i < num_palettes; i++) {
             InterpolatedPalettes[i + start_palette] = (unsigned char*)malloc(65536);
