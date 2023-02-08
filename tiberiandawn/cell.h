@@ -38,6 +38,7 @@
 #include "building.h"
 #include "unit.h"
 #include "template.h"
+#include "endianness.h"
 
 /****************************************************************************
 **	Each cell on the map is controlled by the following structure.
@@ -164,6 +165,16 @@ public:
     {
         struct
         {
+#ifdef __BIG_ENDIAN__
+            unsigned Building : 1; // A building of some time (usually blocks movement).
+            unsigned Monolith : 1; // Some immovable blockage is in cell.
+            unsigned Vehicle : 1;  // Reserved for vehicle occupation.
+            unsigned SE : 1;
+            unsigned SW : 1;
+            unsigned NE : 1;
+            unsigned NW : 1;
+            unsigned Center : 1;
+#else
             unsigned Center : 1;
             unsigned NW : 1;
             unsigned NE : 1;
@@ -172,6 +183,7 @@ public:
             unsigned Vehicle : 1;  // Reserved for vehicle occupation.
             unsigned Monolith : 1; // Some immovable blockage is in cell.
             unsigned Building : 1; // A building of some time (usually blocks movement).
+#endif
         } Occupy;
         unsigned char Composite;
     } Flag;
