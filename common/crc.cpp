@@ -111,7 +111,7 @@ int32_t CRCEngine::operator()(void const* buffer, size_t length)
         while (longcount--) {
             int32_t l;
             memcpy(&l, longptr++, sizeof(int32_t));
-            CRC = lrotl(CRC, 1) + l;
+            CRC = lrotl(CRC, 1) + le32toh(l);
             bytes_left -= sizeof(int32_t);
         }
 
