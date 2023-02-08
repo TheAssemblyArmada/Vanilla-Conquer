@@ -3826,7 +3826,7 @@ void DisplayClass::Mouse_Left_Release(CELL cell, int x, int y, ObjectClass* obje
         **	Try to place the pending object onto the map.
         */
         if (ProximityCheck) {
-            OutList.Add(EventClass(EventClass::PLACE, PendingObjectPtr->What_Am_I(), cell + ZoneOffset));
+            OutList.Add(EventClass(EventClass::PLACE, PendingObjectPtr->What_Am_I(), (CELL)(cell + ZoneOffset)));
         } else {
             Speak(VOX_DEPLOY);
         }
