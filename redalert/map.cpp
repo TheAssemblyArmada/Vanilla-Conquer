@@ -62,6 +62,7 @@
 #include "function.h"
 #include "lcwpipe.h"
 #include "lcwstraw.h"
+#include "common/endianness.h"
 
 #define MCW MAP_CELL_W
 int const MapClass::RadiusOffset[] = {
@@ -1261,6 +1262,7 @@ bool MapClass::Read_Binary(Straw& straw)
         cellptr = &Array[0];
         for (cell = 0; cell < MAP_CELL_TOTAL; cell++) {
             decomp.Get(&cellptr->TType, sizeof(cellptr->TType));
+            cellptr->TType = (TemplateType)le16toh(cellptr->TType);
             cellptr++;
         }
         cellptr = &Array[0];
@@ -1277,6 +1279,7 @@ bool MapClass::Read_Binary(Straw& straw)
         cellptr = &Array[0];
         for (cell = 0; cell < MAP_CELL_TOTAL; cell++) {
             decomp.Get(&cellptr->TType, sizeof(cellptr->TType));
+            cellptr->TType = (TemplateType)le16toh(cellptr->TType);
             decomp.Get(&cellptr->TIcon, sizeof(cellptr->TIcon));
             cellptr->Recalc_Attributes();
             cellptr++;
