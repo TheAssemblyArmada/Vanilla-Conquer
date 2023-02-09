@@ -1,5 +1,6 @@
 #include "soscomp.h"
 #include <string.h>
+#include <assert.h>
 
 // index table for stepping into step table.
 static const short wCODECIndexTab[16] = {-1, -1, -1, -1, 2, 4, 6, 8, -1, -1, -1, -1, 2, 4, 6, 8};
@@ -18,196 +19,183 @@ static const short wCODECStepTab[89] = {
 
 void sosCODECInitStream(_SOS_COMPRESS_INFO* stream)
 {
-    stream->wCode = 0;
-    stream->wCodeBuf = 0;
-    stream->wIndex = 0;
-    stream->wStep = wCODECStepTab[stream->wIndex];
-    stream->dwPredicted = 0;
-    stream->dwSampleIndex = 0;
+    for (int i = 0; i < 2; i++) {
+        stream->Channels[i].wCode = 0;
+        stream->Channels[i].wCodeBuf = 0;
+        stream->Channels[i].wIndex = 0;
+        stream->Channels[i].wStep = wCODECStepTab[0];
+        stream->Channels[i].dwPredicted = 0;
+        stream->Channels[i].dwSampleIndex = 0;
+    }
+}
 
-    stream->wCode2 = 0;
-    stream->wCodeBuf2 = 0;
-    stream->wIndex2 = 0;
-    stream->wStep2 = wCODECStepTab[stream->wIndex2];
-    stream->dwPredicted2 = 0;
-    stream->dwSampleIndex2 = 0;
+/* Number of possible wIndex.  Comes from the fact that:
+ *
+ *   next_index = clamp(next_index, 0, 88);
+ *
+ * which means 0 <= index <= 88, hence 89 indexes.
+ */
+#define NUM_INDEXES 89
+
+/* Number of possible nybbles.  Comes from the fact that:
+ *
+ *   next_nybble = wCodeBuf & 0xF
+ *
+ * which means 0 <= next_nybble <= 15, hence 16 possibilites.
+ */
+#define NUM_NYBBLES 16
+
+/* Define a dynamic programming table mapping all possible indexes and nybbles
+ * into their next value.  Pack things together into a struct so a cache miss
+ * will retrieve both next index and diff value.
+ *
+ * This table should consume ~12kb, which is quite small.
+ *
+ */
+static struct
+{
+    int diff;
+    short index;
+} SosDecompTable[NUM_INDEXES][NUM_NYBBLES];
+
+/* Flag if above table was initialized.  */
+static bool SosDecompTableGenerated = false;
+
+/* Generate decompression table for samples.  Precompute every possible value
+ * of dwDifference and Channels[0].wIndex based on every possible  combination
+ * of index and nybble values.  */
+void sosCODECGenerateDecompressTable(void)
+{
+    short index, nybble;
+    int diff;
+
+    for (index = 0; index < NUM_INDEXES; index++) {
+        short step = wCODECStepTab[index];
+        for (nybble = 0; nybble < NUM_NYBBLES; nybble++) {
+            diff = step >> 3;
+
+            if ((nybble & 4) != 0) {
+                diff += step;
+            }
+
+            if ((nybble & 2) != 0) {
+                diff += step >> 1;
+            }
+
+            if ((nybble & 1) != 0) {
+                diff += step >> 2;
+            }
+
+            if ((nybble & 8) != 0) {
+                diff = -diff;
+            }
+
+            short next_index = index + wCODECIndexTab[nybble & 0x7];
+            next_index = clamp(next_index, 0, 88);
+
+            SosDecompTable[index][nybble].diff = diff;
+            SosDecompTable[index][nybble].index = next_index;
+        }
+    }
+}
+
+/* Template version of sosCODECDecompressData which generates a single version
+   for 8-bits and 16-bits.  This instructs the compiler to avoid generating a
+   branch in the deepest loop.  */
+template <bool BITS_8> static unsigned sosCODECDecompressDataTemplate(_SOS_COMPRESS_INFO* stream, unsigned bytes)
+{
+    unsigned full_length = bytes;
+    bytes = BITS_8 ? (bytes / 2) : (bytes / 4);
+
+    /* Quickly return if we are not going to write anything.  */
+    if (bytes == 0) {
+        return full_length;
+    }
+
+    int channel = 0;
+    int num_channels = stream->wChannels;
+
+    unsigned char* src = (unsigned char*)stream->lpSource;
+    short* dst = (short*)(stream->lpDest);
+    do {
+        short index = stream->Channels[channel].wIndex;
+        int sample = stream->Channels[channel].dwPredicted;
+
+        int j = 0;
+        do {
+            unsigned char codebuf = *src;
+            src += num_channels;
+
+            /* First step: case dwSampleIndex is even (unrolled).  */
+            char current_nybble = codebuf & 0xF;
+
+            sample += SosDecompTable[index][current_nybble].diff;
+            sample = clamp(sample, -32768, 32767);
+
+            if (BITS_8) {
+                *dst = ((sample & 0xFF00) >> 8) ^ 0x80;
+                dst = (short*)((char*)(dst) + num_channels);
+            } else {
+                *dst = sample;
+                dst += num_channels;
+            }
+
+            index = SosDecompTable[index][current_nybble].index;
+
+            /* Second step: case dwSampleIndex is odd (unrolled).  */
+            current_nybble = codebuf >> 4;
+            sample += SosDecompTable[index][current_nybble].diff;
+            sample = clamp(sample, -32768, 32767);
+
+            if (BITS_8) {
+                *dst = ((sample & 0xFF00) >> 8) ^ 0x80;
+                dst = (short*)((char*)(dst) + num_channels);
+            } else {
+                *dst = sample;
+                dst += num_channels;
+            }
+
+            index = SosDecompTable[index][current_nybble].index;
+        } while (++j < bytes);
+
+        /* Write back the important stuff from the loop back to the struct.  */
+        stream->Channels[channel].dwPredicted = sample;
+        stream->Channels[channel].wIndex = index;
+
+        /* In case of stereo we also need to update the src and dst pointers
+         before proceeding to the next iteration..  */
+        src = (unsigned char*)stream->lpSource + 1;
+        if (BITS_8) {
+            dst = (short*)(stream->lpDest + 1);
+        } else {
+            dst = (short*)(stream->lpDest) + 1;
+        }
+    } while (++channel < num_channels);
+
+    return full_length;
 }
 
 //
 // decompress data from a 4:1 ADPCM compressed file.  the number of
 // bytes decompressed is returned.
 //
-unsigned int sosCODECDecompressData(_SOS_COMPRESS_INFO* stream, unsigned int bytes)
+//
+unsigned sosCODECDecompressData(_SOS_COMPRESS_INFO* stream, unsigned bytes)
 {
-    short current_nybble;
-    unsigned step;
-    int sample;
-    unsigned full_length;
-
-    full_length = bytes;
-    stream->dwSampleIndex = 0;
-    stream->dwSampleIndex2 = 0;
+    if (SosDecompTableGenerated == false) {
+        sosCODECGenerateDecompressTable();
+        SosDecompTableGenerated = true;
+    }
 
     if (stream->wBitSize == 16) {
-        bytes /= 2;
+        return sosCODECDecompressDataTemplate<false>(stream, bytes);
     }
-
-    char* src = stream->lpSource;
-    short* dst = (short*)(stream->lpDest);
-
-    // Handle stereo.
-    if (stream->wChannels == 2) {
-        current_nybble = 0;
-        for (int i = bytes; i > 0; i -= 2) {
-            if ((stream->dwSampleIndex & 1) != 0) {
-                current_nybble = stream->wCodeBuf >> 4;
-                stream->wCode = current_nybble;
-            } else {
-                stream->wCodeBuf = *src;
-                // Stereo is interleaved so skip a byte for this channel.
-                src += 2;
-                current_nybble = stream->wCodeBuf & 0xF;
-                stream->wCode = current_nybble;
-            }
-
-            step = stream->wStep;
-            stream->dwDifference = step >> 3;
-
-            if ((current_nybble & 4) != 0) {
-                stream->dwDifference += step;
-            }
-
-            if ((current_nybble & 2) != 0) {
-                stream->dwDifference += step >> 1;
-            }
-
-            if ((current_nybble & 1) != 0) {
-                stream->dwDifference += step >> 2;
-            }
-
-            if ((current_nybble & 8) != 0) {
-                stream->dwDifference = -stream->dwDifference;
-            }
-
-            sample = clamp(stream->dwDifference + stream->dwPredicted, -32768, 32767);
-            stream->dwPredicted = sample;
-
-            if (stream->wBitSize == 16) {
-                *dst = sample;
-                // Stereo is interleaved so skip a sample for this channel.
-                dst += 2;
-            } else {
-                *dst++ = ((sample & 0xFF00) >> 8) ^ 0x80;
-            }
-
-            stream->wIndex += wCODECIndexTab[stream->wCode & 0x7];
-            stream->wIndex = clamp(stream->wIndex, 0, 88);
-            ++stream->dwSampleIndex;
-            stream->wStep = wCODECStepTab[stream->wIndex];
-        }
-
-        src = stream->lpSource + 1;
-        dst = (short*)(stream->lpDest + 1);
-
-        if (stream->wBitSize == 16) {
-            dst = (short*)(stream->lpDest) + 1;
-        }
-
-        for (int i = bytes; i > 0; i -= 2) {
-            if ((stream->dwSampleIndex2 & 1) != 0) {
-                current_nybble = stream->wCodeBuf2 >> 4;
-                stream->wCode2 = current_nybble;
-            } else {
-                stream->wCodeBuf2 = *src;
-                // Stereo is interleaved so skip a byte for this channel.
-                src += 2;
-                current_nybble = stream->wCodeBuf2 & 0xF;
-                stream->wCode2 = current_nybble;
-            }
-
-            step = stream->wStep2;
-            stream->dwDifference2 = step >> 3;
-
-            if ((current_nybble & 4) != 0) {
-                stream->dwDifference2 += step;
-            }
-
-            if ((current_nybble & 2) != 0) {
-                stream->dwDifference2 += step >> 1;
-            }
-
-            if ((current_nybble & 1) != 0) {
-                stream->dwDifference2 += step >> 2;
-            }
-
-            if ((current_nybble & 8) != 0) {
-                stream->dwDifference2 = -stream->dwDifference2;
-            }
-
-            sample = clamp(stream->dwDifference2 + stream->dwPredicted2, -32768, 32767);
-            stream->dwPredicted2 = sample;
-
-            if (stream->wBitSize == 16) {
-                *dst = sample;
-                // Stereo is interleaved so skip a sample for this channel.
-                dst += 2;
-            } else {
-                *dst++ = ((sample & 0xFF00) >> 8) ^ 0x80;
-            }
-
-            stream->wIndex2 += wCODECIndexTab[stream->wCode2 & 0x7];
-            stream->wIndex2 = clamp(stream->wIndex2, 0, 88);
-            ++stream->dwSampleIndex2;
-            stream->wStep2 = wCODECStepTab[stream->wIndex2];
-        }
-    } else {
-        for (int i = bytes; i > 0; --i) {
-            if ((stream->dwSampleIndex & 1) != 0) {
-                current_nybble = stream->wCodeBuf >> 4;
-                stream->wCode = current_nybble;
-            } else {
-                stream->wCodeBuf = *src++;
-                current_nybble = stream->wCodeBuf & 0xF;
-                stream->wCode = current_nybble;
-            }
-
-            step = stream->wStep;
-            stream->dwDifference = step >> 3;
-
-            if ((current_nybble & 4) != 0) {
-                stream->dwDifference += step;
-            }
-
-            if ((current_nybble & 2) != 0) {
-                stream->dwDifference += step >> 1;
-            }
-
-            if ((current_nybble & 1) != 0) {
-                stream->dwDifference += step >> 2;
-            }
-
-            if ((current_nybble & 8) != 0) {
-                stream->dwDifference = -stream->dwDifference;
-            }
-
-            sample = clamp(stream->dwDifference + stream->dwPredicted, -32768, 32767);
-            stream->dwPredicted = sample;
-
-            if (stream->wBitSize == 16) {
-                *dst++ = sample;
-            } else {
-                *dst = ((sample & 0xFF00) >> 8) ^ 0x80;
-                dst = (short*)((char*)(dst) + 1);
-            }
-
-            stream->wIndex += wCODECIndexTab[stream->wCode & 0x7];
-            stream->wIndex = clamp(stream->wIndex, 0, 88);
-            ++stream->dwSampleIndex;
-            stream->wStep = wCODECStepTab[stream->wIndex];
-        };
+#if 0 // No video or audio sample with this option?
+    else {
+        return sosCODECDecompressDataTemplate<true>(stream, bytes);
     }
-
-    return full_length;
+#endif
+    assert(0 && "Unreachable");
 }
 
 //
@@ -224,8 +212,8 @@ unsigned int sosCODECCompressData(_SOS_COMPRESS_INFO* stream, unsigned int bytes
     short current_samp;
 
     int samples = stream->wBitSize == 16 ? bytes >> 1 : bytes;
-    stream->dwSampleIndex = 0;
-    stream->dwSampleIndex2 = 0;
+    stream->Channels[0].dwSampleIndex = 0;
+    stream->Channels[1].dwSampleIndex = 0;
     short* src = (short*)(stream->lpSource);
     char* dst = stream->lpDest;
 
@@ -241,7 +229,7 @@ unsigned int sosCODECCompressData(_SOS_COMPRESS_INFO* stream, unsigned int bytes
                 current_samp = (current_samp & 0xFF00) ^ 0x8000;
             }
 
-            delta = current_samp - (stream->dwPredicted);
+            delta = current_samp - (stream->Channels[0].dwPredicted);
             code = 0;
 
             if (delta < 0) {
@@ -249,13 +237,13 @@ unsigned int sosCODECCompressData(_SOS_COMPRESS_INFO* stream, unsigned int bytes
                 code = 8;
             }
 
-            stream->wCode = code;
-            tmp_step = stream->wStep;
+            stream->Channels[0].wCode = code;
+            tmp_step = stream->Channels[0].wStep;
             tmp = 4;
 
             for (int i = 3; i > 0; --i) {
                 if (delta >= tmp_step) {
-                    stream->wCode |= tmp;
+                    stream->Channels[0].wCode |= tmp;
                     delta -= tmp_step;
                 }
 
@@ -263,40 +251,41 @@ unsigned int sosCODECCompressData(_SOS_COMPRESS_INFO* stream, unsigned int bytes
                 tmp >>= 1;
             };
 
-            stream->dwDifference = delta;
+            stream->Channels[0].dwDifference = delta;
 
-            if (stream->dwSampleIndex & 1) {
-                *dst = stream->wCodeBuf | (stream->wCode << 4);
+            if (stream->Channels[0].dwSampleIndex & 1) {
+                *dst = stream->Channels[0].wCodeBuf | (stream->Channels[0].wCode << 4);
                 dst += 2;
             } else {
-                stream->wCodeBuf = stream->wCode & 0xF;
+                stream->Channels[0].wCodeBuf = stream->Channels[0].wCode & 0xF;
             }
 
-            step = stream->wStep;
-            code = stream->wCode;
-            stream->dwDifference = step >> 3;
+            step = stream->Channels[0].wStep;
+            code = stream->Channels[0].wCode;
+            stream->Channels[0].dwDifference = step >> 3;
 
             if (code & 4) {
-                stream->dwDifference += step;
+                stream->Channels[0].dwDifference += step;
             }
 
             if (code & 2) {
-                stream->dwDifference += step >> 1;
+                stream->Channels[0].dwDifference += step >> 1;
             }
 
             if (code & 1) {
-                stream->dwDifference += step >> 2;
+                stream->Channels[0].dwDifference += step >> 2;
             }
 
             if (code & 8) {
-                stream->dwDifference = -stream->dwDifference;
+                stream->Channels[0].dwDifference = -stream->Channels[0].dwDifference;
             }
 
-            stream->dwPredicted = clamp(stream->dwDifference + stream->dwPredicted, -32768, 32767);
-            stream->wIndex += wCODECIndexTab[stream->wCode];
-            stream->wIndex = clamp(stream->wIndex, 0, 88);
-            ++stream->dwSampleIndex;
-            stream->wStep = wCODECStepTab[stream->wIndex];
+            stream->Channels[0].dwPredicted =
+                clamp(stream->Channels[0].dwDifference + stream->Channels[0].dwPredicted, -32768, 32767);
+            stream->Channels[0].wIndex += wCODECIndexTab[stream->Channels[0].wCode];
+            stream->Channels[0].wIndex = clamp(stream->Channels[0].wIndex, 0, 88);
+            ++stream->Channels[0].dwSampleIndex;
+            stream->Channels[0].wStep = wCODECStepTab[stream->Channels[0].wIndex];
         }
 
         src = (short*)(stream->lpSource + 1);
@@ -316,7 +305,7 @@ unsigned int sosCODECCompressData(_SOS_COMPRESS_INFO* stream, unsigned int bytes
                 current_samp = (current_samp & 0xFF00) ^ 0x8000;
             }
 
-            delta = current_samp - (stream->dwPredicted2);
+            delta = current_samp - (stream->Channels[1].dwPredicted);
             code = 0;
 
             if (delta < 0) {
@@ -324,13 +313,13 @@ unsigned int sosCODECCompressData(_SOS_COMPRESS_INFO* stream, unsigned int bytes
                 code = 8;
             }
 
-            stream->wCode2 = code;
-            tmp_step = stream->wStep2;
+            stream->Channels[1].wCode = code;
+            tmp_step = stream->Channels[1].wStep;
             tmp = 4;
 
             for (int i = 3; i > 0; --i) {
                 if (delta >= tmp_step) {
-                    stream->wCode2 |= tmp;
+                    stream->Channels[1].wCode |= tmp;
                     delta -= tmp_step;
                 }
 
@@ -338,40 +327,41 @@ unsigned int sosCODECCompressData(_SOS_COMPRESS_INFO* stream, unsigned int bytes
                 tmp >>= 1;
             };
 
-            stream->dwDifference2 = delta;
+            stream->Channels[1].dwDifference = delta;
 
-            if (stream->dwSampleIndex2 & 1) {
-                *dst = stream->wCodeBuf2 | (stream->wCode2 << 4);
+            if (stream->Channels[1].dwSampleIndex & 1) {
+                *dst = stream->Channels[1].wCodeBuf | (stream->Channels[1].wCode << 4);
                 dst += 2;
             } else {
-                stream->wCodeBuf2 = stream->wCode2 & 0xF;
+                stream->Channels[1].wCodeBuf = stream->Channels[1].wCode & 0xF;
             }
 
-            step = stream->wStep2;
-            code = stream->wCode2;
-            stream->dwDifference2 = step >> 3;
+            step = stream->Channels[1].wStep;
+            code = stream->Channels[1].wCode;
+            stream->Channels[1].dwDifference = step >> 3;
 
             if (code & 4) {
-                stream->dwDifference2 += step;
+                stream->Channels[1].dwDifference += step;
             }
 
             if (code & 2) {
-                stream->dwDifference2 += step >> 1;
+                stream->Channels[1].dwDifference += step >> 1;
             }
 
             if (code & 1) {
-                stream->dwDifference2 += step >> 2;
+                stream->Channels[1].dwDifference += step >> 2;
             }
 
             if (code & 8) {
-                stream->dwDifference2 = -stream->dwDifference2;
+                stream->Channels[1].dwDifference = -stream->Channels[1].dwDifference;
             }
 
-            stream->dwPredicted2 = clamp(stream->dwDifference2 + stream->dwPredicted2, -32768, 32767);
-            stream->wIndex2 += wCODECIndexTab[stream->wCode2];
-            stream->wIndex2 = clamp(stream->wIndex2, 0, 88);
-            ++stream->dwSampleIndex2;
-            stream->wStep2 = wCODECStepTab[stream->wIndex2];
+            stream->Channels[1].dwPredicted =
+                clamp(stream->Channels[1].dwDifference + stream->Channels[1].dwPredicted, -32768, 32767);
+            stream->Channels[1].wIndex += wCODECIndexTab[stream->Channels[1].wCode];
+            stream->Channels[1].wIndex = clamp(stream->Channels[1].wIndex, 0, 88);
+            ++stream->Channels[1].dwSampleIndex;
+            stream->Channels[1].wStep = wCODECStepTab[stream->Channels[1].wIndex];
         }
     } else {
         // Compress a mono data stream.
@@ -385,7 +375,7 @@ unsigned int sosCODECCompressData(_SOS_COMPRESS_INFO* stream, unsigned int bytes
                 current_samp = (current_samp & 0xFF00) ^ 0x8000;
             }
 
-            delta = current_samp - (stream->dwPredicted);
+            delta = current_samp - (stream->Channels[0].dwPredicted);
             code = 0;
 
             if (delta < 0) {
@@ -393,13 +383,13 @@ unsigned int sosCODECCompressData(_SOS_COMPRESS_INFO* stream, unsigned int bytes
                 code = 8;
             }
 
-            stream->wCode = code;
-            tmp_step = stream->wStep;
+            stream->Channels[0].wCode = code;
+            tmp_step = stream->Channels[0].wStep;
             tmp = 4;
 
             for (int i = 3; i > 0; --i) {
                 if (delta >= tmp_step) {
-                    stream->wCode |= tmp;
+                    stream->Channels[0].wCode |= tmp;
                     delta -= tmp_step;
                 }
 
@@ -407,39 +397,40 @@ unsigned int sosCODECCompressData(_SOS_COMPRESS_INFO* stream, unsigned int bytes
                 tmp >>= 1;
             }
 
-            stream->dwDifference = delta;
+            stream->Channels[0].dwDifference = delta;
 
-            if (stream->dwSampleIndex & 1) {
-                *dst++ = stream->wCodeBuf | (stream->wCode << 4);
+            if (stream->Channels[0].dwSampleIndex & 1) {
+                *dst++ = stream->Channels[0].wCodeBuf | (stream->Channels[0].wCode << 4);
             } else {
-                stream->wCodeBuf = stream->wCode & 0xF;
+                stream->Channels[0].wCodeBuf = stream->Channels[0].wCode & 0xF;
             }
 
-            step = stream->wStep;
-            code = stream->wCode;
-            stream->dwDifference = step >> 3;
+            step = stream->Channels[0].wStep;
+            code = stream->Channels[0].wCode;
+            stream->Channels[0].dwDifference = step >> 3;
 
             if (code & 4) {
-                stream->dwDifference += step;
+                stream->Channels[0].dwDifference += step;
             }
 
             if (code & 2) {
-                stream->dwDifference += step >> 1;
+                stream->Channels[0].dwDifference += step >> 1;
             }
 
             if (code & 1) {
-                stream->dwDifference += step >> 2;
+                stream->Channels[0].dwDifference += step >> 2;
             }
 
             if (code & 8) {
-                stream->dwDifference = -stream->dwDifference;
+                stream->Channels[0].dwDifference = -stream->Channels[0].dwDifference;
             }
 
-            stream->dwPredicted = clamp(stream->dwDifference + stream->dwPredicted, -32768, 32767);
-            stream->wIndex += wCODECIndexTab[stream->wCode];
-            stream->wIndex = clamp(stream->wIndex, 0, 88);
-            ++stream->dwSampleIndex;
-            stream->wStep = wCODECStepTab[stream->wIndex];
+            stream->Channels[0].dwPredicted =
+                clamp(stream->Channels[0].dwDifference + stream->Channels[0].dwPredicted, -32768, 32767);
+            stream->Channels[0].wIndex += wCODECIndexTab[stream->Channels[0].wCode];
+            stream->Channels[0].wIndex = clamp(stream->Channels[0].wIndex, 0, 88);
+            ++stream->Channels[0].dwSampleIndex;
+            stream->Channels[0].wStep = wCODECStepTab[stream->Channels[0].wIndex];
         }
     }
 

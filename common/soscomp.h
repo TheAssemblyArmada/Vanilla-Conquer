@@ -43,21 +43,16 @@ typedef struct _tagCOMPRESS_INFO
     char* lpDest;
     unsigned int dwCompSize;
     unsigned int dwUnCompSize;
-    unsigned int dwSampleIndex;
-    int dwPredicted;
-    int dwDifference;
-    short wCodeBuf;
-    short wCode;
-    short wStep;
-    short wIndex;
-
-    unsigned int dwSampleIndex2; // added BP for channel 2
-    int dwPredicted2;            // added BP for channel 2
-    int dwDifference2;           // added BP for channel 2
-    short wCodeBuf2;             // added BP for channel 2
-    short wCode2;                // added BP for channel 2
-    short wStep2;                // added BP for channel 2
-    short wIndex2;               // added BP for channel 2
+    struct
+    {
+        unsigned int dwSampleIndex;
+        int dwPredicted;
+        int dwDifference;
+        short wCodeBuf;
+        short wCode;
+        short wStep;
+        short wIndex;
+    } Channels[2];
     short wBitSize;
     short wChannels; // added BP for # of channels
 } _SOS_COMPRESS_INFO;
