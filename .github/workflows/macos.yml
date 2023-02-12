@@ -38,8 +38,8 @@ jobs:
     - if: ${{ steps.dep-cache.outputs.cache-hit != 'true' }}
       name: Install dependencies
       run: |
-        wget -q https://github.com/macports/macports-base/releases/download/v2.7.2/MacPorts-2.7.2-12-Monterey.pkg
-        sudo installer -pkg ./MacPorts-2.7.2-12-Monterey.pkg -target /
+        wget -q https://github.com/macports/macports-base/releases/download/v2.8.1/MacPorts-2.8.1-12-Monterey.pkg
+        sudo installer -pkg ./MacPorts-2.8.1-12-Monterey.pkg -target /
         export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
         sudo port selfupdate -N
         sudo port install dylibbundler -N
