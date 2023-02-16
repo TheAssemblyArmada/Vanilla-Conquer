@@ -586,7 +586,6 @@ void LoadOptionsClass::Fill_List(ListClass* list)
     FileEntryClass* fdata; // for adding entries to 'Files'
     char descr[DESCRIP_MAX];
     char scan_path[_MAX_PATH];
-    char sep[2] = {0};
     unsigned scenario; // scenario #
     HousesType house;  // house
     Find_File_Data* ff = nullptr;
@@ -611,8 +610,7 @@ void LoadOptionsClass::Fill_List(ListClass* list)
     /*
     ** Find all savegame files
     */
-    sep[0] = PathsClass::SEP;
-    snprintf(scan_path, sizeof(scan_path), "%s%s%s", Paths.User_Path(), sep, "SAVEGAME.*");
+    snprintf(scan_path, sizeof(scan_path), "%s", Paths.Concatenate_Paths(Paths.User_Path(), "SAVEGAME.*").c_str());
 
     found = Find_First(scan_path, 0, &ff);
     while (found) {
