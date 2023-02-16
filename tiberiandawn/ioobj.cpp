@@ -293,7 +293,7 @@ void TeamClass::Decode_Pointers(void)
     */
     ((TeamTypeClass*&)Class) = As_TeamType(TARGET_SAFE_CAST(Class));
     Check_Ptr((void*)Class, __FILE__, __LINE__);
-    ((HouseClass*&)House) = HouseClass::As_Pointer(*((HousesType*)&House));
+    ((HouseClass*&)House) = HouseClass::As_Pointer((HousesType) * ((intptr_t*)&House));
     Check_Ptr((void*)House, __FILE__, __LINE__);
 
     /*
@@ -432,7 +432,7 @@ void AircraftClass::Decode_Pointers(void)
     /*
     ----------------------------- Decode 'Class' -----------------------------
     */
-    ((AircraftTypeClass const*&)Class) = &AircraftTypeClass::As_Reference(*((AircraftType*)&Class));
+    ((AircraftTypeClass const*&)Class) = &AircraftTypeClass::As_Reference((AircraftType) * ((intptr_t*)&Class));
     Check_Ptr((void*)Class, __FILE__, __LINE__);
 
     /*
@@ -513,7 +513,7 @@ void AnimClass::Decode_Pointers(void)
     /*
     ----------------------------- Decode 'Class' -----------------------------
     */
-    ((AnimTypeClass const*&)Class) = &AnimTypeClass::As_Reference(*((AnimType*)&Class));
+    ((AnimTypeClass const*&)Class) = &AnimTypeClass::As_Reference((AnimType) * ((intptr_t*)&Class));
     Check_Ptr((void*)Class, __FILE__, __LINE__);
 
     /*
@@ -604,7 +604,7 @@ void BuildingClass::Decode_Pointers(void)
     /*
     ----------------------------- Decode 'Class' -----------------------------
     */
-    ((BuildingTypeClass const*&)Class) = &BuildingTypeClass::As_Reference(*((StructType*)&Class));
+    ((BuildingTypeClass const*&)Class) = &BuildingTypeClass::As_Reference((StructType) * ((intptr_t*)&Class));
     Check_Ptr((void*)Class, __FILE__, __LINE__);
 
     /*------------------------------------------------------------------------
@@ -685,7 +685,7 @@ void BulletClass::Decode_Pointers(void)
     /*
     ----------------------------- Decode 'Class' -----------------------------
     */
-    ((BulletTypeClass const*&)Class) = &BulletTypeClass::As_Reference(*((BulletType*)&Class));
+    ((BulletTypeClass const*&)Class) = &BulletTypeClass::As_Reference((BulletType) * ((intptr_t*)&Class));
     Check_Ptr((void*)Class, __FILE__, __LINE__);
 
     /*
@@ -760,7 +760,7 @@ void InfantryClass::Decode_Pointers(void)
     /*
     ----------------------------- Decode 'Class' -----------------------------
     */
-    ((InfantryTypeClass const*&)Class) = &InfantryTypeClass::As_Reference(*((InfantryType*)&Class));
+    ((InfantryTypeClass const*&)Class) = &InfantryTypeClass::As_Reference((InfantryType) * ((intptr_t*)&Class));
     Check_Ptr((void*)Class, __FILE__, __LINE__);
 
     /*
@@ -825,7 +825,7 @@ void OverlayClass::Decode_Pointers(void)
     /*
     ----------------------------- Decode 'Class' -----------------------------
     */
-    ((OverlayTypeClass const*&)Class) = &OverlayTypeClass::As_Reference(*((OverlayType*)&Class));
+    ((OverlayTypeClass const*&)Class) = &OverlayTypeClass::As_Reference((OverlayType) * ((intptr_t*)&Class));
     Check_Ptr((void*)Class, __FILE__, __LINE__);
 
     /*
@@ -890,7 +890,7 @@ void SmudgeClass::Decode_Pointers(void)
     /*
     ----------------------------- Decode 'Class' -----------------------------
     */
-    ((SmudgeTypeClass const*&)Class) = &SmudgeTypeClass::As_Reference(*((SmudgeType*)&Class));
+    ((SmudgeTypeClass const*&)Class) = &SmudgeTypeClass::As_Reference((SmudgeType) * ((intptr_t*)&Class));
     Check_Ptr((void*)Class, __FILE__, __LINE__);
 
     /*
@@ -955,7 +955,7 @@ void TemplateClass::Decode_Pointers(void)
     /*
     ----------------------------- Decode 'Class' -----------------------------
     */
-    ((TemplateTypeClass const*&)Class) = &TemplateTypeClass::As_Reference(*((TemplateType*)&Class));
+    ((TemplateTypeClass const*&)Class) = &TemplateTypeClass::As_Reference((TemplateType) * ((intptr_t*)&Class));
     Check_Ptr((void*)Class, __FILE__, __LINE__);
 
     /*
@@ -1021,7 +1021,7 @@ void TerrainClass::Decode_Pointers(void)
     /*
     ----------------------------- Decode 'Class' -----------------------------
     */
-    ((TerrainTypeClass const*&)Class) = &TerrainTypeClass::As_Reference(*((TerrainType*)&Class));
+    ((TerrainTypeClass const*&)Class) = &TerrainTypeClass::As_Reference((TerrainType) * ((intptr_t*)&Class));
     Check_Ptr((void*)Class, __FILE__, __LINE__);
 
     /*
@@ -1340,7 +1340,7 @@ void HouseClass::Decode_Pointers(void)
     /*
     ----------------------------- Decode 'Class' -----------------------------
     */
-    ((HouseTypeClass const*&)Class) = &HouseTypeClass::As_Reference(*((HousesType*)&Class));
+    ((HouseTypeClass const*&)Class) = &HouseTypeClass::As_Reference((HousesType) * ((intptr_t*)&Class));
     Check_Ptr((void*)Class, __FILE__, __LINE__);
 }
 
@@ -1664,7 +1664,7 @@ void DriveClass::Decode_Pointers(void)
     /*
     ----------------------------- Decode 'Class' -----------------------------
     */
-    ((UnitTypeClass const*&)Class) = &UnitTypeClass::As_Reference(*((UnitType*)&Class));
+    ((UnitTypeClass const*&)Class) = &UnitTypeClass::As_Reference((UnitType) * ((intptr_t*)&Class));
     Check_Ptr((void*)Class, __FILE__, __LINE__);
 
     /*
@@ -1859,7 +1859,7 @@ void TechnoClass::Decode_Pointers(void)
     /*
     ----------------------------- Decode 'House' -----------------------------
     */
-    ((HouseClass*&)House) = HouseClass::As_Pointer(*((HousesType*)&House));
+    ((HouseClass*&)House) = HouseClass::As_Pointer((HousesType) * ((intptr_t*)&House));
     Check_Ptr((void*)House, __FILE__, __LINE__);
 
     FlasherClass::Decode_Pointers();
