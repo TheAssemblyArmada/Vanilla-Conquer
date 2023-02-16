@@ -37,44 +37,47 @@ enum
     INVALID_FILE_HANDLE = -1,
 };
 
-bool ReverseChannels;
-LockedDataType LockedData;
+static bool ReverseChannels;
+static LockedDataType LockedData;
 LPDIRECTSOUND SoundObject;
-LPDIRECTSOUNDBUFFER DumpBuffer;
+static LPDIRECTSOUNDBUFFER DumpBuffer;
 LPDIRECTSOUNDBUFFER PrimaryBufferPtr;
-WAVEFORMATEX DsBuffFormat;
-WAVEFORMATEX PrimaryBuffFormat;
-DSBUFFERDESC BufferDesc;
-DSBUFFERDESC PrimaryBufferDesc;
-CRITICAL_SECTION GlobalAudioCriticalSection;
-void* SoundThreadHandle;
-bool SoundThreadActive;
-bool StartingFileStream;
-MemoryFlagType StreamBufferFlag;
+static WAVEFORMATEX DsBuffFormat;
+static WAVEFORMATEX PrimaryBuffFormat;
+static DSBUFFERDESC BufferDesc;
+static DSBUFFERDESC PrimaryBufferDesc;
+static CRITICAL_SECTION GlobalAudioCriticalSection;
+static void* SoundThreadHandle;
+static bool SoundThreadActive;
+static bool StartingFileStream;
+static MemoryFlagType StreamBufferFlag;
 //int Misc;
-UINT SoundTimerHandle;
-void* FileStreamBuffer;
-bool volatile AudioDone;
+static UINT SoundTimerHandle;
+static void* FileStreamBuffer;
+static bool volatile AudioDone;
 SFX_Type SoundType;
 Sample_Type SampleType;
 
 // Forward declare some internal functions.
 bool Attempt_Audio_Restore(LPDIRECTSOUNDBUFFER sound_buffer);
+static int Get_Free_Sample_Handle(int priority);
+static int Play_Sample_Handle(void const* sample, int priority, int volume, signed short panloc, int id);
+static int Sample_Read(int fh, void* buffer, int size);
 void CALLBACK
 Sound_Timer_Callback(UINT uID = 0, UINT uMsg = 0, DWORD_PTR dwUser = 0, DWORD_PTR dw1 = 0, DWORD_PTR dw2 = 0);
-int Simple_Copy(void** source, int* ssize, void** alternate, int* altsize, void** dest, int size);
-int Sample_Copy(SampleTrackerType* st,
-                void** source,
-                int* ssize,
-                void** alternate,
-                int* altsize,
-                void* dest,
-                int size,
-                SCompressType sound_comp,
-                void* trailer,
-                int16_t* trailersize);
+static int Simple_Copy(void** source, int* ssize, void** alternate, int* altsize, void** dest, int size);
+static int Sample_Copy(SampleTrackerType* st,
+                       void** source,
+                       int* ssize,
+                       void** alternate,
+                       int* altsize,
+                       void* dest,
+                       int size,
+                       SCompressType sound_comp,
+                       void* trailer,
+                       int16_t* trailersize);
 
-int Convert_HMI_To_Direct_Sound_Volume(int vol)
+static int Convert_HMI_To_Direct_Sound_Volume(int vol)
 {
     // Complete silence.
     if (vol <= 0) {
@@ -94,7 +97,7 @@ int Convert_HMI_To_Direct_Sound_Volume(int vol)
     return int(-(v + -1.0));
 }
 
-void Maintenance_Callback()
+static void Maintenance_Callback()
 {
     SampleTrackerType* st = LockedData.SampleTracker;
     HRESULT ret;
@@ -260,7 +263,7 @@ void Maintenance_Callback()
     }
 }
 
-void Init_Locked_Data()
+static void Init_Locked_Data()
 {
     LockedData.DigiHandle = INVALID_AUDIO_HANDLE;
     LockedData.ServiceSomething = 0;
@@ -273,7 +276,7 @@ void Init_Locked_Data()
     LockedData._int = 0;
 }
 
-bool File_Callback(short id, short* odd, void** buffer, int* size)
+static bool File_Callback(short id, short* odd, void** buffer, int* size)
 {
     if (id == INVALID_AUDIO_HANDLE) {
         return false;
@@ -384,11 +387,11 @@ bool File_Callback(short id, short* odd, void** buffer, int* size)
     return false;
 }
 
-int __cdecl Stream_Sample_Vol(void* buffer,
-                              int size,
-                              bool (*callback)(short int, short int*, void**, int*),
-                              int volume,
-                              int handle)
+static int __cdecl Stream_Sample_Vol(void* buffer,
+                                     int size,
+                                     bool (*callback)(short int, short int*, void**, int*),
+                                     int volume,
+                                     int handle)
 {
     if (AudioDone || buffer == nullptr || size == 0 || LockedData.DigiHandle == INVALID_AUDIO_HANDLE) {
         return INVALID_AUDIO_HANDLE;
@@ -414,12 +417,7 @@ int __cdecl Stream_Sample_Vol(void* buffer,
     return playid;
 }
 
-int File_Stream_Sample(const char* filename, bool real_time_start)
-{
-    return File_Stream_Sample_Vol(filename, VOLUME_MAX, real_time_start);
-}
-
-void File_Stream_Preload(int index)
+static void File_Stream_Preload(int index)
 {
     SampleTrackerType* st = &LockedData.SampleTracker[index];
     int maxnum = (LockedData.StreamBufferCount / 2) + 4;
@@ -598,25 +596,7 @@ void* Load_Sample(char const* filename)
     return data;
 }
 
-long Load_Sample_Into_Buffer(char const* filename, void* buffer, long size)
-{
-    if (buffer == nullptr || size == 0 || LockedData.DigiHandle == INVALID_AUDIO_HANDLE || !filename
-        || !Find_File(filename)) {
-        return 0;
-    }
-
-    int handle = Open_File(filename, 1);
-
-    if (handle == INVALID_FILE_HANDLE) {
-        return 0;
-    }
-
-    int sample_size = Sample_Read(handle, buffer, size);
-    Close_File(handle);
-    return sample_size;
-}
-
-int Sample_Read(int fh, void* buffer, int size)
+static int Sample_Read(int fh, void* buffer, int size)
 {
     if (buffer == nullptr || fh == INVALID_AUDIO_HANDLE || size <= sizeof(AUDHeaderType)) {
         return 0;
@@ -641,7 +621,7 @@ void Free_Sample(void const* sample)
     }
 }
 
-void CALLBACK Sound_Timer_Callback(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
+static void CALLBACK Sound_Timer_Callback(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
 {
     if (!AudioDone) {
         EnterCriticalSection(&GlobalAudioCriticalSection);
@@ -650,7 +630,7 @@ void CALLBACK Sound_Timer_Callback(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_
     }
 }
 
-void Sound_Thread(void* a1)
+static void Sound_Thread(void* a1)
 {
     // TODO : Find a alternative solution, this is the original code, and likely causes lockups on modern systems.
     DuplicateHandle(
@@ -677,7 +657,7 @@ bool Set_Primary_Buffer_Format()
     return false;
 }
 
-int Print_Sound_Error(char* sound_error, void* window)
+static int Print_Sound_Error(char* sound_error, void* window)
 {
     return MessageBoxA((HWND)window, sound_error, "DirectSound Audio Error", MB_OK | MB_ICONWARNING);
 }
@@ -979,7 +959,7 @@ void Stop_Sample_Playing(void const* sample)
     }
 }
 
-int Get_Free_Sample_Handle(int priority)
+static int Get_Free_Sample_Handle(int priority)
 {
     int index = 0;
 
@@ -1029,7 +1009,7 @@ int Play_Sample(void const* sample, int priority, int volume, signed short panlo
     return Play_Sample_Handle(sample, priority, volume, panloc, Get_Free_Sample_Handle(priority));
 }
 
-bool Attempt_Audio_Restore(LPDIRECTSOUNDBUFFER sound_buffer)
+static bool Attempt_Audio_Restore(LPDIRECTSOUNDBUFFER sound_buffer)
 {
     HRESULT return_code = 0;
     DWORD play_status = 0;
@@ -1050,7 +1030,7 @@ bool Attempt_Audio_Restore(LPDIRECTSOUNDBUFFER sound_buffer)
     return return_code != DSERR_BUFFERLOST;
 }
 
-int Attempt_To_Play_Buffer(int id)
+static int Attempt_To_Play_Buffer(int id)
 {
     HRESULT return_code;
     SampleTrackerType* st = &LockedData.SampleTracker[id];
@@ -1093,7 +1073,7 @@ int Attempt_To_Play_Buffer(int id)
 }
 
 extern bool Any_Locked();
-int Play_Sample_Handle(void const* sample, int priority, int volume, signed short panloc, int id)
+static int Play_Sample_Handle(void const* sample, int priority, int volume, signed short panloc, int id)
 {
     HRESULT return_code;
     DWORD status;
@@ -1323,13 +1303,6 @@ void Restore_Sound_Buffers()
     }
 }
 
-int Set_Sound_Vol(int vol)
-{
-    int oldvol = LockedData.SoundVolume;
-    LockedData.SoundVolume = vol;
-    return oldvol;
-}
-
 int Set_Score_Vol(int volume)
 {
     int old = LockedData.ScoreVolume;
@@ -1360,47 +1333,9 @@ void Fade_Sample(int index, int ticks)
     }
 }
 
-void Unfade_Sample(int index, int ticks)
-{
-    if (Sample_Status(index)) {
-        SampleTrackerType* st = &LockedData.SampleTracker[index];
-
-        if (ticks > 0 && !st->Loading) {
-            st->Reducer -= ((st->Volume / ticks) + 1);
-        } else {
-            st->Reducer = 0;
-        }
-    }
-}
-
 int Get_Digi_Handle()
 {
     return LockedData.DigiHandle;
-}
-
-unsigned Sample_Length(void* sample)
-{
-    if (sample == nullptr) {
-        return 0;
-    }
-
-    AUDHeaderType header;
-    memcpy(&header, sample, sizeof(header));
-    unsigned time = header.UncompSize;
-
-    if (header.Flags & 2) {
-        time /= 2;
-    }
-
-    if (header.Flags & 1) {
-        time /= 2;
-    }
-
-    if (header.Rate / 60 > 0) {
-        time /= header.Rate / 60;
-    }
-
-    return time;
 }
 
 bool Start_Primary_Sound_Buffer(bool forced)
@@ -1440,7 +1375,7 @@ void Stop_Primary_Sound_Buffer()
     }
 }
 
-void Suspend_Audio_Thread()
+static void Suspend_Audio_Thread()
 {
     if (SoundThreadActive) {
         timeKillEvent(SoundTimerHandle);
@@ -1449,7 +1384,7 @@ void Suspend_Audio_Thread()
     }
 }
 
-void Resume_Audio_Thread()
+static void Resume_Audio_Thread()
 {
     if (!SoundThreadActive) {
         SoundTimerHandle = timeSetEvent(TIMER_DELAY, TIMER_RESOLUTION, Sound_Timer_Callback, SoundThreadActive, 1);
@@ -1457,7 +1392,7 @@ void Resume_Audio_Thread()
     }
 }
 
-int Simple_Copy(void** source, int* ssize, void** alternate, int* altsize, void** dest, int size)
+static int Simple_Copy(void** source, int* ssize, void** alternate, int* altsize, void** dest, int size)
 {
     int out = 0;
 
@@ -1498,16 +1433,16 @@ int Simple_Copy(void** source, int* ssize, void** alternate, int* altsize, void*
     return out;
 }
 
-int Sample_Copy(SampleTrackerType* st,
-                void** source,
-                int* ssize,
-                void** alternate,
-                int* altsize,
-                void* dest,
-                int size,
-                SCompressType scomp,
-                void* trailer,
-                int16_t* trailersize)
+static int Sample_Copy(SampleTrackerType* st,
+                       void** source,
+                       int* ssize,
+                       void** alternate,
+                       int* altsize,
+                       void* dest,
+                       int size,
+                       SCompressType scomp,
+                       void* trailer,
+                       int16_t* trailersize)
 {
     int datasize = 0;
 

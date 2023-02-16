@@ -202,24 +202,26 @@ struct LockedDataType
     unsigned SoundVolume;
     unsigned ScoreVolume;
     int VolumeLock;
-} LockedData;
+};
 
 void (*Audio_Focus_Loss_Function)() = nullptr;
 
+static struct LockedDataType LockedData;
 SFX_Type SoundType;
 Sample_Type SampleType;
-void* FileStreamBuffer = nullptr;
+static void* FileStreamBuffer = nullptr;
 bool StreamLowImpact = false;
-bool StartingFileStream = false;
-bool volatile AudioDone = false;
+static bool StartingFileStream = false;
+static bool volatile AudioDone = false;
 ALCcontext* OpenALContext = nullptr;
 extern bool GameInFocus;
 static uint8_t ChunkBuffer[BUFFER_CHUNK_SIZE];
 
-unsigned int SoundTimerHandle;
-
 bool Any_Locked(); // From each games winstub.cpp at the moment.
-void Maintenance_Callback();
+static int Get_Free_Sample_Handle(int priority);
+static void Maintenance_Callback();
+static int Play_Sample_Handle(const void* sample, int priority, int volume, signed short panloc, int id);
+static int Sample_Read(int fh, void* buffer, int size);
 
 static ALenum Get_OpenAL_Format(int bits, int channels)
 {
@@ -281,7 +283,7 @@ static void Init_Locked_Data()
     LockedData.ScoreVolume = VOLUME_MAX;
 }
 
-int Simple_Copy(void** source, int* ssize, void** alternate, int* altsize, void** dest, int size)
+static int Simple_Copy(void** source, int* ssize, void** alternate, int* altsize, void** dest, int size)
 {
     int out = 0;
 
@@ -322,16 +324,16 @@ int Simple_Copy(void** source, int* ssize, void** alternate, int* altsize, void*
     return out;
 }
 
-int Sample_Copy(SampleTrackerType* st,
-                void** source,
-                int* ssize,
-                void** alternate,
-                int* altsize,
-                void* dest,
-                int size,
-                SCompressType scomp,
-                void* trailer,
-                int16_t* trailersize)
+static int Sample_Copy(SampleTrackerType* st,
+                       void** source,
+                       int* ssize,
+                       void** alternate,
+                       int* altsize,
+                       void* dest,
+                       int size,
+                       SCompressType scomp,
+                       void* trailer,
+                       int16_t* trailersize)
 {
     int datasize = 0;
 
@@ -397,12 +399,8 @@ int Sample_Copy(SampleTrackerType* st,
     return datasize;
 }
 
-int File_Stream_Sample(const char* filename, bool real_time_start)
-{
-    return File_Stream_Sample_Vol(filename, VOLUME_MAX, real_time_start);
-}
-
-int Stream_Sample_Vol(void* buffer, int size, bool (*callback)(short, short*, void**, int*), int volume, int handle)
+static int
+Stream_Sample_Vol(void* buffer, int size, bool (*callback)(short, short*, void**, int*), int volume, int handle)
 {
     if (AudioDone || buffer == nullptr || size == 0 || LockedData.DigiHandle == INVALID_AUDIO_HANDLE) {
         return INVALID_AUDIO_HANDLE;
@@ -428,7 +426,7 @@ int Stream_Sample_Vol(void* buffer, int size, bool (*callback)(short, short*, vo
     return playid;
 }
 
-bool File_Callback(short id, short* odd, void** buffer, int* size)
+static bool File_Callback(short id, short* odd, void** buffer, int* size)
 {
     if (id == INVALID_AUDIO_HANDLE) {
         return false;
@@ -496,7 +494,7 @@ bool File_Callback(short id, short* odd, void** buffer, int* size)
     return false;
 }
 
-void File_Stream_Preload(int index)
+static void File_Stream_Preload(int index)
 {
     SampleTrackerType* st = &LockedData.SampleTracker[index];
     int maxnum = (LockedData.StreamBufferCount / 2) + 4;
@@ -597,7 +595,7 @@ int File_Stream_Sample_Vol(char const* filename, int volume, bool real_time_star
     }
 
     return INVALID_AUDIO_HANDLE;
-};
+}
 
 void Sound_Callback()
 {
@@ -649,9 +647,9 @@ void Sound_Callback()
             }
         }
     }
-};
+}
 
-void Maintenance_Callback()
+static void Maintenance_Callback()
 {
     if (AudioDone) {
         return;
@@ -746,7 +744,7 @@ void Maintenance_Callback()
 
         --LockedData.VolumeLock;
     }
-};
+}
 
 void* Load_Sample(char const* filename)
 {
@@ -770,27 +768,9 @@ void* Load_Sample(char const* filename)
     }
 
     return data;
-};
-
-int Load_Sample_Into_Buffer(char const* filename, void* buffer, int size)
-{
-    if (buffer == nullptr || size == 0 || LockedData.DigiHandle == INVALID_AUDIO_HANDLE || !filename
-        || !Find_File(filename)) {
-        return 0;
-    }
-
-    int handle = Open_File(filename, 1);
-
-    if (handle == INVALID_FILE_HANDLE) {
-        return 0;
-    }
-
-    int sample_size = Sample_Read(handle, buffer, size);
-    Close_File(handle);
-    return sample_size;
 }
 
-int Sample_Read(int fh, void* buffer, int size)
+static int Sample_Read(int fh, void* buffer, int size)
 {
     if (buffer == nullptr || fh == INVALID_AUDIO_HANDLE || size <= sizeof(AUDHeaderType)) {
         return 0;
@@ -805,14 +785,14 @@ int Sample_Read(int fh, void* buffer, int size)
     memcpy(buffer, &header, sizeof(AUDHeaderType));
 
     return actual_bytes_read;
-};
+}
 
 void Free_Sample(const void* sample)
 {
     if (sample != nullptr) {
         free((void*)sample);
     }
-};
+}
 
 bool Audio_Init(int bits_per_sample, bool stereo, int rate, bool reverse_channels)
 {
@@ -872,7 +852,7 @@ bool Audio_Init(int bits_per_sample, bool stereo, int rate, bool reverse_channel
     AudioDone = false;
 
     return true;
-};
+}
 
 void Sound_End()
 {
@@ -900,7 +880,7 @@ void Sound_End()
     }
 
     AudioDone = true;
-};
+}
 
 void Stop_Sample(int index)
 {
@@ -939,7 +919,7 @@ void Stop_Sample(int index)
             st->QueueBuffer = nullptr;
         }
     }
-};
+}
 
 bool Sample_Status(int index)
 {
@@ -969,7 +949,7 @@ bool Sample_Status(int index)
     alGetSourcei(st->OpenALSource, AL_SOURCE_STATE, &val);
 
     return val == AL_PLAYING;
-};
+}
 
 bool Is_Sample_Playing(const void* sample)
 {
@@ -984,7 +964,7 @@ bool Is_Sample_Playing(const void* sample)
     }
 
     return false;
-};
+}
 
 void Stop_Sample_Playing(const void* sample)
 {
@@ -996,14 +976,14 @@ void Stop_Sample_Playing(const void* sample)
             }
         }
     }
-};
+}
 
 int Play_Sample(const void* sample, int priority, int volume, signed short panloc)
 {
     return Play_Sample_Handle(sample, priority, volume, panloc, Get_Free_Sample_Handle(priority));
-};
+}
 
-int Attempt_To_Play_Buffer(int id)
+static int Attempt_To_Play_Buffer(int id)
 {
     SampleTrackerType* st = &LockedData.SampleTracker[id];
 
@@ -1015,7 +995,7 @@ int Attempt_To_Play_Buffer(int id)
     return id;
 }
 
-int Play_Sample_Handle(const void* sample, int priority, int volume, signed short panloc, int id)
+static int Play_Sample_Handle(const void* sample, int priority, int volume, signed short panloc, int id)
 {
     if (Any_Locked()) {
         return INVALID_AUDIO_HANDLE;
@@ -1143,15 +1123,7 @@ int Play_Sample_Handle(const void* sample, int priority, int volume, signed shor
     }
 
     return INVALID_AUDIO_HANDLE;
-};
-
-int Set_Sound_Vol(int volume)
-{
-
-    int oldvol = LockedData.SoundVolume;
-    LockedData.SoundVolume = volume;
-    return oldvol;
-};
+}
 
 int Set_Score_Vol(int volume)
 {
@@ -1167,7 +1139,7 @@ int Set_Score_Vol(int volume)
     }
 
     return old;
-};
+}
 
 void Fade_Sample(int index, int ticks)
 {
@@ -1180,9 +1152,9 @@ void Fade_Sample(int index, int ticks)
             Stop_Sample(index);
         }
     }
-};
+}
 
-int Get_Free_Sample_Handle(int priority)
+static int Get_Free_Sample_Handle(int priority)
 {
     int index = 0;
 
@@ -1225,44 +1197,21 @@ int Get_Free_Sample_Handle(int priority)
 
     LockedData.SampleTracker[index].IsScore = false;
     return index;
-};
+}
 
 int Get_Digi_Handle()
 {
     return LockedData.DigiHandle;
 }
 
-int Sample_Length(const void* sample)
+void Restore_Sound_Buffers()
 {
-    if (sample == nullptr) {
-        return 0;
-    }
-
-    AUDHeaderType header;
-    memcpy(&header, sample, sizeof(header));
-    unsigned time = header.UncompSize;
-
-    if (header.Flags & 2) {
-        time /= 2;
-    }
-
-    if (header.Flags & 1) {
-        time /= 2;
-    }
-
-    if (header.Rate / 60 > 0) {
-        time /= header.Rate / 60;
-    }
-
-    return time;
-};
-
-void Restore_Sound_Buffers(){};
+}
 
 bool Set_Primary_Buffer_Format()
 {
     return true;
-};
+}
 
 bool Start_Primary_Sound_Buffer(bool forced)
 {
@@ -1273,7 +1222,7 @@ bool Start_Primary_Sound_Buffer(bool forced)
     alcProcessContext(OpenALContext);
 
     return true;
-};
+}
 
 void Stop_Primary_Sound_Buffer()
 {
@@ -1284,4 +1233,4 @@ void Stop_Primary_Sound_Buffer()
     if (OpenALContext != nullptr) {
         alcSuspendContext(OpenALContext);
     }
-};
+}
