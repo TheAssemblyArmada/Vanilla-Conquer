@@ -39,6 +39,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "blowfish.h"
+#include "endianness.h"
 #include <string.h>
 #include <assert.h>
 
@@ -53,10 +54,17 @@ typedef union
     unsigned int Long;
     struct
     {
+#ifdef __BIG_ENDIAN__
+        unsigned char C0;
+        unsigned char C1;
+        unsigned char C2;
+        unsigned char C3;
+#else
         unsigned char C3;
         unsigned char C2;
         unsigned char C1;
         unsigned char C0;
+#endif
     } Char;
 } Int;
 
