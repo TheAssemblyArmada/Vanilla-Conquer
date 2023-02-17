@@ -215,9 +215,10 @@ unsigned int Load_Uncompress(char const* file, BufferClass& uncomp_buff, BufferC
 {
     int fd;                 // Source file handle.
     unsigned int isize = 0; // Size of the file.
-    unsigned int skipsize;  // Size of the skip data bytes.
-    void* uncomp_ptr;       //	Source buffer pointer.
-    char* newuncomp_ptr;    // Adjusted source pointer.
+    unsigned short tmp16;
+    unsigned int skipsize; // Size of the skip data bytes.
+    void* uncomp_ptr;      // Source buffer pointer.
+    char* newuncomp_ptr;   // Adjusted source pointer.
 
     uncomp_ptr = uncomp_buff.Get_Buffer(); // get a pointer to buffer
 
@@ -226,15 +227,19 @@ unsigned int Load_Uncompress(char const* file, BufferClass& uncomp_buff, BufferC
     /*======================================================================*/
 
     fd = Open_File(file, READ);       // Open up the file to read from
-    Read_File(fd, (char*)&isize, 2L); // Read the file size
+    Read_File(fd, (char*)&tmp16, 2L); // Read the file size
     Read_File(fd, uncomp_ptr, 8L);    // Read the header bytes in.
-    isize -= 8;                       // Remaining data in file.
+
+    isize = le16toh(tmp16);
+
+    isize -= 8; // Remaining data in file.
 
     /*======================================================================*/
     /* Check for and read in the skip data block.									*/
     /*======================================================================*/
 
-    skipsize = *(((short*)uncomp_ptr) + 3);
+    memcpy(&tmp16, ((short*)uncomp_ptr) + 3, sizeof(tmp16));
+    skipsize = le16toh(tmp16);
 
     if (reserved_data && skipsize) {
         Read_File(fd, reserved_data, (unsigned int)skipsize);
@@ -291,7 +296,7 @@ unsigned int Load_Uncompress(char const* file, BufferClass& uncomp_buff, BufferC
  *=========================================================================*/
 unsigned int Uncompress_Data(void const* src, void* dst)
 {
-    unsigned int skip;      // Number of leading data to skip.
+    unsigned short skip;    // Number of leading data to skip.
     CompressionType method; // Compression method used.
     unsigned int uncomp_size = 0;
 
@@ -303,13 +308,9 @@ unsigned int Uncompress_Data(void const* src, void* dst)
     **	compression method, size, and skip data amount.
     */
     uncomp_size = ((CompHeaderType*)src)->Size;
-#if (AMIGA)
-    uncomp_size = Reverse_Long(uncomp_size);
-#endif
+    uncomp_size = le32toh(uncomp_size);
     skip = ((CompHeaderType*)src)->Skip;
-#if (AMIGA)
-    skip = Reverse_Word(skip);
-#endif
+    skip = le16toh(skip);
     method = (CompressionType)((CompHeaderType*)src)->Method;
     src = Add_Long_To_Pointer((void*)src, (int)sizeof(CompHeaderType) + (int)skip);
 
