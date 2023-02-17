@@ -15,6 +15,7 @@
 #include "memflag.h"
 #include "soscomp.h"
 #include "sound.h"
+#include "endianness.h"
 #include <al.h>
 #include <alc.h>
 #include <algorithm>
@@ -356,12 +357,25 @@ int Sample_Copy(SampleTrackerType* st,
             break;
         }
 
-        if (Simple_Copy(source, ssize, alternate, altsize, &dptr, sizeof(dsize)) < sizeof(dsize) || dsize > size) {
+        fsize = le16toh(fsize);
+
+        if (Simple_Copy(source, ssize, alternate, altsize, &dptr, sizeof(dsize)) < sizeof(dsize)) {
             break;
         }
 
-        if (Simple_Copy(source, ssize, alternate, altsize, &mptr, sizeof(magic)) < sizeof(magic)
-            || magic != LockedData.MagicNumber) {
+        dsize = le16toh(dsize);
+
+        if (dsize > size) {
+            break;
+        }
+
+        if (Simple_Copy(source, ssize, alternate, altsize, &mptr, sizeof(magic)) < sizeof(magic)) {
+            break;
+        }
+
+        magic = le32toh(magic);
+
+        if (magic != LockedData.MagicNumber) {
             break;
         }
 
@@ -411,7 +425,7 @@ int Stream_Sample_Vol(void* buffer, int size, bool (*callback)(short, short*, vo
     AUDHeaderType header;
     memcpy(&header, buffer, sizeof(header));
     int oldsize = header.Size;
-    header.Size = size - sizeof(header);
+    header.Size = htole32(size - sizeof(header));
     memcpy(buffer, &header, sizeof(header));
     int playid = Play_Sample_Handle(buffer, PRIORITY_MAX, volume, 0, handle);
     header.Size = oldsize;
@@ -1035,6 +1049,9 @@ int Play_Sample_Handle(const void* sample, int priority, int volume, signed shor
         // Read in the sample's header.
         AUDHeaderType raw_header;
         memcpy(&raw_header, sample, sizeof(raw_header));
+        raw_header.Rate = le16toh(raw_header.Rate);
+        raw_header.Size = le32toh(raw_header.Size);
+        raw_header.UncompSize = le32toh(raw_header.UncompSize);
 
         // We don't support anything lower than 20000 hz.
         if (raw_header.Rate < 24000 && raw_header.Rate > 20000) {
