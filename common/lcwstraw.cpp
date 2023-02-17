@@ -156,6 +156,9 @@ int LCWStraw::Get(void* destbuf, int slen)
             if (incount != sizeof(BlockHeader))
                 break;
 
+            BlockHeader.CompCount = le16toh(BlockHeader.CompCount);
+            BlockHeader.UncompCount = le16toh(BlockHeader.UncompCount);
+
             void* ptr = &Buffer[(BlockSize + SafetyMargin) - BlockHeader.CompCount];
             incount = Straw::Get(ptr, BlockHeader.CompCount);
             if (incount != BlockHeader.CompCount)
@@ -167,10 +170,12 @@ int LCWStraw::Get(void* destbuf, int slen)
             BlockHeader.UncompCount = (unsigned short)Straw::Get(Buffer, BlockSize);
             if (BlockHeader.UncompCount == 0)
                 break;
-            BlockHeader.CompCount =
+            unsigned short compcount =
                 (unsigned short)LCW_Comp(Buffer, &Buffer2[sizeof(BlockHeader)], BlockHeader.UncompCount);
+            BlockHeader.UncompCount = htole16(BlockHeader.UncompCount);
+            BlockHeader.CompCount = htole16(compcount);
             memmove(Buffer2, &BlockHeader, sizeof(BlockHeader));
-            Counter = BlockHeader.CompCount + sizeof(BlockHeader);
+            Counter = compcount + sizeof(BlockHeader);
         }
     }
 

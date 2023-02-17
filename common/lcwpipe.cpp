@@ -147,6 +147,8 @@ int LCWPipe::Put(void const* source, int slen)
                 */
                 if (Counter == sizeof(BlockHeader)) {
                     memmove(&BlockHeader, Buffer, sizeof(BlockHeader));
+                    BlockHeader.UncompCount = le16toh(BlockHeader.UncompCount);
+                    BlockHeader.CompCount = le16toh(BlockHeader.CompCount);
                     Counter = 0;
                 }
             }
@@ -190,10 +192,10 @@ int LCWPipe::Put(void const* source, int slen)
             Counter += tocopy;
 
             if (Counter == BlockSize) {
-                int len = LCW_Comp(Buffer, Buffer2, BlockSize);
+                unsigned short len = LCW_Comp(Buffer, Buffer2, BlockSize);
 
-                BlockHeader.CompCount = (unsigned short)len;
-                BlockHeader.UncompCount = (unsigned short)BlockSize;
+                BlockHeader.CompCount = htole16(len);
+                BlockHeader.UncompCount = htole16(BlockSize);
                 total += Pipe::Put(&BlockHeader, sizeof(BlockHeader));
                 total += Pipe::Put(Buffer2, len);
                 Counter = 0;
@@ -205,13 +207,13 @@ int LCWPipe::Put(void const* source, int slen)
         **	source data left for a whole data block.
         */
         while (slen >= BlockSize) {
-            int len = LCW_Comp(source, Buffer2, BlockSize);
+            unsigned short len = LCW_Comp(source, Buffer2, BlockSize);
 
             source = ((char*)source) + BlockSize;
             slen -= BlockSize;
 
-            BlockHeader.CompCount = (unsigned short)len;
-            BlockHeader.UncompCount = (unsigned short)BlockSize;
+            BlockHeader.CompCount = htole16(len);
+            BlockHeader.UncompCount = htole16(BlockSize);
             total += Pipe::Put(&BlockHeader, sizeof(BlockHeader));
             total += Pipe::Put(Buffer2, len);
         }
@@ -289,10 +291,10 @@ int LCWPipe::Flush(void)
             **	A partial block in the compression process is a normal occurrence. Just
             **	compress the partial block and output normally.
             */
-            int len = LCW_Comp(Buffer, Buffer2, Counter);
+            unsigned short len = LCW_Comp(Buffer, Buffer2, Counter);
 
-            BlockHeader.CompCount = (unsigned short)len;
-            BlockHeader.UncompCount = (unsigned short)Counter;
+            BlockHeader.CompCount = htole16(len);
+            BlockHeader.UncompCount = htole16(Counter);
             total += Pipe::Put(&BlockHeader, sizeof(BlockHeader));
             total += Pipe::Put(Buffer2, len);
             Counter = 0;
