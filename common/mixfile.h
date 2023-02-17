@@ -298,20 +298,25 @@ MixFileClass<T, TCRC>::MixFileClass(char const* filename)
     **	extended format may have extra options or data layout.
     */
     int got = straw->Get(&alternate, sizeof(alternate));
+    int16_t alternate_first = le16toh(alternate.First);
+    int16_t alternate_second = le16toh(alternate.Second);
 
     /*
     **	Detect if this is an extended mixfile. If so, then see if it is encrypted
     **	and/or has a message digest attached. Otherwise, just retrieve the
     **	plain mixfile header.
     */
-    if (alternate.First == 0) {
-        IsDigest = ((alternate.Second & 0x01) != 0);
-        IsEncrypted = ((alternate.Second & 0x02) != 0);
+    if (alternate_first == 0) {
+        IsDigest = ((alternate_second & 0x01) != 0);
+        IsEncrypted = ((alternate_second & 0x02) != 0);
         straw->Get(&fileheader, sizeof(fileheader));
     } else {
         memmove(&fileheader, &alternate, sizeof(alternate));
         straw->Get(((char*)&fileheader) + sizeof(alternate), sizeof(fileheader) - sizeof(alternate));
     }
+
+    fileheader.count = le16toh(fileheader.count);
+    fileheader.size = le32toh(fileheader.size);
 
     Count = fileheader.count;
     DataSize = fileheader.size;
@@ -323,6 +328,12 @@ MixFileClass<T, TCRC>::MixFileClass(char const* filename)
     if (HeaderBuffer == NULL)
         return;
     straw->Get(HeaderBuffer, Count * sizeof(SubBlock));
+
+    for (int i = 0; i < Count; i++) {
+        HeaderBuffer[i].CRC = le32toh(HeaderBuffer[i].CRC);
+        HeaderBuffer[i].Offset = le32toh(HeaderBuffer[i].Offset);
+        HeaderBuffer[i].Size = le32toh(HeaderBuffer[i].Size);
+    }
 
     /*
     **	The start of the embedded mixfile data will be at the current file offset.
@@ -412,15 +423,17 @@ MixFileClass<T, TCRC>::MixFileClass(char const* filename, PKey const* key)
     **	extended format may have extra options or data layout.
     */
     int got = straw->Get(&alternate, sizeof(alternate));
+    int16_t alternate_first = le16toh(alternate.First);
+    int16_t alternate_second = le16toh(alternate.Second);
 
     /*
     **	Detect if this is an extended mixfile. If so, then see if it is encrypted
     **	and/or has a message digest attached. Otherwise, just retrieve the
     **	plain mixfile header.
     */
-    if (alternate.First == 0) {
-        IsDigest = ((alternate.Second & 0x01) != 0);
-        IsEncrypted = ((alternate.Second & 0x02) != 0);
+    if (alternate_first == 0) {
+        IsDigest = ((alternate_second & 0x01) != 0);
+        IsEncrypted = ((alternate_second & 0x02) != 0);
 
         if (IsEncrypted) {
             pstraw.Key(key);
@@ -434,6 +447,9 @@ MixFileClass<T, TCRC>::MixFileClass(char const* filename, PKey const* key)
         straw->Get(((char*)&fileheader) + sizeof(alternate), sizeof(fileheader) - sizeof(alternate));
     }
 
+    fileheader.count = le16toh(fileheader.count);
+    fileheader.size = le32toh(fileheader.size);
+
     Count = fileheader.count;
     DataSize = fileheader.size;
     // BGMono_Printf("Mixfileclass %s DataSize: %08x   \n",filename,DataSize);Get_Key();
@@ -444,6 +460,12 @@ MixFileClass<T, TCRC>::MixFileClass(char const* filename, PKey const* key)
     if (HeaderBuffer == NULL)
         return;
     straw->Get(HeaderBuffer, Count * sizeof(SubBlock));
+
+    for (int i = 0; i < Count; i++) {
+        HeaderBuffer[i].CRC = le32toh(HeaderBuffer[i].CRC);
+        HeaderBuffer[i].Offset = le32toh(HeaderBuffer[i].Offset);
+        HeaderBuffer[i].Size = le32toh(HeaderBuffer[i].Size);
+    }
 
     /*
     **	The start of the embedded mixfile data will be at the current file offset.
