@@ -36,6 +36,7 @@
 #define COMPAT_H
 
 #include "tile.h"
+#include "endianness.h"
 
 /*=========================================================================*/
 /* Define some Graphic Routines which will only be fixed by these defines	*/
@@ -68,7 +69,7 @@ typedef enum MenuIndexType
 inline int Get_IconSet_MapWidth(void const* data)
 {
     if (data) {
-        return (((IControl_Type*)data)->MapWidth);
+        return le16toh((((IControl_Type*)data)->MapWidth));
     }
     return (0);
 }
@@ -76,7 +77,7 @@ inline int Get_IconSet_MapWidth(void const* data)
 inline int Get_IconSet_MapHeight(void const* data)
 {
     if (data) {
-        return (((IControl_Type*)data)->MapHeight);
+        return le16toh((((IControl_Type*)data)->MapHeight));
     }
     return (0);
 }
@@ -97,75 +98,75 @@ public:
     */
     int Map_Width(void) const
     {
-        return (MapWidth);
+        return (le16toh(MapWidth));
     };
     int Map_Height(void) const
     {
-        return (MapHeight);
+        return (le16toh(MapHeight));
     };
     unsigned char* Control_Map(void)
     {
-        return ((unsigned char*)this + ColorMap);
+        return ((unsigned char*)this + le32toh(ColorMap));
     };
     unsigned char const* Control_Map(void) const
     {
-        return ((unsigned char const*)this + ColorMap);
+        return ((unsigned char const*)this + le32toh(ColorMap));
     };
     int Icon_Count(void) const
     {
-        return (Count);
+        return (le16toh(Count));
     };
     int Pixel_Width(void) const
     {
-        return (Width);
+        return (le16toh(Width));
     };
     int Pixel_Height(void) const
     {
-        return (Height);
+        return (le16toh(Height));
     };
     int Total_Size(void) const
     {
-        return (Size);
+        return (le32toh(Size));
     };
     unsigned char const* Palette_Data(void) const
     {
-        return ((unsigned char const*)this + Palettes);
+        return ((unsigned char const*)this + le32toh(Palettes));
     };
     unsigned char* Palette_Data(void)
     {
-        return ((unsigned char*)this + Palettes);
+        return ((unsigned char*)this + le32toh(Palettes));
     };
     unsigned char const* Icon_Data(void) const
     {
-        return ((unsigned char const*)this + Icons);
+        return ((unsigned char const*)this + le32toh(Icons));
     };
     unsigned char* Icon_Data(void)
     {
-        return ((unsigned char*)this + Icons);
+        return ((unsigned char*)this + le32toh(Icons));
     };
     unsigned char const* Map_Data(void) const
     {
-        return ((unsigned char const*)this + Map);
+        return ((unsigned char const*)this + le32toh(Map));
     };
     unsigned char* Map_Data(void)
     {
-        return ((unsigned char*)this + Map);
+        return ((unsigned char*)this + le32toh(Map));
     };
     unsigned char const* Remap_Data(void) const
     {
-        return ((unsigned char const*)this + Remaps);
+        return ((unsigned char const*)this + le32toh(Remaps));
     };
     unsigned char* Remap_Data(void)
     {
-        return ((unsigned char*)this + Remaps);
+        return ((unsigned char*)this + le32toh(Remaps));
     };
     unsigned char const* Trans_Data(void) const
     {
-        return ((unsigned char const*)this + TransFlag);
+        return ((unsigned char const*)this + le32toh(TransFlag));
     };
     unsigned char* Trans_Data(void)
     {
-        return ((unsigned char*)this + TransFlag);
+        return ((unsigned char*)this + le32toh(TransFlag));
     };
 
     /*
