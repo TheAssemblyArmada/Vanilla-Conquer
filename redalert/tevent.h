@@ -35,6 +35,8 @@
 #ifndef TEVENT_H
 #define TEVENT_H
 
+#include "endianness.h"
+
 /*
 **	These are the trigger events that are checked for and if qualified, they will signal
 **	a successful trigger event. This might result in the trigger action being performed.
@@ -132,12 +134,22 @@ struct TEventClass
 
     union
     {
-        StructType Structure;  // Used for structure type checking.
-        UnitType Unit;         // Used for unit type checking.
-        InfantryType Infantry; //	Used for infantry type checking.
-        AircraftType Aircraft; // Used for aircraft type checking.
-        HousesType House;      // Used for house specific events.
-        int Value;             // Used for other events that need data.
+        struct
+        {
+#ifdef __BIG_ENDIAN__
+            unsigned char __padding_1[3];
+#endif
+
+            union
+            {
+                StructType Structure;  // Used for structure type checking.
+                UnitType Unit;         // Used for unit type checking.
+                InfantryType Infantry; //	Used for infantry type checking.
+                AircraftType Aircraft; // Used for aircraft type checking.
+                HousesType House;      // Used for house specific events.
+            };
+        };
+        int Value; // Used for other events that need data.
     } Data;
 
     TEventClass(void)

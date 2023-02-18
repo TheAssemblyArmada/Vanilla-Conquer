@@ -35,6 +35,8 @@
 #ifndef ACTION_H
 #define ACTION_H
 
+#include "endianness.h"
+
 typedef enum TActionType : unsigned char
 {
     TACTION_NONE,
@@ -106,14 +108,34 @@ struct TActionClass
 
     union
     {
-        ThemeType Theme;           // Musical theme.
-        VocType Sound;             // Sound effect.
-        VoxType Speech;            // Speech identifier.
-        HousesType House;          // House to be affected.
-        SpecialWeaponType Special; // Special weapon ability.
-        QuarryType Quarry;         // Preferred target for attack.
-        VQType Movie;              // The movie to play.
-        bool Bool;                 // Boolean value.
+        struct
+        {
+#ifdef __BIG_ENDIAN__
+            unsigned char __padding_2[2];
+#endif
+            union
+            {
+                VocType Sound; // Sound effect.
+            };
+        };
+
+        struct
+        {
+#ifdef __BIG_ENDIAN__
+            unsigned char __padding_1[3];
+#endif
+            union
+            {
+                ThemeType Theme;           // Musical theme.
+                VoxType Speech;            // Speech identifier.
+                HousesType House;          // House to be affected.
+                SpecialWeaponType Special; // Special weapon ability.
+                QuarryType Quarry;         // Preferred target for attack.
+                bool Bool;                 // Boolean value.
+            };
+        };
+
+        VQType Movie; // The movie to play.
         int Value;
     } Data;
 

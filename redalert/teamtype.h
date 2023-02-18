@@ -35,6 +35,8 @@
 #ifndef TEAMTYPE_H
 #define TEAMTYPE_H
 
+#include "endianness.h"
+
 /*
 **	TeamMissionType: the various missions that a team can have.
 */
@@ -86,10 +88,21 @@ public:
     TeamMissionType Mission; // Mission type.
     union
     {
-        FormationType Formation; // Formation to use.
-        QuarryType Quarry;       // Combat quarry type.
-        MissionType Mission;     // General mission orders.
-        int Value;               // Usually a waypoint number.
+        struct
+        {
+#ifdef __BIG_ENDIAN__
+            unsigned char __padding_1[3];
+#endif
+
+            union
+            {
+                FormationType Formation; // Formation to use.
+                QuarryType Quarry;       // Combat quarry type.
+                MissionType Mission;     // General mission orders.
+            };
+        };
+
+        int Value; // Usually a waypoint number.
     } Data;
 };
 
