@@ -21,6 +21,19 @@
 #include <stdlib.h>
 #include <string.h>
 
+static void VQA_ByteSwapAudio(VQAAudio* audio, void* buffer, size_t bufferbytecount)
+{
+    unsigned int i;
+
+    if (audio->BitsPerSample == 16) {
+        unsigned short* usbuffer = (unsigned short*)buffer;
+
+        for (i = 0; i < bufferbytecount / 2; i++) {
+            usbuffer[i] = le16toh(usbuffer[i]);
+        }
+    }
+}
+
 void Flip_VQAHeader(VQAHeader* header)
 {
     header->Version = le16toh(header->Version);
@@ -248,6 +261,7 @@ int VQA_Load_SND0(VQAHandle* handle, unsigned iffsize)
             return VQAERR_READ;
         }
 
+        VQA_ByteSwapAudio(audio, audio->TempBuf, size_aligned);
         audio->TempBufSize = iffsize;
         return VQAERR_NONE;
     }
@@ -256,6 +270,7 @@ int VQA_Load_SND0(VQAHandle* handle, unsigned iffsize)
         return VQAERR_READ;
     }
 
+    VQA_ByteSwapAudio(audio, audio->Buffer, size_aligned);
     audio->AudBufPos += iffsize;
 
     for (unsigned i = 0; i < (iffsize / config->HMIBufSize); ++i) {
