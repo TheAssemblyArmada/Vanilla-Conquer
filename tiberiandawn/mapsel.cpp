@@ -746,15 +746,15 @@ void Map_Selection(void)
     }
 
     TextPrintBuffer->Fill_Rect(0,
-                               2 * 10,
-                               2 * String_Pixel_Width(GetMapSelString(TXT_ESTABLISHING_TRADITIONAL_BOUNDARIES)),
-                               2 * (10 + 24),
+                               factor * 10,
+                               factor * String_Pixel_Width(GetMapSelString(TXT_ESTABLISHING_TRADITIONAL_BOUNDARIES)),
+                               factor * (10 + 24),
                                BLACK);
     Call_Back_Delay(1);
     TextPrintBuffer->Fill_Rect(0,
-                               2 * 10,
-                               2 * String_Pixel_Width(GetMapSelString(TXT_ESTABLISHING_TRADITIONAL_BOUNDARIES)),
-                               2 * (10 + 24),
+                               factor * 10,
+                               factor * String_Pixel_Width(GetMapSelString(TXT_ESTABLISHING_TRADITIONAL_BOUNDARIES)),
+                               factor * (10 + 24),
                                TBLACK);
     Call_Back_Delay(1);
 
@@ -814,10 +814,10 @@ void Map_Selection(void)
     */
 #ifdef FRENCH
     PseudoSeenBuff->Fill_Rect(xcoord, 0, xcoord + 6 * 16 + 10, 8, BLACK);
-    TextPrintBuffer->Fill_Rect(xcoord * 2, 0, 2 * (xcoord + 6 * 16 + 10), 2 * 8, BLACK);
+    TextPrintBuffer->Fill_Rect(xcoord * factor, 0, factor * (xcoord + 6 * 16 + 10), factor * 8, BLACK);
 #else
     PseudoSeenBuff->Fill_Rect(xcoord, 0, xcoord + 6 * 16, 8, BLACK);
-    TextPrintBuffer->Fill_Rect(2 * xcoord, 0, 2 * (xcoord + 6 * 16), 2 * 8, BLACK);
+    TextPrintBuffer->Fill_Rect(factor * xcoord, 0, factor * (xcoord + 6 * 16), factor * 8, BLACK);
 #endif
     Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL, Settings.Video.InterpolationMode);
     SysMemPage.Blit(backpage, xcoord, 1, 0, 0, 20 * 6, 8);
@@ -840,10 +840,10 @@ void Map_Selection(void)
 //	Set_Font(oldfont);
 #ifdef FRENCH
     PseudoSeenBuff->Fill_Rect(xcoord, 12, xcoord + 6 * 16 + 10, 20, BLACK);
-    TextPrintBuffer->Fill_Rect(2 * xcoord, 2 * 12, 2 * (xcoord + 6 * 16 + 10), 2 * 20, BLACK);
+    TextPrintBuffer->Fill_Rect(factor * xcoord, factor * 12, factor * (xcoord + 6 * 16 + 10), factor * 20, BLACK);
 #else
     PseudoSeenBuff->Fill_Rect(xcoord, 12, xcoord + 6 * 16, 20, BLACK);
-    TextPrintBuffer->Fill_Rect(2 * xcoord, 2 * 12, 2 * (xcoord + 6 * 16), 2 * 20, BLACK);
+    TextPrintBuffer->Fill_Rect(factor * xcoord, factor * 12, factor * (xcoord + 6 * 16), factor * 20, BLACK);
 #endif
     Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL, Settings.Video.InterpolationMode);
 
@@ -869,13 +869,13 @@ void Map_Selection(void)
 #if (GERMAN | FRENCH)
         SysMemPage.Fill_Rect(0, 160, 20 * 6, 186, TBLACK);
         PseudoSeenBuff->Fill_Rect(0, 160, 20 * 6, 186, TBLACK);
-        TextPrintBuffer->Fill_Rect(0, 2 * 160, 2 * 20 * 6, 2 * 186, BLACK);
+        TextPrintBuffer->Fill_Rect(0, factor * 160, factor * 20 * 6, factor * 186, BLACK);
         SeenBuff.Fill_Rect(0, 2 * 160, 2 * 20 * 6, 2 * 186, TBLACK);
         HidPage.Fill_Rect(0, 2 * 160, 2 * 20 * 6, 2 * 186, TBLACK);
 #else
         SysMemPage.Fill_Rect(0, 160, 20 * 6, 176, TBLACK);
         PseudoSeenBuff->Fill_Rect(0, 160, 20 * 6, 176, TBLACK);
-        TextPrintBuffer->Fill_Rect(0, 2 * 160, 2 * 20 * 6, 2 * 176, BLACK);
+        TextPrintBuffer->Fill_Rect(0, factor * 160, factor * 20 * 6, factor * 176, BLACK);
         SeenBuff.Fill_Rect(0, 2 * 160, 2 * 20 * 6, 2 * 176, TBLACK);
         HidPage.Fill_Rect(0, 2 * 160, 2 * 20 * 6, 2 * 176, TBLACK);
 #endif
@@ -928,23 +928,25 @@ void Map_Selection(void)
                 case 35:
                     if (house == HOUSE_GOOD) {
                         TextPrintBuffer->Fill_Rect(0,
-                                                   2 * 10,
-                                                   2 * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE)),
-                                                   2 * (10 + 12),
+                                                   factor * 10,
+                                                   factor * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE)),
+                                                   factor * (10 + 12),
                                                    BLACK);
                     } else {
 #if (FRENCH)
-                        TextPrintBuffer->Fill_Rect(2 * 180,
-                                                   2 * 10,
-                                                   2 * (180 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
-                                                   2 * (10 + 12),
-                                                   BLACK);
+                        TextPrintBuffer->Fill_Rect(
+                            factor * 180,
+                            factor * 10,
+                            factor * (180 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
+                            factor * (10 + 12),
+                            BLACK);
 #else
-                        TextPrintBuffer->Fill_Rect(2 * 210,
-                                                   2 * 10,
-                                                   2 * (210 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
-                                                   2 * (10 + 12),
-                                                   BLACK);
+                        TextPrintBuffer->Fill_Rect(
+                            factor * 210,
+                            factor * 10,
+                            factor * (210 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
+                            factor * (10 + 12),
+                            BLACK);
 #endif //(FRENCH)
                     }
                     break;
@@ -952,23 +954,25 @@ void Map_Selection(void)
                 case 36:
                     if (house == HOUSE_GOOD) {
                         TextPrintBuffer->Fill_Rect(0,
-                                                   2 * 10,
-                                                   2 * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE)),
-                                                   2 * (10 + 12),
+                                                   factor * 10,
+                                                   factor * String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE)),
+                                                   factor * (10 + 12),
                                                    TBLACK);
                     } else {
 #if (FRENCH)
-                        TextPrintBuffer->Fill_Rect(2 * 180,
-                                                   2 * 10,
-                                                   2 * (180 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
-                                                   2 * (10 + 12),
-                                                   TBLACK);
+                        TextPrintBuffer->Fill_Rect(
+                            factor * 180,
+                            factor * 10,
+                            factor * (180 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
+                            factor * (10 + 12),
+                            TBLACK);
 #else
-                        TextPrintBuffer->Fill_Rect(2 * 210,
-                                                   2 * 10,
-                                                   2 * (210 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
-                                                   2 * (10 + 12),
-                                                   TBLACK);
+                        TextPrintBuffer->Fill_Rect(
+                            factor * 210,
+                            factor * 10,
+                            factor * (210 + String_Pixel_Width(GetMapSelString(TXT_ENHANCING_IMAGE))),
+                            factor * (10 + 12),
+                            TBLACK);
 #endif //(FRENCH)
                     }
                     break;
@@ -992,11 +996,11 @@ void Map_Selection(void)
 #if (GERMAN | FRENCH)
         SysMemPage.Fill_Rect(0, 160, 20 * 6, 186, TBLACK);
         PseudoSeenBuff->Fill_Rect(0, 160, 20 * 6, 186, TBLACK);
-        TextPrintBuffer->Fill_Rect(0, 2 * 160, 2 * 20 * 6, 2 * 186, BLACK);
+        TextPrintBuffer->Fill_Rect(0, factor * 160, factor * 20 * 6, factor * 186, BLACK);
 #else
         SysMemPage.Fill_Rect(0, 160, 20 * 6, 176, TBLACK);
         PseudoSeenBuff->Fill_Rect(0, 160, 20 * 6, 176, TBLACK);
-        TextPrintBuffer->Fill_Rect(0, 2 * 160, 2 * 20 * 6, 2 * 176, BLACK);
+        TextPrintBuffer->Fill_Rect(0, factor * 160, factor * 20 * 6, factor * 176, BLACK);
 #endif
     }
     Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL, Settings.Video.InterpolationMode);
@@ -1069,11 +1073,15 @@ void Map_Selection(void)
         Hide_Mouse();
         // erase "Select country to attack"
         PseudoSeenBuff->Fill_Rect(attackxcoord, 160, attackxcoord + (17 * 6), 178, BLACK);
-        TextPrintBuffer->Fill_Rect(2 * attackxcoord, 2 * 160, 2 * (attackxcoord + (17 * 6)), 2 * 178, BLACK);
+        TextPrintBuffer->Fill_Rect(
+            factor * attackxcoord, factor * 160, factor * (attackxcoord + (17 * 6)), factor * 178, BLACK);
 #if (GERMAN | FRENCH)
         PseudoSeenBuff->Fill_Rect(attackxcoord + (17 * 6), 160, attackxcoord + (21 * 6), 178, BLACK);
-        TextPrintBuffer->Fill_Rect(
-            2 * attackxcoord + (17 * 6 * 2), 2 * 160, 2 * (attackxcoord + (21 * 6)), 2 * 178, BLACK);
+        TextPrintBuffer->Fill_Rect(factor * attackxcoord + (17 * 6 * 2),
+                                   factor * 160,
+                                   factor * (attackxcoord + (21 * 6)),
+                                   factor * 178,
+                                   BLACK);
 #endif // GERMAN
         Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL, Settings.Video.InterpolationMode);
 
@@ -1124,15 +1132,19 @@ void Map_Selection(void)
 
         Hide_Mouse();
 #if (GERMAN | FRENCH)
-        PseudoSeenBuff->Fill_Rect(attackxcoord, 160, 319, 178, BLACK);              // erase "Select country to attack"
-        TextPrintBuffer->Fill_Rect(2 * attackxcoord, 2 * 160, 639, 2 * 178, BLACK); // erase "Select country to attack"
+        PseudoSeenBuff->Fill_Rect(attackxcoord, 160, 319, 178, BLACK); // erase "Select country to attack"
+        TextPrintBuffer->Fill_Rect(factor * attackxcoord,
+                                   factor * 160,
+                                   (factor * 320) - 1,
+                                   factor * 178,
+                                   BLACK); // erase "Select country to attack"
 #else
         PseudoSeenBuff->Fill_Rect(
             attackxcoord, 160, attackxcoord + (17 * 6), 199, BLACK); // erase "Select country to attack"
-        TextPrintBuffer->Fill_Rect(2 * attackxcoord,
-                                   2 * 160,
-                                   2 * (attackxcoord + (17 * 6)),
-                                   2 * 199,
+        TextPrintBuffer->Fill_Rect(factor * attackxcoord,
+                                   factor * 160,
+                                   factor * (attackxcoord + (17 * 6)),
+                                   factor * 199,
                                    BLACK); // erase "Select country to attack"
 #endif
         Interpolate_2X_Scale(PseudoSeenBuff, &SeenBuff, NULL, Settings.Video.InterpolationMode);
