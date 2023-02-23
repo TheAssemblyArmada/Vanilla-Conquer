@@ -491,6 +491,8 @@ int main(int argc, char* argv[])
         Reset_Video_Mode();
 #endif
 
+        Sound_End();
+
         /*
         ** Flag that this is a clean shutdown (not killed with Ctrl-Alt-Del)
         */

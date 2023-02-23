@@ -471,7 +471,11 @@ int main(int argc, char** argv)
 
 #if defined(SDL_BUILD)
         Reset_Video_Mode();
-#elif defined(_WIN32)
+#endif
+
+        Sound_End();
+
+#if defined(_WIN32)
         PostMessageA(MainWindow, WM_DESTROY, 0, 0);
         do {
             Keyboard->Check();
