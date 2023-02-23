@@ -43,7 +43,7 @@ enum INILoadType
 
 class FastINIClass
 {
-    class FastINIEntry : public Node<FastINIEntry>
+    class FastINIEntry : public VanillaNode<FastINIEntry>
     {
     public:
         // Class constructor and deconstructor.
@@ -78,7 +78,7 @@ class FastINIClass
         char* Value;
     };
 
-    class FastINISection : public Node<FastINISection>
+    class FastINISection : public VanillaNode<FastINISection>
     {
     public:
         FastINISection(const char* name)
@@ -109,7 +109,7 @@ class FastINIClass
 
     public:
         char* SectionName;
-        List<FastINIEntry> EntryList;
+        VanillaList<FastINIEntry> EntryList;
         IndexClass<FastINIEntry*> EntryIndex;
     };
 
@@ -139,7 +139,7 @@ public:
     int Load(FileClass& file);
     virtual int Load(Straw& straw);
 
-    const List<FastINISection>& Section_List() const
+    const VanillaList<FastINISection>& Section_List() const
     {
         return SectionList;
     }
@@ -189,7 +189,7 @@ protected:
     static int32_t const CRC(const char* string);
 
 protected:
-    List<FastINISection> SectionList;
+    VanillaList<FastINISection> SectionList;
     IndexClass<FastINISection*> SectionIndex;
 };
 

@@ -133,7 +133,7 @@ protected:
     **	The value entries for the INI file are stored as objects of this type.
     **	The entry identifier and value string are combined into this object.
     */
-    struct INIEntry : Node<INIEntry>
+    struct INIEntry : VanillaNode<INIEntry>
     {
         INIEntry(char* entry = 0, char* value = 0)
             : Entry(entry)
@@ -160,7 +160,7 @@ protected:
     **	Each section (bracketed) is represented by an object of this type. All entries
     **	subordinate to this section are attached.
     */
-    struct INISection : Node<INISection>
+    struct INISection : VanillaNode<INISection>
     {
         INISection(char* section)
             : Section(section)
@@ -179,7 +179,7 @@ protected:
         };
 
         char* Section;
-        List<INIEntry> EntryList;
+        VanillaList<INIEntry> EntryList;
         IndexClass<INIEntry*> EntryIndex;
     };
 
@@ -194,7 +194,7 @@ protected:
     /*
     **	This is the list of all sections within this INI file.
     */
-    List<INISection> SectionList;
+    VanillaList<INISection> SectionList;
 
     IndexClass<INISection*> SectionIndex;
 
@@ -203,7 +203,7 @@ public:
     {
         MAX_LINE_LENGTH = 128
     };
-    const List<INISection>& Section_List() const
+    const VanillaList<INISection>& Section_List() const
     {
         return SectionList;
     }
