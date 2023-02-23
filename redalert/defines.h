@@ -33,6 +33,8 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+#include "endianness.h"
+
 /**********************************************************************
 **	Language control: define the desired language for this build.
 */
@@ -503,28 +505,22 @@ typedef union
 } COORD_COMPOSITE;
 
 typedef signed short CELL;
-#ifdef __BIG_ENDIAN__
-#warning "FIXME"
-//#define SLUFF_BITS (sizeof(CELL) * CHAR_BIT) - (14)
-#endif
 typedef union
 {
     CELL Cell;
     struct
     {
 #ifdef __BIG_ENDIAN__
-#if SLUFF_BITS
         /*
         **	Unused upper bits will cause problems on a big-endian machine unless they
         **	are deliberately accounted for.
         */
-        unsigned sluff : SLUF_BITS;
-#endif
-        unsigned Y : 7;
-        unsigned X : 7;
+        unsigned short sluff : 2;
+        unsigned short Y : 7;
+        unsigned short X : 7;
 #else
-        unsigned X : 7;
-        unsigned Y : 7;
+        unsigned short X : 7;
+        unsigned short Y : 7;
 #endif
     } Sub;
 } CELL_COMPOSITE;
