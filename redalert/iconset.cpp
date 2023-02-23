@@ -75,7 +75,7 @@ int Get_Icon_Set_Size(void const* iconset)
 
     icontrol = (IControl_Type*)iconset;
     if (icontrol) {
-        size = icontrol->Size;
+        size = le32toh(icontrol->Size);
     }
     return (size);
 }
@@ -87,7 +87,7 @@ int Get_Icon_Set_Width(void const* iconset)
 
     icontrol = (IControl_Type*)iconset;
     if (icontrol) {
-        width = icontrol->Width;
+        width = le16toh(icontrol->Width);
     }
     return (width);
 }
@@ -99,7 +99,7 @@ int Get_Icon_Set_Height(void const* iconset)
 
     icontrol = (IControl_Type*)iconset;
     if (icontrol) {
-        height = icontrol->Height;
+        height = le16toh(icontrol->Height);
     }
     return (height);
 }
@@ -109,7 +109,7 @@ void* Get_Icon_Set_Icondata(void const* iconset)
     IControl_Type* icontrol;
     icontrol = (IControl_Type*)iconset;
     if (icontrol)
-        return (Add_Long_To_Pointer(iconset, icontrol->Icons));
+        return (Add_Long_To_Pointer(iconset, le32toh(icontrol->Icons)));
     return (NULL);
 }
 
@@ -120,7 +120,7 @@ void* Get_Icon_Set_Trans(void const* iconset)
 
     icontrol = (IControl_Type*)iconset;
     if (icontrol) {
-        ptr = Add_Long_To_Pointer((void*)iconset, icontrol->TransFlag);
+        ptr = Add_Long_To_Pointer((void*)iconset, le32toh(icontrol->TransFlag));
     }
     return (ptr);
 }
@@ -132,7 +132,7 @@ int Get_Icon_Set_Count(void const* iconset)
 
     icontrol = (IControl_Type*)iconset;
     if (icontrol) {
-        count = icontrol->Count;
+        count = le16toh(icontrol->Count);
     }
     return (count);
 }
@@ -142,6 +142,6 @@ void* Get_Icon_Set_Map(void const* iconset)
     IControl_Type* icontrol;
     icontrol = (IControl_Type*)iconset;
     if (icontrol)
-        return (Add_Long_To_Pointer(iconset, icontrol->Map));
+        return (Add_Long_To_Pointer(iconset, le32toh(icontrol->Map)));
     return (NULL);
 }
