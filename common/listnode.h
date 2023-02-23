@@ -174,13 +174,13 @@ private:
 **	interface class will work. You can usually ensure this by deriving the
 **	class T object from this node.
 */
-template <class T> class List;
-template <class T> class Node : public GenericNode
+template <class T> class VanillaList;
+template <class T> class VanillaNode : public GenericNode
 {
 public:
-    List<T>* Main_List(void) const
+    VanillaList<T>* Main_List(void) const
     {
-        return ((List<T>*)GenericNode::Main_List());
+        return ((VanillaList<T>*)GenericNode::Main_List());
     }
     T* Next(void) const
     {
@@ -200,7 +200,7 @@ public:
 **	This is an "interface class" for a list of nodes. The rules for the class T object
 **	are the same as the requirements required of the node class.
 */
-template <class T> class List : public GenericList
+template <class T> class VanillaList : public GenericList
 {
 public:
     T* First(void) const

@@ -44,7 +44,7 @@ void Emergency_Exit(int);
 extern int RequiredCD;
 extern bool RunningAsDLL;
 
-template <class T, class TCRC = CRCEngine> class MixFileClass : public Node<MixFileClass<T>>
+template <class T, class TCRC = CRCEngine> class MixFileClass : public VanillaNode<MixFileClass<T>>
 {
 public:
     char const* Filename; // Filename of mixfile.
@@ -158,7 +158,7 @@ private:
     */
     void* Data; // Pointer to raw data.
 
-    static List<MixFileClass<T, TCRC>> MixList;
+    static VanillaList<MixFileClass<T, TCRC>> MixList;
 };
 
 /***********************************************************************************************

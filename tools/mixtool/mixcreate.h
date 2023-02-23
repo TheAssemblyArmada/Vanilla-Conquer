@@ -76,11 +76,11 @@ template <typename TFC, typename TCRC> class MixFileCreatorClass
     };
 
 private:
-    class FileDataNode : public Node<FileDataNode>
+    class FileDataNode : public VanillaNode<FileDataNode>
     {
     public:
         FileDataNode()
-            : Node<FileDataNode>()
+            : VanillaNode<FileDataNode>()
             , Entry()
             , FilePath(nullptr)
             , InMix(false)
@@ -157,7 +157,7 @@ private:
     static char TempFilename[];
 
 protected:
-    List<FileDataNode> FileList;
+    VanillaList<FileDataNode> FileList;
     IndexClass<FileDataNode*> FileIndex;
     TFC* NewMixHandle;
     MixNameDatabase* NameDatabase;
