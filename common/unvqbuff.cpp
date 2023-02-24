@@ -20,11 +20,13 @@ void UnVQ_4x2(uint8_t* codebook,
 {
     uint32_t* cb_offset = (uint32_t*)codebook;
     uint32_t blocks_per_row_left = 0;
-    uint8_t block_id[4];
+    uint32_t block_id;
     uint32_t data_end;
     uint32_t vptr_pos;
     uint32_t video_pos;
     uint32_t row_offset;
+    uint8_t pointer1;
+    uint8_t pointer2;
 
     video_pos = 0;
     vptr_pos = 0;
@@ -33,22 +35,19 @@ void UnVQ_4x2(uint8_t* codebook,
     data_end = blocks_per_row * num_rows;
 
     while (vptr_pos < data_end) {
-        block_id[0] = pointers[vptr_pos];
-        block_id[1] = pointers[vptr_pos + blocks_per_row * num_rows];
-        block_id[2] = 0;
-        block_id[3] = 0;
+        pointer1 = pointers[vptr_pos];
+        pointer2 = pointers[vptr_pos + blocks_per_row * num_rows];
         vptr_pos++;
 
-        if (block_id[1] == 15) { // 255 for LOLG videos.
+        if (pointer2 == 15) { // 255 for LOLG videos.
             // make all bytes same color as first byte
-            block_id[1] = block_id[0];
-            block_id[2] = block_id[0];
-            block_id[3] = block_id[0];
-            *(uint32_t*)&buffer[video_pos] = *(uint32_t*)block_id;
-            *(uint32_t*)&buffer[video_pos + buff_width] = *(uint32_t*)block_id;
+            block_id = (pointer1 << 24) | (pointer1 << 16) | (pointer1 << 8) | pointer1;
+            *(uint32_t*)&buffer[video_pos] = block_id;
+            *(uint32_t*)&buffer[video_pos + buff_width] = block_id;
         } else {
-            *(uint32_t*)&buffer[video_pos] = cb_offset[2 * *(uint32_t*)block_id];
-            *(uint32_t*)&buffer[video_pos + buff_width] = cb_offset[2 * *(uint32_t*)block_id + 1];
+            block_id = (pointer2 << 8) | pointer1;
+            *(uint32_t*)&buffer[video_pos] = cb_offset[2 * block_id];
+            *(uint32_t*)&buffer[video_pos + buff_width] = cb_offset[2 * block_id + 1];
         }
 
         video_pos += 4;
@@ -71,11 +70,13 @@ void UnVQ_4x4(uint8_t* codebook,
 {
     uint32_t* cb_offset = (uint32_t*)codebook;
     uint32_t blocks_per_row_left = 0;
-    uint8_t block_id[4];
+    uint32_t block_id;
     uint32_t data_end;
     uint32_t vptr_pos;
     uint32_t video_pos;
     uint32_t row_offset;
+    uint8_t pointer1;
+    uint8_t pointer2;
 
     video_pos = 0;
     vptr_pos = 0;
@@ -84,26 +85,23 @@ void UnVQ_4x4(uint8_t* codebook,
     data_end = blocks_per_row * num_rows;
 
     while (vptr_pos < data_end) {
-        block_id[0] = pointers[vptr_pos];
-        block_id[1] = pointers[vptr_pos + blocks_per_row * num_rows];
-        block_id[2] = 0;
-        block_id[3] = 0;
+        pointer1 = pointers[vptr_pos];
+        pointer2 = pointers[vptr_pos + blocks_per_row * num_rows];
         vptr_pos++;
 
-        if (block_id[1] == 255) {
+        if (pointer2 == 255) {
             // make all bytes same color as first byte
-            block_id[1] = block_id[0];
-            block_id[2] = block_id[0];
-            block_id[3] = block_id[0];
-            *(uint32_t*)&buffer[video_pos] = *(uint32_t*)block_id;
-            *(uint32_t*)&buffer[video_pos + 1 * buff_width] = *(uint32_t*)block_id;
-            *(uint32_t*)&buffer[video_pos + 2 * buff_width] = *(uint32_t*)block_id;
-            *(uint32_t*)&buffer[video_pos + 3 * buff_width] = *(uint32_t*)block_id;
+            block_id = (pointer1 << 24) | (pointer1 << 16) | (pointer1 << 8) | pointer1;
+            *(uint32_t*)&buffer[video_pos] = block_id;
+            *(uint32_t*)&buffer[video_pos + 1 * buff_width] = block_id;
+            *(uint32_t*)&buffer[video_pos + 2 * buff_width] = block_id;
+            *(uint32_t*)&buffer[video_pos + 3 * buff_width] = block_id;
         } else {
-            *(uint32_t*)&buffer[video_pos] = cb_offset[4 * *(uint32_t*)block_id];
-            *(uint32_t*)&buffer[video_pos + 1 * buff_width] = cb_offset[4 * *(uint32_t*)block_id + 1];
-            *(uint32_t*)&buffer[video_pos + 2 * buff_width] = cb_offset[4 * *(uint32_t*)block_id + 2];
-            *(uint32_t*)&buffer[video_pos + 3 * buff_width] = cb_offset[4 * *(uint32_t*)block_id + 3];
+            block_id = (pointer2 << 8) | pointer1;
+            *(uint32_t*)&buffer[video_pos] = cb_offset[4 * block_id];
+            *(uint32_t*)&buffer[video_pos + 1 * buff_width] = cb_offset[4 * block_id + 1];
+            *(uint32_t*)&buffer[video_pos + 2 * buff_width] = cb_offset[4 * block_id + 2];
+            *(uint32_t*)&buffer[video_pos + 3 * buff_width] = cb_offset[4 * block_id + 3];
         }
 
         video_pos += 4;
