@@ -6106,18 +6106,19 @@ int HouseClass::AI_Building(void)
         if (Can_Build(b, ActLike) && Power <= Drain + Rule.PowerSurplus && b->Cost_Of() < money) {
             choiceptr = BuildChoice.Alloc();
             if (choiceptr != NULL) {
-                *choiceptr = BuildChoiceClass(
-                    BQuantity[STRUCT_REFINERY] == 0 ? URGENCY_LOW : Power < Drain ? URGENCY_CRITICAL : URGENCY_MEDIUM,
-                    b->Type);
+                *choiceptr = BuildChoiceClass(BQuantity[STRUCT_REFINERY] == 0 ? URGENCY_LOW
+                                              : Power < Drain                 ? URGENCY_CRITICAL
+                                                                              : URGENCY_MEDIUM,
+                                              b->Type);
             }
         } else {
             b = &BuildingTypeClass::As_Reference(STRUCT_POWER);
             if (Can_Build(b, ActLike) && Power <= Drain + Rule.PowerSurplus && b->Cost_Of() < money) {
                 choiceptr = BuildChoice.Alloc();
                 if (choiceptr != NULL) {
-                    *choiceptr = BuildChoiceClass(BQuantity[STRUCT_REFINERY] == 0
-                                                      ? URGENCY_LOW
-                                                      : Power < Drain ? URGENCY_CRITICAL : URGENCY_MEDIUM,
+                    *choiceptr = BuildChoiceClass(BQuantity[STRUCT_REFINERY] == 0 ? URGENCY_LOW
+                                                  : Power < Drain                 ? URGENCY_CRITICAL
+                                                                                  : URGENCY_MEDIUM,
                                                   b->Type);
                 }
             }
