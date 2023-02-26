@@ -8,7 +8,7 @@ jobs:
   remaster_gcc:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3.3.0
       with:
         submodules: 'true'
         fetch-depth: 0
@@ -16,7 +16,7 @@ jobs:
         
     - name: Set Git Info
       id: gitinfo
-      run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
     - name: Install Dependencies
       run: |
@@ -48,7 +48,7 @@ jobs:
         7z a artifact/vanilla-td-remaster-mod-gcc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/Vanilla_TD
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: vanilla-conquer-remaster-gcc
         path: artifact
@@ -60,7 +60,7 @@ jobs:
         platform: [x86, amd64]
         
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3.3.0
       with:
         submodules: 'true'
         fetch-depth: 0
@@ -68,18 +68,18 @@ jobs:
         
     - name: Set Git Info
       id: gitinfo
-      run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       
     - name: Set variables
       id: vars
       run: |
         if [ "${{ matrix.platform }}" = "x86" ]
         then
-          echo "::set-output name=oal_path::Win32"
-          echo "::set-output name=arc_path::i686"
+          echo "oal_path=Win32" >> $GITHUB_OUTPUT
+          echo "arc_path=i686" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=oal_path::Win64"
-          echo "::set-output name=arc_path::x86_64"
+          echo "oal_path=Win64" >> $GITHUB_OUTPUT
+          echo "arc_path=x86_64" >> $GITHUB_OUTPUT
         fi
 
     - name: Install Dependencies
@@ -116,7 +116,7 @@ jobs:
         7z a artifact/vanilla-conquer-win-gcc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dbg ./build/vanillara.dbg ./build/vanillamix.dbg
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: vanilla-conquer-win-gcc-${{ steps.vars.outputs.arc_path }}
         path: artifact
