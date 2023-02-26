@@ -8,19 +8,19 @@ jobs:
   remaster_msvc:
     runs-on: windows-2019
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3.3.0
       with:
         submodules: 'true'
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
         
-    - uses: ilammy/msvc-dev-cmd@v1.4.1
+    - uses: ilammy/msvc-dev-cmd@v1.12.1
       with:
         arch: x86
         
     - name: Set Git Info
       id: gitinfo
-      run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         
     - name: Install Dependencies
       run: |
@@ -47,7 +47,7 @@ jobs:
         7z a artifact/vanilla-td-remaster-mod-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/Vanilla_TD
         
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: vanilla-conquer-remaster-msvc
         path: artifact
@@ -79,31 +79,32 @@ jobs:
       matrix:
         platform: [x86, amd64]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3.3.0
       with:
         submodules: 'true'
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
         
-    - uses: ilammy/msvc-dev-cmd@v1.4.1
+    - uses: ilammy/msvc-dev-cmd@v1.12.1
       with:
         arch: ${{ matrix.platform }}
         
     - name: Set Git Info
       id: gitinfo
-      run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       
     - name: Set variables
       id: vars
+      shell: pwsh
       run: |
         If ("${{ matrix.platform }}" -eq "x86") {
-          echo "::set-output name=oal_path::Win32"
-          echo "::set-output name=sdl_path::x86"
-          echo "::set-output name=arc_path::i686"
+          echo "oal_path=Win32" >> $env:GITHUB_OUTPUT
+          echo "sdl_path=x86" >> $env:GITHUB_OUTPUT
+          echo "arc_path=i686" >> $env:GITHUB_OUTPUT
         } else {
-          echo "::set-output name=oal_path::Win64"
-          echo "::set-output name=sdl_path::x64"
-          echo "::set-output name=arc_path::x86_64"
+          echo "oal_path=Win64" >> $env:GITHUB_OUTPUT
+          echo "sdl_path=x64" >> $env:GITHUB_OUTPUT
+          echo "arc_path=x86_64" >> $env:GITHUB_OUTPUT
         }
 
     - name: Install Dependencies
@@ -143,7 +144,7 @@ jobs:
         7z a artifact/vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.pdb ./build/vanillara.pdb ./build/vanillamix.pdb
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}
         path: artifact

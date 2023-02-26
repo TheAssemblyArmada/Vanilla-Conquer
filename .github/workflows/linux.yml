@@ -24,7 +24,7 @@ jobs:
         platform: [clang, gcc]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3.3.0
       with:
         submodules: 'true'
         fetch-depth: 0
@@ -32,24 +32,24 @@ jobs:
         
     - name: Set Git Info
       id: gitinfo
-      run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       
     - name: Set variables
       id: vars
       run: |
         if [ "${{ matrix.platform }}" = "clang" ]
         then
-          echo "::set-output name=cc::clang"
-          echo "::set-output name=cxx::clang++"
+          echo "cc=clang" >> $GITHUB_OUTPUT
+          echo "cxx=clang++" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=cc::gcc"
-          echo "::set-output name=cxx::g++"
+          echo "cc=gcc" >> $GITHUB_OUTPUT
+          echo "cxx=g++" >> $GITHUB_OUTPUT
         fi
 
     - name: Install dependencies
       run: |
         sudo apt-get update -qq > /dev/null
-        sudo apt-get install -qq -y clang-format-12 libsdl2-dev libopenal-dev > /dev/null
+        sudo apt-get install -qq -y clang-format-14 libsdl2-dev libopenal-dev > /dev/null
 
     - name: Configure Vanilla Conquer
       env:
@@ -89,7 +89,7 @@ jobs:
         7z a artifact/vanilla-conquer-linux-${{ matrix.platform }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dbg ./build/vanillara.dbg ./build/vanillamix.dbg
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: vanilla-conquer-linux-${{ matrix.platform }}-x86_64
         path: artifact
