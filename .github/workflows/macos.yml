@@ -8,7 +8,7 @@ jobs:
   vanilla-macos:
     runs-on: macos-12
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v3.3.0
       with:
         submodules: 'true'
         fetch-depth: 0
@@ -18,7 +18,7 @@ jobs:
     
     - name: Set Git Info
       id: gitinfo
-      run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
     - name: Setting up Cache-Key
       run: echo "DEP_CACHE_KEY=$(curl 'https://ports.macports.org/api/v1/ports/dylibbundler/?format=json' | grep -ioE '("version":).[^,]*')-$(curl 'https://ports.macports.org/api/v1/ports/libsdl2/?format=json' | grep -ioE '("version":).[^,]*')-$(curl 'https://ports.macports.org/api/v1/ports/openal-soft/?format=json' | grep -ioE '("version":).[^,]*')" >> $GITHUB_ENV
@@ -80,7 +80,7 @@ jobs:
         7z a artifact/vanilla-conquer-macos-clang-universal2-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dSYM ./build/vanillara.dSYM ./build/vanillamix.dSYM
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: vanilla-conquer-macos-clang-universal2
         path: artifact
