@@ -75,6 +75,7 @@
 #ifndef IPXGLOBALCONN_H
 #define IPXGLOBALCONN_H
 
+#include "common/endianness.h"
 #include "ipxconn.h"
 
 /*
@@ -93,6 +94,12 @@ typedef struct
     CommHeaderType Header;
     unsigned short ProductID;
 } GlobalHeaderType;
+
+inline void SwapGlobalHeaderType(GlobalHeaderType* ght)
+{
+    SwapCommHeaderType(&ght->Header);
+    ght->ProductID = le16toh(ght->ProductID);
+}
 
 /*
 ***************************** Class Declaration *****************************

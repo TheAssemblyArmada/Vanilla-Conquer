@@ -36,6 +36,7 @@
 #define SPECIAL_H
 
 #include "common/bitfields.h"
+#include "common/endianness.h"
 
 #pragma pack(push, 1)
 class BITFIELD_STRUCT SpecialClass
@@ -47,65 +48,89 @@ public:
     */
     void Init(void);
 
-    /*
-    **	If the shroud should regenerated, then this flag will be true.
-    */
-    unsigned IsShadowGrow : 1;
+    union
+    {
+        unsigned Bitfield;
 
-    /*
-    **	Controls the speedy build option -- used for testing.
-    */
-    unsigned IsSpeedBuild : 1;
+        struct
+        {
+#ifdef __BIG_ENDIAN__
+            unsigned int Unused : 20;
+            unsigned ModernBalance : 1;
+            unsigned IsEarlyWin : 1;
+            unsigned IsMCVDeploy : 1;
+            unsigned UseMCVDeploy : 1;
+            unsigned IsTSpread : 1;
+            unsigned IsTGrowth : 1;
+            unsigned IsThreePoint : 1;
+            unsigned IsInert : 1;
+            unsigned IsCaptureTheFlag : 1;
+            unsigned IsFromInstall : 1;
+            unsigned IsSpeedBuild : 1;
+            unsigned IsShadowGrow : 1;
+#else
+            /*
+            **	If the shroud should regenerated, then this flag will be true.
+            */
+            unsigned IsShadowGrow : 1;
 
-    /*
-    ** If from install, then play the special installation movie and
-    ** skip asking them what type of game they want to play.
-    */
-    unsigned IsFromInstall : 1;
+            /*
+            **	Controls the speedy build option -- used for testing.
+            */
+            unsigned IsSpeedBuild : 1;
 
-    /*
-    **	If capture the flag mode is on, this flag will be true. With this
-    **	flag enabled, then the flag is initially placed at the start of
-    **	the scenario.
-    */
-    unsigned IsCaptureTheFlag : 1;
+            /*
+            ** If from install, then play the special installation movie and
+            ** skip asking them what type of game they want to play.
+            */
+            unsigned IsFromInstall : 1;
 
-    /*
-    **	This flags controls whether weapons are inert. An inert weapon doesn't do any
-    **	damage. Effectively, if this is true, then the units never die.
-    */
-    unsigned IsInert : 1;
+            /*
+            **	If capture the flag mode is on, this flag will be true. With this
+            **	flag enabled, then the flag is initially placed at the start of
+            **	the scenario.
+            */
+            unsigned IsCaptureTheFlag : 1;
 
-    /*
-    **	If wheeled vehicles should do a 3-point turn when rotating in place, then
-    **	this flag is true.
-    */
-    unsigned IsThreePoint : 1;
+            /*
+            **	This flags controls whether weapons are inert. An inert weapon doesn't do any
+            **	damage. Effectively, if this is true, then the units never die.
+            */
+            unsigned IsInert : 1;
 
-    /*
-    **	If Tiberium is allowed to spread and grow, then these flags will be true.
-    **	These are duplicated from the rules.ini file and also controlled by the
-    **	multiplayer dialog box.
-    */
-    unsigned IsTGrowth : 1;
-    unsigned IsTSpread : 1;
+            /*
+            **	If wheeled vehicles should do a 3-point turn when rotating in place, then
+            **	this flag is true.
+            */
+            unsigned IsThreePoint : 1;
 
-    /*
-    **	If this flag is true, then the construction yard can undeploy back into an MCV.
-    **	Used to override the rules setting.
-    */
-    unsigned UseMCVDeploy : 1;
-    unsigned IsMCVDeploy : 1;
+            /*
+            **	If Tiberium is allowed to spread and grow, then these flags will be true.
+            **	These are duplicated from the rules.ini file and also controlled by the
+            **	multiplayer dialog box.
+            */
+            unsigned IsTGrowth : 1;
+            unsigned IsTSpread : 1;
 
-    /*
-    ** New anti-griefing early win mode. ST - 1/31/2020 3:42PM
-    */
-    unsigned IsEarlyWin : 1;
+            /*
+            **	If this flag is true, then the construction yard can undeploy back into an MCV.
+            **	Used to override the rules setting.
+            */
+            unsigned UseMCVDeploy : 1;
+            unsigned IsMCVDeploy : 1;
 
-    /*
-    ** New modern balance setting.
-    */
-    unsigned ModernBalance : 1;
+            /*
+            ** New anti-griefing early win mode. ST - 1/31/2020 3:42PM
+            */
+            unsigned IsEarlyWin : 1;
+
+            /*
+            ** New modern balance setting.
+            */
+            unsigned ModernBalance : 1;
+#endif
+        };
+    };
 };
 #pragma pack(pop)
 

@@ -100,6 +100,7 @@
 ********************************* Includes **********************************
 */
 #include "combuf.h"
+#include "endianness.h"
 
 /*
 ********************************** Defines **********************************
@@ -121,6 +122,12 @@ typedef struct
     unsigned char Code;
     unsigned int PacketID;
 } CommHeaderType;
+
+inline void SwapCommHeaderType(CommHeaderType* cht)
+{
+    cht->MagicNumber = le16toh(cht->MagicNumber);
+    cht->PacketID = le32toh(cht->PacketID);
+}
 
 /*
 ***************************** Class Declaration *****************************

@@ -143,6 +143,8 @@ int IPXGlobalConnClass::Send_Packet(void* buf, int buflen, IPXAddressClass* addr
     ------------------------------------------------------------------------*/
     ((GlobalHeaderType*)PacketBuf)->ProductID = ProductID;
 
+    SwapGlobalHeaderType((GlobalHeaderType*)PacketBuf);
+
     /*------------------------------------------------------------------------
     Set this packet's destination address.  If no address is specified, use
     a Broadcast address (which IPXAddressClass's default constructor creates).
@@ -253,6 +255,7 @@ int IPXGlobalConnClass::Receive_Packet(void* buf, int buflen, IPXAddressClass* a
             ackpacket.Header.Code = PACKET_ACK;
             ackpacket.Header.PacketID = packet->Header.PacketID;
             ackpacket.ProductID = ProductID;
+            SwapGlobalHeaderType(&ackpacket);
             Send((char*)&ackpacket, sizeof(GlobalHeaderType), address, sizeof(IPXAddressClass));
         }
 
@@ -288,7 +291,8 @@ int IPXGlobalConnClass::Receive_Packet(void* buf, int buflen, IPXAddressClass* a
             /*...............................................................
             If ACK is for this entry, mark it
             ...............................................................*/
-            if (packet->Header.PacketID == entry_data->Header.PacketID && entry_data->Header.Code == PACKET_DATA_ACK) {
+            if (packet->Header.PacketID == le32toh(entry_data->Header.PacketID)
+                && entry_data->Header.Code == PACKET_DATA_ACK) {
                 send_entry->IsACK = 1;
                 break;
             }
@@ -361,7 +365,7 @@ int IPXGlobalConnClass::Get_Packet(void* buf, int* buflen, IPXAddressClass* addr
             memcpy(buf, rec_entry->Buffer + sizeof(GlobalHeaderType), packetlen);
         }
         (*buflen) = packetlen;
-        (*product_id) = packet->ProductID;
+        (*product_id) = le16toh(packet->ProductID);
         (*address) = (*((IPXAddressClass*)(rec_entry->ExtraBuffer)));
 
         return (1);
