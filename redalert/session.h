@@ -36,6 +36,7 @@
 
 #include "common/ipxaddr.h"
 #include "common/bitfields.h"
+#include "common/endianness.h"
 #include "msglist.h"
 #include "connect.h"
 #include "version.h"
@@ -321,7 +322,7 @@ typedef struct
 #ifdef WOLAPI_INTEGRATION
             char ShortFileName[13]; // Name of scenario file to expect from host
 #else
-            char ShortFileName[12]; // Name of scenario file to expect from host
+            char ShortFileName[12];                    // Name of scenario file to expect from host
 #endif
             unsigned char FileDigest[32]; // Digest of scenario file to expect from host
                                           //	ajw - This is not necessarily null-terminated.
@@ -361,7 +362,18 @@ typedef struct GlobalPacketType
     {
         struct BITFIELD_STRUCT
         {
-            unsigned int IsOpen : 1; // 1 = game is open for joining
+            union
+            {
+                unsigned int Bitfield;
+
+                struct
+                {
+#ifdef __BIG_ENDIAN__
+                    unsigned int Unused : 31;
+#endif
+                    unsigned int IsOpen : 1; // 1 = game is open for joining
+                };
+            };
         } GameInfo;
         struct
         {
@@ -374,25 +386,42 @@ typedef struct GlobalPacketType
         } PlayerInfo;
         struct BITFIELD_STRUCT
         {
-            char Scenario[DESCRIP_MAX];        // Scenario Name
-            unsigned int Credits;              // player's credits
-            unsigned int IsBases : 1;          // 1 = bases are allowed
-            unsigned int IsTiberium : 1;       // 1 = tiberium is allowed
-            unsigned int IsGoodies : 1;        // 1 = goodies are allowed
-            unsigned int IsGhosties : 1;       // 1 = ghosts are allowed
-            unsigned int OfficialScenario : 1; // Is this scenario an official Westwood one?
-            unsigned char BuildLevel;          // buildable level
-            unsigned char UnitCount;           // max # units
-            unsigned char AIPlayers;           // # of AI players allowed
-            int Seed;                          // random number seed
-            SpecialClass Special;              // command-line options
-            unsigned int GameSpeed;            // Game Speed
-            unsigned int Version;              // version # common to all players
-            unsigned int FileLength;           // Length of scenario file to expect from host.
+            char Scenario[DESCRIP_MAX]; // Scenario Name
+            unsigned int Credits;       // player's credits
+            union
+            {
+                unsigned int Bitfield;
+
+                struct
+                {
+#ifdef __BIG_ENDIAN__
+                    unsigned int Unused : 27;
+                    unsigned int OfficialScenario : 1; // Is this scenario an official Westwood one?
+                    unsigned int IsGhosties : 1;       // 1 = ghosts are allowed
+                    unsigned int IsGoodies : 1;        // 1 = goodies are allowed
+                    unsigned int IsTiberium : 1;       // 1 = tiberium is allowed
+                    unsigned int IsBases : 1;          // 1 = bases are allowed
+#else
+                    unsigned int IsBases : 1;          // 1 = bases are allowed
+                    unsigned int IsTiberium : 1;       // 1 = tiberium is allowed
+                    unsigned int IsGoodies : 1;        // 1 = goodies are allowed
+                    unsigned int IsGhosties : 1;       // 1 = ghosts are allowed
+                    unsigned int OfficialScenario : 1; // Is this scenario an official Westwood one?
+#endif
+                };
+            };
+            unsigned char BuildLevel; // buildable level
+            unsigned char UnitCount;  // max # units
+            unsigned char AIPlayers;  // # of AI players allowed
+            int Seed;                 // random number seed
+            SpecialClass Special;     // command-line options
+            unsigned int GameSpeed;   // Game Speed
+            unsigned int Version;     // version # common to all players
+            unsigned int FileLength;  // Length of scenario file to expect from host.
 #ifdef WOLAPI_INTEGRATION
             char ShortFileName[13]; // Name of scenario file to expect from host
 #else
-            char ShortFileName[12]; // Name of scenario file to expect from host
+            char ShortFileName[12];                    // Name of scenario file to expect from host
 #endif
             unsigned char FileDigest[32]; // Digest of scenario file to expect from host
                                           //	ajw - This is not necessarily null-terminated.
@@ -419,6 +448,77 @@ typedef struct GlobalPacketType
     };
 } GlobalPacketType;
 #pragma pack(pop)
+
+inline void SwapGlobalPacketType(GlobalPacketType* gpt, bool sending)
+{
+    enum NetCommandType command;
+
+    if (sending) {
+        command = gpt->Command;
+    } else {
+        command = (enum NetCommandType)le32toh(gpt->Command);
+    }
+
+    gpt->Command = (enum NetCommandType)le32toh(gpt->Command);
+
+    switch (command) {
+    case NET_QUERY_GAME:
+        break;
+
+    case NET_ANSWER_GAME:
+        gpt->GameInfo.Bitfield = le32toh(gpt->GameInfo.Bitfield);
+        break;
+
+    case NET_QUERY_PLAYER:
+        break;
+
+    case NET_ANSWER_PLAYER:
+    case NET_QUERY_JOIN:
+    case NET_CONFIRM_JOIN:
+        gpt->PlayerInfo.NameCRC = le32toh(gpt->PlayerInfo.NameCRC);
+        gpt->PlayerInfo.MinVersion = le32toh(gpt->PlayerInfo.MinVersion);
+        gpt->PlayerInfo.MaxVersion = le32toh(gpt->PlayerInfo.MaxVersion);
+        gpt->PlayerInfo.CheatCheck = le32toh(gpt->PlayerInfo.CheatCheck);
+        break;
+
+    case NET_CHAT_ANNOUNCE:
+        gpt->Chat.ID = le32toh(gpt->Chat.ID);
+        break;
+
+    case NET_CHAT_REQUEST:
+        break;
+
+    case NET_REJECT_JOIN:
+        gpt->Reject.Why = le32toh(gpt->Reject.Why);
+        break;
+
+    case NET_GAME_OPTIONS:
+        gpt->ScenarioInfo.Credits = le32toh(gpt->ScenarioInfo.Credits);
+        gpt->ScenarioInfo.Bitfield = le32toh(gpt->ScenarioInfo.Bitfield);
+        gpt->ScenarioInfo.Seed = le32toh(gpt->ScenarioInfo.Seed);
+        gpt->ScenarioInfo.Special.Bitfield = le32toh(gpt->ScenarioInfo.Special.Bitfield);
+        gpt->ScenarioInfo.GameSpeed = le32toh(gpt->ScenarioInfo.GameSpeed);
+        gpt->ScenarioInfo.Version = le32toh(gpt->ScenarioInfo.Version);
+        gpt->ScenarioInfo.FileLength = le32toh(gpt->ScenarioInfo.FileLength);
+        break;
+
+    case NET_SIGN_OFF:
+        break;
+
+    case NET_GO:
+    case NET_LOADGAME:
+        gpt->ResponseTime.OneWay = le32toh(gpt->ResponseTime.OneWay);
+        break;
+
+    case NET_MESSAGE:
+        gpt->Message.NameCRC = le32toh(gpt->Message.NameCRC);
+        break;
+
+    case NET_PING:
+        break;
+    }
+}
+
 //...........................................................................
 // For finding sync bugs; filled in by the engine when certain conditions
 // are met; the pointers allow examination of objects in the debugger.

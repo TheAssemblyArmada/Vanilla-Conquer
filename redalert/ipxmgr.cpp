@@ -739,6 +739,19 @@ int IPXManagerClass::Send_Global_Message(void* buf, int buflen, int ack_req, IPX
 
 } /* end of Send_Global_Message */
 
+int IPXManagerClass::Send_Global_Message(GlobalPacketType* buf, int buflen, int ack_req, IPXAddressClass* address)
+{
+    int rc;
+
+    SwapGlobalPacketType(buf, true);
+
+    rc = Send_Global_Message((void*)buf, buflen, ack_req, address);
+
+    SwapGlobalPacketType(buf, false);
+
+    return rc;
+} /* end of Send_Global_Message */
+
 /***************************************************************************
  * IPXManagerClass::Get_Global_Message -- polls the Global Message queue	*
  *                                                                         *
@@ -767,6 +780,20 @@ int IPXManagerClass::Get_Global_Message(void* buf, int* buflen, IPXAddressClass*
 
     return (GlobalChannel->Get_Packet(buf, buflen, address, product_id));
 
+} /* end of Get_Global_Message */
+
+int IPXManagerClass::Get_Global_Message(GlobalPacketType* buf,
+                                        int* buflen,
+                                        IPXAddressClass* address,
+                                        unsigned short* product_id)
+{
+    int rc;
+
+    rc = Get_Global_Message((void*)buf, buflen, address, product_id);
+
+    SwapGlobalPacketType(buf, false);
+
+    return rc;
 } /* end of Get_Global_Message */
 
 /***************************************************************************
@@ -962,6 +989,9 @@ int IPXManagerClass::Service(void)
                 address = *((IPXAddressClass*)temp_address);
 
                 packet = (CommHeaderType*)CurDataBuf;
+
+                SwapCommHeaderType(packet);
+
                 if (packet->MagicNumber == GlobalChannel->Magic_Num()) {
 
                     /*
@@ -1067,6 +1097,7 @@ int IPXManagerClass::Service(void)
             packet goes into the Global Queue, or into one of the Private Queues
             .....................................................................*/
             packet = (CommHeaderType*)CurDataBuf;
+            SwapCommHeaderType(packet);
             if (packet->MagicNumber == GlobalChannel->Magic_Num()) {
                 /*..................................................................
                 Put the packet in the Global Queue

@@ -121,6 +121,8 @@
 #include "common/ipxaddr.h"
 #include "connmgr.h"
 
+struct GlobalPacketType;
+
 /*
 ********************************** Defines **********************************
 */
@@ -186,7 +188,9 @@ public:
     This is how the application sends & receives messages.
     .....................................................................*/
     int Send_Global_Message(void* buf, int buflen, int ack_req = 0, IPXAddressClass* address = NULL);
+    int Send_Global_Message(GlobalPacketType* buf, int buflen, int ack_req = 0, IPXAddressClass* address = NULL);
     int Get_Global_Message(void* buf, int* buflen, IPXAddressClass* address, unsigned short* product_id);
+    int Get_Global_Message(GlobalPacketType* buf, int* buflen, IPXAddressClass* address, unsigned short* product_id);
 
     virtual int Send_Private_Message(void* buf, int buflen, int ack_req = 1, int conn_id = CONNECTION_NONE);
     virtual int Get_Private_Message(void* buf, int* buflen, int* conn_id);
