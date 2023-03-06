@@ -286,8 +286,20 @@ int PKey::Encrypt(void const* source, int slen, void* dest) const
         **	Perform the encryption of the block.
         */
         BigInt temp = 0;
+        unsigned int* tempui = temp;
+        int i;
+
         memmove(&temp, source, Plain_Block_Size());
+
+        for (i = 0; i < (Plain_Block_Size() + 3) / 4; i++) {
+            tempui[i] = htole32(tempui[i]);
+        }
+
         temp = temp.exp_b_mod_c(Exponent, Modulus);
+
+        for (i = 0; i < (Crypt_Block_Size() + 3) / 4; i++) {
+            tempui[i] = le32toh(tempui[i]);
+        }
 
         /*
         **	Move the cypher block to the destination.
@@ -327,6 +339,8 @@ int PKey::Decrypt(void const* source, int slen, void* dest) const
 {
     int total = 0;
     BigInt temp;
+    unsigned int* tempui = temp;
+    int i;
 
     /*
     **	Decrypt the source data in full blocks. Partial blocks are not processed in any way.
@@ -338,7 +352,16 @@ int PKey::Decrypt(void const* source, int slen, void* dest) const
         */
         temp = 0;
         memmove(&temp, source, Crypt_Block_Size());
+
+        for (i = 0; i < (Crypt_Block_Size() + 3) / 4; i++) {
+            tempui[i] = le32toh(tempui[i]);
+        }
+
         temp = temp.exp_b_mod_c(Exponent, Modulus);
+
+        for (i = 0; i < (Plain_Block_Size() + 3) / 4; i++) {
+            tempui[i] = htole32(tempui[i]);
+        }
 
         /*
         **	Move the cypher block to the destination.
