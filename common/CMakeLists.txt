@@ -112,6 +112,7 @@ set(COMMONR_SRC
     soundio_null.cpp
     video_null.cpp
     wwkeyboard.cpp
+    wwkeyboard_win32.cpp
     wwmouse.cpp
 )
 
@@ -140,12 +141,12 @@ else()
 endif()
 
 if(DDRAW)
-    list(APPEND COMMONV_SRC video_ddraw.cpp)
+    list(APPEND COMMONV_SRC video_ddraw.cpp wwkeyboard_win32.cpp)
     list(APPEND VANILLA_LIBS ddraw)
 elseif(SDL2)
-    list(APPEND COMMONV_SRC video_sdl2.cpp)
+    list(APPEND COMMONV_SRC video_sdl2.cpp wwkeyboard_sdl2.cpp)
 elseif(SDL1)
-    list(APPEND COMMONV_SRC video_sdl1.cpp)
+    list(APPEND COMMONV_SRC video_sdl1.cpp wwkeyboard_sdl1.cpp)
 else()
     list(APPEND COMMONV_SRC video_null.cpp)
 endif()

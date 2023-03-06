@@ -232,7 +232,7 @@ int main(int argc, char** argv)
 
         CCFileClass cfile("CONQUER.INI");
 
-        Keyboard = new WWKeyboardClass();
+        Keyboard = CreateWWKeyboardClass();
 
 #ifdef JAPANESE
         //////////////////////////////////////if(!ForceEnglish) KBLanguage = 1;
