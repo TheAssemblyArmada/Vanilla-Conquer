@@ -780,6 +780,7 @@ typedef enum KeyNumType : unsigned short
     KN_LSHIFT = VK_SHIFT,
     KN_M = VK_M,
     KN_MINUS = VK_NONE_BD,
+    KN_MMOUSE = VK_MBUTTON,
     KN_N = VK_N,
     KN_NUMLOCK = VK_NUMLOCK,
     KN_O = VK_O,
