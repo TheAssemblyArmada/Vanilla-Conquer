@@ -134,7 +134,7 @@ unsigned short WWKeyboardClass::Buff_Get(void)
 bool WWKeyboardClass::Is_Mouse_Key(unsigned short key)
 {
     key &= 0xFF;
-    return (key == VK_LBUTTON || key == VK_MBUTTON || key == VK_RBUTTON);
+    return (key == KN_LMOUSE || key == KN_MMOUSE || key == KN_RMOUSE);
 }
 
 /***********************************************************************************************
@@ -219,13 +219,13 @@ bool WWKeyboardClass::Put_Key_Message(unsigned short vk_key, bool release)
     ** would be incompatible with the dos version.
     */
     if (!Is_Mouse_Key(vk_key)) {
-        if (Down(VK_SHIFT) || Down(VK_CAPITAL) || Down(VK_NUMLOCK)) {
+        if (Down(KN_LSHIFT) || Down(KN_RSHIFT) || Down(KN_CAPSLOCK) || Down(KN_NUMLOCK)) {
             vk_key |= WWKEY_SHIFT_BIT;
         }
-        if (Down(VK_CONTROL)) {
+        if (Down(KN_LCTRL) || Down(KN_RCTRL)) {
             vk_key |= WWKEY_CTRL_BIT;
         }
-        if (Down(VK_MENU)) {
+        if (Down(KN_LALT) || Down(KN_RALT)) {
             vk_key |= WWKEY_ALT_BIT;
         }
     }
