@@ -48,12 +48,13 @@ void Frame_Limiter(FrameLimitFlags flags)
 #else
         auto frame_end = std::chrono::steady_clock::now();
 #endif
-        int64_t _ms_per_tick = 1000 / Settings.Video.FrameLimit;
-        auto remaining =
-            _ms_per_tick - std::chrono::duration_cast<std::chrono::milliseconds>(frame_end - frame_start).count();
-        if (remaining > 0) {
-            ms_sleep(unsigned(remaining));
+        unsigned int min_frame_time = 1000000 / Settings.Video.FrameLimit;
+        auto cur_frame_time = std::chrono::duration_cast<std::chrono::microseconds>(frame_end - frame_start).count();
+        if (cur_frame_time < min_frame_time) {
+            frame_start += std::chrono::microseconds{min_frame_time};
+            us_sleep(min_frame_time - cur_frame_time);
+        } else {
+            frame_start = frame_end;
         }
-        frame_start = std::chrono::steady_clock::now();
     }
 }
