@@ -17,6 +17,21 @@
 #endif
 
 /**
+ * Yield the current thread for at least us microseconds.
+ */
+static inline void us_sleep(unsigned us)
+{
+#ifdef _WIN32
+    Sleep((us + 999) / 1000);
+#else
+    struct timespec ts;
+    ts.tv_sec = us / 1000000;
+    ts.tv_nsec = (us % 1000000) * 1000;
+    nanosleep(&ts, NULL);
+#endif
+}
+
+/**
  * Yield the current thread for at least ms milliseconds.
  */
 static inline void ms_sleep(unsigned ms)
