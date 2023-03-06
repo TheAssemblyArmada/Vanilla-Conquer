@@ -900,7 +900,9 @@ private:
     **	This is a keyboard state array that is used to aid in translating
     **	KN_ keys into KA_ keys.
     */
+#if defined(_WIN32)
     unsigned char KeyState[256];
+#endif
 
     /*
     **	This is the circular keyboard holding buffer. It holds the VK key and
