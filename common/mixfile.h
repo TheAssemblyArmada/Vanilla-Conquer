@@ -29,10 +29,7 @@
 #include "shastraw.h"
 #include "wwstd.h"
 #include "rndstraw.h"
-
-#ifndef _WIN32
-#include <libgen.h> // For basename()
-#endif
+#include "paths.h"
 
 #ifndef _MAX_PATH
 #define _MAX_PATH PATH_MAX
@@ -528,11 +525,6 @@ template <class T, class TCRC> MixFileClass<T, TCRC>* MixFileClass<T, TCRC>::Fin
 {
     MixFileClass<T, TCRC>* ptr = MixList.First();
     while (ptr->Is_Valid()) {
-#ifdef _WIN32
-        char path[_MAX_PATH];
-        char name[_MAX_FNAME];
-        char ext[_MAX_EXT];
-
         /*
         **	Strip the drive and path (if present) off of the filename
         **	in the mixfile list. This enables a simple comparison to the
@@ -540,16 +532,11 @@ template <class T, class TCRC> MixFileClass<T, TCRC>* MixFileClass<T, TCRC>::Fin
         **	the full pathname in the mixfile list WILL have a path attached. Hence, this
         ** stripping of the path is necessary.
         */
-        _splitpath(ptr->Filename, NULL, NULL, name, ext);
-        _makepath(path, NULL, NULL, name, ext);
-#else
-        char buff[PATH_MAX];
-        char* path = nullptr;
-        strncpy(buff, ptr->Filename, PATH_MAX);
-        buff[PATH_MAX - 1] = '\0';
-        path = basename(buff);
-#endif
-        if (stricmp(path, filename) == 0) {
+
+        std::string path;
+        path = Paths.Get_Filename(ptr->Filename);
+
+        if (stricmp(path.c_str(), filename) == 0) {
             return (ptr);
         }
         ptr = ptr->Next();
