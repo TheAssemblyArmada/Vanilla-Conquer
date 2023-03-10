@@ -26,7 +26,6 @@ set(COMMON_SRC
     crc.cpp
     crew.cpp
     cstraw.cpp
-    connect.cpp
     debugstring.cpp
     delay.cpp
     dipthong.cpp
@@ -157,6 +156,7 @@ endif()
 
 if(NETWORKING)
     list(APPEND COMMONV_SRC
+        connect.cpp
         ipxaddr.cpp
         wsproto.cpp
         wspudp.cpp
