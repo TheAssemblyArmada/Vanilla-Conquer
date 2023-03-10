@@ -87,6 +87,33 @@
 #include <algorithm>
 #include "mp.h"
 #include "memrev.h"
+#include "endianness.h"
+
+#ifdef __BIG_ENDIAN__
+#define HALFWORD_0 1
+#define HALFWORD_1 0
+#else
+#define HALFWORD_0 0
+#define HALFWORD_1 1
+#endif
+
+static inline uint16_t Get_HalfWord(const uint16_t* base, size_t offset)
+{
+#ifdef __BIG_ENDIAN__
+    return base[offset ^ 1];
+#else
+    return base[offset];
+#endif
+}
+
+static inline void Set_HalfWord(uint16_t* base, size_t offset, uint16_t value)
+{
+#ifdef __BIG_ENDIAN__
+    base[offset ^ 1] = value;
+#else
+    base[offset] = value;
+#endif
+}
 
 /***********************************************************************************************
  * _Byte_Precision -- Determines the number of bytes significant in long integer.              *
@@ -306,11 +333,27 @@ unsigned XMP_Encode(unsigned char* to, unsigned tobytes, digit const* from, int 
 //#pragma warning 364 9
 unsigned XMP_Encode(unsigned char* to, digit const* from, int precision)
 {
+    int i;
+#ifdef __BIG_ENDIAN__
+    digit from_copy[precision];
+#endif
+
     assert(to != NULL);
     assert(from != NULL);
     assert(precision > 0);
 
     bool is_negative = XMP_Is_Negative(from, precision);
+
+#ifdef __BIG_ENDIAN__
+    if (sizeof(digit) == 4) {
+        for (i = 0; i < precision; i++) {
+            from_copy[i] = le32toh(from[i]);
+        }
+    }
+
+    from = from_copy;
+#endif
+
     unsigned char filler = (unsigned char)(is_negative ? 0xff : 0);
     unsigned char* number_ptr;
 
@@ -380,6 +423,12 @@ void XMP_Signed_Decode(digit* result, const unsigned char* from, int frombytes, 
     */
     for (index = 0; index < frombytes; index++) {
         *--dest = *from++;
+    }
+
+    if (sizeof(digit) == 4) {
+        for (index = 0; index < precision; index++) {
+            result[index] = le32toh(result[index]);
+        }
     }
 }
 
@@ -1068,18 +1117,58 @@ bool XMP_Add_Int(digit* result, const digit* left_number, digit right_number, bo
  * HISTORY:                                                                                    *
  *   07/01/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
+bool XMP_Sub(uint16_t* result,
+             size_t result_offset,
+             const uint16_t* left_number,
+             size_t left_number_offset,
+             const digit* right_number,
+             bool borrow,
+             int precision)
+{
+    bool ret;
+
+#ifdef __BIG_ENDIAN__
+    uint16_t temp_left_number[precision * 2];
+    uint16_t temp_result[precision * 2];
+    size_t i;
+
+    for (i = 0; i < precision * 2; i++) {
+        Set_HalfWord(temp_left_number, i, Get_HalfWord(left_number, left_number_offset + i));
+    }
+
+    ret = XMP_Sub((digit*)temp_result, (const digit*)temp_left_number, right_number, borrow, precision);
+
+    for (i = 0; i < precision * 2; i++) {
+        Set_HalfWord(result, result_offset + i, Get_HalfWord(temp_result, i));
+    }
+#else
+    ret = XMP_Sub((digit*)(result + result_offset),
+                  (const digit*)(left_number + left_number_offset),
+                  right_number,
+                  borrow,
+                  precision);
+#endif
+
+    return ret;
+}
+
 bool XMP_Sub(digit* result, const digit* left_number, const digit* right_number, bool borrow, int precision)
 {
     const uint16_t* left_number_ptr = (const uint16_t*)left_number;
+    size_t left_number_offset = 0;
     const uint16_t* right_number_ptr = (const uint16_t*)right_number;
+    size_t right_number_offset = 0;
     uint16_t* result_ptr = (uint16_t*)result;
+    size_t result_offset = 0;
 
     precision *= 2;
     while (precision--) {
-        digit x = (digit)*left_number_ptr - (digit)*right_number_ptr - (digit)borrow;
-        right_number_ptr++;
-        left_number_ptr++;
-        *result_ptr++ = (uint16_t)x;
+        digit x = (digit)Get_HalfWord(left_number_ptr, left_number_offset)
+                  - (digit)Get_HalfWord(right_number_ptr, right_number_offset) - (digit)borrow;
+        right_number_offset++;
+        left_number_offset++;
+        Set_HalfWord(result_ptr, result_offset, x);
+        result_offset++;
         borrow = (((1L << 16) & x) != 0L);
     }
     return (borrow);
@@ -1748,18 +1837,23 @@ void XMP_Decode_ASCII(char const* str, digit* mpn, int precision)
  * HISTORY:                                                                                    *
  *   07/02/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void XMP_Hybrid_Mul(uint16_t* prod, uint16_t* multiplicand, uint16_t multiplier, int precision)
+void XMP_Hybrid_Mul(uint16_t* prod,
+                    size_t prod_offset,
+                    uint16_t* multiplicand,
+                    size_t multiplicand_offset,
+                    uint16_t multiplier,
+                    int precision)
 {
     uint32_t carry = 0;
     for (int i = 0; i < precision; ++i) {
-        uint32_t p = (uint32_t)multiplier * *multiplicand++;
-        p += *prod + carry;
-        *prod++ = (uint16_t)p;
+        uint32_t p = (uint32_t)multiplier * Get_HalfWord(multiplicand, multiplicand_offset++);
+        p += Get_HalfWord(prod, prod_offset) + carry;
+        Set_HalfWord(prod, prod_offset++, (uint16_t)p);
         carry = p >> 16;
     }
 
     /* Add carry to the next higher word of product / dividend */
-    *prod += (uint16_t)carry;
+    Set_HalfWord(prod, prod_offset, Get_HalfWord(prod, prod_offset) + (uint16_t)carry);
 }
 
 /***********************************************************************************************
@@ -1791,12 +1885,17 @@ void XMP_Double_Mul(digit* prod, const digit* multiplicand, const digit* multipl
     */
     XMP_Init(prod, 0, precision * 2);
 
-    const uint16_t* multiplier_ptr = (const uint16_t*)multiplier;
-    uint16_t* product_ptr = (uint16_t*)prod;
+    size_t multiplier_offset = 0;
+    size_t product_offset = 0;
 
     // Multiply multiplicand by each word in multiplier, accumulating prod.
     for (int i = 0; i < precision * 2; ++i) {
-        XMP_Hybrid_Mul(product_ptr++, (uint16_t*)multiplicand, *multiplier_ptr++, precision * 2);
+        XMP_Hybrid_Mul((uint16_t*)prod,
+                       product_offset++,
+                       (uint16_t*)multiplicand,
+                       0,
+                       Get_HalfWord((const uint16_t*)multiplier, multiplier_offset++),
+                       precision * 2);
     }
 }
 
@@ -1867,8 +1966,8 @@ int XMP_Prepare_Modulus(const digit* n_modulus, int precision)
         _modulus_shift--; /* now  0 <= _modulus_shift <= 16 */
     }
     uint16_t* mpm = (uint16_t*)_mod_quotient;
-    _reciprical_low_digit = *mpm++;
-    _reciprical_high_digit = *mpm;
+    _reciprical_low_digit = Get_HalfWord(mpm, 0);
+    _reciprical_high_digit = Get_HalfWord(mpm, 1);
 
     return 0;
 }
@@ -1928,9 +2027,10 @@ int XMP_Mod_Mult(digit* prod, const digit* multiplicand, const digit* multiplier
         int nqd = dmi + 1 - _modulus_sub_precision; // number of quotient digits remaining to be generated
 
         /* Set msb, lsb, and normal ptrs of dividend */
-        uint16_t* dmph =
-            ((uint16_t*)_double_staging_number) + dmi + 1; // points to one higher than precision would indicate
-        uint16_t* dmpl = dmph - _modulus_sub_precision;
+        size_t dmph_offset = dmi + 1;
+        uint16_t* dmph = (uint16_t*)_double_staging_number;
+        size_t dmpl_offset = dmph_offset - _modulus_sub_precision;
+        uint16_t* dmpl = dmph;
 
         /*
         ** Divide loop.
@@ -1942,20 +2042,19 @@ int XMP_Mod_Mult(digit* prod, const digit* multiplicand, const digit* multiplier
         ** modulus to get the proper negative remainder.
         */
         for (; nqd; nqd--) {
-            --dmph;
-            --dmpl;
+            --dmph_offset;
+            --dmpl_offset;
 
-            uint16_t q = mp_quo_digit(dmph); // trial quotient digit
+            uint16_t q = mp_quo_digit(dmph, dmph_offset); // trial quotient digit
             if (q > 0) {
-                XMP_Hybrid_Mul(dmpl, (uint16_t*)_scratch_modulus, q, precision * 2);
+                XMP_Hybrid_Mul(dmpl, dmpl_offset, (uint16_t*)_scratch_modulus, 0, q, precision * 2);
 
                 /* Perform correction if q too large.
                 **  This rarely occurs.
                 */
-                if (!(*dmph & SEMI_UPPER_MOST_BIT)) {
-                    uint16_t* dmp = dmpl;
-                    if (XMP_Sub((uint32_t*)dmp, (uint32_t*)dmp, _scratch_modulus, false, precision)) {
-                        (*dmph)--;
+                if (!(Get_HalfWord(dmph, dmph_offset) & SEMI_UPPER_MOST_BIT)) {
+                    if (XMP_Sub(dmpl, dmpl_offset, dmpl, dmpl_offset, _scratch_modulus, false, precision)) {
+                        Set_HalfWord(dmph, dmph_offset, Get_HalfWord(dmph, dmph_offset) - 1);
                     }
                 }
             }
@@ -2024,7 +2123,7 @@ void XMP_Mod_Mult_Clear(int precision)
 **      three MULTUNITs at dividend by the upper two MULTUNITs of the
 **      modulus.
 */
-uint16_t mp_quo_digit(uint16_t* dividend)
+uint16_t mp_quo_digit(uint16_t* dividend, size_t dividend_offset)
 {
     uint32_t q, q0, q1, q2;
 
@@ -2033,17 +2132,19 @@ uint16_t mp_quo_digit(uint16_t* dividend)
      * The last terms of q1 and q2 perform upward rounding, which is
      * needed to guarantee that the result not be too small.
      */
-    q1 = (dividend[-2] ^ SEMI_MASK) * (uint32_t)_reciprical_high_digit + _reciprical_high_digit;
-    q2 = (dividend[-1] ^ SEMI_MASK) * (uint32_t)_reciprical_low_digit + (1L << 16);
+    q1 = (Get_HalfWord(dividend, dividend_offset - 2) ^ SEMI_MASK) * (uint32_t)_reciprical_high_digit
+         + _reciprical_high_digit;
+    q2 = (Get_HalfWord(dividend, dividend_offset - 1) ^ SEMI_MASK) * (uint32_t)_reciprical_low_digit + (1L << 16);
     q0 = (q1 >> 1) + (q2 >> 1) + 1;
 
     /*      Compute the middle significant product group.   */
-    q1 = (dividend[-1] ^ SEMI_MASK) * (uint32_t)_reciprical_high_digit;
-    q2 = (dividend[0] ^ SEMI_MASK) * (uint32_t)_reciprical_low_digit;
+    q1 = (Get_HalfWord(dividend, dividend_offset - 1) ^ SEMI_MASK) * (uint32_t)_reciprical_high_digit;
+    q2 = (Get_HalfWord(dividend, dividend_offset) ^ SEMI_MASK) * (uint32_t)_reciprical_low_digit;
     q = (q0 >> 16) + (q1 >> 1) + (q2 >> 1) + 1;
 
     /*      Compute the most significant term and add in the others */
-    q = (q >> (16 - 2)) + (((dividend[0] ^ SEMI_MASK) * (uint32_t)_reciprical_high_digit) << 1);
+    q = (q >> (16 - 2))
+        + (((Get_HalfWord(dividend, dividend_offset) ^ SEMI_MASK) * (uint32_t)_reciprical_high_digit) << 1);
     q >>= _modulus_shift;
 
     /*      Prevent overflow and then wipe out the intermediate results. */

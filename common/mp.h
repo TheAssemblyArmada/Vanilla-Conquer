@@ -84,7 +84,7 @@ void XMP_Double_Mul(digit* prod, const digit* multiplicand, const digit* multipl
 int xmp_stage_modulus(const digit* n_modulus, int precision);
 int XMP_Mod_Mult(digit* prod, const digit* multiplicand, const digit* multiplier, int precision);
 void XMP_Mod_Mult_Clear(int precision);
-uint16_t mp_quo_digit(uint16_t* dividend);
+uint16_t mp_quo_digit(uint16_t* dividend, size_t dividend_offset);
 int xmp_exponent_mod(digit* expout, const digit* expin, const digit* exponent_ptr, const digit* modulus, int precision);
 bool XMP_Is_Small_Prime(const digit* candidate, int precision);
 bool XMP_Small_Divisors_Test(const digit* candidate, int precision);
