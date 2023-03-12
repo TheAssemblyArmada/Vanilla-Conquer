@@ -814,7 +814,7 @@ void RadarClass::Plot_Radar_Pixel(CELL cell)
             if (ZoomFactor > 1) {
                 void const* ptr;
                 int32_t offset;
-                int icon;
+                unsigned char icon;
 
                 if (cellptr->TType != TEMPLATE_NONE) {
                     ptr = TemplateTypeClass::As_Reference(cellptr->TType).Get_Image_Data();
@@ -828,10 +828,11 @@ void RadarClass::Plot_Radar_Pixel(CELL cell)
                 **	Convert the logical icon number into the actual icon number.
                 */
                 Mem_Copy(Add_Long_To_Pointer((void*)ptr, 28), &offset, sizeof(offset));
-                Mem_Copy(Add_Long_To_Pointer((void*)ptr, offset + icon), &icon, sizeof(char));
-                icon &= 0x00FF;
+                offset = le32toh(offset);
+                Mem_Copy(Add_Long_To_Pointer((void*)ptr, offset + icon), &icon, sizeof(icon));
 
                 Mem_Copy(Add_Long_To_Pointer((void*)ptr, 12), &offset, sizeof(offset));
+                offset = le32toh(offset);
                 ptr = Add_Long_To_Pointer((void*)ptr, offset + icon * (24 * 24));
 
                 unsigned char* data = (unsigned char*)ptr;
