@@ -56,7 +56,7 @@ unsigned int Find_File_Data_Posix::GetTime() const
         return 0;
     }
     struct stat buf = {0};
-    if (stat(DirEntry->d_name, &buf) != 0) {
+    if (stat(FullName, &buf) != 0) {
         return false;
     }
     return buf.st_mtime;
