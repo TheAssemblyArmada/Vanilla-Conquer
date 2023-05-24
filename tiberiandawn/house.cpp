@@ -4612,8 +4612,8 @@ void HouseClass::Init_Data(PlayerColorType color, HousesType house, int credits)
 
     case REMAP_LTBLUE:
         RemapTable = RemapLtBlue;
-        ((unsigned char&)Class->Color) = 135;
-        ((unsigned char&)Class->BrightColor) = 2;
+        ((unsigned char&)Class->Color) = 203;
+        ((unsigned char&)Class->BrightColor) = 201;
         break;
 
     case REMAP_ORANGE:
