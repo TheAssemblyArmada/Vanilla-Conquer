@@ -1701,7 +1701,8 @@ static void Create_Units(void)
         /*---------------------------------------------------------------------
         Set the house's max # units (this is used in the Mission_Timed_Hunt())
         ---------------------------------------------------------------------*/
-        hptr->MaxUnit = MPlayerUnitCount * scaleval;
+        // Disable this as it will force MaxUnit to 10 preventing AI from building vehicles in skirmish (Tore)
+        //hptr->MaxUnit = MPlayerUnitCount * scaleval;
 
         /*---------------------------------------------------------------------
         Create units for this house
