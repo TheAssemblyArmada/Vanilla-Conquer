@@ -4630,8 +4630,8 @@ void HouseClass::Init_Data(PlayerColorType color, HousesType house, int credits)
 
     case REMAP_BLUE:
         RemapTable = RemapBlue;
-        ((unsigned char&)Class->Color) = 203;
-        ((unsigned char&)Class->BrightColor) = 201;
+        ((unsigned char&)Class->Color) = 135;
+        ((unsigned char&)Class->BrightColor) = 2;
         break;
     }
 }

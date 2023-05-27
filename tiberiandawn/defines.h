@@ -697,11 +697,11 @@ typedef enum PlayerColorType : signed char
     REMAP_NONE = -1,
     REMAP_GOLD,
     REMAP_FIRST = REMAP_GOLD,
-    REMAP_LTBLUE,
+    REMAP_LTBLUE, // Ingame grey color
     REMAP_RED,
     REMAP_GREEN,
     REMAP_ORANGE,
-    REMAP_BLUE,
+    REMAP_BLUE, // Ingame dark green color
     REMAP_LAST = REMAP_BLUE,
 
     REMAP_COUNT
