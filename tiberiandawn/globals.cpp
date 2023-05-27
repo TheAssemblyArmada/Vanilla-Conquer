@@ -518,7 +518,7 @@ int MPlayerUnitCount = 10;    // # units for non-base multiplayer scenarios
 Min & Max unit count values; index0 = bases OFF, index1 = bases ON
 ---------------------------------------------------------------------------*/
 int MPlayerCountMin[2] = {1, 0};
-int MPlayerCountMax[2] = {50, 12};
+int MPlayerCountMax[2] = {50, 10};
 
 /*---------------------------------------------------------------------------
 MPlayerMaxAhead is the number of frames ahead of this one to execute a given
