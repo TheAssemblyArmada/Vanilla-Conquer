@@ -1698,11 +1698,12 @@ static void Create_Units(void)
             }
         }
 
+#ifndef USE_RA_AI // This prevents the AI from building vehicles when the RA AI is used in Skirmish. (Tore)
         /*---------------------------------------------------------------------
         Set the house's max # units (this is used in the Mission_Timed_Hunt())
         ---------------------------------------------------------------------*/
-        // Disable this as it will force MaxUnit to 10 preventing AI from building vehicles in skirmish (Tore)
-        //hptr->MaxUnit = MPlayerUnitCount * scaleval;
+        hptr->MaxUnit = MPlayerUnitCount * scaleval;
+#endif // USE_RA_AI
 
         /*---------------------------------------------------------------------
         Create units for this house
