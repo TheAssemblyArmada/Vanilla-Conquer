@@ -554,7 +554,11 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
 #ifdef SDL2_BUILD
             Put_Key_Message(event.key.keysym.scancode, false);
 #else
-            Put_Key_Message(event.key.keysym.sym, false);
+            if (event.key.keysym.sym == SDLK_RETURN && (event.key.keysym.mod & KMOD_ALT)) {
+                /* Switching to full screen is handled in the key up event */
+            } else {
+                Put_Key_Message(event.key.keysym.sym, false);
+            }
 #endif
             break;
         case SDL_KEYUP:
@@ -565,7 +569,11 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
                 Put_Key_Message(event.key.keysym.scancode, true);
             }
 #else
-            Put_Key_Message(event.key.keysym.sym, true);
+            if (event.key.keysym.sym == SDLK_RETURN && (event.key.keysym.mod & KMOD_ALT)) {
+                Toggle_Video_Fullscreen();
+            } else {
+                Put_Key_Message(event.key.keysym.sym, true);
+            }
 #endif
             break;
         case SDL_MOUSEMOTION:
