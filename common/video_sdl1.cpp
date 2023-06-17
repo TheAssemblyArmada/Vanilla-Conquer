@@ -157,6 +157,24 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
 void Toggle_Video_Fullscreen()
 {
     Settings.Video.Windowed = !Settings.Video.Windowed;
+
+    if (window) {
+        int win_flags = SDL_HWSURFACE | SDL_HWPALETTE;
+        SDL_Surface* new_window;
+
+        if (!Settings.Video.Windowed) {
+            win_flags |= SDL_FULLSCREEN;
+        }
+
+        new_window = SDL_SetVideoMode(window->w, window->h, 8, win_flags);
+        if (new_window) {
+            window = new_window;
+
+            /* The palette needs to be restored when switching to a new video mode */
+            SDL_SetPalette(window, SDL_LOGPAL, logpal, 0, 256);
+            SDL_SetPalette(window, SDL_PHYSPAL, physpal, 0, 256);
+        }
+    }
 }
 
 void Get_Video_Scale(float& x, float& y)
