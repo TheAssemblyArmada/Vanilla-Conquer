@@ -607,6 +607,17 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
 
             Put_Mouse_Message(key, x, y, event.type == SDL_MOUSEBUTTONDOWN ? false : true);
         } break;
+#ifdef SDL1_BUILD
+        case SDL_ACTIVEEVENT:
+            if (event.active.state & SDL_APPINPUTFOCUS) {
+                if (event.active.gain) {
+                    Focus_Restore();
+                } else {
+                    Focus_Loss();
+                }
+            }
+            break;
+#endif
 #ifdef SDL2_BUILD
         case SDL_WINDOWEVENT:
             switch (event.window.event) {
