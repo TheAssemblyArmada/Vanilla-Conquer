@@ -84,6 +84,16 @@ void WWKeyboardClassSDL1::Fill_Buffer_From_System(void)
 
             Put_Mouse_Message(key, x, y, event.type == SDL_MOUSEBUTTONDOWN ? false : true);
         } break;
+
+        case SDL_ACTIVEEVENT:
+            if (event.active.state & SDL_APPINPUTFOCUS) {
+                if (event.active.gain) {
+                    Focus_Restore();
+                } else {
+                    Focus_Loss();
+                }
+            }
+            break;
         }
     }
 }
