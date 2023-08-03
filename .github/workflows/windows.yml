@@ -60,7 +60,7 @@ jobs:
         tag_name: "latest"
         prerelease: true
         files: |
-          artifact\*
+          artifact/*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -69,7 +69,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          artifact\*
+          artifact/*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -109,7 +109,6 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        choco install imagemagick.app --no-progress --version 7.0.10.56 --side-by-side
         choco install openalsdk --no-progress
         Invoke-WebRequest -Uri https://www.libsdl.org/release/SDL2-devel-2.0.12-VC.zip -OutFile $Env:TEMP\SDL2-devel.zip
         Invoke-WebRequest -Uri https://github.com/ninja-build/ninja/releases/download/v1.10.1/ninja-win.zip -OutFile $Env:TEMP\ninja-win.zip
@@ -118,13 +117,12 @@ jobs:
         Expand-Archive $Env:TEMP\ninja-win.zip -DestinationPath $Env:TEMP\ninja
         Expand-Archive $Env:TEMP\openal-soft-1.21.0-bin.zip -DestinationPath $Env:TEMP
         echo "$Env:TEMP\ninja" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-        echo "C:\Program Files\ImageMagick-7.0.10-Q16-HDRI" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         ninja --version
         Rename-Item $Env:TEMP\openal-soft-1.21.0-bin\bin\${{ steps.vars.outputs.oal_path }}\soft_oal.dll OpenAL32.dll
         
     - name: Configure Vanilla Conquer
       run: |
-        cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_TOOLS=ON -DBUILD_TESTS=ON -DSDL2=ON "-DSDL2_ROOT_DIR=$($Env:TEMP)\SDL2-2.0.12" -DOPENAL=ON "-DOPENAL_ROOT=C:\Program Files (x86)\OpenAL 1.1 SDK" -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON "-DImageMagick_convert_EXECUTABLE=C:\Program Files\ImageMagick-7.0.10-Q16-HDRI\magick.exe" -DImageMagick_convert_FOUND=TRUE -B build
+        cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_TOOLS=ON -DBUILD_TESTS=ON -DSDL2=ON "-DSDL2_ROOT_DIR=$($Env:TEMP)\SDL2-2.0.12" -DOPENAL=ON "-DOPENAL_ROOT=C:\Program Files (x86)\OpenAL 1.1 SDK" -DBUILD_REMASTERTD=OFF -DBUILD_REMASTERRA=OFF -DMAP_EDITORTD=ON -DMAP_EDITORRA=ON "-DImageMagick_magick_EXECUTABLE=$($(Get-Command magick.exe).Source)" -DImageMagick_magick_FOUND=TRUE -B build
 
     - name: Build Vanilla Conquer
       run: |
@@ -157,7 +155,7 @@ jobs:
         tag_name: "latest"
         prerelease: true
         files: |
-          artifact\*
+          artifact/*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -166,6 +164,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          artifact\*
+          artifact/*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
