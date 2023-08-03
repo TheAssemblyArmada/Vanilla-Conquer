@@ -13,8 +13,6 @@ jobs:
         submodules: 'true'
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
-        
-    - uses: seanmiddleditch/gha-setup-ninja@master
     
     - name: Set Git Info
       id: gitinfo
@@ -34,7 +32,11 @@ jobs:
       with:
         path: ~/macports
         key: ${{ env.DEP_CACHE_KEY }}
-
+    
+    - name: Install ninja
+      run: |
+        brew install ninja
+    
     - if: ${{ steps.dep-cache.outputs.cache-hit != 'true' }}
       name: Install dependencies
       run: |
