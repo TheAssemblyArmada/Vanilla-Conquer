@@ -439,6 +439,7 @@ public:
                                     const char* shape_name = NULL) const;
 
     virtual void Draw_It(int x, int y, WindowNumberType window) const;
+    bool Should_Show_Health_Bar();
     virtual void Draw_Pips(int x, int y, WindowNumberType window) const;
     virtual void Hidden(void);
     virtual bool Mark(MarkType mark = MARK_CHANGE);
