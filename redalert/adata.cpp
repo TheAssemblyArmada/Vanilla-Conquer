@@ -2394,7 +2394,7 @@ void AnimTypeClass::Init_Heap(void)
  * HISTORY:                                                                                    *
  *   06/02/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void AnimTypeClass::One_Time(void)
+void AnimTypeClass::Init_Clear(void)
 {
     for (int index = ANIM_FIRST; index < ANIM_COUNT; index++) {
         char fullname[_MAX_FNAME + _MAX_EXT];
@@ -2436,22 +2436,20 @@ void AnimTypeClass::One_Time(void)
  *=============================================================================================*/
 void AnimTypeClass::Init(TheaterType theater)
 {
-    if (theater != LastTheater) {
-        for (int index = ANIM_FIRST; index < ANIM_COUNT; index++) {
-            AnimTypeClass const& anim = As_Reference((AnimType)index);
+    for (int index = ANIM_FIRST; index < ANIM_COUNT; index++) {
+        AnimTypeClass const& anim = As_Reference((AnimType)index);
 
-            if (anim.IsTheater) {
-                char fullname[_MAX_FNAME + _MAX_EXT]; // Fully constructed iconset name.
-                _makepath(fullname, NULL, NULL, anim.IniName, Theaters[theater].Suffix);
-                ((void const*&)anim.ImageData) = MFCD::Retrieve(fullname);
-            }
+        if (anim.IsTheater) {
+            char fullname[_MAX_FNAME + _MAX_EXT]; // Fully constructed iconset name.
+            _makepath(fullname, NULL, NULL, anim.IniName, Theaters[theater].Suffix);
+            ((void const*&)anim.ImageData) = MFCD::Retrieve(fullname);
         }
+    }
 
 #ifdef REMASTER_BUILD
-        // Set up beacon image data manually since they're new animations only available in the virtual renderer
-        ((void const*&)As_Reference(ANIM_BEACON_VIRTUAL).ImageData) = As_Reference(ANIM_BEACON).ImageData;
+    // Set up beacon image data manually since they're new animations only available in the virtual renderer
+    ((void const*&)As_Reference(ANIM_BEACON_VIRTUAL).ImageData) = As_Reference(ANIM_BEACON).ImageData;
 #endif
-    }
 }
 
 /***********************************************************************************************

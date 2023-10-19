@@ -525,26 +525,18 @@ void VesselTypeClass::Dimensions(int& width, int& height) const
  * HISTORY:                                                                                    *
  *   03/20/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void VesselTypeClass::One_Time(void)
+void VesselTypeClass::Init_Clear(void)
 {
     for (VesselType index = VESSEL_FIRST; index < VESSEL_COUNT; index++) {
         char fullname[_MAX_FNAME + _MAX_EXT];
         char buffer[_MAX_FNAME];
         VesselTypeClass const& uclass = As_Reference(index);
-#ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
-        if (uclass.Level != -1 || index == VESSEL_CARRIER) {
-#else
-        if (uclass.Level != -1) {
-#endif
-            //		if (uclass.IsBuildable) {
-
-            /*
+        /*
             **	Fetch the supporting data files for the unit.
             */
-            sprintf(buffer, "%sICON", uclass.Graphic_Name());
-            _makepath(fullname, NULL, NULL, buffer, ".SHP");
-            ((void const*&)uclass.CameoData) = MFCD::Retrieve(fullname);
-        }
+        sprintf(buffer, "%sICON", uclass.Graphic_Name());
+        _makepath(fullname, NULL, NULL, buffer, ".SHP");
+        ((void const*&)uclass.CameoData) = MFCD::Retrieve(fullname);
 
         /*
         **	Fetch a pointer to the unit's shape data.

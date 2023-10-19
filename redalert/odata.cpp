@@ -614,7 +614,7 @@ void OverlayTypeClass::Init_Heap(void)
  * HISTORY:                                                                                    *
  *   08/12/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void OverlayTypeClass::One_Time(void)
+void OverlayTypeClass::Init_Clear(void)
 {
 }
 
@@ -852,25 +852,22 @@ void OverlayTypeClass::Draw_It(int x, int y, int data) const
  *=============================================================================================*/
 void OverlayTypeClass::Init(TheaterType theater)
 {
-    if (theater != LastTheater) {
+    for (OverlayType index = OVERLAY_FIRST; index < OVERLAY_COUNT; index++) {
+        OverlayTypeClass& overlay = As_Reference(index);
+        char fullname[_MAX_FNAME + _MAX_EXT]; // Fully constructed iconset name.
 
-        for (OverlayType index = OVERLAY_FIRST; index < OVERLAY_COUNT; index++) {
-            OverlayTypeClass& overlay = As_Reference(index);
-            char fullname[_MAX_FNAME + _MAX_EXT]; // Fully constructed iconset name.
-
-            if (overlay.IsTheater) {
-                _makepath(fullname, NULL, NULL, overlay.IniName, Theaters[theater].Suffix);
-            } else {
-                _makepath(fullname, NULL, NULL, overlay.IniName, ".SHP");
-            }
-            overlay.ImageData = MFCD::Retrieve(fullname);
-
-            IsTheaterShape = overlay.IsTheater; // Tell Build_Frame if this is a theater specific shape
-            if (overlay.RadarIcon != NULL)
-                delete[](char*) overlay.RadarIcon;
-            overlay.RadarIcon = Get_Radar_Icon(overlay.Get_Image_Data(), 0, -1, 3);
-            IsTheaterShape = false;
+        if (overlay.IsTheater) {
+            _makepath(fullname, NULL, NULL, overlay.IniName, Theaters[theater].Suffix);
+        } else {
+            _makepath(fullname, NULL, NULL, overlay.IniName, ".SHP");
         }
+        overlay.ImageData = MFCD::Retrieve(fullname);
+
+        IsTheaterShape = overlay.IsTheater; // Tell Build_Frame if this is a theater specific shape
+        if (overlay.RadarIcon != NULL)
+            delete[](char*) overlay.RadarIcon;
+        overlay.RadarIcon = Get_Radar_Icon(overlay.Get_Image_Data(), 0, -1, 3);
+        IsTheaterShape = false;
     }
 }
 

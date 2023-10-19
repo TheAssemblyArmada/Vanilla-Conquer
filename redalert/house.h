@@ -817,7 +817,7 @@ public:
     };
 
     static void Init(void);
-    static void One_Time(void);
+    static void Init_Clear(void);
     static HouseClass* As_Pointer(HousesType house);
     static void Recalc_Attributes(void);
 

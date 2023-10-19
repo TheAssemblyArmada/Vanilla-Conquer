@@ -518,19 +518,6 @@ bool Read_Scenario(char* name)
                     Emergency_Exit(EXIT_FAILURE);
                 }
             }
-            CCINIClass ini;
-            CCFileClass mplayerIniFile("MPLAYER.INI");
-            if (ini.Load(mplayerIniFile, false)) {
-                Rule.General(ini);
-                Rule.Recharge(ini);
-                Rule.AI(ini);
-                Rule.Powerups(ini);
-                Rule.Land_Types(ini);
-                Rule.Themes(ini);
-                Rule.IQ(ini);
-                Rule.Objects(ini);
-                Rule.Difficulty(ini);
-            }
         }
 #endif
         Fill_In_Data();
@@ -2183,6 +2170,32 @@ bool Read_Scenario_INI(char* fname, bool)
     }
 #endif
 
+    HouseTypes.Set_Heap(HOUSE_COUNT);
+    BuildingTypes.Set_Heap(STRUCT_COUNT);
+    AircraftTypes.Set_Heap(AIRCRAFT_COUNT);
+    InfantryTypes.Set_Heap(INFANTRY_COUNT);
+    BulletTypes.Set_Heap(BULLET_COUNT);
+    AnimTypes.Set_Heap(ANIM_COUNT);
+    UnitTypes.Set_Heap(UNIT_COUNT);
+    VesselTypes.Set_Heap(VESSEL_COUNT);
+    TemplateTypes.Set_Heap(TEMPLATE_COUNT);
+    TerrainTypes.Set_Heap(TERRAIN_COUNT);
+    OverlayTypes.Set_Heap(OVERLAY_COUNT);
+    SmudgeTypes.Set_Heap(SMUDGE_COUNT);
+
+    HouseTypeClass::Init_Heap();
+    SmudgeTypeClass::Init_Heap();
+    BuildingTypeClass::Init_Heap();
+    AircraftTypeClass::Init_Heap();
+    InfantryTypeClass::Init_Heap();
+    BulletTypeClass::Init_Heap();
+    AnimTypeClass::Init_Heap();
+    UnitTypeClass::Init_Heap();
+    VesselTypeClass::Init_Heap();
+    TemplateTypeClass::Init_Heap();
+    TerrainTypeClass::Init_Heap();
+    OverlayTypeClass::Init_Heap();
+
 #ifdef FIXIT_ANTS
     Session.Messages.Reset();
     //	Session.Messages.Add_Message(NULL, 0, NULL, PCOLOR_GREEN, TPF_6PT_GRAD|TPF_USE_GRAD_PAL|TPF_FULLSHADOW, 1);
@@ -2206,26 +2219,14 @@ bool Read_Scenario_INI(char* fname, bool)
     BuildingTypeClass::As_Reference(STRUCT_LARVA2).Level = -1;
 #endif
 
-    Rule.General(RuleINI);
-    Rule.Recharge(RuleINI);
-    Rule.AI(RuleINI);
-    Rule.Powerups(RuleINI);
-    Rule.Land_Types(RuleINI);
-    Rule.Themes(RuleINI);
-    Rule.IQ(RuleINI);
-    Rule.Objects(RuleINI);
-    Rule.Difficulty(RuleINI);
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98 - Except does this _change_ any rules, or just add to them? - Just adds.
-    Rule.General(AftermathINI);
-    Rule.Recharge(AftermathINI);
-    Rule.AI(AftermathINI);
-    Rule.Powerups(AftermathINI);
-    Rule.Land_Types(AftermathINI);
-    Rule.Themes(AftermathINI);
-    Rule.IQ(AftermathINI);
-    Rule.Objects(AftermathINI);
-    Rule.Difficulty(AftermathINI);
-#endif
+    Rule.Process(RuleINI, false);
+    Rule.Process(AftermathINI, false);
+
+    CCINIClass mpini;
+    CCFileClass mplayerIniFile("MPLAYER.INI");
+    if (mpini.Load(mplayerIniFile, false)) {
+        Rule.Process(mpini, false);
+    }
 
     /*
     **	For civilians, remove the graphics name override from the base rules (can still be overridden in
@@ -2242,15 +2243,22 @@ bool Read_Scenario_INI(char* fname, bool)
     **	Override any rules values specified in this
     **	particular scenario file.
     */
-    Rule.General(ini);
-    Rule.Recharge(ini);
-    Rule.AI(ini);
-    Rule.Powerups(ini);
-    Rule.Land_Types(ini);
-    Rule.Themes(ini);
-    Rule.IQ(ini);
-    Rule.Objects(ini);
-    Rule.Difficulty(ini);
+    Rule.Process(ini, false);
+
+    ObjectTypeClass::Init_Clear();
+    BuildingTypeClass::Init_Clear();
+    BulletTypeClass::Init_Clear();
+    HouseTypeClass::Init_Clear();
+    TemplateTypeClass::Init_Clear();
+    OverlayTypeClass::Init_Clear();
+    SmudgeTypeClass::Init_Clear();
+    TerrainTypeClass::Init_Clear();
+    UnitTypeClass::Init_Clear();
+    VesselTypeClass::Init_Clear();
+    InfantryTypeClass::Init_Clear();
+    AnimTypeClass::Init_Clear();
+    AircraftTypeClass::Init_Clear();
+    HouseClass::Init_Clear();
 
     /*
     **	- Use ore growth and spread values from the special settings.

@@ -403,7 +403,7 @@ HousesType HouseTypeClass::From_Name(char const* name)
  *   05/21/1994 JLB : Converted to member function.                                            *
  *   06/19/1996 JLB : Converted to regular heap class management.                              *
  *=============================================================================================*/
-void HouseTypeClass::One_Time(void)
+void HouseTypeClass::Init_Clear(void)
 {
 }
 

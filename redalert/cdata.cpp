@@ -1298,7 +1298,7 @@ ObjectClass* TemplateTypeClass::Create_One_Of(HouseClass*) const
  * HISTORY:                                                                                    *
  *   08/12/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void TemplateTypeClass::One_Time(void)
+void TemplateTypeClass::Init_Clear(void)
 {
 }
 
