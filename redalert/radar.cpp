@@ -1683,6 +1683,10 @@ int RadarClass::RTacticalClass::Action(unsigned flags, KeyNumType& key)
         return (false);
     }
 
+    if (Map.IsScrollCoasting) {
+        return (false);
+    }
+
     /*
     ** Disable processing if the player names are up
     */

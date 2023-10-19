@@ -184,6 +184,10 @@ DisplayClass::DisplayClass(void)
     , BandY(0)
     , NewX(0)
     , NewY(0)
+    , ScrollCoastPressPointX(0)
+    , ScrollCoastPressPointY(0)
+    , IsScrollCoasting(false)
+    , IsTentativeScrollCoast(false)
 {
     ShadowShapes = 0;
     TransIconset = 0;
@@ -590,10 +594,11 @@ void DisplayClass::Set_View_Dimensions(int x, int y, int width, int height)
     IsToRedraw = true;
     Flag_To_Redraw(false);
 
-    TacButton.X = TacPixelX;
-    TacButton.Y = TacPixelY;
-    TacButton.Width = Lepton_To_Pixel(TacLeptonWidth);
-    TacButton.Height = Lepton_To_Pixel(TacLeptonHeight);
+    /* set TacButton to whole screen so the mouse actions can be optionally applied to whole screen */
+    TacButton.X = 0;
+    TacButton.Y = 0;
+    TacButton.Width = SeenBuff.Get_Width();
+    TacButton.Height = SeenBuff.Get_Height();
 }
 
 /***********************************************************************************************
@@ -3043,6 +3048,15 @@ void DisplayClass::Refresh_Band(void)
     }
 }
 
+bool DisplayClass::Is_Mouse_At_Tactical_View_Edge(int x, int y)
+{
+    int SidebarWidth = 160; // SIDE_WIDTH (80) * RESFACTOR (2) for win95
+    if (y == 0 || x == 0 || x == SeenBuff.Get_Width() - SidebarWidth - 1 || y == SeenBuff.Get_Height() - 1) {
+        return true;
+    }
+    return false;
+}
+
 /***********************************************************************************************
  * DisplayClass::TacticalClass::Action -- Processes input for the tactical map.                *
  *                                                                                             *
@@ -3081,7 +3095,14 @@ int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType& key)
         x = Get_Mouse_X();
         y = Get_Mouse_Y();
     }
-    bool edge = (y == 0 || x == 0 || x == SeenBuff.Get_Width() - 1 || y == SeenBuff.Get_Height() - 1);
+    // For right click scroll coasting the whole screen x and Y are passed to make sure
+    // scroll coasting works on outside of tactical display (e.g. the upper black part of the
+    // screen with the options and credits tabs
+    int displayx = x;
+    int displayy = y;
+    
+    int SidebarWidth = 160;
+    bool edge = Map.Is_Mouse_At_Tactical_View_Edge(x, y);
     COORDINATE coord = Map.Pixel_To_Coord(x, y);
     CELL cell = Coord_Cell(coord);
     if (coord) {
@@ -3219,12 +3240,6 @@ int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType& key)
             Map.Set_Cursor_Pos(cell);
         }
 
-        /*
-        **	A right mouse button press cancels the current action or selection.
-        */
-        if (flags & RIGHTPRESS) {
-            Map.Mouse_Right_Press();
-        }
 
         /*
         **	Make sure that if the mouse button has been released and the map doesn't know about it,
@@ -3274,6 +3289,29 @@ int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType& key)
         }
     }
 
+        /*
+        **	A right mouse button press cancels the current action or selection.
+        */
+    if (flags & RIGHTPRESS) {
+        Map.Mouse_Right_Press();
+    }
+
+    /*
+        **	When the mouse buttons aren't pressed, only the mouse cursor shape is processed.
+        **	The shape changes depending on what object the mouse is currently over and what
+        **	object is currently selected.
+        */
+    if (flags & RIGHTHELD) {
+        Map.Mouse_Right_Held(displayx, displayy);
+    }
+
+    /*
+        **	Normal actions occur when the mouse button is released.
+        */
+    if (flags & RIGHTRELEASE) {
+        Map.Mouse_Right_Release(cell, displayx, displayy, object, action);
+    }
+
     return (GadgetClass::Action(0, key));
 }
 
@@ -3304,10 +3342,8 @@ int DisplayClass::TacticalClass::Selection_At_Mouse(unsigned flags, KeyNumType& 
     } else {
         x = Get_Mouse_X();
         y = Get_Mouse_Y();
-
-        if (x == 0 || y == 199 || x == 319)
-            edge = true;
     }
+    edge = Map.Is_Mouse_At_Tactical_View_Edge(x, y);
     COORDINATE coord = Map.Pixel_To_Coord(x, y);
     CELL cell = Coord_Cell(coord);
 
@@ -3378,10 +3414,9 @@ int DisplayClass::TacticalClass::Command_Object(unsigned flags, KeyNumType& key)
     } else {
         x = Get_Mouse_X();
         y = Get_Mouse_Y();
-
-        if (x == 0 || y == 199 || x == 319)
-            edge = true;
     }
+    edge = Map.Is_Mouse_At_Tactical_View_Edge(x, y);
+
     COORDINATE coord = Map.Pixel_To_Coord(x, y);
     CELL cell = Coord_Cell(coord);
 
@@ -3442,30 +3477,81 @@ int DisplayClass::TacticalClass::Command_Object(unsigned flags, KeyNumType& key)
  *=============================================================================================*/
 void DisplayClass::Mouse_Right_Press(void)
 {
-    if (PendingObjectPtr && PendingObjectPtr->Is_Techno()) {
-        // PendingObjectPtr->Transmit_Message(RADIO_OVER_OUT);
-        PendingObjectPtr = 0;
-        PendingObject = 0;
-        PendingHouse = HOUSE_NONE;
-        Set_Cursor_Shape(0);
-    } else {
-        if (IsRepairMode) {
-            IsRepairMode = false;
-        } else {
-            if (IsSellMode) {
-                IsSellMode = false;
-            } else {
-                if (IsTargettingMode != SPC_NONE) {
-                    IsTargettingMode = SPC_NONE;
-                } else {
-                    Unselect_All();
-                }
-            }
+    if (IsRubberBand || IsTentative) {
+        return;
+    }
+        IsTentativeScrollCoast = true;
+
+        ScrollCoastPressPointX = Get_Mouse_X();
+        ScrollCoastPressPointY = Get_Mouse_Y();
+}
+
+void DisplayClass::Mouse_Right_Held(int x, int y)
+{
+    if (IsTentativeScrollCoast && Options.UseRightClickScrollCoast) {
+        if (abs(ScrollCoastPressPointX - x) > 8 || abs(ScrollCoastPressPointY - y) > 8) {
+            IsTentativeScrollCoast = false;
+            IsScrollCoasting = true;
         }
     }
 
-    // If it breaks... call 228.
-    Set_Default_Mouse(MOUSE_NORMAL, Map.IsSmall);
+    if (IsScrollCoasting && !IsRubberBand) {
+        COORDINATE ScrollCoastPressCoord = XY_Coord(ScrollCoastPressPointX, ScrollCoastPressPointY);
+        COORDINATE MouseCoord = XY_Coord(x, y);
+
+        int base_scroll_rate = 1 * Options.ScrollCoastRate;
+        int ScrollLeptons = base_scroll_rate * abs(Distance(ScrollCoastPressCoord, MouseCoord));
+
+        // scroll rate sensitivity modifier
+        if (ScrollLeptons > 0) {
+            ScrollLeptons /= 6;
+        }
+
+        int maxLeptons = 8 * CELL_LEPTON_W;
+
+        // Clamp to maxLeptons max
+        ScrollLeptons = min(maxLeptons, ScrollLeptons);
+        
+        DirType dir = Direction(ScrollCoastPressCoord, MouseCoord);
+        int control = Dir_Facing(dir);
+
+        Override_Mouse_Shape((MouseType)(MOUSE_N + control), false);
+
+        Scroll_Map(dir, ScrollLeptons, true);
+    }
+}
+
+void DisplayClass::Mouse_Right_Release(CELL cell, int x, int y, ObjectClass* object, ActionType action, bool wsmall)
+{
+    if (!IsScrollCoasting) {
+        if (PendingObjectPtr && PendingObjectPtr->Is_Techno()) {
+            // PendingObjectPtr->Transmit_Message(RADIO_OVER_OUT);
+            PendingObjectPtr = 0;
+            PendingObject = 0;
+            PendingHouse = HOUSE_NONE;
+            Set_Cursor_Shape(0);
+        } else {
+            if (IsRepairMode) {
+                IsRepairMode = false;
+            } else {
+                if (IsSellMode) {
+                    IsSellMode = false;
+                } else {
+                    if (IsTargettingMode != SPC_NONE) {
+                        IsTargettingMode = SPC_NONE;
+                    } else {
+                        Unselect_All();
+                    }
+                }
+            }
+        }
+
+        // If it breaks... call 228.
+        Set_Default_Mouse(MOUSE_NORMAL, Map.IsSmall);
+    }
+
+    IsTentativeScrollCoast = false;
+    IsScrollCoasting = false;
 }
 
 /***********************************************************************************************
@@ -3493,6 +3579,10 @@ void DisplayClass::Mouse_Right_Press(void)
 void DisplayClass::Mouse_Left_Up(CELL cell, bool shadow, ObjectClass* object, ActionType action, bool wsmall)
 {
     IsTentative = false;
+
+    if (IsScrollCoasting || IsTentativeScrollCoast) {
+        return;
+    }
 
     TARGET target = TARGET_NONE;
     if (object != NULL) {
@@ -4097,7 +4187,7 @@ void DisplayClass::Mouse_Left_Release(CELL cell, int x, int y, ObjectClass* obje
  *=============================================================================================*/
 void DisplayClass::Mouse_Left_Press(int x, int y)
 {
-    if (!IsRepairMode && !IsSellMode && IsTargettingMode == SPC_NONE && !PendingObject) {
+    if (!IsRepairMode && !IsSellMode && IsTargettingMode == SPC_NONE && !PendingObject && !IsScrollCoasting) {
         IsTentative = true;
         BandX = x;
         BandY = y;
@@ -4123,7 +4213,7 @@ void DisplayClass::Mouse_Left_Press(int x, int y)
  *=============================================================================================*/
 void DisplayClass::Mouse_Left_Held(int x, int y)
 {
-    if (IsRubberBand) {
+    if (IsRubberBand && !IsScrollCoasting) {
         if (x != NewX || y != NewY) {
             x = Bound(x, 0, Lepton_To_Pixel(TacLeptonWidth) - 1);
             y = Bound(y, 0, Lepton_To_Pixel(TacLeptonHeight) - 1);

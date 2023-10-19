@@ -2000,8 +2000,9 @@ int SidebarClass::StripClass::SelectClass::Action(unsigned flags, KeyNumType& ke
     */
     FactoryClass* factory = PlayerPtr->Fetch_Factory(otype);
 
-    Map.Override_Mouse_Shape(MOUSE_NORMAL);
-
+    if (!Map.IsScrollCoasting) {
+         Map.Override_Mouse_Shape(MOUSE_NORMAL);
+    }
     if (index < Strip->BuildableCount) {
         if (otype != RTTI_SPECIAL) {
             choice = Fetch_Techno_Type(otype, oid);
@@ -2022,7 +2023,7 @@ int SidebarClass::StripClass::SelectClass::Action(unsigned flags, KeyNumType& ke
         /*
         **	Display the help text if the mouse is over the button.
         */
-        if (flags & LEFTUP) {
+        if ((flags & LEFTUP) && !Map.IsScrollCoasting) {
             Map.Help_Text(SpecialWeaponHelp[spc], X, Y, scheme->Color, true);
             flags &= ~LEFTUP;
         }
@@ -2031,14 +2032,14 @@ int SidebarClass::StripClass::SelectClass::Action(unsigned flags, KeyNumType& ke
         **	A right mouse button signals "cancel".  If we are in targeting
         ** mode then we don't want to be any more.
         */
-        if (flags & RIGHTPRESS) {
+        if ((flags & RIGHTPRESS) && !Map.IsScrollCoasting) {
             Map.IsTargettingMode = SPC_NONE;
         }
         /*
         **	A left mouse press signal "activate".  If our weapon type is
         ** available then we should activate it.
         */
-        if (flags & LEFTPRESS) {
+        if ((flags & LEFTPRESS) && !Map.IsScrollCoasting) {
 
             if ((unsigned)spc < SPC_COUNT) {
                 if (PlayerPtr->SuperWeapon[spc].Is_Ready()) {
@@ -2062,7 +2063,7 @@ int SidebarClass::StripClass::SelectClass::Action(unsigned flags, KeyNumType& ke
             /*
             **	Display the help text if the mouse is over the button.
             */
-            if (flags & LEFTUP) {
+            if ((flags & LEFTUP) && !Map.IsScrollCoasting) {
                 Map.Help_Text(choice->Full_Name(), X, Y, scheme->Color, true);
                 Map.Set_Cost(choice->Cost_Of() * PlayerPtr->CostBias);
                 flags &= ~LEFTUP;
@@ -2071,7 +2072,7 @@ int SidebarClass::StripClass::SelectClass::Action(unsigned flags, KeyNumType& ke
             /*
             **	A right mouse button signals "cancel".
             */
-            if (flags & RIGHTPRESS) {
+            if ((flags & RIGHTPRESS) && !Map.IsScrollCoasting) {
 
                 /*
                 **	If production is in progress, put it on hold. If production is already
@@ -2104,7 +2105,7 @@ int SidebarClass::StripClass::SelectClass::Action(unsigned flags, KeyNumType& ke
                 }
             }
 
-            if (flags & LEFTPRESS) {
+            if ((flags & LEFTPRESS) && !Map.IsScrollCoasting) {
 
                 /*
                 **	If there is already a factory attached to this strip but the player didn't click

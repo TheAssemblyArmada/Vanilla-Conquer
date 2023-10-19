@@ -80,6 +80,8 @@ public:
     unsigned int GameSpeed;
 
     int ScrollRate;    // Distance to scroll.
+    bool UseRightClickScrollCoast; // Enable scrolling map with right mouse button held
+    int ScrollCoastRate; // Rate for Scroll coasting
     fixed Volume;      // Volume for sound effects.
     fixed ScoreVolume; // Volume for scores.
 #ifdef FIXIT_VERSION_3
