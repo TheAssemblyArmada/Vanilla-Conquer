@@ -164,6 +164,7 @@ ScenarioClass::ScenarioClass(void)
     , IsNoMapSel(false)
     , IsTruckCrate(false)
     , IsMoneyTiberium(false)
+    , EnableEvac(true)
     ,
 #ifdef FIXIT_VERSION_3 //	For endgame auto-sonar pulse.
 #define AUTOSONAR_PERIOD TICKS_PER_SECOND * 40
@@ -782,6 +783,10 @@ void Clear_Scenario(void)
     Scen.CarryOverPercent = 0;
     Scen.TransitTheme = THEME_NONE;
     Scen.Percent = 0;
+    /*
+    ** Default setting for evac depends on session type.
+    */
+    Scen.EnableEvac = Session.Type == GAME_NORMAL ? true : false;
 
     memset(Scen.GlobalFlags, 0, sizeof(Scen.GlobalFlags));
 
@@ -2302,6 +2307,7 @@ bool Read_Scenario_INI(char* fname, bool)
     Scen.IsTruckCrate = ini.Get_Bool(BASIC, "TruckCrate", Scen.IsTruckCrate);
     Scen.IsMoneyTiberium = ini.Get_Bool(BASIC, "FillSilos", Scen.IsMoneyTiberium);
     Scen.Percent = ini.Get_Int(BASIC, "Percent", Scen.Percent);
+    Scen.EnableEvac = ini.Get_Bool(BASIC, "EnableEvac", Scen.EnableEvac);
 
     /*
     **	Read in the specific information for each of the house types.  This creates

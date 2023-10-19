@@ -249,7 +249,7 @@ public:
     unsigned IsToInherit : 1;
 
     /*
-    **	If Tanya or a civilian is to be automatically evacuated when they enter
+    **	If Tanya is to be automatically evacuated when they enter
     **	a transport vehicle, then this flag will be true.
     */
     unsigned IsTanyaEvac : 1;
@@ -309,6 +309,11 @@ public:
     **	this flag will be set to true.
     */
     unsigned IsMoneyTiberium : 1;
+
+    /* 
+    ** When set to false, units will not be evacuated no matter what
+    */
+    bool EnableEvac;
 
     /*
     **	This is the fading countdown timer.  As this timer counts down, the

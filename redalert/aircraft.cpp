@@ -112,6 +112,13 @@
 static bool _Counts_As_Civ_Evac(ObjectClass const* candidate)
 {
     /*
+    **	If evac logic isn't enabled, no candidate can be evacuated.
+    */
+    if (!Scen.EnableEvac) {
+        return false;
+    }
+
+    /*
     **	If the candidate pointer is missing, then return with failure code.
     */
     if (candidate == NULL)
