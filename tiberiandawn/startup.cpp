@@ -467,7 +467,6 @@ int main(int argc, char** argv)
         Memory_Error_Exit = Print_Error_Exit;
 
         CCDebugString("C&C95 - About to exit.\n");
-        ReadyToQuit = 1;
 
 #if defined(SDL_BUILD)
         Reset_Video_Mode();
@@ -475,8 +474,20 @@ int main(int argc, char** argv)
 
         Sound_End();
 
-#if defined(_WIN32)
-        PostMessageA(MainWindow, WM_DESTROY, 0, 0);
+        /*
+        ** Flag that this is a clean shutdown (not killed with Ctrl-Alt-Del)
+        */
+        ReadyToQuit = 1;
+
+        /*
+        ** Post a message to our message handler to tell it to clean up.
+        */
+#if defined(_WIN32) && !defined(SDL_BUILD)
+        PostMessage(MainWindow, WM_DESTROY, 0, 0);
+
+        /*
+        ** Wait until the message handler has dealt with the message
+        */
         do {
             Keyboard->Check();
         } while (ReadyToQuit == 1);
