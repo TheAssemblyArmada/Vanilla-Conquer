@@ -11,6 +11,7 @@
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 #include "audio.h"
 #include "auduncmp.h"
+#include "debugstring.h"
 #include "file.h"
 #include "memflag.h"
 #include "soscomp.h"
@@ -38,7 +39,7 @@ enum
     TIMER_TARGET_RESOLUTION = 10, // 10-millisecond target resolution
     INVALID_AUDIO_HANDLE = -1,
     INVALID_FILE_HANDLE = -1,
-    OPENAL_BUFFER_COUNT = 2,
+    OPENAL_BUFFER_COUNT = 3,
 };
 
 /*
@@ -683,7 +684,7 @@ void Maintenance_Callback()
                     // Work out if we have any space to buffer more data right now.
                     alGetSourcei(st->OpenALSource, AL_BUFFERS_PROCESSED, &processed_buffers);
 
-                    while (processed_buffers > 0 && st->MoreSource) {
+                    while (processed_buffers > 0) {
                         int bytes_copied = Sample_Copy(st,
                                                        &st->Source,
                                                        &st->Remainder,
@@ -695,10 +696,6 @@ void Maintenance_Callback()
                                                        nullptr,
                                                        nullptr);
 
-                        if (bytes_copied != BUFFER_CHUNK_SIZE) {
-                            st->MoreSource = false;
-                        }
-
                         if (bytes_copied > 0) {
                             ALuint buffer;
                             alSourceUnqueueBuffers(st->OpenALSource, 1, &buffer);
@@ -706,12 +703,20 @@ void Maintenance_Callback()
                             alSourceQueueBuffers(st->OpenALSource, 1, &buffer);
                             --processed_buffers;
                         }
+
+                        if (bytes_copied != BUFFER_CHUNK_SIZE && st->FilePending == 0) {
+                            st->MoreSource = false;
+                        }
+
+                        if (bytes_copied != BUFFER_CHUNK_SIZE) {
+                            break;
+                        }
                     }
                 } else {
                     ALint source_status;
                     alGetSourcei(st->OpenALSource, AL_SOURCE_STATE, &source_status);
 
-                    if (source_status != AL_PLAYING) {
+                    if (source_status != AL_PLAYING && source_status != AL_PAUSED) {
                         st->Service = 0;
                         Stop_Sample(i);
                     }
@@ -982,7 +987,7 @@ bool Sample_Status(int index)
     ALint val;
     alGetSourcei(st->OpenALSource, AL_SOURCE_STATE, &val);
 
-    return val == AL_PLAYING;
+    return val == AL_PLAYING || val == AL_PAUSED;
 };
 
 bool Is_Sample_Playing(const void* sample)
