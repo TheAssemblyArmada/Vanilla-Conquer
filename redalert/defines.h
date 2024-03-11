@@ -130,8 +130,13 @@
 #endif
 
 // Test to see if partial object drawing is any faster.
+#ifdef REMASTER_BUILD
 //#define	PARTIAL
 #define SORTDRAW
+#else
+#define	PARTIAL
+//#define SORTDRAW
+#endif
 
 /**********************************************************************
 **	If the scenario editor to to be active in this build then uncomment
