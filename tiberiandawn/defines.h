@@ -691,6 +691,9 @@ typedef enum HousesType : signed char
 #define HOUSEF_MULTI4  (1 << HOUSE_MULTI4)
 #define HOUSEF_MULTI5  (1 << HOUSE_MULTI5)
 #define HOUSEF_MULTI6  (1 << HOUSE_MULTI6)
+#define HOUSEF_OTHERS                                                                                                  \
+    (HOUSEF_NEUTRAL | HOUSEF_JP | HOUSEF_MULTI1 | HOUSEF_MULTI2 | HOUSEF_MULTI3 | HOUSEF_MULTI4 | HOUSEF_MULTI5        \
+     | HOUSEF_MULTI6)
 
 typedef enum PlayerColorType : signed char
 {

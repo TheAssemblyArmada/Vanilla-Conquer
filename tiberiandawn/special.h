@@ -56,6 +56,7 @@ public:
         IsJuvenile = false;
         IsSmartDefense = false;
         IsTreeTarget = false;
+        UseMCVDeploy = false;
         IsMCVDeploy = false;
         IsVisceroids = false;
         IsMonoEnabled = false;
@@ -151,6 +152,7 @@ public:
     /*
     **	If this flag is true, then the construction yard can undeploy back into an MCV.
     */
+    unsigned UseMCVDeploy : 1;
     unsigned IsMCVDeploy : 1;
 
     /*

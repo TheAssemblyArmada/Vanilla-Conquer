@@ -2630,9 +2630,9 @@ ActionType TechnoClass::What_Action(ObjectClass* object) const
         // Changed for multiplayer. ST - 3/13/2019 5:52PM
         if (Is_Owned_By_Player() && (ctrldown || !House->Is_Ally(object))
             && (ctrldown || object->Class_Of().IsLegalTarget
-                || (Special.IsTreeTarget && object->What_Am_I() == RTTI_TERRAIN))) {
+                || (Rule.IsTreeTarget && object->What_Am_I() == RTTI_TERRAIN))) {
             // if (IsOwnedByPlayer && (ctrldown || !House->Is_Ally(object)) && (ctrldown ||
-            // object->Class_Of().IsLegalTarget || (Special.IsTreeTarget && object->What_Am_I() == RTTI_TERRAIN))) {
+            // object->Class_Of().IsLegalTarget || (Rule.IsTreeTarget && object->What_Am_I() == RTTI_TERRAIN))) {
             if (Can_Player_Move() || In_Range(object, 0)) {
                 // Check for anti-air capability
                 if (object->What_Am_I() != RTTI_AIRCRAFT) {

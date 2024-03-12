@@ -724,13 +724,10 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Set_Multiplayer_Data(int scena
     MPlayerSolo = game_options.MPlayerSolo;           // 1 = allows a single-player net game
     MPlayerUnitCount = game_options.MPlayerUnitCount; // # units for non-base multiplayer scenarios
 
-    Special.IsMCVDeploy = game_options.IsMCVDeploy;
     Special.IsVisceroids = game_options.SpawnVisceroids;
     Special.IsCaptureTheFlag = game_options.CaptureTheFlag;
     Special.IsEarlyWin = game_options.DestroyStructures;
     Special.ModernBalance = game_options.ModernBalance;
-
-    Rule.AllowSuperWeapons = game_options.EnableSuperweapons; // Are superweapons available
 
     if (MPlayerTiberium) {
         Special.IsTGrowth = 1;
@@ -739,6 +736,11 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Set_Multiplayer_Data(int scena
         Special.IsTGrowth = 0;
         Special.IsTSpread = 0;
     }
+
+    Special.IsMCVDeploy = game_options.IsMCVDeploy;
+    Special.UseMCVDeploy = true;
+
+    Rule.AllowSuperWeapons = game_options.EnableSuperweapons; // Are superweapons available
 
     Scen.Scenario = scenario_index;
     MPlayerCount = 0;

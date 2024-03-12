@@ -3949,6 +3949,41 @@ void Blit_Hid_Page_To_Seen_Buff(void)
 }
 
 /***********************************************************************************************
+ * Owner_From_Name -- Convert an owner name into a bitfield.                                   *
+ *                                                                                             *
+ *    This will take an owner specification and convert it into a bitfield that represents     *
+ *    it. Sometimes this will be just a single house bit, but other times it could be          *
+ *    all the allies or soviet house bits combined.                                            *
+ *                                                                                             *
+ * INPUT:   text  -- Pointer to the text to convert into a house bitfield.                     *
+ *                                                                                             *
+ * OUTPUT:  Returns with the houses specified. The value is in the form of a bit field with    *
+ *          one bit per house type.                                                            *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/12/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+int Owner_From_Name(char const* text)
+{
+    int ownable = 0;
+    if (stricmp(text, "nod") == 0) {
+        ownable |= HOUSEF_BAD;
+    } else {
+        if (stricmp(text, "gdi") == 0) {
+            ownable |= HOUSEF_GOOD;
+        } else {
+            HousesType h = HouseTypeClass::From_Name(text);
+            if (h != HOUSE_NONE && (h < HOUSE_MULTI1 || h > HOUSE_MULTI6)) {
+                ownable |= (1 << h);
+            }
+        }
+    }
+    return (ownable);
+}
+
+/***********************************************************************************************
  * Shake_The_Screen -- Dispatcher that shakes the screen.                                      *
  *                                                                                             *
  *    This routine will shake the game screen the number of shakes requested.                  *

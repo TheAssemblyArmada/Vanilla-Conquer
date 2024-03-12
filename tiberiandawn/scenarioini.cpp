@@ -277,6 +277,30 @@ bool Read_Scenario_Ini(char* root, bool fresh)
         GlyphX_Debug_Print(fname);
     }
 
+    Rule.General(RuleINI);
+    Rule.Recharge(RuleINI);
+    Rule.AI(RuleINI);
+    // Rule.Powerups(RuleINI);
+    // Rule.Land_Types(RuleINI);
+    // Rule.Themes(RuleINI);
+    Rule.IQ(RuleINI);
+    // Rule.Objects(RuleINI);
+    Rule.Difficulty(RuleINI);
+
+    /*
+    **	Override any rules values specified in this
+    **	particular scenario file.
+    */
+    Rule.General(ini);
+    Rule.Recharge(ini);
+    Rule.AI(ini);
+    // Rule.Powerups(RuleINI);
+    // Rule.Land_Types(RuleINI);
+    // Rule.Themes(RuleINI);
+    Rule.IQ(ini);
+    // Rule.Objects(RuleINI);
+    Rule.Difficulty(ini);
+
     /*
     ** Init the Scenario CRC value
     */
@@ -692,6 +716,30 @@ bool Read_Scenario_Ini_File(char* scenario_file_name, char* bin_file_name, const
         GlyphX_Debug_Print("Opened scenario file");
         GlyphX_Debug_Print(scenario_file_name);
     }
+
+    Rule.General(RuleINI);
+    Rule.Recharge(RuleINI);
+    Rule.AI(RuleINI);
+    // Rule.Powerups(RuleINI);
+    // Rule.Land_Types(RuleINI);
+    // Rule.Themes(RuleINI);
+    Rule.IQ(RuleINI);
+    // Rule.Objects(RuleINI);
+    Rule.Difficulty(RuleINI);
+
+    /*
+    **	Override any rules values specified in this
+    **	particular scenario file.
+    */
+    Rule.General(ini);
+    Rule.Recharge(ini);
+    Rule.AI(ini);
+    // Rule.Powerups(RuleINI);
+    // Rule.Land_Types(RuleINI);
+    // Rule.Themes(RuleINI);
+    Rule.IQ(ini);
+    // Rule.Objects(RuleINI);
+    Rule.Difficulty(ini);
 
     /*
     ** Init the Scenario CRC value
