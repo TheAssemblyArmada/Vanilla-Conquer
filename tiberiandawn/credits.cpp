@@ -79,7 +79,6 @@ CreditClass::CreditClass(void)
  * HISTORY:                                                                                    *
  *   03/13/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-#define XX (320 - 120)
 #define WW 50
 void CreditClass::Graphic_Logic(bool forced)
 {

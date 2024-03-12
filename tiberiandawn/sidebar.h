@@ -367,6 +367,9 @@ public:
         */
         static char ClockTranslucentTable[(1 + 1) * 256];
 
+    private:
+        void Recalculate_Offsets(void);
+
     } Column[COLUMNS];
 
     /*
@@ -408,6 +411,7 @@ public:
     static void const* SidebarShape2;
 
 private:
+    void Recalculate_Offsets(void);
     bool Activate_Repair(int control);
     bool Activate_Upgrade(int control);
     bool Activate_Demolish(int control);

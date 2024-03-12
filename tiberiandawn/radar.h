@@ -186,6 +186,8 @@ protected:
     static TacticalClass RadarButton;
 
 private:
+    void Recalculate_Offsets(void);
+
     /*
     **	The current radar position as the upper left corner cell for the
     **	radar map display. The width and height is controlled by the

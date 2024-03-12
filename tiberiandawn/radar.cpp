@@ -105,24 +105,7 @@ RadarClass::RadarClass(void)
     IsPlayerNames = false;
 }
 
-/***********************************************************************************************
- * RadarClass::One_Time -- Handles one time processing for the radar map.                      *
- *                                                                                             *
- *    This routine handles any one time processing required in order for the radar map to      *
- *    function. This actually only requires an allocation of the radar staging buffer. This    *
- *    buffer is needed for those cases where the radar area of the page is being destroyed     *
- *    and it needs to be destroyed.                                                            *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   Be sure to call this routine only ONCE.                                         *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   12/22/1994 JLB : Created.                                                                 *
- *=============================================================================================*/
-void RadarClass::One_Time(void)
+void RadarClass::Recalculate_Offsets(void)
 {
     int factor = Get_Resolution_Factor();
     RadWidth = 80 << factor;
@@ -144,11 +127,33 @@ void RadarClass::One_Time(void)
         RadIHeight = 69 << factor;
     }
 
-    DisplayClass::One_Time();
     RadarButton.X = RadX + RadOffX;
     RadarButton.Y = RadY + RadOffY;
     RadarButton.Width = RadIWidth;
     RadarButton.Height = RadIHeight;
+}
+
+/***********************************************************************************************
+ * RadarClass::One_Time -- Handles one time processing for the radar map.                      *
+ *                                                                                             *
+ *    This routine handles any one time processing required in order for the radar map to      *
+ *    function. This actually only requires an allocation of the radar staging buffer. This    *
+ *    buffer is needed for those cases where the radar area of the page is being destroyed     *
+ *    and it needs to be destroyed.                                                            *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   Be sure to call this routine only ONCE.                                         *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   12/22/1994 JLB : Created.                                                                 *
+ *=============================================================================================*/
+void RadarClass::One_Time(void)
+{
+    Recalculate_Offsets();
+    DisplayClass::One_Time();
 }
 
 /***********************************************************************************************
@@ -337,6 +342,8 @@ void RadarClass::Draw_It(bool forced)
     */
     if (!forced && !IsToRedraw && !FullRedraw)
         return;
+
+    Recalculate_Offsets();
 
     static HousesType _house = HOUSE_NONE;
     if (PlayerPtr->ActLike != _house) {

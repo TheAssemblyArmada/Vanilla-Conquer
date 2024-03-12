@@ -103,6 +103,7 @@ protected:
     };
 
 private:
+    void Recalculate_Offsets(void);
     int Power_Height(int value);
 
     unsigned IsActive : 1;

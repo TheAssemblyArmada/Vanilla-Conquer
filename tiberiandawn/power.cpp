@@ -110,6 +110,26 @@ void PowerClass::Init_Clear(void)
     PowerDir = 0;
 }
 
+void PowerClass::Recalculate_Offsets(void)
+{
+    int factor = Get_Resolution_Factor();
+    PowX = SeenBuff.Get_Width() - Map.RadWidth;
+    if (factor) {
+        PowY = Map.RadY + Map.RadHeight + (13 << factor) - 4;
+    } else {
+        PowY = Map.RadY + Map.RadHeight + (13 << factor);
+    }
+    PowWidth = 8 << factor;
+    PowHeight = SeenBuff.Get_Height() - PowY;
+    PowLineSpace = 5 << factor;
+    PowLineWidth = PowWidth - 4;
+
+    PowerButton.X = PowX;
+    PowerButton.Y = PowY;
+    PowerButton.Width = PowWidth - 1;
+    PowerButton.Height = PowHeight;
+}
+
 /***********************************************************************************************
  * PowerClass::One_Time -- One time processing for the power bar.                              *
  *                                                                                             *
@@ -127,24 +147,9 @@ void PowerClass::Init_Clear(void)
 void PowerClass::One_Time(void)
 {
     RadarClass::One_Time();
+    Recalculate_Offsets();
 
     int factor = Get_Resolution_Factor();
-    PowX = SeenBuff.Get_Width() - Map.RadWidth;
-    if (factor) {
-        PowY = Map.RadY + Map.RadHeight + (13 << factor) - 4;
-    } else {
-        PowY = Map.RadY + Map.RadHeight + (13 << factor);
-    }
-    PowWidth = 8 << factor;
-    PowHeight = SeenBuff.Get_Height() - PowY;
-    PowLineSpace = 5 << factor;
-    PowLineWidth = PowWidth - 4;
-
-    PowerButton.X = PowX;
-    PowerButton.Y = PowY;
-    PowerButton.Width = PowWidth - 1;
-    PowerButton.Height = PowHeight;
-
     PowerShape = MFCD::Retrieve((factor) ? "HPOWER.SHP" : "POWER.SHP");
     PowerBarShape = Hires_Retrieve("PWRBAR.SHP");
 }
@@ -172,6 +177,7 @@ void PowerClass::Draw_It(bool complete)
     int factor = Get_Resolution_Factor();
 
     if (complete || IsToRedraw) {
+        Recalculate_Offsets();
         //		PowX = TacPixelX + TacWidth*ICON_PIXEL_W;	// X position of upper left corner of power bar.
 
         if (LogicPage->Lock()) {

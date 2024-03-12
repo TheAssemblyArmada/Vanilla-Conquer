@@ -153,24 +153,8 @@ SidebarClass::SidebarClass(void)
     new (&Column[1]) StripClass(InitClass());
 }
 
-/***********************************************************************************************
- * SidebarClass::One_Time -- Handles the one time game initializations.                        *
- *                                                                                             *
- *    This routine is used to load the graphic data that is needed by the sidebar display. It  *
- *    should only be called ONCE.                                                              *
- *                                                                                             *
- * INPUT:   none                                                                               *
- *                                                                                             *
- * OUTPUT:  none                                                                               *
- *                                                                                             *
- * WARNINGS:   Only call this routine once when the game first starts.                         *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   10/28/94   JLB : Created.                                                                 *
- *=============================================================================================*/
-void SidebarClass::One_Time(void)
+void SidebarClass::Recalculate_Offsets(void)
 {
-    PowerClass::One_Time();
     /*
     ** Set up the pixel offsets and widths and heights used to render the
     ** sidebar.  They are now variables because we need to change them for
@@ -215,6 +199,50 @@ void SidebarClass::One_Time(void)
     Column[0].Y = SideY + TopHeight + 1;
     Column[1].X = Column[0].X + (StripClass::STRIP_WIDTH * factor) + spacing - 1;
     Column[1].Y = SideY + TopHeight + 1;
+
+    if (Get_Resolution_Factor()) {
+        if (!Repair)
+            Repair = new ShapeButtonClass();
+        if (!Upgrade)
+            Upgrade = new ShapeButtonClass();
+        if (!Zoom)
+            Zoom = new ShapeButtonClass();
+        Repair->X = SideX + 4;
+        Upgrade->X = SideX + 57;
+        Zoom->X = SideX + 110;
+    } else {
+        if (!Repair)
+            Repair = new TextButtonClass();
+        if (!Upgrade)
+            Upgrade = new TextButtonClass();
+        if (!Zoom)
+            Zoom = new TextButtonClass();
+        Repair->X = SideX + 2;
+        Upgrade->X = Repair->X + Repair->Width + 2;
+        Zoom->X = Upgrade->X + Upgrade->Width + 2;
+    }
+}
+
+/***********************************************************************************************
+ * SidebarClass::One_Time -- Handles the one time game initializations.                        *
+ *                                                                                             *
+ *    This routine is used to load the graphic data that is needed by the sidebar display. It  *
+ *    should only be called ONCE.                                                              *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   Only call this routine once when the game first starts.                         *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/28/94   JLB : Created.                                                                 *
+ *=============================================================================================*/
+void SidebarClass::One_Time(void)
+{
+    PowerClass::One_Time();
+
+    Recalculate_Offsets();
 
     Column[0].One_Time(0);
     Column[1].One_Time(1);
@@ -341,17 +369,14 @@ void SidebarClass::Init_IO(void)
             ShapeButtonClass* SBCUpgrade = (ShapeButtonClass*)Upgrade;
             ShapeButtonClass* SBCZoom = (ShapeButtonClass*)Zoom;
 
-            Repair->X = 484;
             Repair->Y = 160;
             SBCRepair->ReflectButtonState = true;
             SBCRepair->Set_Shape(Hires_Retrieve(repair_shp));
 
-            Upgrade->X = 480 + 57;
             Upgrade->Y = 160;
             SBCUpgrade->ReflectButtonState = true;
             SBCUpgrade->Set_Shape(Hires_Retrieve(sell_shp));
 
-            Zoom->X = 480 + 110;
             Zoom->Y = 160;
             SBCZoom->Set_Shape(Hires_Retrieve(map_shp));
         } else {
@@ -368,17 +393,14 @@ void SidebarClass::Init_IO(void)
             TBCZoom->Set_Text("Map");
             TBCZoom->Set_Style(TPF_6POINT | TPF_NOSHADOW | TPF_CENTER);
 
-            Repair->X = 242;
             Repair->Y = 80;
             Repair->Width = 32;
             Repair->Height = 9;
 
-            Upgrade->X = Repair->X + Repair->Width + 2;
             Upgrade->Y = Repair->Y;
             Upgrade->Width = 20;
             Upgrade->Height = Repair->Height;
 
-            Zoom->X = Upgrade->X + Upgrade->Width + 2;
             Zoom->Y = Upgrade->Y;
             Zoom->Width = 20;
             Zoom->Height = Upgrade->Height;
@@ -765,6 +787,8 @@ void SidebarClass::Draw_It(bool complete)
 
     if (IsSidebarActive && (IsToRedraw || complete) && !Debug_Map) {
         IsToRedraw = false;
+
+        Recalculate_Offsets();
 
         if (LogicPage->Lock()) {
             /*
@@ -1222,6 +1246,14 @@ void SidebarClass::StripClass::Init_Clear(void)
         Buildables[index].BuildableType = RTTI_NONE;
         Buildables[index].Factory = -1;
         Buildables[index].BuildableViaCapture = false; // Added for new sidebar functionality. ST - 9/24/2019 3:10PM
+    }
+}
+
+void SidebarClass::StripClass::Recalculate_Offsets(void)
+{
+    for (int i = 0; i < COLUMNS; i++) {
+        UpButton[i].X = X + ButtonSpacingOffset + 1;
+        DownButton[i].X = UpButton[i].X + UpButton[i].Width + ButtonSpacingOffset - 2;
     }
 }
 
@@ -1757,6 +1789,7 @@ bool SidebarClass::StripClass::AI(KeyNumType& input, int, int)
 void SidebarClass::StripClass::Draw_It(bool complete)
 {
     if (IsToRedraw || complete) {
+        Recalculate_Offsets();
         IsToRedraw = false;
         int factor = Get_Resolution_Factor();
 
