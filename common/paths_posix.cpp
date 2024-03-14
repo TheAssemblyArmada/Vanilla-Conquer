@@ -15,7 +15,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <errno.h>
-#include <dlfcn.h>
 #include <pwd.h>
 #include <stdexcept>
 #include <sys/stat.h>
