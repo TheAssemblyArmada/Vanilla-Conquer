@@ -858,10 +858,14 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
         input = KN_NONE;
         break;
 
+#if (KN_HOME | KN_SHIFT_BIT) != KN_HOME
     /*---------------------------------------------------------------------
     SHIFT-HOME: set new Home Cell position
     ---------------------------------------------------------------------*/
     case ((int)KN_HOME | (int)KN_SHIFT_BIT):
+#else
+    case ((int)KN_HOME | (int)KN_CTRL_BIT):
+#endif
         /*
         ** Unflag the old Home Cell, if there are no other waypoints
         ** pointing to it
