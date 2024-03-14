@@ -139,6 +139,7 @@ const char* PathsClass::Program_Path()
             path = (char*)malloc(size);
             if (!_NSGetExecutablePath(path, &size)) {
                 free(path);
+                ProgramPath = ".";
                 return ProgramPath.c_str();
             }
         }
@@ -160,12 +161,14 @@ const char* PathsClass::Program_Path()
         size_t size = sizeof(buffer1);
 
         if (sysctl(mib, (u_int)(sizeof(mib) / sizeof(mib[0])), path, &size, NULL, 0) != 0) {
+            ProgramPath = ".";
             return ProgramPath.c_str();
         }
 
         resolved = realpath(path, buffer);
 #endif
         if (!resolved) {
+            ProgramPath = ".";
             return ProgramPath.c_str();
         }
 
@@ -243,7 +246,9 @@ bool PathsClass::Is_Absolute(const char* path)
 
 std::string PathsClass::Concatenate_Paths(const char* path1, const char* path2)
 {
-    return std::string(path1) + SEP + path2;
+    if (path1 != NULL && *path1 != '\0')
+        return std::string(path1) + SEP + path2;
+    return std::string(path2);
 }
 
 std::string PathsClass::Argv_Path(const char* cmd_arg)
