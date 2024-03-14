@@ -44,7 +44,7 @@
 
 #include <stdio.h>
 //#include <mem.h>
-#include <sys/timeb.h>
+#include <chrono>
 #include <string.h>
 #include "connect.h"
 
@@ -224,6 +224,8 @@ int ConnectionClass::Send_Packet(void* buf, int buflen, int ack_req)
         ((CommHeaderType*)PacketBuf)->Code = PACKET_DATA_NOACK;
         ((CommHeaderType*)PacketBuf)->PacketID = NumSendNoAck;
     }
+
+    SwapCommHeaderType((CommHeaderType*)PacketBuf);
 
     SwapCommHeaderType((CommHeaderType*)PacketBuf);
 
@@ -747,7 +749,6 @@ int ConnectionClass::Service_Receive_Queue(void)
  *=========================================================================*/
 unsigned int ConnectionClass::Time(void)
 {
-    static struct timeb mytime; // DOS time
     unsigned int msec;
 
 #ifdef WWLIB32_H
@@ -764,23 +765,19 @@ unsigned int ConnectionClass::Time(void)
     /*------------------------------------------------------------------------
     Otherwise, use the DOS timer
     ------------------------------------------------------------------------*/
-    else {
-        ftime(&mytime);
-        msec = (unsigned int)mytime.time * 1000 + (unsigned int)mytime.millitm;
-        return ((msec / 100) * 6);
-    }
 
 #else
 
     /*------------------------------------------------------------------------
     If the Westwood library isn't being used, use the DOS timer.
     ------------------------------------------------------------------------*/
-    ftime(&mytime);
-    msec = (unsigned int)mytime.time * 1000 + (unsigned int)mytime.millitm;
-    return ((msec / 100) * 6);
-
 #endif
 
+    static auto epoch = std::chrono::steady_clock::now().time_since_epoch();
+    auto now = std::chrono::steady_clock::now().time_since_epoch();
+    msec = unsigned(std::chrono::duration_cast<std::chrono::milliseconds>(now - epoch).count());
+
+    return ((msec / 100) * 6);
 } /* end of Time */
 
 /***************************************************************************
