@@ -20,7 +20,11 @@ SettingsClass::SettingsClass()
     */
     Video.WindowWidth = 640;
     Video.WindowHeight = 400;
+#ifdef __MINT__
+    Video.Windowed = true;
+#else
     Video.Windowed = false;
+#endif
     Video.Width = 0;
     Video.Height = 0;
     Video.Boxing = true;
