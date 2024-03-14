@@ -1,5 +1,6 @@
 #include "common/rect.h"
 
+#include <stdio.h>
 #include <cstdint>
 #include <iostream>
 
