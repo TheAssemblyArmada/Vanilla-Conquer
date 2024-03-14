@@ -1,5 +1,6 @@
 #include "common/xordelta.h"
 
+#include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <iostream>
