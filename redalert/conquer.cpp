@@ -3833,44 +3833,51 @@ typedef enum
 #error DVD must be defined!
 #endif
 
-static void Reinit_Secondary_Mixfiles()
+static void Reinit_Secondary_Mixfiles(const char* main_mix_name)
 {
     static bool in_progress = false;
-
-    // Only reinitialised if the main mix file has been initialised once already.
-    if (MainMix != nullptr && !in_progress) {
-        in_progress = true;
-
-        delete MoviesMix;
-        delete Movies2Mix;
-        delete GeneralMix;
-        delete ScoreMix;
-        delete MainMix;
-
-        MainMix = new MFCD("MAIN.MIX", &FastKey);
-        assert(MainMix != NULL);
-        //		ConquerMix = new MFCD("CONQUER.MIX", &FastKey);
-        if (CCFileClass("MOVIES1.MIX").Is_Available()) {
-            MoviesMix = new MFCD("MOVIES1.MIX", &FastKey);
-        } else {
-            MoviesMix = nullptr;
-        }
-        if (CCFileClass("MOVIES2.MIX").Is_Available()) {
-            Movies2Mix = new MFCD("MOVIES2.MIX", &FastKey);
-        } else {
-            Movies2Mix = nullptr;
-        }
-        GeneralMix = new MFCD("GENERAL.MIX", &FastKey);
-        ScoreMix = new MFCD("SCORES.MIX", &FastKey);
-
-        in_progress = false;
+    if (in_progress) {
+        return;
     }
+    in_progress = true;
+
+    delete MainMix;
+    MainMix = new MFCD(main_mix_name, &FastKey);
+    assert(MainMix != NULL);
+
+    delete MoviesMix;
+    if (CCFileClass("MOVIES1.MIX").Is_Available()) {
+        MoviesMix = new MFCD("MOVIES1.MIX", &FastKey);
+    } else {
+        MoviesMix = nullptr;
+    }
+
+    delete Movies2Mix;
+    if (CCFileClass("MOVIES2.MIX").Is_Available()) {
+        Movies2Mix = new MFCD("MOVIES2.MIX", &FastKey);
+    } else {
+        Movies2Mix = nullptr;
+    }
+
+    delete GeneralMix;
+    GeneralMix = new MFCD("GENERAL.MIX", &FastKey);
+
+    delete ScoreMix;
+    ScoreMix = new MFCD("SCORES.MIX", &FastKey);
+
+    in_progress = false;
 }
 
 /**
  * Checks for local folders containing data from the various discs.
  */
 static int LastCD = -1;
+
+static struct
+{
+    std::string Dir;
+    std::string File;
+} CDPaths[CD_COUNT];
 
 static bool Change_Local_Dir(int cd)
 {
@@ -3884,21 +3891,42 @@ static bool Change_Local_Dir(int cd)
         for (int i = 0; i < CD_COUNT; ++i) {
             for (int j = 0; j < 3; ++j) {
                 std::string path = Paths.Concatenate_Paths(paths[j].c_str(), _vol_labels[i]);
+
                 RawFileClass vol(path.c_str());
-
-                if (vol.Is_Directory()) {
-                    CDFileClass::Refresh_Search_Drives();
-                    path += PathsClass::SEP;
-                    CDFileClass::Add_Search_Drive(path.c_str());
-                    CCFileClass fc("MAIN.MIX");
-
-                    // Populate _detected as a bitfield for which discs we found a local copy of.
-                    if (fc.Is_Available()) {
-                        _detected |= 1 << i;
-                    }
-
-                    break;
+                if (!vol.Is_Directory()) {
+                    continue;
                 }
+
+                CDFileClass::Refresh_Search_Drives();
+                path += PathsClass::SEP;
+                CDFileClass::Add_Search_Drive(path.c_str());
+
+                CCFileClass fc("MAIN.MIX");
+                if (!fc.Is_Available()) {
+                    continue;
+                }
+
+                _detected |= 1 << i;
+                CDPaths[i].Dir = path;
+                CDPaths[i].File = "MAIN.MIX";
+                break;
+            }
+
+            // Support for Steam release numbered mixes
+            if (CDPaths[i].File.empty()) {
+                char _mix_file[32];
+                sprintf(_mix_file, "MAIN%d.MIX", i + 1);
+
+                CCFileClass fc(_mix_file);
+                if (fc.Is_Available()) {
+                    _detected |= 1 << i;
+                    CDPaths[i].Dir = ".";
+                    CDPaths[i].File = _mix_file;
+                }
+            }
+
+            if (!CDPaths[i].File.empty()) {
+                DBG_INFO("Found '%s' disc at: %s/%s", _vol_labels[i], CDPaths[i].Dir.c_str(), CDPaths[i].File.c_str());
             }
         }
 
@@ -3947,32 +3975,27 @@ static bool Change_Local_Dir(int cd)
         cd = CD_DATADIR;
     }
 
-    // If the data from the CD we want was detected, then double check it and set it as though we used the -CD command line.
-    if (_detected & (1 << cd)) {
-        for (int j = 0; j < 3; ++j) {
-            std::string path = Paths.Concatenate_Paths(paths[j].c_str(), _vol_labels[cd]);
-            RawFileClass vol(path.c_str());
-
-            if (vol.Is_Directory()) {
-                CDFileClass::Refresh_Search_Drives();
-                path += PathsClass::SEP;
-                CDFileClass::Add_Search_Drive(path.c_str());
-
-                // The file should be available if we reached this point.
-                assert(CCFileClass("MAIN.MIX").Is_Available());
-
-                CurrentCD = cd;
-                LastCD = cd;
-                Theme.Stop();
-                Reinit_Secondary_Mixfiles();
-                ThemeClass::Scan();
-
-                return true;
-            }
-        }
+    if (_detected & (1 << cd) == 0) {
+        return false;
     }
 
-    return false;
+    CDFileClass::Refresh_Search_Drives();
+    auto path = CDPaths[cd].Dir;
+    if (path != ".") {
+        path += PathsClass::SEP;
+        CDFileClass::Add_Search_Drive(CDPaths[cd].Dir.c_str());
+    }
+
+    // The file should be available if we reached this point.
+    assert(CCFileClass(CDPaths[cd].File.c_str()).Is_Available());
+
+    CurrentCD = cd;
+    LastCD = cd;
+    Theme.Stop();
+    Reinit_Secondary_Mixfiles(CDPaths[cd].File.c_str());
+    ThemeClass::Scan();
+
+    return true;
 }
 
 bool Force_CD_Available(int cd_desired) //	ajw
