@@ -577,12 +577,21 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
             default:
                 key = VK_LBUTTON;
                 break;
+#ifdef __MINT__
+            /* MiNT SDL port may have a bug in the gem driver,
+               reporting right button presses as button 2 (SDL_BUTTON_MIDDLE) */
+            case SDL_BUTTON_RIGHT:
+            case SDL_BUTTON_MIDDLE:
+                key = VK_RBUTTON;
+                break;
+#else
             case SDL_BUTTON_RIGHT:
                 key = VK_RBUTTON;
                 break;
             case SDL_BUTTON_MIDDLE:
                 key = VK_MBUTTON;
                 break;
+#endif
 #ifdef SDL1_BUILD
             case SDL_BUTTON_WHEELUP:
                 key = VK_MOUSEWHEEL_UP;
