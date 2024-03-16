@@ -131,7 +131,13 @@
 
 // Test to see if partial object drawing is any faster.
 //#define	PARTIAL
+
+// SORTDRAW is used to synchronize object drawing across machines. Since this
+// consumes CPU for sorting and memory to keep 4 more pointers in the
+// CellClass, we can disable this when NETWORKING is disabled to save RAM.
+#ifdef NETWORKING
 #define SORTDRAW
+#endif
 
 /**********************************************************************
 **	If the scenario editor to to be active in this build then uncomment
