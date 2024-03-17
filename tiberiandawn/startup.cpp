@@ -484,7 +484,9 @@ int main(int argc, char** argv)
         */
 #if defined(_WIN32) && !defined(SDL_BUILD)
         PostMessage(MainWindow, WM_DESTROY, 0, 0);
+#endif
 
+#if !defined(REMASTER_BUILD) && defined(_WIN32) && !defined(SDL_BUILD)
         /*
         ** Wait until the message handler has dealt with the message
         */

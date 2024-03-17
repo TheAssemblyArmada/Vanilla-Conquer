@@ -626,9 +626,11 @@ void Memory_Error_Handler(void)
 #ifdef _WIN32
     PostMessage(MainWindow, WM_DESTROY, 0, 0);
 #endif
+#if !defined(REMASTER_BUILD) && defined(_WIN32) && !defined(SDL_BUILD)
     do {
         Keyboard->Check();
     } while (ReadyToQuit == 1);
+#endif
 
     exit(1);
 }
