@@ -256,4 +256,12 @@ if(BUILD_VANILLATD)
                     -g3 -fno-omit-frame-pointer)
         target_link_options(VanillaTD PUBLIC -fsanitize=address)
     endif()
+    if(VITA)
+        include(VitaPackage)
+        generate_vita_package(VanillaTD
+            APP_NAME "VanillaTD"
+            TITLE_ID "VCTD00001"
+            ICON "${CMAKE_SOURCE_DIR}/resources/vanillatd_icon.svg"
+        )
+    endif()
 endif()

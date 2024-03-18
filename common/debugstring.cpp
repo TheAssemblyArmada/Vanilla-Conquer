@@ -9,6 +9,10 @@
 #include <io.h>
 #endif
 
+#ifdef VITA
+#include <psp2/kernel/clib.h>
+#endif
+
 static class DebugStateClass
 {
 public:
@@ -66,6 +70,16 @@ void Debug_String_Log(unsigned level, const char* file, int line, const char* fm
         fflush(DebugState.File);
     }
 
+#ifdef VITA
+    /* Don't print file and line numbers to stderr to avoid clogging it up with too much info */
+    va_list args;
+    sceClibPrintf("%-5s: ", levels[level]);
+    va_start(args, fmt);
+    char msg[200];
+    vsprintf(msg, fmt, args);
+    sceClibPrintf("%s\n", msg);
+    va_end(args);
+#else
     /* Don't print file and line numbers to stderr to avoid clogging it up with too much info */
     va_list args;
     fprintf(stderr, "%-5s: ", levels[level]);
@@ -74,6 +88,7 @@ void Debug_String_Log(unsigned level, const char* file, int line, const char* fm
     fprintf(stderr, "\n");
     va_end(args);
     fflush(stderr);
+#endif
 }
 
 void Debug_String_File(const char* file)

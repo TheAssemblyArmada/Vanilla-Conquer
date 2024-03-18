@@ -52,6 +52,12 @@ HINSTANCE ProgramInstance;
 #include <unistd.h>
 #endif
 
+#ifdef VITA
+int _newlib_heap_size_user = 340 * 1024 * 1024;
+#include <psp2/kernel/processmgr.h>
+#include <psp2/power.h>
+#endif
+
 extern int ReadyToQuit;
 void Read_Setup_Options(RawFileClass* config_file);
 
@@ -200,6 +206,9 @@ int DLL_Startup(const char* command_line_in)
 
 int main(int argc, char** argv)
 {
+#ifdef VITA
+    scePowerSetArmClockFrequency(444);
+#endif
     UtfArgs args(argc, argv);
     CCDebugString("C&C95 - Starting up.\n");
 
@@ -223,7 +232,12 @@ int main(int argc, char** argv)
     /*
     **	Remember the current working directory and drive.
     */
-    Paths.Init("vanillatd", "CONQUER.INI", "CONQUER.MIX", args.ArgV[0]);
+#ifdef VITA
+    const char* progpath = "ux0:data";
+#else
+    const char* progpath = args.ArgV[0];
+#endif
+    Paths.Init("vanillatd", "CONQUER.INI", "CONQUER.MIX", progpath);
     CDFileClass::Refresh_Search_Drives();
 
     if (Parse_Command_Line(args.ArgC, args.ArgV)) {
@@ -508,6 +522,10 @@ int main(int argc, char** argv)
             Palette = NULL;
         }
     }
+
+#ifdef VITA
+    sceKernelExitProcess(0);
+#endif
 
     return (EXIT_SUCCESS);
 }

@@ -53,7 +53,7 @@ extern WWKeyboardClass* Keyboard;
 #include <stdio.h>
 #include <assert.h>
 
-#ifndef _WIN32
+#if !defined _WIN32 && !defined VITA
 #include <ifaddrs.h>
 #endif
 
@@ -210,7 +210,7 @@ bool UDPInterfaceClass::Open_Socket(SOCKET)
         LocalAddresses.Delete(0);
     }
 
-#ifdef _WIN32
+#if defined _WIN32 || defined VITA
     /*
     ** Use gethostbyname to find the name of the local host. We will need this to look up
     ** the local ip address.

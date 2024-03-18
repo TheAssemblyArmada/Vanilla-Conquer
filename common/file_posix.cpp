@@ -8,6 +8,12 @@
 #include <limits.h>
 #include <fnmatch.h>
 
+#ifdef VITA
+// TODO More definitions to move to a compat lib that tests for the symbols?
+#define PATH_MAX     256
+#define FNM_CASEFOLD 0
+#endif
+
 class Find_File_Data_Posix : public Find_File_Data
 {
 public:
@@ -122,3 +128,51 @@ Find_File_Data* Find_File_Data::CreateFindData()
 {
     return new Find_File_Data_Posix();
 }
+
+#ifdef VITA
+#include <algorithm>
+#include <string>
+#include <vector>
+
+#define PATH_MAX 256
+
+std::string StringLower(std::string str)
+{
+    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+    return str;
+}
+
+// fnmatch is missing from vita newlib, this is here until otherwise.
+int fnmatch(const char* pattern, const char* string, int flags)
+{
+    //massive hackjob..
+    std::string filename = string;
+    std::string filter = pattern;
+    filename = StringLower(filename);
+    filter = StringLower(filter);
+    std::vector<std::string> filter_split;
+    std::string delimiter = "*";
+    bool found = true;
+
+    size_t pos = 0;
+    std::string token;
+    while ((pos = filter.find(delimiter)) != std::string::npos) {
+        token = filter.substr(0, pos);
+        filter_split.push_back(token);
+        filter.erase(0, pos + delimiter.length());
+    }
+
+    if (!filter_split.empty()) {
+        for (int i = 0; i < filter_split.size(); ++i) {
+            if (filename.find(filter_split[i]) == std::string::npos) {
+                found = false;
+                break;
+            }
+        }
+    } else {
+        found = filename.find(filter) != std::string::npos;
+    }
+
+    return found ? 0 : 1;
+}
+#endif

@@ -10,6 +10,8 @@
 #include <winbase.h>
 #elif defined(_WIN32)
 #include <synchapi.h>
+#elif defined VITA
+#include <psp2/kernel/threadmgr.h>
 #else /* Assuming recent posix*/
 #define __USE_POSIX199309
 #define _POSIX_C_SOURCE 199309L

@@ -650,7 +650,14 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
         case SDL_CONTROLLERBUTTONUP:
             Handle_Controller_Button_Event(event.cbutton);
             break;
+#ifdef VITA
+        case SDL_FINGERDOWN:
+        case SDL_FINGERUP:
+        case SDL_FINGERMOTION:
+            Handle_Touch_Event(event.tfinger);
+            break;
 #endif
+#endif // SDL2_BUILD
         }
     }
 #ifdef SDL2_BUILD
@@ -685,6 +692,9 @@ void WWKeyboardClass::Open_Controller()
             GameController = SDL_GameControllerOpen(i);
         }
     }
+#if SDL_VERSION_ATLEAST(2, 0, 10) && defined(VITA)
+    SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "0");
+#endif
 }
 
 void WWKeyboardClass::Close_Controller()
@@ -700,6 +710,12 @@ void WWKeyboardClass::Process_Controller_Axis_Motion()
     const uint32_t currentTime = SDL_GetTicks();
     const float deltaTime = currentTime - LastControllerTime;
     LastControllerTime = currentTime;
+
+#ifdef VITA
+    if (!AnalogStickMouse) {
+        return;
+    }
+#endif
 
     if (ControllerLeftXAxis != 0 || ControllerLeftYAxis != 0) {
         const int16_t xSign = (ControllerLeftXAxis > 0) - (ControllerLeftXAxis < 0);
@@ -719,6 +735,15 @@ void WWKeyboardClass::Handle_Controller_Axis_Event(const SDL_ControllerAxisEvent
     AnalogScrollActive = false;
     ScrollDirType directionX = SDIR_NONE;
     ScrollDirType directionY = SDIR_NONE;
+
+#ifdef VITA
+    int CONTROLLER_L_DEADZONE;
+    if (!AnalogStickMouse) {
+        CONTROLLER_L_DEADZONE = CONTROLLER_L_DEADZONE_SCROLL;
+    } else {
+        CONTROLLER_L_DEADZONE = CONTROLLER_L_DEADZONE_MOUSE;
+    }
+#endif
 
     if (motion.axis == SDL_CONTROLLER_AXIS_LEFTX) {
         if (std::abs(motion.value) > CONTROLLER_L_DEADZONE)
@@ -746,6 +771,19 @@ void WWKeyboardClass::Handle_Controller_Axis_Event(const SDL_ControllerAxisEvent
         else
             ControllerSpeedBoost = 1;
     }
+
+#ifdef VITA
+    if (!AnalogStickMouse) {
+        if (ControllerLeftXAxis != 0) {
+            AnalogScrollActive = true;
+            directionX = ControllerLeftXAxis > 0 ? SDIR_E : SDIR_W;
+        }
+        if (ControllerLeftYAxis != 0) {
+            AnalogScrollActive = true;
+            directionY = ControllerLeftYAxis > 0 ? SDIR_S : SDIR_N;
+        }
+    }
+#endif
 
     if (ControllerRightXAxis != 0) {
         AnalogScrollActive = true;
@@ -842,6 +880,17 @@ void WWKeyboardClass::Handle_Controller_Button_Event(const SDL_ControllerButtonE
         Get_Video_Mouse(x, y);
         Put_Mouse_Message(key, x, y, button.state == SDL_RELEASED);
     }
+
+#ifdef VITA
+    if (button.state == SDL_PRESSED
+        && (button.button == SDL_CONTROLLER_BUTTON_LEFTSHOULDER || button.button == SDL_CONTROLLER_BUTTON_RIGHTSHOULDER
+            || button.button == SDL_CONTROLLER_BUTTON_START)) {
+        if (SDL_GameControllerGetButton(GameController, SDL_CONTROLLER_BUTTON_LEFTSHOULDER)
+            && SDL_GameControllerGetButton(GameController, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)
+            && SDL_GameControllerGetButton(GameController, SDL_CONTROLLER_BUTTON_START))
+            AnalogStickMouse = !AnalogStickMouse;
+    }
+#endif
 }
 
 bool WWKeyboardClass::Is_Analog_Scroll_Active()
@@ -853,7 +902,86 @@ unsigned char WWKeyboardClass::Get_Scroll_Direction()
 {
     return ScrollDirection;
 }
-#endif
+#ifdef VITA
+bool WWKeyboardClass::Is_Analog_Only_Scroll()
+{
+    return !AnalogStickMouse;
+}
+
+void WWKeyboardClass::Handle_Touch_Event(const SDL_TouchFingerEvent& event)
+{
+    // rear touchpad
+    if (event.touchId != 0) {
+        if (Settings.Vita.RearTouchEnabled) {
+            if (event.type == SDL_FINGERDOWN) {
+                ++RearNumTouches;
+                if (RearNumTouches == 1) {
+                    RearFirstFingerId = event.fingerId;
+                }
+                LastRearTouchTime = SDL_GetTicks();
+            } else if (event.type == SDL_FINGERUP) {
+                --RearNumTouches;
+                if ((RearNumTouches == 0) && (SDL_GetTicks() - LastRearTouchTime < REAR_LMB_DELAY)) {
+                    int emulatedPointerPosX;
+                    int emulatedPointerPosY;
+                    Get_Video_Mouse(emulatedPointerPosX, emulatedPointerPosY);
+                    Put_Mouse_Message(VK_LBUTTON, emulatedPointerPosX, emulatedPointerPosY, 0);
+                    Put_Mouse_Message(VK_LBUTTON, emulatedPointerPosX, emulatedPointerPosY, 1);
+                }
+            } else if (event.type == SDL_FINGERMOTION) {
+                if (RearFirstFingerId == event.fingerId) {
+                    float movX = event.dx * REAR_TOUCH_SPEED_MOD * Settings.Vita.RearTouchSpeed;
+                    float movY = event.dy * REAR_TOUCH_SPEED_MOD * Settings.Vita.RearTouchSpeed;
+                    Move_Video_Mouse(movX, movY);
+                }
+            }
+        }
+        return;
+    }
+
+    if (event.type == SDL_FINGERDOWN) {
+        ++NumTouches;
+        if (NumTouches == 1) {
+            FirstFingerId = event.fingerId;
+        }
+    } else if (event.type == SDL_FINGERUP) {
+        --NumTouches;
+    }
+
+    if (FirstFingerId == event.fingerId) {
+        const int screenWidth = 960;
+        const int screenHeight = 544;
+        int gameWidth;
+        int gameHeight;
+        Get_Game_Resolution(gameWidth, gameHeight);
+        SDL_Rect renderRect = Get_Render_Rect();
+
+        float emulatedPointerPosX =
+            static_cast<float>(screenWidth * event.x - renderRect.x) * (static_cast<double>(gameWidth) / renderRect.w);
+        float emulatedPointerPosY = static_cast<float>(screenHeight * event.y - renderRect.y)
+                                    * (static_cast<double>(gameHeight) / renderRect.h);
+
+        if (emulatedPointerPosX < 0)
+            emulatedPointerPosX = 0;
+        else if (emulatedPointerPosX >= gameWidth)
+            emulatedPointerPosX = gameWidth - 1;
+
+        if (emulatedPointerPosY < 0)
+            emulatedPointerPosY = 0;
+        else if (emulatedPointerPosY >= gameHeight)
+            emulatedPointerPosY = gameHeight - 1;
+
+        Set_Video_Mouse(emulatedPointerPosX, emulatedPointerPosY);
+
+        if (event.type == SDL_FINGERDOWN) {
+            Put_Mouse_Message(VK_LBUTTON, emulatedPointerPosX, emulatedPointerPosY, 0);
+        } else if (event.type == SDL_FINGERUP) {
+            Put_Mouse_Message(VK_LBUTTON, emulatedPointerPosX, emulatedPointerPosY, 1);
+        }
+    }
+}
+#endif // VITA
+#endif // SDL2_BUILD
 
 /***********************************************************************************************
  * WWKeyboardClass::Clear -- Clears the keyboard buffer.                                       *

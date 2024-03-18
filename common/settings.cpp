@@ -11,7 +11,12 @@ SettingsClass::SettingsClass()
     */
     Mouse.RawInput = true;
     Mouse.Sensitivity = 100;
+#ifdef VITA
+    // Default to enabled on platforms where controller is likely to be primary method.
+    Mouse.ControllerEnabled = true;
+#else
     Mouse.ControllerEnabled = false;
+#endif
     Mouse.ControllerPointerSpeed = 10;
     Options.MouseWheelScrolling = true;
 
@@ -32,6 +37,12 @@ SettingsClass::SettingsClass()
     Video.Scaler = "nearest";
     Video.Driver = "default";
     Video.PixelFormat = "default";
+
+#ifdef VITA
+    Vita.ScaleGameSurface = true;
+    Vita.RearTouchEnabled = true;
+    Vita.RearTouchSpeed = 5;
+#endif
 }
 
 void SettingsClass::Load(INIClass& ini)
@@ -77,6 +88,12 @@ void SettingsClass::Load(INIClass& ini)
     if (Video.Boxing || Mouse.RawInput || Mouse.ControllerEnabled) {
         Video.HardwareCursor = false;
     }
+
+#ifdef VITA
+    Vita.ScaleGameSurface = ini.Get_Bool("Vita", "ScaleGameSurface", Vita.ScaleGameSurface);
+    Vita.RearTouchEnabled = ini.Get_Bool("Vita", "RearTouchEnabled", Vita.RearTouchEnabled);
+    Vita.RearTouchSpeed = ini.Get_Int("Vita", "RearTouchSpeed", Vita.RearTouchSpeed);
+#endif
 }
 
 void SettingsClass::Save(INIClass& ini)
@@ -111,4 +128,10 @@ void SettingsClass::Save(INIClass& ini)
     ** VQA and WSA interpolation mode 0 = scanlines, 1 = vertical doubling, 2 = linear
     */
     ini.Put_Int("Video", "InterpolationMode", Video.InterpolationMode);
+
+#ifdef VITA
+    ini.Put_Bool("Vita", "ScaleGameSurface", Vita.ScaleGameSurface);
+    ini.Put_Bool("Vita", "RearTouchEnabled", Vita.RearTouchEnabled);
+    ini.Put_Int("Vita", "RearTouchSpeed", Vita.RearTouchSpeed);
+#endif
 }

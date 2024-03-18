@@ -38,6 +38,15 @@ public:
         std::string PixelFormat;
     } Video;
 
+#ifdef VITA
+    struct
+    {
+        bool ScaleGameSurface;
+        bool RearTouchEnabled;
+        int RearTouchSpeed;
+    } Vita;
+#endif
+
     struct
     {
         bool MouseWheelScrolling;

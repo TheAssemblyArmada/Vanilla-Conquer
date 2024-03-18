@@ -70,6 +70,17 @@ void Reset_Video_Mode();
 unsigned Get_Free_Video_Memory();
 void Wait_Blit();
 
+#ifdef VITA
+#include <SDL.h>
+
+const int32_t VITA_FULLSCREEN_WIDTH = 960;
+const int32_t VITA_FULLSCREEN_HEIGHT = 544;
+
+void Get_Game_Resolution(int& w, int& h);
+void Set_Video_Mouse(int x, int y);
+SDL_Rect Get_Render_Rect();
+#endif
+
 /*
 ** Set desired cursor image in game palette.
 */

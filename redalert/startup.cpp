@@ -59,6 +59,13 @@ HINSTANCE ProgramInstance;
 #else
 #include <unistd.h>
 #endif
+
+#ifdef VITA
+int _newlib_heap_size_user = 340 * 1024 * 1024;
+#include <psp2/kernel/processmgr.h>
+#include <psp2/power.h>
+#endif
+
 extern bool RA95AlreadyRunning;
 void Check_Use_Compressed_Shapes(void);
 void Read_Setup_Options(RawFileClass* config_file);
@@ -289,7 +296,12 @@ int main(int argc, char* argv[])
     /*
     **	Remember the current working directory and drive.
     */
-    Paths.Init("vanillara", CONFIG_FILE_NAME, "REDALERT.MIX", args.ArgV[0]);
+#ifdef VITA
+    const char* progpath = "ux0:data";
+#else
+    const char* progpath = args.ArgV[0];
+#endif
+    Paths.Init("vanillara", CONFIG_FILE_NAME, "REDALERT.MIX", progpath);
     CDFileClass::Refresh_Search_Drives();
 
     if (Parse_Command_Line(args.ArgC, args.ArgV)) {
@@ -514,6 +526,10 @@ int main(int argc, char* argv[])
 
         return (EXIT_SUCCESS);
     }
+
+#ifdef VITA
+    sceKernelExitProcess(0);
+#endif
 
     return (EXIT_SUCCESS);
 }

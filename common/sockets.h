@@ -29,22 +29,33 @@ static inline int socket_cleanup(void)
 {
     return WSACleanup();
 }
-
 #else /* Assume posix style sockets on non-windows */
+
+#ifdef VITA
+// TODO vita networking stuff.
+#include <psp2/net/net.h>
+#endif
 
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netdb.h> // for getaddrinfo() and freeaddrinfo()
+#ifndef VITA
 #include <sys/ioctl.h>
+#endif
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h> // for close()
 typedef int SOCKET;
-#define INVALID_SOCKET       (-1)
-#define SOCKET_ERROR         (-1)
-#define closesocket(x)       close(x)
+#define INVALID_SOCKET (-1)
+#define SOCKET_ERROR   (-1)
+#define closesocket(x) close(x)
+#ifdef VITA // Hack around lack of ioctl for setting none blocking.
+#define FIONBIO              SO_NONBLOCK
+#define ioctlsocket(x, y, z) setsockopt(x, SOL_SOCKET, y, z, sizeof(*(z)))
+#else
 #define ioctlsocket(x, y, z) ioctl(x, y, z)
-#define LastSocketError      (errno)
+#endif
+#define LastSocketError (errno)
 
 #define WSAEISCONN       EISCONN
 #define WSAEINPROGRESS   EINPROGRESS
