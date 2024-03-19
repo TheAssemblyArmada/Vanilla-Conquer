@@ -493,7 +493,7 @@ int Scan_Place_Object(ObjectClass* obj, CELL cell);
 **	INIT.CPP
 */
 void Uninit_Game(void);
-long Obfuscate(char const* string);
+uint32_t Obfuscate(char const* string);
 void Anim_Init(void);
 bool Init_Game(int argc, char* argv[]);
 bool Select_Game(bool fade = false);

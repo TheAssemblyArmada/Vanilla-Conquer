@@ -205,7 +205,7 @@ extern int RESFACTOR;
 **	Enable the set of limited cheat key options.
 */
 #ifdef VIRGIN_CHEAT_KEYS
-#define PARM_PLAYTEST 0xF7DDC227 // "PLAYTEST"
+#define PARM_PLAYTEST 0xF7DDC227UL // "PLAYTEST"
 #endif
 
 /*
@@ -213,11 +213,11 @@ extern int RESFACTOR;
 */
 #ifdef CHEAT_KEYS
 #ifndef PARM_PLAYTEST
-#define PARM_PLAYTEST 0xF7DDC227 // "PLAYTEST"
+#define PARM_PLAYTEST 0xF7DDC227UL // "PLAYTEST"
 #endif
 #endif
 
-#define PARM_INSTALL 0xD95C68A2 //	"FROMINSTALL"
+#define PARM_INSTALL 0xD95C68A2UL //	"FROMINSTALL"
 
 /**********************************************************************
 **	Defines for verifying free disk space

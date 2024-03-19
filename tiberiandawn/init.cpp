@@ -2318,7 +2318,7 @@ void Load_Recording_Values(void)
  * HISTORY:                                                                                    *
  *   08/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-long Obfuscate(char const* string)
+uint32_t Obfuscate(char const* string)
 {
     char buffer[1024];
 
