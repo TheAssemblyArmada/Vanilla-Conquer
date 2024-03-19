@@ -468,7 +468,7 @@ int main(int argc, char** argv)
 
         CCDebugString("C&C95 - About to exit.\n");
 
-#if defined(SDL_BUILD)
+#ifdef NEW_VIDEO_BUILD
         Reset_Video_Mode();
 #endif
 

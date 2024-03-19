@@ -189,7 +189,7 @@ int AllDone;
 **	This is true if the game is the currently in focus windows app
 **
 */
-#ifdef SDL_BUILD
+#ifdef NEW_VIDEO_BUILD
 bool GameInFocus = true;
 #else
 bool GameInFocus = false;
