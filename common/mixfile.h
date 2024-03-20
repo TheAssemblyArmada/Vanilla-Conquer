@@ -653,7 +653,7 @@ template <class T, class TCRC> bool MixFileClass<T, TCRC>::Cache(Buffer const* b
         */
         int actual = straw->Get(Data, DataSize);
         if (actual != DataSize) {
-            delete[] Data;
+            delete[] static_cast<char*>(Data);
             Data = NULL;
             file.Error(EIO);
             return (false);
@@ -670,7 +670,7 @@ template <class T, class TCRC> bool MixFileClass<T, TCRC>::Cache(Buffer const* b
             sha.Result(digest2);
             fstraw.Get(digest1, sizeof(digest1));
             if (memcmp(digest1, digest2, sizeof(digest1)) != 0) {
-                delete[] Data;
+                delete[] static_cast<char*>(Data);
                 Data = NULL;
                 return (false);
             }
@@ -702,7 +702,7 @@ template <class T, class TCRC> bool MixFileClass<T, TCRC>::Cache(Buffer const* b
 template <class T, class TCRC> void MixFileClass<T, TCRC>::Free(void)
 {
     if (Data != NULL && IsAllocated) {
-        delete[] Data;
+        delete[] static_cast<char*>(Data);
     }
     Data = NULL;
     IsAllocated = false;

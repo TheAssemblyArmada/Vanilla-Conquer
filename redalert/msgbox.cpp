@@ -442,7 +442,7 @@ int WWMessageBox::Process(const char* msg, const char* b1txt, const char* b2txt,
         }
         SeenBuff.Unlock();
 
-        delete[] back;
+        delete[] static_cast<char*>(back);
         back = NULL;
         Show_Mouse();
     }

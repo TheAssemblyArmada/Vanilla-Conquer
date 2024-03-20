@@ -635,7 +635,7 @@ void Uninit_Game(void)
 {
     Map.Free_Cells();
 
-    delete[] SpeechBuffer;
+    delete[] static_cast<char*>(SpeechBuffer);
 
     CCFileClass::Clear_Search_Drives();
     MFCD::Free_All();
@@ -2075,7 +2075,7 @@ void Parse_INI_File(void)
     Fetch working pointer to the INI staging buffer. Make sure that the buffer
     is cleared out before proceeding.
     ------------------------------------------------------------------------*/
-    buffer = (char*)_ShapeBuffer;
+    buffer = _ShapeBuffer;
     memset(buffer, '\0', _ShapeBufferSize);
 
     /*------------------------------------------------------------------------
