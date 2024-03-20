@@ -119,7 +119,7 @@ public:
     **	This is the "throttle setting" of the unit. It is a fractional value with 0 = stop
     **	and 255 = full speed.
     */
-    unsigned char const Speed;
+    unsigned char Speed;
 
     /*
     **
