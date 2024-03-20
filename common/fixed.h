@@ -36,6 +36,7 @@
 #define FIXED_H
 
 #include <stdint.h>
+#include "endianness.h"
 
 /*
 **	This is a very simple fixed point class that functions like a regular integral type. However
