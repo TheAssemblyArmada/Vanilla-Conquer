@@ -487,7 +487,7 @@ int main(int argc, char* argv[])
         HiddenPage.Clear();
         Memory_Error_Exit = Print_Error_Exit;
 
-#ifdef SDL_BUILD
+#ifdef NEW_VIDEO_BUILD
         Reset_Video_Mode();
 #endif
 
