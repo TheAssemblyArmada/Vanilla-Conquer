@@ -56,7 +56,7 @@ static size_t TotalRam = 0;
 static unsigned int Memory_Calls = 0;
 
 void (*Memory_Error)(void) = NULL;
-extern void (*Memory_Error_Exit)(char* string) = NULL;
+void (*Memory_Error_Exit)(char* string) = NULL;
 
 /***************************************************************************
  * Alloc -- Allocates system RAM.                                          *
