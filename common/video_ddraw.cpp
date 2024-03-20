@@ -671,7 +671,21 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
     //
     // Set the required display mode with 8 bits per pixel
     //
-    result = DirectDrawObject->SetDisplayMode(w, h, bits_per_pixel);
+    do {
+        result = DirectDrawObject->SetDisplayMode(w, h, bits_per_pixel);
+        if (result != DD_OK) {
+            /* giulianob: C&C runs by default in 640x400 resolution, which is
+               by some videocards even back then.  In failure to set the
+               resulution, try to fallback into 640x480.  */
+            if (h == 400) {
+                h = 480;
+            } else {
+                /* Just give up.  */
+                result = ~DD_OK;
+            }
+        }
+    } while (result != DD_OK);
+
     if (result != DD_OK) {
         DirectDrawObject->Release();
         DirectDrawObject = NULL;
