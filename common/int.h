@@ -403,8 +403,8 @@ public:
     }
 
     // Friend helper functions.
-    friend Int<PRECISION> Generate_Prime(Straw& rng, int pbits);
-    friend Int<PRECISION> Gcd(const Int<PRECISION>& a, const Int<PRECISION>& b);
+    template <int P> friend Int<P> Generate_Prime(Straw& rng, int pbits);
+    template <int P> friend Int<P> Gcd(const Int<P>& a, const Int<P>& b);
     //		friend bool NextPrime(Int<PRECISION> & p, const Int<PRECISION> & max, bool blumInt=false);
     //		friend Int<PRECISION> a_exp_b_mod_pq(const Int<PRECISION> & a, const Int<PRECISION> & ep, const Int<PRECISION>
     //& eq, const Int<PRECISION> & p, const Int<PRECISION> & q, const Int<PRECISION> & u);
