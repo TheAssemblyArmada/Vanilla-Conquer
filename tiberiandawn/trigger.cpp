@@ -1192,7 +1192,7 @@ void TriggerClass::Write_INI(CCINIClass& ini, bool refresh)
         }
 
         sprintf(buf,
-                "%s,%s,%ld,%s,%s,%d",
+                "%s,%s,%d,%s,%s,%d",
                 TriggerClass::Name_From_Event(trigger->Event),
                 TriggerClass::Name_From_Action(trigger->Action),
                 trigger->Data,
