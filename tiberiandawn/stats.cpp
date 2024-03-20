@@ -593,7 +593,7 @@ void Send_Statistics_Packet(void)
     ** Tidy up
     */
     CCDebugString("C&C95 - About to delete packet memory.\n");
-    delete[] packet;
+    delete[] static_cast<char*>(packet);
 
     GameStatisticsPacketSent = true;
     CCDebugString("C&C95 - Returning from Send_Statistics_Packet.\n");

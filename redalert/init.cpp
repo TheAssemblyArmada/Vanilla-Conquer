@@ -2910,7 +2910,7 @@ void Free_Heaps(void)
     */
     for (int index = 0; index < ARRAY_SIZE(SpeechBuffer); index++) {
         if (SpeechBuffer[index]) {
-            delete[] SpeechBuffer[index];
+            delete[] static_cast<char*>(SpeechBuffer[index]);
             SpeechBuffer[index] = NULL;
         }
     }

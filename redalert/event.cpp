@@ -901,7 +901,7 @@ void EventClass::Execute(void)
             printf("%d\n", ((char*)Data.Variable.Pointer)[i]);
         }
         if (ID != PlayerPtr->ID) {
-            delete[] Data.Variable.Pointer;
+            delete[] static_cast<char*>(Data.Variable.Pointer);
         }
         break;
 
