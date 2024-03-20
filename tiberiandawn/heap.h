@@ -139,7 +139,7 @@ public:
     };
     virtual int Free(T* pointer)
     {
-        FixedHeapClass::Free(pointer);
+        return FixedHeapClass::Free(pointer);
     };
 
 protected:
