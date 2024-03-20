@@ -151,6 +151,18 @@ std::string PathsClass::Concatenate_Paths(const char* path1, const char* path2)
     return std::string(path1) + SEP + path2;
 }
 
+std::string PathsClass::Get_Filename(const char* path)
+{
+    char temppath[_MAX_PATH];
+    char name[_MAX_FNAME];
+    char ext[_MAX_EXT];
+
+    _splitpath(path, NULL, NULL, name, ext);
+    _makepath(temppath, NULL, NULL, name, ext);
+
+    return std::string(temppath);
+}
+
 std::string PathsClass::Argv_Path(const char* cmd_arg)
 {
     TCHAR base_buff[MAX_PATH];
