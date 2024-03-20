@@ -11,8 +11,12 @@
 #elif defined(_WIN32)
 #include <synchapi.h>
 #else /* Assuming recent posix*/
-#define __USE_POSIX199309
+#ifndef __USE_POSIX199309
+#define __USE_POSIX199309 1
+#endif
+#ifndef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE 199309L
+#endif
 #include <time.h>
 #endif
 
