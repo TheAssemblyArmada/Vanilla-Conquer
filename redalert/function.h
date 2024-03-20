@@ -513,7 +513,7 @@ bool Load_Misc_Values(Straw& file);
 bool Save_Misc_Values(Pipe& file);
 bool Load_MPlayer_Values(Straw& file);
 bool Save_MPlayer_Values(Pipe& file);
-bool Get_Savefile_Info(int id, char* buf, unsigned* scenp, HousesType* housep);
+bool Get_Savefile_Info(int id, char* buf, unsigned* scenp, HousesType* housep, GameType *session_type);
 bool Load_Game(int id);
 bool Load_Game(const char* file_name);
 // bool Read_Object (void * ptr, int base_size, int class_size, FileClass & file, void * vtable);  // Original

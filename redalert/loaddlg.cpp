@@ -645,6 +645,7 @@ void LoadOptionsClass::Fill_List(ListClass* list)
     char scan_path[_MAX_PATH];
     unsigned scenario; // scenario #
     HousesType house;  // house
+    GameType session_type;
     Find_File_Data* ff = nullptr;
     int id;
     bool found;
@@ -680,7 +681,7 @@ void LoadOptionsClass::Fill_List(ListClass* list)
             /*
             ** get the game's info; if success, add it to the list
             */
-            bool ok = Get_Savefile_Info(id, descr, &scenario, &house);
+            bool ok = Get_Savefile_Info(id, descr, &scenario, &house, &session_type);
 
             fdata = new FileEntryClass;
 
@@ -688,8 +689,10 @@ void LoadOptionsClass::Fill_List(ListClass* list)
             if (!ok) {
                 strcpy(fdata->Descr, Text_String(TXT_OLD_GAME));
             } else {
-                if (house == HOUSE_USSR || house == HOUSE_UKRAINE) {
+                if (house == HOUSE_BAD ||  house == HOUSE_USSR || house == HOUSE_UKRAINE) {
                     sprintf(fdata->Descr, "(%s) ", Text_String(TXT_SOVIET));
+                } else if (session_type == GAME_SKIRMISH) {
+                    sprintf(fdata->Descr, "(%s) ", "Skirmish");
                 } else {
                     sprintf(fdata->Descr, "(%s) ", Text_String(TXT_ALLIES));
                 }
