@@ -35,6 +35,7 @@
 #define DEFINES_H
 
 #include "common/bitfields.h"
+#include "common/endianness.h"
 
 /**********************************************************************
 **	If defined, then the advanced balancing features will be enabled
