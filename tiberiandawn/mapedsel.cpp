@@ -481,7 +481,7 @@ int MapEditClass::Move_Grabbed_Object(void)
             //			Map[Coord_Cell(GrabbedObject->Coord)].Flag.Composite &=
             //				~(1 << CellClass::Spot_Index(GrabbedObject->Coord));
         } else {
-            new_coord = NULL;
+            new_coord = 0;
         }
 
     } else {
@@ -500,10 +500,10 @@ int MapEditClass::Move_Grabbed_Object(void)
         ................ Try to place object at new coordinate ................
         */
         if (GrabbedObject->Can_Enter_Cell(Coord_Cell(new_coord)) != MOVE_OK) {
-            new_coord = NULL;
+            new_coord = 0;
         }
     }
-    if (new_coord != NULL) {
+    if (new_coord != 0) {
         /*
         ** If this object is part of the AI's Base list, change the coordinate
         ** in the Base's Node list.

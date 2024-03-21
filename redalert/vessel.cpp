@@ -718,7 +718,7 @@ void VesselClass::Per_Cell_Process(PCPType why)
                 CELL cell = Coord_Cell(Adjacent_Cell(Center_Coord(), face));
                 SmartPtr<BuildingClass> whom;
                 whom = Map[cell].Cell_Building();
-                if (whom != NULL && ((*whom == STRUCT_SHIP_YARD) || (*whom == STRUCT_SUB_PEN))) {
+                if (whom != nullptr && ((*whom == STRUCT_SHIP_YARD) || (*whom == STRUCT_SUB_PEN))) {
 
                     // MBL 04.27.2020: Make only audible to the correct player
                     // if (IsOwnedByPlayer) Speak(VOX_REPAIRING);
