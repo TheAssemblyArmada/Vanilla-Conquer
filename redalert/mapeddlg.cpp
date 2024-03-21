@@ -553,7 +553,7 @@ int MapEditClass::Load_Scenario(void)
         /*
         **	Other Variables
         */
-        char scen_buf[10] = {0}; // buffer for editing scenario #
+        char scen_buf[14] = {0}; // buffer for editing scenario #
 
         /*
         **	Buttons

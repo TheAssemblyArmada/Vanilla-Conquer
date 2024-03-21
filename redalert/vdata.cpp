@@ -529,7 +529,7 @@ void VesselTypeClass::One_Time(void)
 {
     for (VesselType index = VESSEL_FIRST; index < VESSEL_COUNT; index++) {
         char fullname[_MAX_FNAME + _MAX_EXT];
-        char buffer[_MAX_FNAME];
+        char buffer[_MAX_FNAME + 4];
         VesselTypeClass const& uclass = As_Reference(index);
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
         if (uclass.Level != -1 || index == VESSEL_CARRIER) {

@@ -4965,7 +4965,7 @@ void UnitClass::Write_INI(CCINIClass& ini)
     for (int index = 0; index < Units.Count(); index++) {
         UnitClass* unit = Units.Ptr(index);
         if (unit != NULL && !unit->IsInLimbo && unit->IsActive) {
-            char uname[10];
+            char uname[12];
             char buf[128];
 
             sprintf(uname, "%d", index);

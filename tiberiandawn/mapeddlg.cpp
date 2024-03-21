@@ -1955,16 +1955,16 @@ int MapEditClass::Scenario_Dialog(void)
     /*
     .......................... Init credits buffers ..........................
     */
-    sprintf(level_buf, "%ld", BuildLevel);
+    sprintf(level_buf, "%d", BuildLevel);
     leveledt.Set_Text(level_buf, 4);
 
-    sprintf(gdicred_buf, "%ld", gdi_credits);
+    sprintf(gdicred_buf, "%d", gdi_credits);
     gdicred.Set_Text(gdicred_buf, 8);
 
-    sprintf(nodcred_buf, "%ld", nod_credits);
+    sprintf(nodcred_buf, "%d", nod_credits);
     nodcred.Set_Text(nodcred_buf, 8);
 
-    sprintf(neutcred_buf, "%ld", neut_credits);
+    sprintf(neutcred_buf, "%d", neut_credits);
     neutcred.Set_Text(neutcred_buf, 8);
 
     theaterbtn.Set_Selected_Index(orig_theater - THEATER_NONE - 1);
@@ -3110,7 +3110,7 @@ int MapEditClass::Edit_Trigger(void)
     name_edt.Set_Text(namebuf, 5);
 
     if (TriggerClass::Event_Need_Data(event_idx)) {
-        sprintf(databuf, "%ld", CurTrigger->Data); // Credits/Time
+        sprintf(databuf, "%d", CurTrigger->Data); // Credits/Time
         data_edt.Set_Text(databuf, 8);
     }
 
@@ -3280,7 +3280,7 @@ int MapEditClass::Edit_Trigger(void)
             semipersistbtn.Add_Tail(*commands);
             if (TriggerClass::Event_Need_Data(event_idx)) {
                 data_edt.Add_Tail(*commands);
-                sprintf(databuf, "%ld", CurTrigger->Data);
+                sprintf(databuf, "%d", CurTrigger->Data);
                 data_edt.Set_Text(databuf, 8);
             }
             if (TriggerClass::Event_Need_House(event_idx)) {

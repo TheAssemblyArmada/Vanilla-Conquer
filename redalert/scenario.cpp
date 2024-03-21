@@ -993,7 +993,7 @@ void Do_Win(void)
             if (AntsEnabled) {
                 char scenarioname[24];
                 strcpy(scenarioname, Scen.ScenarioName);
-                char buf[10];
+                char buf[12];
                 Scen.Scenario++;
                 sprintf(buf, "%02d", Scen.Scenario);
                 memcpy(&scenarioname[3], buf, 2);

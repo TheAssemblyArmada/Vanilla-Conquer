@@ -375,7 +375,7 @@ void GameOptionsClass::Process(void)
                 if (!Restate_Mission(Scen.ScenarioName, TXT_VIDEO, TXT_OPTIONS)) {
 #endif
                     BreakoutAllowed = true;
-                    char buffer[25];
+                    char buffer[_MAX_FNAME + _MAX_EXT + 4];
                     sprintf(buffer, "%s.VQA", BriefMovie);
                     if (CCFileClass(buffer).Is_Available()) {
                         Play_Movie(BriefMovie);

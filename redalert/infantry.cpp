@@ -3617,7 +3617,7 @@ void InfantryClass::Write_INI(CCINIClass& ini)
     for (int index = 0; index < Infantry.Count(); index++) {
         InfantryClass* infantry = Infantry.Ptr(index);
         if (!infantry->IsInLimbo) {
-            char uname[10];
+            char uname[12];
             char buf[128];
 
             sprintf(uname, "%d", index);

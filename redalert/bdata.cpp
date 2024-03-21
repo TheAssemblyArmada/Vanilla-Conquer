@@ -3008,7 +3008,7 @@ void BuildingTypeClass::One_Time(void)
 
     for (int sindex = STRUCT_FIRST; sindex < STRUCT_COUNT; sindex++) {
         char fullname[_MAX_FNAME + _MAX_EXT];
-        char buffer[_MAX_FNAME];
+        char buffer[_MAX_FNAME + 4];
         BuildingTypeClass const& building = As_Reference((StructType)sindex);
         /*
         **	Fetch the sidebar cameo image for this building.

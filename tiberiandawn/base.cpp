@@ -130,7 +130,7 @@ int BaseNodeClass::operator>(BaseNodeClass const&)
 void BaseClass::Read_INI(CCINIClass& ini)
 {
     char buf[128];
-    char uname[10];
+    char uname[12];
     BaseNodeClass node; // node to add to list
 
     /*
@@ -200,7 +200,7 @@ void BaseClass::Read_INI(CCINIClass& ini)
 void BaseClass::Write_INI(CCINIClass& ini)
 {
     char buf[128];
-    char uname[10];
+    char uname[12];
 
     /*
     **	Clear out all existing teamtype data from the INI file.
