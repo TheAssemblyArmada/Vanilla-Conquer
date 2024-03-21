@@ -1382,12 +1382,12 @@ bool Parse_Command_Line(int argc, char* argv[])
         }
 
         bool processed = true;
-        unsigned ob = unsigned(Obfuscate(string));
+        uint32_t ob = Obfuscate(string);
 
         /*
         **	Check to see if the parameter is a cheat enabling one.
         */
-        unsigned const* optr = &CheatCodes[0];
+        uint32_t const* optr = &CheatCodes[0];
         while (*optr) {
             if (*optr++ == ob) {
                 Debug_Playtest = true;
@@ -1627,7 +1627,7 @@ bool Parse_Command_Line(int argc, char* argv[])
  * HISTORY:                                                                                    *
  *   08/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Obfuscate(char const* string)
+uint32_t Obfuscate(char const* string)
 {
     char buffer[1024];
 

@@ -378,7 +378,7 @@ bool Read_Scenario_INI_Write_INB(char* root, bool fresh);
 **	INIT.CPP
 */
 void Load_Title_Page(bool visible = false);
-int Obfuscate(char const* string);
+uint32_t Obfuscate(char const* string);
 void Anim_Init(void);
 bool Init_Game(int argc, char* argv[]);
 bool Select_Game(bool fade = false);
