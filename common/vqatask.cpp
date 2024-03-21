@@ -117,7 +117,7 @@ VQAErrorType VQA_Play(VQAHandle* handle, VQAPlayMode mode)
             }
 
             if (data->Flags & VQA_DATA_FLAG_VIDEO_MEMORY_SET) {
-                ++VQAMovieDone;
+                VQAMovieDone = true;
             } else {
                 rc = (VQAErrorType)VQA_LoadFrame(handle);
 
