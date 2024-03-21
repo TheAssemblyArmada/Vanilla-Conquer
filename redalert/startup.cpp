@@ -298,7 +298,7 @@ int main(int argc, char* argv[])
 
         CCFileClass cfile(CONFIG_FILE_NAME);
 
-        Keyboard = new WWKeyboardClass();
+        Keyboard = CreateWWKeyboardClass();
 
         /*
         ** If there is loads of memory then use uncompressed shapes

@@ -860,30 +860,25 @@ typedef enum ScrollDirType : unsigned char
 
 class WWKeyboardClass
 {
-public:
+protected:
     /* Define the base constructor and destructors for the class			*/
     WWKeyboardClass();
+    virtual ~WWKeyboardClass();
 
+public:
     /* Define the functions which work with the Keyboard Class				*/
     KeyNumType Check(void) const;
     KeyNumType Get(void);
     bool Put(unsigned short key);
     void Clear(void);
-    KeyASCIIType To_ASCII(unsigned short num);
+    virtual KeyASCIIType To_ASCII(unsigned short num) = 0;
     bool Down(unsigned short key);
 
-#ifdef SDL2_BUILD
-    bool Is_Gamepad_Active();
-    void Open_Controller();
-    void Close_Controller();
-    bool Is_Analog_Scroll_Active();
-    unsigned char Get_Scroll_Direction();
-#elif defined(SDL1_BUILD)
-    bool Is_Gamepad_Active()
-    {
-        return false;
-    }
-#endif
+    virtual bool Is_Gamepad_Active();
+    virtual void Open_Controller();
+    virtual void Close_Controller();
+    virtual bool Is_Analog_Scroll_Active();
+    virtual unsigned char Get_Scroll_Direction();
 
 #if defined(_WIN32) && !defined(SDL_BUILD)
     /* Define the main hook for the message processing loop.					*/
@@ -895,15 +890,12 @@ public:
     int MouseQX;
     int MouseQY;
 
-private:
-    /*
-    **	This is a keyboard state array that is used to aid in translating
-    **	KN_ keys into KA_ keys.
-    */
-#if defined(_WIN32)
-    unsigned char KeyState[256];
-#endif
+protected:
+    bool Is_Buffer_Full(void) const;
+    bool Put_Key_Message(unsigned short vk_key, bool release = false);
+    bool Put_Mouse_Message(unsigned short vk_key, int x, int y, bool release = false);
 
+private:
     /*
     **	This is the circular keyboard holding buffer. It holds the VK key and
     **	the current shift state at the time the key was added to the queue.
@@ -914,12 +906,9 @@ private:
     unsigned short Fetch_Element(void);
     unsigned short Peek_Element(void) const;
     bool Put_Element(unsigned short val);
-    bool Is_Buffer_Full(void) const;
     bool Is_Buffer_Empty(void) const;
     static bool Is_Mouse_Key(unsigned short key);
-    void Fill_Buffer_From_System(void);
-    bool Put_Key_Message(unsigned short vk_key, bool release = false);
-    bool Put_Mouse_Message(unsigned short vk_key, int x, int y, bool release = false);
+    virtual void Fill_Buffer_From_System(void) = 0;
     int Available_Buffer_Room(void) const;
 
     /*
@@ -934,36 +923,8 @@ private:
     */
     uint8_t DownState[0x2000]; // (UINT16_MAX / 8) + 1
     int DownSkip;
-
-#ifdef SDL2_BUILD
-    void Handle_Controller_Axis_Event(const SDL_ControllerAxisEvent& motion);
-    void Handle_Controller_Button_Event(const SDL_ControllerButtonEvent& button);
-    void Process_Controller_Axis_Motion();
-
-    // used to convert user-friendly pointer speed values into more useable ones
-    static constexpr float CONTROLLER_SPEED_MOD = 2000000.0f;
-    // bigger value correndsponds to faster pointer movement speed with bigger stick axis values
-    static constexpr float CONTROLLER_AXIS_SPEEDUP = 1.03f;
-    // speedup value while the trigger is pressed
-    static constexpr int CONTROLLER_TRIGGER_SPEEDUP = 2;
-
-    enum
-    {
-        CONTROLLER_L_DEADZONE = 4000,
-        CONTROLLER_R_DEADZONE = 6000,
-        CONTROLLER_TRIGGER_R_DEADZONE = 3000
-    };
-
-    SDL_GameController* GameController = nullptr;
-    int16_t ControllerLeftXAxis = 0;
-    int16_t ControllerLeftYAxis = 0;
-    int16_t ControllerRightXAxis = 0;
-    int16_t ControllerRightYAxis = 0;
-    uint32_t LastControllerTime = 0;
-    float ControllerSpeedBoost = 1;
-    bool AnalogScrollActive = false;
-    ScrollDirType ScrollDirection = SDIR_NONE;
-#endif
 };
+
+WWKeyboardClass* CreateWWKeyboardClass(void);
 
 #endif
