@@ -927,8 +927,8 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
         **	If there's a current cell, place the flag & waypoint there.
         */
         if (CurrentCell != 0) {
-            waypt_idx = (Keyboard->To_ASCII((KeyNumType)(input & 0xff)) - KA_1);
-            //				waypt_idx = (KN_To_KA(input & 0xff) - KA_1);
+            waypt_idx = (Keyboard->To_ASCII((KeyNumType)(input & KN_SCANCODE_MASK)) - KA_1);
+            //				waypt_idx = (KN_To_KA(input & KN_SCANCODE_MASK) - KA_1);
             house = (HousesType)(HOUSE_MULTI1 + waypt_idx);
             if (HouseClass::As_Pointer(house)) {
                 HouseClass::As_Pointer(house)->Flag_Attach(CurrentCell, true);
@@ -940,7 +940,7 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
             **	waypoint.
             */
             if (CurrentObject[0] != 0) {
-                waypt_idx = (Keyboard->To_ASCII((KeyNumType)(input & 0xff)) - KA_1);
+                waypt_idx = (Keyboard->To_ASCII((KeyNumType)(input & KN_SCANCODE_MASK)) - KA_1);
                 house = (HousesType)(HOUSE_MULTI1 + waypt_idx);
                 if (HouseClass::As_Pointer(house) && CurrentObject[0]->What_Am_I() == RTTI_UNIT) {
                     HouseClass::As_Pointer(house)->Flag_Attach((UnitClass*)CurrentObject[0], true);

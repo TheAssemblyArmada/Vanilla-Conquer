@@ -59,7 +59,6 @@
 #include <cstdlib>
 #ifdef SDL_BUILD
 #include <SDL.h>
-#include "sdl_keymap.h"
 #endif
 #include "settings.h"
 
@@ -136,7 +135,7 @@ unsigned short WWKeyboardClass::Buff_Get(void)
  *=============================================================================================*/
 bool WWKeyboardClass::Is_Mouse_Key(unsigned short key)
 {
-    key &= 0xFF;
+    key &= KN_SCANCODE_MASK;
     return (key == KN_LMOUSE || key == KN_MMOUSE || key == KN_RMOUSE);
 }
 
@@ -223,18 +222,18 @@ bool WWKeyboardClass::Put_Key_Message(unsigned short vk_key, bool release)
     */
     if (!Is_Mouse_Key(vk_key)) {
         if (Down(KN_LSHIFT) || Down(KN_RSHIFT) || Down(KN_CAPSLOCK) || Down(KN_NUMLOCK)) {
-            vk_key |= WWKEY_SHIFT_BIT;
+            vk_key |= KN_SHIFT_BIT;
         }
         if (Down(KN_LCTRL) || Down(KN_RCTRL)) {
-            vk_key |= WWKEY_CTRL_BIT;
+            vk_key |= KN_CTRL_BIT;
         }
         if (Down(KN_LALT) || Down(KN_RALT)) {
-            vk_key |= WWKEY_ALT_BIT;
+            vk_key |= KN_ALT_BIT;
         }
     }
 
     if (release) {
-        vk_key |= WWKEY_RLS_BIT;
+        vk_key |= KN_RLSE_BIT;
     }
 
     /*
@@ -296,10 +295,155 @@ KeyASCIIType WWKeyboardClass::To_ASCII(unsigned short key)
     /*
     **	Released keys never translate into an ASCII value.
     */
-    if (key & WWKEY_RLS_BIT) {
+    if (key & KN_RLSE_BIT) {
         return KA_NONE;
     }
 
+#if defined(SDL_BUILD)
+    key &= KN_SCANCODE_MASK; // drop all mods
+    bool shift = (SDL_GetModState() & KMOD_SHIFT) != 0;
+
+    switch (key) {
+    case KN_A:
+        return shift ? KA_A : KA_a;
+    case KN_B:
+        return shift ? KA_B : KA_b;
+    case KN_C:
+        return shift ? KA_C : KA_c;
+    case KN_D:
+        return shift ? KA_D : KA_d;
+    case KN_E:
+        return shift ? KA_E : KA_e;
+    case KN_F:
+        return shift ? KA_F : KA_f;
+    case KN_G:
+        return shift ? KA_G : KA_g;
+    case KN_H:
+        return shift ? KA_H : KA_h;
+    case KN_I:
+        return shift ? KA_I : KA_i;
+    case KN_J:
+        return shift ? KA_J : KA_j;
+    case KN_K:
+        return shift ? KA_K : KA_k;
+    case KN_L:
+        return shift ? KA_L : KA_l;
+    case KN_M:
+        return shift ? KA_M : KA_m;
+    case KN_N:
+        return shift ? KA_N : KA_n;
+    case KN_O:
+        return shift ? KA_O : KA_o;
+    case KN_P:
+        return shift ? KA_P : KA_p;
+    case KN_Q:
+        return shift ? KA_Q : KA_q;
+    case KN_R:
+        return shift ? KA_R : KA_r;
+    case KN_S:
+        return shift ? KA_S : KA_s;
+    case KN_T:
+        return shift ? KA_T : KA_t;
+    case KN_U:
+        return shift ? KA_U : KA_u;
+    case KN_V:
+        return shift ? KA_V : KA_v;
+    case KN_W:
+        return shift ? KA_W : KA_w;
+    case KN_X:
+        return shift ? KA_X : KA_x;
+    case KN_Y:
+        return shift ? KA_Y : KA_y;
+    case KN_Z:
+        return shift ? KA_Z : KA_z;
+
+    // FIXME: remaining mappings may only be valid for Standard US ANSI keyboard layout
+    case KN_1:
+        return shift ? KA_EXCLAMATION : KA_1;
+    case KN_2:
+        return shift ? KA_AT : KA_2;
+    case KN_3:
+        return shift ? KA_HASH : KA_3;
+    case KN_4:
+        return shift ? KA_DOLLAR : KA_4;
+    case KN_5:
+        return shift ? KA_PERCENT : KA_5;
+    case KN_6:
+        return shift ? KA_CARET : KA_6;
+    case KN_7:
+        return shift ? KA_AMPER : KA_7;
+    case KN_8:
+        return shift ? KA_ASTERISK : KA_8;
+    case KN_9:
+        return shift ? KA_LPAREN : KA_9;
+    case KN_0:
+        return shift ? KA_RPAREN : KA_0;
+    case KN_RETURN:
+        return shift ? KA_NONE : KA_RETURN;
+    case KN_ESC:
+        return shift ? KA_NONE : KA_ESC;
+    case KN_BACKSPACE:
+        return shift ? KA_NONE : KA_BACKSPACE;
+    case KN_TAB:
+        return shift ? KA_NONE : KA_TAB;
+    case KN_SPACE:
+        return shift ? KA_NONE : KA_SPACE;
+    case KN_MINUS:
+        return shift ? KA_UNDERLINE : KA_MINUS;
+    case KN_EQUAL:
+        return shift ? KA_PLUS : KA_EQUAL;
+    case KN_LBRACKET:
+        return shift ? KA_LBRACE : KA_LBRACKET;
+    case KN_RBRACKET:
+        return shift ? KA_RBRACE : KA_RBRACKET;
+    case KN_BACKSLASH:
+        return shift ? KA_BAR : KA_BACKSLASH;
+    case KN_SEMICOLON:
+        return shift ? KA_COLON : KA_SEMICOLON;
+    case KN_SQUOTE:
+        return shift ? KA_DQUOTE : KA_SQUOTE;
+    case KN_GRAVE:
+        return shift ? KA_TILDA : KA_GRAVE;
+    case KN_COMMA:
+        return shift ? KA_LESS_THAN : KA_COMMA;
+    case KN_PERIOD:
+        return shift ? KA_GREATER_THAN : KA_PERIOD;
+    case KN_SLASH:
+        return shift ? KA_QUESTION : KA_SLASH;
+    case KN_KEYPAD_SLASH:
+        return shift ? KA_NONE : KA_SLASH;
+    case KN_KEYPAD_ASTERISK:
+        return shift ? KA_NONE : KA_ASTERISK;
+    case KN_KEYPAD_MINUS:
+        return shift ? KA_NONE : KA_MINUS;
+    case KN_KEYPAD_PLUS:
+        return shift ? KA_NONE : KA_PLUS;
+    case KN_E_END:
+        return shift ? KA_NONE : KA_1;
+    case KN_E_DOWN:
+        return shift ? KA_NONE : KA_2;
+    case KN_E_PGDN:
+        return shift ? KA_NONE : KA_3;
+    case KN_E_LEFT:
+        return shift ? KA_NONE : KA_4;
+    case KN_SELECT:
+        return shift ? KA_NONE : KA_5;
+    case KN_E_RIGHT:
+        return shift ? KA_NONE : KA_6;
+    case KN_E_HOME:
+        return shift ? KA_NONE : KA_7;
+    case KN_E_UP:
+        return shift ? KA_NONE : KA_8;
+    case KN_E_PGUP:
+        return shift ? KA_NONE : KA_9;
+    case KN_E_INSERT:
+        return shift ? KA_NONE : KA_0;
+    case KN_E_DELETE:
+        return shift ? KA_NONE : KA_PERIOD;
+    }
+
+    return KA_NONE;
+#elif defined(_WIN32)
     /*
     **	Ask windows to translate the key into an ASCII equivalent.
     */
@@ -307,48 +451,34 @@ KeyASCIIType WWKeyboardClass::To_ASCII(unsigned short key)
     int result = 1;
     int scancode = 0;
 
-#if defined(SDL_BUILD)
-    key &= 0xFF; // drop all mods
-
-    if (key > ARRAY_SIZE(sdl_keymap) / 2 - 1) {
-        return KA_NONE;
-    }
-
-    if (SDL_GetModState() & KMOD_SHIFT) {
-        return sdl_keymap[key + ARRAY_SIZE(sdl_keymap) / 2];
-    } else {
-        return sdl_keymap[key];
-    }
-#elif defined(_WIN32)
     /*
     **	Set the KeyState buffer to reflect the shift bits stored in the key value.
     */
-    if (key & WWKEY_SHIFT_BIT) {
+    if (key & KN_SHIFT_BIT) {
         KeyState[VK_SHIFT] = 0x80;
     }
-    if (key & WWKEY_CTRL_BIT) {
+    if (key & KN_CTRL_BIT) {
         KeyState[VK_CONTROL] = 0x80;
     }
-    if (key & WWKEY_ALT_BIT) {
+    if (key & KN_ALT_BIT) {
         KeyState[VK_MENU] = 0x80;
     }
 
-    scancode = MapVirtualKeyA(key & 0xFF, 0);
-    result = ToAscii((UINT)(key & 0xFF), (UINT)scancode, (PBYTE)KeyState, (LPWORD)buffer, (UINT)0);
+    scancode = MapVirtualKeyA(key & KN_SCANCODE_MASK, 0);
+    result = ToAscii((UINT)(key & KN_SCANCODE_MASK), (UINT)scancode, (PBYTE)KeyState, (LPWORD)buffer, (UINT)0);
 
     /*
     **	Restore the KeyState buffer back to pristine condition.
     */
-    if (key & WWKEY_SHIFT_BIT) {
+    if (key & KN_SHIFT_BIT) {
         KeyState[VK_SHIFT] = 0;
     }
-    if (key & WWKEY_CTRL_BIT) {
+    if (key & KN_CTRL_BIT) {
         KeyState[VK_CONTROL] = 0;
     }
-    if (key & WWKEY_ALT_BIT) {
+    if (key & KN_ALT_BIT) {
         KeyState[VK_MENU] = 0;
     }
-#endif
 
     /*
     **	If Windows could not perform the translation as expected, then
@@ -359,6 +489,7 @@ KeyASCIIType WWKeyboardClass::To_ASCII(unsigned short key)
     }
 
     return (KeyASCIIType)(buffer[0]);
+#endif
 }
 
 /***********************************************************************************************
@@ -552,20 +683,48 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
             break;
         case SDL_KEYDOWN:
 #ifdef SDL2_BUILD
+            switch (event.key.keysym.scancode) {
+            case SDL_SCANCODE_KP_ENTER:
+                event.key.keysym.scancode = SDL_SCANCODE_RETURN;
+                break;
+            }
             Put_Key_Message(event.key.keysym.scancode, false);
 #else
-            Put_Key_Message(event.key.keysym.sym, false);
+            switch (event.key.keysym.sym) {
+            case SDLK_KP_ENTER:
+                event.key.keysym.sym = SDLK_RETURN;
+                break;
+            }
+            if (event.key.keysym.sym == SDLK_RETURN && (event.key.keysym.mod & KMOD_ALT)) {
+                /* Switching to full screen is handled in the key up event */
+            } else {
+                Put_Key_Message(event.key.keysym.sym, false);
+            }
 #endif
             break;
         case SDL_KEYUP:
 #ifdef SDL2_BUILD
-            if (event.key.keysym.scancode == SDL_SCANCODE_RETURN && Down(VK_MENU)) {
+            switch (event.key.keysym.scancode) {
+            case SDL_SCANCODE_KP_ENTER:
+                event.key.keysym.scancode = SDL_SCANCODE_RETURN;
+                break;
+            }
+            if (event.key.keysym.scancode == SDL_SCANCODE_RETURN && Down(KN_LALT)) {
                 Toggle_Video_Fullscreen();
             } else {
                 Put_Key_Message(event.key.keysym.scancode, true);
             }
 #else
-            Put_Key_Message(event.key.keysym.sym, true);
+            switch (event.key.keysym.sym) {
+            case SDLK_KP_ENTER:
+                event.key.keysym.sym = SDLK_RETURN;
+                break;
+            }
+            if (event.key.keysym.sym == SDLK_RETURN && (event.key.keysym.mod & KMOD_ALT)) {
+                Toggle_Video_Fullscreen();
+            } else {
+                Put_Key_Message(event.key.keysym.sym, true);
+            }
 #endif
             break;
         case SDL_MOUSEMOTION:
@@ -578,20 +737,29 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
             switch (event.button.button) {
             case SDL_BUTTON_LEFT:
             default:
-                key = VK_LBUTTON;
+                key = KN_LMOUSE;
                 break;
+#ifdef __MINT__
+            /* MiNT SDL port may have a bug in the gem driver,
+               reporting right button presses as button 2 (SDL_BUTTON_MIDDLE) */
             case SDL_BUTTON_RIGHT:
-                key = VK_RBUTTON;
+            case SDL_BUTTON_MIDDLE:
+                key = KN_RMOUSE;
+                break;
+#else
+            case SDL_BUTTON_RIGHT:
+                key = KN_RMOUSE;
                 break;
             case SDL_BUTTON_MIDDLE:
-                key = VK_MBUTTON;
+                key = KN_MMOUSE;
                 break;
+#endif
 #ifdef SDL1_BUILD
             case SDL_BUTTON_WHEELUP:
-                key = VK_MOUSEWHEEL_UP;
+                key = KN_MOUSEWHEEL_UP;
                 break;
             case SDL_BUTTON_WHEELDOWN:
-                key = VK_MOUSEWHEEL_DOWN;
+                key = KN_MOUSEWHEEL_DOWN;
                 break;
 #endif
             }
@@ -624,9 +792,9 @@ void WWKeyboardClass::Fill_Buffer_From_System(void)
             break;
         case SDL_MOUSEWHEEL:
             if (event.wheel.y > 0) { // scroll up
-                Put_Key_Message(VK_MOUSEWHEEL_UP, false);
+                Put_Key_Message(KN_MOUSEWHEEL_UP, false);
             } else if (event.wheel.y < 0) { // scroll down
-                Put_Key_Message(VK_MOUSEWHEEL_DOWN, false);
+                Put_Key_Message(KN_MOUSEWHEEL_DOWN, false);
             }
             break;
         case SDL_CONTROLLERDEVICEREMOVED:
@@ -785,11 +953,11 @@ void WWKeyboardClass::Handle_Controller_Button_Event(const SDL_ControllerButtonE
     switch (button.button) {
     case SDL_CONTROLLER_BUTTON_A:
         mousePress = true;
-        key = VK_LBUTTON;
+        key = KN_LMOUSE;
         break;
     case SDL_CONTROLLER_BUTTON_B:
         mousePress = true;
-        key = VK_RBUTTON;
+        key = KN_RMOUSE;
         break;
     case SDL_CONTROLLER_BUTTON_X:
         keyboardPress = true;
@@ -949,7 +1117,7 @@ bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LO
     **	Press of the left mouse button.
     */
     case WM_LBUTTONDOWN:
-        Put_Mouse_Message(VK_LBUTTON, LOWORD(lParam), HIWORD(lParam));
+        Put_Mouse_Message(KN_LMOUSE, LOWORD(lParam), HIWORD(lParam));
         processed = true;
         break;
 
@@ -957,7 +1125,7 @@ bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LO
     **	Release of the left mouse button.
     */
     case WM_LBUTTONUP:
-        Put_Mouse_Message(VK_LBUTTON, LOWORD(lParam), HIWORD(lParam), true);
+        Put_Mouse_Message(KN_LMOUSE, LOWORD(lParam), HIWORD(lParam), true);
         processed = true;
         break;
 
@@ -966,10 +1134,10 @@ bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LO
     **	just a rapid click of the left button twice.
     */
     case WM_LBUTTONDBLCLK:
-        Put_Mouse_Message(VK_LBUTTON, LOWORD(lParam), HIWORD(lParam));
-        Put_Mouse_Message(VK_LBUTTON, LOWORD(lParam), HIWORD(lParam), true);
-        Put_Mouse_Message(VK_LBUTTON, LOWORD(lParam), HIWORD(lParam));
-        Put_Mouse_Message(VK_LBUTTON, LOWORD(lParam), HIWORD(lParam), true);
+        Put_Mouse_Message(KN_LMOUSE, LOWORD(lParam), HIWORD(lParam));
+        Put_Mouse_Message(KN_LMOUSE, LOWORD(lParam), HIWORD(lParam), true);
+        Put_Mouse_Message(KN_LMOUSE, LOWORD(lParam), HIWORD(lParam));
+        Put_Mouse_Message(KN_LMOUSE, LOWORD(lParam), HIWORD(lParam), true);
         processed = true;
         break;
 
@@ -977,7 +1145,7 @@ bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LO
     **	Press of the middle mouse button.
     */
     case WM_MBUTTONDOWN:
-        Put_Mouse_Message(VK_MBUTTON, LOWORD(lParam), HIWORD(lParam));
+        Put_Mouse_Message(KN_MMOUSE, LOWORD(lParam), HIWORD(lParam));
         processed = true;
         break;
 
@@ -985,7 +1153,7 @@ bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LO
     **	Release of the middle mouse button.
     */
     case WM_MBUTTONUP:
-        Put_Mouse_Message(VK_MBUTTON, LOWORD(lParam), HIWORD(lParam), true);
+        Put_Mouse_Message(KN_MMOUSE, LOWORD(lParam), HIWORD(lParam), true);
         processed = true;
         break;
 
@@ -994,10 +1162,10 @@ bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LO
     **	regular middle button clicks.
     */
     case WM_MBUTTONDBLCLK:
-        Put_Mouse_Message(VK_MBUTTON, LOWORD(lParam), HIWORD(lParam));
-        Put_Mouse_Message(VK_MBUTTON, LOWORD(lParam), HIWORD(lParam), true);
-        Put_Mouse_Message(VK_MBUTTON, LOWORD(lParam), HIWORD(lParam));
-        Put_Mouse_Message(VK_MBUTTON, LOWORD(lParam), HIWORD(lParam), true);
+        Put_Mouse_Message(KN_MMOUSE, LOWORD(lParam), HIWORD(lParam));
+        Put_Mouse_Message(KN_MMOUSE, LOWORD(lParam), HIWORD(lParam), true);
+        Put_Mouse_Message(KN_MMOUSE, LOWORD(lParam), HIWORD(lParam));
+        Put_Mouse_Message(KN_MMOUSE, LOWORD(lParam), HIWORD(lParam), true);
         processed = true;
         break;
 
@@ -1005,7 +1173,7 @@ bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LO
     **	Right mouse button press.
     */
     case WM_RBUTTONDOWN:
-        Put_Mouse_Message(VK_RBUTTON, LOWORD(lParam), HIWORD(lParam));
+        Put_Mouse_Message(KN_RMOUSE, LOWORD(lParam), HIWORD(lParam));
         processed = true;
         break;
 
@@ -1013,7 +1181,7 @@ bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LO
     **	Right mouse button release.
     */
     case WM_RBUTTONUP:
-        Put_Mouse_Message(VK_RBUTTON, LOWORD(lParam), HIWORD(lParam), true);
+        Put_Mouse_Message(KN_RMOUSE, LOWORD(lParam), HIWORD(lParam), true);
         processed = true;
         break;
 
@@ -1022,10 +1190,10 @@ bool WWKeyboardClass::Message_Handler(HWND window, UINT message, UINT wParam, LO
     **	into being just two regular right button clicks.
     */
     case WM_RBUTTONDBLCLK:
-        Put_Mouse_Message(VK_RBUTTON, LOWORD(lParam), HIWORD(lParam));
-        Put_Mouse_Message(VK_RBUTTON, LOWORD(lParam), HIWORD(lParam), true);
-        Put_Mouse_Message(VK_RBUTTON, LOWORD(lParam), HIWORD(lParam));
-        Put_Mouse_Message(VK_RBUTTON, LOWORD(lParam), HIWORD(lParam), true);
+        Put_Mouse_Message(KN_RMOUSE, LOWORD(lParam), HIWORD(lParam));
+        Put_Mouse_Message(KN_RMOUSE, LOWORD(lParam), HIWORD(lParam), true);
+        Put_Mouse_Message(KN_RMOUSE, LOWORD(lParam), HIWORD(lParam));
+        Put_Mouse_Message(KN_RMOUSE, LOWORD(lParam), HIWORD(lParam), true);
         processed = true;
         break;
 

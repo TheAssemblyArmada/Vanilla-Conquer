@@ -472,8 +472,8 @@ void Keyboard_Process(KeyNumType& input)
     **	The VK_BIT must be stripped from the "plain" value of the key so that a comparison to
     **	KN_1, for example, will yield TRUE if in fact the "1" key was pressed.
     */
-    KeyNumType plain = KeyNumType(input & ~(WWKEY_SHIFT_BIT | WWKEY_ALT_BIT | WWKEY_CTRL_BIT | WWKEY_VK_BIT));
-    KeyNumType key = KeyNumType(input & ~WWKEY_VK_BIT);
+    KeyNumType plain = KeyNumType(input & ~(KN_SHIFT_BIT | KN_ALT_BIT | KN_CTRL_BIT | KN_VK_BIT));
+    KeyNumType key = KeyNumType(input & ~KN_VK_BIT);
 
 #ifdef CHEAT_KEYS
 
@@ -531,11 +531,11 @@ void Keyboard_Process(KeyNumType& input)
     **	CTRL or ALT key is held down.
     */
     int action = 0;
-    if (input & WWKEY_SHIFT_BIT)
+    if (input & KN_SHIFT_BIT)
         action = 1;
-    if (input & WWKEY_ALT_BIT)
+    if (input & KN_ALT_BIT)
         action = 3;
-    if (input & WWKEY_CTRL_BIT)
+    if (input & KN_CTRL_BIT)
         action = 2;
 
     /*
