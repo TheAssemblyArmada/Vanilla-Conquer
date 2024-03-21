@@ -396,8 +396,8 @@ void CellClass::Redraw_Objects(bool forced)
 #else
                 optr->Mark(MARK_CHANGE);
 #endif
-                if (optr->Next != NULL && !optr->Next->IsActive) {
-                    optr->Next = NULL;
+                if (optr->Next != nullptr && !optr->Next->IsActive) {
+                    optr->Next = nullptr;
                 }
                 optr = optr->Next;
             }
@@ -604,7 +604,7 @@ void CellClass::Occupy_Down(ObjectClass* object)
     */
     if (object->What_Am_I() == RTTI_BUILDING && Cell_Occupier()) {
         optr = Cell_Occupier();
-        while (optr->Next != NULL) {
+        while (optr->Next != nullptr) {
             assert(optr != object);
             assert(optr->What_Am_I() != RTTI_BUILDING);
             optr = optr->Next;

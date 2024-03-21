@@ -1171,13 +1171,13 @@ int MapEditClass::Place_Object(void)
         if (Is_Spot_Free(Pixel_To_Coord(Get_Mouse_X(), Get_Mouse_Y()))) {
             obj_coord = Closest_Free_Spot(Pixel_To_Coord(Get_Mouse_X(), Get_Mouse_Y()));
         } else {
-            obj_coord = NULL;
+            obj_coord = 0;
         }
 
         /*
         ................ No free spots; don't place the object ................
         */
-        if (obj_coord == NULL) {
+        if (obj_coord == 0) {
             // ScenarioInit--;
             return (-1);
         }

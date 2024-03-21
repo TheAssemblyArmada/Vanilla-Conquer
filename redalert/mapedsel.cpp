@@ -464,7 +464,7 @@ int MapEditClass::Move_Grabbed_Object(void)
             */
             ((InfantryClass*)GrabbedObject)->Clear_Occupy_Bit(GrabbedObject->Coord);
         } else {
-            new_coord = NULL;
+            new_coord = 0;
         }
 
     } else {
@@ -483,10 +483,10 @@ int MapEditClass::Move_Grabbed_Object(void)
         **	Try to place object at new coordinate
         */
         if (GrabbedObject->Can_Enter_Cell(Coord_Cell(new_coord)) != MOVE_OK) {
-            new_coord = NULL;
+            new_coord = 0;
         }
     }
-    if (new_coord != NULL) {
+    if (new_coord != 0) {
 
         /*
         ** If this object is part of the AI's Base list, change the coordinate

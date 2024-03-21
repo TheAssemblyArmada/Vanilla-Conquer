@@ -1335,7 +1335,7 @@ void ObjectClass::Debug_Dump(MonoClass* mono) const
 {
     mono->Set_Cursor(1, 1);
     mono->Printf("%-18.18s", Text_String(Full_Name()));
-    if (Next != NULL) {
+    if (Next != nullptr) {
         mono->Set_Cursor(20, 5);
         mono->Printf("%08X", Next->As_Target());
     }
