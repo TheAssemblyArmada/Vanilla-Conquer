@@ -25,7 +25,9 @@
 */
 
 // Exception handling isn't enabled
+#ifdef _MSC_VER
 #pragma warning(disable : 4530) // warning C4530: C++ exception handler used, but unwind semantics are not enabled.
+#endif
 
 #include <string>
 #include <vector>
@@ -73,7 +75,9 @@ typedef __int64 int64;
 **
 */
 // For compatibility with Watcom in audio enums
+#ifdef _MSC_VER
 #pragma warning(disable : 4091)
+#endif
 
 // From RedAlert\Audio.cpp
 typedef enum

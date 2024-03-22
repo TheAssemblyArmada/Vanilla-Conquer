@@ -177,8 +177,10 @@
 // typedef enums with -1 will show this warning, even when the type of the enum is signed. It's a compiler bug,
 // apparently ST - 1/8/2019 9:23AM
 //
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4341)
+#endif
 
 /**********************************************************************
 **	These enumerations are used to implement RTTI.
@@ -3042,6 +3044,8 @@ typedef enum StrategyType : unsigned char
 
 #endif // USE_RA_AI
 
+#ifdef _MSC_VER
 #pragma warning(pop)
+#endif
 
 #endif

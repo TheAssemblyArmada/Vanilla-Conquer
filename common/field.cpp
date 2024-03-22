@@ -34,7 +34,9 @@
 #include "endianness.h"
 
 // ST - 12/18/2018 10:14AM
+#ifdef _MSC_VER
 #pragma warning(disable : 4996)
+#endif
 
 FieldClass::FieldClass(const char* id, char data)
 {

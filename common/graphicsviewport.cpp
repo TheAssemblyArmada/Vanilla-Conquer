@@ -779,7 +779,9 @@ unsigned int GraphicViewPortClass::Print(char const* str, int x, int y, int fcol
     return (return_code);
 }
 
+#ifdef _MSC_VER
 #pragma warning(disable : 4996)
+#endif
 
 /***************************************************************************
  * GVPC::PRINT -- Stub function to print an integer                        *
