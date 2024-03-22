@@ -299,26 +299,47 @@ typedef struct
     {
         struct BITFIELD_STRUCT
         {
-            HousesType House;                  // player's House
-            PlayerColorType Color;             // player's color or SIGNOFF ID
-            unsigned int MinVersion;           // min version this game supports
-            unsigned int MaxVersion;           // max version this game supports
-            char Scenario[DESCRIP_MAX];        // Scenario name
-            unsigned int Credits;              // player's credits
+            HousesType House;           // player's House
+            PlayerColorType Color;      // player's color or SIGNOFF ID
+            unsigned int MinVersion;    // min version this game supports
+            unsigned int MaxVersion;    // max version this game supports
+            char Scenario[DESCRIP_MAX]; // Scenario name
+            unsigned int Credits;       // player's credits
+#if HAVE_MS_BITFIELDS
             unsigned int IsBases : 1;          // 1 = bases are allowed
             unsigned int IsTiberium : 1;       // 1 = tiberium is allowed
             unsigned int IsGoodies : 1;        // 1 = goodies are allowed
             unsigned int IsGhosties : 1;       // 1 = ghosts are allowed
             unsigned int OfficialScenario : 1; //	Is this scenario an official Westwood one?
-            int CheatCheck;                    // Unique ID of "rules.ini" file.
-            unsigned char BuildLevel;          // buildable level
-            unsigned char UnitCount;           // max # units
-            unsigned char AIPlayers;           // # of AI players allowed
-            int Seed;                          // random number seed
-            SpecialClass Special;              // command-line options
-            unsigned int GameSpeed;            // Game Speed
-            unsigned int ResponseTime;         // packet response time
-            unsigned int FileLength;           // Length of scenario file to expect from host.
+#else
+            /*
+            ** simulate effects of attribute((ms_struct))
+            */
+#ifdef __BIG_ENDIAN__
+            unsigned int : 27;
+            unsigned int OfficialScenario : 1;
+            unsigned int IsGhosties : 1;
+            unsigned int IsGoodies : 1;
+            unsigned int IsTiberium : 1;
+            unsigned int IsBases : 1;
+#else
+            unsigned int IsBases : 1;
+            unsigned int IsTiberium : 1;
+            unsigned int IsGoodies : 1;
+            unsigned int IsGhosties : 1;
+            unsigned int OfficialScenario : 1;
+            unsigned int : 27;
+#endif
+#endif
+            int CheatCheck;            // Unique ID of "rules.ini" file.
+            unsigned char BuildLevel;  // buildable level
+            unsigned char UnitCount;   // max # units
+            unsigned char AIPlayers;   // # of AI players allowed
+            int Seed;                  // random number seed
+            SpecialClass Special;      // command-line options
+            unsigned int GameSpeed;    // Game Speed
+            unsigned int ResponseTime; // packet response time
+            unsigned int FileLength;   // Length of scenario file to expect from host.
 #ifdef WOLAPI_INTEGRATION
             char ShortFileName[13]; // Name of scenario file to expect from host
 #else
