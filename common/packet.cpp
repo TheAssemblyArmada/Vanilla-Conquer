@@ -131,8 +131,12 @@ PacketClass::PacketClass(char* curbuf)
         //
         // Copy the adjusted header into the buffer and then advance the buffer
         //
-        memcpy(field, curbuf, FIELD_HEADER_SIZE);
-        curbuf += FIELD_HEADER_SIZE;
+        memcpy(field->ID, curbuf, 4);
+        curbuf += 4;
+        memcpy(&field->DataType, curbuf, 2);
+        curbuf += 2;
+        memcpy(&field->Size, curbuf, 2);
+        curbuf += 2;
         remaining_size -= FIELD_HEADER_SIZE;
 
         //

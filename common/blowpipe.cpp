@@ -129,7 +129,7 @@ int BlowPipe::Put(void const* source, int slen)
     **	Process the input data in blocks until there is not enough
     **	source data to fill a full block of data.
     */
-    while (slen >= sizeof(Buffer)) {
+    while (slen >= (int)sizeof(Buffer)) {
         if (Control == DECRYPT) {
             BF->Decrypt(source, sizeof(Buffer), Buffer);
         } else {

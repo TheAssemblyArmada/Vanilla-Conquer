@@ -182,7 +182,7 @@ void TeamClass::Decode_Pointers(void)
     */
     if (Member) {
         Member = (FootClass*)As_Techno(TARGET_SAFE_CAST(Member), false);
-        assert(Member != NULL);
+        assert(Member != nullptr);
     }
 }
 
@@ -867,6 +867,6 @@ void ObjectClass::Decode_Pointers(void)
 {
     if (Next) {
         Next = As_Object(TARGET_SAFE_CAST(Next), false);
-        assert(Next != NULL);
+        assert(Next != nullptr);
     }
 }

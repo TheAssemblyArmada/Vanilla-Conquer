@@ -1130,7 +1130,7 @@ bool XMP_Sub(uint16_t* result,
 #ifdef __BIG_ENDIAN__
     uint16_t temp_left_number[precision * 2];
     uint16_t temp_result[precision * 2];
-    size_t i;
+    int i;
 
     for (i = 0; i < precision * 2; i++) {
         Set_HalfWord(temp_left_number, i, Get_HalfWord(left_number, left_number_offset + i));
@@ -2420,7 +2420,7 @@ bool XMP_Rabin_Miller_Test(Straw& rng, digit const* w, int rounds, int precision
                 return false;
             }
         }
-        if (j == a) {
+        if (j == (int)a) {
             return false;
         }
     }

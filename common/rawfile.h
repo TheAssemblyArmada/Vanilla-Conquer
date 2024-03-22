@@ -172,8 +172,8 @@ inline RawFileClass::RawFileClass(void)
     : Rights(READ)
     , BiasStart(0)
     , BiasLength(-1)
-    , Handle(nullptr)
     , Filename(0)
+    , Handle(nullptr)
 {
 }
 

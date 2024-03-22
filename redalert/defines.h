@@ -846,7 +846,7 @@ typedef enum ThemeType : char
     THEME_UNDER3,
     THEME_VR2,
 
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
+#ifdef FIXIT_CSII /*	checked - ajw 9/28/98 */
     THEME_BOG,
     THEME_FLOAT_V2,
     THEME_GLOOM,
@@ -1567,7 +1567,7 @@ typedef enum InfantryType : char
     INFANTRY_DELPHI,   // Agent "Delphi"
     INFANTRY_CHAN,     // Dr. Chan
 
-#ifdef FIXIT_CSII   //	checked - ajw 9/28/98                                                                           \
+#ifdef FIXIT_CSII   /* checked - ajw 9/28/98 */
                     // CounterStrike II only!
     INFANTRY_SHOCK, // Shock Trooper
     INFANTRY_MECHANIC,
@@ -1613,13 +1613,13 @@ typedef enum UnitType : char
     UNIT_ANT3, // Warrior ant.
 #endif
 
-#ifdef FIXIT_CSII           //	checked - ajw 9/28/98                                                                   \
+#ifdef FIXIT_CSII           /* checked - ajw 9/28/98 */
                             // CS II ONLY!
     UNIT_CHRONOTANK,        // Chrono-shifting tank
     UNIT_TESLATANK,         // Tesla-equipped tank
     UNIT_MAD,               // Timequake tank
     UNIT_DEMOTRUCK,         // Jihad truck
-#ifdef FIXIT_PHASETRANSPORT //	checked - ajw 9/28/98
+#ifdef FIXIT_PHASETRANSPORT /*	checked - ajw 9/28/98 */
     UNIT_PHASE,             // cloaking APC for special missions
 #endif
 #endif
@@ -1658,11 +1658,11 @@ typedef enum VesselType : char
     VESSEL_CA,         // Heavy weapon patrol craft
     VESSEL_TRANSPORT,  // Unit transporter
     VESSEL_PT,         // Light weapon patrol craft
-#ifdef FIXIT_CSII      //	checked - ajw 9/28/98                                                                        \
+#ifdef FIXIT_CSII      /*	checked - ajw 9/28/98 */
                        // CS II ONLY
     VESSEL_MISSILESUB, // Missile-equipped submarine
 #endif
-#ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
+#ifdef FIXIT_CARRIER /*	checked - ajw 9/28/98 */
     VESSEL_CARRIER,
 #endif
 
@@ -2666,7 +2666,7 @@ typedef enum WarheadType : char
     WARHEAD_TESLA,        // Electrocution warhead for infantrymen
     WARHEAD_DOG,          // Slavering attack beast mauling infantryman
     WARHEAD_NUKE,         // Nuclear missile
-#ifdef FIXIT_CSII         //	checked - ajw 9/28/98
+#ifdef FIXIT_CSII         /*	checked - ajw 9/28/98 */
     WARHEAD_MECHANICAL,   // repair weapon for vehicles
 #endif
     WARHEAD_COUNT,
@@ -2722,7 +2722,7 @@ typedef enum WeaponType : char
     WEAPON_MANDIBLE,
 #endif
 
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
+#ifdef FIXIT_CSII /*	checked - ajw 9/28/98 */
     WEAPON_PORTATESLA,
     WEAPON_GOODWRENCH,
     WEAPON_SUBSCUD,
@@ -2730,7 +2730,7 @@ typedef enum WeaponType : char
     WEAPON_APTUSK,
     WEAPON_DEMOCHARGE,
 #endif
-#ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
+#ifdef FIXIT_CARRIER /*	checked - ajw 9/28/98 */
     WEAPON_CARRIER,
 #endif
 
@@ -3307,7 +3307,7 @@ typedef enum VocType : short
     VOC_RAMBO2,
     VOC_RAMBO3,
 
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
+#ifdef FIXIT_CSII /*	checked - ajw 9/28/98 */
     VOC_MECHYES1,
     VOC_MECHHOWDY1,
     VOC_MECHRISE1,

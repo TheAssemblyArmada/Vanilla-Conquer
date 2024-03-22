@@ -137,7 +137,10 @@ GraphicBufferClass* Read_PCX_File(const char* name, char* palette, void* Buff, i
                 if (rle > 192) {
                     rle -= 192;
                     color = READ_CHAR();
-                    ;
+#ifdef __GNUC__
+// FIXME: same code below does not give warning???
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
                     memset(buffer + scan_pos + i, color, rle);
                     i += rle;
                 } else {
@@ -146,10 +149,12 @@ GraphicBufferClass* Read_PCX_File(const char* name, char* palette, void* Buff, i
             }
         }
 
-        if (i == width)
+        if (i == (unsigned)width) {
             rle = READ_CHAR();
-        if (rle > 192)
+        }
+        if (rle > 192) {
             rle = READ_CHAR();
+        }
 
     } else {
 
