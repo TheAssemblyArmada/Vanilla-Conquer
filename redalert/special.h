@@ -55,7 +55,7 @@ public:
         struct
         {
 #ifdef __BIG_ENDIAN__
-            unsigned int Unused : 20;
+            unsigned int : 20;
             unsigned ModernBalance : 1;
             unsigned IsEarlyWin : 1;
             unsigned IsMCVDeploy : 1;
@@ -128,6 +128,9 @@ public:
             ** New modern balance setting.
             */
             unsigned ModernBalance : 1;
+#if !HAVE_MS_BITFIELDS
+            unsigned int : 20;
+#endif
 #endif
         };
     };

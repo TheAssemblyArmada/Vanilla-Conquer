@@ -539,11 +539,10 @@ typedef int TARGET;
 
 #define TARGET_MANTISSA 24 // Bits of value precision.
 #define TARGET_EXPONENT 8
-#pragma pack(push, 1)
 typedef union
 {
     TARGET Target;
-    struct BITFIELD_STRUCT
+    struct
     {
 #ifdef __BIG_ENDIAN__
         unsigned Exponent : TARGET_EXPONENT;
@@ -554,7 +553,6 @@ typedef union
 #endif
     } Sub;
 } TARGET_COMPOSITE;
-#pragma pack(pop)
 inline TARGET Build_Target(RTTIType kind, int value)
 {
     TARGET_COMPOSITE target;
