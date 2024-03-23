@@ -36,6 +36,7 @@
 
 #include "base64.h"
 #include <stddef.h>
+#include "endianness.h"
 
 /*
 **	This is the magic padding character used to fill out the encoded data to a multiple of
