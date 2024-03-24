@@ -107,7 +107,7 @@ public:
     }
     bool Is_Valid(void) const
     {
-        return (this != NULL && NextNode != NULL && PrevNode != NULL);
+        return (NextNode != NULL && PrevNode != NULL);
     }
 
 protected:

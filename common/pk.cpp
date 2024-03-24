@@ -187,8 +187,6 @@ void PKey::Decode_Exponent(void* buffer)
 void PKey::Generate(Straw& random, int bits, PKey& fastkey, PKey& slowkey)
 {
     // PG_TO_FIX
-    fastkey;
-    slowkey;
 #if (0)
     /*
     **	Key generation consists of create a key pair and then testing the key

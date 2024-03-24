@@ -250,7 +250,7 @@ inline static void _splitpath(const char* path, char* drive, char* dir, char* fn
         return;
     }
 
-    for (int i = 0; i < strlen(path); i++) {
+    for (int i = 0; i < (int)strlen(path); i++) {
         if (path[i] == '.') {
             strcpy(ext, path + i + 1);
             break;

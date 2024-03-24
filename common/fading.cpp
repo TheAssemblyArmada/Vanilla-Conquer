@@ -13,8 +13,8 @@
 
 void* Build_Fading_Table(void const* palette, void* dest, int color, int frac)
 {
-    const int ALLOWED_COUNT = 16;
-    const int ALLOWED_START = 256 - ALLOWED_COUNT;
+    // const int ALLOWED_COUNT = 16;
+    // const int ALLOWED_START = 256 - ALLOWED_COUNT;
 
     if (!palette || !dest) {
         return 0;
@@ -32,7 +32,6 @@ void* Build_Fading_Table(void const* palette, void* dest, int color, int frac)
     unsigned char targetred = pal[palindex++];
     unsigned char targetgreen = pal[palindex++];
     unsigned char targetblue = pal[palindex];
-    unsigned tableindex = 0;
     dst[0] = 0;
 
     // Remap most pal entries to the last 16 entries that are the most faded colours.
@@ -107,7 +106,6 @@ void* Conquer_Build_Fading_Table(const void* palette, void* dest, int color, int
     unsigned char targetred = pal[palindex++];
     unsigned char targetgreen = pal[palindex++];
     unsigned char targetblue = pal[palindex];
-    unsigned tableindex = 0;
     dst[0] = 0;
 
     // Remap most pal entries to the last 16 entries that are the most faded colours.

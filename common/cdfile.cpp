@@ -93,7 +93,6 @@ extern int Get_CD_Index(int cd_drive, int timeout);
  *=============================================================================================*/
 int Is_Disk_Inserted(int disk)
 {
-    disk;
     return true;
 }
 

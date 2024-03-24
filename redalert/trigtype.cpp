@@ -408,10 +408,10 @@ bool TriggerTypeClass::Edit(void)
     PBubble_Sort(&action1list[0], action1list.Count());
     PBubble_Sort(&action2list[0], action2list.Count());
 
-    if (Action1.Action == ACTION_NONE)
+    if (Action1.Action == TACTION_NONE)
         Action1.Action = TACTION_FIRST;
     action1list.Set_Selected_Index(&ActionChoices[Action1.Action]);
-    if (Action2.Action == ACTION_NONE)
+    if (Action2.Action == TACTION_NONE)
         Action2.Action = TACTION_FIRST;
     action2list.Set_Selected_Index(&ActionChoices[Action2.Action]);
 

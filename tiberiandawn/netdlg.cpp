@@ -160,9 +160,6 @@ static int Net_Fake_Join_Dialog(void);
  *=============================================================================================*/
 bool Init_Network(void)
 {
-    NetNumType net;
-    NetNodeType node;
-
     /*------------------------------------------------------------------------
     This call allocates all necessary queue buffers, allocates Real-mode
     memory, and commands IPX to start listening on the Global Channel.
@@ -1339,7 +1336,7 @@ static int Net_Join_Dialog(void)
         /*
         ---------------------------- Process input ----------------------------
         */
-        switch (input) {
+        switch ((unsigned int)input) {
         /*------------------------------------------------------------------
         User clicks on a color button:
         - If we've joined a game, don't allow a new color selection
@@ -3222,7 +3219,7 @@ static int Net_New_Dialog(void)
         /*
         ---------------------------- Process input ----------------------------
         */
-        switch (input) {
+        switch ((unsigned int)input) {
         /*------------------------------------------------------------------
         New Scenario selected.
         ------------------------------------------------------------------*/
@@ -4275,8 +4272,8 @@ static int Net_Fake_New_Dialog(void)
     KeyNumType input;
 
     char credbuf[CREDITSBUF_MAX]; // for credit edit box
-    int old_cred;                 // old value in credits buffer
-    int transmit;                 // 1 = re-transmit new game options
+    // int old_cred;                 // old value in credits buffer
+    int transmit; // 1 = re-transmit new game options
 
     int ok_timer = 0; // for timing OK button
     int rc;
@@ -4343,7 +4340,7 @@ static int Net_Fake_New_Dialog(void)
     */
 
     sprintf(credbuf, "%d", MPlayerCredits);
-    old_cred = MPlayerCredits;
+    // old_cred = MPlayerCredits;
 
     /*........................................................................
     Init other scenario parameters
@@ -4477,7 +4474,7 @@ static int Net_Fake_New_Dialog(void)
         /*
         ---------------------------- Process input ----------------------------
         */
-        switch (input) {
+        switch ((unsigned int)input) {
 
         /*------------------------------------------------------------------
         CANCEL: send a SIGN_OFF, bail out with error code
@@ -4804,8 +4801,8 @@ static int Net_Fake_Join_Dialog(void)
     int d_dialog_y = ((200 * factor - d_dialog_h) / 2); // centered y-coord
     int d_dialog_cx = d_dialog_x + (d_dialog_w / 2);    // center x-coord
 
-    int d_margin1 = 10;
-    int d_txt6_h = 15;
+    // int d_margin1 = 10;
+    // int d_txt6_h = 15;
 
     int d_gamelist_w = 160 * factor;
     int d_gamelist_h = 27 * factor;
@@ -4878,13 +4875,13 @@ static int Net_Fake_Join_Dialog(void)
     KeyNumType input;
 
     JoinStateType joinstate = JOIN_NOTHING; // current "state" of this dialog
-    char namebuf[MPLAYER_NAME_MAX] = {0};   // buffer for player's name
-    int game_index = -1;                    // index of currently-selected game
-    int join_index = -1;                    // index of game we're joining
-    int rc = 0;                             // -1 = user cancelled, 1 = New
-    JoinEventType event;                    // event from incoming packet
-    int i, j;                               // loop counter
-    int parms_received;                     // 1 = game options received
+    // char namebuf[MPLAYER_NAME_MAX] = {0};   // buffer for player's name
+    int game_index = -1; // index of currently-selected game
+    int join_index = -1; // index of game we're joining
+    int rc = 0;          // -1 = user cancelled, 1 = New
+    JoinEventType event; // event from incoming packet
+    int i, j;            // loop counter
+    int parms_received;  // 1 = game options received
 
     unsigned char tmp_id[MAX_PLAYERS]; // temp storage for sorting player ID's
     int min_index;                     // for sorting player ID's
@@ -5053,7 +5050,7 @@ static int Net_Fake_Join_Dialog(void)
         /*
         ---------------------------- Process input ----------------------------
         */
-        switch (input) {
+        switch ((unsigned int)input) {
 
         /*------------------------------------------------------------------
         CANCEL: send a SIGN_OFF
@@ -5127,6 +5124,7 @@ static int Net_Fake_Join_Dialog(void)
                 gamelist.Set_Selected_Index(0);
                 join_index = gamelist.Current_Index();
                 parms_received = 0;
+                (void)parms_received;
                 if (Request_To_Join(MPlayerName, join_index, &playerlist, MPlayerHouse, MPlayerColorIdx)) {
                     joinstate = JOIN_WAIT_CONFIRM;
                 } else {

@@ -247,10 +247,10 @@ template <class T, class TCRC> MixFileClass<T, TCRC>::~MixFileClass(void)
  *=============================================================================================*/
 template <class T, class TCRC>
 MixFileClass<T, TCRC>::MixFileClass(char const* filename)
-    : IsDigest(false)
+    : Filename(0)
+    , IsDigest(false)
     , IsEncrypted(false)
     , IsAllocated(false)
-    , Filename(0)
     , Count(0)
     , DataSize(0)
     , DataStart(0)
@@ -297,7 +297,7 @@ MixFileClass<T, TCRC>::MixFileClass(char const* filename)
     **	whether this is an extended mixfile format or the plain format. An
     **	extended format may have extra options or data layout.
     */
-    int got = straw->Get(&alternate, sizeof(alternate));
+    straw->Get(&alternate, sizeof(alternate));
     int16_t alternate_first = le16toh(alternate.First);
     int16_t alternate_second = le16toh(alternate.Second);
 
@@ -422,7 +422,7 @@ MixFileClass<T, TCRC>::MixFileClass(char const* filename, PKey const* key)
     **	whether this is an extended mixfile format or the plain format. An
     **	extended format may have extra options or data layout.
     */
-    int got = straw->Get(&alternate, sizeof(alternate));
+    straw->Get(&alternate, sizeof(alternate));
     int16_t alternate_first = le16toh(alternate.First);
     int16_t alternate_second = le16toh(alternate.Second);
 

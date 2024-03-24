@@ -250,7 +250,6 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
     char frameflags;
     uintptr_t return_value;
     char* temp_shape_ptr;
-    unsigned short keyfr_frames;
     int i;
 
     //

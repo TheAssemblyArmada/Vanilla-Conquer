@@ -347,9 +347,9 @@ void Debug_Key(unsigned input)
  * HISTORY:                                                                                    *
  *   07/18/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
+#if 0
 static char const* Bench_Time(BenchType btype)
 {
-#if 0
     static char buffer[32];
 
     int rootcount = Benches[BENCH_GAME_FRAME].Count();
@@ -368,8 +368,8 @@ static char const* Bench_Time(BenchType btype)
         percent = 99;
     sprintf(buffer, "%-2d%% %7d", percent, time);
     return (buffer);
-#endif
 }
+#endif
 
 /***********************************************************************************************
  * Benchmarks -- Display the performance tracking benchmarks.                                  *

@@ -25,7 +25,7 @@ void Resolve_File(char* fname)
 #ifndef _WIN32
     // step through each sub-directory before going for the win
     char* next = fname;
-    while (next = strchr(next, '/')) {
+    while ((next = strchr(next, '/')) != NULL) {
         *next = '\0';
         Resolve_File_Single(fname);
         *next++ = '/';
