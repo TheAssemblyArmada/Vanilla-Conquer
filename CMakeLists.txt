@@ -136,9 +136,14 @@ if(NETWORKING)
 endif()
 
 if(SDL1)
+if(${CMAKE_SYSTEM_NAME} MATCHES "m68k-atari-mint")
+    list(APPEND VANILLA_LIBS "-lSDL")
+    include_directories(${CMAKE_INCLUDE_PATH}/SDL)
+else()
     find_package(SDL REQUIRED)
     list(APPEND VANILLA_LIBS ${SDL_LIBRARY})
     include_directories(${SDL_INCLUDE_DIR})
+endif()
 
     # winuser.h defines VK_ macros but it can be prevented
     if(WIN32)
