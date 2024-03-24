@@ -106,7 +106,7 @@ char const* Map_Selection(void)
 #ifdef FIXIT_ANTS
     if (AntsEnabled) {
         strcpy(scenarioname, Scen.ScenarioName);
-        char buf[10];
+        char buf[12];
         sprintf(buf, "%02d", Scen.Scenario + 1);
         memcpy(&scenarioname[3], buf, 2);
         return (scenarioname);
@@ -259,7 +259,7 @@ char const* Map_Selection(void)
         strcpy(scenarioname, antmission[antnum]);
     } else {
         strcpy(scenarioname, Scen.ScenarioName);
-        char buf[10];
+        char buf[12];
         sprintf(buf, "%02d", Scen.Scenario + 1);
         memcpy(&scenarioname[3], buf, 2);
         scenarioname[6] = 'A' + selection;

@@ -2162,7 +2162,7 @@ void VesselClass::Write_INI(CCINIClass& ini)
     for (int index = 0; index < Vessels.Count(); index++) {
         VesselClass* vessel = Vessels.Ptr(index);
         if (vessel != NULL && !vessel->IsInLimbo && vessel->IsActive) {
-            char uname[10];
+            char uname[12];
             char buf[128];
 
             sprintf(uname, "%d", index);

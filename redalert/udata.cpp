@@ -1038,7 +1038,7 @@ void UnitTypeClass::One_Time(void)
 {
     for (UnitType index = UNIT_FIRST; index < UNIT_COUNT; index++) {
         char fullname[_MAX_FNAME + _MAX_EXT];
-        char buffer[_MAX_FNAME];
+        char buffer[_MAX_FNAME + 4];
         UnitTypeClass const& uclass = As_Reference(index);
         CCFileClass file;
 

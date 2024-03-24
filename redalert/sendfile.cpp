@@ -367,9 +367,9 @@ bool Receive_Remote_File(char* file_name, unsigned int file_length, int gametype
         if (Ipx.Get_Global_Message(&receive_packet, &receive_packet_len, &sender_address, &product_id)) {
 
 #ifdef WINSOCK_IPX
-            if (receive_packet.Command == NET_FILE_CHUNK && sender_address == Session.HostAddress) {
+            if (NetCommandType(receive_packet.Command) == NET_FILE_CHUNK && sender_address == Session.HostAddress) {
 #else  // WINSOCK_IPX
-            if (receive_packet.Command == NET_FILE_CHUNK
+            if (NetCommandType(receive_packet.Command) == NET_FILE_CHUNK
                 && (Winsock.Get_Connected() || sender_address == Session.HostAddress)) {
 #endif // WINSOCK_IPX
 

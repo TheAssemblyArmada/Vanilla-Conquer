@@ -241,7 +241,7 @@ void Send_Statistics_Packet(void)
         /*
         ** Scenario
         */
-        char fname[128];
+        char fname[_MAX_FNAME + _MAX_EXT + 4];
         char namebuffer[40];
         sprintf(fname, "%s.INI", Scen.ScenarioName);
         CCFileClass fileo;

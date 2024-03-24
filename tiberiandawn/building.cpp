@@ -3368,7 +3368,7 @@ void BuildingClass::Write_INI(CCINIClass& ini)
 
         building = Buildings.Ptr(index);
         if (!building->IsInLimbo) {
-            char uname[10];
+            char uname[12];
             char buf[127];
 
             sprintf(uname, "%03d", index);

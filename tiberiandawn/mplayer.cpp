@@ -625,7 +625,7 @@ void Read_Scenario_Descriptions(void)
     INIClass ini;
     CCFileClass file;
     int i;
-    char fname[20];
+    char fname[_MAX_FNAME + _MAX_EXT + 4];
 
     /*------------------------------------------------------------------------
     Clear the scenario description lists

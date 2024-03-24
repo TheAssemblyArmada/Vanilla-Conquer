@@ -252,7 +252,7 @@ int MapEditClass::Select_Team(char const* caption)
     int j;
     int def_idx;                    // default list index
     static int tabs[] = {120, 180}; // list box tab stops
-    char txt[10];
+    char txt[14];
     //	int housetxt;
 
     /*........................................................................

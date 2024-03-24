@@ -148,7 +148,7 @@ bool Start_Scenario(char* root, bool briefing)
 
 #ifdef NEWMENU
 
-            char buffer[25];
+            char buffer[_MAX_FNAME + _MAX_EXT + 4];
             sprintf(buffer, "%s.VQA", BriefMovie);
             CCFileClass file(buffer);
 
@@ -769,8 +769,8 @@ bool Restate_Mission(char const* name, int button1, int button2)
         */
         bool brief = true;
 #ifdef NEWMENU
-        char buffer[25];
-        char buffer1[25];
+        char buffer[_MAX_FNAME + _MAX_EXT + 4];
+        char buffer1[_MAX_FNAME + _MAX_EXT + 4];
         sprintf(buffer, "%s.VQA", BriefMovie);
         sprintf(buffer1, "%s.VQA", ActionMovie);
         CCFileClass file1(buffer);

@@ -579,7 +579,7 @@ void AircraftClass::Write_INI(CCINIClass& ini)
 
         unit = Aircraft.Ptr(index);
         if (!unit->IsInLimbo) {
-            char uname[10];
+            char uname[12];
             char buf[128];
 
             sprintf(uname, "%03d", index);
@@ -762,7 +762,7 @@ void AircraftClass::AI(void)
             do_physics = false;
         }
     }
-    if (do_physics && Physics(Coord, PrimaryFacing) != RESULT_NONE) {
+    if (do_physics && Physics(Coord, PrimaryFacing) != IMPACT_NONE) {
         Mark();
     }
 

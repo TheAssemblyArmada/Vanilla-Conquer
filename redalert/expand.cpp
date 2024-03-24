@@ -311,7 +311,7 @@ private:
  *=============================================================================================*/
 void EListClass::Draw_Entry(int index, int x, int y, int width, int selected)
 {
-    char buffer[128];
+    char buffer[256];
     RemapControlType* scheme = GadgetClass::Get_Color_Scheme();
 
     int text = TXT_NONE;
