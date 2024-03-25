@@ -265,6 +265,8 @@ void XMP_DER_Decode(digit* result, unsigned char const* input, int precision)
     }
 }
 
+#ifndef __BIG_ENDIAN__
+// FIXME: does not for work big-endian
 /***********************************************************************************************
  * XMP_Encode -- Encode MP number into buffer.                                                 *
  *                                                                                             *
@@ -308,6 +310,7 @@ unsigned XMP_Encode(unsigned char* to, unsigned tobytes, digit const* from, int 
 
     return (tobytes);
 }
+#endif
 
 /***********************************************************************************************
  * XMP_Encode -- Encode MP number into buffer as compactly as possible.                        *
@@ -358,7 +361,8 @@ unsigned XMP_Encode(unsigned char* to, digit const* from, int precision)
     unsigned char* number_ptr;
 
     unsigned char* const end = (unsigned char*)from;
-    for (number_ptr = (unsigned char*)end + precision - 1; number_ptr > (unsigned char*)end; number_ptr--) {
+    for (number_ptr = (unsigned char*)end + precision * sizeof(digit) - 1; number_ptr > (unsigned char*)end;
+         number_ptr--) {
         if (*number_ptr != filler)
             break;
     }
@@ -922,6 +926,8 @@ unsigned XMP_Count_Bits(const digit* number, int precision)
     return (total_bit_count);
 }
 
+#ifndef __BIG_ENDIAN__
+// FIXME: does not work for big-endian
 /***********************************************************************************************
  * XMP_Count_Bytes -- Counts the number of precision bytes in MP number.                       *
  *                                                                                             *
@@ -951,6 +957,7 @@ int XMP_Count_Bytes(const digit* number, int precision)
     }
     return (count);
 }
+#endif
 
 /***********************************************************************************************
  * XMP_Move -- Assign one MP number to another.                                                *
