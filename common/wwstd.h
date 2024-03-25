@@ -258,13 +258,16 @@ inline static void _splitpath(const char* path, char* drive, char* dir, char* fn
     }
 }
 
+#ifndef __MINT__
 inline static char* strupr(char* str)
 {
     for (int i = 0; i < strlen(str); i++)
         str[i] = toupper(str[i]);
     return str;
 }
+#endif
 
+#ifndef __MINT__
 inline static void strrev(char* str)
 {
     int len = strlen(str);
@@ -275,6 +278,7 @@ inline static void strrev(char* str)
         str[len - i - 1] = c;
     }
 }
+#endif
 
 inline static void _strlwr(char* str)
 {
