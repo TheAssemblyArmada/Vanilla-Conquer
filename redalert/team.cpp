@@ -98,7 +98,7 @@ static inline bool _Is_It_Breathing(FootClass const* object)
     **	If the object is not present or appears to be dead, then it
     **	certainly isn't an active member of the team.
     */
-    if (object == NULL || !object->IsActive || object->Strength == 0)
+    if (object == nullptr || !object->IsActive || object->Strength == 0)
         return (false);
 
     /*
@@ -292,7 +292,7 @@ void TeamClass::operator delete(void* ptr)
 TeamClass::~TeamClass(void)
 {
     if (GameActive && Class.Is_Valid()) {
-        while (Member != NULL) {
+        while (Member != nullptr) {
             Remove(Member);
         }
         Class->Number--;
@@ -306,7 +306,7 @@ TeamClass::~TeamClass(void)
             if (Trigger->AttachCount == 0) {
                 delete (TriggerClass*)Trigger;
             }
-            Trigger = NULL;
+            Trigger = nullptr;
         }
     }
 }
@@ -677,7 +677,7 @@ void TeamClass::AI(void)
     **	If there are no members of the team and the team has reached
     **	full strength at one time, then delete the team.
     */
-    if (Member == NULL && IsHasBeen) {
+    if (Member == nullptr && IsHasBeen) {
 
         /*
         **	If this team had no members (i.e., the team object wasn't terminated by some
@@ -718,7 +718,7 @@ void TeamClass::AI(void)
                 break;
 
             case TMISSION_MOVE:
-                if ((unsigned)mission->Data.Value < WAYPT_COUNT && Member != NULL) {
+                if ((unsigned)mission->Data.Value < WAYPT_COUNT && Member != nullptr) {
                     FootClass* leader = Fetch_A_Leader();
                     CELL movecell = Scen.Waypoint[mission->Data.Value];
                     if (!Is_Leaving_Map()) {
@@ -757,7 +757,7 @@ void TeamClass::AI(void)
     /*
     **	Perform mission of the team. This depends on the mission list.
     */
-    if (Member != NULL && IsMoving && !IsReforming && !IsUnderStrength) {
+    if (Member != nullptr && IsMoving && !IsReforming && !IsUnderStrength) {
 
         /*
         ** If the current Target has been dealt with but the mission target
@@ -912,7 +912,7 @@ bool TeamClass::Add(FootClass* obj)
     **	Actually add the object to the team.
     */
     Quantity[typeindex]++;
-    obj->IsInitiated = (Member == NULL);
+    obj->IsInitiated = (Member == nullptr);
     obj->Member = Member;
     Member = obj;
     obj->Team = this;
@@ -1144,7 +1144,7 @@ bool TeamClass::Remove(FootClass* obj, int typeindex)
     **	team captain. Mark the center location of the team as invalid so that
     **	it will be centered around the captain.
     */
-    if (!initiated && Member != NULL) {
+    if (!initiated && Member != nullptr) {
         Member->IsInitiated = true;
         Zone = TARGET_NONE;
     }
@@ -1639,7 +1639,7 @@ void TeamClass::Coordinate_Attack(void)
     **	can "attack" an empty cell and this is perfectly ok (paratrooper drop and parabombs
     **	are prime examples).
     */
-    if (Is_Target_Cell(Target) && Member != NULL && Fetch_A_Leader()->What_Am_I() != RTTI_AIRCRAFT) {
+    if (Is_Target_Cell(Target) && Member != nullptr && Fetch_A_Leader()->What_Am_I() != RTTI_AIRCRAFT) {
         CellClass* cellptr = &Map[As_Cell(Target)];
         TemplateType tt = cellptr->TType;
         if (cellptr->Cell_Object()) {
@@ -2671,7 +2671,7 @@ int TeamClass::TMission_Formation(void)
  *=============================================================================================*/
 int TeamClass::TMission_Attack(void)
 {
-    if (!Target_Legal(MissionTarget) && Member != NULL) {
+    if (!Target_Legal(MissionTarget) && Member != nullptr) {
         TeamMissionClass const* mission = &Class->MissionList[CurrentMission];
 
         /*
