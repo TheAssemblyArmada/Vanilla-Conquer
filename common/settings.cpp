@@ -1,3 +1,4 @@
+#include "wwstd.h"
 #include "settings.h"
 #include "ini.h"
 #include "miscasm.h"
@@ -36,6 +37,8 @@ SettingsClass::SettingsClass()
 
 void SettingsClass::Load(INIClass& ini)
 {
+    char buf[128];
+
     /*
     ** Mouse settings
     */
@@ -77,6 +80,15 @@ void SettingsClass::Load(INIClass& ini)
     if (Video.Boxing || Mouse.RawInput || Mouse.ControllerEnabled) {
         Video.HardwareCursor = false;
     }
+
+    ini.Get_String("Video", "ButtonStyle", "Default", buf, sizeof(buf));
+    if (!stricmp(buf, "Gold")) {
+        Video.ButtonStyle = 1;
+    } else if (!stricmp(buf, "Classic") || !stricmp(buf, "DOS")) {
+        Video.ButtonStyle = 0;
+    } else {
+        Video.ButtonStyle = -1;
+    }
 }
 
 void SettingsClass::Save(INIClass& ini)
@@ -111,4 +123,7 @@ void SettingsClass::Save(INIClass& ini)
     ** VQA and WSA interpolation mode 0 = scanlines, 1 = vertical doubling, 2 = linear
     */
     ini.Put_Int("Video", "InterpolationMode", Video.InterpolationMode);
+
+    ini.Put_String(
+        "Video", "ButtonStyle", Video.ButtonStyle == -1 ? "Default" : (Video.ButtonStyle == 1 ? "Gold" : "Classic"));
 }

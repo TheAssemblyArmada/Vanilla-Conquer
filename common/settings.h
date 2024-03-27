@@ -33,6 +33,7 @@ public:
         int InterpolationMode;
         bool HardwareCursor;
         bool DOSMode;
+        int ButtonStyle;
         std::string Scaler;
         std::string Driver;
         std::string PixelFormat;
