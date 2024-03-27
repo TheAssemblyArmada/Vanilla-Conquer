@@ -173,7 +173,7 @@ void Set_Video_Cursor_Clip(bool clipped)
         int relative = -1;
 
         if (relative < 0) {
-            DBG_ERROR("Raw input not supported, disabling.");
+            // DBG_ERROR("Raw input not supported, disabling.");
             Settings.Mouse.RawInput = false;
         }
     }
