@@ -3613,7 +3613,9 @@ static bool Change_Local_Dir(int cd)
  *   07/11/1995 JLB : Created.                                                                 *
  *   05/22/1996  ST : Handles multiple CD drives / CD changers                                 *
  *=============================================================================================*/
+#ifdef _MSC_VER
 #pragma warning(disable : 4101)
+#endif
 bool Force_CD_Available(int cd)
 {
 

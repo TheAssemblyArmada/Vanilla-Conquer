@@ -129,7 +129,9 @@ typedef struct
 /*
 ------------------------------- Shape block ---------------------------------
 */
+#ifdef _MSC_VER
 #pragma warning(disable : 4200)
+#endif
 #pragma pack(push, 2)
 typedef struct
 {

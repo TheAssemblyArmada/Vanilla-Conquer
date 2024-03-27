@@ -66,7 +66,9 @@ typedef __int64 int64;
 **
 */
 // For compatibility with Watcom in audio enums
+#ifdef _MSC_VER
 #pragma warning(disable : 4091)
+#endif
 
 // From TiberianDawn\Audio.cpp
 typedef enum
