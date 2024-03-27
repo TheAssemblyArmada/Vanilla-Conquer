@@ -108,6 +108,9 @@ bool Set_Video_Mode(int w, int h, int bits_per_pixel)
 {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_ShowCursor(SDL_DISABLE);
+#ifdef __MINT__
+    atexit(SDL_Quit);
+#endif
 
     int win_w = w;
     int win_h = h;
