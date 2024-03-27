@@ -44,6 +44,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "settings.h"
 
 /***********************************************************************************************
  * Dialog_Box -- draws a dialog background box                                                 *
@@ -93,10 +94,8 @@ extern void CC_Texture_Fill(void const* shapefile, int shapenum, int xpos, int y
 
 void Draw_Box(int x, int y, int w, int h, BoxStyleEnum up, bool filled)
 {
-    static BoxStyleType const ButtonColors[BOXSTYLE_COUNT] = {
-
+    static BoxStyleType const ButtonColorsClassic[BOXSTYLE_COUNT] = {
         // Filler, Shadow, Hilite, Corner colors
-
         {LTGREY, WHITE, DKGREY, LTGREY},                                    // 0 Button is down.
         {LTGREY, DKGREY, WHITE, LTGREY},                                    // 1 Button is up w/border.
         {LTBLUE, BLUE, LTCYAN, LTBLUE},                                     // 2 Raised blue.
@@ -105,29 +104,45 @@ void Draw_Box(int x, int y, int w, int h, BoxStyleEnum up, bool filled)
         {LTGREY, DKGREY, WHITE, LTGREY},                                    // 5 Button is up w/arrows.
         {CC_GREEN_BKGD, CC_LIGHT_GREEN, CC_GREEN_SHADOW, CC_GREEN_CORNERS}, // 6 Button is down.
         {CC_GREEN_BKGD, CC_GREEN_SHADOW, CC_LIGHT_GREEN, CC_GREEN_CORNERS}, // 7 Button is up w/border.
-        // {CC_GREEN_BKGD, 14, 12, 13},    // 6 Button is down.
-        // {CC_GREEN_BKGD, 12, 14, 13},    // 7 Button is up w/border.
-        {DKGREY, WHITE, BLACK, DKGREY},             // 8 Button is disabled down.
-        {DKGREY, BLACK, LTGREY, DKGREY},            // 9 Button is disabled up.
-        {BLACK, CC_GREEN_BOX, CC_GREEN_BOX, BLACK}, // 10 List box.
-        {BLACK, CC_GREEN_BOX, CC_GREEN_BOX, BLACK}, // 11 Menu box.
-        // {BLACK, 14, 14, BLACK}, // 10 List box.
-        // {BLACK, 14, 14, BLACK}, // 11 Menu box.
+        {DKGREY, WHITE, BLACK, DKGREY},                                     // 8 Button is disabled down.
+        {DKGREY, BLACK, LTGREY, DKGREY},                                    // 9 Button is disabled up.
+        {BLACK, CC_GREEN_BOX, CC_GREEN_BOX, BLACK},                         // 10 List box.
+        {BLACK, CC_GREEN_BOX, CC_GREEN_BOX, BLACK},                         // 11 Menu box.
     };
+
+    static BoxStyleType const ButtonColorsGold[BOXSTYLE_COUNT] = {
+        // Filler, Shadow, Hilite, Corner colors
+        {LTGREY, WHITE, DKGREY, LTGREY}, // 0 Button is down.
+        {LTGREY, DKGREY, WHITE, LTGREY}, // 1 Button is up w/border.
+        {LTBLUE, BLUE, LTCYAN, LTBLUE},  // 2 Raised blue.
+        {DKGREY, WHITE, BLACK, DKGREY},  // 3 Button is disabled down.
+        {DKGREY, BLACK, WHITE, LTGREY},  // 4 Button is disabled up.
+        {LTGREY, DKGREY, WHITE, LTGREY}, // 5 Button is up w/arrows.
+        {CC_GREEN_BKGD, 14, 12, 13},     // 6 Button is down.
+        {CC_GREEN_BKGD, 12, 14, 13},     // 7 Button is up w/border.
+        {DKGREY, WHITE, BLACK, DKGREY},  // 8 Button is disabled down.
+        {DKGREY, BLACK, LTGREY, DKGREY}, // 9 Button is disabled up.
+        {BLACK, 14, 14, BLACK},          // 10 List box.
+        {BLACK, 14, 14, BLACK},          // 11 Menu box.
+    };
+
+    bool useGoldStyle;
+    if (Settings.Video.ButtonStyle == -1) {
+        useGoldStyle = !Settings.Video.DOSMode;
+    } else {
+        useGoldStyle = Settings.Video.ButtonStyle == 1;
+    }
 
     w--;
     h--;
-    BoxStyleType const& style = ButtonColors[up];
+    BoxStyleType const& style = useGoldStyle ? ButtonColorsGold[up] : ButtonColorsClassic[up];
 
     if (filled) {
-        /*
-        if (style.Filler == CC_GREEN_BKGD) {
+        if (useGoldStyle && style.Filler == CC_GREEN_BKGD) {
             CC_Texture_Fill(MFCD::Retrieve("BTEXTURE.SHP"), InMainLoop, x, y, w, h);
         } else {
             LogicPage->Fill_Rect(x, y, x + w, y + h, style.Filler);
         }
-        */
-        LogicPage->Fill_Rect(x, y, x + w, y + h, style.Filler);
     }
 
     switch (up) {

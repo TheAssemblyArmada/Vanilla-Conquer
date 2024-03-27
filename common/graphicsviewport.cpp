@@ -981,12 +981,19 @@ void GraphicViewPortClass::Draw_Rect(int x1_pixel, int y1_pixel, int x2_pixel, i
     Unlock();
 }
 
-void GraphicViewPortClass::Texture_Fill_Rect(int xpos, int ypos, int width, int height, unsigned char* shape_pointer, int source_width, int source_height)
+void GraphicViewPortClass::Texture_Fill_Rect(int xpos,
+                                             int ypos,
+                                             int width,
+                                             int height,
+                                             unsigned char* shape_pointer,
+                                             int source_width,
+                                             int source_height)
 {
     if (Lock()) {
         for (int y = ypos; y < ypos + height; y++) {
             for (int x = xpos; x < xpos + width; x++) {
-                LogicPage->Put_Pixel(x, y, *(shape_pointer + ((y % source_height) * source_width) + (x % source_width)));
+                LogicPage->Put_Pixel(
+                    x, y, *(shape_pointer + ((y % source_height) * source_width) + (x % source_width)));
             }
         }
         Unlock();
