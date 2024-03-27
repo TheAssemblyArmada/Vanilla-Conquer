@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "irandom.h"
+#include "endianness.h"
 
 unsigned int RandNumb = 0x12349876;
 
@@ -59,6 +60,18 @@ unsigned char Random()
     ** This treats the number as bytes so setting it on bit endian machines needs to byte swap.
     */
     unsigned char* bytes = reinterpret_cast<unsigned char*>(&RandNumb);
+#ifdef __BIG_ENDIAN__
+    unsigned char cf1 = (bytes[3] >> 1) & 1;
+    unsigned char tmp_a = bytes[3] >> 2;
+    unsigned char cf2 = (bytes[1] >> 7) & 1;
+    bytes[1] = (bytes[1] << 1) | cf1;
+    cf1 = (bytes[2] >> 7) & 1;
+    bytes[2] = (bytes[2] << 1) | cf2;
+    cf2 = (tmp_a - (RandNumb + (cf1 != 1))) & 1;
+    bytes[3] = (bytes[3] >> 1) | (cf2 << 7);
+
+    return bytes[2] ^ bytes[3];
+#else
     unsigned char cf1 = (bytes[0] >> 1) & 1;
     unsigned char tmp_a = bytes[0] >> 2;
     unsigned char cf2 = (bytes[2] >> 7) & 1;
@@ -69,6 +82,7 @@ unsigned char Random()
     bytes[0] = (bytes[0] >> 1) | (cf2 << 7);
 
     return bytes[1] ^ bytes[0];
+#endif
 }
 
 int Get_Random_Mask(int maxval)
