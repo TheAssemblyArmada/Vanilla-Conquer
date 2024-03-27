@@ -36,6 +36,7 @@
 #define SPECIAL_H
 
 #include "common/bitfields.h"
+#include "common/endianness.h"
 #include <stdint.h>
 
 #pragma pack(push, 1)
@@ -77,163 +78,238 @@ public:
         ModernBalance = false;
     }
 
-    /*
-    **	Is the game flagged for easy mode?
-    */
-    unsigned IsEasy : 1;
+    union
+    {
+        uint32_t Bitfield;
 
-    /*
-    **	Is the game flagged for difficult?
-    */
-    unsigned IsDifficult : 1;
+        struct
+        {
+#if HAVE_MS_BITFIELDS
+            /*
+            **	Is the game flagged for easy mode?
+            */
+            unsigned IsEasy : 1;
 
-    /*
-    **	Controls the speedy build option -- used for testing.
-    */
-    unsigned IsSpeedBuild : 1;
+            /*
+            **	Is the game flagged for difficult?
+            */
+            unsigned IsDifficult : 1;
 
-    /*
-    **	If the player can build the helipad separate from the helipad and
-    **	helicopter combo, then this flag will be true.
-    */
-    unsigned IsSeparate : 1;
+            /*
+            **	Controls the speedy build option -- used for testing.
+            */
+            unsigned IsSpeedBuild : 1;
 
-    /*
-    **	If the defender has the advantage then this will be true. This flag
-    **	allows the defender to have a better advantage in combat than the
-    **	attacker. Moving units will not be able to dish out or take as much
-    **	damage when this flag is true.
-    */
-    unsigned IsDefenderAdvantage : 1;
+            /*
+            **	If the player can build the helipad separate from the helipad and
+            **	helicopter combo, then this flag will be true.
+            */
+            unsigned IsSeparate : 1;
 
-    /*
-    **	If civilian structures are to have a name, then this flag will be
-    **	set to true. The default case is to just use generic names for
-    **	civilians.
-    */
-    unsigned IsNamed : 1;
+            /*
+            **	If the defender has the advantage then this will be true. This flag
+            **	allows the defender to have a better advantage in combat than the
+            **	attacker. Moving units will not be able to dish out or take as much
+            **	damage when this flag is true.
+            */
+            unsigned IsDefenderAdvantage : 1;
 
-    /*
-    ** If from install, then play the special installation movie and
-    ** skip asking them what type of game they want to play.
-    */
-    unsigned IsFromInstall : 1;
+            /*
+            **	If civilian structures are to have a name, then this flag will be
+            **	set to true. The default case is to just use generic names for
+            **	civilians.
+            */
+            unsigned IsNamed : 1;
 
-    /*
-    **	If capture the flag mode is on, this flag will be true. With this
-    **	flag enabled, then the flag is initially placed at the start of
-    **	the scenario.
-    */
-    unsigned IsCaptureTheFlag : 1;
+            /*
+            ** If from install, then play the special installation movie and
+            ** skip asking them what type of game they want to play.
+            */
+            unsigned IsFromInstall : 1;
 
-    /*
-    **	Is target selecting by other human opponents visible to the player?
-    */
-    unsigned IsVisibleTarget : 1;
+            /*
+            **	If capture the flag mode is on, this flag will be true. With this
+            **	flag enabled, then the flag is initially placed at the start of
+            **	the scenario.
+            */
+            unsigned IsCaptureTheFlag : 1;
 
-    /*
-    **	If human generated sound effects are to be used, then this
-    **	flag will be true.
-    */
-    unsigned IsJuvenile : 1;
+            /*
+            **	Is target selecting by other human opponents visible to the player?
+            */
+            unsigned IsVisibleTarget : 1;
 
-    /*
-    **	If friendly units should return fire when fired upon, set this
-    **	flag to true. The default is only for the enemy units to do this.
-    */
-    unsigned IsSmartDefense : 1;
+            /*
+            **	If human generated sound effects are to be used, then this
+            **	flag will be true.
+            */
+            unsigned IsJuvenile : 1;
 
-    /*
-    **	If targeting of trees is allowed, then this flag will be true.
-    */
-    unsigned IsTreeTarget : 1;
+            /*
+            **	If friendly units should return fire when fired upon, set this
+            **	flag to true. The default is only for the enemy units to do this.
+            */
+            unsigned IsSmartDefense : 1;
 
-    /*
-    **	If this flag is true, then the construction yard can undeploy back into an MCV.
-    */
-    unsigned IsMCVDeploy : 1;
+            /*
+            **	If targeting of trees is allowed, then this flag will be true.
+            */
+            unsigned IsTreeTarget : 1;
 
-    /*
-    **	Controls whether or not visceroids spawn
-    */
-    unsigned IsVisceroids : 1;
+            /*
+            **	If this flag is true, then the construction yard can undeploy back into an MCV.
+            */
+            unsigned IsMCVDeploy : 1;
 
-    /*
-    **	If the monochrome debugging output is enabled, then this flag will be true.
-    */
-    unsigned IsMonoEnabled : 1;
+            /*
+            **	Controls whether or not visceroids spawn
+            */
+            unsigned IsVisceroids : 1;
 
-    /*
-    **	This flags controls whether weapons are inert. An inert weapon doesn't do any
-    **	damage. Effectively, if this is true, then the units never die.
-    */
-    unsigned IsInert : 1;
+            /*
+            **	If the monochrome debugging output is enabled, then this flag will be true.
+            */
+            unsigned IsMonoEnabled : 1;
 
-    /*
-    **	When this flag is true, the computer findpath algorithm reveals the route being
-    **	examined. This is used to trace findpath bugs.
-    */
-    unsigned IsShowPath : 1;
+            /*
+            **	This flags controls whether weapons are inert. An inert weapon doesn't do any
+            **	damage. Effectively, if this is true, then the units never die.
+            */
+            unsigned IsInert : 1;
 
-    /*
-    **	If wheeled vehicles should do a 3-point turn when rotating in place, then
-    **	this flag is true.
-    */
-    unsigned IsThreePoint : 1;
+            /*
+            **	When this flag is true, the computer findpath algorithm reveals the route being
+            **	examined. This is used to trace findpath bugs.
+            */
+            unsigned IsShowPath : 1;
 
-    /*
-    **	If Tiberium is allowed to grow, then this flag will be true.
-    */
-    unsigned IsTGrowth : 1;
+            /*
+            **	If wheeled vehicles should do a 3-point turn when rotating in place, then
+            **	this flag is true.
+            */
+            unsigned IsThreePoint : 1;
 
-    /*
-    **	If Tiberium is allowed to spread, then this flag will be true.
-    */
-    unsigned IsTSpread : 1;
+            /*
+            **	If Tiberium is allowed to grow, then this flag will be true.
+            */
+            unsigned IsTGrowth : 1;
 
-    /*
-    **	This controls whether Tiberium grows&spreads quickly or not.
-    */
-    unsigned IsTFast : 1;
+            /*
+            **	If Tiberium is allowed to spread, then this flag will be true.
+            */
+            unsigned IsTSpread : 1;
 
-    /*
-    **	This flag controls whether the road additional pieces are added to
-    **	the bottom of buildings. If true, then the roads are NOT added.
-    */
-    unsigned IsRoad : 1;
+            /*
+            **	This controls whether Tiberium grows&spreads quickly or not.
+            */
+            unsigned IsTFast : 1;
 
-    /*
-    **	Controls whether units (especially infantry) will scatter when there
-    **	is an immediate threat. This gives infantry a "mind of their own" when
-    **	it comes to self preservation. If set to false, then units will not
-    **	scatter.
-    */
-    unsigned IsScatter : 1;
+            /*
+            **	This flag controls whether the road additional pieces are added to
+            **	the bottom of buildings. If true, then the roads are NOT added.
+            */
+            unsigned IsRoad : 1;
 
-    /*
-    **	Special bonus scenario enabled.
-    */
-    unsigned IsJurassic : 1;
+            /*
+            **	Controls whether units (especially infantry) will scatter when there
+            **	is an immediate threat. This gives infantry a "mind of their own" when
+            **	it comes to self preservation. If set to false, then units will not
+            **	scatter.
+            */
+            unsigned IsScatter : 1;
 
-    /*
-    **	Are score variations allowed?
-    */
-    unsigned IsVariation : 1;
+            /*
+            **	Special bonus scenario enabled.
+            */
+            unsigned IsJurassic : 1;
 
-    /*
-    **	If the gross human splatter marks should be present.
-    */
-    unsigned IsGross : 1;
+            /*
+            **	Are score variations allowed?
+            */
+            unsigned IsVariation : 1;
 
-    /*
-    **	Disables scrolling over the "options" and "sidebar" tabs.
-    */
-    unsigned IsScrollMod : 1;
+            /*
+            **	If the gross human splatter marks should be present.
+            */
+            unsigned IsGross : 1;
 
-    /*
-    ** New anti-griefing early win mode. ST - 1/31/2020 3:42PM
-    */
-    unsigned IsEarlyWin : 1;
+            /*
+            **	Disables scrolling over the "options" and "sidebar" tabs.
+            */
+            unsigned IsScrollMod : 1;
+
+            /*
+            ** New anti-griefing early win mode. ST - 1/31/2020 3:42PM
+            */
+            unsigned IsEarlyWin : 1;
+#else
+            /*
+            ** simulate effects of attribute((ms_struct))
+            */
+#ifdef __BIG_ENDIAN__
+            unsigned : 4;
+            unsigned IsEarlyWin : 1;
+            unsigned IsScrollMod : 1;
+            unsigned IsGross : 1;
+            unsigned IsVariation : 1;
+            unsigned IsJurassic : 1;
+            unsigned IsScatter : 1;
+            unsigned IsRoad : 1;
+            unsigned IsTFast : 1;
+            unsigned IsTSpread : 1;
+            unsigned IsTGrowth : 1;
+            unsigned IsThreePoint : 1;
+            unsigned IsShowPath : 1;
+            unsigned IsInert : 1;
+            unsigned IsMonoEnabled : 1;
+            unsigned IsVisceroids : 1;
+            unsigned IsMCVDeploy : 1;
+            unsigned IsTreeTarget : 1;
+            unsigned IsSmartDefense : 1;
+            unsigned IsJuvenile : 1;
+            unsigned IsVisibleTarget : 1;
+            unsigned IsCaptureTheFlag : 1;
+            unsigned IsFromInstall : 1;
+            unsigned IsNamed : 1;
+            unsigned IsDefenderAdvantage : 1;
+            unsigned IsSeparate : 1;
+            unsigned IsSpeedBuild : 1;
+            unsigned IsDifficult : 1;
+            unsigned IsEasy : 1;
+#else
+            unsigned IsEasy : 1;
+            unsigned IsDifficult : 1;
+            unsigned IsSpeedBuild : 1;
+            unsigned IsSeparate : 1;
+            unsigned IsDefenderAdvantage : 1;
+            unsigned IsNamed : 1;
+            unsigned IsFromInstall : 1;
+            unsigned IsCaptureTheFlag : 1;
+            unsigned IsVisibleTarget : 1;
+            unsigned IsJuvenile : 1;
+            unsigned IsSmartDefense : 1;
+            unsigned IsTreeTarget : 1;
+            unsigned IsMCVDeploy : 1;
+            unsigned IsVisceroids : 1;
+            unsigned IsMonoEnabled : 1;
+            unsigned IsInert : 1;
+            unsigned IsShowPath : 1;
+            unsigned IsThreePoint : 1;
+            unsigned IsTGrowth : 1;
+            unsigned IsTSpread : 1;
+            unsigned IsTFast : 1;
+            unsigned IsRoad : 1;
+            unsigned IsScatter : 1;
+            unsigned IsJurassic : 1;
+            unsigned IsVariation : 1;
+            unsigned IsGross : 1;
+            unsigned IsScrollMod : 1;
+            unsigned IsEarlyWin : 1;
+            unsigned : 4;
+#endif
+#endif
+        };
+    };
 
     /*
     ** Health bar display mode
@@ -254,10 +330,31 @@ public:
         RB_ALWAYS,
     } ResourceBarDisplayMode;
 
-    /*
-    ** New modern balance setting.
-    */
-    unsigned ModernBalance : 1;
+    union
+    {
+        uint32_t Bitfield2;
+
+        struct
+        {
+            /*
+            ** New modern balance setting.
+            */
+#if HAVE_MS_BITFIELDS
+            unsigned ModernBalance : 1;
+#else
+            /*
+            ** simulate effects of attribute((ms_struct))
+            */
+#ifdef __BIG_ENDIAN__
+            unsigned : 31;
+            unsigned ModernBalance : 1;
+#else
+            unsigned ModernBalance : 1;
+            unsigned : 31;
+#endif
+#endif
+        };
+    };
 
     /*
     ** Some additional padding in case we need to add data to the class and maintain backwards compatibility for

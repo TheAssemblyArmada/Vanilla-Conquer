@@ -93,6 +93,7 @@ typedef struct
 {
     CommHeaderType Header;
     unsigned short ProductID;
+    unsigned short pad;
 } GlobalHeaderType;
 
 inline void SwapGlobalHeaderType(GlobalHeaderType* ght)

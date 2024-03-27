@@ -16,10 +16,15 @@
 /*
  * Use this macro to mark a structure to be packed in an MSVC compatible way.
  */
-#if defined __clang__ || defined __GNUC__
-#define BITFIELD_STRUCT __attribute__((ms_struct))
+#if (defined __clang__ || defined __GNUC__) && (defined(__i386__) || defined(__x86_64__))
+#define BITFIELD_STRUCT   __attribute__((ms_struct))
+#define HAVE_MS_BITFIELDS 1
+#elif defined(_MSC_VER)
+#define BITFIELD_STRUCT
+#define HAVE_MS_BITFIELDS 1
 #else
 #define BITFIELD_STRUCT
+#define HAVE_MS_BITFIELDS 0
 #endif
 
 #endif /* COMMON_BITFIELDS_H */
