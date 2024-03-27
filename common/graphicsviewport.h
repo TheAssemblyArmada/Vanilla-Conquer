@@ -289,20 +289,7 @@ public:
     void Remap(int sx, int sy, int width, int height, void* remap);
     void Remap(void* remap);
     void Draw_Stamp(void const* icondata, int icon, int x_pixel, int y_pixel, void const* remap, int clip_window);
-
-    // PG_TO_FIX
-    // This seems to be missing. Might not be needed anyway since it looks like it's only used for UI drawing. ST -
-    // 12/17/2018 6:11PM
-    void Texture_Fill_Rect(int xpos,
-                           int ypos,
-                           int width,
-                           int height,
-                           void const* shape_pointer,
-                           int source_width,
-                           int source_height)
-    {
-        return;
-    }
+    void Texture_Fill_Rect(int xpos, int ypos, int width, int height, unsigned char* shape_pointer, int source_width, int source_height);
 
     // This doesnt seem to exist anywhere?? - Steve T 9/26/95 6:05PM
     //      VOID Grey_Out_Region(int x, int y, int width, int height, int color);
