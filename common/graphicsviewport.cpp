@@ -900,9 +900,39 @@ void GraphicViewPortClass::Fill_Rect(int sx, int sy, int dx, int dy, unsigned ch
 {
     if (AllowHardwareBlitFills && IsHardware && ((dx - sx) * (dy - sy) >= (32 * 32))
         && GraphicBuff->Get_DD_Surface()->IsReadyToBlit()) {
-        Rect dest_rectangle(sx + XPos, sy + YPos, dx - sx, dy - sy);
-        Rect self_rect(XPos, YPos, Width, Height);
-        GraphicBuff->Get_DD_Surface()->FillRect(dest_rectangle.Intersect(self_rect), color);
+        Rect dest_rectangle;
+
+        dest_rectangle.X = sx + XPos;
+        dest_rectangle.Y = sy + YPos;
+        dest_rectangle.Width = dx + XPos;
+        dest_rectangle.Height = dy + YPos;
+
+        if (dest_rectangle.X < XPos) {
+            dest_rectangle.X = XPos;
+        }
+
+        if (dest_rectangle.Width >= Width + XPos) {
+            dest_rectangle.Width = Width + XPos - 1;
+        }
+
+        if (dest_rectangle.Y < YPos) {
+            dest_rectangle.Y = YPos;
+        }
+
+        if (dest_rectangle.Height >= Height + YPos) {
+            dest_rectangle.Height = Height + YPos - 1;
+        }
+
+        if (dest_rectangle.X >= dest_rectangle.Width)
+            return;
+        if (dest_rectangle.Y >= dest_rectangle.Height)
+            return;
+
+        dest_rectangle.Width++;
+        dest_rectangle.Height++;
+        dest_rectangle.Width -= dest_rectangle.X;
+        dest_rectangle.Height -= dest_rectangle.Y;
+        GraphicBuff->Get_DD_Surface()->FillRect(dest_rectangle, color);
     } else {
         if (Lock()) {
             Buffer_Fill_Rect(this, sx, sy, dx, dy, color);
