@@ -133,6 +133,12 @@ void Draw_Box(int x, int y, int w, int h, BoxStyleEnum up, bool filled)
         useGoldStyle = Settings.Video.ButtonStyle == 1;
     }
 
+    /* If DOSMode is enabled then force disable of goldstyle buttons once the
+       textures may not be available.  */
+    if (Get_Resolution_Factor() == 0) {
+        useGoldStyle = false;
+    }
+
     w--;
     h--;
     BoxStyleType const& style = useGoldStyle ? ButtonColorsGold[up] : ButtonColorsClassic[up];
