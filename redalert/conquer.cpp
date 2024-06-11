@@ -3139,7 +3139,7 @@ void CC_Draw_Shape(void const* shapefile,
 
             predoffset = Frame;
 
-            if (x > WindowList[window][WINDOWWIDTH]) {
+            if (x > WindowList[window][WINDOWWIDTH] >> 1) {
                 predoffset = -predoffset;
             }
 

@@ -9,6 +9,7 @@
 // distributed with this program. You should have received a copy of the
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
+#include "debugstring.h"
 #include "graphicsviewport.h"
 #include "keyframe.h"
 #include "shape.h"
@@ -29,7 +30,10 @@ extern bool OriginalUseBigShapeBuffer;
 // with the value PredTable[PredFrame] pixels away if PartialCount
 // is greater than or equal to 256. After every pixel, it is increased by
 // PartialPred and reset to % 256 after reaching 256 or greater.
-static const short PredTable[8] = {1, 3, 2, 5, 2, 3, 4, 1};
+static const short PredNegTable[8] = {-1, -3, -2, -5, -2, -3, -4, -1};
+static short PredNegOffTable[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+static const short PredPosTable[8] = {1, 3, 2, 5, 2, 3, 4, 1};
+static const short* PredTable = PredPosTable;
 static unsigned PredFrame;
 static unsigned PartialCount;
 static unsigned PartialPred;
@@ -172,7 +176,7 @@ void BF_Fading(int width,
 {
     while (height--) {
         for (int i = width; i > 0; --i) {
-            unsigned char sbyte = *src;
+            unsigned char sbyte = *src++;
 
             for (int i = 0; i < count; ++i) {
                 sbyte = fade_tab[sbyte];
@@ -180,6 +184,9 @@ void BF_Fading(int width,
 
             *dst++ = sbyte;
         }
+
+        src += src_pitch;
+        dst += dst_pitch;
     }
 }
 
@@ -298,8 +305,6 @@ void BF_Predator(int width,
         for (int i = width; i > 0; --i) {
             PartialCount += PartialPred;
 
-            // if ( PartialCount & 0xFF00 ) {
-            //    PartialCount &= 0xFFFF00FF;
             if (PartialCount >= 256) {
                 PartialCount %= 256;
 
@@ -307,13 +312,12 @@ void BF_Predator(int width,
                     *dst = dst[PredTable[PredFrame]];
                 }
 
-                PredFrame = (PredFrame + 2) % 8;
+                PredFrame = (PredFrame + 1) % 8;
             }
 
             ++dst;
         }
 
-        src += src_pitch + width;
         dst += dst_pitch;
     }
 }
@@ -340,9 +344,11 @@ void BF_Predator_Trans(int width,
 
                     if (&dst[PredTable[PredFrame]] < PredatorLimit) {
                         sbyte = dst[PredTable[PredFrame]];
+                    } else {
+                        sbyte = *dst;
                     }
 
-                    PredFrame = (PredFrame + 2) % 8;
+                    PredFrame = (PredFrame + 1) % 8;
                 }
 
                 *dst = sbyte;
@@ -377,9 +383,11 @@ void BF_Predator_Ghost(int width,
 
                 if (&dst[PredTable[PredFrame]] < PredatorLimit) {
                     sbyte = dst[PredTable[PredFrame]];
+                } else {
+                    sbyte = *dst;
                 }
 
-                PredFrame = (PredFrame + 2) % 8;
+                PredFrame = (PredFrame + 1) % 8;
             }
 
             unsigned char fbyte = ghost_lookup[sbyte];
@@ -418,9 +426,11 @@ void BF_Predator_Ghost_Trans(int width,
 
                     if (&dst[PredTable[PredFrame]] < PredatorLimit) {
                         sbyte = dst[PredTable[PredFrame]];
+                    } else {
+                        sbyte = *dst;
                     }
 
-                    PredFrame = (PredFrame + 2) % 8;
+                    PredFrame = (PredFrame + 1) % 8;
                 }
 
                 unsigned char fbyte = ghost_lookup[sbyte];
@@ -461,9 +471,11 @@ void BF_Predator_Fading(int width,
 
                 if (&dst[PredTable[PredFrame]] < PredatorLimit) {
                     sbyte = dst[PredTable[PredFrame]];
+                } else {
+                    sbyte = *dst;
                 }
 
-                PredFrame = (PredFrame + 2) % 8;
+                PredFrame = (PredFrame + 1) % 8;
             }
 
             for (int i = 0; i < count; ++i) {
@@ -497,9 +509,11 @@ void BF_Predator_Fading_Trans(int width,
 
                     if (&dst[PredTable[PredFrame]] < PredatorLimit) {
                         sbyte = dst[PredTable[PredFrame]];
+                    } else {
+                        sbyte = *dst;
                     }
 
-                    PredFrame = (PredFrame + 2) % 8;
+                    PredFrame = (PredFrame + 1) % 8;
                 }
 
                 for (int i = 0; i < count; ++i) {
@@ -539,9 +553,11 @@ void BF_Predator_Ghost_Fading(int width,
 
                 if (&dst[PredTable[PredFrame]] < PredatorLimit) {
                     sbyte = dst[PredTable[PredFrame]];
+                } else {
+                    sbyte = *dst;
                 }
 
-                PredFrame = (PredFrame + 2) % 8;
+                PredFrame = (PredFrame + 1) % 8;
             }
 
             unsigned char fbyte = ghost_lookup[sbyte];
@@ -585,9 +601,11 @@ void BF_Predator_Ghost_Fading_Trans(int width,
 
                     if (&dst[PredTable[PredFrame]] < PredatorLimit) {
                         sbyte = dst[PredTable[PredFrame]];
+                    } else {
+                        sbyte = *dst;
                     }
 
-                    PredFrame = (PredFrame + 2) % 8;
+                    PredFrame = (PredFrame + 1) % 8;
                 }
 
                 unsigned char fbyte = ghost_lookup[sbyte];
@@ -858,7 +876,7 @@ void Single_Line_Predator(int width,
                 *dst = dst[PredTable[PredFrame]];
             }
 
-            PredFrame = (PredFrame + 2) % 8;
+            PredFrame = (PredFrame + 1) % 8;
         }
 
         ++dst;
@@ -883,9 +901,11 @@ void Single_Line_Predator_Trans(int width,
 
                 if (&dst[PredTable[PredFrame]] < PredatorLimit) {
                     sbyte = dst[PredTable[PredFrame]];
+                } else {
+                    sbyte = *dst;
                 }
 
-                PredFrame = (PredFrame + 2) % 8;
+                PredFrame = (PredFrame + 1) % 8;
             }
 
             *dst = sbyte;
@@ -912,9 +932,11 @@ void Single_Line_Predator_Ghost(int width,
 
             if (&dst[PredTable[PredFrame]] < PredatorLimit) {
                 sbyte = dst[PredTable[PredFrame]];
+            } else {
+                sbyte = *dst;
             }
 
-            PredFrame = (PredFrame + 2) % 8;
+            PredFrame = (PredFrame + 1) % 8;
         }
 
         unsigned char fbyte = ghost_lookup[sbyte];
@@ -945,9 +967,11 @@ void Single_Line_Predator_Ghost_Trans(int width,
 
                 if (&dst[PredTable[PredFrame]] < PredatorLimit) {
                     sbyte = dst[PredTable[PredFrame]];
+                } else {
+                    sbyte = *dst;
                 }
 
-                PredFrame = (PredFrame + 2) % 8;
+                PredFrame = (PredFrame + 1) % 8;
             }
 
             unsigned char fbyte = ghost_lookup[sbyte];
@@ -980,9 +1004,11 @@ void Single_Line_Predator_Fading(int width,
 
             if (&dst[PredTable[PredFrame]] < PredatorLimit) {
                 sbyte = dst[PredTable[PredFrame]];
+            } else {
+                sbyte = *dst;
             }
 
-            PredFrame = (PredFrame + 2) % 8;
+            PredFrame = (PredFrame + 1) % 8;
         }
 
         for (int i = 0; i < count; ++i) {
@@ -1011,9 +1037,11 @@ void Single_Line_Predator_Fading_Trans(int width,
 
                 if (&dst[PredTable[PredFrame]] < PredatorLimit) {
                     sbyte = dst[PredTable[PredFrame]];
+                } else {
+                    sbyte = *dst;
                 }
 
-                PredFrame = (PredFrame + 2) % 8;
+                PredFrame = (PredFrame + 1) % 8;
             }
 
             for (int i = 0; i < count; ++i) {
@@ -1045,9 +1073,11 @@ void Single_Line_Predator_Ghost_Fading(int width,
 
             if (&dst[PredTable[PredFrame]] < PredatorLimit) {
                 sbyte = dst[PredTable[PredFrame]];
+            } else {
+                sbyte = *dst;
             }
 
-            PredFrame = (PredFrame + 2) % 8;
+            PredFrame = (PredFrame + 1) % 8;
         }
 
         unsigned char fbyte = ghost_lookup[sbyte];
@@ -1083,9 +1113,11 @@ void Single_Line_Predator_Ghost_Fading_Trans(int width,
 
                 if (&dst[PredTable[PredFrame]] < PredatorLimit) {
                     sbyte = dst[PredTable[PredFrame]];
+                } else {
+                    sbyte = *dst;
                 }
 
-                PredFrame = (PredFrame + 2) % 8;
+                PredFrame = (PredFrame + 1) % 8;
             }
 
             unsigned char fbyte = ghost_lookup[sbyte];
@@ -1301,6 +1333,17 @@ void Buffer_Frame_To_Page(int x,
     if (flags & SHAPE_PREDATOR) {
         int current_frame = va_arg(ap, unsigned);
         blit_style |= 8;
+
+        if (current_frame < 0) {
+
+            for (int i = 0; i < 8; ++i) {
+                PredNegOffTable[i] =
+                    PredNegTable[i] + viewport.Get_XAdd() + viewport.Get_Width() + viewport.Get_Pitch();
+            }
+            PredTable = PredNegOffTable;
+        } else {
+            PredTable = PredPosTable;
+        }
 
         PredFrame = ((unsigned)current_frame) % 8;
         PartialCount = 0;
