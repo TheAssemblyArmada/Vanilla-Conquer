@@ -2363,9 +2363,15 @@ bool CellClass::Goodie_Check(FootClass* object)
                                     ucount += hptr->QuantityV(j);
                                 }
                                 int bcount = 0;
+#ifdef FIXIT_ANTS
+                                for (j = 0; j < STRUCT_COUNT - 3; j++) {
+                                    bcount += hptr->QuantityB(j);
+                                }
+#else
                                 for (j = 0; j < STRUCT_COUNT; j++) {
                                     bcount += hptr->QuantityB(j);
                                 }
+#endif
                                 ucount += bcount / 2; // weight buildings less
                                 minunits = min(minunits, ucount);
                             }

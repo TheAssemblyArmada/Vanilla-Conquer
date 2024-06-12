@@ -124,7 +124,7 @@ inline bool XMP_Is_Negative(const digit* r, int precision)
     return ((signeddigit) * (r + (precision - 1)) < 0);
 }
 
-inline bool XMP_Test_Eq_Int(digit const* r, int i, int p)
+inline bool XMP_Test_Eq_Int(digit const* r, digit i, int p)
 {
     return ((*r == i) && XMP_Significance(r, p) <= 1);
 }

@@ -450,14 +450,15 @@ public:
 
     virtual void Blt(const Rect& destRect, VideoSurface* src, const Rect& srcRect, bool mask)
     {
-        SDL_Rect srcRectSDL = {srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height};
-        SDL_Rect destRectSDL = {destRect.X, destRect.Y, destRect.Width, destRect.Height};
+        SDL_Rect srcRectSDL = {Sint16(srcRect.X), Sint16(srcRect.Y), Uint16(srcRect.Width), Uint16(srcRect.Height)};
+        SDL_Rect destRectSDL = {
+            Sint16(destRect.X), Sint16(destRect.Y), Uint16(destRect.Width), Uint16(destRect.Height)};
         SDL_BlitSurface(((VideoSurfaceSDL1*)src)->surface, &srcRectSDL, surface, &destRectSDL);
     }
 
     virtual void FillRect(const Rect& rect, unsigned char color)
     {
-        SDL_Rect rectSDL = {rect.X, rect.Y, rect.Width, rect.Height};
+        SDL_Rect rectSDL = {Sint16(rect.X), Sint16(rect.Y), Uint16(rect.Width), Uint16(rect.Height)};
         SDL_FillRect(surface, &rectSDL, color);
     }
 

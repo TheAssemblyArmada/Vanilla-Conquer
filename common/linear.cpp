@@ -226,7 +226,7 @@ bool Linear_Scale_To_Linear(void* thisptr,
                 int xrat = 0;
 
                 for (int j = 0; j < dst_x1; ++j) {
-                    *d++ = (remap)[s[xrat >> 16]];
+                    *d++ = (remap)[(unsigned char)s[xrat >> 16]];
                     xrat += x_ratio;
                 }
             }

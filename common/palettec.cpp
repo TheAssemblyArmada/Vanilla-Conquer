@@ -118,7 +118,8 @@ PaletteClass& PaletteClass::operator=(PaletteClass const& palette)
     if (this == &palette)
         return (*this);
 
-    memcpy(&Palette[0], &palette.Palette[0], sizeof(Palette));
+    for (int i = 0; i < PaletteClass::COLOR_COUNT; i++)
+        Palette[i] = palette.Palette[i];
     return (*this);
 }
 
@@ -319,7 +320,7 @@ void PaletteClass::Set(int time, void (*callback)(void)) const
         **	code, at the time of this writing, delays at least one game tick in the process
         **	of setting the palette.
         */
-        int holdtime = timer;
+        unsigned int holdtime = timer;
 
         /*
         **	Set the palette to this intermediate palette and then loop back

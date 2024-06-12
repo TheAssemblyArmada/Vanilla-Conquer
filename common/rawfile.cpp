@@ -123,8 +123,8 @@ RawFileClass::RawFileClass(char const* filename)
     : Rights(0)
     , BiasStart(0)
     , BiasLength(-1)
-    , Handle(nullptr)
     , Filename(nullptr)
+    , Handle(nullptr)
 {
     Set_Name(filename);
 }
