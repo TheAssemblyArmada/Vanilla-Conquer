@@ -790,7 +790,8 @@ public:
 
     virtual void FillRect(const Rect& rect, unsigned char color)
     {
-        SDL_FillRect(surface, (SDL_Rect*)(&rect), color);
+        SDL_Rect rectSDL = {rect.X, rect.Y, rect.Width + 1, rect.Height + 1};
+        SDL_FillRect(surface, &rectSDL, color);
     }
 
     void RenderSurface()
