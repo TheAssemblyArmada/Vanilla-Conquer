@@ -306,7 +306,7 @@ bool Init_Game(int, char*[])
         sprintf(buffer, "Command & Conquer kann Ihren Maustreiber nicht finden..");
 #else
 #ifdef FRENCH
-        sprintf(buffer, "Command & Conquer ne peut pas d‚tecter votre gestionnaire de souris.");
+        sprintf(buffer, "Command & Conquer ne peut pas dï¿½tecter votre gestionnaire de souris.");
 #else
         sprintf(buffer, "Command & Conquer is unable to detect your mouse driver.");
 #endif
@@ -877,37 +877,43 @@ bool Select_Game(bool fade)
             case SEL_NEW_SCENARIO:
                 Scen.CarryOverMoney = 0;
                 if (Expansion_Dialog()) {
-                    switch (Fetch_Difficulty()) {
-                    case 0:
-                        Scen.CDifficulty = DIFF_HARD;
-                        Scen.Difficulty = DIFF_EASY;
-                        break;
+                    int difficulty = Fetch_Difficulty();
+                    if (difficulty != -1) {
+                        switch (difficulty) {
+                        case 0:
+                            Scen.CDifficulty = DIFF_HARD;
+                            Scen.Difficulty = DIFF_EASY;
+                            break;
 
-                    case 1:
-                        Scen.CDifficulty = DIFF_HARD;
-                        Scen.Difficulty = DIFF_NORMAL;
-                        break;
+                        case 1:
+                            Scen.CDifficulty = DIFF_HARD;
+                            Scen.Difficulty = DIFF_NORMAL;
+                            break;
 
-                    case 2:
-                        Scen.CDifficulty = DIFF_NORMAL;
-                        Scen.Difficulty = DIFF_NORMAL;
-                        break;
+                        case 2:
+                            Scen.CDifficulty = DIFF_NORMAL;
+                            Scen.Difficulty = DIFF_NORMAL;
+                            break;
 
-                    case 3:
-                        Scen.CDifficulty = DIFF_EASY;
-                        Scen.Difficulty = DIFF_NORMAL;
-                        break;
+                        case 3:
+                            Scen.CDifficulty = DIFF_EASY;
+                            Scen.Difficulty = DIFF_NORMAL;
+                            break;
 
-                    case 4:
-                        Scen.CDifficulty = DIFF_EASY;
-                        Scen.Difficulty = DIFF_HARD;
-                        break;
+                        case 4:
+                            Scen.CDifficulty = DIFF_EASY;
+                            Scen.Difficulty = DIFF_HARD;
+                            break;
+                        }
+
+                        Theme.Fade_Out();
+                        //						Theme.Queue_Song(THEME_AOI);
+                        GameToPlay = GAME_NORMAL;
+                        process = false;
+                    } else {
+                        display = true;
+                        selection = SEL_NONE;
                     }
-
-                    Theme.Fade_Out();
-                    //						Theme.Queue_Song(THEME_AOI);
-                    GameToPlay = GAME_NORMAL;
-                    process = false;
                 } else {
                     display = true;
                     selection = SEL_NONE;
@@ -955,12 +961,15 @@ bool Select_Game(bool fade)
             /*
             **	SEL_START_NEW_GAME: Play the game
             */
-            case SEL_START_NEW_GAME:
-                if (Special.IsFromInstall) {
-                    Scen.CDifficulty = DIFF_NORMAL;
-                    Scen.Difficulty = DIFF_NORMAL;
-                } else {
-                    switch (Fetch_Difficulty()) {
+            case SEL_START_NEW_GAME: {
+                int difficulty = 2;
+
+                if (!Special.IsFromInstall) {
+                    difficulty = Fetch_Difficulty();
+                }
+
+                if (difficulty != -1) {
+                    switch (difficulty) {
                     case 0:
                         Scen.CDifficulty = DIFF_HARD;
                         Scen.Difficulty = DIFF_EASY;
@@ -986,47 +995,51 @@ bool Select_Game(bool fade)
                         Scen.Difficulty = DIFF_HARD;
                         break;
                     }
-                }
 
-                Scen.CarryOverMoney = 0;
+                    Scen.CarryOverMoney = 0;
 
-                if (Is_Demo()) {
-                    Hide_Mouse();
-                    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-                    Load_Title_Screen("PREPICK.CPS", &HidPage, Palette);
-                    Blit_Hid_Page_To_Seen_Buff();
-                    Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
-                    Keyboard->Clear();
-                    Keyboard->Get();
-                    Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
-                    Show_Mouse();
-                }
+                    if (Is_Demo()) {
+                        Hide_Mouse();
+                        Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
+                        Load_Title_Screen("PREPICK.CPS", &HidPage, Palette);
+                        Blit_Hid_Page_To_Seen_Buff();
+                        Fade_Palette_To(Palette, FADE_PALETTE_MEDIUM, Call_Back);
+                        Keyboard->Clear();
+                        Keyboard->Get();
+                        Fade_Palette_To(BlackPalette, FADE_PALETTE_MEDIUM, Call_Back);
+                        Show_Mouse();
+                    }
 
-                Scen.Scenario = 1;
-                BuildLevel = 1;
+                    Scen.Scenario = 1;
+                    BuildLevel = 1;
 
-                ScenPlayer = SCEN_PLAYER_GDI;
-                ScenDir = SCEN_DIR_EAST;
-                Whom = HOUSE_GOOD;
-
-                if (!Is_Demo()) {
-                    Theme.Fade_Out();
-                    Choose_Side();
-                }
-
-                /*
-                ** If user is playing special mode, do NOT change Whom; leave it set to
-                ** GDI or NOD.  Ini.cpp will set the player's ActLike to mirror the
-                ** Whom value.
-                */
-                if (Special.IsJurassic && AreThingiesEnabled) {
-                    ScenPlayer = SCEN_PLAYER_JP;
+                    ScenPlayer = SCEN_PLAYER_GDI;
                     ScenDir = SCEN_DIR_EAST;
-                }
+                    Whom = HOUSE_GOOD;
 
-                GameToPlay = GAME_NORMAL;
-                process = false;
+                    if (!Is_Demo()) {
+                        Theme.Fade_Out();
+                        Choose_Side();
+                    }
+
+                    /*
+                    ** If user is playing special mode, do NOT change Whom; leave it set to
+                    ** GDI or NOD.  Ini.cpp will set the player's ActLike to mirror the
+                    ** Whom value.
+                    */
+                    if (Special.IsJurassic && AreThingiesEnabled) {
+                        ScenPlayer = SCEN_PLAYER_JP;
+                        ScenDir = SCEN_DIR_EAST;
+                    }
+
+                    GameToPlay = GAME_NORMAL;
+                    process = false;
+                } else {
+                    display = true;
+                    selection = SEL_NONE;
+                }
                 break;
+            }
 
             /*
             **	Load a saved game.
@@ -1652,20 +1665,20 @@ bool Parse_Command_Line(int argc, char* argv[])
                  "              (Syntax: DESTNETxx.xx.xx.xx)\r\n"
                  "  -SOCKET   = Kennung des Netzwerk-Sockets (0 - 16383)\n"
                  "  -STEALTH  = Namen im Mehrspieler-Modus verstecken (\"Boss-Modus\")\r\n"
-                 "  -MESSAGES = Mitteilungen von auáerhalb des Spiels zulassen\r\n"
+                 "  -MESSAGES = Mitteilungen von auï¿½erhalb des Spiels zulassen\r\n"
                  //					"  -ELITE    = Fortgeschrittene KI und Gefechtstechniken.\r\n"
                  "\r\n");
 #else
 #ifdef FRENCH
             puts("Command & Conquer (c) 1995, Westwood Studios\r\n"
-                 "ParamŠtres:\r\n"
-                 //						"  -CD<chemin d'accŠs> = Recherche des fichiers dans le\r\n"
-                 //						"                        r‚pertoire indiqu‚.\r\n"
-                 "  -DESTNET  = Sp‚cifier le num‚ro de r‚seau du systŠme de destination\r\n"
+                 "Paramï¿½tres:\r\n"
+                 //						"  -CD<chemin d'accï¿½s> = Recherche des fichiers dans le\r\n"
+                 //						"                        rï¿½pertoire indiquï¿½.\r\n"
+                 "  -DESTNET  = Spï¿½cifier le numï¿½ro de rï¿½seau du systï¿½me de destination\r\n"
                  "              (Syntaxe: DESTNETxx.xx.xx.xx)\r\n"
-                 "  -SOCKET   = ID poste r‚seau (0 … 16383)\r\n"
+                 "  -SOCKET   = ID poste rï¿½seau (0 ï¿½ 16383)\r\n"
                  "  -STEALTH  = Cacher les noms en mode multijoueurs (\"Mode Boss\")\r\n"
-                 "  -MESSAGES = Autorise les messages ext‚rieurs … ce jeu.\r\n"
+                 "  -MESSAGES = Autorise les messages extï¿½rieurs ï¿½ ce jeu.\r\n"
                  "\r\n");
 #else
             puts("Command & Conquer (c) 1995, 1996 Westwood Studios\r\n"
@@ -2062,9 +2075,9 @@ void Parse_INI_File(void)
     /*
     ** These arrays store the coded version of the names Geologic, Period, & Jurassic.
     ** Decode them by subtracting 83.  For you curious types, the names look like:
-    ** š¸Â¿Âº¼¶
-    ** £¸Å¼Â·
-    ** ?ÈÅ´ÆÆ¼¶
+    ** ï¿½ï¿½Â¿Âºï¿½ï¿½
+    ** ï¿½ï¿½Å¼Â·
+    ** ?ï¿½Å´ï¿½Æ¼ï¿½
     ** If these INI entries aren't found, the IsJurassic flag does nothing.
     */
     static char coded_section[] = {154, 184, 194, 191, 194, 186, 188, 182, 0};

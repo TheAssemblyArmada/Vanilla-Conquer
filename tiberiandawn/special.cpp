@@ -282,7 +282,7 @@ int Fetch_Difficulty(void)
 
     int factor = (SeenBuff.Get_Width() == 320) ? 1 : 2;
     int const w = 250 * factor;
-    int const h = 80 * factor;
+    int const h = 70 * factor;
     int const x = ((320 * factor) / 2) - w / 2;
     int const y = ((200 * factor) / 2) - h / 2;
     int const bwidth = 30 * factor;
@@ -304,12 +304,14 @@ int Fetch_Difficulty(void)
     **	Create the OK button.
     */
     TextButtonClass okbutton(1, TXT_OK, TPF_BUTTON, (x + w) - (bwidth + 20 * factor), (y + h) - (18 * factor), bwidth);
+    TextButtonClass cancelbutton(3, TXT_CANCEL, TPF_BUTTON, x + (20 * factor), (y + h) - (18 * factor), bwidth);
     GadgetClass* buttonlist = &okbutton;
+    cancelbutton.Add(*buttonlist);
 
     /*
     **	Create the slider button.
     */
-    SliderClass slider(2, x + 20 * factor, y + h - 29 * factor, w - 40 * factor, 8 * factor, true);
+    SliderClass slider(2, x + 20 * factor, y + h - 38 * factor, w - 40 * factor, 8 * factor, true);
     if (Rule.IsFineDifficulty) {
         slider.Set_Maximum(5);
         slider.Set_Value(2);
@@ -402,6 +404,9 @@ int Fetch_Difficulty(void)
         case (1 | BUTTON_FLAG):
             process = false;
             break;
+
+        case (3 | BUTTON_FLAG):
+            return -1;
 
         default:
             break;
