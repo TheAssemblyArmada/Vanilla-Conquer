@@ -240,7 +240,7 @@ void BaseClass::Write_INI(CCINIClass& ini)
  * HISTORY:                                                                                    *
  *   03/24/1995 BRR : Created.                                                                 *
  *=============================================================================================*/
-bool BaseClass::Load(FileClass& file)
+bool BaseClass::Load(Straw& file)
 {
     int num_struct;
     int i;
@@ -249,7 +249,7 @@ bool BaseClass::Load(FileClass& file)
     /*
     ** Read in & check the size of this class
     */
-    if (file.Read(&i, sizeof(i)) != sizeof(i)) {
+    if (file.Get(&i, sizeof(i)) != sizeof(i)) {
         return (false);
     }
 
@@ -260,11 +260,11 @@ bool BaseClass::Load(FileClass& file)
     /*
     ** Read in the House & the number of structures in the base
     */
-    if (file.Read(&House, sizeof(House)) != sizeof(House)) {
+    if (file.Get(&House, sizeof(House)) != sizeof(House)) {
         return (false);
     }
 
-    if (file.Read(&num_struct, sizeof(num_struct)) != sizeof(num_struct)) {
+    if (file.Get(&num_struct, sizeof(num_struct)) != sizeof(num_struct)) {
         return (false);
     }
 
@@ -272,7 +272,7 @@ bool BaseClass::Load(FileClass& file)
     ** Read each node entry & add it to the list
     */
     for (i = 0; i < num_struct; i++) {
-        if (file.Read(&node, sizeof(node)) != sizeof(node)) {
+        if (file.Get(&node, sizeof(node)) != sizeof(node)) {
             return (false);
         }
         Nodes.Add(node);
@@ -296,7 +296,7 @@ bool BaseClass::Load(FileClass& file)
  * HISTORY:                                                                                    *
  *   03/24/1995 BRR : Created.                                                                 *
  *=============================================================================================*/
-bool BaseClass::Save(FileClass& file)
+bool BaseClass::Save(Pipe& file) const
 {
     int num_struct;
     int i;
@@ -306,30 +306,22 @@ bool BaseClass::Save(FileClass& file)
     ** Write the size of this class
     */
     i = sizeof(*this);
-    if (file.Write(&i, sizeof(i)) != sizeof(i)) {
-        return (false);
-    }
+    file.Put(&i, sizeof(i));
 
     /*
     ** Write the House & the number of structures in the base
     */
-    if (file.Write(&House, sizeof(House)) != sizeof(House)) {
-        return (false);
-    }
+    file.Put(&House, sizeof(House));
 
     num_struct = Nodes.Count();
-    if (file.Write(&num_struct, sizeof(num_struct)) != sizeof(num_struct)) {
-        return (false);
-    }
+    file.Put(&num_struct, sizeof(num_struct));
 
     /*
     ** Write each node entry
     */
     for (i = 0; i < num_struct; i++) {
         node = Nodes[i];
-        if (file.Write(&node, sizeof(node)) != sizeof(node)) {
-            return (false);
-        }
+        file.Put(&node, sizeof(node));
     }
 
     return (true);

@@ -41,6 +41,9 @@
 #include "power.h"
 #include "factory.h"
 
+class Straw;
+class Pipe;
+
 /*
 **  ST - 3/14/2019 10:49AM
 **
@@ -85,8 +88,8 @@ public:
     */
     void Code_Pointers(void);
     void Decode_Pointers(void);
-    bool Load(FileClass& file);
-    bool Save(FileClass& file);
+    bool Load(Straw& file);
+    bool Save(Pipe& file);
 
     /*
     **	Each side strip is managed by this class. It handles all strip specific
@@ -194,8 +197,8 @@ bool Sidebar_Glyphx_Add(RTTIType type, int ID, HouseClass* player_ptr = NULL, bo
 void Sidebar_Glyphx_Recalc(HouseClass* player_ptr = NULL);
 bool Sidebar_Glyphx_Factory_Link(int factory, RTTIType type, int id, HouseClass* player_ptr = NULL);
 void Sidebar_Glyphx_AI(HouseClass* player_ptr, KeyNumType& input);
-bool Sidebar_Glyphx_Save(FileClass& file, SidebarGlyphxClass* sidebar);
-bool Sidebar_Glyphx_Load(FileClass& file, SidebarGlyphxClass* sidebar);
+bool Sidebar_Glyphx_Save(Pipe& file, SidebarGlyphxClass* sidebar);
+bool Sidebar_Glyphx_Load(Straw& file, SidebarGlyphxClass* sidebar);
 void Sidebar_Glyphx_Code_Pointers(SidebarGlyphxClass* sidebar);
 void Sidebar_Glyphx_Decode_Pointers(SidebarGlyphxClass* sidebar);
 
