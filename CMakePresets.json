@@ -110,7 +110,7 @@
                 "CMAKE_C_FLAGS_DEBUG": "-g3 -Og",
                 "CMAKE_CXX_FLAGS_RELEASE": "-O3 -g3 -DNDEBUG",
                 "CMAKE_C_FLAGS_RELEASE": "-O3 -g3 -DNDEBUG",
-                "VC_CXX_FLAGS": "-w;-Wwrite-strings;-Werror=write-strings;-fcheck-new;-DNOMINMAX",
+                "VC_CXX_FLAGS": "-w;-Wwrite-strings;-Werror=write-strings",
                 "MAP_EDITORTD": "ON",
                 "MAP_EDITORRA": "ON",
                 "BUILD_TOOLS": "ON"
@@ -178,7 +178,7 @@
                 "CMAKE_C_FLAGS_RELEASE": "-O3 -g -DNDEBUG",
                 "CMAKE_EXE_LINKER_FLAGS": "-static-libstdc++ -static-libgcc",
                 "CMAKE_SHARESD_LINKER_FLAGS": "-static-libstdc++ -static-libgcc",
-                "VC_CXX_FLAGS": "-fpermissive;-w;-Wwrite-strings;-Werror=write-strings;-fcheck-new;-fsigned-char;-DNOMINMAX",
+                "VC_CXX_FLAGS": "-w;-Wwrite-strings;-Werror=write-strings",
                 "MAP_EDITORTD": "ON",
                 "MAP_EDITORRA": "ON",
                 "BUILD_TOOLS": "ON"
@@ -199,6 +199,7 @@
                 "BUILD_VANILLARA": "OFF",
                 "MAP_EDITORTD": "OFF",
                 "MAP_EDITORRA": "OFF",
+                "VC_CXX_FLAGS": "-fpermissive;-w;-Wwrite-strings;-Werror=write-strings",
                 "BUILD_TOOLS": "OFF"
             }
         },

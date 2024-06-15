@@ -80,7 +80,7 @@ template <class T> inline T operator~(T t1)
     return ((T)(~(int)t1));
 }
 
-#ifdef NOMINMAX
+#if !defined _WIN32 || defined NOMINMAX
 inline int min(int a, int b)
 {
     return a < b ? a : b;

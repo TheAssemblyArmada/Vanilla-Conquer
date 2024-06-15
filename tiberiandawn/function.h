@@ -88,7 +88,7 @@ Map(screen) class heirarchy.
                    ³ InfantryTypeClass AircraftTypeClass
 */
 
-#ifdef NOMINMAX
+#if !defined _WIN32 || defined NOMINMAX
 inline int min(int a, int b)
 {
     return a < b ? a : b;
