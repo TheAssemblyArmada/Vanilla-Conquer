@@ -108,8 +108,8 @@
             "cacheVariables": {
                 "CMAKE_CXX_FLAGS_DEBUG": "-g3 -Og",
                 "CMAKE_C_FLAGS_DEBUG": "-g3 -Og",
-                "CMAKE_CXX_FLAGS_RELEASE": "-O3 -g3 -DNDEBUG",
-                "CMAKE_C_FLAGS_RELEASE": "-O3 -g3 -DNDEBUG",
+                "CMAKE_CXX_FLAGS_RELEASE": "-O2 -g3 -DNDEBUG",
+                "CMAKE_C_FLAGS_RELEASE": "-O2 -g3 -DNDEBUG",
                 "VC_CXX_FLAGS": "-w;-Wwrite-strings;-Werror=write-strings",
                 "MAP_EDITORTD": "ON",
                 "MAP_EDITORRA": "ON",
@@ -174,8 +174,8 @@
             "cacheVariables": {
                 "CMAKE_CXX_FLAGS_DEBUG": "-g -Og",
                 "CMAKE_C_FLAGS_DEBUG": "-g -Og",
-                "CMAKE_CXX_FLAGS_RELEASE": "-O3 -g -DNDEBUG",
-                "CMAKE_C_FLAGS_RELEASE": "-O3 -g -DNDEBUG",
+                "CMAKE_CXX_FLAGS_RELEASE": "-O2 -g -DNDEBUG",
+                "CMAKE_C_FLAGS_RELEASE": "-O2 -g -DNDEBUG",
                 "CMAKE_EXE_LINKER_FLAGS": "-static-libstdc++ -static-libgcc",
                 "CMAKE_SHARESD_LINKER_FLAGS": "-static-libstdc++ -static-libgcc",
                 "VC_CXX_FLAGS": "-w;-Wwrite-strings;-Werror=write-strings",
