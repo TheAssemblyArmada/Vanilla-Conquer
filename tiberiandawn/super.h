@@ -45,6 +45,10 @@ public:
                VoxType ready = VOX_NONE,
                VoxType impatient = VOX_NONE,
                VoxType suspend = VOX_NONE);
+    SuperClass(NoInitClass const& noinit)
+        : Control(noinit)
+    {
+    }
 
     bool Suspend(bool on);
     bool Enable(bool onetime = false, bool player = false, bool quiet = false);

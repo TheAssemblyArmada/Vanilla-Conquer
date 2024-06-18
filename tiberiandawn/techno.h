@@ -226,7 +226,9 @@ public:
         , CargoClass(x)
         , DoorClass(x)
         , CrewClass(x)
-        , House(this->House){};
+        , House(this->House)
+        , CloakingDevice(x)
+        , PrimaryFacing(x){};
     virtual ~TechnoClass(void){};
 
     /*

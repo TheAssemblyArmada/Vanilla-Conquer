@@ -38,9 +38,8 @@
 class RegionClass
 {
 public:
-    RegionClass(void)
-    {
-        Threat = 0;
+    RegionClass(void){
+        //Threat = 0;
     };
     ~RegionClass(void){};
     int operator!=(RegionClass const& region)
@@ -75,6 +74,10 @@ public:
     {
         return Threat;
     };
+    void Init()
+    {
+        Threat = 0;
+    }
 
 protected:
     int Threat;

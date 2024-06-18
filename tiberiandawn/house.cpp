@@ -367,6 +367,9 @@ HouseClass::HouseClass(HousesType house)
     , CapturedBuildings()
     , TotalCrates()
 {
+    for (int i = 0; i < MAP_TOTAL_REGIONS; ++i) {
+        Regions[i].Init();
+    }
 
     for (HousesType i = HOUSE_FIRST; i < HOUSE_COUNT; i++) {
         UnitsKilled[i] = 0;

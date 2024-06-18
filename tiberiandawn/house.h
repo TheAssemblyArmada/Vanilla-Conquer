@@ -421,10 +421,35 @@ public:
     {
     }
     HouseClass(void)
-        : Class(0){};
+        : Class(0)
+    {
+        for (int i = 0; i < MAP_TOTAL_REGIONS; ++i) {
+            Regions[i].Init();
+        }
+    }
     HouseClass(HousesType house);
-    HouseClass(NoInitClass const&)
-        : Class(this->Class){};
+    HouseClass(NoInitClass const& noinit)
+        : Class(this->Class)
+        , FreeHarvester(noinit)
+        , IonCannon(noinit)
+        , AirStrike(noinit)
+        , NukeStrike(noinit)
+        , AlertTime(noinit)
+        , BorrowedTime(noinit)
+        , BlitzTime(noinit)
+        , VisibleCredits(noinit)
+        , ScreenShakeTime(noinit)
+        , DamageTime(noinit)
+        , TeamTime(noinit)
+        , TriggerTime(noinit)
+        , SpeakAttackDelay(noinit)
+        , SpeakPowerDelay(noinit)
+        , SpeakMoneyDelay(noinit)
+        , SpeakMaxedDelay(noinit)
+        , Attack(noinit)
+        , AITimer(noinit)
+    {
+    }
     operator HousesType(void) const;
 
     /*---------------------------------------------------------------------

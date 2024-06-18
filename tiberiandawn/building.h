@@ -35,6 +35,7 @@
 #ifndef BUILDING_H
 #define BUILDING_H
 
+#include "ftimer.h"
 #include "tarcom.h"
 #include "radio.h"
 #include "cargo.h"
@@ -175,7 +176,9 @@ public:
         : Class(0){};
     BuildingClass(NoInitClass const& x)
         : TechnoClass(x)
-        , Class(this->Class){};
+        , Class(this->Class)
+        , CountDown(x)
+        , PlacementDelay(x){};
     BuildingClass(StructType type, HousesType house);
     virtual ~BuildingClass(void);
     virtual RTTIType What_Am_I(void) const

@@ -67,6 +67,7 @@ public:
     MissionClass(void);
     MissionClass(NoInitClass const& x)
         : ObjectClass(x)
+        , Timer(x)
     {
     }
     virtual ~MissionClass(void){};

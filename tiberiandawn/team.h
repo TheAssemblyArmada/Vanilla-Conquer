@@ -177,7 +177,8 @@ public:
         : AbstractClass(x)
         , SuspendTimer(x)
         , Class(this->Class)
-        , House(this->House){};
+        , House(this->House)
+        , TimeOut(x){};
 
     TeamClass(TeamTypeClass const* team, HouseClass* owner);
     virtual ~TeamClass(void);

@@ -67,7 +67,9 @@ protected:
     TurretClass(UnitType classid, HousesType house);
     TurretClass(void);
     TurretClass(NoInitClass const& x)
-        : DriveClass(x){};
+        : DriveClass(x)
+        , Reload(x)
+        , SecondaryFacing(x){};
     virtual ~TurretClass(void);
 
     BulletClass* Fire_At(TARGET target, int which);
