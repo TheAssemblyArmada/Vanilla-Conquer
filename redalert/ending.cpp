@@ -119,7 +119,7 @@ void Nod_Ending(void)
                 Clear_KeyBuffer();
             } else {
                 int key = Keyboard->Get();
-                if ((key & 0xFF) == KN_LMOUSE && !(key & KN_RLSE_BIT)) {
+                if ((key & KN_SCANCODE_MASK) == KN_LMOUSE && !(key & KN_RLSE_BIT)) {
                     int mousex = MouseQX;
                     int mousey = MouseQY;
                     if (mousey >= 22 && mousey <= 177) {

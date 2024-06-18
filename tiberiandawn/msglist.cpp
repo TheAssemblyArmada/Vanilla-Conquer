@@ -627,17 +627,18 @@ int MessageListClass::Input(KeyNumType& input)
         /*
         ** Allow numeric keypad presses to map to ascii numbers
         */
-        if ((input & WWKEY_VK_BIT) && ascii >= '0' && ascii <= '9') {
+        if ((input & KN_VK_BIT) && ascii >= '0' && ascii <= '9') {
 
-            input = (KeyNumType)(input & ~WWKEY_VK_BIT);
+            input = (KeyNumType)(input & ~KN_VK_BIT);
 
         } else {
             /*
             ** Filter out all special keys except return, escape and backspace
             */
-            if ((!(input & WWKEY_VK_BIT) && !(input & KN_BUTTON) && ascii >= ' ' && ascii <= 127)
-                || (input & 0xff) == (KN_RETURN & 0xff) || (input & 0xff) == (KN_BACKSPACE & 0xff)
-                || (input & 0xff) == (KN_ESC & 0xff)) {
+            if ((!(input & KN_VK_BIT) && !(input & KN_BUTTON) && ascii >= ' ' && ascii <= 127)
+                || (input & KN_SCANCODE_MASK) == (KN_RETURN & KN_SCANCODE_MASK)
+                || (input & KN_SCANCODE_MASK) == (KN_BACKSPACE & KN_SCANCODE_MASK)
+                || (input & KN_SCANCODE_MASK) == (KN_ESC & KN_SCANCODE_MASK)) {
 
                 // ascii = (KeyASCIIType)(Keyboard->To_ASCII(input));
             } else {
@@ -650,7 +651,7 @@ int MessageListClass::Input(KeyNumType& input)
         /*------------------------------------------------------------------
         ESC = abort message
         ------------------------------------------------------------------*/
-        case KA_ESC & 0xff:
+        case KA_ESC:
             EditLabel->UserData = 1; // force it to be removed
             input = KN_NONE;
             break;
@@ -658,7 +659,7 @@ int MessageListClass::Input(KeyNumType& input)
         /*------------------------------------------------------------------
         RETURN = send the message
         ------------------------------------------------------------------*/
-        case KA_RETURN & 0xff:
+        case KA_RETURN:
             EditLabel->UserData = 1; // force it to be removed
             retcode = 3;
             input = KN_NONE;
@@ -667,7 +668,7 @@ int MessageListClass::Input(KeyNumType& input)
         /*------------------------------------------------------------------
         BACKSPACE = remove a character
         ------------------------------------------------------------------*/
-        case KA_BACKSPACE & 0xff:
+        case KA_BACKSPACE:
             if (EditCurPos > EditInitPos) {
                 EditCurPos--;
                 EditBuf[EditCurPos] = 0;
@@ -683,7 +684,7 @@ int MessageListClass::Input(KeyNumType& input)
         ------------------------------------------------------------------*/
         default:
             if ((EditCurPos - EditInitPos) < (MaxChars - 1)) {
-                if (!(input & WWKEY_VK_BIT) && ascii >= ' ' && ascii <= 127) {
+                if (!(input & KN_VK_BIT) && ascii >= ' ' && ascii <= 127) {
                     EditBuf[EditCurPos] = ascii;
                     EditCurPos++;
                     retcode = 1;

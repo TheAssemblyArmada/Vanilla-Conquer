@@ -426,8 +426,8 @@ void Keyboard_Process(KeyNumType& input)
     ** Use WWKEY values because KN values have WWKEY_KN_BIT or'd in with them
     ** and we need WWKEY_KN_BIT to still be set if it is.
     */
-    KeyNumType plain = (KeyNumType)(input & ~(WWKEY_SHIFT_BIT | WWKEY_ALT_BIT | WWKEY_CTRL_BIT));
-    KeyNumType key = KeyNumType(input & ~WWKEY_VK_BIT);
+    KeyNumType plain = (KeyNumType)(input & ~(KN_SHIFT_BIT | KN_ALT_BIT | KN_CTRL_BIT));
+    KeyNumType key = KeyNumType(input & ~KN_VK_BIT);
 
 #ifdef CHEAT_KEYS
 
@@ -481,11 +481,11 @@ void Keyboard_Process(KeyNumType& input)
     **	CTRL or ALT key is held down.
     */
     int action = 0;
-    if (input & WWKEY_SHIFT_BIT)
+    if (input & KN_SHIFT_BIT)
         action = 1;
-    if (input & WWKEY_ALT_BIT)
+    if (input & KN_ALT_BIT)
         action = 3;
-    if (input & WWKEY_CTRL_BIT)
+    if (input & KN_CTRL_BIT)
         action = 2;
 
     /*

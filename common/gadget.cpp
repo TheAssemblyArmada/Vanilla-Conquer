@@ -526,7 +526,7 @@ KeyNumType GadgetClass::Input(void)
     **	know the position of the mouse at the exact instant when the click occurred
     **	rather the the mouse position at the time we get around to this function.
     */
-    if (((key & 0xFF) == KN_LMOUSE) || ((key & 0xFF) == KN_RMOUSE)) {
+    if (((key & KN_SCANCODE_MASK) == KN_LMOUSE) || ((key & KN_SCANCODE_MASK) == KN_RMOUSE)) {
         mousex = Keyboard->MouseQX;
         mousey = Keyboard->MouseQY;
     } else {

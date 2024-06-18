@@ -1003,17 +1003,17 @@ int MessageListClass::Input(KeyNumType& input)
         /*
         ** Allow numeric keypad presses to map to ascii numbers
         */
-        if ((input & WWKEY_VK_BIT) && ascii >= '0' && ascii <= '9') {
+        if ((input & KN_VK_BIT) && ascii >= '0' && ascii <= '9') {
 
-            input = (KeyNumType)(input & ~WWKEY_VK_BIT);
+            input = (KeyNumType)(input & ~KN_VK_BIT);
 
         } else {
             /*
             ** Filter out all special keys except return, escape and backspace
             */
-            if ((!(input & WWKEY_VK_BIT) && !(input & KN_BUTTON) && ascii >= ' ' && ascii <= 127)
-                || (input & 0xff) == (KN_RETURN & 0xff) || (input & 0xff) == (KN_BACKSPACE & 0xff)
-                || (input & 0xff) == (KN_ESC & 0xff)) {
+            if ((!(input & KN_VK_BIT) && !(input & KN_BUTTON) && ascii >= ' ' && ascii <= 127)
+                || (input & KN_SCANCODE_MASK) == (KN_RETURN) || (input & KN_SCANCODE_MASK) == (KN_BACKSPACE)
+                || (input & KN_SCANCODE_MASK) == (KN_ESC)) {
 
                 // ascii = (KeyASCIIType)(Keyboard->To_ASCII(input));
             } else {
@@ -1026,7 +1026,7 @@ int MessageListClass::Input(KeyNumType& input)
         //..................................................................
         //	ESC = abort message
         //..................................................................
-        case KA_ESC & 0xff:
+        case KA_ESC:
             Remove_Edit();
             retcode = 2;
             input = KN_NONE;
@@ -1038,7 +1038,7 @@ int MessageListClass::Input(KeyNumType& input)
         // onto this one after we send it; then, they won't be mushed
         // together.
         //..................................................................
-        case KA_RETURN & 0xff:
+        case KA_RETURN:
             if (EditCurPos == EditInitPos) {
                 retcode = 0;
                 input = KN_NONE;
@@ -1057,7 +1057,7 @@ int MessageListClass::Input(KeyNumType& input)
         //..................................................................
         //	BACKSPACE = remove a character
         //..................................................................
-        case KA_BACKSPACE & 0xff:
+        case KA_BACKSPACE:
             if (EditCurPos > EditInitPos) {
                 EditCurPos--;
                 EditBuf[EditCurPos] = 0;

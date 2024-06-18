@@ -253,9 +253,9 @@ int EditClass::Action(unsigned flags, KeyNumType& key)
             /*
             ** Allow numeric keypad presses to map to ascii numbers
             */
-            if ((key & WWKEY_VK_BIT) && ascii >= '0' && ascii <= '9') {
+            if ((key & KN_VK_BIT) && ascii >= '0' && ascii <= '9') {
 
-                key = (KeyNumType)(key & ~WWKEY_VK_BIT);
+                key = (KeyNumType)(key & ~KN_VK_BIT);
                 if ((!(flags & LEFTRELEASE)) && (!(flags & RIGHTRELEASE))) {
                     if (Handle_Key(ascii)) {
                         flags &= ~KEYBOARD;
@@ -266,8 +266,7 @@ int EditClass::Action(unsigned flags, KeyNumType& key)
                 /*
                 ** Filter out all special keys except return and backspace
                 */
-                if ((!(key & WWKEY_VK_BIT) && ascii >= ' ' && ascii <= 255) || key == KN_RETURN
-                    || key == KN_BACKSPACE) {
+                if ((!(key & KN_VK_BIT) && ascii >= ' ' && ascii <= 255) || key == KN_RETURN || key == KN_BACKSPACE) {
 
                     if ((!(flags & LEFTRELEASE)) && (!(flags & RIGHTRELEASE))) {
                         if (Handle_Key(Keyboard->To_ASCII(key))) {

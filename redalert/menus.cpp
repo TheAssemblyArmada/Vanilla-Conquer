@@ -235,7 +235,7 @@ int Check_Menu(int menu, char const* text[], char*, int field, int index)
     UnknownKey = 0;
     if (Keyboard->Check()) {
         /* mask off all but release bit	*/
-        key = (Keyboard->Get() & ~(WWKEY_SHIFT_BIT | WWKEY_ALT_BIT | WWKEY_CTRL_BIT));
+        key = (Keyboard->Get() & ~(KN_SHIFT_BIT | KN_ALT_BIT | KN_CTRL_BIT));
     }
 
     /*
