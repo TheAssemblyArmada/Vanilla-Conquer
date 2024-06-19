@@ -3223,6 +3223,13 @@ bool CellClass::Can_Tiberium_Germinate(void) const
     if (building != NULL && !building->Class->IsInvisible)
         return (false);
 
+    /*
+    **	Don't allow Tiberium to grow on a cell with a terrain object.
+    */
+    TerrainClass const* terrain = Cell_Terrain();
+    if (terrain != NULL && (*terrain != TERRAIN_NONE))
+        return (false);
+
     if (!Ground[Land_Type()].Build)
         return (false);
 
