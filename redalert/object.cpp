@@ -2380,7 +2380,7 @@ BuildingClass* ObjectTypeClass::Who_Can_Build_Me(bool intheory, bool legal, Hous
             BuildingClass* building = Buildings.Ptr(index);
             assert(building != NULL);
 
-            if (!building->IsInLimbo && building->House->Class->House == house && building->Class->ToBuild == RTTI
+            if (!building->IsInLimbo && building->House->Class->House == house && (*building == STRUCT_AIRSTRIP)
                 && building->Mission != MISSION_DECONSTRUCTION && building->MissionQueue != MISSION_DECONSTRUCTION
                 && ((1L << building->ActLike) & Get_Ownable())
                 && (!legal || building->House->Can_Build(this, building->ActLike))) {
