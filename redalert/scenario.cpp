@@ -2641,9 +2641,15 @@ bool Read_Scenario_INI(char* fname, bool)
     */
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98 - Added runtime check.
     if (Is_Aftermath_Installed()) {
+#ifdef REMASTER_BUILD
         if (Session.Type == GAME_SKIRMISH || Session.Type == GAME_GLYPHX_MULTIPLAYER) {
             bAftermathMultiplayer = NewUnitsEnabled = OverrideNewUnitsEnabled;
         }
+#else
+        if (Session.Type == GAME_SKIRMISH) {
+            bAftermathMultiplayer = NewUnitsEnabled = true;
+        }
+#endif
     }
 #endif
     ScenarioInit--;
