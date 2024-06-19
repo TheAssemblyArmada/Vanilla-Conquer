@@ -916,11 +916,15 @@ TechnoClass::TechnoClass(HousesType house)
 
     // Added for multiplayer changes. ST - 4/24/2019 10:40AM
     IsDiscoveredByPlayerMask = 0;
+#ifdef REMASTER_BUILD
     if (GameToPlay == GAME_NORMAL) {
         IsOwnedByPlayer = (house == PlayerPtr->Class->House);
     } else {
         IsOwnedByPlayer = House->IsHuman;
     }
+#else
+    IsOwnedByPlayer = (PlayerPtr == House);
+#endif
 
     /*
     **	There is a chance that a vehicle will be a "lemon".

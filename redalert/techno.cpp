@@ -162,7 +162,7 @@ const char* NewName[] = {
     "Fire Ant",
     "Feuer-Ameise",
     "Queen Ant",
-    "Ameisenk”nigin",
+    "Ameisenkï¿½nigin",
     "ATS",
     "Angriffs-U-Boot",
     "Tesla Tank",
@@ -188,7 +188,7 @@ const char* NewName[] = {
     "Scout Ant",
     "Fourmi de Reconnaissance",
     "Warrior Ant",
-    "Fourmi GuerriŠre",
+    "Fourmi Guerriï¿½re",
     "Fire Ant",
     "Fourmi Lance-Flammes",
     "Queen Ant",
@@ -204,11 +204,11 @@ const char* NewName[] = {
     "Stavros",
     "Stavros",
     "F-A Longbow",
-    "HAA (H‚licoptŠre d'Assaut Avanc‚)",
+    "HAA (Hï¿½licoptï¿½re d'Assaut Avancï¿½)",
     "Civilian Specialist",
-    "Sp‚cialiste Civil",
+    "Spï¿½cialiste Civil",
     "Alloy Facility",
-    "Usine M‚tallurgique",
+    "Usine Mï¿½tallurgique",
     NULL,
 };
 
@@ -683,11 +683,15 @@ TechnoClass::TechnoClass(RTTIType rtti, int id, HousesType house)
     // IsOwnedByPlayer = (PlayerPtr == House);
     // Added for multiplayer changes. ST - 4/24/2019 10:40AM
     IsDiscoveredByPlayerMask = 0;
+#ifdef REMASTER_BUILD
     if (Session.Type == GAME_NORMAL) {
         IsOwnedByPlayer = (PlayerPtr == House);
     } else {
         IsOwnedByPlayer = House->IsHuman;
     }
+#else
+    IsOwnedByPlayer = (PlayerPtr == House);
+#endif
 }
 
 /***********************************************************************************************
