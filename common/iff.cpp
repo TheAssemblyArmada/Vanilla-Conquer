@@ -168,7 +168,7 @@ unsigned int Get_Iff_Chunk_Size(int fh, int id)
 
                 /* Otherwise, go to the next chunk in the file */
 
-                chunksize = (chunksize + 1) & 0xFFFFFFFEL;
+                chunksize = (chunksize + 1) & 0xFFFFFFFE;
                 Seek_File(fh, chunksize, SEEK_CUR);
             }
         }
@@ -228,7 +228,7 @@ unsigned int Read_Iff_Chunk(int fh, int id, void* buffer, unsigned int maxsize)
             maxsize = MIN(maxsize, chunksize);
             Read_File(fh, buffer, maxsize); // Read the buffer.
 
-            chunksize = (chunksize + 1) & 0xFFFFFFFEL;
+            chunksize = (chunksize + 1) & 0xFFFFFFFE;
             if (maxsize < chunksize) {
                 Seek_File(fh, chunksize - maxsize, SEEK_CUR);
             }
@@ -243,7 +243,7 @@ unsigned int Read_Iff_Chunk(int fh, int id, void* buffer, unsigned int maxsize)
 
                 /* Otherwise, go to the next chunk in the file */
 
-                chunksize = (chunksize + 1) & 0xFFFFFFFEL;
+                chunksize = (chunksize + 1) & 0xFFFFFFFE;
                 Seek_File(fh, chunksize, SEEK_CUR);
             }
         }

@@ -493,7 +493,7 @@ int Scan_Place_Object(ObjectClass* obj, CELL cell);
 **	INIT.CPP
 */
 void Uninit_Game(void);
-long Obfuscate(char const* string);
+unsigned Obfuscate(char const* string);
 void Anim_Init(void);
 bool Init_Game(int argc, char* argv[]);
 bool Select_Game(bool fade = false);
@@ -508,8 +508,8 @@ void Load_Recording_Values(void);
 */
 void* Small_Icon(void const* iconptr, int iconnum);
 void Set_Window(int window, int x, int y, int w, int h);
-long Load_Uncompress(FileClass& file, BufferClass& uncomp_buff, BufferClass& dest_buff, void* reserved_data);
-long Translucent_Table_Size(int count);
+int Load_Uncompress(FileClass& file, BufferClass& uncomp_buff, BufferClass& dest_buff, void* reserved_data);
+int Translucent_Table_Size(int count);
 void* Build_Translucent_Table(void const* palette, TLucentType const* control, int count, void* buffer);
 void* Conquer_Build_Translucent_Table(void const* palette, TLucentType const* control, int count, void* buffer);
 
@@ -839,8 +839,8 @@ inline COORDINATE Coord_Mid(COORDINATE coord1, COORDINATE coord2)
 
 inline COORDINATE XYPixel_Coord(int x, int y)
 {
-    return ((COORDINATE)MAKE_LONG((int)(((long)y * (long)ICON_LEPTON_H) / (long)ICON_PIXEL_H) /*+LEPTON_OFFSET_Y*/,
-                                  (int)(((long)x * (long)ICON_LEPTON_W) / (long)ICON_PIXEL_W) /*+LEPTON_OFFSET_X*/));
+    return ((COORDINATE)MAKE_LONG((int)((y * ICON_LEPTON_H) / ICON_PIXEL_H) /*+LEPTON_OFFSET_Y*/,
+                                  (int)((x * ICON_LEPTON_W) / ICON_PIXEL_W) /*+LEPTON_OFFSET_X*/));
 }
 
 inline int Lepton_To_Pixel(int lepton)

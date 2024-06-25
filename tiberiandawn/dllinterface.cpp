@@ -661,7 +661,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Get_Visible_Page(unsigned char
     }
 
     unsigned char* raw_buffer = (unsigned char*)gbuffer->Get_Buffer();
-    long raw_size = gbuffer->Get_Size();
+    int raw_size = gbuffer->Get_Size();
     if (raw_buffer == NULL || gbuffer->Get_Width() < view_port_width || gbuffer->Get_Height() < view_port_height) {
         return false;
     }
@@ -2282,7 +2282,7 @@ unsigned int DLLExportClass::TD_Calculate_Leadership(int house, unsigned int uni
 unsigned int
 DLLExportClass::TD_Calculate_Score(unsigned int leadership, unsigned int efficiency, unsigned int build_level)
 {
-    long total = ((leadership * 40) + (4600) + (efficiency * 14)) / 100;
+    int total = ((leadership * 40) + (4600) + (efficiency * 14)) / 100;
     if (!total)
         total++;
     total *= (build_level + 1);

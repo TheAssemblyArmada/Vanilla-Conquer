@@ -169,7 +169,7 @@ FootClass::FootClass(HousesType house)
     IsDeploying = false;
     IsNewNavCom = false;
     IsPlanningToLook = false;
-    HeadToCoord = 0L;
+    HeadToCoord = 0;
     PathDelay = 0;
     Group = -1;
     TryTryAgain = PATH_RETRY;
@@ -1551,7 +1551,7 @@ RadioMessageType FootClass::Receive_Message(RadioClass* from, RadioMessageType m
     **	then it doesn't need furthur movement instructions.
     */
     case RADIO_NEED_TO_MOVE:
-        param = (long)NavCom;
+        param = NavCom;
         if (!Target_Legal(NavCom)) {
             return (RADIO_ROGER);
         }

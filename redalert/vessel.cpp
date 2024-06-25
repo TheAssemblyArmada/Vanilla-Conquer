@@ -660,7 +660,7 @@ void VesselClass::AI(void)
         **	If not, then close the door.
         */
         if (!Is_Door_Closed() && Mission != MISSION_UNLOAD && Transmit_Message(RADIO_TRYING_TO_LOAD) != RADIO_ROGER
-            && !(long)DoorShutCountDown) {
+            && !(int)DoorShutCountDown) {
             LST_Close_Door();
         }
     }
@@ -1518,7 +1518,7 @@ RadioMessageType VesselClass::Receive_Message(RadioClass* from, RadioMessageType
                     if (cell == 0) {
                         Transmit_Message(RADIO_OVER_OUT, from);
                     } else {
-                        param = (long)::As_Target(cell);
+                        param = ::As_Target(cell);
 
                         /*
                         **	If it is now facing the correct direction, then open the
@@ -1536,7 +1536,7 @@ RadioMessageType VesselClass::Receive_Message(RadioClass* from, RadioMessageType
                         */
                         if (Transmit_Message(RADIO_MOVE_HERE, param, from) == RADIO_YEA_NOW_WHAT) {
                             if (Is_Door_Open()) {
-                                param = (long)As_Target();
+                                param = As_Target();
                                 Transmit_Message(RADIO_TETHER);
                                 if (Transmit_Message(RADIO_MOVE_HERE, param, from) != RADIO_ROGER) {
                                     Transmit_Message(RADIO_OVER_OUT, from);

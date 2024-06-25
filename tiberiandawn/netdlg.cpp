@@ -4022,7 +4022,7 @@ static JoinEventType Get_NewGame_Responses(ColorListClass* playerlist)
 uint32_t Compute_Name_CRC(char* name)
 {
     char buf[80];
-    uint32_t crc = 0L;
+    uint32_t crc = 0;
     int i;
 
     strcpy(buf, name);

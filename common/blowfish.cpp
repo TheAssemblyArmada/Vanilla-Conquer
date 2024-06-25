@@ -161,8 +161,8 @@ void BlowfishEngine::Submit_Key(void const* key, int length)
     **	the table data WHILE it is using the table data, the tables are
     **	thoroughly obfuscated by this process.
     */
-    unsigned int left = 0x00000000L;
-    unsigned int right = 0x00000000L;
+    unsigned int left = 0x00000000;
+    unsigned int right = 0x00000000;
     unsigned int* p_en = &P_Encrypt[0];          // Encryption table.
     unsigned int* p_de = &P_Decrypt[ROUNDS + 1]; // Decryption table.
     for (int p_index = 0; p_index < ROUNDS + 2; p_index += 2) {

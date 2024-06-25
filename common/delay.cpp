@@ -38,7 +38,7 @@ void Delay(int duration)
     TimerClass timer(BT_SYSTEM, true);
 
     while (duration--) {
-        count = timer.Time() + 1L;
+        count = timer.Time() + 1;
         while (count >= (unsigned)timer.Time()) {
             ;
         }

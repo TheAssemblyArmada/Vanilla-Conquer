@@ -132,7 +132,7 @@ void LogicClass::Debug_Dump(MonoClass* mono) const
     /*
     **	Fill in the data for the current frame's performance record.
     */
-    SpareTicks = MIN((long)SpareTicks, (long)TIMER_SECOND);
+    SpareTicks = MIN(SpareTicks, TIMER_SECOND);
     _record[RECORDCOUNT - 1].Graphic = Fixed_To_Cardinal(RECORDHEIGHT, Cardinal_To_Fixed(TIMER_SECOND, SpareTicks));
 
     /*

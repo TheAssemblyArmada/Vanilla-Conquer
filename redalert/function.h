@@ -379,7 +379,7 @@ bool Read_Scenario_INI_Write_INB(char* root, bool fresh);
 **	INIT.CPP
 */
 void Load_Title_Page(bool visible = false);
-int Obfuscate(char const* string);
+unsigned Obfuscate(char const* string);
 void Anim_Init(void);
 bool Init_Game(int argc, char* argv[]);
 bool Select_Game(bool fade = false);
@@ -398,7 +398,7 @@ void* Conquer_Build_Fading_Table(PaletteClass const& palette, void* dest, int co
 void* Small_Icon(void const* iconptr, int iconnum);
 void Set_Window(int window, int x, int y, int w, int h);
 int Load_Uncompress(FileClass& file, BufferClass& uncomp_buff, BufferClass& dest_buff, void* reserved_data);
-long Translucent_Table_Size(int count);
+int Translucent_Table_Size(int count);
 void* Build_Translucent_Table(PaletteClass const& palette, TLucentType const* control, int count, void* buffer);
 void* Conquer_Build_Translucent_Table(PaletteClass const& palette, TLucentType const* control, int count, void* buffer);
 void* Make_Fading_Table(PaletteClass const& palette, void* dest, int color, int frac);

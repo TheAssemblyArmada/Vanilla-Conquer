@@ -864,8 +864,8 @@ void Toggle_Formation(void)
 // MBL 03.23.2020: this has been copied to DLLExportClass::Team_Units_Formation_Toggle_On(), and modified as needed
 #ifndef REMASTER_BUILD
     int team = -1;
-    long minx = 0x7FFFFFFFL, miny = 0x7FFFFFFFL;
-    long maxx = 0, maxy = 0;
+    int minx = 0x7FFFFFFF, miny = 0x7FFFFFFF;
+    int maxx = 0, maxy = 0;
     int index;
     bool setform = 0;
 
@@ -3540,8 +3540,8 @@ void Handle_Team(int team, int action)
     **	Create the team.
     */
     case 2: {
-        long minx = 0x7FFFFFFFL, miny = 0x7FFFFFFFL;
-        long maxx = 0, maxy = 0;
+        int minx = 0x7FFFFFFF, miny = 0x7FFFFFFF;
+        int maxx = 0, maxy = 0;
         team_form_data.TeamSpeed[team] = SPEED_WHEEL;
         team_form_data.TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
         for (index = 0; index < Units.Count(); index++) {
@@ -3552,8 +3552,8 @@ void Handle_Team(int team, int action)
                 if (obj->Is_Selected_By_Player()) {
                     obj->Group = team;
                     obj->Mark(MARK_CHANGE);
-                    long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                    long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                    int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                    int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
                     if (xc < minx)
                         minx = xc;
                     if (xc > maxx)
@@ -3578,8 +3578,8 @@ void Handle_Team(int team, int action)
                 if (obj->Is_Selected_By_Player()) {
                     obj->Group = team;
                     obj->Mark(MARK_CHANGE);
-                    long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                    long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                    int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                    int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
                     if (xc < minx)
                         minx = xc;
                     if (xc > maxx)
@@ -3604,8 +3604,8 @@ void Handle_Team(int team, int action)
                 if (obj->Is_Selected_By_Player()) {
                     obj->Group = team;
                     obj->Mark(MARK_CHANGE);
-                    long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                    long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                    int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                    int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
                     if (xc < minx)
                         minx = xc;
                     if (xc > maxx)
@@ -3649,8 +3649,8 @@ void Handle_Team(int team, int action)
 #else
 #if (1)
                 // Old always-north formation stuff
-                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
 
                 obj->XFormOffset = xc - centerx;
                 obj->YFormOffset = yc - centery;
@@ -3676,8 +3676,8 @@ void Handle_Team(int team, int action)
 #else
 #if (1)
                     // Old always-north formation stuff
-                    long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                    long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                    int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                    int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
 
                     obj->XFormOffset = xc - centerx;
                     obj->YFormOffset = yc - centery;

@@ -191,7 +191,7 @@ void File_Fatal(char const* message)
  * HISTORY:                                                                                    *
  *   10/17/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-long Load_Uncompress(FileClass& file, BufferClass& uncomp_buff, BufferClass& dest_buff, void* reserved_data)
+int Load_Uncompress(FileClass& file, BufferClass& uncomp_buff, BufferClass& dest_buff, void* reserved_data)
 {
     unsigned short size;
     void* sptr = uncomp_buff.Get_Buffer();
@@ -264,7 +264,7 @@ long Load_Uncompress(FileClass& file, BufferClass& uncomp_buff, BufferClass& des
     if (opened) {
         file.Close();
     }
-    return ((long)size);
+    return ((int)size);
 }
 
 /***********************************************************************************************
@@ -283,9 +283,9 @@ long Load_Uncompress(FileClass& file, BufferClass& uncomp_buff, BufferClass& des
  * HISTORY:                                                                                    *
  *   04/02/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-long Translucent_Table_Size(int count)
+int Translucent_Table_Size(int count)
 {
-    return (256L + (256L * count));
+    return (256 + (256 * count));
 }
 
 /***********************************************************************************************

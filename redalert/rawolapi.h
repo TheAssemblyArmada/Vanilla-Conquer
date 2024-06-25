@@ -224,7 +224,7 @@ protected:
     void InsertUserSorted(User* pUserNew);
 
 private:
-    long m_cRef; // Reference Count
+    int m_cRef; // Reference Count
 };
 
 //***********************************************************************************************
@@ -266,7 +266,7 @@ public:
     bool bResumed;
 
 private:
-    long m_cRef; // Ref count
+    int m_cRef; // Ref count
 };
 
 //***********************************************************************************************
@@ -305,7 +305,7 @@ protected:
     WolapiObject* pOwner; //	Link back to the object that contains me.
 
 private:
-    long m_cRef; // Reference Count
+    int m_cRef; // Reference Count
 };
 
 //***********************************************************************************************

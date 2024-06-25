@@ -282,9 +282,9 @@ int Load_Picture(char const* filename,
  * HISTORY:                                                                                    *
  *   04/02/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-long Translucent_Table_Size(int count)
+int Translucent_Table_Size(int count)
 {
-    return (256L + (256L * count));
+    return (256 + (256 * count));
 }
 
 /***********************************************************************************************

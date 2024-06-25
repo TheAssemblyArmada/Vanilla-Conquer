@@ -204,7 +204,7 @@ static CELL StartLocation;
  *=========================================================================*/
 int Point_Relative_To_Line(int x, int z, int x1, int z1, int x2, int z2)
 {
-    return ((((long)x - (long)x2) * ((long)z1 - (long)z2)) - (((long)z - (long)z2) * ((long)x1 - (long)x2)));
+    return (((x - x2) * (z1 - z2)) - ((z - z2) * (x1 - x2)));
 }
 
 /***************************************************************************

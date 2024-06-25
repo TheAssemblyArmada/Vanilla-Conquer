@@ -350,7 +350,7 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
         ptr = (char*)Add_Long_To_Pointer(dataptr, (offset[0] & 0x00FFFFFFL));
 
         if (keyfr.flags & 1) {
-            ptr = (char*)Add_Long_To_Pointer(ptr, 768L);
+            ptr = (char*)Add_Long_To_Pointer(ptr, 768);
         }
         length = LCW_Uncompress(ptr, buffptr, buffsize);
     } else { // key delta or delta
@@ -366,19 +366,19 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
         }
 
         // key frame
-        offcurr = offset[1] & 0x00FFFFFFL;
+        offcurr = offset[1] & 0x00FFFFFF;
 
         // key delta
-        offdiff = (offset[0] & 0x00FFFFFFL) - offcurr;
+        offdiff = (offset[0] & 0x00FFFFFF) - offcurr;
 
         ptr = (char*)Add_Long_To_Pointer(dataptr, offcurr);
 
         if (keyfr.flags & 1) {
-            ptr = (char*)Add_Long_To_Pointer(ptr, 768L);
+            ptr = (char*)Add_Long_To_Pointer(ptr, 768);
         }
 
 #ifndef FIXIT_SCORE_CRASH
-        off16 = (unsigned int)lockptr & 0x00003FFFL;
+        off16 = (unsigned int)lockptr & 0x00003FFF;
 #endif
 
         length = LCW_Uncompress(ptr, buffptr, buffsize);
@@ -391,7 +391,7 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
         if (((offset[2] & 0x00FFFFFFL) - offcurr) >= (0x00010000L - off16)) {
 
             ptr = (char*)Add_Long_To_Pointer(ptr, offdiff);
-            off16 = (unsigned int)ptr & 0x00003FFFL;
+            off16 = (unsigned int)ptr & 0x00003FFF;
 
             offcurr += offdiff;
             offdiff = 0;
@@ -414,7 +414,7 @@ uintptr_t Build_Frame(void const* dataptr, unsigned short framenumber, void* buf
                 if (((offset[subframe + 2] & 0x00FFFFFFL) - offcurr) >= (0x00010000L - off16)) {
 
                     ptr = (char*)Add_Long_To_Pointer(ptr, offdiff);
-                    off16 = (unsigned int)lockptr & 0x00003FFFL;
+                    off16 = (unsigned int)lockptr & 0x00003FFF;
 
                     offcurr += offdiff;
                     offdiff = 0;
@@ -637,7 +637,7 @@ bool Get_Build_Frame_Palette(void const* dataptr, void* palette)
         frames = le16toh(frames);
         if (flags & 1) {
             char const* ptr = (char const*)Add_Long_To_Pointer(
-                dataptr, ((((long)sizeof(unsigned long) << 1) * frames + 16 + sizeof(KeyFrameHeaderType))));
+                dataptr, ((((int)sizeof(unsigned) << 1) * frames + 16 + sizeof(KeyFrameHeaderType))));
 
             memcpy(palette, ptr, 768L);
             return (true);

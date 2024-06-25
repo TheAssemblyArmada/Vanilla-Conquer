@@ -254,7 +254,7 @@ void* Open_Animation(char const* file_name,
     // Else size is zero.
     //
     if (user_flags & WSA_OPEN_DIRECT) {
-        target_buffer_size = 0L;
+        target_buffer_size = 0;
     } else {
         anim_flags |= WSA_TARGET_IN_BUFFER;
         target_buffer_size = (unsigned int)file_header.pixel_width * file_header.pixel_height;
@@ -1079,7 +1079,7 @@ static unsigned int Get_File_Frame_Offset(int file_handle, int frame, int palett
     Seek_File(file_handle, (frame << 2) + WSA_FILE_HEADER_SIZE, SEEK_SET);
 
     if (Read_File(file_handle, (char*)&offset, sizeof(uint32_t)) != sizeof(uint32_t)) {
-        offset = 0L;
+        offset = 0;
     }
     offset = le32toh(offset);
     offset += palette_adjust;

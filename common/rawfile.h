@@ -119,7 +119,7 @@ protected:
     */
     int Transfer_Block_Size(void)
     {
-        return (int)((unsigned)UINT_MAX) - 16L;
+        return (int)((unsigned)UINT_MAX) - 16;
     };
 
     int Raw_Seek(int pos, int dir = SEEK_CUR);

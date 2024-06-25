@@ -1896,9 +1896,9 @@ int MapEditClass::Scenario_Dialog(void)
     */
     orig_theater = theater = Theater;
     if (ScenPlayer != SCEN_PLAYER_MPLAYER) {
-        gdi_credits = HouseClass::As_Pointer(HOUSE_GOOD)->Credits / 1000L;
-        nod_credits = HouseClass::As_Pointer(HOUSE_BAD)->Credits / 1000L;
-        neut_credits = HouseClass::As_Pointer(HOUSE_NEUTRAL)->Credits / 1000L;
+        gdi_credits = HouseClass::As_Pointer(HOUSE_GOOD)->Credits / 1000;
+        nod_credits = HouseClass::As_Pointer(HOUSE_BAD)->Credits / 1000;
+        neut_credits = HouseClass::As_Pointer(HOUSE_NEUTRAL)->Credits / 1000;
         gdi_edge = HouseClass::As_Pointer(HOUSE_GOOD)->Edge;
         nod_edge = HouseClass::As_Pointer(HOUSE_BAD)->Edge;
     } else {
@@ -2208,9 +2208,9 @@ int MapEditClass::Scenario_Dialog(void)
         gdi_credits = atol(gdicred_buf);
         nod_credits = atol(nodcred_buf);
         neut_credits = atol(neutcred_buf);
-        HouseClass::As_Pointer(HOUSE_GOOD)->Credits = gdi_credits * 1000L;
-        HouseClass::As_Pointer(HOUSE_BAD)->Credits = nod_credits * 1000L;
-        HouseClass::As_Pointer(HOUSE_NEUTRAL)->Credits = neut_credits * 1000L;
+        HouseClass::As_Pointer(HOUSE_GOOD)->Credits = gdi_credits * 1000;
+        HouseClass::As_Pointer(HOUSE_BAD)->Credits = nod_credits * 1000;
+        HouseClass::As_Pointer(HOUSE_NEUTRAL)->Credits = neut_credits * 1000;
         /*
         ............................... Edges .................................
         */

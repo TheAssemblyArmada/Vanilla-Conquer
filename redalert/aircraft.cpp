@@ -644,7 +644,7 @@ void AircraftClass::Read_INI(CCINIClass& ini)
                         if (token) {
                             coord = Cell_Coord((CELL)atoi(token));
                         } else {
-                            coord = 0xFFFFFFFFL;
+                            coord = 0xFFFFFFFF;
                         }
 
                         token = strtok(NULL, ",");
@@ -2921,7 +2921,7 @@ RadioMessageType AircraftClass::Receive_Message(RadioClass* from, RadioMessageTy
                     if (cell == 0) {
                         Transmit_Message(RADIO_OVER_OUT, from);
                     } else {
-                        param = (long)::As_Target(cell);
+                        param = ::As_Target(cell);
 
                         /*
                         **	Tell the potential passenger where it should go. If the passenger is
@@ -2929,7 +2929,7 @@ RadioMessageType AircraftClass::Receive_Message(RadioClass* from, RadioMessageTy
                         **	directly.
                         */
                         if (Transmit_Message(RADIO_MOVE_HERE, param, from) == RADIO_YEA_NOW_WHAT) {
-                            param = (long)As_Target();
+                            param = As_Target();
                             Transmit_Message(RADIO_TETHER);
                             if (Transmit_Message(RADIO_MOVE_HERE, param, from) != RADIO_ROGER) {
                                 Transmit_Message(RADIO_OVER_OUT, from);

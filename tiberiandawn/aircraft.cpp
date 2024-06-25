@@ -2654,7 +2654,7 @@ RadioMessageType AircraftClass::Receive_Message(RadioClass* from, RadioMessageTy
                     if (cell == 0) {
                         Transmit_Message(RADIO_OVER_OUT, from);
                     } else {
-                        param = (long)::As_Target(cell);
+                        param = ::As_Target(cell);
 
                         /*
                         **	Tell the potential passenger where it should go. If the passenger is
@@ -2662,7 +2662,7 @@ RadioMessageType AircraftClass::Receive_Message(RadioClass* from, RadioMessageTy
                         **	directly.
                         */
                         if (Transmit_Message(RADIO_MOVE_HERE, param, from) == RADIO_YEA_NOW_WHAT) {
-                            param = (long)As_Target();
+                            param = As_Target();
                             Transmit_Message(RADIO_TETHER);
                             if (Transmit_Message(RADIO_MOVE_HERE, param, from) != RADIO_ROGER) {
                                 Transmit_Message(RADIO_OVER_OUT, from);
@@ -3558,7 +3558,7 @@ void AircraftClass::Response_Select(void)
     }
 }
 
-void AircraftClass::Set_Reinforcement_Delay(long delay)
+void AircraftClass::Set_Reinforcement_Delay(int delay)
 {
     ReinforcementStart = Frame + delay;
 }

@@ -278,9 +278,9 @@ void const* ObjectTypeClass::Get_Cameo_Data(void) const
  *=============================================================================================*/
 ObjectClass::ObjectClass(void)
 {
-    Coord = 0xFFFFFFFFL; // Some bogus illegal value.
-    Next = 0;            // Not part of any object list.
-    Trigger = 0;         // No associated trigger.
+    Coord = 0xFFFFFFFF; // Some bogus illegal value.
+    Next = 0;           // Not part of any object list.
+    Trigger = 0;        // No associated trigger.
     IsToDamage = false;
     IsToDisplay = false;    // Redraw is presumed unnecessary.
     IsInLimbo = true;       // Always presumed to start in limbo state.

@@ -1627,7 +1627,7 @@ bool Parse_Command_Line(int argc, char* argv[])
  * HISTORY:                                                                                    *
  *   08/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int Obfuscate(char const* string)
+unsigned Obfuscate(char const* string)
 {
     char buffer[1024];
 
@@ -2610,7 +2610,7 @@ static void Init_Authorization(void)
 #ifdef NEVER
     while (!ok && counter) {
         SmartPtr<char const> str = Fetch_Password(TXT_PASSWORD_CAPTION, TXT_PASSWORD_MESSAGE, TXT_OK);
-        SmartPtr<long const> lptr = &CheatCodes[0];
+        SmartPtr<int const> lptr = &CheatCodes[0];
         while (*lptr) {
             if (Obfuscate(str) == *lptr++) {
                 ok = true;

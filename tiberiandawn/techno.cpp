@@ -2126,7 +2126,7 @@ FireErrorType TechnoClass::Can_Fire(TARGET target, int which) const
     // Mono_Printf("Infantry[0]=%p.\n", Infantry.Raw_Ptr(0));
     // Mono_Printf("Buildings[0]=%p.\n", Buildings.Raw_Ptr(0));
     // Mono_Printf("Aircraft[0]=%p.\n", Aircraft.Raw_Ptr(0));
-    // Mono_Printf("object=%p, Strength=%d, IsActive=%d, IsInLimbo=%d.\n", object, (long)object->Strength,
+    // Mono_Printf("object=%p, Strength=%d, IsActive=%d, IsInLimbo=%d.\n", object, (int)object->Strength,
     // object->IsActive, object->IsInLimbo);Get_Key();
     if (object && /*(object->IsActive || GameToPlay != GAME_NORMAL) &&*/ object->Is_Techno()
         && ((TechnoClass*)object)->Is_Cloaked(this)) {
@@ -2376,7 +2376,7 @@ BulletClass* TechnoClass::Fire_At(TARGET target, int which)
             // Mono_Printf("Infantry[0]=%p.\n", Infantry.Raw_Ptr(0));
             // Mono_Printf("Buildings[0]=%p.\n", Buildings.Raw_Ptr(0));
             // Mono_Printf("Aircraft[0]=%p.\n", Aircraft.Raw_Ptr(0));
-            // Mono_Printf("object=%p, Strength=%d, IsActive=%d, IsInLimbo=%d.\n", object, (long)object->Strength,
+            // Mono_Printf("object=%p, Strength=%d, IsActive=%d, IsInLimbo=%d.\n", object, (int)object->Strength,
             // object->IsActive, object->IsInLimbo);Get_Key();
             bullet->Payback = this;
             bullet->Strength = (short)firepower;

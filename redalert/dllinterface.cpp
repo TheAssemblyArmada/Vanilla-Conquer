@@ -6093,7 +6093,7 @@ bool DLLExportClass::Get_Shroud_State(uint64 player_id, unsigned char* buffer_in
     for (int y = 0; y < map_cell_height; y++) {
         for (int x = 0; x < map_cell_width; x++) {
             CELL cell = XY_Cell(map_cell_x + x, map_cell_y + y);
-            COORDINATE coord = Cell_Coord(cell) & 0xFF00FF00L;
+            COORDINATE coord = Cell_Coord(cell) & 0xFF00FF00;
 
             memory_needed += sizeof(CNCShroudEntryStruct);
             if (memory_needed >= buffer_size) {
@@ -6434,7 +6434,7 @@ bool DLLExportClass::Get_Dynamic_Map_State(uint64 player_id, unsigned char* buff
     for (int y = 0; y < map_cell_height; y++) {
         for (int x = 0; x < map_cell_width; x++) {
             CELL cell = XY_Cell(map_cell_x + x, map_cell_y + y);
-            COORDINATE coord = Cell_Coord(cell) & 0xFF00FF00L;
+            COORDINATE coord = Cell_Coord(cell) & 0xFF00FF00;
 
             memory_needed += sizeof(CNCDynamicMapEntryStruct) * 2;
             if (memory_needed >= buffer_size) {
@@ -7568,8 +7568,8 @@ void DLLExportClass::Team_Units_Formation_Toggle_On(uint64 player_id)
     //
 
     int team = MAX_TEAMS;
-    long minx = 0x7FFFFFFFL, miny = 0x7FFFFFFFL;
-    long maxx = 0, maxy = 0;
+    int minx = 0x7FFFFFFFL, miny = 0x7FFFFFFF;
+    int maxx = 0, maxy = 0;
     int index;
     bool setform = 0;
 
@@ -7659,8 +7659,8 @@ void DLLExportClass::Team_Units_Formation_Toggle_On(uint64 player_id)
         if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
             obj->Mark(MARK_CHANGE);
             if (setform) {
-                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
                 if (xc < minx)
                     minx = xc;
                 if (xc > maxx)
@@ -7684,8 +7684,8 @@ void DLLExportClass::Team_Units_Formation_Toggle_On(uint64 player_id)
         if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
             obj->Mark(MARK_CHANGE);
             if (setform) {
-                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
                 if (xc < minx)
                     minx = xc;
                 if (xc > maxx)
@@ -7708,8 +7708,8 @@ void DLLExportClass::Team_Units_Formation_Toggle_On(uint64 player_id)
         if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
             obj->Mark(MARK_CHANGE);
             if (setform) {
-                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
                 if (xc < minx)
                     minx = xc;
                 if (xc > maxx)
@@ -7739,8 +7739,8 @@ void DLLExportClass::Team_Units_Formation_Toggle_On(uint64 player_id)
         for (index = 0; index < Units.Count(); index++) {
             UnitClass* obj = Units.Ptr(index);
             if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
-                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
 
                 obj->XFormOffset = xc - centerx;
                 obj->YFormOffset = yc - centery;
@@ -7750,8 +7750,8 @@ void DLLExportClass::Team_Units_Formation_Toggle_On(uint64 player_id)
         for (index = 0; index < Infantry.Count(); index++) {
             InfantryClass* obj = Infantry.Ptr(index);
             if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
-                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
 
                 obj->XFormOffset = xc - centerx;
                 obj->YFormOffset = yc - centery;
@@ -7761,8 +7761,8 @@ void DLLExportClass::Team_Units_Formation_Toggle_On(uint64 player_id)
         for (index = 0; index < Vessels.Count(); index++) {
             VesselClass* obj = Vessels.Ptr(index);
             if (obj && !obj->IsInLimbo && obj->House == PlayerPtr && obj->Group == team) {
-                long xc = Cell_X(Coord_Cell(obj->Center_Coord()));
-                long yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
+                int xc = Cell_X(Coord_Cell(obj->Center_Coord()));
+                int yc = Cell_Y(Coord_Cell(obj->Center_Coord()));
 
                 obj->XFormOffset = xc - centerx;
                 obj->YFormOffset = yc - centery;

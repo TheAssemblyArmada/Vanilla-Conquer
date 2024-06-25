@@ -78,7 +78,7 @@ public:
     */
     AbstractClass(void)
     {
-        Coord = 0L;
+        Coord = 0;
     };
     AbstractClass(NoInitClass const& x){};
     virtual ~AbstractClass(void){};

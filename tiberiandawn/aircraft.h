@@ -175,7 +175,7 @@ public:
     virtual void Enter_Idle_Mode(bool initial = false);
     virtual RadioMessageType Receive_Message(RadioClass* from, RadioMessageType message, int& param);
     virtual void Scatter(COORDINATE threat, bool forced = false, bool nokidding = false);
-    void Set_Reinforcement_Delay(long delay);
+    void Set_Reinforcement_Delay(int delay);
 
 /*
 **	Scenario and debug support.

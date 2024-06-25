@@ -437,7 +437,7 @@ void Debug_Key(unsigned input)
             if (fh) {
 
                 fprintf(fh, "track 2\n");
-                coord = 0x0100FF00L;
+                coord = 0x0100FF00;
                 for (index = 0; index <= 48; index++) {
                     fprintf(fh, "0x%08lXL\n", coord);
                     coord = Coord_Move(coord, 32, 11);
@@ -445,7 +445,7 @@ void Debug_Key(unsigned input)
                 fprintf(fh, "\n\n");
 
                 fprintf(fh, "track 1\n");
-                coord = 0x01000000L;
+                coord = 0x01000000;
                 for (index = 0; index <= 40; index++) {
                     fprintf(fh, "0x%08lXL\n", coord);
                     coord = Coord_Move(coord, 0, 11);

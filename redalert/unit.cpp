@@ -825,7 +825,7 @@ RadioMessageType UnitClass::Receive_Message(RadioClass* from, RadioMessageType m
                     if (cell == 0) {
                         Transmit_Message(RADIO_OVER_OUT, from);
                     } else {
-                        param = (long)::As_Target(cell);
+                        param = ::As_Target(cell);
                         Do_Turn(dir);
 
                         /*
@@ -860,7 +860,7 @@ RadioMessageType UnitClass::Receive_Message(RadioClass* from, RadioMessageType m
 #else
                             if (*this != UNIT_APC || Is_Door_Open()) {
 #endif
-                                param = (long)As_Target();
+                                param = As_Target();
                                 Transmit_Message(RADIO_TETHER);
                                 if (Transmit_Message(RADIO_MOVE_HERE, param, from) != RADIO_ROGER) {
                                     Transmit_Message(RADIO_OVER_OUT, from);
@@ -5267,7 +5267,7 @@ void UnitClass::Shroud_Regen(void)
 
             if (IsActive && Strength) {
                 // Now shroud around the new center
-                ShroudBits = 0L;
+                ShroudBits = 0;
                 ShroudCenter = Coord_Cell(Center_Coord());
                 centerx = Cell_X(ShroudCenter);
                 centery = Cell_Y(ShroudCenter);

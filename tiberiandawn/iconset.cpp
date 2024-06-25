@@ -49,7 +49,7 @@
 // extern int Misc;
 int Misc;
 
-long Get_Icon_Set_Size(void const* iconset);
+int Get_Icon_Set_Size(void const* iconset);
 int Get_Icon_Set_Width(void const* iconset);
 int Get_Icon_Set_Height(void const* iconset);
 void* Get_Icon_Set_Icondata(void const* iconset);
@@ -69,7 +69,7 @@ void* Get_Icon_Set_Map(void const* iconset);
 // PRIVATE char *IconPalette = NULL;		// MCGA only.
 // PRIVATE char *IconRemap = NULL;			// MCGA only.
 
-long Get_Icon_Set_Size(void const* iconset)
+int Get_Icon_Set_Size(void const* iconset)
 {
     IControl_Type* icontrol;
     int size = 0;
@@ -110,7 +110,7 @@ void* Get_Icon_Set_Icondata(void const* iconset)
     IControl_Type* icontrol;
     icontrol = (IControl_Type*)iconset;
     if (icontrol)
-        return (Add_Long_To_Pointer(iconset, (long)le32toh(icontrol->Icons)));
+        return (Add_Long_To_Pointer(iconset, le32toh(icontrol->Icons)));
     return (NULL);
 }
 

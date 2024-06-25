@@ -280,7 +280,7 @@ TriggerClass::TriggerClass(void)
     Event = EVENT_NONE;
     Action = ACTION_NONE;
     House = HOUSE_NONE;
-    DataCopy = Data = 0L;
+    DataCopy = Data = 0;
     Name[0] = '\0';
     Team = NULL;
 }

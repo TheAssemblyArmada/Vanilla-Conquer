@@ -259,8 +259,8 @@ bool Read_Scenario(char* root)
         **	so that tutorial message will reappear in scenario two.
         */
         if (Scen.Scenario < 5) {
-            TutorFlags[0] = 0L;
-            TutorFlags[1] = 0L;
+            TutorFlags[0] = 0;
+            TutorFlags[1] = 0;
         }
 
     } else {

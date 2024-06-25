@@ -184,13 +184,13 @@ void CommBufferClass::Init(void)
     //------------------------------------------------------------------------
     //	Init data members
     //------------------------------------------------------------------------
-    SendTotal = 0L;
-    ReceiveTotal = 0L;
+    SendTotal = 0;
+    ReceiveTotal = 0;
 
-    DelaySum = 0L;
-    NumDelay = 0L;
-    MeanDelay = 0L;
-    MaxDelay = 0L;
+    DelaySum = 0;
+    NumDelay = 0;
+    MeanDelay = 0;
+    MaxDelay = 0;
 
     SendCount = 0;
 
@@ -202,9 +202,9 @@ void CommBufferClass::Init(void)
     for (i = 0; i < MaxSend; i++) {
         SendQueue[i].IsActive = 0;
         SendQueue[i].IsACK = 0;
-        SendQueue[i].FirstTime = 0L;
-        SendQueue[i].LastTime = 0L;
-        SendQueue[i].SendCount = 0L;
+        SendQueue[i].FirstTime = 0;
+        SendQueue[i].LastTime = 0;
+        SendQueue[i].SendCount = 0;
         SendQueue[i].BufLen = 0;
         SendQueue[i].ExtraLen = 0;
 
@@ -261,9 +261,9 @@ void CommBufferClass::Init_Send_Queue(void)
     for (i = 0; i < MaxSend; i++) {
         SendQueue[i].IsActive = 0;
         SendQueue[i].IsACK = 0;
-        SendQueue[i].FirstTime = 0L;
-        SendQueue[i].LastTime = 0L;
-        SendQueue[i].SendCount = 0L;
+        SendQueue[i].FirstTime = 0;
+        SendQueue[i].LastTime = 0;
+        SendQueue[i].SendCount = 0;
         SendQueue[i].BufLen = 0;
         SendQueue[i].ExtraLen = 0;
 
@@ -319,9 +319,9 @@ int CommBufferClass::Queue_Send(void* buf, int buflen, void* extrabuf, int extra
     //------------------------------------------------------------------------
     SendQueue[index].IsActive = 1;    // entry is now active
     SendQueue[index].IsACK = 0;       // entry hasn't been ACK'd
-    SendQueue[index].FirstTime = 0L;  // filled in by Manager when sent
-    SendQueue[index].LastTime = 0L;   // filled in by Manager when sent
-    SendQueue[index].SendCount = 0L;  // filled in by Manager when sent
+    SendQueue[index].FirstTime = 0;   // filled in by Manager when sent
+    SendQueue[index].LastTime = 0;    // filled in by Manager when sent
+    SendQueue[index].SendCount = 0;   // filled in by Manager when sent
     SendQueue[index].BufLen = buflen; // save buffer size
 
     //------------------------------------------------------------------------
@@ -409,9 +409,9 @@ int CommBufferClass::UnQueue_Send(void* buf, int* buflen, int index, void* extra
     //------------------------------------------------------------------------
     SendQueue[SendIndex[index]].IsActive = 0;
     SendQueue[SendIndex[index]].IsACK = 0;
-    SendQueue[SendIndex[index]].FirstTime = 0L;
-    SendQueue[SendIndex[index]].LastTime = 0L;
-    SendQueue[SendIndex[index]].SendCount = 0L;
+    SendQueue[SendIndex[index]].FirstTime = 0;
+    SendQueue[SendIndex[index]].LastTime = 0;
+    SendQueue[SendIndex[index]].SendCount = 0;
     SendQueue[SendIndex[index]].BufLen = 0;
     SendQueue[SendIndex[index]].ExtraLen = 0;
 
@@ -745,10 +745,10 @@ unsigned int CommBufferClass::Max_Response_Time(void)
  *=========================================================================*/
 void CommBufferClass::Reset_Response_Time(void)
 {
-    DelaySum = 0L;
-    NumDelay = 0L;
-    MeanDelay = 0L;
-    MaxDelay = 0L;
+    DelaySum = 0;
+    NumDelay = 0;
+    MeanDelay = 0;
+    MaxDelay = 0;
 
 } /* end of Reset_Response_Time */
 
