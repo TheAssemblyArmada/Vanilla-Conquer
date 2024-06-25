@@ -13,9 +13,8 @@ static void Resolve_File_Single(char* fname)
     }
 
     size_t name_len = strlen(fname);
-    size_t full_len = strlen(ffblk->GetFullName());
 
-    if (ffblk->FindFirst(fname) && name_len == full_len) {
+    if (ffblk->FindFirst(fname) && name_len == strlen(ffblk->GetFullName())) {
         strncpy(fname, ffblk->GetFullName(), name_len + 1);
     }
 
