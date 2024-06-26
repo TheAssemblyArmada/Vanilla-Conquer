@@ -250,18 +250,22 @@ inline static void _splitpath(const char* path, char* drive, char* dir, char* fn
         return;
     }
 
-    for (int i = 0; i < strlen(path); i++) {
-        if (path[i] == '.') {
-            strcpy(ext, path + i + 1);
+    while (*path != '\0') {
+        if (*path == '.') {
+            strcpy(ext, path + 1);
             break;
         }
+
+        ++path;
     }
 }
 
 inline static char* strupr(char* str)
 {
-    for (int i = 0; i < strlen(str); i++)
-        str[i] = toupper(str[i]);
+    while (*str != '\0') {
+        *str = toupper(*str);
+        ++str;
+    }
     return str;
 }
 
@@ -278,10 +282,9 @@ inline static void strrev(char* str)
 
 inline static void _strlwr(char* str)
 {
-    int len = strlen(str);
-
-    for (int i = 0; i < len; i++) {
-        str[i] = tolower(str[i]);
+    while (*str != '\0') {
+        *str = tolower(*str);
+        ++str;
     }
 }
 

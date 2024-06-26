@@ -1089,8 +1089,9 @@ uint32_t SessionClass::Compute_Unique_ID(void)
     //------------------------------------------------------------------------
     path = getenv("PATH");
     if (path) {
-        for (i = 0; i < strlen(path); i++) {
-            Add_CRC(&id, (unsigned int)path[i]);
+        while (*path != '\0') {
+            Add_CRC(&id, (unsigned int)(*path));
+            ++path;
         }
     }
 
