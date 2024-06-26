@@ -89,9 +89,6 @@
 /* For `Players` vector */
 #include "externs.h"
 
-// Turn off "expression is not meaningful".
-//#pragma warning 628 9
-
 //#include "WolDebug.h"
 
 /***************************************************************************

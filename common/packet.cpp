@@ -402,7 +402,6 @@ bool PacketClass::Get_Field(const char* id, int& data)
  * HISTORY:                                                               *
  *   04/23/1996 PWG : Created.                                            *
  *========================================================================*/
-#pragma warning(disable : 4996)
 bool PacketClass::Get_Field(const char* id, char* data)
 {
     FieldClass* field = Find_Field(id);

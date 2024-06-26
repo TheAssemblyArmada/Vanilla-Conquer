@@ -511,10 +511,6 @@ bool Init_Game(int, char*[])
         MFCD::Cache("CONQUER.MIX");
         if (SampleType != 0 && !Debug_Quiet) {
             MFCD::Cache("SOUNDS.MIX");
-            if (Special.IsJuvenile) {
-                new MFCD("ZOUNDS.MIX"); // Cached.
-                MFCD::Cache("ZOUNDS.MIX");
-            }
         }
     }
     Call_Back();
@@ -617,6 +613,14 @@ bool Init_Game(int, char*[])
     ** dialogs are invoked.  (GameSpeed must be synchronized between systems.)
     */
     Options.Load_Settings();
+
+    /*
+    ** Now that conquer.ini has been read, we can check if we need zounds.mix.
+    */
+    if (!Is_Demo() && SampleType != 0 && !Debug_Quiet && Special.IsJuvenile) {
+        new MFCD("ZOUNDS.MIX");
+        MFCD::Cache("ZOUNDS.MIX");
+    }
 
     /*
     **	Dump a default copy of rules.ini.

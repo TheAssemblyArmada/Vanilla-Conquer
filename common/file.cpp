@@ -12,8 +12,10 @@ static void Resolve_File_Single(char* fname)
         return;
     }
 
-    if (ffblk->FindFirst(fname) && strlen(fname) == strlen(ffblk->GetName())) {
-        strncpy(fname, ffblk->GetName(), strlen(fname) + 1);
+    size_t name_len = strlen(fname);
+
+    if (ffblk->FindFirst(fname) && name_len == strlen(ffblk->GetFullName())) {
+        strncpy(fname, ffblk->GetFullName(), name_len + 1);
     }
 
     delete ffblk;

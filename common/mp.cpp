@@ -333,7 +333,6 @@ unsigned XMP_Encode(unsigned char* to, unsigned tobytes, digit const* from, int 
  * HISTORY:                                                                                    *
  *   07/01/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-//#pragma warning 364 9
 unsigned XMP_Encode(unsigned char* to, digit const* from, int precision)
 {
     int i;

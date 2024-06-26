@@ -173,13 +173,6 @@
 
 #define FOREIGN_VERSION_NUMBER 6
 
-//
-// typedef enums with -1 will show this warning, even when the type of the enum is signed. It's a compiler bug,
-// apparently ST - 1/8/2019 9:23AM
-//
-#pragma warning(push)
-#pragma warning(disable : 4341)
-
 /**********************************************************************
 **	These enumerations are used to implement RTTI.
 */
@@ -3041,7 +3034,5 @@ typedef enum StrategyType : unsigned char
 } StrategyType;
 
 #endif // USE_RA_AI
-
-#pragma warning(pop)
 
 #endif

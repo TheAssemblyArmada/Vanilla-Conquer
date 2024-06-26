@@ -196,6 +196,7 @@ unsigned sosCODECDecompressData(_SOS_COMPRESS_INFO* stream, unsigned bytes)
     }
 #endif
     assert(0 && "Unreachable");
+    return 0;
 }
 
 //

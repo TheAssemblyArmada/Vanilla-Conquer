@@ -30,7 +30,7 @@ jobs:
 
     - name: Restore cache
       id: dep-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       env:
         cache-name: cache-dependencies
       with:
@@ -95,7 +95,7 @@ jobs:
         
     - name: Upload development release
       if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' && matrix.networking == 'net' }}
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         name: Development Build
         tag_name: "latest"
@@ -107,7 +107,7 @@ jobs:
 
     - name: Upload tagged release
       if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.networking == 'net' }}
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           artifact/*

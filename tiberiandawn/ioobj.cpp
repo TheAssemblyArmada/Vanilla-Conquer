@@ -130,8 +130,6 @@
 
 #include "function.h"
 
-#pragma warning(disable : 4302) // Truncation from pointer to TARGET
-
 /***********************************************************************************************
  * TeamTypeClass::Load -- Loads from a save game file.                                         *
  *                                                                                             *

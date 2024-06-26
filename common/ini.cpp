@@ -80,9 +80,6 @@
 #include "cstraw.h"
 #endif
 
-// Disable the "temporary object used to initialize a non-constant reference" warning.
-//#pragma warning 665 9
-
 /***********************************************************************************************
  * INIClass::~INIClass -- Destructor for INI handler.                                          *
  *                                                                                             *

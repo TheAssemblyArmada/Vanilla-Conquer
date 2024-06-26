@@ -231,6 +231,10 @@ public:
     {
     }
     virtual const char* GetName() const = 0;
+    virtual const char* GetFullName() const
+    {
+        return nullptr;
+    };
     virtual unsigned int GetTime() const = 0;
 
     virtual bool FindFirst(const char* fname) = 0;

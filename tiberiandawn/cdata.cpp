@@ -837,11 +837,11 @@ static TemplateTypeClass const Boulder3(TEMPLATE_BOULDER3,
                                         LAND_ROCK,
                                         NULL);
 static TemplateTypeClass const
-    Boulder4(TEMPLATE_BOULDER4, THEATERF_TEMPERATE, "B4", TXT_SLOPE, LAND_ROCK, 1, 1, LAND_ROCK, NULL);
+    Boulder4(TEMPLATE_BOULDER4, THEATERF_DESERT, "B4", TXT_SLOPE, LAND_ROCK, 1, 1, LAND_ROCK, NULL);
 static TemplateTypeClass const
-    Boulder5(TEMPLATE_BOULDER5, THEATERF_TEMPERATE, "B5", TXT_SLOPE, LAND_ROCK, 1, 1, LAND_ROCK, NULL);
+    Boulder5(TEMPLATE_BOULDER5, THEATERF_DESERT, "B5", TXT_SLOPE, LAND_ROCK, 1, 1, LAND_ROCK, NULL);
 static TemplateTypeClass const
-    Boulder6(TEMPLATE_BOULDER6, THEATERF_TEMPERATE, "B6", TXT_SLOPE, LAND_ROCK, 1, 1, LAND_ROCK, NULL);
+    Boulder6(TEMPLATE_BOULDER6, THEATERF_DESERT, "B6", TXT_SLOPE, LAND_ROCK, 1, 1, LAND_ROCK, NULL);
 static TemplateTypeClass const Slope1(TEMPLATE_SLOPE1,
                                       THEATERF_WINTER | THEATERF_DESERT | THEATERF_TEMPERATE,
                                       "S01",

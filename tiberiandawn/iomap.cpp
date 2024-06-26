@@ -65,8 +65,6 @@
 
 #include "function.h"
 
-#pragma warning(disable : 4302) // Truncation from pointer to TARGET
-
 /***********************************************************************************************
  * CellClass::Should_Save -- Should the cell be written to disk?                               *
  *                                                                                             *

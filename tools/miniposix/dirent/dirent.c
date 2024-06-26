@@ -214,7 +214,7 @@ DIR *opendir(const char *name)
             __seterrno(ENOENT);
             return NULL;
         }
-        size = wcslen(full) + 1;
+        size = (int)wcslen(full) + 1;
         memcpy(wname, L"\\\\?\\", sizeof(wchar_t) * 5);
         if (size > NTFS_MAX_PATH) {
             free(wname);

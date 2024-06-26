@@ -85,9 +85,6 @@
 
 #endif // WINSOCK_IPX
 
-// Turn off "expression is not meaningful".
-//#pragma warning 628 9
-
 //#include "WolDebug.h"
 
 /***************************************************************************

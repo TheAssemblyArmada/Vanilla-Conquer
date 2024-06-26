@@ -129,7 +129,6 @@ typedef struct
 /*
 ------------------------------- Shape block ---------------------------------
 */
-#pragma warning(disable : 4200)
 #pragma pack(push, 2)
 typedef struct
 {
