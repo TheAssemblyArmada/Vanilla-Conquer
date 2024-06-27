@@ -36,6 +36,7 @@
  * Functions:                                                             	 			*
  *                                                                         				*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+#pragma once
 #ifndef _WIN32
 
 class TcpipManagerClass

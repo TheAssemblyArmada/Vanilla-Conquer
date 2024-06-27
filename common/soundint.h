@@ -34,6 +34,7 @@
  * Functions:                                                              *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#pragma once
 #include "sound.h"
 #include <dsound.h>
 

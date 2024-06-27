@@ -37,6 +37,8 @@
  *                                                                         				*
  *                                                                         				*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+#pragma once
+
 class GraphicBufferClass;
 
 class EgoClass

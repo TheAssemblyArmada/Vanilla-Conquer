@@ -14,6 +14,7 @@
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
 /* $Header:   F:\projects\c&c0\vcs\code\wwalloc.h_v   4.9   07 May 1996 17:14:00   JOE_BOSTIC  $ */
+#pragma once
 
 /*
 **	This should be located in the wwlib32.h file, but is located here for

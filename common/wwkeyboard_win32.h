@@ -1,3 +1,4 @@
+#pragma once
 #include "wwkeyboard.h"
 
 class WWKeyboardClassWin32 : public WWKeyboardClass

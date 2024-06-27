@@ -12,6 +12,7 @@
 // distributed with this program. You should have received a copy of the
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
+#pragma once
 
 #define TXT_NONE                                    0   //
 #define TXT_CREDIT_FORMAT                           1   // %3d.%02d

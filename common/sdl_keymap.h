@@ -1,3 +1,4 @@
+#pragma once
 /*
 ** Standard US ANSI keyboard layout for SDL
 */

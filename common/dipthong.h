@@ -13,6 +13,7 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
+#pragma once
 int Dip_Text(char const* source, char* dest);
 int UnDip_Text(char const* source, char* dest);
 char* Extract_String(void const* data, int string);
