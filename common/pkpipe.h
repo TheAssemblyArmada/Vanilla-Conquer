@@ -130,8 +130,8 @@ private:
     int Encrypted_Key_Length(void) const;
     int Plain_Key_Length(void) const;
 
-    PKPipe(PKPipe& rvalue);
-    PKPipe& operator=(PKPipe const& pipe);
+    PKPipe(PKPipe& rvalue) = delete;
+    PKPipe& operator=(PKPipe const& pipe) = delete;
 };
 
 #endif

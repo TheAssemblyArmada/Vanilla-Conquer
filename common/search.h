@@ -151,8 +151,8 @@ private:
     NodeElement const* Archive;
 
     //-------------------------------------------------------------------------------------
-    IndexClass(IndexClass const& rvalue);
-    IndexClass* operator=(IndexClass const& rvalue);
+    IndexClass(IndexClass const& rvalue) = delete;
+    IndexClass* operator=(IndexClass const& rvalue) = delete;
 
     /*
     **	Increase size of internal index table by amount specified.

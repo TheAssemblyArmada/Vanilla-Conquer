@@ -70,8 +70,8 @@ private:
     {
         return (BufferPtr.Is_Valid());
     }
-    CacheStraw(CacheStraw& rvalue);
-    CacheStraw& operator=(CacheStraw const& pipe);
+    CacheStraw(CacheStraw& rvalue) = delete;
+    CacheStraw& operator=(CacheStraw const& pipe) = delete;
 };
 
 #endif

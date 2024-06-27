@@ -57,8 +57,8 @@ protected:
     SHAEngine SHA;
 
 private:
-    SHAStraw(SHAStraw& rvalue);
-    SHAStraw& operator=(SHAStraw const& straw);
+    SHAStraw(SHAStraw& rvalue) = delete;
+    SHAStraw& operator=(SHAStraw const& straw) = delete;
 };
 
 #endif

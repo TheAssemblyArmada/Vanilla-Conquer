@@ -137,8 +137,8 @@ private:
     /*
     **	Disable the copy constructor and assignment operator.
     */
-    Pipe(Pipe& rvalue);
-    Pipe& operator=(Pipe const& pipe);
+    Pipe(Pipe& rvalue) = delete;
+    Pipe& operator=(Pipe const& pipe) = delete;
 };
 
 #endif

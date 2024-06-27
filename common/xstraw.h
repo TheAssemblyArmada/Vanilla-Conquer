@@ -69,8 +69,8 @@ private:
     {
         return (BufferPtr.Is_Valid());
     }
-    BufferStraw(BufferStraw& rvalue);
-    BufferStraw& operator=(BufferStraw const& pipe);
+    BufferStraw(BufferStraw& rvalue) = delete;
+    BufferStraw& operator=(BufferStraw const& pipe) = delete;
 };
 
 /*
@@ -101,8 +101,8 @@ private:
     {
         return (File != NULL);
     }
-    FileStraw(FileStraw& rvalue);
-    FileStraw& operator=(FileStraw const& pipe);
+    FileStraw(FileStraw& rvalue) = delete;
+    FileStraw& operator=(FileStraw const& pipe) = delete;
 };
 
 #endif

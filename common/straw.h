@@ -147,8 +147,8 @@ private:
     /*
     **	Disable the copy constructor and assignment operator.
     */
-    Straw(Straw& rvalue);
-    Straw& operator=(Straw const& pipe);
+    Straw(Straw& rvalue) = delete;
+    Straw& operator=(Straw const& pipe) = delete;
 };
 
 #endif

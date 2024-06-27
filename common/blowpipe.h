@@ -83,8 +83,8 @@ private:
     int Counter;
     CryptControl Control;
 
-    BlowPipe(BlowPipe& rvalue);
-    BlowPipe& operator=(BlowPipe const& pipe);
+    BlowPipe(BlowPipe& rvalue) = delete;
+    BlowPipe& operator=(BlowPipe const& pipe) = delete;
 };
 
 #endif

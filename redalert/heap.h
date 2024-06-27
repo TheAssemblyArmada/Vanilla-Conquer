@@ -116,10 +116,10 @@ protected:
 
 private:
     // The assignment operator is not supported.
-    FixedHeapClass& operator=(FixedHeapClass const&);
+    FixedHeapClass& operator=(FixedHeapClass const&) = delete;
 
     // The copy constructor is not supported.
-    FixedHeapClass(FixedHeapClass const&);
+    FixedHeapClass(FixedHeapClass const&) = delete;
 };
 
 /**************************************************************************

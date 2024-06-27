@@ -79,8 +79,8 @@ private:
 
     void Scramble_Seed(void);
 
-    RandomStraw(RandomStraw& rvalue);
-    RandomStraw& operator=(RandomStraw const& pipe);
+    RandomStraw(RandomStraw& rvalue) = delete;
+    RandomStraw& operator=(RandomStraw const& pipe) = delete;
 };
 
 #endif

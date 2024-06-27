@@ -83,8 +83,8 @@ private:
     /*
     **	Explicitly disable the copy constructor and the assignment operator.
     */
-    Base64Straw(Base64Straw& rvalue);
-    Base64Straw& operator=(Base64Straw const& pipe);
+    Base64Straw(Base64Straw& rvalue) = delete;
+    Base64Straw& operator=(Base64Straw const& pipe) = delete;
 };
 
 #endif

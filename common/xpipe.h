@@ -70,8 +70,8 @@ private:
     {
         return (BufferPtr.Is_Valid());
     }
-    BufferPipe(BufferPipe& rvalue);
-    BufferPipe& operator=(BufferPipe const& pipe);
+    BufferPipe(BufferPipe& rvalue) = delete;
+    BufferPipe& operator=(BufferPipe const& pipe) = delete;
 };
 
 /*
@@ -105,8 +105,8 @@ private:
     {
         return (File != NULL);
     }
-    FilePipe(FilePipe& rvalue);
-    FilePipe& operator=(FilePipe const& pipe);
+    FilePipe(FilePipe& rvalue) = delete;
+    FilePipe& operator=(FilePipe const& pipe) = delete;
 };
 
 #endif

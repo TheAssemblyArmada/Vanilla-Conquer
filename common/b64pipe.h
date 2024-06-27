@@ -85,8 +85,8 @@ private:
     /*
     **	Explicitly disable the copy constructor and the assignment operator.
     */
-    Base64Pipe(Base64Pipe& rvalue);
-    Base64Pipe& operator=(Base64Pipe const& pipe);
+    Base64Pipe(Base64Pipe& rvalue) = delete;
+    Base64Pipe& operator=(Base64Pipe const& pipe) = delete;
 };
 
 #endif

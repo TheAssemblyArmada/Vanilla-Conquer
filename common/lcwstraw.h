@@ -94,8 +94,8 @@ private:
         unsigned short UncompCount; // Bytes of uncompressed data it represents.
     } BlockHeader;
 
-    LCWStraw(LCWStraw& rvalue);
-    LCWStraw& operator=(LCWStraw const& pipe);
+    LCWStraw(LCWStraw& rvalue) = delete;
+    LCWStraw& operator=(LCWStraw const& pipe) = delete;
 };
 
 #endif

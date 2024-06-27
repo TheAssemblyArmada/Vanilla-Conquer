@@ -84,8 +84,8 @@ private:
     int Counter;
     CryptControl Control;
 
-    BlowStraw(BlowStraw& rvalue);
-    BlowStraw& operator=(BlowStraw const& straw);
+    BlowStraw(BlowStraw& rvalue) = delete;
+    BlowStraw& operator=(BlowStraw const& straw) = delete;
 };
 
 #endif

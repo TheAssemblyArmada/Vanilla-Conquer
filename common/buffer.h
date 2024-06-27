@@ -80,8 +80,8 @@ private:
     /*	could be copied and the associated buffer freed.  If this were to	*/
     /*	gappen it could cause weird general protection fault.					*/
     /*===================================================================*/
-    BufferClass(BufferClass const&);
-    BufferClass& operator=(BufferClass const&);
+    BufferClass(BufferClass const&) = delete;
+    BufferClass& operator=(BufferClass const&) = delete;
 
 protected:
     void* Buffer;

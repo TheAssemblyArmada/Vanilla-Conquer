@@ -73,8 +73,8 @@ public:
 
     RawFileClass(char const* filename);
     RawFileClass(void);
-    RawFileClass(RawFileClass const& f);
-    RawFileClass& operator=(RawFileClass const& f);
+    RawFileClass(RawFileClass const& f) = delete;
+    RawFileClass& operator=(RawFileClass const& f) = delete;
     virtual ~RawFileClass(void);
 
     virtual char const* File_Name(void) const;

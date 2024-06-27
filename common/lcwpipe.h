@@ -94,8 +94,8 @@ private:
         unsigned short UncompCount; // Bytes of uncompressed data it represents.
     } BlockHeader;
 
-    LCWPipe(LCWPipe& rvalue);
-    LCWPipe& operator=(LCWPipe const& pipe);
+    LCWPipe(LCWPipe& rvalue) = delete;
+    LCWPipe& operator=(LCWPipe const& pipe) = delete;
 };
 
 #endif

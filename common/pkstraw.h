@@ -120,8 +120,8 @@ private:
     int Encrypted_Key_Length(void) const;
     int Plain_Key_Length(void) const;
 
-    PKStraw(PKStraw& rvalue);
-    PKStraw& operator=(PKStraw const& straw);
+    PKStraw(PKStraw& rvalue) = delete;
+    PKStraw& operator=(PKStraw const& straw) = delete;
 };
 
 #endif

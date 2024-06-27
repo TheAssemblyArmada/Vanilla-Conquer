@@ -101,8 +101,8 @@ private:
     int Position;
 
     // Force these to never be invoked.
-    CCFileClass const& operator=(CCFileClass const& c);
-    CCFileClass(CCFileClass const&);
+    CCFileClass const& operator=(CCFileClass const& c) = delete;
+    CCFileClass(CCFileClass const&) = delete;
 };
 
 #endif

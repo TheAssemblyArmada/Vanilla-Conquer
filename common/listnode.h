@@ -162,8 +162,8 @@ protected:
     GenericNode LastNode;
 
 private:
-    GenericList(GenericList& list);
-    GenericList& operator=(GenericList const&);
+    GenericList(GenericList& list) = delete;
+    GenericList& operator=(GenericList const&) = delete;
 };
 
 /*

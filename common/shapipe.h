@@ -57,8 +57,8 @@ protected:
     SHAEngine SHA;
 
 private:
-    SHAPipe(SHAPipe& rvalue);
-    SHAPipe& operator=(SHAPipe const& pipe);
+    SHAPipe(SHAPipe& rvalue) = delete;
+    SHAPipe& operator=(SHAPipe const& pipe) = delete;
 };
 
 #endif
