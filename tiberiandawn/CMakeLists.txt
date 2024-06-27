@@ -50,7 +50,6 @@ set(TIBDAWN_SRC
     heap.cpp
     help.cpp
     house.cpp
-    iconset.cpp
     idata.cpp
     infantry.cpp
     init.cpp

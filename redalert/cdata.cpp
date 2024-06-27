@@ -1010,10 +1010,10 @@ void TemplateTypeClass::Init_Heap(void)
  *=============================================================================================*/
 LandType TemplateTypeClass::Land_Type(int icon) const
 {
-    IconsetClass const* icontrol = (IconsetClass const*)Get_Image_Data();
+    void const* icontrol = Get_Image_Data();
 
     if (icontrol != NULL) {
-        unsigned char const* map = icontrol->Control_Map();
+        unsigned char const* map = Get_Icon_Set_ControlMap(icontrol);
         if (map != NULL) {
             static LandType _land[16] = {
                 LAND_CLEAR,
@@ -1034,7 +1034,7 @@ LandType TemplateTypeClass::Land_Type(int icon) const
                 LAND_CLEAR,
             };
 
-            return (_land[map[icon % (icontrol->Map_Width() * icontrol->Map_Height())]]);
+            return (_land[map[icon % (Get_Icon_Set_MapWidth(icontrol) * Get_Icon_Set_MapHeight(icontrol))]]);
         }
     }
     return (LAND_CLEAR);
@@ -1093,8 +1093,8 @@ short const* TemplateTypeClass::Occupy_List(bool) const
     static short _occupy[13 * 8 + 5];
     short* ptr;
 
-    IconsetClass const* iconset = (IconsetClass const*)Get_Image_Data();
-    unsigned char const* map = iconset->Map_Data();
+    void const* iconset = Get_Image_Data();
+    unsigned char const* map = (unsigned char const*)Get_Icon_Set_Map(iconset);
 
     ptr = &_occupy[0];
     for (int index = 0; index < Width * Height; index++) {
@@ -1138,8 +1138,8 @@ void TemplateTypeClass::Init(TheaterType theater)
             _makepath(fullname, NULL, NULL, tplate.IniName, Theaters[theater].Suffix);
             ptr = MFCD::Retrieve(fullname);
             ((void const*&)tplate.ImageData) = ptr;
-            ((unsigned char&)tplate.Width) = Get_IconSet_MapWidth(ptr);
-            ((unsigned char&)tplate.Height) = Get_IconSet_MapHeight(ptr);
+            ((unsigned char&)tplate.Width) = Get_Icon_Set_MapWidth(ptr);
+            ((unsigned char&)tplate.Height) = Get_Icon_Set_MapHeight(ptr);
         }
     }
 }
@@ -1181,8 +1181,8 @@ void TemplateTypeClass::Display(int x, int y, WindowNumberType window, HousesTyp
     x += WindowList[window][WINDOWX];
     y += WindowList[window][WINDOWY];
 
-    IconsetClass const* iconset = (IconsetClass const*)Get_Image_Data();
-    unsigned char const* map = iconset->Map_Data();
+    void const* iconset = Get_Image_Data();
+    unsigned char const* map = (unsigned char const*)Get_Icon_Set_Map(iconset);
 
     for (index = 0; index < w * h; index++) {
         if (map[index] != 0xFF) {

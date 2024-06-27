@@ -43,6 +43,7 @@ set(COMMON_SRC
     getshape.cpp
     graphicsviewport.cpp
     hsv.cpp
+    iconset.cpp
     iff.cpp
     ini.cpp
     int.cpp

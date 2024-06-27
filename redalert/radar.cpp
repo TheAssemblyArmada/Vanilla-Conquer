@@ -1039,14 +1039,14 @@ void RadarClass::Plot_Radar_Pixel(CELL cell)
                     icon = cellptr->Clear_Icon();
                 }
 
-                IconsetClass const* iconset = (IconsetClass const*)ptr;
-                unsigned char const* icondata = iconset->Icon_Data();
+                unsigned char const* icondata = (unsigned char const*)Get_Icon_Set_Icondata(ptr);
+                unsigned char const* map = (unsigned char const*)Get_Icon_Set_Map(ptr);
 
                 /*
                 **	Convert the logical icon number into the actual icon number.
                 */
                 icon &= 0x00FF;
-                icon = *(iconset->Map_Data() + icon);
+                icon = map[icon];
 
                 unsigned char* data = (unsigned char*)icondata + icon * (24 * 24);
                 Buffer_To_Page(0, 0, 24, 24, data, _TileStage);

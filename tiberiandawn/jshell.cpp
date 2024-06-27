@@ -71,8 +71,9 @@ void* Small_Icon(void const* iconptr, int iconnum)
     unsigned char* data;
 
     if (iconptr) {
-        iconnum = ((char*)((char*)iptr + iptr->Map))[iconnum];
-        data = &((unsigned char*)((unsigned char*)iptr + iptr->Icons))[iconnum * (24 * 24)];
+        iconnum = ((char*)Get_Icon_Set_Map(iptr))[iconnum];
+        // TODO these 24's need unhardcoding if Icon size is changed
+        data = &((unsigned char*)Get_Icon_Set_Icondata(iptr))[iconnum * (24 * 24)];
         //		data = &iptr->Icons[iconnum*(24*24)];
 
         for (int index = 0; index < 9; index++) {
