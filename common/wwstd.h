@@ -262,11 +262,12 @@ inline static void _splitpath(const char* path, char* drive, char* dir, char* fn
 
 inline static char* strupr(char* str)
 {
+    char* ret = str;
     while (*str != '\0') {
         *str = toupper(*str);
         ++str;
     }
-    return str;
+    return ret;
 }
 
 inline static void strrev(char* str)
