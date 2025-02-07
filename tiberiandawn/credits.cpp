@@ -109,7 +109,7 @@ void CreditClass::Graphic_Logic(bool forced)
         unsigned fore = factor ? 11 : WHITE;
 
         TabClass::Draw_Credits_Tab();
-        Fancy_Text_Print("%ld", xx, 0, fore, TBLACK, flags, Current);
+        Fancy_Text_Print("%d", xx, 0, fore, TBLACK, flags, Current);
 
         IsToRedraw = false;
         IsAudible = false;
