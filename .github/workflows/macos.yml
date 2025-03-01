@@ -6,7 +6,7 @@ on:
 
 jobs:
   vanilla-macos:
-    runs-on: macos-12    
+    runs-on: macos-14
     strategy:
       matrix:
         networking: [net, nonet]
@@ -44,8 +44,8 @@ jobs:
     - if: ${{ steps.dep-cache.outputs.cache-hit != 'true' }}
       name: Install dependencies
       run: |
-        wget -q https://github.com/macports/macports-base/releases/download/v2.8.1/MacPorts-2.8.1-12-Monterey.pkg
-        sudo installer -pkg ./MacPorts-2.8.1-12-Monterey.pkg -target /
+        wget -q https://github.com/macports/macports-base/releases/download/v2.10.5/MacPorts-2.10.5-14-Sonoma.pkg
+        sudo installer -pkg ./MacPorts-2.10.5-14-Sonoma.pkg -target /
         export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
         sudo port selfupdate -N
         sudo port install dylibbundler -N
