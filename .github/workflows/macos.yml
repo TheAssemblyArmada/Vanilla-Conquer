@@ -9,7 +9,7 @@ jobs:
     runs-on: macos-14
     strategy:
       matrix:
-        networking: [net, nonet]
+        preset: [release, internal, testing, nonet]
 
     steps:
     - uses: actions/checkout@v4
@@ -37,64 +37,66 @@ jobs:
         path: ~/macports
         key: ${{ env.DEP_CACHE_KEY }}
     
-    - name: Install ninja
+    - name: Install homebrew deps
       run: |
-        brew install ninja
+        brew install imagemagick dylibbundler
     
     - if: ${{ steps.dep-cache.outputs.cache-hit != 'true' }}
-      name: Install dependencies
+      name: Install macport dependencies
       run: |
         wget -q https://github.com/macports/macports-base/releases/download/v2.10.5/MacPorts-2.10.5-14-Sonoma.pkg
         sudo installer -pkg ./MacPorts-2.10.5-14-Sonoma.pkg -target /
         export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
         sudo port selfupdate -N
-        sudo port install dylibbundler -N
         sudo port install libsdl2 +universal -N
         sudo port install openal-soft +universal -N
-        sudo port install imageMagick -N
         mkdir ~/macports
         sudo cp -R /opt/local ~/macports
         sudo chown -R $USER:staff ~/macports
 
     - if: ${{ steps.dep-cache.outputs.cache-hit == 'true' }}
-      name: Restore dependencies from cache
+      name: Restore macport dependencies from cache
       run: |
-        sudo cp -R ~/macports/local /opt
+        sudo cp -R ~/macports/local /opt/local
 
-    - name: Configure Vanilla Conquer
-      run: |
-        export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
-        cmake --preset clang-vanilla-${{ matrix.networking }}-tests -DCMAKE_FIND_FRAMEWORK=LAST -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
-        
     - name: Build Vanilla Conquer
+      env:
+        CMAKE_OSX_ARCHITECTURES: "arm64;x86_64"
+        VC_CXX_FLAGS: "-w;-Wwrite-strings;-Werror=write-strings"
       run: |
         export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
-        cmake --build build
-        dsymutil build/vanillatd.app/Contents/MacOS/vanillatd -o build/vanillatd.dSYM
-        dsymutil build/vanillara.app/Contents/MacOS/vanillara -o build/vanillara.dSYM
-        dsymutil build/vanillamix -o build/vanillamix.dSYM
-        strip -Sx build/vanillatd.app/Contents/MacOS/vanillatd
-        strip -Sx build/vanillara.app/Contents/MacOS/vanillara
-        strip -Sx build/vanillamix
-        dylibbundler --create-dir --bundle-deps --overwrite-files --dest-dir ./build/vanillatd.app/Contents/libs --fix-file build/vanillatd.app/Contents/MacOS/vanillatd
-        dylibbundler --create-dir --bundle-deps --overwrite-files --dest-dir ./build/vanillara.app/Contents/libs --fix-file build/vanillara.app/Contents/MacOS/vanillara
+        cmake --workflow --preset ${{ matrix.preset }}
 
     - name: Create archives
-      if: ${{ matrix.networking == 'net' }}
-      run: |
+      if: ${{ matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
+      run: |  
+        dsymutil build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.app/Contents/MacOS/vanillatd -o build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.dSYM
+        dsymutil build/${{ matrix.preset }}/RelWithDebInfo/vanillara.app/Contents/MacOS/vanillara -o build/${{ matrix.preset }}/RelWithDebInfo/vanillara.dSYM
+        strip -Sx build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.app/Contents/MacOS/vanillatd
+        strip -Sx build/${{ matrix.preset }}/RelWithDebInfo/vanillara.app/Contents/MacOS/vanillara
+        dylibbundler --create-dir --bundle-deps --overwrite-files --dest-dir ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.app/Contents/libs --fix-file build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.app/Contents/MacOS/vanillatd
+        dylibbundler --create-dir --bundle-deps --overwrite-files --dest-dir ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.app/Contents/libs --fix-file build/${{ matrix.preset }}/RelWithDebInfo/vanillara.app/Contents/MacOS/vanillara
         mkdir artifact
-        7z a artifact/vanilla-conquer-macos-clang-universal2-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd.app ./build/vanillara.app ./build/vanillamix
-        7z a artifact/vanilla-conquer-macos-clang-universal2-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dSYM ./build/vanillara.dSYM ./build/vanillamix.dSYM
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-macos-clang-universal2-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.app ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.app
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-macos-clang-universal2-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.dSYM ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.dSYM
 
+    - name: Add internal tools to archive
+      if: ${{ matrix.preset == 'internal' }}
+      run: |
+        dsymutil build/${{ matrix.preset }}/RelWithDebInfo/vanillamix -o build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dSYM
+        strip -Sx build/${{ matrix.preset }}/RelWithDebInfo/vanillamix
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-macos-clang-universal2--${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-macos-clang-universal2--${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dSYM
+    
     - name: Upload artifact
-      if: ${{ matrix.networking == 'net' }}
+      if: ${{ matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       uses: actions/upload-artifact@v4
       with:
-        name: vanilla-conquer-macos-clang-universal2
+        name: vanilla-conquer-${{ matrix.preset }}-macos-clang-universal2
         path: artifact
         
     - name: Upload development release
-      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' && matrix.networking == 'net' }}
+      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' && matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       uses: softprops/action-gh-release@v2
       with:
         name: Development Build
@@ -106,7 +108,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload tagged release
-      if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.networking == 'net' }}
+      if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       uses: softprops/action-gh-release@v2
       with:
         files: |

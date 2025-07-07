@@ -1,44 +1,30 @@
 {
-    "version": 2,
+    "version": 6,
     "cmakeMinimumRequired": {
         "major": 3,
-        "minor": 20,
+        "minor": 25,
         "patch": 0
     },
     "configurePresets": [
         {
-            "name": "default",
-            "displayName": "Default Config",
-            "generator": "Ninja",
-            "hidden": true,
-            "binaryDir": "${sourceDir}/build",
+            "name": "release",
+            "displayName": "Vanilla Release build",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL",
+                "CMAKE_FIND_FRAMEWORK": "LAST",
                 "DSOUND": "OFF",
                 "DDRAW": "OFF",
                 "SDL2": "ON",
-                "OPENAL": "ON",
-                "CMAKE_BUILD_TYPE": "Release"
+                "OPENAL": "ON"
             }
         },
         {
-            "name": "default-win",
-            "inherits": "default",
-            "displayName": "MSVC defaults",
-            "hidden": true,
-            "cacheVariables": {
-                "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL",
-                "VC_CXX_FLAGS": "/Zc:strictStrings;-wd4244;-wd4018;-wd4291;-wd4101;-wd4267;-wd4200",
-                "CMAKE_CXX_FLAGS_RELEASE": "/Zi /O2 /Ob2 /DNDEBUG",
-                "CMAKE_EXE_LINKER_FLAGS_RELEASE": "/debug:full /INCREMENTAL:NO",
-                "CMAKE_MODULE_LINKER_FLAGS_RELEASE": "/debug:full /INCREMENTAL:NO",
-                "CMAKE_SHARED_LINKER_FLAGS_RELEASE": "/debug:full /INCREMENTAL:NO"
-            }
-        },
-        {
-            "name": "cl-remaster",
-            "inherits": "default-win",
-            "displayName": "MSVC Remaster build",
+            "name": "remaster",
+            "inherits": "release",
+            "displayName": "Vanilla Remaster build",
             "cacheVariables": {
                 "BUILD_REMASTERTD": "ON",
                 "BUILD_REMASTERRA": "ON",
@@ -50,36 +36,36 @@
             }
         },
         {
-            "name": "cl-vanilla",
-            "inherits": "default-win",
-            "displayName": "MSVC Vanilla build",
+            "name": "internal",
+            "inherits": "release",
+            "displayName": "Vanilla Internal build",
             "cacheVariables": {
-                "BUILD_REMASTERTD": "OFF",
-                "BUILD_REMASTERRA": "OFF",
                 "MAP_EDITORTD": "ON",
                 "MAP_EDITORRA": "ON",
                 "BUILD_TOOLS": "ON"
             }
         },
         {
-            "name": "cl-vanilla-net-tests",
-            "inherits": "cl-vanilla",
-            "displayName": "MSVC Vanilla build with tests",
+            "name": "testing",
+            "inherits": "release",
+            "displayName": "Vanilla build with tests",
             "cacheVariables": {
+                "BUILD_VANILLATD": "OFF",
+                "BUILD_VANILLARA": "OFF",
                 "BUILD_TESTS": "ON"
             }
         },
         {
-            "name": "cl-vanilla-nonet-tests",
-            "inherits": "cl-vanilla-net-tests",
-            "displayName": "MSVC Vanilla build with tests and no networking",
+            "name": "nonet",
+            "inherits": "internal",
+            "displayName": "Vanilla build no networking",
             "cacheVariables": {
                 "NETWORKING": "OFF"
             }
         },
         {
             "name": "msvc2019-i686-remaster",
-            "inherits": "cl-remaster",
+            "inherits": "remaster",
             "binaryDir": "${sourceDir}/build_remaster",
             "displayName": "MSVC 2019 32bit Remaster build",
             "generator": "Visual Studio 16 2019",
@@ -87,7 +73,7 @@
         },
         {
             "name": "msvc2019-i686-vanilla",
-            "inherits": "cl-vanilla",
+            "inherits": "release",
             "binaryDir": "${sourceDir}/build_msvc32",
             "displayName": "MSVC 2019 32bit Vanilla build",
             "generator": "Visual Studio 16 2019",
@@ -95,135 +81,132 @@
         },
         {
             "name": "msvc2019-x86-64-vanilla",
-            "inherits": "cl-vanilla",
+            "inherits": "release",
             "binaryDir": "${sourceDir}/build_msvc64",
             "displayName": "MSVC 2019 64bit Vanilla build",
             "architecture": "x64"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "remaster",
+            "configurePreset": "remaster",
+            "displayName": "Vanilla Game Build",
+            "description": "Vanilla Game Build",
+            "configuration": "RelWithDebInfo"
         },
         {
-            "name": "default-unix",
-            "inherits": "default",
-            "hidden": true,
-            "displayName": "UNIX defaults",
-            "cacheVariables": {
-                "CMAKE_CXX_FLAGS_DEBUG": "-g3 -Og",
-                "CMAKE_C_FLAGS_DEBUG": "-g3 -Og",
-                "CMAKE_CXX_FLAGS_RELEASE": "-O2 -g3 -DNDEBUG",
-                "CMAKE_C_FLAGS_RELEASE": "-O2 -g3 -DNDEBUG",
-                "VC_CXX_FLAGS": "-w;-Wwrite-strings;-Werror=write-strings",
-                "MAP_EDITORTD": "ON",
-                "MAP_EDITORRA": "ON",
-                "BUILD_TOOLS": "ON"
+            "name": "release",
+            "configurePreset": "release",
+            "displayName": "Vanilla Game Build",
+            "description": "Vanilla Game Build",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "internal",
+            "configurePreset": "internal",
+            "displayName": "Vanilla Game Build",
+            "description": "Vanilla Game Build",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "testing",
+            "configurePreset": "testing",
+            "displayName": "Vanilla Game Build",
+            "description": "Vanilla Game Build",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "nonet",
+            "configurePreset": "nonet",
+            "displayName": "Vanilla Game Build",
+            "description": "Vanilla Game Build",
+            "configuration": "RelWithDebInfo"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "testing",
+            "configurePreset": "testing",
+            "configuration": "RelWithDebInfo",
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "noTestsAction": "error",
+                "stopOnFailure": true
             }
-        },
+        }
+    ],
+    "workflowPresets": [
         {
-            "name": "gcc-vanilla",
-            "inherits": "default-unix",
-            "displayName": "GCC Vanilla build",
-            "environment": {
-                "CC": "gcc",
-                "CXX": "g++"
-            }
-        },
-        {
-            "name": "gcc-vanilla-net-tests",
-            "inherits": "gcc-vanilla",
-            "displayName": "GCC Vanilla build with tests",
-            "cacheVariables": {
-                "BUILD_TESTS": "ON"
-            }
-        },
-        {
-            "name": "gcc-vanilla-nonet-tests",
-            "inherits": "gcc-vanilla-net-tests",
-            "displayName": "GCC Vanilla build with tests",
-            "cacheVariables": {
-                "NETWORKING": "OFF"
-            }
-        },
-        {
-            "name": "clang-vanilla",
-            "inherits": "default-unix",
-            "displayName": "Clang Vanilla build",
-            "environment": {
-                "CC": "clang",
-                "CXX": "clang++"
-            }
-        },
-        {
-            "name": "clang-vanilla-net-tests",
-            "inherits": "clang-vanilla",
-            "displayName": "Clang Vanilla build with tests",
-            "cacheVariables": {
-                "BUILD_TESTS": "ON"
-            }
-        },
-        {
-            "name": "clang-vanilla-nonet-tests",
-            "inherits": "clang-vanilla-net-tests",
-            "displayName": "Clang Vanilla build with tests",
-            "cacheVariables": {
-                "NETWORKING": "OFF"
-            }
-        },
-        {
-            "name": "default-mingw",
-            "inherits": "default",
-            "hidden": true,
-            "displayName": "MinGW-w64 defaults",
-            "cacheVariables": {
-                "CMAKE_CXX_FLAGS_DEBUG": "-g -Og",
-                "CMAKE_C_FLAGS_DEBUG": "-g -Og",
-                "CMAKE_CXX_FLAGS_RELEASE": "-O2 -g -DNDEBUG",
-                "CMAKE_C_FLAGS_RELEASE": "-O2 -g -DNDEBUG",
-                "CMAKE_EXE_LINKER_FLAGS": "-static-libstdc++ -static-libgcc",
-                "CMAKE_SHARESD_LINKER_FLAGS": "-static-libstdc++ -static-libgcc",
-                "VC_CXX_FLAGS": "-w;-Wwrite-strings;-Werror=write-strings",
-                "MAP_EDITORTD": "ON",
-                "MAP_EDITORRA": "ON",
-                "BUILD_TOOLS": "ON"
-            }
-        },
-        {
-            "name": "mingw-i686-remaster",
-            "inherits": "default-mingw",
-            "displayName": "MinGW-w64 32bit Remaster build",
-            "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": {
-                    "type": "FILEPATH",
-                    "value": "${sourceDir}/cmake/i686-mingw-w64-toolchain.cmake"
+            "name": "release",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "release"
                 },
-                "BUILD_REMASTERTD": "ON",
-                "BUILD_REMASTERRA": "ON",
-                "BUILD_VANILLATD": "OFF",
-                "BUILD_VANILLARA": "OFF",
-                "MAP_EDITORTD": "OFF",
-                "MAP_EDITORRA": "OFF",
-                "VC_CXX_FLAGS": "-fpermissive;-w;-Wwrite-strings;-Werror=write-strings",
-                "BUILD_TOOLS": "OFF"
-            }
+                {
+                    "type": "build",
+                    "name": "release"
+                }
+            ]
         },
         {
-            "name": "mingw-i686-vanilla",
-            "inherits": "default-mingw",
-            "displayName": "MinGW-w64 32bit Vanilla build",
-            "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": {
-                    "type": "FILEPATH",
-                    "value": "${sourceDir}/cmake/i686-mingw-w64-toolchain.cmake"
+            "name": "remaster",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "remaster"
+                },
+                {
+                    "type": "build",
+                    "name": "remaster"
                 }
-            }
+            ]
         },
         {
-            "name": "mingw-x86_64-vanilla",
-            "inherits": "default-mingw",
-            "displayName": "MinGW-w64 64bit Vanilla build",
-            "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": {
-                    "type": "FILEPATH",
-                    "value": "${sourceDir}/cmake/x86_64-mingw-w64-toolchain.cmake"
+            "name": "internal",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "internal"
+                },
+                {
+                    "type": "build",
+                    "name": "internal"
                 }
-            }
+            ]
+        },
+        {
+            "name": "testing",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "testing"
+                },
+                {
+                    "type": "build",
+                    "name": "testing"
+                },
+                {
+                    "type": "test",
+                    "name": "testing"
+                }
+            ]
+        },
+        {
+            "name": "nonet",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "nonet"
+                },
+                {
+                    "type": "build",
+                    "name": "nonet"
+                }
+            ]
         }
     ]
 }
