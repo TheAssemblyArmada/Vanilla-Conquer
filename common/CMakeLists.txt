@@ -190,7 +190,7 @@ if(BUILD_REMASTERTD OR BUILD_REMASTERRA)
 endif()
 
 # These options currently require directx components from the aug 2007 SDK.
-if(BUILD_VANILLATD OR BUILD_VANILLARA)
+if(BUILD_VANILLATD OR BUILD_VANILLARA OR BUILD_TESTS)
     add_library(commonv STATIC ${COMMONV_SRC})
     target_compile_definitions(commonv PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS})
     target_link_libraries(commonv PUBLIC common ${VANILLA_LIBS})

@@ -1,3 +1,23 @@
+find_program(ImageMagick_magick_EXECUTABLE magick)
+if(ImageMagick_magick_EXECUTABLE)
+    set(ImageMagick_convert_FOUND TRUE)
+    set(ImageMagick_convert_EXECUTABLE ${ImageMagick_magick_EXECUTABLE})
+    set(ImageMagick_convert_ARGS convert)
+else()
+    find_program(ImageMagick_convert_EXECUTABLE convert)
+
+    if(ImageMagick_convert_EXECUTABLE)
+        set(ImageMagick_convert_FOUND TRUE)
+    endif()
+endif()
+
+if(APPLE OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin") # Make icns file.
+    find_package(iconutil REQUIRED)
+    if(NOT iconutil_FOUND)
+        message(WARNING "Could not find suitable tool to build .icns file with.")
+    endif()
+endif()
+
 function(make_icon)
 	cmake_parse_arguments(
 		ARG
@@ -18,21 +38,9 @@ function(make_icon)
 		message(FATAL_ERROR "INPUT does not exist: ${ARG_INPUT}")
 	endif()
     
-    find_package(ImageMagick COMPONENTS magick)
-    
-    if(ImageMagick_magick_FOUND)
-        set(ImageMagick_convert_FOUND TRUE)
-        set(ImageMagick_convert_EXECUTABLE ${ImageMagick_magick_EXECUTABLE})
-        set(ImageMagick_convert_ARGS convert)
-    else()
-        find_package(ImageMagick COMPONENTS convert)
-    endif()
-    
-    
     if(NOT ImageMagick_convert_FOUND)
         message(WARNING "ImageMagick was not found, icons will not be generated.")
     elseif(APPLE OR ${CMAKE_SYSTEM_NAME} MATCHES "Darwin") # Make icns file.
-        find_package(iconutil REQUIRED)
         if(iconutil_FOUND)
             get_filename_component(ARG_INPUT_FN "${ARG_INPUT}" NAME_WLE)
             set(ICON_FILE "${CMAKE_BINARY_DIR}/${ARG_INPUT_FN}.icns")
@@ -69,8 +77,6 @@ function(make_icon)
             if(ARG_OUTPUT)
                 set("${ARG_OUTPUT}" "${ICON_FILE}" PARENT_SCOPE)
             endif()
-        else()
-            message(WARNING "Could not find suitable tool to build .icns file with.")
         endif()
     elseif(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows") # Make windows icon
         get_filename_component(ARG_INPUT_FN "${ARG_INPUT}" NAME_WLE)

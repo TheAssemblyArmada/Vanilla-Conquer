@@ -1,5 +1,14 @@
 cmake_minimum_required(VERSION 3.25)
 
+# Allow passing search paths from environment.
+foreach(_path_elem $ENV{CMAKE_FIND_ROOT_PATH})
+    if(NOT IS_ABSOLUTE ${_path_elem})
+        list(APPEND CMAKE_FIND_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${_path_elem}")
+    else()     
+        list(APPEND CMAKE_FIND_ROOT_PATH "${_path_elem}")
+    endif()
+endforeach()
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 include(FeatureSummary)
 include(CheckCXXCompilerFlag)
@@ -60,7 +69,7 @@ add_feature_info(Networking NETWORKING "Networking support")
 add_feature_info(Tests BUILD_TESTS "Unit tests")
 add_feature_info(Tools BUILD_TOOLS "Mod developer tools")
 
-if(NOT BUILD_VANILLATD AND NOT BUILD_VANILLARA)
+if(NOT BUILD_VANILLATD AND NOT BUILD_VANILLARA AND NOT BUILD_TESTS)
     set(DSOUND OFF)
     set(DDRAW OFF)
     set(SDL1 OFF)
@@ -131,6 +140,7 @@ if(SDL1)
 endif()
 
 if(SDL2)
+    message("Find path is ${CMAKE_FIND_ROOT_PATH}")
     find_package(SDL2 REQUIRED)
     list(APPEND VANILLA_LIBS ${SDL2_LIBRARY})
     include_directories(${SDL2_INCLUDE_DIR})
