@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.25)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 include(FeatureSummary)
@@ -70,6 +70,8 @@ endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
+include(Compilers)
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_FIND_FRAMEWORK "LAST")
@@ -87,30 +89,6 @@ endif()
 if(WIN32)
     add_definitions(-DWIN32 -D_WINDOWS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -DNOMINMAX)
     set(COMMON_LIBS winmm)
-endif()
-
-if(NOT MSVC)
-    # GCC and Clang don't check new allocations by default while MSVC does.
-    message(STATUS "Checking whether compiler supports -fcheck-new")
-    check_cxx_compiler_flag("-Werror -fcheck-new" HAVE_CHECK_NEW)
-
-    if(HAVE_CHECK_NEW)
-        message(STATUS "yes")
-        list(APPEND VC_CXX_FLAGS -fcheck-new)
-    else()
-        message(STATUS "no")
-    endif()
-
-    # Some platforms default to an unsigned char, this fixes that.
-    message(STATUS "Checking whether compiler supports -fsigned-char")
-    check_cxx_compiler_flag("-Werror -fsigned-char" HAVE_SIGNED_CHAR)
-
-    if(HAVE_SIGNED_CHAR)
-        message(STATUS "yes")
-        list(APPEND VC_CXX_FLAGS -fsigned-char)
-    else()
-        message(STATUS "no")
-    endif()
 endif()
 
 set(VANILLA_DEFS "")
