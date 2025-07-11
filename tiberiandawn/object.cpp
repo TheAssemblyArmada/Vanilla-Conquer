@@ -940,7 +940,7 @@ bool ObjectClass::Render(bool forced)
                     cell = Adjacent_Cell(Coord_Cell(foot->Head_To_Coord()),
                                          (FacingType)((foot->Path[0] + FACING_S) & FACING_NW));
                     Map.Coord_To_Pixel(Cell_Coord(cell), oldx, oldy);
-                    for (int index = 0; index < MAX_PATH; index++) {
+                    for (int index = 0; index < CONQUER_PATH_MAX; index++) {
                         if (foot->Path[index] == FACING_NONE)
                             break;
                         cell = Adjacent_Cell(cell, foot->Path[index]);
