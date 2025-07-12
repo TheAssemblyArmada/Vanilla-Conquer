@@ -6,7 +6,7 @@ on:
 
 jobs:
   remaster_msvc:
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
     - uses: actions/checkout@v4
       with:
@@ -31,23 +31,21 @@ jobs:
         Expand-Archive $Env:TEMP\ninja-win.zip -DestinationPath $Env:TEMP\ninja
         echo "$Env:TEMP\ninja" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         ninja --version
-        
-    - name: Configure Vanilla Conquer
-      run: |
-        cmake --preset cl-remaster
-        
+
     - name: Build Vanilla Conquer
+      env:
+        VC_CXX_FLAGS: "/Zc:strictStrings;-wd4244;-wd4018;-wd4291;-wd4101;-wd4267;-wd4200"
       run: |
-        cmake --build build
+        cmake --workflow --preset remaster
 
     - name: Create archives
       shell: bash
       run: |
         mkdir artifact
-        7z a artifact/vanilla-conquer-remasterdll-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/RedAlert.dll ./build/TiberianDawn.dll
-        7z a artifact/vanilla-conquer-remasterdll-msvc-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/RedAlert.pdb ./build/TiberianDawn.pdb
-        7z a artifact/vanilla-ra-remaster-mod-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/Vanilla_RA
-        7z a artifact/vanilla-td-remaster-mod-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/Vanilla_TD
+        7z a artifact/vanilla-conquer-remasterdll-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/remaster/RelWithDebInfo/RedAlert.dll ./build/remaster/RelWithDebInfo/TiberianDawn.dll
+        7z a artifact/vanilla-conquer-remasterdll-msvc-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/remaster/RelWithDebInfo/RedAlert.pdb ./build/remaster/RelWithDebInfo/TiberianDawn.pdb
+        7z a artifact/vanilla-ra-remaster-mod-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/remaster/Vanilla_RA
+        7z a artifact/vanilla-td-remaster-mod-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/remaster/Vanilla_TD
         
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -77,11 +75,12 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   vanilla_win_msvc:
-    runs-on: windows-2019
+    runs-on: windows-2022
     strategy:
       matrix:
-        platform: [x86, amd64]
-        networking: [net, nonet]
+        preset: [release, internal, testing, nonet]
+        arch: [{win: Win32, lin: i686, cmd: x86}, {win: Win64, lin: x86_64, cmd: x64}]
+
     steps:
     - uses: actions/checkout@v4
       with:
@@ -91,7 +90,7 @@ jobs:
         
     - uses: ilammy/msvc-dev-cmd@v1.13.0
       with:
-        arch: ${{ matrix.platform }}
+        arch: ${{ matrix.arch.cmd }}
         
     - name: Set Git Info
       id: gitinfo
@@ -99,65 +98,53 @@ jobs:
       run: |
         $gitoutput = git rev-parse --short HEAD
         echo "sha_short=${gitoutput}" >> $env:GITHUB_OUTPUT
-      
-    - name: Set variables
-      id: vars
-      shell: pwsh
-      run: |
-        If ("${{ matrix.platform }}" -eq "x86") {
-          echo "oal_path=Win32" >> $env:GITHUB_OUTPUT
-          echo "sdl_path=x86" >> $env:GITHUB_OUTPUT
-          echo "arc_path=i686" >> $env:GITHUB_OUTPUT
-        } else {
-          echo "oal_path=Win64" >> $env:GITHUB_OUTPUT
-          echo "sdl_path=x64" >> $env:GITHUB_OUTPUT
-          echo "arc_path=x86_64" >> $env:GITHUB_OUTPUT
-        }
 
     - name: Install Dependencies
+      id: deps
       run: |
-        choco install openalsdk --no-progress
-        Invoke-WebRequest -Uri https://www.libsdl.org/release/SDL2-devel-2.0.12-VC.zip -OutFile $Env:TEMP\SDL2-devel.zip
+        Invoke-WebRequest -Uri https://www.libsdl.org/release/SDL2-devel-2.0.12-VC.zip -OutFile SDL2-devel.zip
         Invoke-WebRequest -Uri https://github.com/ninja-build/ninja/releases/download/v1.10.1/ninja-win.zip -OutFile $Env:TEMP\ninja-win.zip
-        Invoke-WebRequest -SkipCertificateCheck -Uri https://www.openal-soft.org/openal-binaries/openal-soft-1.21.0-bin.zip -OutFile $Env:TEMP\openal-soft-1.21.0-bin.zip
-        Expand-Archive $Env:TEMP\SDL2-devel.zip -DestinationPath $Env:TEMP
+        Invoke-WebRequest -SkipCertificateCheck -Uri https://www.openal-soft.org/openal-binaries/openal-soft-1.21.0-bin.zip -OutFile openal-soft-1.21.0-bin.zip
+        Expand-Archive SDL2-devel.zip -DestinationPath .
         Expand-Archive $Env:TEMP\ninja-win.zip -DestinationPath $Env:TEMP\ninja
-        Expand-Archive $Env:TEMP\openal-soft-1.21.0-bin.zip -DestinationPath $Env:TEMP
+        Expand-Archive openal-soft-1.21.0-bin.zip -DestinationPath .
         echo "$Env:TEMP\ninja" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         ninja --version
-        Rename-Item $Env:TEMP\openal-soft-1.21.0-bin\bin\${{ steps.vars.outputs.oal_path }}\soft_oal.dll OpenAL32.dll
-        
-    - name: Configure Vanilla Conquer
-      run: |
-        cmake --preset cl-vanilla-${{ matrix.networking }}-tests -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON "-DSDL2_ROOT_DIR=$($Env:TEMP)\SDL2-2.0.12" "-DOPENAL_ROOT=C:\Program Files (x86)\OpenAL 1.1 SDK" "-DImageMagick_magick_EXECUTABLE=$($(Get-Command magick.exe).Source)" -DImageMagick_magick_FOUND=TRUE
+        echo "magickpath=$(Split-Path -Path $(Get-Command magick).Path -Parent)" >> $env:GITHUB_OUTPUT
+        Rename-Item openal-soft-1.21.0-bin\bin\${{ matrix.arch.win }}\soft_oal.dll OpenAL32.dll
 
     - name: Build Vanilla Conquer
+      env:
+        CMAKE_FIND_ROOT_PATH: "SDL2-2.0.12;openal-soft-1.21.0-bin;${{ steps.deps.outputs.magickpath }}"
+        VC_CXX_FLAGS: "/Zc:strictStrings;-wd4244;-wd4018;-wd4291;-wd4101;-wd4267;-wd4200"
       run: |
-        cmake --build build
-
-    - name: Run unit tests
-      run: |
-        cd build
-        Copy-Item -Path "$Env:TEMP\SDL2-2.0.12\lib\${{ steps.vars.outputs.sdl_path }}\SDL2.dll" -Destination . -verbose
-        ctest -C Release
+        New-Item -Path "build/${{ matrix.preset }}/RelWithDebInfo" -ItemType Directory
+        Copy-Item -Path "SDL2-2.0.12\lib\${{ matrix.arch.cmd }}\SDL2.dll" -Destination build/${{ matrix.preset }}/RelWithDebInfo
+        cmake --workflow --preset ${{ matrix.preset }}
         
     - name: Create archives
-      if: ${{ matrix.networking == 'net' }}
+      if: ${{ matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       shell: bash
       run: |
         mkdir artifact
-        7z a artifact/vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd.exe ./build/vanillara.exe ./build/vanillamix.exe $TEMP/SDL2-2.0.12/lib/${{ steps.vars.outputs.sdl_path }}/SDL2.dll $TEMP/openal-soft-1.21.0-bin/bin/${{ steps.vars.outputs.oal_path }}/OpenAL32.dll
-        7z a artifact/vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.pdb ./build/vanillara.pdb ./build/vanillamix.pdb
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.exe ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.exe ./SDL2-2.0.12/lib/${{ matrix.arch.cmd }}/SDL2.dll ./openal-soft-1.21.0-bin/bin/${{ matrix.arch.win }}/OpenAL32.dll
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.pdb ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.pdb
 
+    - name: Add internal tools to archive
+      if: ${{ matrix.preset == 'internal' }}
+      run: |
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.exe
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.pdb
+    
     - name: Upload artifact
-      if: ${{ matrix.networking == 'net' }}
+      if: ${{ matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       uses: actions/upload-artifact@v4
       with:
-        name: vanilla-conquer-win-msvc-${{ steps.vars.outputs.arc_path }}
+        name: vanilla-conquer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}
         path: artifact
         
     - name: Upload development release
-      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' && matrix.networking == 'net' }}
+      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' && matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       uses: softprops/action-gh-release@v2
       with:
         name: Development Build
@@ -169,7 +156,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload tagged release
-      if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.networking == 'net' }}
+      if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       uses: softprops/action-gh-release@v2
       with:
         files: |

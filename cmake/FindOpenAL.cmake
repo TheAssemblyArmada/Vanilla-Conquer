@@ -61,6 +61,7 @@ find_path(OPENAL_INCLUDE_DIR al.h
     ENV OPENALDIR
   PATH_SUFFIXES include/AL include/OpenAL include AL OpenAL
   PATHS
+  /
   ${OPENAL_ROOT}
   ~/Library/Frameworks
   /Library/Frameworks
@@ -80,6 +81,7 @@ find_library(OPENAL_LIBRARY
   ENV OPENALDIR
   PATH_SUFFIXES libx32 lib64 lib libs64 libs ${_OpenAL_ARCH_DIR}
   PATHS
+  /
   ${OPENAL_ROOT}
   ~/Library/Frameworks
   /Library/Frameworks

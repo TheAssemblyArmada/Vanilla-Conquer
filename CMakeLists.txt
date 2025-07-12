@@ -1,4 +1,13 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.25)
+
+# Allow passing search paths from environment.
+foreach(_path_elem $ENV{CMAKE_FIND_ROOT_PATH})
+    if(NOT IS_ABSOLUTE ${_path_elem})
+        list(APPEND CMAKE_FIND_ROOT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${_path_elem}")
+    else()     
+        list(APPEND CMAKE_FIND_ROOT_PATH "${_path_elem}")
+    endif()
+endforeach()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 include(FeatureSummary)
@@ -60,7 +69,7 @@ add_feature_info(Networking NETWORKING "Networking support")
 add_feature_info(Tests BUILD_TESTS "Unit tests")
 add_feature_info(Tools BUILD_TOOLS "Mod developer tools")
 
-if(NOT BUILD_VANILLATD AND NOT BUILD_VANILLARA)
+if(NOT BUILD_VANILLATD AND NOT BUILD_VANILLARA AND NOT BUILD_TESTS)
     set(DSOUND OFF)
     set(DDRAW OFF)
     set(SDL1 OFF)
@@ -69,6 +78,8 @@ if(NOT BUILD_VANILLATD AND NOT BUILD_VANILLARA)
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+include(Compilers)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -87,30 +98,6 @@ endif()
 if(WIN32)
     add_definitions(-DWIN32 -D_WINDOWS -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -DNOMINMAX)
     set(COMMON_LIBS winmm)
-endif()
-
-if(NOT MSVC)
-    # GCC and Clang don't check new allocations by default while MSVC does.
-    message(STATUS "Checking whether compiler supports -fcheck-new")
-    check_cxx_compiler_flag("-Werror -fcheck-new" HAVE_CHECK_NEW)
-
-    if(HAVE_CHECK_NEW)
-        message(STATUS "yes")
-        list(APPEND VC_CXX_FLAGS -fcheck-new)
-    else()
-        message(STATUS "no")
-    endif()
-
-    # Some platforms default to an unsigned char, this fixes that.
-    message(STATUS "Checking whether compiler supports -fsigned-char")
-    check_cxx_compiler_flag("-Werror -fsigned-char" HAVE_SIGNED_CHAR)
-
-    if(HAVE_SIGNED_CHAR)
-        message(STATUS "yes")
-        list(APPEND VC_CXX_FLAGS -fsigned-char)
-    else()
-        message(STATUS "no")
-    endif()
 endif()
 
 set(VANILLA_DEFS "")
@@ -153,6 +140,7 @@ if(SDL1)
 endif()
 
 if(SDL2)
+    message("Find path is ${CMAKE_FIND_ROOT_PATH}")
     find_package(SDL2 REQUIRED)
     list(APPEND VANILLA_LIBS ${SDL2_LIBRARY})
     include_directories(${SDL2_INCLUDE_DIR})

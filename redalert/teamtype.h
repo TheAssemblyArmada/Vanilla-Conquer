@@ -144,6 +144,9 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void operator delete(void*, void*)
+    {
+    }
 
     /*
     **	Initialization: clears all team types in preparation for new scenario

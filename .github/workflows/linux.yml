@@ -21,9 +21,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        platform: [clang, gcc]
-        networking: [net, nonet]
-        os: [ubuntu-22.04]
+        compiler: [{cc: clang, cxx: clang++}, {cc: gcc, cxx: g++}]
+        preset: [release, internal, testing, nonet]
+        os: [ubuntu-22.04, ubuntu-24.04]
 
     steps:
     - uses: actions/checkout@v4
@@ -35,71 +35,57 @@ jobs:
     - name: Set Git Info
       id: gitinfo
       run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-      
-    - name: Set variables
-      id: vars
-      run: |
-        if [ "${{ matrix.platform }}" = "clang" ]
-        then
-          echo "cc=clang" >> $GITHUB_OUTPUT
-          echo "cxx=clang++" >> $GITHUB_OUTPUT
-        else
-          echo "cc=gcc" >> $GITHUB_OUTPUT
-          echo "cxx=g++" >> $GITHUB_OUTPUT
-        fi
 
     - name: Install dependencies
       run: |
         sudo apt-get update -qq > /dev/null
         sudo apt-get install -qq -y clang-format-14 libsdl2-dev libopenal-dev ninja-build > /dev/null
-
-    - name: Configure Vanilla Conquer
+    
+    - name: Build Vanilla Conquer
       env:
-          CC: ${{ steps.vars.outputs.cc }}
-          CXX: ${{ steps.vars.outputs.cxx }}
+        CC: ${{ matrix.compiler.cc }}
+        CXX: ${{ matrix.compiler.cxx }}
+        VC_CXX_FLAGS: "-w;-Wwrite-strings;-Werror=write-strings"
       run: |
-        cmake --preset ${{ matrix.platform }}-vanilla-${{ matrix.networking }}-tests
+        cmake --workflow --preset ${{ matrix.preset }}
 
     - name: Check formatting
-      if: ${{ matrix.platform }} == clang
+      if: ${{ matrix.compiler.cc == 'clang' && matrix.preset == 'testing'}} 
       run: |
-        cmake --build build --target format
+        cmake --build build/testing --target format
         git diff --exit-code
         
-    - name: Build Vanilla Conquer
-      run: |
-        cmake --build build
-        cp ./build/vanillatd ./build/vanillatd.dbg
-        cp ./build/vanillara ./build/vanillara.dbg
-        cp ./build/vanillamix ./build/vanillamix.dbg
-        strip --strip-all ./build/vanillatd
-        strip --strip-all ./build/vanillara
-        strip --strip-all ./build/vanillamix
-        objcopy --add-gnu-debuglink=./build/vanillatd.dbg ./build/vanillatd
-        objcopy --add-gnu-debuglink=./build/vanillara.dbg ./build/vanillara
-        objcopy --add-gnu-debuglink=./build/vanillamix.dbg ./build/vanillamix
-
-    - name: Run unit tests
-      run: |
-        cd build
-        ctest
-
     - name: Create archives
-      if: ${{ matrix.networking == 'net' }}
+      if: ${{ matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       run: |
+        cp ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.dbg
+        cp ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.dbg
+        strip --strip-all ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd
+        strip --strip-all ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara
+        objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd
+        objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara
         mkdir artifact
-        7z a artifact/vanilla-conquer-linux-${{ matrix.platform }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/vanillatd ./build/vanillara ./build/vanillamix
-        7z a artifact/vanilla-conquer-linux-${{ matrix.platform }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/vanillatd.dbg ./build/vanillara.dbg ./build/vanillamix.dbg
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.dbg
 
+    - name: Add internal tools to archive
+      if: ${{ matrix.preset == 'internal' }}
+      run: |
+        cp ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dbg
+        objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix
+        strip --strip-all ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dbg
+    
     - name: Upload artifact
-      if: ${{ matrix.networking == 'net' }}
+      if: ${{ matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       uses: actions/upload-artifact@v4
       with:
-        name: vanilla-conquer-linux-${{ matrix.platform }}-${{ matrix.os }}-x86_64
+        name: vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-x86_64
         path: artifact
         
     - name: Upload development release
-      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' && matrix.networking == 'net' }}
+      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' && matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       uses: softprops/action-gh-release@v2
       with:
         name: Development Build
@@ -111,7 +97,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload tagged release
-      if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.networking == 'net' }}
+      if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       uses: softprops/action-gh-release@v2
       with:
         files: |
