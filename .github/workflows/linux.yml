@@ -10,7 +10,7 @@ jobs:
     steps:
     - name: Create Development release
       if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' }}
-      uses: "0xDylan/action-auto-releases-n20@v1.1"
+      uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
