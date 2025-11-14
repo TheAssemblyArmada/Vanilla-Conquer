@@ -78,6 +78,7 @@ find_library(SDL2_LIBRARY
     HINTS
     ${SDL2_LIB_HINTS}
     PATHS
+    /
     ${SDL2_ROOT_DIR}
     ENV SDL2DIR
     PATH_SUFFIXES lib SDL2 ${SDL2_LIB_PATH_SUFFIX})
@@ -113,6 +114,7 @@ find_path(SDL2_INCLUDE_DIR
     HINTS
     ${SDL2_INCLUDE_HINTS}
     PATHS
+    /
     ${SDL2_ROOT_DIR}
     ENV SDL2DIR
     PATH_SUFFIXES include include/sdl2 include/SDL2 SDL2)
@@ -125,6 +127,7 @@ if(WIN32 AND SDL2_LIBRARY)
         HINTS
         ${SDL2_LIB_HINTS}
         PATHS
+        /
         ${SDL2_ROOT_DIR}
         ENV SDL2DIR
         PATH_SUFFIXES bin lib ${SDL2_LIB_PATH_SUFFIX})
@@ -137,6 +140,7 @@ if(WIN32 OR ANDROID OR IOS OR (APPLE AND NOT _sdl2_framework))
         NAMES
         SDL2main
         PATHS
+        /
         ${SDL2_ROOT_DIR}
         ENV SDL2DIR
         PATH_SUFFIXES lib ${SDL2_LIB_PATH_SUFFIX})

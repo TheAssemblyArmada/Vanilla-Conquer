@@ -572,7 +572,7 @@ bool WinsockInterfaceClass::Set_Socket_Options(void)
     if (err == INVALID_SOCKET) {
         char out[128];
         sprintf(out, "TS: Failed to set socket option SO_RCVBUF - error code %d.\n", LastSocketError);
-        fprintf(stderr, out);
+        fprintf(stderr, "%s", out);
         assert(err != INVALID_SOCKET);
     }
 
@@ -583,7 +583,7 @@ bool WinsockInterfaceClass::Set_Socket_Options(void)
     if (err == INVALID_SOCKET) {
         char out[128];
         sprintf(out, "TS: Failed to set socket option SO_SNDBUF - error code %d.\n", LastSocketError);
-        fprintf(stderr, out);
+        fprintf(stderr, "%s", out);
         assert(err != INVALID_SOCKET);
     }
 

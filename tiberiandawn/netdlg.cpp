@@ -4076,7 +4076,7 @@ void Net_Reconnect_Dialog(int reconn, int fresh, int oldest_index, unsigned int 
             id = Ipx.Connection_ID(oldest_index);
             sprintf(buf1, Text_String(TXT_RECONNECTING_TO), Ipx.Connection_Name(id));
         } else {
-            sprintf(buf1, Text_String(TXT_WAITING_FOR_CONNECTIONS));
+            sprintf(buf1, "%s", Text_String(TXT_WAITING_FOR_CONNECTIONS));
         }
         sprintf(buf2, Text_String(TXT_TIME_ALLOWED), timeval + 1);
         buf3 = Text_String(TXT_PRESS_ESC);

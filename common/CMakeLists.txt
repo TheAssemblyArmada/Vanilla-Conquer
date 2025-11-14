@@ -171,6 +171,7 @@ target_link_libraries(common PUBLIC ${COMMON_LIBS})
 target_include_directories(common PUBLIC .)
 target_compile_definitions(common PRIVATE FIXIT_FAST_LOAD $<$<CONFIG:Debug>:_DEBUG>)
 target_compile_options(common PUBLIC ${VC_CXX_FLAGS})
+target_compile_features(common PUBLIC cxx_std_11)
 # Make build check state of git to check for uncommitted changes.
 add_dependencies(common check_git)
 
@@ -189,7 +190,7 @@ if(BUILD_REMASTERTD OR BUILD_REMASTERRA)
 endif()
 
 # These options currently require directx components from the aug 2007 SDK.
-if(BUILD_VANILLATD OR BUILD_VANILLARA)
+if(BUILD_VANILLATD OR BUILD_VANILLARA OR BUILD_TESTS)
     add_library(commonv STATIC ${COMMONV_SRC})
     target_compile_definitions(commonv PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS})
     target_link_libraries(commonv PUBLIC common ${VANILLA_LIBS})
