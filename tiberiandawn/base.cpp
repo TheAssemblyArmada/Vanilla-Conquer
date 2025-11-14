@@ -170,18 +170,6 @@ void BaseClass::Read_INI(CCINIClass& ini)
         */
         node.Coord = atol(strtok(NULL, ","));
 
-#ifdef MEGAMAPS
-        if (Map.MapBinaryVersion != MAP_VERSION_MEGA) {
-            int x = Coord_X(node.Coord);
-            int y = Coord_Y(node.Coord);
-            x >>= 8;
-            y >>= 8;
-            CELL cell = XY_Cell(x, y);
-            cell = Confine_Old_Cell(cell);
-            node.Coord = Cell_Coord(cell);
-        }
-#endif
-
         /*
         ** Add this node to the Base's list
         */
