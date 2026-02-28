@@ -18,6 +18,8 @@
 #include "sound.h"
 #include "soundio_imp.h"
 #include <algorithm>
+#include <atomic>
+#include <stdint.h>
 #include <stdlib.h>
 
 enum
@@ -202,14 +204,20 @@ static void* FileStreamBuffer = nullptr;
 bool StreamLowImpact = false;
 static bool StartingFileStream = false;
 static bool volatile AudioDone = false;
+static std::atomic_flag SoundCallbackBusy = ATOMIC_FLAG_INIT;
+static std::atomic_flag MaintenanceCallbackBusy = ATOMIC_FLAG_INIT;
+static std::atomic<bool> MaintenanceCallbackPending(false);
 extern bool GameInFocus;
 static uint8_t ChunkBuffer[BUFFER_CHUNK_SIZE];
 
 bool Any_Locked(); // From each games winstub.cpp at the moment.
 static int Get_Free_Sample_Handle(int priority);
 static void Maintenance_Callback();
+static void Maintenance_Callback_Impl();
 static int Play_Sample_Handle(const void* sample, int priority, int volume, signed short panloc, int id);
 static int Sample_Read(int fh, void* buffer, int size);
+static bool Is_Pointer_In_Range(const void* ptr, const void* base, size_t len);
+static bool Is_Valid_Copy_Source(const SampleTrackerType* st, const void* ptr, int requested);
 
 static void Init_Locked_Data()
 {
@@ -226,15 +234,18 @@ static void Init_Locked_Data()
 static int Simple_Copy(void** source, int* ssize, void** alternate, int* altsize, void** dest, int size)
 {
     int out = 0;
+    if (!source || !ssize || !alternate || !altsize || !dest || !*dest || size <= 0) {
+        return 0;
+    }
 
-    if (*ssize == 0) {
+    if (*ssize <= 0) {
         *source = *alternate;
-        *ssize = *altsize;
+        *ssize = std::max(0, *altsize);
         *alternate = nullptr;
         *altsize = 0;
     }
 
-    if (*source == nullptr || *ssize == 0) {
+    if (*source == nullptr || *ssize <= 0) {
         return out;
     }
 
@@ -244,7 +255,11 @@ static int Simple_Copy(void** source, int* ssize, void** alternate, int* altsize
         s = *ssize;
     }
 
-    memcpy(*dest, *source, s);
+    if (s <= 0) {
+        return out;
+    }
+
+    memcpy(*dest, *source, (size_t)s);
     *source = static_cast<char*>(*source) + s;
     *ssize -= s;
     *dest = static_cast<char*>(*dest) + s;
@@ -264,6 +279,47 @@ static int Simple_Copy(void** source, int* ssize, void** alternate, int* altsize
     return out;
 }
 
+static bool Is_Pointer_In_Range(const void* ptr, const void* base, size_t len)
+{
+    if (!ptr || !base || len == 0) {
+        return false;
+    }
+    uintptr_t p = (uintptr_t)ptr;
+    uintptr_t b = (uintptr_t)base;
+    return p >= b && p < (b + len);
+}
+
+static bool Is_Valid_Copy_Source(const SampleTrackerType* st, const void* ptr, int requested)
+{
+    if (!st || !ptr || requested <= 0) {
+        return false;
+    }
+
+    // Reject obviously bad sizes early.
+    if (requested > (BUFFER_CHUNK_SIZE * 2) && requested > LockedData.StreamBufferSize) {
+        return false;
+    }
+
+    if (st->Original && st->OriginalSize > (int)sizeof(AUDHeaderType)) {
+        const char* base = static_cast<const char*>(st->Original) + sizeof(AUDHeaderType);
+        size_t len = (size_t)(st->OriginalSize - (int)sizeof(AUDHeaderType));
+        if (Is_Pointer_In_Range(ptr, base, len)) {
+            size_t remain = (size_t)((base + len) - static_cast<const char*>(ptr));
+            return remain >= (size_t)requested;
+        }
+    }
+
+    if (st->FileBuffer && LockedData.StreamBufferSize > 0 && LockedData.StreamBufferCount > 0) {
+        size_t len = (size_t)LockedData.StreamBufferSize * (size_t)LockedData.StreamBufferCount;
+        if (Is_Pointer_In_Range(ptr, st->FileBuffer, len)) {
+            size_t remain = (size_t)((static_cast<const char*>(st->FileBuffer) + len) - static_cast<const char*>(ptr));
+            return remain >= (size_t)requested;
+        }
+    }
+
+    return false;
+}
+
 static int Sample_Copy(SampleTrackerType* st,
                        void** source,
                        int* ssize,
@@ -276,6 +332,17 @@ static int Sample_Copy(SampleTrackerType* st,
                        int16_t* trailersize)
 {
     int datasize = 0;
+    if (!st || !source || !ssize || !alternate || !altsize || !dest || size <= 0) {
+        return 0;
+    }
+    if (*ssize > 0 && *source && !Is_Valid_Copy_Source(st, *source, std::min(*ssize, size))) {
+        *source = nullptr;
+        *ssize = 0;
+    }
+    if (*altsize > 0 && *alternate && !Is_Valid_Copy_Source(st, *alternate, std::min(*altsize, size))) {
+        *alternate = nullptr;
+        *altsize = 0;
+    }
 
     // There is no compression or it doesn't match any of the supported compressions so we just copy the data over.
     if (scomp == SCOMP_NONE || (scomp != SCOMP_WESTWOOD && scomp != SCOMP_SOS)) {
@@ -327,6 +394,9 @@ static int Sample_Copy(SampleTrackerType* st,
             }
         } else {
             // Else we need to decompress it.
+            if (fsize > UNCOMP_BUFFER_SIZE) {
+                break;
+            }
             void* uptr = LockedData.UncompBuffer;
 
             if (Simple_Copy(source, ssize, alternate, altsize, &uptr, fsize) < fsize) {
@@ -552,6 +622,28 @@ int File_Stream_Sample_Vol(char const* filename, int volume, bool real_time_star
 
 void Sound_Callback()
 {
+    static int disable_callback = -1;
+    static bool traced_mode = false;
+    if (disable_callback < 0) {
+        const char* env = getenv("VANILLATD_DISABLE_AUDIO_CALLBACK");
+        disable_callback = (env && env[0] == '1') ? 1 : 0;
+    }
+    if (!traced_mode) {
+        FILE* f = fopen("/tmp/vanillatd_port_trace.log", "a");
+        if (f) {
+            fprintf(f, "[audio] Sound_Callback mode: %s\n", disable_callback ? "disabled" : "enabled");
+            fclose(f);
+        }
+        traced_mode = true;
+    }
+    if (disable_callback) {
+        return;
+    }
+
+    if (SoundCallbackBusy.test_and_set(std::memory_order_acquire)) {
+        return;
+    }
+
     if (!AudioDone && LockedData.DigiHandle != INVALID_AUDIO_HANDLE) {
         Maintenance_Callback();
 
@@ -600,9 +692,28 @@ void Sound_Callback()
             }
         }
     }
+
+    SoundCallbackBusy.clear(std::memory_order_release);
 }
 
 static void Maintenance_Callback()
+{
+    // Prevent recursive maintenance passes from mutating tracker source/queue state mid-copy.
+    // Nested calls are coalesced and replayed once the active pass finishes.
+    if (MaintenanceCallbackBusy.test_and_set(std::memory_order_acquire)) {
+        MaintenanceCallbackPending.store(true, std::memory_order_release);
+        return;
+    }
+
+    do {
+        MaintenanceCallbackPending.store(false, std::memory_order_relaxed);
+        Maintenance_Callback_Impl();
+    } while (MaintenanceCallbackPending.exchange(false, std::memory_order_acquire));
+
+    MaintenanceCallbackBusy.clear(std::memory_order_release);
+}
+
+static void Maintenance_Callback_Impl()
 {
     if (AudioDone) {
         return;
@@ -725,6 +836,13 @@ static int Sample_Read(int fh, void* buffer, int size)
 
     AUDHeaderType header;
     int actual_bytes_read = Read_File(fh, &header, sizeof(AUDHeaderType));
+    if (actual_bytes_read != (int)sizeof(AUDHeaderType)) {
+        return 0;
+    }
+    header.Rate = le16toh(header.Rate);
+    header.Size = le32toh(header.Size);
+    header.UncompSize = le32toh(header.UncompSize);
+
     int to_read = std::min<unsigned>(size - sizeof(AUDHeaderType), header.Size);
 
     actual_bytes_read += Read_File(fh, static_cast<char*>(buffer) + sizeof(AUDHeaderType), to_read);
