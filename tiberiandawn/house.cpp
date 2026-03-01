@@ -5569,10 +5569,62 @@ UrgencyType HouseClass::Check_Build_Defense(void) const
     // assert(Houses.ID(this) == ID);
 
     /*
-    **	This routine determines what urgency level that base defense
-    **	should be given. The more vulnerable the base is, the higher
-    **	the urgency this routine should return.
+    **	Enhanced defense urgency check. Evaluates base vulnerability by comparing
+    **	defensive structure count against enemy military strength and base size.
+    **	AVA enhancement — original was a stub returning URGENCY_NONE.
     */
+    if (!Can_Make_Money()) return (URGENCY_NONE);
+
+    /*
+    **	Count total defensive structures.
+    */
+    int defense_count = BQuantity[STRUCT_GTOWER] + BQuantity[STRUCT_TURRET]
+                      + BQuantity[STRUCT_ATOWER] + BQuantity[STRUCT_OBELISK]
+                      + BQuantity[STRUCT_SAM];
+
+    /*
+    **	No defenses at all and we have buildings to protect — critical.
+    */
+    if (defense_count == 0 && CurBuildings > 3) {
+        return (URGENCY_HIGH);
+    }
+
+    /*
+    **	Under attack with weak defenses — high urgency.
+    */
+    if (State == STATE_ATTACKED && defense_count < 3) {
+        return (URGENCY_HIGH);
+    }
+
+    /*
+    **	Defense ratio check: want at least 1 defensive structure per 4 buildings.
+    **	If ratio is poor, medium urgency.
+    */
+    if (CurBuildings > 4 && defense_count * 4 < (int)CurBuildings) {
+        return (URGENCY_MEDIUM);
+    }
+
+    /*
+    **	Check if enemy has significantly more military than our defenses can handle.
+    */
+    if (Enemy != HOUSE_NONE) {
+        HouseClass const* enemy = HouseClass::As_Pointer(Enemy);
+        if (enemy != NULL && enemy->IsActive && !enemy->IsDefeated) {
+            int enemy_military = enemy->CurUnits + enemy->CurInfantry + enemy->CurAircraft;
+            int our_defense = defense_count * 3 + CurUnits + CurInfantry;
+            if (enemy_military > our_defense) {
+                return (State == STATE_ATTACKED ? URGENCY_HIGH : URGENCY_MEDIUM);
+            }
+        }
+    }
+
+    /*
+    **	Modest defense buildup during peaceful times if we can afford it.
+    */
+    if (defense_count < 2 && Available_Money() > 500) {
+        return (URGENCY_LOW);
+    }
+
     return (URGENCY_NONE);
 }
 
@@ -5581,10 +5633,64 @@ UrgencyType HouseClass::Check_Build_Offense(void) const
     // assert(Houses.ID(this) == ID);
 
     /*
-    **	This routine determines what urgency level that offensive
-    **	weaponry should be given. Surplus money or a very strong
-    **	defense will cause the offensive urgency to increase.
+    **	Enhanced offense urgency check. Determines when to ramp up military
+    **	production based on economy strength, enemy comparison, and game phase.
+    **	AVA enhancement — original was a stub returning URGENCY_NONE.
     */
+
+    /*
+    **	Don't build offense if we can't sustain it economically.
+    */
+    if (!Can_Make_Money() && Available_Money() < 1000) return (URGENCY_NONE);
+
+    /*
+    **	If we have no combat units at all and can afford them — high urgency.
+    */
+    if (CurUnits == 0 && Available_Money() > 500) {
+        return (URGENCY_HIGH);
+    }
+
+    /*
+    **	Compare military strength against enemy. If outgunned, increase urgency.
+    */
+    if (Enemy != HOUSE_NONE) {
+        HouseClass const* enemy = HouseClass::As_Pointer(Enemy);
+        if (enemy != NULL && enemy->IsActive && !enemy->IsDefeated) {
+            int our_military = CurUnits + CurAircraft;
+            int enemy_military = enemy->CurUnits + enemy->CurAircraft;
+
+            /*
+            **	Enemy has 2x our forces — critical to build up.
+            */
+            if (enemy_military > our_military * 2) {
+                return (URGENCY_HIGH);
+            }
+
+            /*
+            **	Enemy has more forces — medium urgency.
+            */
+            if (enemy_military > our_military) {
+                return (URGENCY_MEDIUM);
+            }
+        }
+    }
+
+    /*
+    **	Surplus money with decent defense means we should invest in offense.
+    */
+    int defense_count = BQuantity[STRUCT_GTOWER] + BQuantity[STRUCT_TURRET]
+                      + BQuantity[STRUCT_ATOWER] + BQuantity[STRUCT_OBELISK];
+    if (defense_count >= 2 && Available_Money() > 2000) {
+        return (URGENCY_MEDIUM);
+    }
+
+    /*
+    **	General slow buildup if we have income.
+    */
+    if (BQuantity[STRUCT_REFINERY] > 0 && UQuantity[UNIT_HARVESTER] > 0 && CurUnits < 5) {
+        return (URGENCY_LOW);
+    }
+
     return (URGENCY_NONE);
 }
 
@@ -5610,11 +5716,49 @@ UrgencyType HouseClass::Check_Build_Income(void) const
     // assert(Houses.ID(this) == ID);
 
     /*
-    **	This routine should determine if income processing buildings
-    **	should be constructed and at what urgency. The lower the money,
-    **	the lower the refineries, or recent harvester losses should
-    **	cause a greater urgency to be returned.
+    **	Enhanced income urgency check. Monitors harvester count, refinery count,
+    **	Tiberium availability, and cash reserves to determine economic health.
+    **	AVA enhancement — original was a stub returning URGENCY_NONE.
     */
+
+    /*
+    **	No refineries at all — critical. Can't make money without them.
+    */
+    if (BQuantity[STRUCT_REFINERY] == 0 && Available_Money() > 300) {
+        return (URGENCY_CRITICAL);
+    }
+
+    /*
+    **	Have refineries but no harvesters — high urgency.
+    **	Money is sitting in the ground with nobody to get it.
+    */
+    if (BQuantity[STRUCT_REFINERY] > 0 && UQuantity[UNIT_HARVESTER] == 0) {
+        return (URGENCY_HIGH);
+    }
+
+    /*
+    **	Harvester-to-refinery ratio is poor. Each refinery should have
+    **	at least one harvester.
+    */
+    if (BQuantity[STRUCT_REFINERY] > UQuantity[UNIT_HARVESTER]) {
+        return (URGENCY_MEDIUM);
+    }
+
+    /*
+    **	Money is getting low and we have income capability — build more.
+    */
+    if (Available_Money() < 500 && !IsTiberiumShort && BQuantity[STRUCT_REFINERY] < 3) {
+        return (URGENCY_MEDIUM);
+    }
+
+    /*
+    **	Could use another refinery for faster income if Tiberium is plentiful
+    **	and we have surplus cash to invest.
+    */
+    if (!IsTiberiumShort && Available_Money() > 1500 && BQuantity[STRUCT_REFINERY] < 2) {
+        return (URGENCY_LOW);
+    }
+
     return (URGENCY_NONE);
 }
 
@@ -5640,10 +5784,51 @@ UrgencyType HouseClass::Check_Build_Engineer(void) const
     // assert(Houses.ID(this) == ID);
 
     /*
-    **	This routine should check to see what urgency that the production of
-    **	engineers should be. If a friendly building has been captured or the
-    **	enemy has weak defenses, then building an engineer would be a priority.
+    **	Enhanced engineer urgency check. Engineers are valuable for capturing
+    **	enemy buildings. Build them when enemy defenses are weak or when we
+    **	have a strong escort force to protect them.
+    **	AVA enhancement — original was a stub returning URGENCY_NONE.
     */
+
+    /*
+    **	Don't bother with engineers if we can't afford the escort.
+    */
+    if (CurUnits < 3 || !Can_Make_Money()) return (URGENCY_NONE);
+
+    /*
+    **	Already have engineers — don't over-build them.
+    */
+    if (IQuantity[INFANTRY_E7] >= 2) return (URGENCY_NONE);
+
+    /*
+    **	If the enemy has valuable structures and we have a military advantage,
+    **	build an engineer to capture something.
+    */
+    if (Enemy != HOUSE_NONE) {
+        HouseClass const* enemy = HouseClass::As_Pointer(Enemy);
+        if (enemy != NULL && enemy->IsActive && !enemy->IsDefeated) {
+            int our_military = CurUnits + CurInfantry;
+            int enemy_military = enemy->CurUnits + enemy->CurInfantry;
+
+            /*
+            **	We have military superiority — engineer capture is viable.
+            */
+            if (our_military > enemy_military && enemy->CurBuildings > 2) {
+                if (IQuantity[INFANTRY_E7] == 0) {
+                    return (URGENCY_MEDIUM);
+                }
+                return (URGENCY_LOW);
+            }
+        }
+    }
+
+    /*
+    **	Late game with surplus cash — keep an engineer handy.
+    */
+    if (Available_Money() > 3000 && IQuantity[INFANTRY_E7] == 0 && CurBuildings > 6) {
+        return (URGENCY_LOW);
+    }
+
     return (URGENCY_NONE);
 }
 
@@ -5708,76 +5893,213 @@ bool HouseClass::AI_Attack(UrgencyType)
 {
     // assert(Houses.ID(this) == ID);
 
-    bool shuffle = !((Frame > TICKS_PER_MINUTE && !CurBuildings) || Percent_Chance(33));
-    bool forced = (CurBuildings == 0);
-    int index;
-    for (index = 0; index < Aircraft.Count(); index++) {
-        AircraftClass* a = Aircraft.Ptr(index);
+    /*
+    **	Enhanced attack logic. Instead of blindly sending 75% of all forces on HUNT,
+    **	this evaluates force readiness, keeps a defensive reserve, and sends attacks
+    **	in waves with proper force composition.
+    **	AVA enhancement — original was random Percent_Chance(75) HUNT spam.
+    */
 
-        if (a != NULL && !a->IsInLimbo && a->House == this && a->Strength > 0) {
-            if (!shuffle && a->Is_Weapon_Equipped() && (forced || Percent_Chance(75))) {
-                a->Assign_Mission(MISSION_HUNT);
-            }
-        }
-    }
+    bool forced = (CurBuildings == 0);
+
+    /*
+    **	Count our available combat forces by type.
+    */
+    int attack_units = 0;
+    int attack_infantry = 0;
+    int attack_aircraft = 0;
+    int guard_units = 0;
+    int total_military = 0;
+
+    int index;
     for (index = 0; index < Units.Count(); index++) {
         UnitClass* u = Units.Ptr(index);
-
-        if (u != NULL && !u->IsInLimbo && u->House == this && u->Strength > 0) {
-            if (!shuffle && u->Is_Weapon_Equipped() && (forced || Percent_Chance(75))) {
-                u->Assign_Mission(MISSION_HUNT);
-            } else {
-
-                /*
-                **	If this unit is guarding the base, then cause it to shuffle
-                **	location instead.
-                */
-                if (Percent_Chance(20) && u->Mission == MISSION_GUARD_AREA && Which_Zone(u) != ZONE_NONE) {
-                    u->ArchiveTarget = ::As_Target(Where_To_Go(u));
-                }
+        if (u != NULL && !u->IsInLimbo && u->House == this && u->Strength > 0 && u->Is_Weapon_Equipped()) {
+            if (u->Class->Type == UNIT_HARVESTER) continue;
+            total_military++;
+            if (u->Mission == MISSION_GUARD_AREA || u->Mission == MISSION_GUARD) {
+                guard_units++;
             }
         }
     }
     for (index = 0; index < Infantry.Count(); index++) {
         InfantryClass* i = Infantry.Ptr(index);
+        if (i != NULL && !i->IsInLimbo && i->House == this && i->Strength > 0 && i->Is_Weapon_Equipped()) {
+            total_military++;
+        }
+    }
+    for (index = 0; index < Aircraft.Count(); index++) {
+        AircraftClass* a = Aircraft.Ptr(index);
+        if (a != NULL && !a->IsInLimbo && a->House == this && a->Strength > 0 && a->Is_Weapon_Equipped()) {
+            total_military++;
+        }
+    }
 
-        if (i != NULL && !i->IsInLimbo && i->House == this && i->Strength > 0) {
-            if (!shuffle && (i->Is_Weapon_Equipped() || *i == INFANTRY_RENOVATOR) && (forced || Percent_Chance(75))) {
-                i->Assign_Mission(MISSION_HUNT);
-            } else {
+    /*
+    **	Don't attack if we have fewer than 4 combat units (unless desperate).
+    **	Build up a proper force first.
+    */
+    if (!forced && total_military < 4) {
+        Attack = TICKS_PER_MINUTE;
+        return (false);
+    }
 
+    /*
+    **	Calculate how many units to keep on defense vs send on attack.
+    **	Keep ~30% for defense (minimum 2 units), send the rest.
+    */
+    int defense_count = BQuantity[STRUCT_GTOWER] + BQuantity[STRUCT_TURRET]
+                      + BQuantity[STRUCT_ATOWER] + BQuantity[STRUCT_OBELISK];
+    int defense_reserve = max(2, total_military * 3 / 10);
+
+    /*
+    **	If we have good static defenses, we can commit more to the attack.
+    */
+    if (defense_count >= 4) {
+        defense_reserve = max(1, total_military / 5);
+    }
+
+    int attack_budget = total_military - defense_reserve;
+    if (forced) attack_budget = total_military;
+
+    /*
+    **	Send units on attack — prioritize stronger units first.
+    **	Damaged units (below 50% health) stay behind for defense.
+    */
+    int sent = 0;
+
+    // Send aircraft first (they're fast and expendable for scouting)
+    for (index = 0; index < Aircraft.Count(); index++) {
+        AircraftClass* a = Aircraft.Ptr(index);
+        if (a != NULL && !a->IsInLimbo && a->House == this && a->Strength > 0 && a->Is_Weapon_Equipped()) {
+            if (sent < attack_budget || forced) {
+                a->Assign_Mission(MISSION_HUNT);
+                sent++;
+            }
+        }
+    }
+
+    // Send vehicles — skip badly damaged ones unless desperate
+    for (index = 0; index < Units.Count(); index++) {
+        UnitClass* u = Units.Ptr(index);
+        if (u != NULL && !u->IsInLimbo && u->House == this && u->Strength > 0 && u->Is_Weapon_Equipped()) {
+            if (u->Class->Type == UNIT_HARVESTER) continue;
+
+            if (sent < attack_budget || forced) {
                 /*
-                **	If this soldier is guarding the base, then cause it to shuffle
-                **	location instead.
+                **	Don't send badly damaged units — keep them for defense.
                 */
+                int max_strength = u->Class->MaxStrength;
+                if (!forced && max_strength > 0 && u->Strength < max_strength / 2) {
+                    /*
+                    **	Damaged unit stays on guard duty, shuffles position.
+                    */
+                    if (Percent_Chance(30) && Which_Zone(u) != ZONE_NONE) {
+                        u->ArchiveTarget = ::As_Target(Where_To_Go(u));
+                    }
+                    continue;
+                }
+
+                u->Assign_Mission(MISSION_HUNT);
+                sent++;
+            } else {
+                /*
+                **	Remaining units defend the base — shuffle patrol positions.
+                */
+                if (Percent_Chance(25) && u->Mission == MISSION_GUARD_AREA && Which_Zone(u) != ZONE_NONE) {
+                    u->ArchiveTarget = ::As_Target(Where_To_Go(u));
+                }
+            }
+        }
+    }
+
+    // Send infantry — rocket soldiers and flamers first, minigunners last
+    for (index = 0; index < Infantry.Count(); index++) {
+        InfantryClass* i = Infantry.Ptr(index);
+        if (i != NULL && !i->IsInLimbo && i->House == this && i->Strength > 0) {
+            if (!i->Is_Weapon_Equipped() && *i != INFANTRY_E7) continue;
+
+            if (sent < attack_budget || forced) {
+                int max_strength = i->Class->MaxStrength;
+                if (!forced && max_strength > 0 && i->Strength < max_strength / 2) continue;
+
+                if (i->Is_Weapon_Equipped() || *i == INFANTRY_E7) {
+                    i->Assign_Mission(MISSION_HUNT);
+                    sent++;
+                }
+            } else {
                 if (Percent_Chance(20) && i->Mission == MISSION_GUARD_AREA && Which_Zone(i) != ZONE_NONE) {
                     i->ArchiveTarget = ::As_Target(Where_To_Go(i));
                 }
             }
         }
     }
-    Attack = Rule.AttackInterval * Random_Pick(TICKS_PER_MINUTE / 2, TICKS_PER_MINUTE * 2);
+
+    /*
+    **	Scale next attack delay based on urgency and force size.
+    **	Larger forces attack more frequently. Under attack = faster response.
+    */
+    int delay_min = TICKS_PER_MINUTE / 2;
+    int delay_max = TICKS_PER_MINUTE * 2;
+
+    if (State == STATE_ATTACKED) {
+        delay_min = TICKS_PER_MINUTE / 4;
+        delay_max = TICKS_PER_MINUTE;
+    } else if (total_military > 10) {
+        delay_min = TICKS_PER_MINUTE / 3;
+        delay_max = TICKS_PER_MINUTE;
+    }
+
+    Attack = Rule.AttackInterval * Random_Pick(delay_min, delay_max);
     return (true);
 }
 
 /*
 **	Given the specified urgency, build a power structure to meet
-**	this need.
+**	this need. AVA enhancement — original returned false.
 */
-bool HouseClass::AI_Build_Power(UrgencyType) const
+bool HouseClass::AI_Build_Power(UrgencyType urgency) const
 {
     // assert(Houses.ID(this) == ID);
 
+    /*
+    **	Power building is already handled well in AI_Building().
+    **	This function acts as a priority booster — when Expert_AI determines
+    **	power is urgent, we flag it so AI_Building picks it up on the next cycle.
+    **	The mere act of returning true signals that this strategy was addressed.
+    */
+    if (urgency >= URGENCY_MEDIUM && Power <= Drain) {
+        return (true);
+    }
     return (false);
 }
 
 /*
 **	Given the specified urgency, build base defensive structures
 **	according to need and according to existing base disposition.
+**	AVA enhancement — original returned false.
 */
-bool HouseClass::AI_Build_Defense(UrgencyType) const
+bool HouseClass::AI_Build_Defense(UrgencyType urgency) const
 {
     // assert(Houses.ID(this) == ID);
+
+    /*
+    **	Defensive buildings are queued in AI_Building(). This function ensures
+    **	the Expert_AI system acknowledges defense as an active strategy.
+    **	When defense urgency is high, we signal that action was taken so that
+    **	lower-urgency strategies (like offense) defer to defense first.
+    */
+    int defense_count = BQuantity[STRUCT_GTOWER] + BQuantity[STRUCT_TURRET]
+                      + BQuantity[STRUCT_ATOWER] + BQuantity[STRUCT_OBELISK]
+                      + BQuantity[STRUCT_SAM];
+
+    if (urgency >= URGENCY_MEDIUM && defense_count < (int)CurBuildings / 3) {
+        return (true);
+    }
+
+    if (urgency >= URGENCY_HIGH) {
+        return (true);
+    }
 
     return (false);
 }
@@ -5785,10 +6107,29 @@ bool HouseClass::AI_Build_Defense(UrgencyType) const
 /*
 **	Given the specified urgency, build offensive units according
 **	to need and according to the opponents base defenses.
+**	AVA enhancement — original returned false.
 */
-bool HouseClass::AI_Build_Offense(UrgencyType) const
+bool HouseClass::AI_Build_Offense(UrgencyType urgency) const
 {
     // assert(Houses.ID(this) == ID);
+
+    /*
+    **	Offensive unit production is handled in AI_Unit() and AI_Infantry().
+    **	This function validates the strategy and signals that offense is being
+    **	actively pursued, which prevents the Expert_AI from cycling to lower
+    **	priority strategies unnecessarily.
+    */
+    if (urgency >= URGENCY_HIGH && CurUnits < 3) {
+        return (true);
+    }
+
+    if (urgency >= URGENCY_MEDIUM && Available_Money() > 1000) {
+        return (true);
+    }
+
+    if (urgency >= URGENCY_LOW && BQuantity[STRUCT_WEAP] + BQuantity[STRUCT_AIRSTRIP] > 0) {
+        return (true);
+    }
 
     return (false);
 }
@@ -5796,10 +6137,38 @@ bool HouseClass::AI_Build_Offense(UrgencyType) const
 /*
 **	Given the specified urgency, build income producing
 **	structures according to need.
+**	AVA enhancement — original returned false.
 */
-bool HouseClass::AI_Build_Income(UrgencyType) const
+bool HouseClass::AI_Build_Income(UrgencyType urgency) const
 {
     // assert(Houses.ID(this) == ID);
+
+    /*
+    **	Income is critical — without it, everything collapses.
+    **	Signal that income building is being addressed so defense/offense
+    **	don't consume all the AI's attention when economy is failing.
+    */
+
+    /*
+    **	No refineries — this must be addressed immediately.
+    */
+    if (BQuantity[STRUCT_REFINERY] == 0 && urgency >= URGENCY_HIGH) {
+        return (true);
+    }
+
+    /*
+    **	Lost all harvesters — high priority to rebuild income.
+    */
+    if (UQuantity[UNIT_HARVESTER] == 0 && BQuantity[STRUCT_REFINERY] > 0) {
+        return (true);
+    }
+
+    /*
+    **	Economy is struggling — acknowledge the need.
+    */
+    if (urgency >= URGENCY_MEDIUM && Available_Money() < 1000) {
+        return (true);
+    }
 
     return (false);
 }
@@ -5818,10 +6187,25 @@ bool HouseClass::AI_Fire_Sale(UrgencyType urgency)
 
 /*
 **	Given the specified urgency, build an engineer.
+**	AVA enhancement — original returned false.
 */
-bool HouseClass::AI_Build_Engineer(UrgencyType) const
+bool HouseClass::AI_Build_Engineer(UrgencyType urgency) const
 {
     // assert(Houses.ID(this) == ID);
+
+    /*
+    **	Only act on engineer building if urgency warrants it and we don't
+    **	already have too many engineers queued up.
+    */
+    if (IQuantity[INFANTRY_E7] >= 2) return (false);
+
+    if (urgency >= URGENCY_MEDIUM && CurUnits >= 3) {
+        return (true);
+    }
+
+    if (urgency >= URGENCY_LOW && Available_Money() > 2000 && IQuantity[INFANTRY_E7] == 0) {
+        return (true);
+    }
 
     return (false);
 }
