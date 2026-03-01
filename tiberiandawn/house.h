@@ -960,6 +960,60 @@ public:
 
     static TFixedIHeapClass<BuildChoiceClass> BuildChoice;
 
+    /*
+    **	Adaptive AI Personality System (AVA enhancement).
+    **	Each computer house rolls randomized personality weights at game start.
+    **	These weights shift during gameplay based on combat outcomes, creating
+    **	unique behavior every match. Values range 0-100.
+    */
+    struct AIPersonalityType
+    {
+        /*
+        **	Core personality traits — rolled at game start.
+        */
+        int Aggression;        // 0=turtle, 100=rush. Affects attack threshold & frequency.
+        int Greed;             // 0=military-first, 100=economy-obsessed. Affects refinery priority.
+        int Caution;           // 0=reckless, 100=paranoid. Affects defense building & reserve %.
+        int Boldness;          // 0=wait-for-advantage, 100=attack-regardless. Min force for attack.
+        int Adaptiveness;      // 0=stubborn, 100=reactive. How fast traits shift from feedback.
+
+        /*
+        **	Feedback counters — track in-game outcomes for adaptation.
+        */
+        int AttackSuccesses;   // Attacks where we destroyed more than we lost.
+        int AttackFailures;    // Attacks where we lost more than we destroyed.
+        int HarvesterLosses;   // Harvesters lost this game (drives Caution up).
+        int BasesLostCount;    // Buildings lost to enemy attacks (drives Caution up).
+
+        /*
+        **	Derived values — recalculated from traits + feedback.
+        */
+        int AttackThreshold;   // Min units before attacking (from Boldness).
+        int DefenseReserve;    // % of forces kept for defense (from Caution).
+        int AttackFrequency;   // Ticks between attacks (from Aggression).
+
+        /*
+        **	Initialization flag.
+        */
+        bool IsInitialized;
+    };
+    AIPersonalityType AIPersonality;
+
+    /*
+    **	Initialize adaptive personality with randomized weights.
+    */
+    void Init_Personality(void);
+
+    /*
+    **	Recalculate derived values from current traits.
+    */
+    void Recalc_Personality(void);
+
+    /*
+    **	Record attack outcome and adapt personality accordingly.
+    */
+    void Record_Attack_Outcome(bool success);
+
 #endif // USE_RA_AI
 
     /*

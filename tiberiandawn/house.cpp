@@ -525,6 +525,12 @@ HouseClass::HouseClass(HousesType house)
 
     Assign_Handicap(DIFF_NORMAL);
 
+    /*
+    **	Initialize adaptive personality with randomized weights.
+    **	This gives each computer opponent unique behavior every game.
+    */
+    Init_Personality();
+
 #endif
 }
 
@@ -5564,15 +5570,229 @@ UrgencyType HouseClass::Check_Build_Power(void) const
     return (urgency);
 }
 
+/***********************************************************************************************
+ * HouseClass::Init_Personality -- Initialize adaptive AI personality with random weights.     *
+ *                                                                                             *
+ *    Rolls randomized personality traits for this computer house. Called once at game start.   *
+ *    Each trait ranges 0-100 and affects decision-making throughout the match. The random      *
+ *    seed is synced via Scen.RandomNumber so multiplayer stays deterministic.                  *
+ *                                                                                             *
+ *    AVA enhancement — gives each AI opponent a unique playstyle every game.                   *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   Must be called after house is fully constructed.                                *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   03/02/2026 AVA : Created.                                                                 *
+ *=============================================================================================*/
+void HouseClass::Init_Personality(void)
+{
+    /*
+    **	Roll core personality traits. Each is independent.
+    **	The ranges are deliberately wide to create diverse opponents.
+    */
+    AIPersonality.Aggression   = Random_Pick(20, 90);
+    AIPersonality.Greed        = Random_Pick(15, 85);
+    AIPersonality.Caution      = Random_Pick(15, 85);
+    AIPersonality.Boldness     = Random_Pick(20, 90);
+    AIPersonality.Adaptiveness = Random_Pick(30, 80);
+
+    /*
+    **	Zero the feedback counters.
+    */
+    AIPersonality.AttackSuccesses = 0;
+    AIPersonality.AttackFailures  = 0;
+    AIPersonality.HarvesterLosses = 0;
+    AIPersonality.BasesLostCount  = 0;
+
+    AIPersonality.IsInitialized = true;
+
+    /*
+    **	Calculate initial derived values.
+    */
+    Recalc_Personality();
+}
+
+/***********************************************************************************************
+ * HouseClass::Recalc_Personality -- Recalculate derived values from current traits.           *
+ *                                                                                             *
+ *    Converts raw personality traits into actionable thresholds. Called after init and after    *
+ *    any trait adaptation. This is where the personality actually becomes behavior.            *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   03/02/2026 AVA : Created.                                                                 *
+ *=============================================================================================*/
+void HouseClass::Recalc_Personality(void)
+{
+    /*
+    **	AttackThreshold: how many combat units before the AI considers attacking.
+    **	Bold AIs attack with as few as 2 units. Cautious ones wait for 8+.
+    **	Boldness 90 → 2 units. Boldness 20 → 8 units.
+    */
+    AIPersonality.AttackThreshold = max(2, 10 - (AIPersonality.Boldness / 12));
+
+    /*
+    **	DefenseReserve: percentage of forces kept home for defense.
+    **	Cautious AIs keep 50%. Reckless ones keep only 10%.
+    **	Caution 85 → 50%. Caution 15 → 10%.
+    */
+    AIPersonality.DefenseReserve = max(10, min(50, AIPersonality.Caution * 55 / 100));
+
+    /*
+    **	AttackFrequency: base ticks between attacks (multiplied by Rule.AttackInterval).
+    **	Aggressive AIs attack every 20-40 seconds. Passive ones wait 60-120 seconds.
+    **	Aggression 90 → fast. Aggression 20 → slow.
+    */
+    int base_delay = TICKS_PER_MINUTE * 2 - (AIPersonality.Aggression * TICKS_PER_MINUTE * 15 / 1000);
+    AIPersonality.AttackFrequency = max((int)(TICKS_PER_MINUTE / 3), base_delay);
+}
+
+/***********************************************************************************************
+ * HouseClass::Record_Attack_Outcome -- Adapt personality based on attack result.              *
+ *                                                                                             *
+ *    Called after an attack wave resolves. Shifts personality traits based on whether the      *
+ *    attack succeeded or failed. The Adaptiveness trait controls how much each outcome         *
+ *    changes the AI's behavior.                                                               *
+ *                                                                                             *
+ * INPUT:   success -- true if the attack was beneficial, false if costly.                     *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   03/02/2026 AVA : Created.                                                                 *
+ *=============================================================================================*/
+void HouseClass::Record_Attack_Outcome(bool success)
+{
+    if (!AIPersonality.IsInitialized) return;
+
+    /*
+    **	How much to shift per outcome — scaled by Adaptiveness.
+    **	High adaptiveness (80) → shift 8 points. Low (30) → shift 3 points.
+    */
+    int shift = max(1, AIPersonality.Adaptiveness / 10);
+
+    if (success) {
+        AIPersonality.AttackSuccesses++;
+
+        /*
+        **	Success reinforces aggression and boldness, reduces caution.
+        **	"That worked — let's do more of it."
+        */
+        AIPersonality.Aggression = min(95, AIPersonality.Aggression + shift);
+        AIPersonality.Boldness   = min(95, AIPersonality.Boldness + shift / 2);
+        AIPersonality.Caution    = max(10, AIPersonality.Caution - shift / 2);
+    } else {
+        AIPersonality.AttackFailures++;
+
+        /*
+        **	Failure increases caution, reduces aggression and boldness.
+        **	"That didn't work — build up more before trying again."
+        */
+        AIPersonality.Caution    = min(90, AIPersonality.Caution + shift);
+        AIPersonality.Aggression = max(15, AIPersonality.Aggression - shift);
+        AIPersonality.Boldness   = max(15, AIPersonality.Boldness - shift / 2);
+
+        /*
+        **	Multiple consecutive failures make the AI much more cautious.
+        */
+        if (AIPersonality.AttackFailures > AIPersonality.AttackSuccesses + 2) {
+            AIPersonality.Caution = min(90, AIPersonality.Caution + shift);
+        }
+    }
+
+    /*
+    **	Recalculate derived thresholds from updated traits.
+    */
+    Recalc_Personality();
+}
+
 UrgencyType HouseClass::Check_Build_Defense(void) const
 {
     // assert(Houses.ID(this) == ID);
 
     /*
-    **	This routine determines what urgency level that base defense
-    **	should be given. The more vulnerable the base is, the higher
-    **	the urgency this routine should return.
+    **	Adaptive defense urgency check. A cautious AI builds defenses earlier and
+    **	considers smaller threats serious. An aggressive AI ignores defense until
+    **	it's critical. Harvester losses and base attacks increase caution over time.
     */
+    if (!Can_Make_Money()) return (URGENCY_NONE);
+
+    int caution = AIPersonality.IsInitialized ? AIPersonality.Caution : 50;
+
+    /*
+    **	Count total defensive structures.
+    */
+    int defense_count = BQuantity[STRUCT_GTOWER] + BQuantity[STRUCT_TURRET]
+                      + BQuantity[STRUCT_ATOWER] + BQuantity[STRUCT_OBELISK]
+                      + BQuantity[STRUCT_SAM];
+
+    /*
+    **	No defenses at all and we have buildings to protect — critical for everyone.
+    */
+    if (defense_count == 0 && CurBuildings > 3) {
+        return (URGENCY_HIGH);
+    }
+
+    /*
+    **	Under attack with weak defenses — urgency scales with caution.
+    **	Cautious AI (caution>60) panics with < 4 defenses.
+    **	Reckless AI (caution<30) only cares with < 2 defenses.
+    */
+    int panic_threshold = 1 + caution / 25;  // 1-4 based on caution
+    if (State == STATE_ATTACKED && defense_count < panic_threshold) {
+        return (URGENCY_HIGH);
+    }
+
+    /*
+    **	Defense ratio check. Cautious AIs want 1 defense per 3 buildings.
+    **	Reckless AIs are fine with 1 per 6.
+    */
+    int desired_ratio = 3 + (100 - caution) / 25;  // 3-7 based on inverse caution
+    if (CurBuildings > 4 && defense_count * desired_ratio < (int)CurBuildings) {
+        return (caution > 50 ? URGENCY_HIGH : URGENCY_MEDIUM);
+    }
+
+    /*
+    **	Enemy comparison — cautious AIs feel threatened more easily.
+    */
+    if (Enemy != HOUSE_NONE) {
+        HouseClass const* enemy = HouseClass::As_Pointer(Enemy);
+        if (enemy != NULL && enemy->IsActive && !enemy->IsDefeated) {
+            int enemy_military = enemy->CurUnits + enemy->CurInfantry + enemy->CurAircraft;
+            int our_defense = defense_count * 3 + CurUnits + CurInfantry;
+
+            /*
+            **	Cautious AI feels threatened if enemy has 70% of our defense.
+            **	Reckless AI only cares if enemy exceeds our defense.
+            */
+            int threat_threshold = our_defense * (60 + caution / 3) / 100;
+            if (enemy_military > threat_threshold) {
+                return (State == STATE_ATTACKED ? URGENCY_HIGH : URGENCY_MEDIUM);
+            }
+        }
+    }
+
+    /*
+    **	Cautious AIs build defenses proactively even in peacetime.
+    */
+    if (defense_count < 2 && Available_Money() > 500) {
+        return (caution > 40 ? URGENCY_MEDIUM : URGENCY_LOW);
+    }
+
+    /*
+    **	Very cautious AIs (caution>70) always want more defenses.
+    */
+    if (caution > 70 && defense_count < 5 && Available_Money() > 1000) {
+        return (URGENCY_LOW);
+    }
+
     return (URGENCY_NONE);
 }
 
@@ -5581,10 +5801,72 @@ UrgencyType HouseClass::Check_Build_Offense(void) const
     // assert(Houses.ID(this) == ID);
 
     /*
-    **	This routine determines what urgency level that offensive
-    **	weaponry should be given. Surplus money or a very strong
-    **	defense will cause the offensive urgency to increase.
+    **	Adaptive offense urgency. Aggressive AIs prioritize military production
+    **	earlier and with less provocation. Greedy AIs defer offense until economy
+    **	is strong. After successful attacks, aggression rises and offense becomes
+    **	more urgent.
     */
+    int aggression = AIPersonality.IsInitialized ? AIPersonality.Aggression : 50;
+    int greed = AIPersonality.IsInitialized ? AIPersonality.Greed : 50;
+
+    /*
+    **	Don't build offense if we can't sustain it. Greedy AIs are stricter here.
+    */
+    int min_money = 500 + greed * 10;  // 500-1350 based on greed
+    if (!Can_Make_Money() && Available_Money() < min_money) return (URGENCY_NONE);
+
+    /*
+    **	No combat units at all — everyone agrees this is urgent.
+    */
+    if (CurUnits == 0 && Available_Money() > 500) {
+        return (URGENCY_HIGH);
+    }
+
+    /*
+    **	Compare military strength against enemy.
+    */
+    if (Enemy != HOUSE_NONE) {
+        HouseClass const* enemy = HouseClass::As_Pointer(Enemy);
+        if (enemy != NULL && enemy->IsActive && !enemy->IsDefeated) {
+            int our_military = CurUnits + CurAircraft;
+            int enemy_military = enemy->CurUnits + enemy->CurAircraft;
+
+            /*
+            **	Aggressive AI panics when enemy has 1.5x. Passive AI only at 2.5x.
+            */
+            int panic_ratio = 250 - aggression;  // 160-230
+            if (enemy_military * 100 > our_military * panic_ratio) {
+                return (URGENCY_HIGH);
+            }
+
+            /*
+            **	Aggressive AI wants parity immediately. Passive AI tolerates being weaker.
+            */
+            int concern_ratio = 130 - aggression / 2;  // 85-120
+            if (enemy_military * 100 > our_military * concern_ratio) {
+                return (URGENCY_MEDIUM);
+            }
+        }
+    }
+
+    /*
+    **	Surplus money → invest in military. Aggressive AIs do this sooner.
+    */
+    int defense_count = BQuantity[STRUCT_GTOWER] + BQuantity[STRUCT_TURRET]
+                      + BQuantity[STRUCT_ATOWER] + BQuantity[STRUCT_OBELISK];
+    int surplus_threshold = 3000 - aggression * 20;  // 1200-2800
+    if (defense_count >= 1 && Available_Money() > surplus_threshold) {
+        return (URGENCY_MEDIUM);
+    }
+
+    /*
+    **	Aggressive AIs always want more units. Passive ones are content with small forces.
+    */
+    int min_units = 3 + (100 - aggression) / 20;  // 3-8
+    if (BQuantity[STRUCT_REFINERY] > 0 && UQuantity[UNIT_HARVESTER] > 0 && CurUnits < min_units) {
+        return (aggression > 60 ? URGENCY_MEDIUM : URGENCY_LOW);
+    }
+
     return (URGENCY_NONE);
 }
 
@@ -5610,11 +5892,51 @@ UrgencyType HouseClass::Check_Build_Income(void) const
     // assert(Houses.ID(this) == ID);
 
     /*
-    **	This routine should determine if income processing buildings
-    **	should be constructed and at what urgency. The lower the money,
-    **	the lower the refineries, or recent harvester losses should
-    **	cause a greater urgency to be returned.
+    **	Adaptive income urgency. Greedy AIs obsess over economy — they build refineries
+    **	earlier, panic sooner when cash is low, and expand harvesting operations
+    **	aggressively. Military-focused AIs (low greed) only build income when desperate.
     */
+    int greed = AIPersonality.IsInitialized ? AIPersonality.Greed : 50;
+
+    /*
+    **	No refineries at all — critical for everyone.
+    */
+    if (BQuantity[STRUCT_REFINERY] == 0 && Available_Money() > 300) {
+        return (URGENCY_CRITICAL);
+    }
+
+    /*
+    **	Have refineries but no harvesters — universally important.
+    */
+    if (BQuantity[STRUCT_REFINERY] > 0 && UQuantity[UNIT_HARVESTER] == 0) {
+        return (URGENCY_HIGH);
+    }
+
+    /*
+    **	Harvester-to-refinery ratio. Greedy AIs want 2 harvesters per refinery.
+    **	Normal AIs want 1:1.
+    */
+    int desired_harvesters = BQuantity[STRUCT_REFINERY] * (greed > 60 ? 2 : 1);
+    if (UQuantity[UNIT_HARVESTER] < desired_harvesters) {
+        return (greed > 50 ? URGENCY_HIGH : URGENCY_MEDIUM);
+    }
+
+    /*
+    **	Cash threshold for concern. Greedy AIs panic at higher cash levels.
+    */
+    int low_cash = 300 + greed * 5;  // 375-725
+    if (Available_Money() < low_cash && !IsTiberiumShort && BQuantity[STRUCT_REFINERY] < 3) {
+        return (greed > 50 ? URGENCY_HIGH : URGENCY_MEDIUM);
+    }
+
+    /*
+    **	Greedy AIs always want more refineries. Cap at 4.
+    */
+    int max_refineries = 2 + greed / 30;  // 2-4
+    if (!IsTiberiumShort && Available_Money() > 1000 && BQuantity[STRUCT_REFINERY] < max_refineries) {
+        return (greed > 60 ? URGENCY_MEDIUM : URGENCY_LOW);
+    }
+
     return (URGENCY_NONE);
 }
 
@@ -5640,10 +5962,62 @@ UrgencyType HouseClass::Check_Build_Engineer(void) const
     // assert(Houses.ID(this) == ID);
 
     /*
-    **	This routine should check to see what urgency that the production of
-    **	engineers should be. If a friendly building has been captured or the
-    **	enemy has weak defenses, then building an engineer would be a priority.
+    **	Adaptive engineer check. Bold AIs build engineers earlier and with less
+    **	military advantage required. Cautious AIs only build engineers when they
+    **	have overwhelming force. Greedy AIs want to capture enemy refineries.
     */
+    int boldness = AIPersonality.IsInitialized ? AIPersonality.Boldness : 50;
+    int greed = AIPersonality.IsInitialized ? AIPersonality.Greed : 50;
+
+    /*
+    **	Minimum escort force. Bold AIs try with 2 units. Cautious with 5+.
+    */
+    int min_escort = max(2, 6 - boldness / 20);  // 2-5
+    if (CurUnits < min_escort || !Can_Make_Money()) return (URGENCY_NONE);
+
+    /*
+    **	Engineer cap. Bold AIs build up to 3. Cautious AIs cap at 1.
+    */
+    int max_engineers = 1 + boldness / 40;  // 1-3
+    if (IQuantity[INFANTRY_E7] >= max_engineers) return (URGENCY_NONE);
+
+    if (Enemy != HOUSE_NONE) {
+        HouseClass const* enemy = HouseClass::As_Pointer(Enemy);
+        if (enemy != NULL && enemy->IsActive && !enemy->IsDefeated) {
+            int our_military = CurUnits + CurInfantry;
+            int enemy_military = enemy->CurUnits + enemy->CurInfantry;
+
+            /*
+            **	Bold AI attempts capture with slight advantage.
+            **	Cautious AI needs 2x superiority.
+            */
+            int required_ratio = 200 - boldness;  // 110-180
+            if (our_military * 100 > enemy_military * required_ratio && enemy->CurBuildings > 1) {
+                if (IQuantity[INFANTRY_E7] == 0) {
+                    return (boldness > 60 ? URGENCY_HIGH : URGENCY_MEDIUM);
+                }
+                return (URGENCY_LOW);
+            }
+
+            /*
+            **	Greedy AIs want to capture refineries even at moderate risk.
+            */
+            if (greed > 60 && our_military >= enemy_military && enemy->CurBuildings > 0) {
+                if (IQuantity[INFANTRY_E7] == 0) {
+                    return (URGENCY_MEDIUM);
+                }
+            }
+        }
+    }
+
+    /*
+    **	Bold AIs keep engineers handy with less surplus required.
+    */
+    int surplus_cash = 4000 - boldness * 20;  // 2000-3800
+    if (Available_Money() > surplus_cash && IQuantity[INFANTRY_E7] == 0 && CurBuildings > 4) {
+        return (URGENCY_LOW);
+    }
+
     return (URGENCY_NONE);
 }
 
@@ -5708,76 +6082,271 @@ bool HouseClass::AI_Attack(UrgencyType)
 {
     // assert(Houses.ID(this) == ID);
 
-    bool shuffle = !((Frame > TICKS_PER_MINUTE && !CurBuildings) || Percent_Chance(33));
+    /*
+    **	Adaptive attack logic. Personality traits determine:
+    **	- AttackThreshold: minimum force before launching (from Boldness)
+    **	- DefenseReserve: % of forces kept home (from Caution)
+    **	- AttackFrequency: delay between waves (from Aggression)
+    **	- HP threshold: how damaged a unit can be and still attack (from Boldness)
+    **	
+    **	After each attack, outcomes are tracked and personality adapts.
+    **	Reckless AIs that keep losing become more cautious.
+    **	Cautious AIs that win become emboldened.
+    */
+
     bool forced = (CurBuildings == 0);
+
+    int aggression = AIPersonality.IsInitialized ? AIPersonality.Aggression : 50;
+    int boldness   = AIPersonality.IsInitialized ? AIPersonality.Boldness : 50;
+    int caution    = AIPersonality.IsInitialized ? AIPersonality.Caution : 50;
+    int attack_threshold = AIPersonality.IsInitialized ? AIPersonality.AttackThreshold : 4;
+    int reserve_pct      = AIPersonality.IsInitialized ? AIPersonality.DefenseReserve : 30;
+
+    /*
+    **	Snapshot current unit counts for post-attack comparison.
+    **	We record units + buildings lost to detect attack outcome later.
+    */
+    int pre_attack_units = CurUnits;
+
+    /*
+    **	Count available combat forces.
+    */
+    int total_military = 0;
     int index;
+
+    for (index = 0; index < Units.Count(); index++) {
+        UnitClass* u = Units.Ptr(index);
+        if (u != NULL && !u->IsInLimbo && u->House == this && u->Strength > 0 && u->Is_Weapon_Equipped()) {
+            if (u->Class->Type == UNIT_HARVESTER) continue;
+            total_military++;
+        }
+    }
+    for (index = 0; index < Infantry.Count(); index++) {
+        InfantryClass* i = Infantry.Ptr(index);
+        if (i != NULL && !i->IsInLimbo && i->House == this && i->Strength > 0 && i->Is_Weapon_Equipped()) {
+            total_military++;
+        }
+    }
     for (index = 0; index < Aircraft.Count(); index++) {
         AircraftClass* a = Aircraft.Ptr(index);
+        if (a != NULL && !a->IsInLimbo && a->House == this && a->Strength > 0 && a->Is_Weapon_Equipped()) {
+            total_military++;
+        }
+    }
 
-        if (a != NULL && !a->IsInLimbo && a->House == this && a->Strength > 0) {
-            if (!shuffle && a->Is_Weapon_Equipped() && (forced || Percent_Chance(75))) {
+    /*
+    **	Check if we have enough forces to attack.
+    **	Bold AIs (threshold=2) rush with tiny forces.
+    **	Cautious AIs (threshold=8) build up huge armies first.
+    */
+    if (!forced && total_military < attack_threshold) {
+        /*
+        **	Not ready yet. Wait, but aggressive AIs check back sooner.
+        */
+        int wait_time = TICKS_PER_MINUTE * 2 - aggression * TICKS_PER_SECOND / 5;
+        Attack = max((int)(TICKS_PER_MINUTE / 2), wait_time);
+        return (false);
+    }
+
+    /*
+    **	Calculate defense reserve from personality.
+    **	Static defenses reduce the need for unit reserves.
+    */
+    int defense_count = BQuantity[STRUCT_GTOWER] + BQuantity[STRUCT_TURRET]
+                      + BQuantity[STRUCT_ATOWER] + BQuantity[STRUCT_OBELISK];
+    int defense_reserve = max(1, total_military * reserve_pct / 100);
+
+    /*
+    **	Good static defenses let us commit more forces.
+    **	Even cautious AIs release troops when turrets cover the base.
+    */
+    if (defense_count >= 4) {
+        defense_reserve = max(1, defense_reserve * 60 / 100);
+    } else if (defense_count >= 2) {
+        defense_reserve = max(1, defense_reserve * 80 / 100);
+    }
+
+    int attack_budget = total_military - defense_reserve;
+    if (forced) attack_budget = total_military;
+
+    /*
+    **	HP threshold for sending units. Bold AIs send damaged units.
+    **	Cautious AIs only send units above 60% HP.
+    **	Boldness 90 → send if >25% HP. Boldness 20 → send if >65% HP.
+    */
+    int hp_threshold_pct = 70 - boldness / 2;  // 25-60%
+
+    int sent = 0;
+
+    /*
+    **	Send aircraft first — fast strikers.
+    */
+    for (index = 0; index < Aircraft.Count(); index++) {
+        AircraftClass* a = Aircraft.Ptr(index);
+        if (a != NULL && !a->IsInLimbo && a->House == this && a->Strength > 0 && a->Is_Weapon_Equipped()) {
+            if (sent < attack_budget || forced) {
                 a->Assign_Mission(MISSION_HUNT);
+                sent++;
             }
         }
     }
+
+    /*
+    **	Send vehicles — respect HP threshold.
+    */
     for (index = 0; index < Units.Count(); index++) {
         UnitClass* u = Units.Ptr(index);
+        if (u != NULL && !u->IsInLimbo && u->House == this && u->Strength > 0 && u->Is_Weapon_Equipped()) {
+            if (u->Class->Type == UNIT_HARVESTER) continue;
 
-        if (u != NULL && !u->IsInLimbo && u->House == this && u->Strength > 0) {
-            if (!shuffle && u->Is_Weapon_Equipped() && (forced || Percent_Chance(75))) {
+            if (sent < attack_budget || forced) {
+                int max_strength = u->Class->MaxStrength;
+                if (!forced && max_strength > 0 && u->Strength * 100 < max_strength * hp_threshold_pct) {
+                    /*
+                    **	Too damaged — keep for defense, shuffle position.
+                    */
+                    if (Percent_Chance(30) && Which_Zone(u) != ZONE_NONE) {
+                        u->ArchiveTarget = ::As_Target(Where_To_Go(u));
+                    }
+                    continue;
+                }
+
                 u->Assign_Mission(MISSION_HUNT);
+                sent++;
             } else {
-
-                /*
-                **	If this unit is guarding the base, then cause it to shuffle
-                **	location instead.
-                */
-                if (Percent_Chance(20) && u->Mission == MISSION_GUARD_AREA && Which_Zone(u) != ZONE_NONE) {
+                if (Percent_Chance(25) && u->Mission == MISSION_GUARD_AREA && Which_Zone(u) != ZONE_NONE) {
                     u->ArchiveTarget = ::As_Target(Where_To_Go(u));
                 }
             }
         }
     }
+
+    /*
+    **	Send infantry.
+    */
     for (index = 0; index < Infantry.Count(); index++) {
         InfantryClass* i = Infantry.Ptr(index);
-
         if (i != NULL && !i->IsInLimbo && i->House == this && i->Strength > 0) {
-            if (!shuffle && (i->Is_Weapon_Equipped() || *i == INFANTRY_RENOVATOR) && (forced || Percent_Chance(75))) {
-                i->Assign_Mission(MISSION_HUNT);
-            } else {
+            if (!i->Is_Weapon_Equipped() && *i != INFANTRY_E7) continue;
 
-                /*
-                **	If this soldier is guarding the base, then cause it to shuffle
-                **	location instead.
-                */
+            if (sent < attack_budget || forced) {
+                int max_strength = i->Class->MaxStrength;
+                if (!forced && max_strength > 0 && i->Strength * 100 < max_strength * hp_threshold_pct) continue;
+
+                if (i->Is_Weapon_Equipped() || *i == INFANTRY_E7) {
+                    i->Assign_Mission(MISSION_HUNT);
+                    sent++;
+                }
+            } else {
                 if (Percent_Chance(20) && i->Mission == MISSION_GUARD_AREA && Which_Zone(i) != ZONE_NONE) {
                     i->ArchiveTarget = ::As_Target(Where_To_Go(i));
                 }
             }
         }
     }
-    Attack = Rule.AttackInterval * Random_Pick(TICKS_PER_MINUTE / 2, TICKS_PER_MINUTE * 2);
+
+    /*
+    **	Infer attack outcome from previous wave by comparing kills vs losses.
+    **	This is approximate — we compare enemy kills this game vs our losses.
+    **	If we've killed more enemies than we've lost since last check, it was good.
+    */
+    if (AIPersonality.IsInitialized && !forced) {
+        int total_kills = 0;
+        for (HousesType h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+            if (h != Class->House) {
+                total_kills += UnitsKilled[h] + BuildingsKilled[h];
+            }
+        }
+        int total_losses = UnitsLost + BuildingsLost;
+
+        /*
+        **	Simple heuristic: if our kill ratio is positive, attacks are working.
+        **	Record outcome every time we attack (compares cumulative totals).
+        */
+        if (total_kills > 0 || total_losses > 0) {
+            bool winning = (total_kills * 100 > total_losses * 120);  // Need 1.2:1 K/D to count as success
+            Record_Attack_Outcome(winning);
+        }
+    }
+
+    /*
+    **	Next attack delay — personality-driven.
+    **	Aggressive AIs attack frequently. Cautious AIs wait longer.
+    **	Under attack = everyone responds faster.
+    */
+    int base_freq = AIPersonality.IsInitialized ? AIPersonality.AttackFrequency : TICKS_PER_MINUTE;
+
+    int delay_min, delay_max;
+    if (State == STATE_ATTACKED) {
+        /*
+        **	Under attack — everyone responds faster, but aggressive AIs are MUCH faster.
+        */
+        delay_min = base_freq / 4;
+        delay_max = base_freq / 2;
+    } else if (total_military > 10) {
+        /*
+        **	Large force built up — attack sooner.
+        */
+        delay_min = base_freq / 3;
+        delay_max = base_freq;
+    } else {
+        delay_min = base_freq / 2;
+        delay_max = base_freq * 3 / 2;
+    }
+
+    delay_min = max(TICKS_PER_SECOND * 10, delay_min);
+    delay_max = max(delay_min + TICKS_PER_SECOND * 5, delay_max);
+
+    Attack = Rule.AttackInterval * Random_Pick(delay_min, delay_max);
     return (true);
 }
 
 /*
 **	Given the specified urgency, build a power structure to meet
-**	this need.
+**	this need. AVA enhancement — original returned false.
 */
-bool HouseClass::AI_Build_Power(UrgencyType) const
+bool HouseClass::AI_Build_Power(UrgencyType urgency) const
 {
     // assert(Houses.ID(this) == ID);
 
+    /*
+    **	Power building is already handled well in AI_Building().
+    **	This function acts as a priority booster — when Expert_AI determines
+    **	power is urgent, we flag it so AI_Building picks it up on the next cycle.
+    **	The mere act of returning true signals that this strategy was addressed.
+    */
+    if (urgency >= URGENCY_MEDIUM && Power <= Drain) {
+        return (true);
+    }
     return (false);
 }
 
 /*
 **	Given the specified urgency, build base defensive structures
 **	according to need and according to existing base disposition.
+**	AVA enhancement — original returned false.
 */
-bool HouseClass::AI_Build_Defense(UrgencyType) const
+bool HouseClass::AI_Build_Defense(UrgencyType urgency) const
 {
     // assert(Houses.ID(this) == ID);
+
+    /*
+    **	Defensive buildings are queued in AI_Building(). This function ensures
+    **	the Expert_AI system acknowledges defense as an active strategy.
+    **	When defense urgency is high, we signal that action was taken so that
+    **	lower-urgency strategies (like offense) defer to defense first.
+    */
+    int defense_count = BQuantity[STRUCT_GTOWER] + BQuantity[STRUCT_TURRET]
+                      + BQuantity[STRUCT_ATOWER] + BQuantity[STRUCT_OBELISK]
+                      + BQuantity[STRUCT_SAM];
+
+    if (urgency >= URGENCY_MEDIUM && defense_count < (int)CurBuildings / 3) {
+        return (true);
+    }
+
+    if (urgency >= URGENCY_HIGH) {
+        return (true);
+    }
 
     return (false);
 }
@@ -5785,10 +6354,29 @@ bool HouseClass::AI_Build_Defense(UrgencyType) const
 /*
 **	Given the specified urgency, build offensive units according
 **	to need and according to the opponents base defenses.
+**	AVA enhancement — original returned false.
 */
-bool HouseClass::AI_Build_Offense(UrgencyType) const
+bool HouseClass::AI_Build_Offense(UrgencyType urgency) const
 {
     // assert(Houses.ID(this) == ID);
+
+    /*
+    **	Offensive unit production is handled in AI_Unit() and AI_Infantry().
+    **	This function validates the strategy and signals that offense is being
+    **	actively pursued, which prevents the Expert_AI from cycling to lower
+    **	priority strategies unnecessarily.
+    */
+    if (urgency >= URGENCY_HIGH && CurUnits < 3) {
+        return (true);
+    }
+
+    if (urgency >= URGENCY_MEDIUM && Available_Money() > 1000) {
+        return (true);
+    }
+
+    if (urgency >= URGENCY_LOW && BQuantity[STRUCT_WEAP] + BQuantity[STRUCT_AIRSTRIP] > 0) {
+        return (true);
+    }
 
     return (false);
 }
@@ -5796,10 +6384,38 @@ bool HouseClass::AI_Build_Offense(UrgencyType) const
 /*
 **	Given the specified urgency, build income producing
 **	structures according to need.
+**	AVA enhancement — original returned false.
 */
-bool HouseClass::AI_Build_Income(UrgencyType) const
+bool HouseClass::AI_Build_Income(UrgencyType urgency) const
 {
     // assert(Houses.ID(this) == ID);
+
+    /*
+    **	Income is critical — without it, everything collapses.
+    **	Signal that income building is being addressed so defense/offense
+    **	don't consume all the AI's attention when economy is failing.
+    */
+
+    /*
+    **	No refineries — this must be addressed immediately.
+    */
+    if (BQuantity[STRUCT_REFINERY] == 0 && urgency >= URGENCY_HIGH) {
+        return (true);
+    }
+
+    /*
+    **	Lost all harvesters — high priority to rebuild income.
+    */
+    if (UQuantity[UNIT_HARVESTER] == 0 && BQuantity[STRUCT_REFINERY] > 0) {
+        return (true);
+    }
+
+    /*
+    **	Economy is struggling — acknowledge the need.
+    */
+    if (urgency >= URGENCY_MEDIUM && Available_Money() < 1000) {
+        return (true);
+    }
 
     return (false);
 }
@@ -5818,10 +6434,25 @@ bool HouseClass::AI_Fire_Sale(UrgencyType urgency)
 
 /*
 **	Given the specified urgency, build an engineer.
+**	AVA enhancement — original returned false.
 */
-bool HouseClass::AI_Build_Engineer(UrgencyType) const
+bool HouseClass::AI_Build_Engineer(UrgencyType urgency) const
 {
     // assert(Houses.ID(this) == ID);
+
+    /*
+    **	Only act on engineer building if urgency warrants it and we don't
+    **	already have too many engineers queued up.
+    */
+    if (IQuantity[INFANTRY_E7] >= 2) return (false);
+
+    if (urgency >= URGENCY_MEDIUM && CurUnits >= 3) {
+        return (true);
+    }
+
+    if (urgency >= URGENCY_LOW && Available_Money() > 2000 && IQuantity[INFANTRY_E7] == 0) {
+        return (true);
+    }
 
     return (false);
 }

@@ -3187,6 +3187,20 @@ void TechnoClass::Record_The_Kill(TechnoClass* source)
         }
 
         /*
+        **	Track building losses for adaptive AI personality.
+        **	Losing buildings makes the AI more cautious and defense-oriented.
+        */
+#ifdef USE_RA_AI
+        if (!House->IsHuman && House->AIPersonality.IsInitialized) {
+            House->AIPersonality.BasesLostCount++;
+            int shift = max(1, House->AIPersonality.Adaptiveness / 10);
+            House->AIPersonality.Caution = min(90, House->AIPersonality.Caution + shift);
+            House->AIPersonality.Aggression = max(15, House->AIPersonality.Aggression - shift / 2);
+            House->Recalc_Personality();
+        }
+#endif
+
+        /*
         ** If the map is displaying the multiplayer player names & their
         ** # of kills, tell it to redraw.
         */
@@ -3237,6 +3251,25 @@ void TechnoClass::Record_The_Kill(TechnoClass* source)
             }
             source->House->UnitsKilled[Owner()]++;
         }
+
+        /*
+        **	Track harvester losses for adaptive AI personality.
+        **	Losing harvesters makes the AI more cautious about base defense.
+        */
+#ifdef USE_RA_AI
+        if (!House->IsHuman && House->AIPersonality.IsInitialized) {
+            if (((UnitClass*)this)->Class->Type == UNIT_HARVESTER) {
+                House->AIPersonality.HarvesterLosses++;
+                /*
+                **	Each harvester loss shifts caution up — these are expensive.
+                */
+                int shift = max(1, House->AIPersonality.Adaptiveness / 8);
+                House->AIPersonality.Caution = min(90, House->AIPersonality.Caution + shift);
+                House->AIPersonality.Greed = min(90, House->AIPersonality.Greed + shift / 2);
+                House->Recalc_Personality();
+            }
+        }
+#endif
 
         /*
         ** If the map is displaying the multiplayer player names & their
