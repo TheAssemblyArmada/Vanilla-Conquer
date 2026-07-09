@@ -104,7 +104,7 @@ jobs:
       run: |
         Invoke-WebRequest -Uri https://www.libsdl.org/release/SDL2-devel-2.0.12-VC.zip -OutFile SDL2-devel.zip
         Invoke-WebRequest -Uri https://github.com/ninja-build/ninja/releases/download/v1.10.1/ninja-win.zip -OutFile $Env:TEMP\ninja-win.zip
-        Invoke-WebRequest -SkipCertificateCheck -Uri https://www.openal-soft.org/openal-binaries/openal-soft-1.21.0-bin.zip -OutFile openal-soft-1.21.0-bin.zip
+        Invoke-WebRequest -SkipCertificateCheck -Uri https://openal-soft.org/openal-binaries/openal-soft-1.21.0-bin.zip -OutFile openal-soft-1.21.0-bin.zip
         Expand-Archive SDL2-devel.zip -DestinationPath .
         Expand-Archive $Env:TEMP\ninja-win.zip -DestinationPath $Env:TEMP\ninja
         Expand-Archive openal-soft-1.21.0-bin.zip -DestinationPath .

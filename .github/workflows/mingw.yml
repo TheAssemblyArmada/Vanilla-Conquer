@@ -28,7 +28,7 @@ jobs:
         sudo apt-get update -qq > /dev/null
         sudo apt-get install -qq -y ninja-build mingw-w64 imagemagick > /dev/null
         wget -q https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz
-        wget -q --no-check-certificate https://www.openal-soft.org/openal-binaries/openal-soft-1.21.0-bin.zip
+        wget -q --no-check-certificate https://openal-soft.org/openal-binaries/openal-soft-1.21.0-bin.zip
         tar -xf SDL2-devel-2.0.12-mingw.tar.gz -C /tmp
         unzip -qq openal-soft-1.21.0-bin.zip -d /tmp
         mv /tmp/openal-soft-1.21.0-bin/bin/${{ matrix.arch.win }}/soft_oal.dll /tmp/openal-soft-1.21.0-bin/bin/${{ matrix.arch.win }}/OpenAL32.dll
