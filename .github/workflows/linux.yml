@@ -74,8 +74,8 @@ jobs:
         cp ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dbg
         objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix
         strip --strip-all ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dbg
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dbg
     
     - name: Upload artifact
       if: ${{ matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
