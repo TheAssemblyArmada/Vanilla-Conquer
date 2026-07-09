@@ -201,7 +201,7 @@ protected:
 public:
     enum
     {
-        MAX_LINE_LENGTH = 128
+        MAX_LINE_LENGTH = 256
     };
     const VanillaList<INISection>& Section_List() const
     {
