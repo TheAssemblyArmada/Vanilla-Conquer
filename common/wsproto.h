@@ -47,8 +47,6 @@ extern WinsockInterfaceClass* PacketTransport; // The object for interfacing wit
 
 #include <string.h>
 
-#include <string.h>
-
 /*
 ** Misc defines
 */

@@ -36,6 +36,7 @@ static inline int socket_cleanup(void)
 #include <errno.h>
 #include <netdb.h> // for getaddrinfo() and freeaddrinfo()
 #include <sys/ioctl.h>
+#include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h> // for close()
