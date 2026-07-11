@@ -179,7 +179,7 @@ void TeamTypeClass::Read_INI(CCINIClass& ini)
     TeamTypeClass* team; // Working team pointer.
 
     int len = ini.Entry_Count(INI_Name());
-    char buf[500]; // INI entry buffer
+    char buf[INIClass::MAX_LINE_LENGTH]; // INI entry buffer
 
     /*
     **	Loop for all team entries, create and fill in.
@@ -240,7 +240,7 @@ void TeamTypeClass::Fill_In(const char* name, const char* entry)
     UnitType u_id;                // unit ID
     AircraftType a_id;            // aircraft ID
     TeamMissionStruct mission;
-    char buf[128];
+    char buf[INIClass::MAX_LINE_LENGTH];
 
     strcpy(buf, entry);
 
