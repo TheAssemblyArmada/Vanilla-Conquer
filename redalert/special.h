@@ -35,11 +35,10 @@
 #ifndef SPECIAL_H
 #define SPECIAL_H
 
-#include "common/bitfields.h"
 #include "common/endianness.h"
 
 #pragma pack(push, 1)
-class BITFIELD_STRUCT SpecialClass
+class SpecialClass
 {
 public:
     /*
@@ -128,9 +127,8 @@ public:
             ** New modern balance setting.
             */
             unsigned ModernBalance : 1;
-#if !HAVE_MS_BITFIELDS
+
             unsigned int : 20;
-#endif
 #endif
         };
     };

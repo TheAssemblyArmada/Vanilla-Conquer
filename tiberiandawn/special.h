@@ -35,12 +35,11 @@
 #ifndef SPECIAL_H
 #define SPECIAL_H
 
-#include "common/bitfields.h"
 #include "common/endianness.h"
 #include <stdint.h>
 
 #pragma pack(push, 1)
-class BITFIELD_STRUCT SpecialClass
+class SpecialClass
 {
 public:
     void Init(void)
@@ -84,7 +83,41 @@ public:
 
         struct
         {
-#if HAVE_MS_BITFIELDS
+            /*
+            ** simulate effects of attribute((ms_struct))
+            */
+#ifdef __BIG_ENDIAN__
+            unsigned : 4;
+            unsigned IsEarlyWin : 1;
+            unsigned IsScrollMod : 1;
+            unsigned IsGross : 1;
+            unsigned IsVariation : 1;
+            unsigned IsJurassic : 1;
+            unsigned IsScatter : 1;
+            unsigned IsRoad : 1;
+            unsigned IsTFast : 1;
+            unsigned IsTSpread : 1;
+            unsigned IsTGrowth : 1;
+            unsigned IsThreePoint : 1;
+            unsigned IsShowPath : 1;
+            unsigned IsInert : 1;
+            unsigned IsMonoEnabled : 1;
+            unsigned IsVisceroids : 1;
+            unsigned IsMCVDeploy : 1;
+            unsigned IsTreeTarget : 1;
+            unsigned IsSmartDefense : 1;
+            unsigned IsJuvenile : 1;
+            unsigned IsVisibleTarget : 1;
+            unsigned IsCaptureTheFlag : 1;
+            unsigned IsFromInstall : 1;
+            unsigned IsNamed : 1;
+            unsigned IsDefenderAdvantage : 1;
+            unsigned IsSeparate : 1;
+            unsigned IsSpeedBuild : 1;
+            unsigned IsDifficult : 1;
+            unsigned IsEasy : 1;
+#else
+
             /*
             **	Is the game flagged for easy mode?
             */
@@ -242,71 +275,8 @@ public:
             ** New anti-griefing early win mode. ST - 1/31/2020 3:42PM
             */
             unsigned IsEarlyWin : 1;
-#else
-            /*
-            ** simulate effects of attribute((ms_struct))
-            */
-#ifdef __BIG_ENDIAN__
+
             unsigned : 4;
-            unsigned IsEarlyWin : 1;
-            unsigned IsScrollMod : 1;
-            unsigned IsGross : 1;
-            unsigned IsVariation : 1;
-            unsigned IsJurassic : 1;
-            unsigned IsScatter : 1;
-            unsigned IsRoad : 1;
-            unsigned IsTFast : 1;
-            unsigned IsTSpread : 1;
-            unsigned IsTGrowth : 1;
-            unsigned IsThreePoint : 1;
-            unsigned IsShowPath : 1;
-            unsigned IsInert : 1;
-            unsigned IsMonoEnabled : 1;
-            unsigned IsVisceroids : 1;
-            unsigned IsMCVDeploy : 1;
-            unsigned IsTreeTarget : 1;
-            unsigned IsSmartDefense : 1;
-            unsigned IsJuvenile : 1;
-            unsigned IsVisibleTarget : 1;
-            unsigned IsCaptureTheFlag : 1;
-            unsigned IsFromInstall : 1;
-            unsigned IsNamed : 1;
-            unsigned IsDefenderAdvantage : 1;
-            unsigned IsSeparate : 1;
-            unsigned IsSpeedBuild : 1;
-            unsigned IsDifficult : 1;
-            unsigned IsEasy : 1;
-#else
-            unsigned IsEasy : 1;
-            unsigned IsDifficult : 1;
-            unsigned IsSpeedBuild : 1;
-            unsigned IsSeparate : 1;
-            unsigned IsDefenderAdvantage : 1;
-            unsigned IsNamed : 1;
-            unsigned IsFromInstall : 1;
-            unsigned IsCaptureTheFlag : 1;
-            unsigned IsVisibleTarget : 1;
-            unsigned IsJuvenile : 1;
-            unsigned IsSmartDefense : 1;
-            unsigned IsTreeTarget : 1;
-            unsigned IsMCVDeploy : 1;
-            unsigned IsVisceroids : 1;
-            unsigned IsMonoEnabled : 1;
-            unsigned IsInert : 1;
-            unsigned IsShowPath : 1;
-            unsigned IsThreePoint : 1;
-            unsigned IsTGrowth : 1;
-            unsigned IsTSpread : 1;
-            unsigned IsTFast : 1;
-            unsigned IsRoad : 1;
-            unsigned IsScatter : 1;
-            unsigned IsJurassic : 1;
-            unsigned IsVariation : 1;
-            unsigned IsGross : 1;
-            unsigned IsScrollMod : 1;
-            unsigned IsEarlyWin : 1;
-            unsigned : 4;
-#endif
 #endif
         };
     };
@@ -339,9 +309,7 @@ public:
             /*
             ** New modern balance setting.
             */
-#if HAVE_MS_BITFIELDS
-            unsigned ModernBalance : 1;
-#else
+
             /*
             ** simulate effects of attribute((ms_struct))
             */
@@ -351,7 +319,6 @@ public:
 #else
             unsigned ModernBalance : 1;
             unsigned : 31;
-#endif
 #endif
         };
     };

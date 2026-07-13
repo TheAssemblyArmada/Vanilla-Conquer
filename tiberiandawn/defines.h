@@ -34,7 +34,6 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
-#include "common/bitfields.h"
 #include "common/endianness.h"
 
 /**********************************************************************
@@ -2718,7 +2717,7 @@ typedef enum SerialCommandType : unsigned short
 **	Also used for the Null-Modem and Modem.
 */
 #pragma pack(push, 1)
-typedef struct BITFIELD_STRUCT
+typedef struct
 {
     SerialCommandType Command;   // One of the enum's defined above
     char Name[MPLAYER_NAME_MAX]; // Player or Game Name
@@ -2727,12 +2726,7 @@ typedef struct BITFIELD_STRUCT
     unsigned char Color;         // player's color or SIGNOFF ID
     unsigned char Scenario;      // Scenario #
     unsigned int Credits;        // player's credits
-#if HAVE_MS_BITFIELDS
-    unsigned int IsBases : 1;    // 1 = bases are allowed
-    unsigned int IsTiberium : 1; // 1 = tiberium is allowed
-    unsigned int IsGoodies : 1;  // 1 = goodies are allowed
-    unsigned int IsGhosties : 1; // 1 = ghosts are allowed
-#else
+
     /*
     ** simulate effects of attribute((ms_struct))
     */
@@ -2743,13 +2737,13 @@ typedef struct BITFIELD_STRUCT
     unsigned int IsTiberium : 1;
     unsigned int IsBases : 1;
 #else
-    unsigned int IsBases : 1;
-    unsigned int IsTiberium : 1;
-    unsigned int IsGoodies : 1;
-    unsigned int IsGhosties : 1;
+    unsigned int IsBases : 1;    // 1 = bases are allowed
+    unsigned int IsTiberium : 1; // 1 = tiberium is allowed
+    unsigned int IsGoodies : 1;  // 1 = goodies are allowed
+    unsigned int IsGhosties : 1; // 1 = ghosts are allowed
     unsigned int : 28;
 #endif
-#endif
+
     unsigned char BuildLevel;            // buildable level
     unsigned char UnitCount;             // max # units
     int Seed;                            // random number seed
@@ -2805,19 +2799,15 @@ typedef struct
     char Name[MPLAYER_NAME_MAX]; // Player or Game Name
     union
     {
-        struct BITFIELD_STRUCT
+        struct
         {
             int Version; // game's version number
-#if HAVE_MS_BITFIELDS
-            unsigned int IsOpen : 1; // 1 = game is open for joining
-#else
 #ifdef __BIG_ENDIAN__
             unsigned int : 31;
-            unsigned int IsOpen : 1;
+            unsigned int IsOpen : 1; // 1 = game is open for joining
 #else
-            unsigned int IsOpen : 1;
+            unsigned int IsOpen : 1; // 1 = game is open for joining
             unsigned int : 31;
-#endif
 #endif
         } GameInfo;
         struct
@@ -2826,16 +2816,11 @@ typedef struct
             unsigned int Color;   // player's color
             unsigned int NameCRC; // CRC of player's game's name
         } PlayerInfo;
-        struct BITFIELD_STRUCT
+        struct
         {
             unsigned char Scenario; // Scenario #
             unsigned int Credits;   // player's credits
-#if HAVE_MS_BITFIELDS
-            unsigned int IsBases : 1;    // 1 = bases are allowed
-            unsigned int IsTiberium : 1; // 1 = tiberium is allowed
-            unsigned int IsGoodies : 1;  // 1 = goodies are allowed
-            unsigned int IsGhosties : 1; // 1 = ghosts are allowed
-#else
+
 #ifdef __BIG_ENDIAN__
             unsigned int : 28;
             unsigned int IsGhosties : 1;
@@ -2843,12 +2828,11 @@ typedef struct
             unsigned int IsTiberium : 1;
             unsigned int IsBases : 1;
 #else
-            unsigned int IsBases : 1;
-            unsigned int IsTiberium : 1;
-            unsigned int IsGoodies : 1;
-            unsigned int IsGhosties : 1;
+            unsigned int IsBases : 1;    // 1 = bases are allowed
+            unsigned int IsTiberium : 1; // 1 = tiberium is allowed
+            unsigned int IsGoodies : 1;  // 1 = goodies are allowed
+            unsigned int IsGhosties : 1; // 1 = ghosts are allowed
             unsigned int : 28;
-#endif
 #endif
             unsigned char BuildLevel; // buildable level
             unsigned char UnitCount;  // max # units

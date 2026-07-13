@@ -48,8 +48,6 @@
 #ifndef COMBUF_H
 #define COMBUF_H
 
-#include "bitfields.h"
-
 /*
 ********************************** Defines **********************************
 */

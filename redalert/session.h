@@ -35,7 +35,6 @@
 #define SESSION_H
 
 #include "common/ipxaddr.h"
-#include "common/bitfields.h"
 #include "common/endianness.h"
 #include "msglist.h"
 #include "connect.h"
@@ -297,7 +296,7 @@ typedef struct
     unsigned char ID;            // unique ID of sender of message
     union
     {
-        struct BITFIELD_STRUCT
+        struct
         {
             HousesType House;           // player's House
             PlayerColorType Color;      // player's color or SIGNOFF ID
@@ -305,13 +304,7 @@ typedef struct
             unsigned int MaxVersion;    // max version this game supports
             char Scenario[DESCRIP_MAX]; // Scenario name
             unsigned int Credits;       // player's credits
-#if HAVE_MS_BITFIELDS
-            unsigned int IsBases : 1;          // 1 = bases are allowed
-            unsigned int IsTiberium : 1;       // 1 = tiberium is allowed
-            unsigned int IsGoodies : 1;        // 1 = goodies are allowed
-            unsigned int IsGhosties : 1;       // 1 = ghosts are allowed
-            unsigned int OfficialScenario : 1; //	Is this scenario an official Westwood one?
-#else
+
             /*
             ** simulate effects of attribute((ms_struct))
             */
@@ -329,7 +322,6 @@ typedef struct
             unsigned int IsGhosties : 1;
             unsigned int OfficialScenario : 1;
             unsigned int : 27;
-#endif
 #endif
             int CheatCheck;            // Unique ID of "rules.ini" file.
             unsigned char BuildLevel;  // buildable level
@@ -381,7 +373,7 @@ typedef struct GlobalPacketType
     char Name[MPLAYER_NAME_MAX]; // Player or Game Name
     union
     {
-        struct BITFIELD_STRUCT
+        struct
         {
             union
             {
@@ -405,7 +397,7 @@ typedef struct GlobalPacketType
             unsigned int MaxVersion; // game's max supported version
             int CheatCheck;          // Unique ID of "rules.ini" file.
         } PlayerInfo;
-        struct BITFIELD_STRUCT
+        struct
         {
             char Scenario[DESCRIP_MAX]; // Scenario Name
             unsigned int Credits;       // player's credits
@@ -428,6 +420,7 @@ typedef struct GlobalPacketType
                     unsigned int IsGoodies : 1;        // 1 = goodies are allowed
                     unsigned int IsGhosties : 1;       // 1 = ghosts are allowed
                     unsigned int OfficialScenario : 1; // Is this scenario an official Westwood one?
+                    unsigned int Unused : 27;
 #endif
                 };
             };
@@ -442,7 +435,7 @@ typedef struct GlobalPacketType
 #ifdef WOLAPI_INTEGRATION
             char ShortFileName[13]; // Name of scenario file to expect from host
 #else
-            char ShortFileName[12];                    // Name of scenario file to expect from host
+            char ShortFileName[12]; // Name of scenario file to expect from host
 #endif
             unsigned char FileDigest[32]; // Digest of scenario file to expect from host
                                           //	ajw - This is not necessarily null-terminated.
