@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cncweb.invalid/schema/classic-freeware-v1.schema.json",
+  "title": "Theater Runtime classic-freeware bootstrap v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "version", "package"],
+  "properties": {
+    "format": { "const": "cncweb-classic-freeware" },
+    "version": { "const": 1 },
+    "package": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "contentSha256", "source", "archive"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+        },
+        "contentSha256": { "$ref": "#/$defs/sha256" },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["product", "provider"],
+          "properties": {
+            "product": { "const": "tiberian-dawn-freeware" },
+            "provider": { "const": "ea-freeware" }
+          }
+        },
+        "archive": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["url", "bytes", "sha256"],
+          "properties": {
+            "url": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048,
+              "description": "Resolved by the browser against this descriptor and required to remain same-origin."
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483648
+            },
+            "sha256": { "$ref": "#/$defs/sha256" }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

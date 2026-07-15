@@ -1,0 +1,11 @@
+{
+  "profile": "cncweb-browser-import",
+  "version": 1,
+  "limits": {
+    "maxEntries": 100000,
+    "maxManifestBytes": 4194304,
+    "maxFileBytes": 67108864,
+    "maxTotalBytes": 2147483648,
+    "maxCompressionRatio": 1000
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cncweb.invalid/schema/manifest-v1.schema.json",
+  "title": "C&C Web content manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "version",
+    "package_id",
+    "created_at_unix_ms",
+    "source",
+    "content",
+    "content_sha256",
+    "files"
+  ],
+  "properties": {
+    "format": { "const": "cncweb-content" },
+    "version": { "const": 1 },
+    "package_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "created_at_unix_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "source": { "$ref": "#/$defs/source" },
+    "content": { "$ref": "#/$defs/content" },
+    "content_sha256": { "$ref": "#/$defs/sha256" },
+    "files": {
+      "type": "array",
+      "maxItems": 100000,
+      "description": "Must be strictly sorted by path; paths must also be unique after Unicode lowercase conversion.",
+      "items": { "$ref": "#/$defs/file" }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "portablePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "description": "Relative UTF-8 path with forward-slash separators. Runtime validation additionally rejects dot/empty segments, controls, Windows-reserved characters/device names, trailing dot/space, and segments longer than 255 bytes."
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product", "provider", "install_fingerprint_sha256"],
+      "properties": {
+        "product": {
+          "enum": ["cnc-remastered-collection", "tiberian-dawn-freeware"]
+        },
+        "provider": {
+          "enum": ["steam", "ea-app", "copied-installation", "ea-freeware", "unknown"]
+        },
+        "install_fingerprint_sha256": { "$ref": "#/$defs/sha256" }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "product": { "const": "cnc-remastered-collection" },
+            "provider": { "enum": ["steam", "ea-app", "copied-installation", "unknown"] }
+          }
+        },
+        {
+          "properties": {
+            "product": { "const": "tiberian-dawn-freeware" },
+            "provider": { "const": "ea-freeware" }
+          }
+        }
+      ]
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["games", "locales"],
+      "properties": {
+        "games": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["tiberian-dawn", "red-alert"] }
+        },
+        "locales": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 35,
+            "pattern": "^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$"
+          }
+        }
+      }
+    },
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "size", "sha256", "role"],
+      "properties": {
+        "path": { "$ref": "#/$defs/portablePath" },
+        "size": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "role": {
+          "enum": [
+            "engine-data",
+            "texture-atlas",
+            "audio",
+            "video",
+            "map",
+            "configuration",
+            "other"
+          ]
+        }
+      }
+    }
+  }
+}

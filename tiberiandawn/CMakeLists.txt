@@ -193,6 +193,67 @@ if(BUILD_REMASTERTD)
     )
 endif()
 
+if(BUILD_WEBTD)
+    if(NOT EMSCRIPTEN)
+        message(FATAL_ERROR "BUILD_WEBTD requires the Emscripten toolchain (use the web-td preset).")
+    endif()
+
+    add_executable(TiberianDawnWeb
+        dllinterface.cpp
+        sidebarglyphx.cpp
+        ${TIBDAWN_SRC}
+        ${CMAKE_SOURCE_DIR}/browser/engine/src/determinism.cpp
+        ${CMAKE_SOURCE_DIR}/browser/engine/src/td_backend.cpp
+    )
+    target_compile_definitions(TiberianDawnWeb PRIVATE
+        ${REMASTER_DEFS}
+        MEGAMAPS
+        CNC_WEB_BUILD
+    )
+    target_include_directories(TiberianDawnWeb PRIVATE
+        ${CMAKE_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_SOURCE_DIR}/browser/engine/include
+        ${CMAKE_SOURCE_DIR}/browser/engine/src
+    )
+    target_compile_options(TiberianDawnWeb PRIVATE
+        -fexceptions
+        -fms-extensions
+        -fsigned-char
+        -fwrapv
+        -fno-fast-math
+        -ffp-contract=off
+        -include "${CMAKE_SOURCE_DIR}/browser/engine/src/td_platform_compat.h"
+        $<$<CONFIG:Release>:-g0>
+    )
+    target_link_libraries(TiberianDawnWeb PRIVATE cnc_web_adapter commonr ${STATIC_LIBS})
+    target_link_options(TiberianDawnWeb PRIVATE
+        --no-entry
+        -fexceptions
+        -sDISABLE_EXCEPTION_CATCHING=0
+        -sALLOW_MEMORY_GROWTH=1
+        -sGROWABLE_ARRAYBUFFERS=0
+        -sINITIAL_MEMORY=67108864
+        -sMAXIMUM_MEMORY=402653184
+        -sFILESYSTEM=1
+        -sFORCE_FILESYSTEM=1
+        -sENVIRONMENT=worker
+        -sMODULARIZE=1
+        -sEXPORT_ES6=1
+        -sEXPORT_NAME=createTiberianDawnModule
+        -sEXIT_RUNTIME=0
+        -sWASM_BIGINT=1
+        "SHELL:-sEXPORTED_RUNTIME_METHODS=['FS','HEAPU8','HEAPU32']"
+        "SHELL:-sEXPORTED_FUNCTIONS=['_malloc','_free','_cnc_web_abi_version','_cnc_web_create','_cnc_web_destroy','_cnc_web_set_campaign_transition','_cnc_web_start','_cnc_web_submit_commands','_cnc_web_advance','_cnc_web_snapshot_size','_cnc_web_write_snapshot','_cnc_web_event_size','_cnc_web_poll_event','_cnc_web_save_size','_cnc_web_write_save','_cnc_web_load_save','_cnc_web_state_hash','_CNC_Web_Acceptance_Force_Victory']"
+        -lworkerfs.js
+        $<$<CONFIG:Release>:-g0>
+    )
+    set_target_properties(TiberianDawnWeb PROPERTIES
+        OUTPUT_NAME "tiberiandawn"
+        SUFFIX ".js"
+    )
+endif()
+
 if(BUILD_VANILLATD)
     include(BuildIcons)
     # Create the custom command for generating the ico/icns files for display in the OS.

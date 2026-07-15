@@ -85,6 +85,33 @@
             "binaryDir": "${sourceDir}/build_msvc64",
             "displayName": "MSVC 2019 64bit Vanilla build",
             "architecture": "x64"
+        },
+        {
+            "name": "web-td",
+            "displayName": "Tiberian Dawn WebAssembly",
+            "description": "Production browser engine module using the TD remaster gameplay core",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "toolchainFile": "${sourceDir}/cmake/toolchains/Emscripten.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "BUILD_WEBTD": "ON",
+                "BUILD_REMASTERTD": "OFF",
+                "BUILD_REMASTERRA": "OFF",
+                "BUILD_VANILLATD": "OFF",
+                "BUILD_VANILLARA": "OFF",
+                "BUILD_TESTS": "OFF",
+                "BUILD_TOOLS": "OFF",
+                "MAP_EDITORTD": "OFF",
+                "MAP_EDITORRA": "OFF",
+                "NETWORKING": "OFF",
+                "SDL1": "OFF",
+                "SDL2": "OFF",
+                "OPENAL": "OFF",
+                "DSOUND": "OFF",
+                "DDRAW": "OFF"
+            }
         }
     ],
     "buildPresets": [
@@ -122,6 +149,12 @@
             "displayName": "Vanilla Game Build",
             "description": "Vanilla Game Build",
             "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "web-td",
+            "configurePreset": "web-td",
+            "displayName": "Tiberian Dawn WebAssembly",
+            "description": "Build the production browser engine module"
         }
     ],
     "testPresets": [
@@ -205,6 +238,19 @@
                 {
                     "type": "build",
                     "name": "nonet"
+                }
+            ]
+        },
+        {
+            "name": "web-td",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "web-td"
+                },
+                {
+                    "type": "build",
+                    "name": "web-td"
                 }
             ]
         }

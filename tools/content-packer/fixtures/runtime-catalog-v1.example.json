@@ -1,0 +1,21 @@
+{
+  "format": "cncweb-runtime",
+  "version": 1,
+  "engine": "tiberian-dawn",
+  "engineRoot": "engine/td",
+  "missions": [
+    {
+      "id": "gdi-01-east-a",
+      "scenarioRoot": "SCG01EA",
+      "scenario": 1,
+      "variation": 0,
+      "direction": 0,
+      "buildLevel": 1,
+      "sabotagedStructure": -1,
+      "faction": "gdi",
+      "title": "GDI Mission 1",
+      "briefing": "Synthetic mission briefing.",
+      "theater": "temperate"
+    }
+  ]
+}

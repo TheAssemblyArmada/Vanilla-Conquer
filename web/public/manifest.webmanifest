@@ -1,0 +1,19 @@
+{
+  "name": "Theater Runtime",
+  "short_name": "Theater",
+  "description": "A high-performance browser strategy runtime with verified classic-freeware content.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#0a0e0c",
+  "theme_color": "#111714",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

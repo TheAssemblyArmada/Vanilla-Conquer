@@ -1,0 +1,41 @@
+{
+  "format": "cncweb-performance-budgets",
+  "version": 1,
+  "bundle": {
+    "appJavaScript": { "rawBytes": 544768, "gzipBytes": 194560 },
+    "appCss": { "rawBytes": 27648, "gzipBytes": 6144 },
+    "simulationWorker": { "rawBytes": 32768, "gzipBytes": 11264 },
+    "engineJavaScript": { "rawBytes": 94208, "gzipBytes": 25600 },
+    "engineWasm": { "rawBytes": 1179648, "gzipBytes": 430080 }
+  },
+  "assetFreeDemo": {
+    "startupToPlayableMs": 2500,
+    "measurementWindowMs": 4000,
+    "tickHzMinimum": 12.5,
+    "tickHzMaximum": 17.5,
+    "maximumTickGapMs": 300,
+    "minimumRafSamples": 120,
+    "maximumMeanRafIntervalMs": 30,
+    "maximumP95RafIntervalMs": 50,
+    "maximumStartupLongTasks": 12,
+    "maximumStartupLongTaskMs": 1000,
+    "maximumSteadyLongTasks": 3,
+    "maximumSteadyLongTaskMs": 250
+  },
+  "classicFreeware": {
+    "maximumColdStartupMs": 30000,
+    "measurementWindowMs": 10000,
+    "minimumObservedWindowMs": 9500,
+    "tickHzMinimum": 12.5,
+    "tickHzMaximum": 17.5,
+    "maximumSnapshotGapMs": 300,
+    "minimumRafSamples": 250,
+    "minimumSnapshotSamples": 115,
+    "maximumMeanRafIntervalMs": 30,
+    "maximumP95RafIntervalMs": 50,
+    "maximumRafIntervalMs": 300,
+    "maximumLongTasks": 3,
+    "maximumLongTaskMs": 250,
+    "maximumClassicBaselineUploads": 1
+  }
+}

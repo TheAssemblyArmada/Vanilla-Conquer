@@ -1,0 +1,27 @@
+[package]
+name = "cncweb-content-packer"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+license = "GPL-3.0-or-later"
+description = "Local owned-content packager for the C&C browser runtime"
+publish = false
+
+[lib]
+name = "cncweb_content_packer"
+path = "src/lib.rs"
+
+[[bin]]
+name = "cncweb-content"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha2 = "0.10"
+thiserror = "2.0"
+zip = { version = "2.2.2", default-features = false, features = ["deflate"] }
+
+[dev-dependencies]
+tempfile = "3.14"

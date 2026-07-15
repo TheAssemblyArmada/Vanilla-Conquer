@@ -1,0 +1,28 @@
+{
+  "format": "cncweb-content",
+  "version": 1,
+  "package_id": "synthetic-contract-example",
+  "created_at_unix_ms": 1700000000000,
+  "source": {
+    "product": "cnc-remastered-collection",
+    "provider": "unknown",
+    "install_fingerprint_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "content": {
+    "games": [
+      "tiberian-dawn"
+    ],
+    "locales": [
+      "en-US"
+    ]
+  },
+  "content_sha256": "6d3e18ba62bf87c81916062dfeb4d9ce6d4cb5d058e890a2c2fb9c70c89c91a4",
+  "files": [
+    {
+      "path": "config/example.json",
+      "size": 3,
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "role": "configuration"
+    }
+  ]
+}

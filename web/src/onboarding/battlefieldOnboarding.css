@@ -1,0 +1,143 @@
+.battlefield-guide,
+.battlefield-guide-launcher {
+  position: absolute;
+  z-index: 6;
+  left: max(12px, env(safe-area-inset-left));
+  border: 1px solid rgba(229, 189, 97, .48);
+  background: rgba(11, 16, 13, .94);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .52);
+  color: #dce5de;
+  backdrop-filter: blur(10px);
+}
+
+.battlefield-guide {
+  top: max(72px, calc(env(safe-area-inset-top) + 72px));
+  width: min(360px, calc(100% - 24px));
+  padding: 14px;
+}
+
+.battlefield-guide-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.battlefield-guide-heading span {
+  display: block;
+  margin-bottom: 2px;
+  color: #e5bd61;
+  font: 600 9px Barlow Condensed, sans-serif;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.battlefield-guide-heading h2 {
+  margin: 0;
+  color: #f1f5f2;
+  font: 650 20px Barlow Condensed, sans-serif;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+}
+
+.battlefield-guide-heading button,
+.battlefield-guide-launcher {
+  min-width: 58px;
+  min-height: 44px;
+  padding: 0 11px;
+  color: #e5bd61;
+  font: 600 11px Barlow Condensed, sans-serif;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.battlefield-guide-heading button {
+  flex: 0 0 auto;
+  margin: -5px -5px 0 0;
+  border: 1px solid rgba(229, 189, 97, .3);
+  background: rgba(229, 189, 97, .08);
+}
+
+.battlefield-guide-heading button:hover,
+.battlefield-guide-launcher:hover {
+  border-color: rgba(229, 189, 97, .72);
+  background: rgba(229, 189, 97, .14);
+  color: #fff0be;
+}
+
+.battlefield-guide-shroud {
+  margin: 11px 0 12px;
+  padding: 9px 10px;
+  border-left: 3px solid #a4c48c;
+  background: rgba(164, 196, 140, .08);
+  color: #c6d0c8;
+  font-size: 11px;
+  line-height: 1.48;
+}
+
+.battlefield-guide-shroud strong {
+  color: #e8eee9;
+}
+
+.battlefield-guide dl {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+}
+
+.battlefield-guide dl > div {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 9px;
+  align-items: baseline;
+}
+
+.battlefield-guide dt {
+  color: #e5bd61;
+  font: 600 10px Barlow Condensed, sans-serif;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.battlefield-guide dd {
+  margin: 0;
+  color: #aebbb1;
+  font-size: 10px;
+  line-height: 1.42;
+}
+
+.battlefield-guide kbd {
+  color: #e7ede8;
+  font: inherit;
+  white-space: nowrap;
+}
+
+.battlefield-guide-launcher {
+  top: max(72px, calc(env(safe-area-inset-top) + 72px));
+}
+
+@media (max-width: 760px) {
+  .battlefield-guide,
+  .battlefield-guide-launcher {
+    left: max(6px, env(safe-area-inset-left));
+  }
+
+  .battlefield-guide {
+    top: max(62px, calc(env(safe-area-inset-top) + 62px));
+    width: min(340px, calc(100% - 12px));
+    max-height: calc(100% - 136px);
+    overflow: auto;
+    padding: 12px;
+  }
+
+  .battlefield-guide-launcher {
+    top: max(62px, calc(env(safe-area-inset-top) + 62px));
+  }
+}
+
+@media (max-width: 420px) {
+  .battlefield-guide dl > div {
+    grid-template-columns: 62px minmax(0, 1fr);
+  }
+}

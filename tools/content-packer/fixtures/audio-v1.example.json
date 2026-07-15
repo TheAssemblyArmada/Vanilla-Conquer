@@ -1,0 +1,40 @@
+{
+  "format": "cncweb-audio",
+  "version": 1,
+  "encoding": "wav-pcm",
+  "assets": [
+    {
+      "kind": "sound",
+      "eventName": "MGUN2",
+      "eventIds": [51],
+      "path": "audio/sfx/mgun2.wav",
+      "sourceArchive": "SOUNDS.MIX",
+      "sourceName": "MGUN2.AUD",
+      "sourceCompression": 1,
+      "sampleRate": 22050,
+      "channels": 1,
+      "bitsPerSample": 8,
+      "frames": 4,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "kind": "speech",
+      "eventName": "ACCOM1",
+      "eventIds": [0],
+      "path": "audio/speech/accom1.wav",
+      "sourceArchive": "SPEECH.MIX",
+      "sourceName": "ACCOM1.AUD",
+      "sourceCompression": 1,
+      "sampleRate": 22050,
+      "channels": 1,
+      "bitsPerSample": 8,
+      "frames": 4,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "diagnostics": {
+    "candidateCount": 2,
+    "missingCandidates": 0,
+    "decodeFailures": []
+  }
+}

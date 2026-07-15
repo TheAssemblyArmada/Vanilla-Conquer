@@ -112,9 +112,14 @@ set(COMMONR_SRC
     soundio_null.cpp
     video_null.cpp
     wwkeyboard.cpp
-    wwkeyboard_win32.cpp
     wwmouse.cpp
 )
+
+if(BUILD_WEBTD AND EMSCRIPTEN)
+    list(APPEND COMMONR_SRC ${CMAKE_SOURCE_DIR}/browser/engine/src/wwkeyboard_web.cpp)
+else()
+    list(APPEND COMMONR_SRC wwkeyboard_win32.cpp)
+endif()
 
 set(COMMONV_SRC
     framelimit.cpp
@@ -175,6 +180,11 @@ target_compile_features(common PUBLIC cxx_std_11)
 # Make build check state of git to check for uncommitted changes.
 add_dependencies(common check_git)
 
+if(BUILD_WEBTD AND EMSCRIPTEN)
+    target_compile_options(common PRIVATE
+        -include "${CMAKE_SOURCE_DIR}/browser/engine/src/td_platform_compat.h")
+endif()
+
 if(WIN32)
     if(WIN9X)
         target_compile_definitions(common PUBLIC _WIN32_WINNT=0x400)
@@ -183,10 +193,21 @@ if(WIN32)
     endif()
 endif()
 
-if(BUILD_REMASTERTD OR BUILD_REMASTERRA)
+if(BUILD_REMASTERTD OR BUILD_REMASTERRA OR BUILD_WEBTD)
     add_library(commonr STATIC ${COMMONR_SRC})
     target_compile_definitions(commonr PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${REMASTER_DEFS})
     target_link_libraries(commonr PUBLIC common ${REMASTER_LIBS})
+    if(BUILD_WEBTD AND EMSCRIPTEN)
+        target_compile_options(commonr PRIVATE
+            -include "${CMAKE_SOURCE_DIR}/browser/engine/src/td_platform_compat.h")
+    endif()
+endif()
+
+if(BUILD_WEBTD AND EMSCRIPTEN)
+    # TimerClass is used by gameplay code; bind it to the adapter's exact
+    # 15 Hz logical clock without changing any existing native target.
+    set_property(SOURCE timer.cpp APPEND PROPERTY COMPILE_OPTIONS
+        -include "${CMAKE_SOURCE_DIR}/browser/engine/src/td_clock_compat.h")
 endif()
 
 # These options currently require directx components from the aug 2007 SDK.

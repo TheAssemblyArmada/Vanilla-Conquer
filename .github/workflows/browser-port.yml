@@ -1,0 +1,151 @@
+name: browser-port
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  content-policy:
+    name: Retail-content guard
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject protected or user-generated content
+        run: ./scripts/check-no-retail-content.sh
+      - name: Test the local owned-content acceptance guards
+        run: |
+          ./scripts/tests/test-owned-content-acceptance.sh
+          PYTHONDONTWRITEBYTECODE=1 \
+            python3 -m unittest scripts/tests/test_verify_owned_content_package.py
+          ./scripts/check-no-retail-content.sh
+
+  content-packer:
+    name: Content packer
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: tools/content-packer
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select the pinned Rust toolchain
+        run: |
+          rustup toolchain install "$(awk -F '"' '/^channel/ { print $2 }' ../../rust-toolchain.toml)" \
+            --profile minimal --component clippy,rustfmt
+          rustup show active-toolchain
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+      - name: Lint
+        run: cargo clippy --locked --all-targets -- -D warnings
+      - name: Test
+        run: cargo test --locked --all-targets
+
+  native-adapter:
+    name: Native engine adapter
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ninja-build libsdl2-dev libopenal-dev
+      - name: Configure, build, and test
+        run: cmake --workflow --preset testing
+
+  web-runtime:
+    name: Browser runtime
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+      - name: Enable the pinned package manager
+        run: corepack enable
+      - name: Install dependencies
+        run: corepack pnpm install --frozen-lockfile
+      - name: Type-check
+        run: corepack pnpm typecheck
+      - name: Test
+        run: corepack pnpm test
+      - name: Test classic-freeware deployment gates
+        run: corepack pnpm test:classic-freeware:deployment-tools
+      - name: Build the source-only shell
+        run: corepack pnpm build
+      - name: Test and enforce production bundle budgets
+        run: |
+          corepack pnpm test:bundle-budget
+          corepack pnpm check:bundle-budget
+      - name: Validate the generated service worker
+        run: |
+          node --check dist/sw.js
+          ! grep -q '__THEATER_' dist/sw.js
+          grep -Eq 'simulation\.worker-.*\.js' dist/sw.js
+      - name: Install the Chromium test browser
+        run: corepack pnpm exec playwright install --with-deps chromium
+      - name: Exercise the production shell in a browser
+        run: corepack pnpm test:e2e
+      - name: Measure the asset-free demo twice against performance budgets
+        run: corepack pnpm test:performance
+
+  webassembly-engine:
+    name: WebAssembly engine and integrated bundle
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+      - name: Install build tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y ninja-build
+          cmake --version
+          ninja --version
+      - name: Install the pinned Emscripten SDK
+        run: |
+          git clone --depth 1 https://github.com/emscripten-core/emsdk.git "$RUNNER_TEMP/emsdk"
+          "$RUNNER_TEMP/emsdk/emsdk" install "$(cat emscripten-version.txt)"
+          "$RUNNER_TEMP/emsdk/emsdk" activate "$(cat emscripten-version.txt)"
+      - name: Build the production engine module
+        run: |
+          source "$RUNNER_TEMP/emsdk/emsdk_env.sh"
+          cmake --workflow --preset web-td
+          test -s build/web-td/tiberiandawn.js
+          test -s build/web-td/tiberiandawn.wasm
+      - name: Instantiate the engine and exercise its lifecycle ABI
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory build/web-td &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for attempt in {1..50}; do
+            curl --fail --silent http://127.0.0.1:8765/tiberiandawn.js >/dev/null && break
+            sleep 0.1
+          done
+          curl --fail --silent http://127.0.0.1:8765/tiberiandawn.wasm >/dev/null
+          node scripts/smoke-web-engine.mjs
+      - name: Build the integrated browser bundle
+        working-directory: web
+        run: |
+          corepack enable
+          corepack pnpm install --frozen-lockfile
+          REQUIRE_BROWSER_ENGINE=1 corepack pnpm build
+          corepack pnpm check:bundle-budget:integrated
+          cmp ../build/web-td/tiberiandawn.js dist/engine/tiberiandawn.js
+          cmp ../build/web-td/tiberiandawn.wasm dist/engine/tiberiandawn.wasm
+          node --check dist/sw.js
+          ! grep -q '__THEATER_' dist/sw.js
+          grep -q 'engine/tiberiandawn.wasm' dist/sw.js
+      - name: Install the Chromium test browser
+        working-directory: web
+        run: corepack pnpm exec playwright install --with-deps chromium
+      - name: Probe the engine ABI in an online and offline browser worker
+        working-directory: web
+        env:
+          REQUIRE_BROWSER_ENGINE_E2E: "1"
+        run: corepack pnpm exec playwright test --grep "real Emscripten engine"

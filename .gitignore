@@ -2,3 +2,23 @@
 /CMakeUserPresets.json
 /.cache
 /.vscode
+
+# Browser workspace artifacts
+/web/node_modules/
+/web/dist/
+/web/coverage/
+/web/.vite/
+/web/playwright-report/
+/web/test-results/
+
+# Local Python verifier/test bytecode
+__pycache__/
+*.py[cod]
+
+# Rust content companion artifacts
+/tools/content-packer/target/
+
+# User-created retail content packages must never be committed.
+*.cncweb
+*.cncsave
+*.cncreplay
