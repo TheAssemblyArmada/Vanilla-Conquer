@@ -267,6 +267,7 @@ RulesClass::RulesClass(void)
     , TiberiumLongScan(0x2000)
     , HealthBarDisplayMode(HB_SELECTED)
     , ResourceBarDisplayMode(RB_SELECTED)
+    , AllowSuperWeapons(true)
 {
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
     NewUnitsEnabled = SecretUnitsEnabled = false;

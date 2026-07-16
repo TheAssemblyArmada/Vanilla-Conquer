@@ -886,6 +886,11 @@ public:
         RB_SELECTED = 0,
         RB_ALWAYS,
     } ResourceBarDisplayMode;
+
+    /*
+    **	Are superweapons allowed?
+    */
+    bool AllowSuperWeapons;
 };
 
 #endif

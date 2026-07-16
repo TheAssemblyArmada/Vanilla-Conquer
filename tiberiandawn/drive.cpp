@@ -83,7 +83,7 @@ void DriveClass::Do_Turn(DirType dir)
         **	Special rotation track is needed for units that
         **	cannot rotate in place.
         */
-        if (Special.IsThreePoint && TrackNumber == -1 && Class->Speed == SPEED_WHEEL) {
+        if (Rule.IsThreePoint && TrackNumber == -1 && Class->Speed == SPEED_WHEEL) {
             int facediff;    // Signed difference between current and desired facing.
             FacingType face; // Current facing (ordinal value).
 
@@ -239,7 +239,7 @@ void DriveClass::Overrun_Square(CELL cell, bool threaten)
                 /*
                 **	Scattering is controlled by the game difficulty level.
                 */
-                if (((GameToPlay == GAME_NORMAL && PlayerPtr->Difficulty == DIFF_HARD) || Special.IsScatter
+                if (((GameToPlay == GAME_NORMAL && PlayerPtr->Difficulty == DIFF_HARD) || Rule.IsScatter
                      || Scen.Scenario > 8)
                     && !(GameToPlay == GAME_NORMAL && PlayerPtr->Difficulty == DIFF_EASY)) {
                     cellptr->Incoming(0, true);
@@ -708,10 +708,10 @@ bool DriveClass::While_Moving(void)
 
                         case MOVE_TEMP:
                             if (*this == UNIT_HARVESTER || !House->IsHuman) {
-                                bool old = Special.IsScatter;
-                                Special.IsScatter = true;
+                                bool old = Rule.IsScatter;
+                                Rule.IsScatter = true;
                                 Map[Coord_Cell(c)].Incoming(0, true);
-                                Special.IsScatter = old;
+                                Rule.IsScatter = old;
                             }
                             break;
                         }
@@ -975,10 +975,10 @@ bool DriveClass::Start_Of_Move(void)
                         CellClass* cellptr = &Map[cell];
                         TechnoClass* blockage = cellptr->Cell_Techno();
                         if (blockage && House->Is_Ally(blockage)) {
-                            bool old = Special.IsScatter;
-                            Special.IsScatter = true;
+                            bool old = Rule.IsScatter;
+                            Rule.IsScatter = true;
                             cellptr->Incoming(0, true);
-                            Special.IsScatter = old;
+                            Rule.IsScatter = old;
                         }
                     }
                 }
@@ -1009,10 +1009,10 @@ bool DriveClass::Start_Of_Move(void)
                 CellClass* cellptr = &Map[cell];
                 TechnoClass* blockage = cellptr->Cell_Techno();
                 if (blockage && House->Is_Ally(blockage)) {
-                    bool old = Special.IsScatter;
-                    Special.IsScatter = true;
+                    bool old = Rule.IsScatter;
+                    Rule.IsScatter = true;
                     cellptr->Incoming(0, true);
-                    Special.IsScatter = old;
+                    Rule.IsScatter = old;
                 }
             }
         }
@@ -1079,10 +1079,10 @@ bool DriveClass::Start_Of_Move(void)
             **	get out of the way.
             */
             if (cando == MOVE_TEMP) {
-                bool old = Special.IsScatter;
-                Special.IsScatter = true;
+                bool old = Rule.IsScatter;
+                Rule.IsScatter = true;
                 Map[destcell].Incoming(0, true);
-                Special.IsScatter = old;
+                Rule.IsScatter = old;
             }
 
             /*
@@ -1210,10 +1210,10 @@ bool DriveClass::Start_Of_Move(void)
                         **	get out of the way.
                         */
                         if (cando == MOVE_TEMP) {
-                            bool old = Special.IsScatter;
-                            Special.IsScatter = true;
+                            bool old = Rule.IsScatter;
+                            Rule.IsScatter = true;
                             Map[destcell].Incoming(0, true);
-                            Special.IsScatter = old;
+                            Rule.IsScatter = old;
                         }
 
                         /*
@@ -1319,7 +1319,7 @@ void DriveClass::AI(void)
         **	For tracked units that are rotating in place, perform the rotation now.
         */
         if ((Class->Speed == SPEED_FLOAT || Class->Speed == SPEED_HOVER || Class->Speed == SPEED_TRACK
-             || (Class->Speed == SPEED_WHEEL && !Special.IsThreePoint))
+             || (Class->Speed == SPEED_WHEEL && !Rule.IsThreePoint))
             && PrimaryFacing.Is_Rotating()) {
             if (PrimaryFacing.Rotation_Adjust((int)Class->ROT * House->GroundspeedBias)) {
                 Mark(MARK_CHANGE);
@@ -1408,7 +1408,7 @@ void DriveClass::Fixup_Path(PathType* path)
     /*
     **	Only wheeled vehicles need a path fixup -- to avoid 3 point turns.
     */
-    if (!Special.IsThreePoint || Class->Speed != SPEED_WHEEL) {
+    if (!Rule.IsThreePoint || Class->Speed != SPEED_WHEEL) {
         return;
     }
 

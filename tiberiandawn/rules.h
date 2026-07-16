@@ -66,11 +66,17 @@ public:
     RulesClass(void);
 
     bool Process(CCINIClass& file);
+    bool General(CCINIClass& ini);
+    bool Recharge(CCINIClass& ini);
     bool AI(CCINIClass& ini);
+    bool Themes(CCINIClass& ini);
     bool IQ(CCINIClass& ini);
     bool Difficulty(CCINIClass& ini);
     bool Export(CCINIClass& file);
+    bool Export_General(CCINIClass& ini);
+    bool Export_Recharge(CCINIClass& ini);
     bool Export_AI(CCINIClass& ini);
+    bool Export_Themes(CCINIClass& ini);
     bool Export_IQ(CCINIClass& ini);
     bool Export_Difficulty(CCINIClass& ini);
 
@@ -255,6 +261,12 @@ public:
     int InfantryBaseMult;
 
     /*
+    **	This array controls the difficulty affects on the game. There is one
+    **	difficulty class object for each difficulty level.
+    */
+    DifficultyClass Diff[DIFF_COUNT];
+
+    /*
     **	Is the computer paranoid? If so, then it will band together with other computer
     **	paranoid players when the situation looks rough.
     */
@@ -273,15 +285,71 @@ public:
     bool IsFineDifficulty;
 
     /*
+    **	If this flag is true, then the construction yard can undeploy back into an MCV.
+    */
+    bool IsMCVDeploy;
+
+    /*
+    **	Can the helipad (and airfield) be purchased separately from the associated
+    **	aircraft.
+    */
+    bool IsSeparate;
+
+    /*
+    **	Give target cursor for trees? Doing this will make targetting of trees easier.
+    */
+    bool IsTreeTarget;
+
+    /*
+    **	If Tiberium is allowed to grow, then this flag will be true.
+    */
+    bool IsTGrowth;
+
+    /*
+    **	If Tiberium is allowed to spread, then this flag will be true.
+    */
+    bool IsTSpread;
+
+    /*
+    **	Should civilan buildings and civilians display their true name rather than
+    **	the generic "Civilian Building" and "Civilain"?
+    */
+    bool IsNamed;
+
+    /*
+    **	Should the player controlled buildings and units automatically return fire when
+    **	fired upon?
+    */
+    bool IsSmartDefense;
+
+    /*
+    **	Should player controlled units try to scatter more easily in order to
+    **	avoid damage or threats?
+    */
+    bool IsScatter;
+
+    /*
     **	Are superweapons allowed?
     */
     bool AllowSuperWeapons;
 
     /*
-    **	This array controls the difficulty affects on the game. There is one
-    **	difficulty class object for each difficulty level.
+    **	If wheeled vehicles should do a 3-point turn when rotating in place, then
+    **	this flag is true.
     */
-    DifficultyClass Diff[DIFF_COUNT];
+    bool IsThreePoint;
+
+    /*
+    **	If infantry should engage in fisticuffs, then
+    **	this flag is true.
+    */
+    bool IsBoxing;
+
+    fixed NukeTime;
+    fixed IonTime;
+    fixed AirStrikeTime;
 };
+
+bool Is_MCV_Deploy();
 
 #endif

@@ -1369,7 +1369,7 @@ void MapClass::Logic(void)
     /*
     **	Bail early if there is no allowed growth or spread of Tiberium.
     */
-    if (!Special.IsTGrowth && !Special.IsTSpread)
+    if (!Rule.IsTGrowth && !Rule.IsTSpread)
         return;
 
     /*
@@ -1384,7 +1384,7 @@ void MapClass::Logic(void)
             cell = (MAP_CELL_TOTAL - 1) - index;
         CellClass* ptr = &(*this)[cell];
 
-        if (Special.IsTGrowth && ptr->Land_Type() == LAND_TIBERIUM && ptr->OverlayData < 11) {
+        if (Rule.IsTGrowth && ptr->Land_Type() == LAND_TIBERIUM && ptr->OverlayData < 11) {
             if (TiberiumGrowthCount < sizeof(TiberiumGrowth) / sizeof(TiberiumGrowth[0])) {
                 TiberiumGrowth[TiberiumGrowthCount++] = cell;
             } else {
@@ -1396,7 +1396,7 @@ void MapClass::Logic(void)
         **	Heavy Tiberium growth can spread.
         */
         TerrainClass* terrain = ptr->Cell_Terrain();
-        if (Special.IsTSpread && (ptr->Land_Type() == LAND_TIBERIUM && ptr->OverlayData > 6)
+        if (Rule.IsTSpread && (ptr->Land_Type() == LAND_TIBERIUM && ptr->OverlayData > 6)
             || (terrain && terrain->Class->IsTiberiumSpawn)) {
 
             int tries = 1;

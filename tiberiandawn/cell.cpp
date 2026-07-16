@@ -1803,7 +1803,7 @@ void CellClass::Incoming(COORDINATE threat, bool forced, bool nokidding)
         /*
         **	Special check to make sure that friendly units never scatter.
         */
-        if (nokidding || Special.IsScatter || (object->Is_Techno() && !((TechnoClass*)object)->House->IsHuman)) {
+        if (nokidding || Rule.IsScatter || (object->Is_Techno() && !((TechnoClass*)object)->House->IsHuman)) {
             if (object->What_Am_I() == RTTI_INFANTRY) {
                 object->Scatter(threat, forced, nokidding);
             } else {
