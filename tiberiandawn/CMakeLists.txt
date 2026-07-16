@@ -158,6 +158,31 @@ endif()
 
 include(ProductVersion)
 
+if(BUILD_REMASTERTD_CORE)
+    add_library(TiberianDawnRemasterCore OBJECT
+        dllinterface.cpp
+        sidebarglyphx.cpp
+        ${TIBDAWN_SRC}
+        ${TIBDAWN_HEADERS}
+    )
+    target_compile_definitions(TiberianDawnRemasterCore PUBLIC
+        $<$<CONFIG:Debug>:_DEBUG>
+        ${REMASTER_DEFS}
+        MEGAMAPS
+    )
+    target_include_directories(TiberianDawnRemasterCore PUBLIC
+        ${VanillaConquer_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+    target_link_libraries(TiberianDawnRemasterCore PUBLIC
+        commonr
+        ${REMASTER_LIBS}
+        ${STATIC_LIBS}
+    )
+    add_library(VanillaConquer::TiberianDawnRemasterCore ALIAS
+        TiberianDawnRemasterCore)
+endif()
+
 if(BUILD_REMASTERTD)
     if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
         # Generate windows version info.

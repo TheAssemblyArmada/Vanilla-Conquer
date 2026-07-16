@@ -188,6 +188,10 @@ bool Init_Game(int, char*[])
         ** Windows CCLOCAL.MIX
         */
 
+#ifdef CNC_WEB_BUILD
+        new MFCD("CCLOCAL.MIX"); // Cached.
+        MFCD::Cache("CCLOCAL.MIX");
+#else
         if (Get_Resolution_Factor()) {
             new MFCD("CCLOCAL.MIX"); // Cached.
             MFCD::Cache("CCLOCAL.MIX");
@@ -195,9 +199,19 @@ bool Init_Game(int, char*[])
             new MFCD("LOCAL.MIX"); // Cached.
             MFCD::Cache("LOCAL.MIX");
         }
+#endif
         CCDebugString("C&C95 - About to register UPDATE.MIX\n");
+#ifdef CNC_WEB_BUILD
+        if (CCFileClass("UPDATE.MIX").Is_Available()) {
+            new MFCD("UPDATE.MIX"); // Cached.
+        }
+        if (CCFileClass("UPDATA.MIX").Is_Available()) {
+            new MFCD("UPDATA.MIX"); // Cached.
+        }
+#else
         new MFCD("UPDATE.MIX"); // Cached.
         new MFCD("UPDATA.MIX"); // Cached.
+#endif
         CCDebugString("C&C95 - About to register UPDATEC.MIX\n");
         new MFCD("UPDATEC.MIX"); // Cached.
         MFCD::Cache("UPDATEC.MIX");
@@ -433,12 +447,17 @@ bool Init_Game(int, char*[])
         */
         CCDebugString("C&C95 - About to register SCORES.MIX\n");
         ScoresPresent = false;
-        //	if (CCFileClass("SCORES.MIX").Is_Available()) {
+#ifdef CNC_WEB_BUILD
+        if (CCFileClass("SCORES.MIX").Is_Available()) {
+#endif
         ScoresPresent = true;
         if (!ScoreMix) {
             ScoreMix = new MFCD("SCORES.MIX");
             ThemeClass::Scan();
         }
+#ifdef CNC_WEB_BUILD
+        }
+#endif
     }
 
     /*
@@ -1636,7 +1655,11 @@ bool Parse_Command_Line(int argc, char* argv[])
         int code = 0;
 
         char arg_string[512];
+        char original_arg_string[512];
         int str_len = (int)strlen(argv[index]);
+        if (str_len >= (int)sizeof(arg_string)) {
+            return false;
+        }
         char* src = argv[index];
         char* dest = arg_string;
         for (int i = 0; i < str_len; i++) {
@@ -1647,6 +1670,7 @@ bool Parse_Command_Line(int argc, char* argv[])
             }
         }
         *dest++ = 0;
+        strcpy(original_arg_string, arg_string);
         string = arg_string;
         strupr(string);
 
@@ -1869,7 +1893,8 @@ bool Parse_Command_Line(int argc, char* argv[])
         **	File search path override.
         */
         if (strstr(string, "-CD")) {
-            CCFileClass::Set_Search_Drives(&string[3]);
+            /* Paths are case-sensitive in the browser filesystem. */
+            CCFileClass::Set_Search_Drives(&original_arg_string[3]);
             continue;
         }
 #ifdef JAPANESE

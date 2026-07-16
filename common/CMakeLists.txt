@@ -105,6 +105,13 @@ else()
     list(APPEND COMMON_SRC file_posix.cpp paths_posix.cpp)
 endif()
 
+set(
+    REMASTER_KEYBOARD_SOURCE
+    "${CMAKE_CURRENT_SOURCE_DIR}/wwkeyboard_win32.cpp"
+    CACHE FILEPATH
+    "WWKeyboard backend source for remaster targets."
+)
+
 set(COMMONR_SRC
     framelimit.cpp
     gbuffer.cpp
@@ -112,8 +119,8 @@ set(COMMONR_SRC
     soundio_null.cpp
     video_null.cpp
     wwkeyboard.cpp
-    wwkeyboard_win32.cpp
     wwmouse.cpp
+    ${REMASTER_KEYBOARD_SOURCE}
 )
 
 set(COMMONV_SRC
@@ -183,7 +190,7 @@ if(WIN32)
     endif()
 endif()
 
-if(BUILD_REMASTERTD OR BUILD_REMASTERRA)
+if(BUILD_REMASTERTD OR BUILD_REMASTERRA OR BUILD_REMASTERTD_CORE)
     add_library(commonr STATIC ${COMMONR_SRC})
     target_compile_definitions(commonr PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${REMASTER_DEFS})
     target_link_libraries(commonr PUBLIC common ${REMASTER_LIBS})

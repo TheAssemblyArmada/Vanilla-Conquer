@@ -3502,6 +3502,7 @@ static void Reinit_Secondary_Mixfiles()
  * Checks for local folders containing data from the various discs.
  */
 static int LastCD = -1;
+int RemasterLastCD = -1;
 
 static bool Change_Local_Dir(int cd)
 {
@@ -3618,11 +3619,9 @@ bool Force_CD_Available(int cd)
 
 #ifdef REMASTER_BUILD
 
-    static int _last = -1;
+    if (RemasterLastCD != cd) {
 
-    if (_last != cd) {
-
-        _last = cd;
+        RemasterLastCD = cd;
 
         Theme.Stop();
 
