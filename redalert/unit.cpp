@@ -4400,8 +4400,10 @@ BulletClass* UnitClass::Fire_At(TARGET target, int which)
 
         if (bullet != NULL) {
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-            if (Class->Type == UNIT_DEMOTRUCK && IsActive)
+            if (Class->Type == UNIT_DEMOTRUCK && IsActive) {
                 delete this;
+                return NULL;
+            }
 #endif
             /*
             **	Possible reload timer set.
