@@ -205,6 +205,7 @@ const missionFiveVariants = new Map([
     direction: 1,
     buildLevel: 5,
     maxTicks: 120_000,
+    relaunchForce: 25,
     reliefRoute: [
       { cellX: 27, cellY: 55 },
       { cellX: 38, cellY: 55 },
@@ -264,7 +265,7 @@ const missionFiveVariants = new Map([
     direction: 1,
     buildLevel: 5,
     maxTicks: 120_000,
-    earliestAssaultTick: 8_100,
+    earliestAssaultTick: 7_200,
     relaunchForce: 3,
     reliefRoute: [
       { cellX: 12, cellY: 30 },
@@ -285,11 +286,13 @@ const missionFiveVariants = new Map([
     precisionRouteStage: 4,
     coreRouteHolds: [
       { routeStage: 4, sites: [{ typeName: "FACT", cellX: 52, cellY: 17 }] },
-      { routeStage: 5, sites: [{ typeName: "AFLD", cellX: 42, cellY: 18 }] },
+      { routeStage: 5, sites: [
+        { typeName: "HAND", cellX: 41, cellY: 22 },
+        { typeName: "AFLD", cellX: 42, cellY: 18 },
+      ] },
       { routeStage: 6, sites: [
         { typeName: "PROC", cellX: 47, cellY: 22 },
         { typeName: "NUKE", cellX: 47, cellY: 18 },
-        { typeName: "NUKE", cellX: 49, cellY: 17 },
       ] },
     ],
     huntSites: [
@@ -337,6 +340,7 @@ if (!mission) {
   process.exit(2);
 }
 const trace = process.env.CNCWEB_VERIFY_TRACE === "1";
+const missionFiveWestBStrategy = mission.number === 5 && mission.variant === "west-b";
 const missionTwoAssaultTick = Number.parseInt(process.env.CNCWEB_VERIFY_ASSAULT_TICK ?? "12000", 10);
 if (mission.number === 2 && (!Number.isSafeInteger(missionTwoAssaultTick) || missionTwoAssaultTick < 0 || missionTwoAssaultTick > mission.maxTicks)) {
   console.error("CNCWEB_VERIFY_ASSAULT_TICK must be an integer within the mission tick budget");
@@ -348,10 +352,14 @@ if (mission.number === 3 && (!Number.isSafeInteger(missionThreeAssaultTick)
   console.error("CNCWEB_VERIFY_MISSION_THREE_ASSAULT_TICK must be an integer within the mission tick budget");
   process.exit(2);
 }
-const missionFiveAssaultTick = Number.parseInt(process.env.CNCWEB_VERIFY_MISSION_FIVE_ASSAULT_TICK ?? "48000", 10);
+const missionFiveAssaultTick = Number.parseInt(
+  process.env.CNCWEB_VERIFY_MISSION_FIVE_ASSAULT_TICK
+    ?? (missionFiveWestBStrategy ? "12000" : "48000"),
+  10,
+);
 const missionFiveAssaultForce = Number.parseInt(
   process.env.CNCWEB_VERIFY_MISSION_FIVE_ASSAULT_FORCE
-    ?? (mission.variant === "west-b" ? "34" : mission.variant === "east-a" ? "35" : "45"),
+    ?? (missionFiveWestBStrategy ? "25" : mission.variant === "east-a" ? "35" : "45"),
   10,
 );
 if (mission.number === 5 && (!Number.isSafeInteger(missionFiveAssaultTick)
@@ -716,6 +724,15 @@ function readSnapshot(handle) {
       subObject: view.getUint8(objectOffset + 184),
       objectFlags: view.getUint32(objectOffset + 204, true),
       canFireMask: view.getUint32(objectOffset + 212, true),
+      // cnc_web_protocol.h v1: occupy_count u16 @216, pip_count u16 @218,
+      // max_pips u16 @220, line_count u16 @222, then pips[18] i32 @296.
+      // Note that the transport renderer exports all five slots, including
+      // PIP_EMPTY, so pipCount is slot count rather than cargo occupancy.
+      pipCount: view.getUint16(objectOffset + 218, true),
+      maxPips: view.getUint16(objectOffset + 220, true),
+      pips: Array.from({ length: 18 }, (_, pipIndex) => (
+        view.getInt32(objectOffset + 296 + pipIndex * 4, true)
+      )),
     });
   }
 
@@ -902,10 +919,10 @@ const MISSION_FIVE_STRUCTURE_PRIORITY = new Map([
 
 const MISSION_FIVE_WEST_B_CORE_PRIORITY = new Map([
   ["FACT", 0],
-  ["AFLD", 1],
-  ["NUKE", 2],
-  ["PROC", 3],
-  ["HAND", 4],
+  ["HAND", 1],
+  ["AFLD", 2],
+  ["NUKE", 3],
+  ["PROC", 4],
 ]);
 
 const MISSION_FIVE_WEST_B_CORE_SITES = new Set([
@@ -942,7 +959,42 @@ function chooseMissionFiveWestBAssaultTarget(
   hostiles,
   huntTriggered,
   requiredCoreSites,
+  reserveHuntSwitch = false,
+  cleanupWaypoint,
 ) {
+  if (reserveHuntSwitch) {
+    hostiles = hostiles.filter((object) => !(
+      object.typeName === "NUKE" && object.cellX === 49 && object.cellY === 17
+    ));
+  }
+  const engineerScreeningFactory = (
+    missionFiveWestBEngineerPhase !== "captured"
+    || (missionFiveShuttleFactCaptureTick !== undefined
+      && missionFiveShuttleCaptures.length < 4)
+  ) && requiredCoreSites?.some((site) => (
+      site.typeName === "FACT" && site.cellX === 52 && site.cellY === 17
+    ));
+  if (engineerScreeningFactory) {
+    const eastGun = hostiles.filter((object) => (
+      object.typeName === "GUN"
+      && object.cellY === 27
+      && (object.cellX === 45 || object.cellX === 50)
+    )).toSorted((left, right) => (
+      left.strength - right.strength || right.cellX - left.cellX || left.id - right.id
+    ))[0];
+    if (eastGun) return eastGun;
+    const eastMobileThreat = chooseFormationThreat(attackers, hostiles.filter((object) => (
+      object.type !== 4
+      && (object.objectFlags & (1 << 12)) !== 0
+      && object.cellX >= 45
+      && object.cellY <= 35
+    )), 10);
+    if (eastMobileThreat) return eastMobileThreat;
+    // Keep the strike screen south-east of the factory. The engineer transport
+    // owns the factory objective during this phase, so combat units must not
+    // fall through to the normal FACT focus order.
+    return { cellX: 55, cellY: 27 };
+  }
   const nearbyGun = chooseFormationThreat(attackers, hostiles.filter((object) => (
     object.typeName === "GUN" && (huntTriggered || object.cellX >= 45)
   )), 10);
@@ -972,6 +1024,14 @@ function chooseMissionFiveWestBAssaultTarget(
       ))[0];
     }
     if (coreStructure) return coreStructure;
+    if (reserveHuntSwitch) {
+      return chooseFormationThreat(attackers, hostiles.filter((object) => (
+        object.type !== 4 && (object.objectFlags & (1 << 12)) !== 0
+      )), 12)
+        ?? chooseMissionFiveAssaultTarget(attackers, hostiles, true)
+        ?? chooseTarget(hostiles)
+        ?? cleanupWaypoint;
+    }
     return undefined;
   }
   const localThreat = chooseFormationThreat(attackers, hostiles.filter((object) => (
@@ -1123,6 +1183,52 @@ let missionFiveAssaultProgressTick = 0;
 let missionFiveLastForwardTargetKey;
 let missionFiveLastForwardTargetStrength;
 let missionFiveWestBRefineryScatterTick;
+let missionFiveWestBEngineerPhase = "await-engineer";
+let missionFiveWestBEngineerKey;
+let missionFiveWestBEngineerProductionStarted = 0;
+let missionFiveWestBApcKey;
+let missionFiveWestBApcRouteStage = 0;
+let missionFiveWestBLoadOrderTick = -Infinity;
+let missionFiveWestBApcOrderTick = -Infinity;
+let missionFiveWestBUnloadOrderTick = -Infinity;
+let missionFiveWestBCaptureOrderTick = -Infinity;
+let missionFiveWestBEngineerCaptureStage = 0;
+let missionFiveWestBEngineerProducedTick;
+let missionFiveWestBLoadTick;
+let missionFiveWestBUnloadIssuedTick;
+let missionFiveWestBEmptyPipsTick;
+let missionFiveWestBEngineerRootTick;
+let missionFiveWestBCaptureTick;
+let missionFiveWestBInitialApcPipsLogged = false;
+const missionFiveWestBEngineerTransitions = [];
+let missionFiveShuttleFactCaptureTick;
+let missionFiveShuttleFactSaleTick;
+let missionFiveShuttleFactSaleFunds;
+let missionFiveShuttleFactGoneTick;
+let missionFiveShuttleFactGoneFunds;
+let missionFiveShuttlePhase = "await-fact";
+let missionFiveShuttleRouteStage = 0;
+let missionFiveShuttleOrderTick = -Infinity;
+let missionFiveShuttleUnloadTick = -Infinity;
+let missionFiveShuttleEngineerStarts = 0;
+let missionFiveShuttleEngineerStartTick = -Infinity;
+let missionFiveShuttleEngineerResumeTick = -Infinity;
+const missionFiveShuttleBaselineFriendlyKeys = new Set();
+const missionFiveShuttleEngineers = new Map();
+const missionFiveShuttleFactCrew = new Map();
+const missionFiveShuttleAssignments = new Map();
+const missionFiveShuttleRaidStages = new Map();
+const missionFiveShuttleRaidOrderTicks = new Map();
+const missionFiveShuttleCaptures = [];
+const missionFiveShuttleCaptureKeys = new Set();
+let missionFiveFootReservePhase = "waiting";
+let missionFiveFootReserveRouteStage = 0;
+let missionFiveFootReserveOrderTick = -Infinity;
+let missionFiveFootEscortOrderTick = -Infinity;
+let missionFiveFootReserveStagingTick;
+const missionFiveFootReserveStagedEngineers = [];
+let missionFiveWestBCleanupBatchTick;
+let missionFiveWestBCleanupBatchSize = 0;
 const missionFiveInitialHuntStructureKeys = new Set();
 const missionFiveInitialSamStructureKeys = new Set();
 let missionFiveSamSweepStage = 0;
@@ -1287,6 +1393,13 @@ const missionThreeAssaultRoute = [
   { cellX: 14, cellY: 35 },
   { cellX: 20, cellY: 34 },
 ];
+function transitionMissionFiveWestBEngineer(nextPhase, tick, detail = {}) {
+  if (missionFiveWestBEngineerPhase === nextPhase) return;
+  const transition = { tick, from: missionFiveWestBEngineerPhase, to: nextPhase, ...detail };
+  missionFiveWestBEngineerTransitions.push(transition);
+  missionFiveWestBEngineerPhase = nextPhase;
+  if (trace) console.error(JSON.stringify({ westBEngineerTransition: transition }));
+}
 let initialFriendly = 0;
 let initialHostiles = 0;
 let peakFriendly = 0;
@@ -1592,7 +1705,247 @@ try {
     }
     peakFriendly = Math.max(peakFriendly, friendly.length);
     peakHostiles = Math.max(peakHostiles, hostiles.length);
-    const attackers = availableAttackers(snapshot);
+    const allAttackers = availableAttackers(snapshot);
+    if (mission.number === 5 && mission.variant === "west-b") {
+      const liveApcs = friendly.filter((object) => object.typeName === "APC" && object.type === 2);
+      if (!missionFiveWestBInitialApcPipsLogged && liveApcs.length > 0) {
+        missionFiveWestBInitialApcPipsLogged = true;
+        const initialApcPips = liveApcs.map((apc) => ({
+          key: objectKey(apc),
+          strength: apc.strength,
+          cellX: apc.cellX,
+          cellY: apc.cellY,
+          pipCount: apc.pipCount,
+          maxPips: apc.maxPips,
+          pips: apc.pips.slice(0, apc.pipCount),
+        }));
+        assert.ok(initialApcPips.every(({ pipCount, maxPips }) => pipCount === maxPips && maxPips === 5),
+          "West-B APC pip slot export changed");
+        if (trace) console.error(JSON.stringify({ westBInitialApcPips: initialApcPips }));
+      }
+
+      const visibleEngineer = friendly.find((object) => (
+        object.typeName === "E6" && object.type === 1 && object.subObject === 0
+      ));
+      if (missionFiveReliefStage >= mission.reliefRoute.length
+        && missionFiveWestBApcKey === undefined
+        && missionFiveWestBEngineerKey === undefined) {
+        const startingApc = liveApcs.filter((apc) => missionFiveInitialFriendlyKeys.has(objectKey(apc)))
+          .toSorted((left, right) => right.strength - left.strength || left.id - right.id)[0];
+        if (startingApc) {
+          missionFiveWestBApcKey = objectKey(startingApc);
+          transitionMissionFiveWestBEngineer("prepark", snapshot.tick, {
+            apc: missionFiveWestBApcKey,
+            startingApc: true,
+            apcStrength: startingApc.strength,
+          });
+          missionFiveWestBApcOrderTick = -Infinity;
+        }
+      }
+      if (visibleEngineer && missionFiveWestBEngineerKey === undefined) {
+        missionFiveWestBEngineerKey = objectKey(visibleEngineer);
+        missionFiveWestBEngineerProducedTick = snapshot.tick;
+      }
+      if (visibleEngineer && missionFiveWestBApcKey !== undefined
+        && missionFiveWestBEngineerPhase === "parked-await-engineer") {
+        transitionMissionFiveWestBEngineer("docking", snapshot.tick, {
+          engineer: missionFiveWestBEngineerKey,
+          apc: missionFiveWestBApcKey,
+        });
+        missionFiveWestBLoadOrderTick = -Infinity;
+      }
+      if (missionFiveWestBEngineerKey !== undefined && missionFiveWestBApcKey === undefined) {
+        const apc = liveApcs.toSorted((left, right) => (
+          Number(!missionFiveInitialFriendlyKeys.has(objectKey(left)))
+          - Number(!missionFiveInitialFriendlyKeys.has(objectKey(right)))
+          || right.strength - left.strength
+          || Math.max(Math.abs(left.cellX - mission.home.cellX), Math.abs(left.cellY - mission.home.cellY))
+            - Math.max(Math.abs(right.cellX - mission.home.cellX), Math.abs(right.cellY - mission.home.cellY))
+          || left.id - right.id
+        ))[0];
+        if (apc) {
+          missionFiveWestBApcKey = objectKey(apc);
+          transitionMissionFiveWestBEngineer("parking", snapshot.tick, {
+            engineer: missionFiveWestBEngineerKey,
+            apc: missionFiveWestBApcKey,
+            startingApc: missionFiveInitialFriendlyKeys.has(missionFiveWestBApcKey),
+            apcStrength: apc.strength,
+          });
+          missionFiveWestBApcOrderTick = -Infinity;
+          missionFiveWestBLoadOrderTick = -Infinity;
+        }
+      }
+      const reservedApc = friendly.find((object) => objectKey(object) === missionFiveWestBApcKey);
+      const occupiedPips = reservedApc?.pips.slice(0, reservedApc.pipCount).filter((pip) => pip !== 0) ?? [];
+      if (missionFiveWestBEngineerPhase === "docking" && occupiedPips.includes(5)) {
+        missionFiveWestBLoadTick = snapshot.tick;
+        transitionMissionFiveWestBEngineer("escort", snapshot.tick, {
+          pipCount: reservedApc.pipCount,
+          occupiedPips,
+        });
+      }
+      if (missionFiveWestBApcKey !== undefined
+        && !reservedApc
+        && !["capture", "captured"].includes(missionFiveWestBEngineerPhase)) {
+        const lostApc = missionFiveWestBApcKey;
+        missionFiveWestBApcKey = undefined;
+        transitionMissionFiveWestBEngineer(visibleEngineer ? "await-apc" : "await-engineer", snapshot.tick, { lostApc });
+      }
+      const capturedFactory = friendly.find((object) => (
+        object.typeName === "FACT" && object.type === 4 && object.cellX === 52 && object.cellY === 17
+      ));
+      if (capturedFactory && missionFiveWestBEngineerPhase !== "captured") {
+        missionFiveWestBCaptureTick = snapshot.tick;
+        transitionMissionFiveWestBEngineer("captured", snapshot.tick, {
+          factory: objectKey(capturedFactory),
+          strength: capturedFactory.strength,
+        });
+      }
+      if (missionFiveShuttleFactCaptureTick === undefined) {
+        for (const engineer of friendly.filter((object) => (
+          object.type === 1 && object.typeName === "E6"
+          && objectKey(object) !== missionFiveWestBEngineerKey
+        ))) {
+          const key = objectKey(engineer);
+          if (missionFiveShuttleEngineers.has(key)) continue;
+          missionFiveShuttleEngineers.set(key, {
+            tick: snapshot.tick, id: engineer.id, strength: engineer.strength,
+            cellX: engineer.cellX, cellY: engineer.cellY,
+          });
+          if (trace) console.error(JSON.stringify({ westBFootReserveEngineer: {
+            tick: snapshot.tick, key, id: engineer.id, strength: engineer.strength,
+            cellX: engineer.cellX, cellY: engineer.cellY,
+            funds: snapshot.sidebar.credits + snapshot.sidebar.tiberium,
+          } }));
+        }
+      }
+      if (capturedFactory && missionFiveShuttleFactCaptureTick === undefined) {
+        missionFiveShuttleFactCaptureTick = snapshot.tick;
+        missionFiveShuttlePhase = "raid";
+        missionFiveShuttleRouteStage = missionFiveFootReserveRouteStage;
+        missionFiveShuttleOrderTick = -Infinity;
+        for (const object of friendly) missionFiveShuttleBaselineFriendlyKeys.add(objectKey(object));
+        if (trace) console.error(JSON.stringify({ westBShuttleFactCapture: {
+          tick: snapshot.tick,
+          key: objectKey(capturedFactory),
+          strength: capturedFactory.strength,
+          funds: snapshot.sidebar.credits + snapshot.sidebar.tiberium,
+          sidebar: snapshot.sidebar.entries.map((entry) => ({
+            assetName: entry.assetName,
+            cost: entry.cost,
+            buildableType: entry.buildableType,
+            buildableId: entry.buildableId,
+            objectType: entry.objectType,
+            completed: entry.completed,
+            constructing: entry.constructing,
+            onHold: entry.onHold,
+            busy: entry.busy,
+          })),
+        } }));
+      }
+      if (missionFiveShuttleFactSaleTick !== undefined
+        && missionFiveShuttleFactGoneTick === undefined && !capturedFactory) {
+        missionFiveShuttleFactGoneTick = snapshot.tick;
+        missionFiveShuttleFactGoneFunds = snapshot.sidebar.credits + snapshot.sidebar.tiberium;
+        if (trace) console.error(JSON.stringify({ westBShuttleFactSaleComplete: {
+          tick: snapshot.tick,
+          funds: missionFiveShuttleFactGoneFunds,
+          refund: missionFiveShuttleFactGoneFunds - missionFiveShuttleFactSaleFunds,
+          crew: [...missionFiveShuttleFactCrew.values()],
+          huntTriggeredTick: missionFiveHuntTriggeredTick,
+        } }));
+      }
+      if (missionFiveShuttleFactCaptureTick !== undefined) {
+        for (const object of friendly.filter((candidate) => (
+          !missionFiveShuttleBaselineFriendlyKeys.has(objectKey(candidate))
+          && Math.max(Math.abs(candidate.cellX - 52), Math.abs(candidate.cellY - 17)) <= 4
+        ))) {
+          const key = objectKey(object);
+          if (!missionFiveShuttleFactCrew.has(key)) {
+            missionFiveShuttleFactCrew.set(key, {
+              tick: snapshot.tick,
+              typeName: object.typeName,
+              id: object.id,
+              strength: object.strength,
+              cellX: object.cellX,
+              cellY: object.cellY,
+            });
+          }
+        }
+        for (const engineer of friendly.filter((object) => (
+          object.type === 1 && object.typeName === "E6"
+          && !missionFiveShuttleBaselineFriendlyKeys.has(objectKey(object))
+        ))) {
+          const key = objectKey(engineer);
+          if (!missionFiveShuttleEngineers.has(key)) {
+            missionFiveShuttleEngineers.set(key, {
+              tick: snapshot.tick,
+              id: engineer.id,
+              strength: engineer.strength,
+              cellX: engineer.cellX,
+              cellY: engineer.cellY,
+            });
+            if (trace) console.error(JSON.stringify({ westBShuttleEngineerBuilt: {
+              tick: snapshot.tick,
+              key,
+              id: engineer.id,
+              strength: engineer.strength,
+              cellX: engineer.cellX,
+              cellY: engineer.cellY,
+              funds: snapshot.sidebar.credits + snapshot.sidebar.tiberium,
+            } }));
+          }
+        }
+        const raidSites = [
+          { typeName: "PROC", cellX: 47, cellY: 22 },
+          { typeName: "AFLD", cellX: 42, cellY: 18 },
+          { typeName: "NUKE", cellX: 47, cellY: 18 },
+          { typeName: "NUKE", cellX: 49, cellY: 17 },
+        ];
+        for (const site of raidSites) {
+          const key = `${site.typeName}:${site.cellX}:${site.cellY}`;
+          if (missionFiveShuttleCaptureKeys.has(key)) continue;
+          const structure = friendly.find((object) => (
+            object.type === 4 && object.typeName === site.typeName
+            && object.cellX === site.cellX && object.cellY === site.cellY
+          ));
+          if (!structure) continue;
+          missionFiveShuttleCaptureKeys.add(key);
+          const capture = {
+            tick: snapshot.tick,
+            typeName: structure.typeName,
+            id: structure.id,
+            strength: structure.strength,
+            cellX: structure.cellX,
+            cellY: structure.cellY,
+          };
+          missionFiveShuttleCaptures.push(capture);
+          if (trace) console.error(JSON.stringify({ westBShuttleCapture: capture }));
+        }
+      }
+    }
+    const missionFiveAvailableAttackers = mission.number === 5
+      && mission.variant === "west-b"
+      && missionFiveWestBApcKey !== undefined
+      && missionFiveWestBEngineerPhase !== "captured"
+      ? allAttackers.filter((attacker) => (
+        objectKey(attacker) !== missionFiveWestBApcKey
+        && objectKey(attacker) !== missionFiveWestBEngineerKey
+        && !missionFiveShuttleEngineers.has(objectKey(attacker))
+      ))
+      : allAttackers.filter((attacker) => (
+        objectKey(attacker) !== missionFiveWestBEngineerKey
+        && !missionFiveShuttleEngineers.has(objectKey(attacker))
+      ));
+    const attackers = missionFiveShuttleFactCaptureTick !== undefined
+      && missionFiveShuttleCaptures.length < 4
+      ? missionFiveAvailableAttackers.filter((attacker) => (
+        objectKey(attacker) !== missionFiveWestBApcKey
+        && !missionFiveShuttleEngineers.has(objectKey(attacker))
+        && !(attacker.type === 1 && attacker.typeName === "E6"
+          && !missionFiveShuttleBaselineFriendlyKeys.has(objectKey(attacker)))
+      ))
+      : missionFiveAvailableAttackers;
     const missionFiveInitialForce = mission.number === 5
       ? attackers.filter((attacker) => missionFiveInitialForceKeys.has(objectKey(attacker)))
       : [];
@@ -1719,6 +2072,317 @@ try {
       }));
     }
     const commands = [];
+    if (mission.number === 5 && mission.variant === "west-b"
+      && missionFiveShuttleFactCaptureTick === undefined) {
+      const footEngineers = friendly.filter((object) => (
+        object.type === 1 && object.typeName === "E6"
+        && missionFiveShuttleEngineers.has(objectKey(object))
+      )).toSorted((left, right) => left.id - right.id);
+      const factApc = friendly.find((object) => objectKey(object) === missionFiveWestBApcKey);
+      const footContextOrder = (group, destination, flags = 0) => {
+        if (group.length === 0 || !destination) return;
+        commands.push({ type: COMMAND_CLEAR_SELECTION, args: [0, 0, 0, 0, 0, 0, 0] });
+        for (const object of group) {
+          commands.push({
+            type: COMMAND_SELECT_OBJECT,
+            args: [object.type, object.id, 0, 0, 0, 0, 0],
+          });
+        }
+        if (flags) commands.push({
+          type: COMMAND_INPUT, flags,
+          args: [INPUT_SPECIAL_KEYS, 0, 0, 0, 0, 0, 0],
+        });
+        commands.push({
+          type: COMMAND_INPUT, flags,
+          args: [INPUT_COMMAND_AT_POSITION,
+            destination.cellX * CELL_PIXELS + CELL_PIXELS / 2,
+            destination.cellY * CELL_PIXELS + CELL_PIXELS / 2,
+            0, 0, 0, 0],
+        });
+        if (flags) commands.push({
+          type: COMMAND_INPUT,
+          args: [INPUT_SPECIAL_KEYS, 0, 0, 0, 0, 0, 0],
+        });
+        selectionCommands += group.length;
+        contextualOrders += 1;
+      };
+      if (missionFiveWestBEngineerPhase === "capture" && factApc
+        && snapshot.tick - missionFiveFootEscortOrderTick >= 120) {
+        footContextOrder([factApc], { cellX: 50, cellY: 24 }, MODIFIER_ALT);
+        missionFiveFootEscortOrderTick = snapshot.tick;
+      }
+      if (missionFiveFootReservePhase === "waiting"
+        && missionFiveAssaultStartedTick === undefined && footEngineers.length > 0) {
+        const holdPoint = { cellX: 35, cellY: 61 };
+        const holding = footEngineers.every((engineer) => Math.max(
+          Math.abs(engineer.cellX - holdPoint.cellX),
+          Math.abs(engineer.cellY - holdPoint.cellY),
+        ) <= 1);
+        if (!holding && snapshot.tick - missionFiveFootReserveOrderTick >= 60) {
+          footContextOrder(footEngineers, holdPoint, MODIFIER_ALT);
+          missionFiveFootReserveOrderTick = snapshot.tick;
+        }
+      }
+      if (missionFiveFootReservePhase === "waiting"
+        && missionFiveAssaultStartedTick !== undefined) {
+        missionFiveFootReservePhase = "outbound";
+        missionFiveFootReserveOrderTick = -Infinity;
+      }
+      if (missionFiveFootReservePhase === "outbound" && footEngineers.length > 0) {
+        const route = [
+          { cellX: 42, cellY: 54 },
+          { cellX: 53, cellY: 53 },
+          { cellX: 53, cellY: 42 },
+          { cellX: 59, cellY: 31 },
+        ];
+        const waypoint = route[missionFiveFootReserveRouteStage];
+        if (waypoint
+          && footEngineers.length === 4
+          && footEngineers.every((engineer) => Math.max(
+            Math.abs(engineer.cellX - waypoint.cellX),
+            Math.abs(engineer.cellY - waypoint.cellY),
+          ) <= 2)) {
+          missionFiveFootReserveRouteStage += 1;
+          missionFiveFootReserveOrderTick = -Infinity;
+        }
+        const nextWaypoint = route[missionFiveFootReserveRouteStage];
+        if (!nextWaypoint) {
+          missionFiveFootReservePhase = "staged";
+          missionFiveFootReserveStagingTick ??= snapshot.tick;
+          if (missionFiveFootReserveStagedEngineers.length === 0) {
+            for (const engineer of footEngineers) {
+              missionFiveFootReserveStagedEngineers.push({
+                key: objectKey(engineer),
+                strength: engineer.strength,
+                maxStrength: engineer.maxStrength,
+                cellX: engineer.cellX,
+                cellY: engineer.cellY,
+              });
+            }
+          }
+          commands.push({ type: COMMAND_CLEAR_SELECTION, args: [0, 0, 0, 0, 0, 0, 0] });
+          for (const engineer of footEngineers) commands.push({
+            type: COMMAND_SELECT_OBJECT,
+            args: [engineer.type, engineer.id, 0, 0, 0, 0, 0],
+          });
+          commands.push({ type: COMMAND_UNIT, args: [UNIT_REQUEST_STOP, 0, 0, 0, 0, 0, 0] });
+          if (trace) console.error(JSON.stringify({ westBFootReservePhase: {
+            tick: snapshot.tick, phase: missionFiveFootReservePhase,
+            engineers: footEngineers.map(({ id, strength, cellX, cellY }) => (
+              { id, strength, cellX, cellY }
+            )),
+          } }));
+        } else if (missionFiveFootReserveRouteStage < missionFiveAssaultRouteStage
+          && snapshot.tick - missionFiveFootReserveOrderTick >= 60) {
+          footContextOrder(footEngineers, nextWaypoint, MODIFIER_ALT);
+          missionFiveFootReserveOrderTick = snapshot.tick;
+        }
+      }
+      if (trace && snapshot.tick % 300 === 0) console.error(JSON.stringify({
+        westBFootReserve: true,
+        tick: snapshot.tick,
+        phase: missionFiveFootReservePhase,
+        routeStage: missionFiveFootReserveRouteStage,
+        engineers: footEngineers.map(({ id, strength, cellX, cellY }) => (
+          { id, strength, cellX, cellY }
+        )),
+      }));
+    }
+    if (mission.number === 5 && mission.variant === "west-b"
+      && missionFiveWestBApcKey !== undefined
+      && missionFiveWestBEngineerPhase !== "captured") {
+      const reservedApc = friendly.find((object) => objectKey(object) === missionFiveWestBApcKey);
+      const visibleEngineer = friendly.find((object) => objectKey(object) === missionFiveWestBEngineerKey);
+      const occupiedPips = reservedApc?.pips.slice(0, reservedApc.pipCount).filter((pip) => pip !== 0) ?? [];
+      const queueContextOrder = (group, destination, flags = 0) => {
+        if (group.length === 0 || !destination) return;
+        commands.push({ type: COMMAND_CLEAR_SELECTION, args: [0, 0, 0, 0, 0, 0, 0] });
+        for (const object of group) {
+          commands.push({ type: COMMAND_SELECT_OBJECT, args: [object.type, object.id, 0, 0, 0, 0, 0] });
+        }
+        if (flags !== 0) {
+          commands.push({
+            type: COMMAND_INPUT,
+            flags,
+            args: [INPUT_SPECIAL_KEYS, 0, 0, 0, 0, 0, 0],
+          });
+        }
+        commands.push({
+          type: COMMAND_INPUT,
+          flags,
+          args: [
+            INPUT_COMMAND_AT_POSITION,
+            destination.cellX * CELL_PIXELS + CELL_PIXELS / 2,
+            destination.cellY * CELL_PIXELS + CELL_PIXELS / 2,
+            0, 0, 0, 0,
+          ],
+        });
+        if (flags !== 0) {
+          commands.push({ type: COMMAND_INPUT, args: [INPUT_SPECIAL_KEYS, 0, 0, 0, 0, 0, 0] });
+        }
+        selectionCommands += group.length;
+        contextualOrders += 1;
+        retargetCycles += 1;
+      };
+      const queueStop = (group) => {
+        if (group.length === 0) return;
+        commands.push({ type: COMMAND_CLEAR_SELECTION, args: [0, 0, 0, 0, 0, 0, 0] });
+        for (const object of group) {
+          commands.push({ type: COMMAND_SELECT_OBJECT, args: [object.type, object.id, 0, 0, 0, 0, 0] });
+        }
+        commands.push({ type: COMMAND_UNIT, args: [UNIT_REQUEST_STOP, 0, 0, 0, 0, 0, 0] });
+        selectionCommands += group.length;
+      };
+
+      if ((missionFiveWestBEngineerPhase === "prepark" || missionFiveWestBEngineerPhase === "parking")
+        && reservedApc) {
+        const parkPoint = { cellX: 31, cellY: 58 };
+        if (Math.abs(reservedApc.cellX - parkPoint.cellX) <= 1
+          && Math.abs(reservedApc.cellY - parkPoint.cellY) <= 1) {
+          const nextPhase = visibleEngineer ? "docking" : "parked-await-engineer";
+          transitionMissionFiveWestBEngineer(nextPhase, snapshot.tick, {
+            apcStrength: reservedApc.strength,
+            parkPoint,
+          });
+          missionFiveWestBApcOrderTick = -Infinity;
+          missionFiveWestBLoadOrderTick = -Infinity;
+          queueStop([reservedApc]);
+        } else if (snapshot.tick - missionFiveWestBApcOrderTick >= 60) {
+          queueContextOrder([reservedApc], parkPoint, MODIFIER_ALT);
+          missionFiveWestBApcOrderTick = snapshot.tick;
+        }
+      } else if (missionFiveWestBEngineerPhase === "docking" && reservedApc && visibleEngineer) {
+        if (missionFiveWestBApcOrderTick === -Infinity) {
+          queueStop([reservedApc]);
+          missionFiveWestBApcOrderTick = snapshot.tick;
+        }
+        if (snapshot.tick - missionFiveWestBLoadOrderTick >= 60) {
+          // E6 alone must receive the contextual ENTER order. Selecting the APC
+          // too would resolve a different action and invalidate this proof.
+          queueContextOrder([visibleEngineer], reservedApc);
+          missionFiveWestBLoadOrderTick = snapshot.tick;
+        }
+      } else if (missionFiveWestBEngineerPhase === "escort" && reservedApc) {
+        const route = mission.assaultRoute.slice(0, 4);
+        const waypoint = route[missionFiveWestBApcRouteStage];
+        if (waypoint
+          && missionFiveWestBApcRouteStage < missionFiveAssaultRouteStage
+          && Math.abs(reservedApc.cellX - waypoint.cellX) <= 2
+          && Math.abs(reservedApc.cellY - waypoint.cellY) <= 2) {
+          missionFiveWestBApcRouteStage += 1;
+          missionFiveWestBApcOrderTick = -Infinity;
+        }
+        const nextWaypoint = route[missionFiveWestBApcRouteStage];
+        if (missionFiveAssaultPhase === "assault"
+          && missionFiveWestBApcRouteStage < missionFiveAssaultRouteStage
+          && nextWaypoint
+          && snapshot.tick - missionFiveWestBApcOrderTick >= 60) {
+          queueContextOrder([reservedApc], nextWaypoint);
+          missionFiveWestBApcOrderTick = snapshot.tick;
+        } else if (missionFiveAssaultPhase !== "assault" && missionFiveWestBApcRouteStage === 0
+          && (Math.abs(reservedApc.cellX - 31) > 1 || Math.abs(reservedApc.cellY - 58) > 1)
+          && snapshot.tick - missionFiveWestBApcOrderTick >= 120) {
+          queueContextOrder([reservedApc], { cellX: 31, cellY: 58 }, MODIFIER_ALT);
+          missionFiveWestBApcOrderTick = snapshot.tick;
+        } else if (!nextWaypoint && missionFiveAssaultRouteStage >= 4) {
+          transitionMissionFiveWestBEngineer("screening", snapshot.tick, {
+            apcRouteStage: missionFiveWestBApcRouteStage,
+          });
+          missionFiveWestBApcOrderTick = -Infinity;
+        }
+      } else if (missionFiveWestBEngineerPhase === "screening" && reservedApc) {
+        const eastGuns = hostiles.filter((hostile) => (
+          hostile.typeName === "GUN" && hostile.cellY === 27
+          && (hostile.cellX === 45 || hostile.cellX === 50)
+        ));
+        const eastMobileThreats = hostiles.filter((hostile) => (
+          hostile.type !== 4 && hostile.cellX >= 48 && hostile.cellY >= 23 && hostile.cellY <= 35
+        ));
+        if (eastGuns.length === 0 && eastMobileThreats.length === 0) {
+          transitionMissionFiveWestBEngineer("ingress", snapshot.tick, {
+            apcStrength: reservedApc.strength,
+          });
+          missionFiveWestBApcOrderTick = -Infinity;
+        } else if (snapshot.tick - missionFiveWestBApcOrderTick >= 120) {
+          // Never contextual-click the transport's current cell while it is
+          // screening: that is an unload. A STOP order holds the route-three
+          // position without exposing the engineer.
+          queueStop([reservedApc]);
+          missionFiveWestBApcOrderTick = snapshot.tick;
+        }
+      } else if (missionFiveWestBEngineerPhase === "ingress" && reservedApc) {
+        const unloadPoint = { cellX: 56, cellY: 16 };
+        if (Math.abs(reservedApc.cellX - unloadPoint.cellX) <= 1
+          && Math.abs(reservedApc.cellY - unloadPoint.cellY) <= 1) {
+          transitionMissionFiveWestBEngineer("unloading", snapshot.tick, {
+            apcStrength: reservedApc.strength,
+          });
+          missionFiveWestBUnloadOrderTick = -Infinity;
+        } else if (snapshot.tick - missionFiveWestBApcOrderTick >= 60) {
+          queueContextOrder([reservedApc], unloadPoint);
+          missionFiveWestBApcOrderTick = snapshot.tick;
+        }
+      }
+      if (missionFiveWestBEngineerPhase === "unloading" && reservedApc) {
+        if (occupiedPips.length === 0) missionFiveWestBEmptyPipsTick ??= snapshot.tick;
+        if (visibleEngineer) missionFiveWestBEngineerRootTick ??= snapshot.tick;
+        if (missionFiveWestBEmptyPipsTick !== undefined && visibleEngineer) {
+          transitionMissionFiveWestBEngineer("capture", snapshot.tick, {
+            pipCount: reservedApc.pipCount,
+            occupiedPips,
+            engineer: objectKey(visibleEngineer),
+          });
+          missionFiveWestBCaptureOrderTick = -Infinity;
+        } else if (snapshot.tick - missionFiveWestBUnloadOrderTick >= 90) {
+          // A transport contextual self-click is the native unload command.
+          queueContextOrder([reservedApc], reservedApc);
+          missionFiveWestBUnloadOrderTick = snapshot.tick;
+          missionFiveWestBUnloadIssuedTick ??= snapshot.tick;
+        }
+      }
+      if (missionFiveWestBEngineerPhase === "capture" && visibleEngineer) {
+        const factory = hostiles.find((hostile) => (
+          hostile.typeName === "FACT" && hostile.cellX === 52 && hostile.cellY === 17
+        ));
+        const captureApproach = [
+          { cellX: 55, cellY: 16 },
+        ];
+        const approach = captureApproach[missionFiveWestBEngineerCaptureStage];
+        if (approach && Math.abs(visibleEngineer.cellX - approach.cellX) <= 1
+          && Math.abs(visibleEngineer.cellY - approach.cellY) <= 1) {
+          missionFiveWestBEngineerCaptureStage += 1;
+          missionFiveWestBCaptureOrderTick = -Infinity;
+        }
+        const nextApproach = captureApproach[missionFiveWestBEngineerCaptureStage];
+        if (nextApproach && snapshot.tick - missionFiveWestBCaptureOrderTick >= 60) {
+          queueContextOrder([visibleEngineer], nextApproach, MODIFIER_ALT);
+          missionFiveWestBCaptureOrderTick = snapshot.tick;
+        } else if (!nextApproach && factory && snapshot.tick - missionFiveWestBCaptureOrderTick >= 60) {
+          queueContextOrder([visibleEngineer], factory);
+          missionFiveWestBCaptureOrderTick = snapshot.tick;
+        }
+      }
+      if (trace && snapshot.tick % 300 === 0) {
+        console.error(JSON.stringify({
+          westBEngineer: true,
+          tick: snapshot.tick,
+          phase: missionFiveWestBEngineerPhase,
+          engineer: visibleEngineer && {
+            strength: visibleEngineer.strength,
+            cellX: visibleEngineer.cellX,
+            cellY: visibleEngineer.cellY,
+          },
+          apc: reservedApc && {
+            strength: reservedApc.strength,
+            cellX: reservedApc.cellX,
+            cellY: reservedApc.cellY,
+            pipCount: reservedApc.pipCount,
+            occupiedPips,
+          },
+          apcRouteStage: missionFiveWestBApcRouteStage,
+        }));
+      }
+    }
     if (mission.number === 5
       && mission.crate
       && missionFiveReliefStage >= mission.reliefRoute.length
@@ -2760,13 +3424,10 @@ try {
       }
     }
     if (mission.number === 5 && mission.variant === "west-b") {
-      const westBFactoryStillLive = hostiles.some((hostile) => (
-        hostile.typeName === "FACT" && hostile.cellX === 52 && hostile.cellY === 17
-      ));
       const fireSaleStructures = friendly.filter((object) => (
         object.type === 4
-        && !westBFactoryStillLive
         && object.typeName === "WEAP"
+        && missionFiveCompletedVehicleKeys.size >= 1
         && (object.objectFlags & (1 << 5))
         && !missionFiveSoldStructureIds.has(object.id)
       ));
@@ -2776,11 +3437,314 @@ try {
           missionFiveSoldStructureIds.add(building.id);
         }
       }
+
+      if (missionFiveShuttleFactCaptureTick !== undefined) {
+        const shuttleContextOrder = (group, destination, flags = 0) => {
+          if (group.length === 0 || !destination) return;
+          commands.push({ type: COMMAND_CLEAR_SELECTION, args: [0, 0, 0, 0, 0, 0, 0] });
+          for (const object of group) {
+            commands.push({
+              type: COMMAND_SELECT_OBJECT,
+              args: [object.type, object.id, 0, 0, 0, 0, 0],
+            });
+          }
+          if (flags) {
+            commands.push({
+              type: COMMAND_INPUT,
+              flags,
+              args: [INPUT_SPECIAL_KEYS, 0, 0, 0, 0, 0, 0],
+            });
+          }
+          commands.push({
+            type: COMMAND_INPUT,
+            flags,
+            args: [
+              INPUT_COMMAND_AT_POSITION,
+              destination.cellX * CELL_PIXELS + CELL_PIXELS / 2,
+              destination.cellY * CELL_PIXELS + CELL_PIXELS / 2,
+              0, 0, 0, 0,
+            ],
+          });
+          if (flags) {
+            commands.push({
+              type: COMMAND_INPUT,
+              args: [INPUT_SPECIAL_KEYS, 0, 0, 0, 0, 0, 0],
+            });
+          }
+          selectionCommands += group.length;
+          contextualOrders += 1;
+        };
+        const shuttleStop = (group) => {
+          if (group.length === 0) return;
+          commands.push({ type: COMMAND_CLEAR_SELECTION, args: [0, 0, 0, 0, 0, 0, 0] });
+          for (const object of group) {
+            commands.push({
+              type: COMMAND_SELECT_OBJECT,
+              args: [object.type, object.id, 0, 0, 0, 0, 0],
+            });
+          }
+          commands.push({ type: COMMAND_UNIT, args: [UNIT_REQUEST_STOP, 0, 0, 0, 0, 0, 0] });
+          selectionCommands += group.length;
+        };
+
+        const shuttleApc = friendly.find((object) => (
+          objectKey(object) === missionFiveWestBApcKey
+        ));
+        const shuttlePips = shuttleApc?.pips.slice(0, shuttleApc.pipCount)
+          .filter((pip) => pip !== 0) ?? [];
+        const visibleShuttleEngineers = friendly.filter((object) => (
+          object.type === 1 && object.typeName === "E6"
+          && missionFiveShuttleEngineers.has(objectKey(object))
+        )).toSorted((left, right) => (
+          (missionFiveShuttleEngineers.get(objectKey(left))?.tick ?? Infinity)
+            - (missionFiveShuttleEngineers.get(objectKey(right))?.tick ?? Infinity)
+          || left.id - right.id
+        ));
+
+        const capturedFactoryForSale = friendly.find((object) => (
+          object.type === 4 && object.typeName === "FACT"
+          && object.cellX === 52 && object.cellY === 17
+        ));
+        if (missionFiveShuttleFactSaleTick === undefined
+          && capturedFactoryForSale && (capturedFactoryForSale.objectFlags & (1 << 5))) {
+          missionFiveShuttleFactSaleTick = snapshot.tick;
+          missionFiveShuttleFactSaleFunds = snapshot.sidebar.credits + snapshot.sidebar.tiberium;
+          commands.push({
+            type: COMMAND_STRUCTURE,
+            args: [STRUCTURE_SELL, capturedFactoryForSale.id, 0, 0, 0, 0, 0],
+          });
+          missionFiveSoldStructureIds.add(capturedFactoryForSale.id);
+          if (trace) console.error(JSON.stringify({ westBShuttleFactSaleOrder: {
+            tick: snapshot.tick,
+            funds: missionFiveShuttleFactSaleFunds,
+            strength: capturedFactoryForSale.strength,
+          } }));
+        }
+
+        const engineerEntry = snapshot.sidebar.entries.find((entry) => entry.assetName === "E6");
+        if (missionFiveShuttleFactGoneTick !== undefined
+          && missionFiveShuttleEngineers.size < 4 && engineerEntry) {
+          if (engineerEntry.onHold
+            && snapshot.tick - missionFiveShuttleEngineerResumeTick >= 120) {
+            commands.push({
+              type: COMMAND_SIDEBAR,
+              args: [SIDEBAR_START_CONSTRUCTION,
+                engineerEntry.buildableType, engineerEntry.buildableId, 0, 0, 0, 0],
+            });
+            missionFiveShuttleEngineerResumeTick = snapshot.tick;
+            if (trace) console.error(JSON.stringify({ westBShuttleEngineerResume: {
+              tick: snapshot.tick,
+              starts: missionFiveShuttleEngineerStarts,
+              progress: engineerEntry.progress,
+              funds: snapshot.sidebar.credits + snapshot.sidebar.tiberium,
+            } }));
+          } else if (!engineerEntry.constructing && !engineerEntry.completed
+            && !engineerEntry.onHold && !engineerEntry.busy
+            && missionFiveShuttleEngineerStarts < 4
+            && snapshot.sidebar.credits + snapshot.sidebar.tiberium >= engineerEntry.cost
+            && snapshot.tick - missionFiveShuttleEngineerStartTick >= 120) {
+            commands.push({
+              type: COMMAND_SIDEBAR,
+              args: [SIDEBAR_START_CONSTRUCTION,
+                engineerEntry.buildableType, engineerEntry.buildableId, 0, 0, 0, 0],
+            });
+            missionFiveShuttleEngineerStarts += 1;
+            missionFiveShuttleEngineerStartTick = snapshot.tick;
+            productionStarts += 1;
+            infantryProductionStarts += 1;
+            if (trace) console.error(JSON.stringify({ westBShuttleEngineerStart: {
+              tick: snapshot.tick,
+              index: missionFiveShuttleEngineerStarts,
+              cost: engineerEntry.cost,
+              funds: snapshot.sidebar.credits + snapshot.sidebar.tiberium,
+            } }));
+          }
+        }
+
+        const distanceTo = (object, point) => Math.max(
+          Math.abs(object.cellX - point.cellX),
+          Math.abs(object.cellY - point.cellY),
+        );
+        if (missionFiveShuttlePhase === "return" && shuttleApc) {
+          const returnRoute = [
+            { cellX: 56, cellY: 29 },
+            { cellX: 53, cellY: 42 },
+            { cellX: 53, cellY: 53 },
+            { cellX: 42, cellY: 54 },
+            { cellX: 31, cellY: 58 },
+          ];
+          const waypoint = returnRoute[missionFiveShuttleRouteStage];
+          if (waypoint && distanceTo(shuttleApc, waypoint) <= 2) {
+            missionFiveShuttleRouteStage += 1;
+            missionFiveShuttleOrderTick = -Infinity;
+          }
+          const nextWaypoint = returnRoute[missionFiveShuttleRouteStage];
+          if (!nextWaypoint) {
+            missionFiveShuttlePhase = "await-load";
+            missionFiveShuttleOrderTick = -Infinity;
+            shuttleStop([shuttleApc]);
+            if (trace) console.error(JSON.stringify({ westBShuttlePhase: {
+              tick: snapshot.tick, phase: missionFiveShuttlePhase,
+              apc: { strength: shuttleApc.strength, cellX: shuttleApc.cellX, cellY: shuttleApc.cellY },
+            } }));
+          } else if (snapshot.tick - missionFiveShuttleOrderTick >= 60) {
+            shuttleContextOrder([shuttleApc], nextWaypoint, MODIFIER_ALT);
+            missionFiveShuttleOrderTick = snapshot.tick;
+          }
+        } else if (missionFiveShuttlePhase === "await-load" && shuttleApc) {
+          if (shuttlePips.filter((pip) => pip === 5).length >= 5) {
+            missionFiveShuttlePhase = "outbound";
+            missionFiveShuttleRouteStage = 0;
+            missionFiveShuttleOrderTick = -Infinity;
+            if (trace) console.error(JSON.stringify({ westBShuttlePhase: {
+              tick: snapshot.tick, phase: missionFiveShuttlePhase,
+              pips: shuttlePips,
+              apc: { strength: shuttleApc.strength, cellX: shuttleApc.cellX, cellY: shuttleApc.cellY },
+            } }));
+          } else if (missionFiveShuttleEngineers.size >= 5
+            && visibleShuttleEngineers.length > 0
+            && snapshot.tick - missionFiveShuttleOrderTick >= 60) {
+            shuttleContextOrder(visibleShuttleEngineers, shuttleApc);
+            missionFiveShuttleOrderTick = snapshot.tick;
+          } else if (snapshot.tick - missionFiveShuttleOrderTick >= 300) {
+            shuttleStop([shuttleApc]);
+            missionFiveShuttleOrderTick = snapshot.tick;
+          }
+        } else if (missionFiveShuttlePhase === "outbound" && shuttleApc) {
+          const outboundRoute = [
+            { cellX: 42, cellY: 54 },
+            { cellX: 53, cellY: 53 },
+            { cellX: 53, cellY: 42 },
+            { cellX: 56, cellY: 29 },
+          ];
+          const waypoint = outboundRoute[missionFiveShuttleRouteStage];
+          if (waypoint && distanceTo(shuttleApc, waypoint) <= 2) {
+            missionFiveShuttleRouteStage += 1;
+            missionFiveShuttleOrderTick = -Infinity;
+          }
+          const nextWaypoint = outboundRoute[missionFiveShuttleRouteStage];
+          if (!nextWaypoint) {
+            missionFiveShuttlePhase = "unloading";
+            missionFiveShuttleUnloadTick = -Infinity;
+            shuttleStop([shuttleApc]);
+            if (trace) console.error(JSON.stringify({ westBShuttlePhase: {
+              tick: snapshot.tick, phase: missionFiveShuttlePhase,
+              pips: shuttlePips,
+              apc: { strength: shuttleApc.strength, cellX: shuttleApc.cellX, cellY: shuttleApc.cellY },
+            } }));
+          } else if (snapshot.tick - missionFiveShuttleOrderTick >= 60) {
+            shuttleContextOrder([shuttleApc], nextWaypoint, MODIFIER_ALT);
+            missionFiveShuttleOrderTick = snapshot.tick;
+          }
+        } else if (missionFiveShuttlePhase === "unloading" && shuttleApc) {
+          if (shuttlePips.length === 0 && visibleShuttleEngineers.length >= 5) {
+            missionFiveShuttlePhase = "raid";
+            if (trace) console.error(JSON.stringify({ westBShuttlePhase: {
+              tick: snapshot.tick, phase: missionFiveShuttlePhase,
+              engineers: visibleShuttleEngineers.map((engineer) => ({
+                key: objectKey(engineer), strength: engineer.strength,
+                cellX: engineer.cellX, cellY: engineer.cellY,
+              })),
+            } }));
+          } else if (snapshot.tick - missionFiveShuttleUnloadTick >= 90) {
+            shuttleContextOrder([shuttleApc], shuttleApc);
+            missionFiveShuttleUnloadTick = snapshot.tick;
+          }
+        }
+
+        if (missionFiveShuttlePhase === "raid") {
+          const raidSites = [
+            { key: "PROC:47:22", typeName: "PROC", cellX: 47, cellY: 22,
+              approach: { cellX: 53, cellY: 27 } },
+            { key: "AFLD:42:18", typeName: "AFLD", cellX: 42, cellY: 18,
+              approach: { cellX: 46, cellY: 24 } },
+            { key: "NUKE:47:18", typeName: "NUKE", cellX: 47, cellY: 18,
+              approach: { cellX: 50, cellY: 24 } },
+            { key: "NUKE:49:17", typeName: "NUKE", cellX: 49, cellY: 17,
+              approach: { cellX: 52, cellY: 23 } },
+          ];
+          for (let index = 0; index < visibleShuttleEngineers.length; index += 1) {
+            const engineer = visibleShuttleEngineers[index];
+            const engineerKey = objectKey(engineer);
+            if (!missionFiveShuttleAssignments.has(engineerKey)) {
+              const site = raidSites[index];
+              if (!site) continue;
+              missionFiveShuttleAssignments.set(engineerKey, site.key);
+              missionFiveShuttleRaidStages.set(engineerKey, 0);
+              if (trace) console.error(JSON.stringify({ westBShuttleAssignment: {
+                tick: snapshot.tick,
+                engineer: engineerKey,
+                target: site.key,
+                strength: engineer.strength,
+                cellX: engineer.cellX,
+                cellY: engineer.cellY,
+              } }));
+            }
+          }
+          for (const engineer of visibleShuttleEngineers) {
+            const engineerKey = objectKey(engineer);
+            const site = raidSites.find((candidate) => (
+              candidate.key === missionFiveShuttleAssignments.get(engineerKey)
+            ));
+            const target = site && hostiles.find((hostile) => (
+              hostile.type === 4 && hostile.typeName === site.typeName
+              && hostile.cellX === site.cellX && hostile.cellY === site.cellY
+            ));
+            if (!site || !target) continue;
+            if (site.key === "AFLD:42:18"
+              && missionFiveShuttleCaptureKeys.size < 3) continue;
+            let stage = missionFiveShuttleRaidStages.get(engineerKey) ?? 0;
+            if (stage === 0 && distanceTo(engineer, site.approach) <= 2) {
+              stage = 1;
+              missionFiveShuttleRaidStages.set(engineerKey, stage);
+            }
+            const lastOrderTick = missionFiveShuttleRaidOrderTicks.get(engineerKey) ?? -Infinity;
+            if (snapshot.tick - lastOrderTick >= 60) {
+              shuttleContextOrder([engineer], stage === 0 ? site.approach : target,
+                stage === 0 ? MODIFIER_ALT : 0);
+              missionFiveShuttleRaidOrderTicks.set(engineerKey, snapshot.tick);
+            }
+            if (trace && snapshot.tick % 300 === 0) {
+              console.error(JSON.stringify({ westBShuttleRaid: {
+                tick: snapshot.tick,
+                engineer: engineerKey,
+                target: site.key,
+                stage,
+                strength: engineer.strength,
+                cellX: engineer.cellX,
+                cellY: engineer.cellY,
+              } }));
+            }
+          }
+        }
+
+        if (trace && snapshot.tick % 300 === 0) {
+          console.error(JSON.stringify({ westBShuttle: {
+            tick: snapshot.tick,
+            phase: missionFiveShuttlePhase,
+            routeStage: missionFiveShuttleRouteStage,
+            starts: missionFiveShuttleEngineerStarts,
+            built: missionFiveShuttleEngineers.size,
+            captures: missionFiveShuttleCaptures,
+            apc: shuttleApc && {
+              strength: shuttleApc.strength,
+              cellX: shuttleApc.cellX,
+              cellY: shuttleApc.cellY,
+              pips: shuttlePips,
+            },
+            visibleEngineers: visibleShuttleEngineers.map((engineer) => ({
+              key: objectKey(engineer), strength: engineer.strength,
+              cellX: engineer.cellX, cellY: engineer.cellY,
+            })),
+          } }));
+        }
+      }
     }
     if (mission.number >= 2) {
       for (const building of friendly.filter((object) => (
         object.type === 4
         && !missionFiveSoldStructureIds.has(object.id)
+        && !(missionFiveWestBStrategy && missionFiveShuttleFactCaptureTick !== undefined)
         && object.strength < object.maxStrength
         && !(object.objectFlags & (1 << 1))
         && (mission.number !== 3 || snapshot.sidebar.credits + snapshot.sidebar.tiberium >= 1_000)
@@ -2808,16 +3772,38 @@ try {
         productionStarts += 1;
       }
     }
-    if (mission.number === 5 && missionFiveReliefStage >= mission.reliefRoute.length
+    if (mission.number === 5
+      && missionFiveReliefStage >= mission.reliefRoute.length
       && missionFiveBaseRepairedTick !== undefined
       && (mission.crate === undefined || missionFiveCrateCollectedTick !== undefined)) {
       let availableFunds = snapshot.sidebar.credits + snapshot.sidebar.tiberium;
       const preferredInfantry = mission.variant === "west-b"
-        ? infantryProductionStarts % 4 === 3 ? "E2" : "E1"
+        ? missionFiveShuttleFactGoneTick !== undefined
+          ? "E2"
+          : infantryProductionStarts % 4 === 3 ? "E2" : "E1"
         : infantryProductionStarts % 3 === 2 ? "E1" : "E2";
       const infantry = snapshot.sidebar.entries.find((entry) => entry.assetName === preferredInfantry)
         ?? snapshot.sidebar.entries.find((entry) => entry.assetName === (preferredInfantry === "E1" ? "E2" : "E1"));
-      const preferredVehicles = ["JEEP", "APC"];
+      const engineer = mission.variant === "west-b"
+        ? snapshot.sidebar.entries.find((entry) => entry.assetName === "E6")
+        : undefined;
+      let queuedEngineer = false;
+      if (engineer && missionFiveWestBEngineerProductionStarted < 5
+        && !engineer.constructing && !engineer.completed && !engineer.onHold && !engineer.busy
+        && availableFunds >= engineer.cost + 200) {
+        commands.push({
+          type: COMMAND_SIDEBAR,
+          args: [SIDEBAR_START_CONSTRUCTION, engineer.buildableType, engineer.buildableId, 0, 0, 0, 0],
+        });
+        missionFiveWestBEngineerProductionStarted += 1;
+        queuedEngineer = true;
+        productionStarts += 1;
+        infantryProductionStarts += 1;
+        availableFunds -= engineer.cost;
+        if (trace) console.error(JSON.stringify({ westBEngineerProduction: true, tick: snapshot.tick, cost: engineer.cost }));
+      }
+      const liveApcAvailable = friendly.some((object) => object.typeName === "APC" && object.type === 2);
+      const preferredVehicles = mission.variant === "west-b" && !liveApcAvailable ? ["APC", "JEEP"] : ["JEEP", "APC"];
       const vehicle = preferredVehicles
         .map((assetName) => snapshot.sidebar.entries.find((entry) => entry.assetName === assetName))
         .find(Boolean);
@@ -2832,9 +3818,13 @@ try {
         vehicleProductionStarts += 1;
         availableFunds -= vehicle.cost;
       };
-      if (mission.variant !== "west-a" && vehicleProductionStarts < 1) queueVehicle(200);
+      if (mission.variant !== "west-a" && (vehicleProductionStarts < 1
+        || (mission.variant === "west-b"
+          && missionFiveWestBEngineerKey !== undefined
+          && !liveApcAvailable
+          && vehicleProductionStarts < 3))) queueVehicle(200);
       const infantryReserve = missionFiveAssaultStartedTick === undefined ? 200 : 0;
-      if (infantry && !infantry.constructing && !infantry.completed && !infantry.onHold && !infantry.busy
+      if (!queuedEngineer && infantry && !infantry.constructing && !infantry.completed && !infantry.onHold && !infantry.busy
         && availableFunds >= infantry.cost + infantryReserve) {
         commands.push({
           type: COMMAND_SIDEBAR,
@@ -2843,6 +3833,14 @@ try {
         productionStarts += 1;
         infantryProductionStarts += 1;
         availableFunds -= infantry.cost;
+        if (mission.variant === "west-b" && missionFiveShuttleFactGoneTick !== undefined) {
+          if (trace) console.error(JSON.stringify({ westBPostRefundInfantry: {
+            tick: snapshot.tick,
+            assetName: infantry.assetName,
+            cost: infantry.cost,
+            fundsAfterQueue: availableFunds,
+          } }));
+        }
       }
       if (mission.variant === "west-a") queueVehicle(600);
     }
@@ -2941,6 +3939,9 @@ try {
         && (mission.crate === undefined || missionFiveCrateCollectedTick !== undefined)
         && snapshot.tick >= (mission.earliestAssaultTick ?? 0)
         && (attackers.length >= missionFiveAssaultForce
+          || (mission.variant === "west-b"
+            && missionFiveWestBApcKey !== undefined
+            && allAttackers.length >= missionFiveAssaultForce)
           || snapshot.tick >= missionFiveAssaultTick
           || (mission.variant === "west-b" && missionFiveAssaultWaveCount > 0
             && attackers.length >= (mission.relaunchForce ?? 26))));
@@ -2961,7 +3962,9 @@ try {
       if (mission.variant === "west-b" && !westBFactoryStillLive) {
         for (const key of missionFiveHomeGuardKeys) missionFiveStrikeGroupKeys.add(key);
         missionFiveHomeGuardKeys.clear();
-        if (missionFiveAssaultRouteStage === (mission.factoryRouteStage ?? mission.assaultTargetStage)) {
+        if (missionFiveAssaultRouteStage === (mission.factoryRouteStage ?? mission.assaultTargetStage)
+          && !(missionFiveShuttleFactCaptureTick !== undefined
+            && missionFiveShuttleCaptures.length < 4)) {
           missionFiveAssaultRouteStage += 1;
           missionFiveAssaultRouteArrivalTicks.push(snapshot.tick);
           missionFiveAssaultProgressTick = snapshot.tick;
@@ -2981,8 +3984,9 @@ try {
         && missionFiveAssaultRouteStage === 6
         ? 1
         : 3;
-      if ((mission.variant === "west-b" || mission.variant === "east-a")
-        && missionFiveAssaultPhase === "assault"
+      if (missionFiveAssaultPhase === "assault"
+        && !(missionFiveShuttleFactCaptureTick !== undefined
+          && missionFiveShuttleCaptures.length < 4)
         && ((snapshot.tick - missionFiveWaveLaunchedTick >= 300
           && missionFiveStrikeGroupKeys.size < missionFiveStrikeExhaustionThreshold)
           || snapshot.tick - missionFiveAssaultProgressTick >= 6_000)) {
@@ -3002,8 +4006,11 @@ try {
       const launchThreshold = missionFiveAssaultWaveCount === 0
         ? snapshot.tick >= missionFiveAssaultTick
           ? mission.variant === "west-b" ? 26 : mission.variant === "east-a" ? 34 : 35
-          : missionFiveAssaultForce
-        : mission.variant === "west-b" ? mission.relaunchForce ?? 26 : mission.variant === "east-a" ? 28 : 40;
+          : mission.variant === "west-b" && missionFiveWestBApcKey !== undefined
+            ? missionFiveAssaultForce - 1
+            : missionFiveAssaultForce
+        : mission.variant === "west-b" ? mission.relaunchForce ?? 26
+          : mission.variant === "east-a" ? 28 : mission.relaunchForce ?? 40;
       if (assaultReady && (missionFiveAssaultPhase === "staging" || missionFiveAssaultPhase === "rebuild")
         && attackers.length >= launchThreshold) {
         missionFiveAssaultPhase = "assault";
@@ -3071,9 +4078,31 @@ try {
         }
         for (const key of evictedGuardTankKeys) missionFiveStrikeGroupKeys.add(key);
         const reserve = mission.variant === "west-b" && !westBFactoryStillLive
-          ? 0
+          ? missionFiveHuntTriggeredTick !== undefined && hostiles.some((hostile) => (
+            hostile.type !== 4 && (hostile.objectFlags & (1 << 12)) !== 0
+          ))
+            ? hostiles.some((hostile) => (
+              hostile.type !== 4 && (hostile.objectFlags & (1 << 12)) !== 0
+              && Math.max(
+                Math.abs(hostile.cellX - mission.home.cellX),
+                Math.abs(hostile.cellY - mission.home.cellY),
+              ) <= 14
+            )) ? 50 : hostiles.some((hostile) => (
+              hostile.typeName === "HAND" && hostile.cellX === 41 && hostile.cellY === 22
+            ))
+              ? attackers.length >= 50 ? 30 : attackers.length
+              : 5
+            : 0
           : mission.homeGuardSize ?? (mission.variant === "east-a" ? 8 : 4);
         const desiredStrikeGroup = Math.min(50, Math.max(0, attackers.length - reserve));
+        if (missionFiveWestBStrategy
+          && missionFiveHuntTriggeredTick !== undefined
+          && reserve === 30
+          && desiredStrikeGroup >= 20
+          && missionFiveWestBCleanupBatchTick === undefined) {
+          missionFiveWestBCleanupBatchTick = snapshot.tick;
+          missionFiveWestBCleanupBatchSize = desiredStrikeGroup;
+        }
         const priority = new Map([["MTNK", 0], ["APC", 1], ["JEEP", 2], ["E2", 3], ["E1", 4]]);
         const reinforcements = attackers
           .filter((attacker) => (
@@ -3161,7 +4190,10 @@ try {
         const coreRouteHold = mission.coreRouteHolds?.find(({ routeStage }) => (
           routeStage === missionFiveAssaultRouteStage
         ));
-        const holdForWestBCore = coreRouteHold?.sites.some((site) => (
+        const holdForWestBCore = (
+          missionFiveShuttleFactCaptureTick !== undefined
+          && missionFiveShuttleCaptures.length < 4
+        ) || coreRouteHold?.sites.some((site) => (
           hostiles.some((hostile) => (
             hostile.typeName === site.typeName
             && hostile.cellX === site.cellX
@@ -3213,11 +4245,22 @@ try {
           missionFiveHuntTriggeredTick !== undefined,
           mission.coreRouteHolds?.find(({ routeStage }) => (
             routeStage === missionFiveAssaultRouteStage
-          ))?.sites.filter((site) => hostiles.some((hostile) => (
-            hostile.typeName === site.typeName
-            && hostile.cellX === site.cellX
-            && hostile.cellY === site.cellY
-          ))),
+          ))?.sites.filter((site) => (
+            (missionFiveShuttleFactCaptureTick !== undefined
+              && missionFiveShuttleCaptures.length < 4
+              && site.typeName === "FACT" && site.cellX === 52 && site.cellY === 17)
+            || hostiles.some((hostile) => (
+              hostile.typeName === site.typeName
+              && hostile.cellX === site.cellX
+              && hostile.cellY === site.cellY
+            ))
+          )),
+          missionFiveHuntTriggeredTick === undefined
+            && hostiles.some((hostile) => (
+              hostile.typeName === "NUKE" && hostile.cellX === 49 && hostile.cellY === 17
+            ))
+            && hostiles.length > 2,
+          mission.assaultRoute[Math.floor(snapshot.tick / 1_200) % mission.assaultRoute.length],
         )
         : chooseMissionFiveAssaultTarget(
           missionFiveForwardGroup,
@@ -3262,6 +4305,29 @@ try {
           ? (mission.threatRadius > 0 ? chooseLocalThreat(attackers, hostiles, mission.threatRadius) : undefined)
             ?? mission.route[missionFourRouteStage]
           : target;
+    if (mission.number === 5 && mission.variant === "west-b"
+      && missionFiveHuntTriggeredTick !== undefined
+      && hostiles.some((hostile) => (
+        hostile.type !== 4 && (hostile.objectFlags & (1 << 12)) !== 0
+      ))) {
+      const armedMobileHostiles = visibleHostiles.filter((hostile) => (
+        hostile.type !== 4 && (hostile.objectFlags & (1 << 12)) !== 0
+      ));
+      const localHomeThreat = chooseMissionFiveDefenseTarget(armedMobileHostiles, mission.home);
+      const armedMobileRemains = hostiles.some((hostile) => (
+        hostile.type !== 4 && (hostile.objectFlags & (1 << 12)) !== 0
+      ));
+      const hostileHand = hostiles.find((hostile) => (
+        hostile.typeName === "HAND" && hostile.cellX === 41 && hostile.cellY === 22
+      ));
+      if (!localHomeThreat && armedMobileRemains && hostileHand && attackers.length < 50) {
+        missionFiveStrikeGroupKeys.clear();
+      }
+      orderTarget = localHomeThreat
+        ?? hostileHand
+        ?? chooseTarget(armedMobileHostiles)
+        ?? mission.home;
+    }
     let missionFiveStaticSweepTarget;
     let missionFiveStaticSweepForceAttack = false;
     let missionFiveStaticSweepForceCycle;
@@ -3717,6 +4783,89 @@ try {
   }
   finalSnapshot = snapshot;
 
+  if (missionFiveWestBStrategy) {
+    if (trace) console.error(JSON.stringify({ westBShuttleSummary: {
+      factCaptureTick: missionFiveShuttleFactCaptureTick,
+      factSaleTick: missionFiveShuttleFactSaleTick,
+      factSaleFunds: missionFiveShuttleFactSaleFunds,
+      factGoneTick: missionFiveShuttleFactGoneTick,
+      factGoneFunds: missionFiveShuttleFactGoneFunds,
+      refund: missionFiveShuttleFactGoneFunds === undefined
+        ? undefined : missionFiveShuttleFactGoneFunds - missionFiveShuttleFactSaleFunds,
+      factCrew: [...missionFiveShuttleFactCrew.values()],
+      phase: missionFiveShuttlePhase,
+      engineerStarts: missionFiveShuttleEngineerStarts,
+      engineers: [...missionFiveShuttleEngineers.entries()],
+      assignments: [...missionFiveShuttleAssignments.entries()],
+      captures: missionFiveShuttleCaptures,
+      huntTriggeredTick: missionFiveHuntTriggeredTick,
+      footReservePhase: missionFiveFootReservePhase,
+      footReserveRouteStage: missionFiveFootReserveRouteStage,
+      footReserveStagingTick: missionFiveFootReserveStagingTick,
+      footReserveStagedEngineers: missionFiveFootReserveStagedEngineers,
+      cleanupBatchTick: missionFiveWestBCleanupBatchTick,
+      cleanupBatchSize: missionFiveWestBCleanupBatchSize,
+      terminalTick: finalSnapshot.tick,
+      finalFunds: finalSnapshot.sidebar.credits + finalSnapshot.sidebar.tiberium,
+    } }));
+    assert.equal(missionFiveWestBEngineerProductionStarted, 5,
+      "West-B did not prebuild exactly five engineers");
+    assert.ok(missionFiveWestBEngineerKey !== undefined,
+      "West-B did not designate the primary factory-capture engineer");
+    assert.equal(missionFiveWestBEngineerPhase, "captured",
+      "West-B primary engineer did not complete the factory capture");
+    assert.equal(missionFiveShuttleEngineers.size, 4,
+      "West-B did not retain exactly four prebuilt reserve engineers");
+    assert.ok(!missionFiveShuttleEngineers.has(missionFiveWestBEngineerKey),
+      "West-B primary engineer was counted as a reserve engineer");
+    assert.equal(missionFiveShuttleEngineerStarts, 0,
+      "West-B queued an engineer after capturing the factory");
+    assert.ok(missionFiveShuttleFactCaptureTick !== undefined,
+      "West-B did not capture the Nod factory");
+    assert.ok(missionFiveShuttleFactSaleTick !== undefined
+      && missionFiveShuttleFactCaptureTick <= missionFiveShuttleFactSaleTick,
+    "West-B sold the Nod factory before its capture was observed");
+    assert.ok(missionFiveShuttleFactGoneTick !== undefined
+      && missionFiveShuttleFactSaleTick < missionFiveShuttleFactGoneTick,
+    "West-B factory sale did not complete after the sale order");
+    assert.equal(missionFiveShuttleFactGoneFunds - missionFiveShuttleFactSaleFunds, 2_500,
+      "West-B factory sale refund changed");
+    assert.ok([...missionFiveShuttleEngineers.values()].every(({ tick }) => (
+      tick < missionFiveShuttleFactCaptureTick
+    )), "West-B observed a reserve engineer produced after the factory capture");
+    assert.equal(missionFiveFootReservePhase, "staged",
+      "West-B reserve engineers did not reach their staging area");
+    assert.ok(missionFiveFootReserveStagingTick !== undefined,
+      "West-B did not record reserve-engineer staging");
+    assert.ok(missionFiveFootReserveStagingTick < missionFiveShuttleFactCaptureTick,
+      "West-B reserve engineers staged after the factory capture");
+    assert.equal(missionFiveFootReserveStagedEngineers.length, 4,
+      "West-B did not stage all four reserve engineers");
+    assert.ok(missionFiveFootReserveStagedEngineers.every(({ strength, maxStrength }) => (
+      strength === maxStrength
+    )), "West-B reserve engineers did not reach staging at full strength");
+    assert.equal(missionFiveShuttleAssignments.size, 4,
+      "West-B did not assign all four reserve engineers to linked structures");
+    assert.equal(new Set(missionFiveShuttleAssignments.values()).size, 4,
+      "West-B reserve engineers did not receive unique linked-structure assignments");
+    assert.ok([...missionFiveShuttleAssignments.keys()].every((key) => (
+      missionFiveShuttleEngineers.has(key)
+    )), "West-B assigned a non-reserve engineer to a linked structure");
+    assert.deepEqual(
+      missionFiveShuttleCaptures.map(({ typeName, cellX, cellY }) => (
+        `${typeName}:${cellX}:${cellY}`
+      )),
+      ["PROC:47:22", "NUKE:47:18", "NUKE:49:17", "AFLD:42:18"],
+      "prebuilt foot reserve did not capture every remaining Hunt-linked structure",
+    );
+    assert.ok(missionFiveHuntTriggeredTick !== undefined
+      && missionFiveHuntTriggeredTick >= Math.max(...missionFiveShuttleCaptures.map(({ tick }) => tick)),
+    "West-B triggered Hunt before completing the four linked captures");
+    assert.ok(missionFiveWestBCleanupBatchTick !== undefined,
+      "West-B did not assemble its post-Hunt cleanup batch");
+    assert.ok(missionFiveWestBCleanupBatchSize >= 20,
+      "West-B post-Hunt cleanup batch was smaller than 20 units");
+  }
   const gameOverEvents = events.filter((event) => event.type === EVENT_GAME_OVER);
   const outcomeEvents = events.filter((event) => event.type === EVENT_CAMPAIGN_OUTCOME);
   const terminalSummary = JSON.stringify({
