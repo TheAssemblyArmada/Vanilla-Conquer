@@ -1,5 +1,39 @@
 import { describe, expect, it } from "vitest";
-import { buildMinimapImage } from "./minimap";
+import { buildMinimapImage, minimapContentRect, minimapPointerToWorld } from "./minimap";
+
+describe("minimapPointerToWorld", () => {
+  it("maps the center of a letterboxed radar image to the classic-map center", () => {
+    const content = minimapContentRect(200, 100, 100, 100);
+    expect(content).toEqual({ x: 50, y: 0, width: 100, height: 100 });
+    expect(minimapPointerToWorld({
+      offsetX: 100,
+      offsetY: 50,
+      clientWidth: 200,
+      clientHeight: 100,
+      bitmapWidth: 100,
+      bitmapHeight: 100,
+      sourceWidth: 640,
+      sourceHeight: 400,
+      classicOriginX: 24,
+      classicOriginY: 16,
+    })).toEqual({ x: 24 + 320, y: 16 + 200 });
+  });
+
+  it("ignores clicks in the letterbox gutter", () => {
+    expect(minimapPointerToWorld({
+      offsetX: 10,
+      offsetY: 50,
+      clientWidth: 200,
+      clientHeight: 100,
+      bitmapWidth: 100,
+      bitmapHeight: 100,
+      sourceWidth: 640,
+      sourceHeight: 400,
+      classicOriginX: 0,
+      classicOriginY: 0,
+    })).toBeUndefined();
+  });
+});
 
 describe("buildMinimapImage", () => {
   it("preserves a small indexed surface through its RGBA palette", () => {

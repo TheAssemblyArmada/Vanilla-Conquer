@@ -146,7 +146,7 @@ sidebar totals. In every reviewed mission, the engine's terminal result alone
 decides success or failure. In Mission 1 the browser-visible deploy
 acceptance selects the real MCV, consumes its engine-authored deploy action, and
 uses **Deploy** until Construction Yard production is available. In Mission 2 it trains a
-Minigunner and exercises pause/resume through visible production controls.
+Minigunner and exercises hold/resume through visible production controls.
 Semantic labels identify the selected MCV and resulting Construction Yard
 without changing the engine command path.
 

@@ -90,8 +90,9 @@ WebGL2 is the first production backend.
   Shift additive selection, and repeat-to-center behavior. Q/E switch
   select/order mode and X stops the current selection; hotkeys do not escape
   editable controls or dialogs. The full-surface minimap refresh is limited to
-  roughly 1 Hz with immediate timeline-boundary updates; it is not yet a
-  semantic radar implementation.
+  roughly 1 Hz with immediate timeline-boundary updates. Click/tap centers the
+  host camera on the corresponding classic-map world point; semantic radar
+  icons and fog rules remain open.
 
 The first implementation does not require WebGPU, Asyncify, Emscripten
 pthreads, SharedArrayBuffer, or cross-origin isolation.

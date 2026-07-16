@@ -32,7 +32,7 @@ async function waitForFreewareMission(page: Page, missionId = "gdi-01-east-a", t
   await expect(page.locator(".mission-picker select").first()).toHaveValue(packageId, { timeout: 3 * 60_000 });
   await expect(page.locator(".mission-picker select").nth(1)).toHaveValue(missionId);
   await expect(page.getByRole("heading", { name: title, exact: true })).toBeVisible();
-  await expect(page.locator(".minimap span")).toHaveText(missionId.toUpperCase());
+  await expect(page.locator(".minimap span")).toHaveText(`Radar · ${missionId.toUpperCase()}`);
   await expect(page.getByRole("button", { name: "Pause", exact: true })).toBeEnabled({ timeout: 3 * 60_000 });
   await expect.poll(() => currentTick(page), { timeout: 3 * 60_000 }).toBeGreaterThan(1);
   await expect(page.locator(".error-banner, .diagnostic-error")).toHaveCount(0);
@@ -261,11 +261,11 @@ test.describe("real classic-freeware bootstrap", () => {
     await build.click();
     await expect(page.locator(".notice-strip")).toHaveText("Building Minigunner");
 
-    const pause = page.getByRole("button", { name: "Pause Minigunner", exact: true });
+    const pause = page.getByRole("button", { name: "Hold Minigunner", exact: true });
     await expect(pause).toBeEnabled({ timeout: 10_000 });
     await pause.click();
-    await expect(page.locator(".notice-strip")).toHaveText("Pausing Minigunner");
-    const resume = page.getByRole("button", { name: "Resume Minigunner", exact: true });
+    await expect(page.locator(".notice-strip")).toHaveText("Holding Minigunner");
+    const resume = page.getByRole("button", { name: "Resume build Minigunner", exact: true });
     await expect(resume).toBeEnabled({ timeout: 10_000 });
     await resume.click();
     await expect(page.locator(".notice-strip")).toHaveText("Resuming Minigunner");

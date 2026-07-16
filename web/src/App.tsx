@@ -32,6 +32,7 @@ import {
   targetSuperweaponCommand,
   type InteractionMode,
 } from "./input/gameCommands";
+import { rememberOrderCoachDismissal, shouldShowOrderCoach, wasOrderCoachDismissed } from "./input/orderCoach";
 import { battlefieldSelectionPresentation, type BattlefieldSelectionPresentation } from "./input/selectionModel";
 import { BattlefieldOnboarding } from "./onboarding/BattlefieldOnboarding";
 import { MissionObjectives } from "./objectives/MissionObjectives";
@@ -45,7 +46,7 @@ import {
 } from "./pwa/registerServiceWorker";
 import { ClassicSurfaceAccumulator, type AccumulatedClassicSurface } from "./render/ClassicSurfaceAccumulator";
 import { WebGLRenderer, type CameraTransform, type GraphicsMode } from "./render/WebGLRenderer";
-import { buildMinimapImage } from "./render/minimap";
+import { buildMinimapImage, minimapPointerToWorld } from "./render/minimap";
 import { clampCameraTransform, focusCameraTransform, pointToWorld, presentationViewport, visibleWorldRect } from "./render/viewport";
 import { SimulationClient } from "./simulation/SimulationClient";
 import { localAcceptanceSession } from "./simulation/acceptanceHooks";
@@ -104,6 +105,18 @@ type DiagnosticEvent = Extract<SimulationEvent, { kind: "diagnostic" }>;
 
 let launchSequence = 0;
 const EMPTY_SELECTION_PRESENTATION = battlefieldSelectionPresentation([], undefined);
+
+function useCoarsePointer(): boolean {
+  const [coarse, setCoarse] = useState(() => typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches);
+  useEffect(() => {
+    const media = window.matchMedia("(pointer: coarse)");
+    const sync = (): void => setCoarse(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
+  return coarse;
+}
 
 const DIALOG_FOCUSABLE = "button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex='-1'])";
 
@@ -592,6 +605,8 @@ export default function App() {
   const [mode, setMode] = useState<GraphicsMode>("classic");
   const [interactionMode, setInteractionMode] = useState<InteractionMode>("select");
   const [battlefieldTool, setBattlefieldTool] = useState<BattlefieldTool>();
+  const [orderCoachDismissed, setOrderCoachDismissed] = useState(wasOrderCoachDismissed);
+  const coarsePointer = useCoarsePointer();
   const [running, setRunning] = useState(false);
   const [tick, setTick] = useState(0);
   const [fps, setFps] = useState(0);
@@ -662,6 +677,13 @@ export default function App() {
     ? `${battlefieldTool.phase === "requesting" ? "Preparing" : battlefieldTool.phase === "placing" ? "Placing" : "Place"} ${describeProductionEntry(battlefieldTool.entry).label}`
     : battlefieldTool?.kind === "superweapon" ? `Target ${describeProductionEntry(battlefieldTool.entry).label}`
       : battlefieldTool?.kind === "repair" ? "Repair structures" : battlefieldTool?.kind === "sell" ? "Sell structures" : undefined;
+  const showOrderCoach = shouldShowOrderCoach({
+    coarsePointer,
+    dismissed: orderCoachDismissed,
+    selectionCount: selectionPresentation.count,
+    interactionMode,
+    hasBattlefieldTool: Boolean(battlefieldTool),
+  });
 
   const clearContextualHover = useCallback((): void => {
     contextualHoverDirtyRef.current = false;
@@ -814,6 +836,29 @@ export default function App() {
       y: cameraRef.current.y + (-delta.y / viewport.height) * world.height,
     });
   }, [applyCamera]);
+
+  const focusCameraFromMinimap = useCallback((event: { clientX: number; clientY: number }) => {
+    const snapshot = snapshotRef.current;
+    const canvas = minimapRef.current;
+    if (!snapshot || !canvas || !snapshot.classicWidth || !snapshot.classicHeight) return;
+    const bounds = canvas.getBoundingClientRect();
+    if (!bounds.width || !bounds.height || !canvas.width || !canvas.height) return;
+    const world = minimapPointerToWorld({
+      offsetX: event.clientX - bounds.left,
+      offsetY: event.clientY - bounds.top,
+      clientWidth: bounds.width,
+      clientHeight: bounds.height,
+      bitmapWidth: canvas.width,
+      bitmapHeight: canvas.height,
+      sourceWidth: snapshot.classicWidth,
+      sourceHeight: snapshot.classicHeight,
+      classicOriginX: snapshot.classicOriginX,
+      classicOriginY: snapshot.classicOriginY,
+    });
+    if (!world) return;
+    focusCameraOnWorld(world);
+    setNotice("Camera centered from radar");
+  }, [focusCameraOnWorld]);
 
   const zoomCamera = useCallback((factor: number, center?: ScreenPoint) => {
     const snapshot = snapshotRef.current;
@@ -1036,6 +1081,10 @@ export default function App() {
     contextualHoverDirtyRef.current = true;
     setInteractionMode(next);
     if (canvasRef.current) canvasRef.current.dataset.tool = next;
+    if (next === "order" && !orderCoachDismissed) {
+      rememberOrderCoachDismissal();
+      setOrderCoachDismissed(true);
+    }
     setNotice(next === "select" ? "Tap a unit to select it; drag to box-select" : "Tap the battlefield to issue a contextual move or attack order");
   };
 
@@ -1047,8 +1096,8 @@ export default function App() {
     }
     switch (description.primaryAction) {
       case "start": return { action: "start", actionLabel: "Build", disabled: false, status: "Available" };
-      case "hold": return { action: "hold", actionLabel: "Pause", disabled: false, status: `${Math.round(description.progress * 100)}%` };
-      case "resume": return { action: "resume", actionLabel: "Resume", disabled: false, status: `Paused · ${Math.round(description.progress * 100)}%` };
+      case "hold": return { action: "hold", actionLabel: "Hold", disabled: false, status: `${Math.round(description.progress * 100)}%` };
+      case "resume": return { action: "resume", actionLabel: "Resume build", disabled: false, status: `On hold · ${Math.round(description.progress * 100)}%` };
       case "place": return { action: "place", actionLabel: "Place", disabled: false, status: "Ready" };
       default:
         return { actionLabel: entry.completed ? "Deploying" : entry.busy ? "Busy" : "Unavailable", disabled: true, status: entry.completed ? "Ready" : entry.busy ? "Factory busy" : "Unavailable" };
@@ -1069,7 +1118,7 @@ export default function App() {
       setNotice(`${action === "resume" ? "Resuming" : "Building"} ${label}`);
     } else if (action === "hold") {
       client.sendCommands([holdProductionCommand(entry)]);
-      setNotice(`Pausing ${label}`);
+      setNotice(`Holding ${label}`);
     } else if (action === "place") {
       client.sendCommands([startPlacementCommand(entry)]);
       quickPlaceCursorRef.current.delete(productionEntryKey(entry));
@@ -1949,6 +1998,10 @@ export default function App() {
         contextualHoverDirtyRef.current = true;
         setInteractionMode(next);
         if (canvasRef.current) canvasRef.current.dataset.tool = next;
+        if (next === "order") {
+          rememberOrderCoachDismissal();
+          setOrderCoachDismissed(true);
+        }
         setNotice(next === "select" ? "Selection mode active" : "Contextual order mode active");
       }
       else if (event.code === "KeyX") {
@@ -2130,7 +2183,7 @@ export default function App() {
       <p className="ea-disclaimer">EA has not endorsed and does not support this product.</p>
 
       <main className="play-area" inert={applicationModalOpen} aria-hidden={applicationModalOpen} aria-busy={launching || importing || bootstrapping}>
-        <div className="viewport-frame">
+        <div className={`viewport-frame${showOrderCoach ? " order-coach-visible" : ""}`}>
           <canvas ref={canvasRef} tabIndex={0} aria-label="Real-time strategy battlefield" aria-describedby="battlefield-help" />
           <canvas ref={placementOverlayRef} className="placement-overlay" aria-hidden="true" />
           <p id="battlefield-help" className="visually-hidden">Pointer: tap to select or order, drag to box-select, middle-drag or use two fingers to pan, and pinch or wheel to zoom. Build completed structures from the command console, then tap a green footprint. Repair, sell, and support tools also target the battlefield. Keyboard: arrow or W A S D keys pan, Q selects, E enters contextual order mode, X stops selected units, plus and minus zoom, Home resets the camera, Escape cancels an active tool or pauses, and Space switches graphics when available. Number keys select control groups; press the same selected group again to center it. Control plus a number assigns the current selection, Shift plus a number adds a group to the selection, and Alt plus a number selects and centers it.</p>
@@ -2159,22 +2212,32 @@ export default function App() {
           {error && <div className="error-banner" role="alert"><span>{error}</span><button onClick={() => setError(undefined)} aria-label="Dismiss error">×</button></div>}
           <div className="visually-hidden" role="status" aria-live="polite" aria-atomic="true">{selectionPresentation.label}</div>
           {selectionPresentation.count > 0 && <div className="selection-status" aria-hidden="true">{selectionPresentation.label}</div>}
-          <div className="action-bar" role="group" aria-label="Touch commands">
-            <button className={!battlefieldTool && interactionMode === "select" ? "active" : ""} aria-label="Select units on next tap" aria-pressed={!battlefieldTool && interactionMode === "select"} disabled={!launch || importing || launching || loading} onClick={() => chooseInteractionMode("select")}><span>◇</span>Select</button>
-            <button className={!battlefieldTool && interactionMode === "order" ? "active" : ""} aria-label="Issue a contextual move or attack order on next tap" aria-pressed={!battlefieldTool && interactionMode === "order"} disabled={!launch || importing || launching || loading} onClick={() => chooseInteractionMode("order")}><span>⌖</span>Order</button>
-            <button aria-label="Stop selected units" disabled={!launch || importing || loading || !running} onClick={stopSelected}><span>■</span>Stop</button>
-            {selectionPresentation.deployment && <button
-              aria-label={selectionPresentation.deployment.available ? "Deploy selected unit" : "Selected unit cannot deploy here"}
-              disabled={!launch || importing || loading || !running || !selectionPresentation.deployment.available}
-              onClick={deploySelected}
-            ><span>⬡</span>{selectionPresentation.deployment.available ? "Deploy" : "Blocked"}</button>}
+          <div className={`action-bar${coarsePointer ? "" : " fine-pointer"}`} role="group" aria-label={coarsePointer ? "Touch commands" : "Battlefield commands"}>
+            {showOrderCoach && <p className="order-coach" role="status">Tap Order, then tap where to go</p>}
+            <div className="action-bar-commands">
+              <button className={!battlefieldTool && interactionMode === "select" ? "active" : ""} aria-label="Select units on next tap" aria-pressed={!battlefieldTool && interactionMode === "select"} disabled={!launch || importing || launching || loading} onClick={() => chooseInteractionMode("select")}><span>◇</span>Select</button>
+              <button className={[!battlefieldTool && interactionMode === "order" ? "active" : "", showOrderCoach ? "coach" : ""].filter(Boolean).join(" ")} aria-label="Issue a contextual move or attack order on next tap" aria-pressed={!battlefieldTool && interactionMode === "order"} disabled={!launch || importing || launching || loading} onClick={() => chooseInteractionMode("order")}><span>⌖</span>Order</button>
+              <button aria-label="Stop selected units" disabled={!launch || importing || loading || !running} onClick={stopSelected}><span>■</span>Stop</button>
+              {selectionPresentation.deployment && <button
+                aria-label={selectionPresentation.deployment.available ? "Deploy selected unit" : "Selected unit cannot deploy here"}
+                disabled={!launch || importing || loading || !running || !selectionPresentation.deployment.available}
+                onClick={deploySelected}
+              ><span>⬡</span>{selectionPresentation.deployment.available ? "Deploy" : "Blocked"}</button>}
+            </div>
           </div>
         </div>
 
         <aside className={sidebarOpen ? "sidebar open" : "sidebar"} aria-label="Mission panel">
           <button className="sidebar-toggle" onClick={() => setSidebarOpen((value) => !value)} aria-label={sidebarOpen ? "Collapse mission panel" : "Expand mission panel"} aria-expanded={sidebarOpen} aria-controls="mission-panel-content">{sidebarOpen ? "›" : "‹"}</button>
           <div id="mission-panel-content" className="sidebar-content" inert={!sidebarOpen} aria-hidden={!sidebarOpen}>
-            <div className="minimap"><canvas ref={minimapRef} aria-label="Live battlefield minimap" /><span>{launch?.kind === "mission" ? launch.mission.id.toUpperCase() : "LOCAL DEMO"}</span></div>
+            <div className="minimap">
+              <canvas
+                ref={minimapRef}
+                aria-label="Battlefield radar. Click or tap to center the camera."
+                onClick={focusCameraFromMinimap}
+              />
+              <span>{`Radar · ${launch?.kind === "mission" ? launch.mission.id.toUpperCase() : "LOCAL DEMO"}`}</span>
+            </div>
             {launch?.kind === "mission" && <MissionObjectives mission={launch.mission} stats={activeMissionStats} result={gameOver} />}
             {activeMissionStats && (activeMissionStats.entries.length > 0 || activeMissionStats.repairEnabled || activeMissionStats.sellEnabled) ? <ProductionPanel
               sidebar={activeMissionStats}

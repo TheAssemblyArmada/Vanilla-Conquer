@@ -94,7 +94,7 @@ east/variation A. Red Alert remains a later, separate engine module.
   box selection, contextual orders, stop, touch and
   desktop camera pan/zoom, pause, diagnostics, locally derived briefing, and
   terminal score UI with deterministic manual-save recovery are connected. A
-  downsampled live classic minimap and engine-exported credits/power/combat
+  downsampled live classic minimap (click/tap centers the camera) and engine-exported credits/power/combat
   telemetry populate the mission panel. DOM telemetry and contextual hover are
   coalesced near 5 Hz, while the full-surface minimap repaints near 1 Hz with
   immediate launch/load/terminal updates. The DOM construction panel exposes
@@ -124,7 +124,13 @@ east/variation A. Red Alert remains a later, separate engine module.
   demo but mission packs are locked to classic mode. A persistent first-run
   guide identifies black areas as unexplored shroud, points players to Mission
   1's lower-right start, documents mouse/keyboard/touch pan, zoom, selection,
-  and orders, and retains an accessible Controls launcher after dismissal.
+  and orders, covers the Mobile Construction Vehicle deploy → build → place
+  loop, and retains an accessible Controls launcher after dismissal. On coarse
+  pointers, selecting units while still in Select mode highlights Order with a
+  one-line coach that dismisses for the session after Order is chosen.
+  Production hold uses Hold / Resume build labels so sim Pause stays unambiguous.
+  On fine pointers the bottom command bar is compact and muted so it does not
+  compete with keyboard select/order shortcuts.
 - Missions 1–5 have exact, reviewed objective presentations gated to their
   canonical GDI/SCG01EA, GDI/SCG02EA, GDI/SCG03EA, GDI/SCG04WA,
   GDI/SCG04WB, GDI/SCG04EA, GDI/SCG05EA, GDI/SCG05WA, and GDI/SCG05WB

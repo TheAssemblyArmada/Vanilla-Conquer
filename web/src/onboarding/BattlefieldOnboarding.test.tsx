@@ -47,6 +47,10 @@ describe("BattlefieldOnboarding", () => {
     expect(guide?.textContent).toContain("Wheel, pinch");
     expect(guide?.textContent).toContain("Click or tap a unit");
     expect(guide?.textContent).toContain("Right-click to order");
+    expect(guide?.textContent).toContain("Mobile Construction Vehicle");
+    expect(guide?.textContent).toContain("Deploy");
+    expect(guide?.textContent).toContain("Place");
+    expect(guide?.textContent).toContain("green footprint");
   });
 
   it("persists dismissal, restores focus, and leaves an accessible way to reopen the guide", () => {

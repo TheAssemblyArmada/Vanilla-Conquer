@@ -82,6 +82,10 @@ export function BattlefieldOnboarding({ active }: BattlefieldOnboardingProps) {
         <dt>Select &amp; order</dt>
         <dd>Click or tap a unit; drag to box-select. Right-click to order, or choose <strong>Order</strong> then tap.</dd>
       </div>
+      <div>
+        <dt>Build</dt>
+        <dd>Select the Mobile Construction Vehicle → <strong>Deploy</strong> → start a structure in the command console → <strong>Place</strong> on a green footprint.</dd>
+      </div>
     </dl>
   </aside>;
 }

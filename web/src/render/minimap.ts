@@ -4,6 +4,78 @@ export interface MinimapImage {
   rgba: Uint8ClampedArray;
 }
 
+export interface MinimapContentRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface MinimapWorldPoint {
+  x: number;
+  y: number;
+}
+
+/** Letterboxed image rect for an object-fit: contain minimap canvas. */
+export function minimapContentRect(
+  clientWidth: number,
+  clientHeight: number,
+  bitmapWidth: number,
+  bitmapHeight: number,
+): MinimapContentRect | undefined {
+  if (!(clientWidth > 0) || !(clientHeight > 0) || !(bitmapWidth > 0) || !(bitmapHeight > 0)) return undefined;
+  const scale = Math.min(clientWidth / bitmapWidth, clientHeight / bitmapHeight);
+  const width = bitmapWidth * scale;
+  const height = bitmapHeight * scale;
+  return {
+    x: (clientWidth - width) / 2,
+    y: (clientHeight - height) / 2,
+    width,
+    height,
+  };
+}
+
+/** Maps a pointer inside the displayed radar image to an engine world point. */
+export function minimapPointerToWorld(options: {
+  offsetX: number;
+  offsetY: number;
+  clientWidth: number;
+  clientHeight: number;
+  bitmapWidth: number;
+  bitmapHeight: number;
+  sourceWidth: number;
+  sourceHeight: number;
+  classicOriginX: number;
+  classicOriginY: number;
+}): MinimapWorldPoint | undefined {
+  const {
+    offsetX,
+    offsetY,
+    clientWidth,
+    clientHeight,
+    bitmapWidth,
+    bitmapHeight,
+    sourceWidth,
+    sourceHeight,
+    classicOriginX,
+    classicOriginY,
+  } = options;
+  if (!(sourceWidth > 0) || !(sourceHeight > 0)) return undefined;
+  const content = minimapContentRect(clientWidth, clientHeight, bitmapWidth, bitmapHeight);
+  if (!content) return undefined;
+  if (offsetX < content.x || offsetY < content.y || offsetX > content.x + content.width || offsetY > content.y + content.height) {
+    return undefined;
+  }
+  const bitmapX = ((offsetX - content.x) / content.width) * bitmapWidth;
+  const bitmapY = ((offsetY - content.y) / content.height) * bitmapHeight;
+  const sourceX = Math.min(sourceWidth, Math.max(0, (bitmapX / bitmapWidth) * sourceWidth));
+  const sourceY = Math.min(sourceHeight, Math.max(0, (bitmapY / bitmapHeight) * sourceHeight));
+  return {
+    x: classicOriginX + sourceX,
+    y: classicOriginY + sourceY,
+  };
+}
+
 /** Downsamples an indexed classic surface into a small RGBA radar image. */
 export function buildMinimapImage(
   indexed: Uint8Array,
