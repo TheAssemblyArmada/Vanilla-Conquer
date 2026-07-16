@@ -372,6 +372,11 @@ public:
         return GameOver;
     }
 
+    static void Clear_Game_Over()
+    {
+        GameOver = false;
+    }
+
 private:
     static void Calculate_Single_Player_Score(EventCallbackStruct&);
 
@@ -449,6 +454,7 @@ bool DLLExportClass::GameOver = false;
 */
 int DLLForceMouseX = 0;
 int DLLForceMouseY = 0;
+bool CNCFirstUpdate = false;
 
 CNC_Event_Callback_Type DLLExportClass::EventCallback = NULL;
 
@@ -590,6 +596,34 @@ void DLL_Shutdown(void)
     DLLExportClass::Shutdown();
 }
 
+#ifdef CNC_WEB_BUILD
+/*
+ * A WebAssembly module may be torn down without a native DLL detach. Mirror
+ * the detach cleanup so another worker/module does not retain archive or heap
+ * state after a failed launch.
+ */
+extern "C" void __cdecl CNC_Web_Shutdown(void)
+{
+    DLLExportClass::Shutdown();
+    /* A missing optional MOVIES.MIX is not attached to MFCD::MixList. */
+    delete MoviesMix;
+    MoviesMix = NULL;
+    Uninit_Game();
+
+    extern int RemasterLastCD;
+    extern MFCD* TheaterIcons;
+    RemasterLastCD = -1;
+    GeneralMix = NULL;
+    ScoreMix = NULL;
+    TheaterData = NULL;
+    TheaterIcons = NULL;
+    LowTheaterData = NULL;
+    LastTheater = THEATER_NONE;
+    RequiredCD = -1;
+    CNCFirstUpdate = false;
+}
+#endif
+
 /**************************************************************************************************
  * CNC_Config -- Configure the plugin
  *
@@ -623,11 +657,11 @@ extern "C" __declspec(dllexport) void __cdecl CNC_Add_Mod_Path(const char* mod_p
 }
 
 /**************************************************************************************************
- * CNC_Get_Visible_Page -- Get the screen buffer 'SeenBuff' from the game
+ * CNC_Get_Visible_Page -- Get the completed legacy render buffer from the game
  *
  * In:   If buffer_in is null, just return info about page
  *
- * Out:  false if not changed since last call
+ * Out:  false if the legacy render buffer is unavailable
  *
  *
  *
@@ -642,31 +676,39 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Get_Visible_Page(unsigned char
     }
 
     /*
-    ** Assume the seen page viewport is the same size as the page
+    ** GScreenClass::Render draws the completed indexed frame into HidPage.
+    ** Non-remaster builds may subsequently blit it to SeenBuff, while WebTD's
+    ** REMASTER_BUILD path deliberately skips that redundant copy.
     */
-
     GraphicBufferClass* gbuffer = HidPage.Get_Graphic_Buffer();
     if (gbuffer == NULL) {
         return false;
     }
 
-    int view_port_width = Map.MapCellWidth * CELL_PIXEL_W;
-    int view_port_height = Map.MapCellHeight * CELL_PIXEL_H;
-
-    if (view_port_width == 0 || view_port_height == 0) {
+    const unsigned int capacity_width = width;
+    const unsigned int capacity_height = height;
+    if (Map.MapCellWidth <= 0 || Map.MapCellHeight <= 0
+        || Map.MapCellWidth > INT_MAX / CELL_PIXEL_W || Map.MapCellHeight > INT_MAX / CELL_PIXEL_H) {
+        return false;
+    }
+    const int view_port_width = Map.MapCellWidth * CELL_PIXEL_W;
+    const int view_port_height = Map.MapCellHeight * CELL_PIXEL_H;
+    if (static_cast<unsigned int>(view_port_width) > capacity_width
+        || static_cast<unsigned int>(view_port_height) > capacity_height) {
         return false;
     }
 
     unsigned char* raw_buffer = (unsigned char*)gbuffer->Get_Buffer();
-    int raw_size = gbuffer->Get_Size();
-    if (raw_buffer == NULL || gbuffer->Get_Width() < view_port_width || gbuffer->Get_Height() < view_port_height) {
+    const int raw_size = gbuffer->Get_Size();
+    const int pitch = gbuffer->Get_Width();
+    if (raw_buffer == NULL || pitch < view_port_width || gbuffer->Get_Height() < view_port_height || pitch <= 0
+        || view_port_height > raw_size / pitch) {
         return false;
     }
 
     width = view_port_width;
     height = view_port_height;
 
-    int pitch = gbuffer->Get_Width();
     for (int i = 0; i < view_port_height; ++i, buffer_in += view_port_width, raw_buffer += pitch) {
         memcpy(buffer_in, raw_buffer, view_port_width);
     }
@@ -1272,6 +1314,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Start_Instance_Variation(int s
             return false;
         }
     }
+    CNCFirstUpdate = GameToPlay != GAME_GLYPHX_MULTIPLAYER;
 
     if (override_map_name && strlen(override_map_name)) {
         strcpy(Scen.ScenarioName, override_map_name);
@@ -1365,6 +1408,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Start_Custom_Instance(const ch
         GameToPlay = GAME_NORMAL;
         ScenPlayer = SCEN_PLAYER_GDI; // Don't think it matters since we are specifying the exact file to load
     }
+    CNCFirstUpdate = GameToPlay != GAME_GLYPHX_MULTIPLAYER;
 
     BuildLevel = build_level;
 
@@ -1594,15 +1638,13 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Advance_Instance(uint64 player
     */
     // Skip this block of code on first update of single-player games. This helps prevents trigger generated messages on
     // the first update from being lost during loading screen or movie. - LLL
-    static bool FirstUpdate = GameToPlay != GAME_GLYPHX_MULTIPLAYER;
-    ;
-    if (!FirstUpdate) {
+    if (!CNCFirstUpdate) {
         HouseClass* old_player_ptr = PlayerPtr;
         Logic.Clear_Recently_Created_Bits();
         Logic.AI();
         DLLExportClass::Logic_Switch_Player_Context(old_player_ptr);
     }
-    FirstUpdate = false;
+    CNCFirstUpdate = false;
 
     /*
     **	Manage the inter-player message list.  If Manage() returns true, it means
@@ -1661,6 +1703,13 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Advance_Instance(uint64 player
         if (GameToPlay == GAME_GLYPHX_MULTIPLAYER) {
             DLLExportClass::On_Multiplayer_Game_Over();
         } else {
+#if defined(CNC_WEB_BUILD)
+            /* The DLL tick path bypasses Do_Win(), where the original game
+             * announces the result. Emit the equivalent browser speech before
+             * GAME_OVER so the host can keep terminal audio alive while it
+             * stops simulation ticks. */
+            Speak(VOX_ACCOMPLISHED);
+#endif
             DLLExportClass::On_Game_Over(player_id, true);
         }
 
@@ -1679,6 +1728,10 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Advance_Instance(uint64 player
         if (GameToPlay == GAME_GLYPHX_MULTIPLAYER) {
             DLLExportClass::On_Multiplayer_Game_Over();
         } else {
+#if defined(CNC_WEB_BUILD)
+            /* Do_Lose() is likewise outside the DLL-driven tick path. */
+            Speak(VOX_FAIL);
+#endif
             DLLExportClass::On_Game_Over(player_id, false);
         }
 
@@ -1781,6 +1834,7 @@ extern "C" __declspec(dllexport) bool __cdecl CNC_Save_Load(bool save,
             return false;
         }
 
+        DLLExportClass::Clear_Game_Over();
         DLLExportClass::Set_Player_Context(DLLExportClass::GlyphxPlayerIDs[0], true);
         DLLExportClass::Cancel_Placement(DLLExportClass::GlyphxPlayerIDs[0], -1, -1);
         Set_Logic_Page(SeenBuff);
@@ -1962,6 +2016,7 @@ void DLLExportClass::Init(void)
     }
 
     CurrentLocalPlayerIndex = 0;
+    GameOver = false;
 }
 
 /**************************************************************************************************
@@ -2443,6 +2498,7 @@ void DLLExportClass::On_Game_Over(uint64 glyphx_Player_id, bool player_wins)
     new_event.GameOver.MovieName = player_wins ? WinMovie : LoseMovie;
     new_event.GameOver.AfterScoreMovieName = "";
     new_event.GameOver.Multiplayer = false;
+    new_event.GameOver.IsHuman = true;
     new_event.GameOver.MultiPlayerTotalPlayers = 0;
 
     Calculate_Single_Player_Score(new_event);
@@ -5186,7 +5242,19 @@ bool DLLExportClass::Place(uint64 player_id, int buildable_type, int buildable_i
                 map_cell_height++;
             }
 
-            CELL cell = (CELL)(map_cell_x + cell_x) + ((map_cell_y + cell_y) << _map_width_shift_bits);
+            /*
+            ** Browser commands are untrusted wire input. Reject relative
+            ** placement coordinates that would escape the fixed map before
+            ** converting them to the legacy CELL type.
+            */
+            int absolute_cell_x = map_cell_x + cell_x;
+            int absolute_cell_y = map_cell_y + cell_y;
+            if (absolute_cell_x < 0 || absolute_cell_x >= MAP_MAX_CELL_WIDTH || absolute_cell_y < 0
+                || absolute_cell_y >= MAP_MAX_CELL_HEIGHT) {
+                return false;
+            }
+
+            CELL cell = (CELL)absolute_cell_x + (absolute_cell_y << _map_width_shift_bits);
 
             /*
             ** Call the place directly instead of queueing it, so we can evaluate the return code.
@@ -5407,12 +5475,33 @@ BuildingClass* DLLExportClass::Get_Pending_Placement_Object(uint64 player_id, in
  **************************************************************************************************/
 bool DLLExportClass::Place_Super_Weapon(uint64 player_id, int buildable_type, int buildable_id, int x, int y)
 {
-    if (buildable_type != RTTI_SPECIAL) {
+    if (!DLLExportClass::Set_Player_Context(player_id) || buildable_type != RTTI_SPECIAL || !PlayerPtr) {
+        return false;
+    }
+
+    SuperClass* weapon = NULL;
+    switch (buildable_id) {
+    case SPC_ION_CANNON:
+        weapon = &PlayerPtr->IonCannon;
+        break;
+    case SPC_NUCLEAR_BOMB:
+        weapon = &PlayerPtr->NukeStrike;
+        break;
+    case SPC_AIR_STRIKE:
+        weapon = &PlayerPtr->AirStrike;
+        break;
+    default:
+        return false;
+    }
+    if (!weapon->Is_Ready()) {
         return false;
     }
 
     COORDINATE coord = Map.Pixel_To_Coord(x, y);
     CELL cell = Coord_Cell(coord);
+    if (!Map.In_Radar(cell)) {
+        return false;
+    }
 
     SpecialWeaponType weapon_type = (SpecialWeaponType)buildable_id;
 
@@ -6385,6 +6474,14 @@ void DLLExportClass::Adjust_Internal_View(bool force_ignore_view_constraints)
     ** input will behave as expected.
     */
 
+#if defined(CNC_WEB_BUILD)
+    /* WebGL owns the presentation viewport and may pan or zoom independently
+     * of TacticalCoord. The adapter supplies normalized world-derived input
+     * pixels, so the legacy tactical rectangle must not reject visible host
+     * coordinates outside its own retained viewport. */
+    force_ignore_view_constraints = true;
+#endif
+
     if (!force_ignore_view_constraints && Legacy_Render_Enabled()) {
         /*
         ** Render view should already be tracking the player's local view
@@ -6535,7 +6632,8 @@ void DLLExportClass::Sell(uint64 player_id, int object_id)
             if (!building->IsActive) {
                 GlyphX_Debug_Print("DLLExportClass::Sell -- trying to sell a non-active building");
             } else {
-                if (building->House && building->House->Class->House == PlayerPtr->Class->House) {
+                if (building->Can_Demolish() && building->House
+                    && building->House->Class->House == PlayerPtr->Class->House) {
                     building->Sell_Back(1);
                 }
             }
