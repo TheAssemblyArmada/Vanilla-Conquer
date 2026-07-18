@@ -35,11 +35,10 @@
 #ifndef SPECIAL_H
 #define SPECIAL_H
 
-#include "common/bitfields.h"
 #include "common/endianness.h"
 
 #pragma pack(push, 1)
-class BITFIELD_STRUCT SpecialClass
+class SpecialClass
 {
 public:
     /*
@@ -55,7 +54,7 @@ public:
         struct
         {
 #ifdef __BIG_ENDIAN__
-            unsigned int Unused : 20;
+            unsigned int : 20;
             unsigned ModernBalance : 1;
             unsigned IsEarlyWin : 1;
             unsigned IsMCVDeploy : 1;
@@ -128,6 +127,8 @@ public:
             ** New modern balance setting.
             */
             unsigned ModernBalance : 1;
+
+            unsigned int : 20;
 #endif
         };
     };
