@@ -42,6 +42,13 @@
 
 #include "wwmem.h"
 
+#if defined(__unix__) || defined(__unix)
+#include <sys/sysinfo.h>
+#include <unistd.h>
+#elif defined(_WIN32)
+#include <windows.h>
+#endif
+
 size_t Largest_Mem_Block(void);
 
 /*=========================================================================*/
@@ -219,9 +226,72 @@ void* Resize_Alloc(void* original_ptr, size_t new_size_in_bytes)
  * HISTORY:                                                                *
  *   09/03/1991 JLB : Commented.                                           *
  *=========================================================================*/
-int Ram_Free(MemoryFlagType)
+size_t Ram_Free(MemoryFlagType)
 {
-    return (64 * 1024 * 1024);
+    return Ram_Free();
+}
+
+size_t Ram_Free(void)
+{
+#if defined(__APPLE__)
+    // Someone has to implement this for Mac.
+    return 128 * 1024 * 1024;
+#elif defined(__unix__) || defined(__unix)
+    // Get amount of memory available to program.
+    return sysconf(_SC_AVPHYS_PAGES) * sysconf(_SC_PAGESIZE);
+#elif defined(_WIN32)
+    MEMORYSTATUSEX status;
+    status.dwLength = sizeof(status);
+    GlobalMemoryStatusEx(&status);
+    return status.ullAvailPhys;
+#else
+    // Oh dear. We are running in some kind of baremetal machine.
+    // Assume malloc returns NULL if there is not enough memory.
+    //
+    // Let's try to allocate a huge chunk of memory first to check if
+    // malloc returns NULL on absurd cases.
+
+    void* p = malloc(1 * 1024 * 1024 * 1024);
+    if (p) {
+        // Either this machine has a lot of memory, or malloc doesn't return
+        // NULL when out of memory. Hence, returns a safe value.
+        free(p);
+        return 128 * 1024 * 1024;
+    }
+
+    // There is no way other than do a binary search with malloc to check.
+    // which is the maximum value that it returns something valid.
+
+    size_t x1 = 1;
+    size_t x0 = 0;
+
+    // Find rightmost element;
+    do {
+        p = malloc(x1);
+        if (p) {
+            x0 = x1;
+            x1 *= 2;
+            free(p);
+        } else {
+            break;
+        }
+    } while (1);
+
+    // Binary search a value between x0 and x1;
+    size_t m = (x1 + x0) / 2;
+    while (x0 < m) {
+        p = malloc(m);
+        if (p != NULL) {
+            free(p);
+            x0 = m;
+        } else {
+            x1 = m;
+        }
+
+        m = (x1 + x0) / 2;
+    }
+    return x1;
+#endif
 }
 
 /***************************************************************************

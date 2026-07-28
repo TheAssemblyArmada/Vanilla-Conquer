@@ -64,7 +64,8 @@ void* operator new[](size_t size, MemoryFlagType flag);
 void* Alloc(size_t bytes_to_alloc, MemoryFlagType flags);
 void Free(void const* pointer);
 void* Resize_Alloc(void* original_ptr, size_t new_size_in_bytes);
-int Ram_Free(MemoryFlagType flag);
+size_t Ram_Free(MemoryFlagType flag);
+size_t Ram_Free(void);
 int Heap_Size(MemoryFlagType flag);
 int Total_Ram_Free(MemoryFlagType flag);
 
