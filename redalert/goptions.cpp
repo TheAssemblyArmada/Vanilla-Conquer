@@ -129,16 +129,20 @@ void GameOptionsClass::Process(void)
         int text = _constants[index].Text;
         buttonsel[index] = NULL;
 
-        if (Session.Type != GAME_NORMAL && !_constants[index].Multiplay) {
+        if (!(Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH) && !_constants[index].Multiplay) {
             continue;
         }
 
-        if ((Session.Type == GAME_SKIRMISH || Session.Type == GAME_INTERNET) && text == TXT_SAVE_MISSION) {
+        if (Session.Type == GAME_SKIRMISH && text == TXT_RESTATE_MISSION) {
+            continue;
+        }
+
+        if ((Session.Type == GAME_INTERNET) && text == TXT_SAVE_MISSION) {
             continue;
         }
 
 #ifdef FIXIT_VERSION_3
-        if (Session.Type != GAME_NORMAL && (num_players < 2) && text == TXT_SAVE_MISSION) {
+        if (!(Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH) && (num_players < 2) && text == TXT_SAVE_MISSION) {
             continue;
         }
 #else
@@ -150,11 +154,7 @@ void GameOptionsClass::Process(void)
 #endif // FIXIT_MULTI_SAVE
 #endif
 
-        if (Session.Type == GAME_SKIRMISH && text == TXT_DELETE_MISSION) {
-            continue;
-        }
-
-        if (Session.Type != GAME_NORMAL && text == TXT_DELETE_MISSION) {
+        if ( !(Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH)  && text == TXT_DELETE_MISSION) {
             text = TXT_RESIGN;
         }
 
@@ -468,7 +468,7 @@ void GameOptionsClass::Process(void)
 
             case (BUTTON_SAVE):
                 display = true;
-                if (Session.Type == GAME_NORMAL) {
+                if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH) {
                     LoadOptionsClass(LoadOptionsClass::SAVE).Process();
 
                 } else {
@@ -479,7 +479,7 @@ void GameOptionsClass::Process(void)
 
             case (BUTTON_DELETE):
                 display = true;
-                if (Session.Type != GAME_NORMAL) {
+                if (! (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH)) {
                     if (Surrender_Dialog(TXT_SURRENDER)) {
                         OutList.Add(EventClass(EventClass::DESTRUCT));
                     }
