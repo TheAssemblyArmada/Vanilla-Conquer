@@ -86,6 +86,8 @@ char const* const OptionsClass::HotkeyName = "WinHotkeys";
 OptionsClass::OptionsClass(void)
     : GameSpeed(3)
     , ScrollRate(3)
+    , UseRightClickScrollCoast(true)
+    , ScrollCoastRate(3)
     , Volume(".40")
     , // was .295
     ScoreVolume(".25")
@@ -566,6 +568,8 @@ void OptionsClass::Load_Settings(void)
     static char const* const OPTIONS = "Options";
     GameSpeed = ini.Get_Int(OPTIONS, "GameSpeed", GameSpeed);
     ScrollRate = ini.Get_Int(OPTIONS, "ScrollRate", ScrollRate);
+    UseRightClickScrollCoast = ini.Get_Bool(OPTIONS, "UseRightClickScrollCoast", true);
+    ScrollCoastRate = ini.Get_Int(OPTIONS, "ScrollCoastRate", ScrollRate);
     Set_Brightness(ini.Get_Fixed(OPTIONS, "Brightness", Brightness));
     Set_Sound_Volume(ini.Get_Fixed(OPTIONS, "Volume", Volume), false);
     Set_Score_Volume(ini.Get_Fixed(OPTIONS, "ScoreVolume", ScoreVolume), false);
@@ -723,6 +727,8 @@ void OptionsClass::Save_Settings(void)
     static char const* const OPTIONS = "Options";
     ini.Put_Int(OPTIONS, "GameSpeed", GameSpeed);
     ini.Put_Int(OPTIONS, "ScrollRate", ScrollRate);
+    ini.Put_Bool(OPTIONS, "UseRightClickScrollCoast", UseRightClickScrollCoast);
+    ini.Put_Int(OPTIONS, "ScrollCoastRate", ScrollCoastRate);
     ini.Put_Fixed(OPTIONS, "Brightness", Brightness);
     ini.Put_Fixed(OPTIONS, "Volume", Volume);
 #ifdef FIXIT_VERSION_3
