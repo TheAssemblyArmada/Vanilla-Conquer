@@ -34,6 +34,9 @@
 #ifndef TILE_H
 #define TILE_H
 
+#include "endianness.h"
+#include <stdint.h>
+
 /*=========================================================================*/
 /* The following prototypes are for the file: ICONSET.CPP						*/
 /*=========================================================================*/
@@ -47,28 +50,57 @@ void* Get_Icon_Set_Palettedata(void const* iconset);
 int Get_Icon_Set_Count(void const* iconset);
 void* Get_Icon_Set_Map(void const* iconset);
 
+int Get_Icon_Set_MapWidth(void const* iconset);
+int Get_Icon_Set_MapHeight(void const* iconset);
+
+unsigned char const* Get_Icon_Set_ControlMap(void const* iconset);
+
+#define CC_ICON_OFFSET 0x20
+
 /*
 ** This is the control structure at the start of a loaded icon set.  It must match
 ** the structure in WWLIB.I!  This structure MUST be a multiple of 16 bytes long.
 */
-
-// RA version of struct
 #pragma pack(push, 2)
 typedef struct
 {
-    uint16_t Width;     // Width of icons (pixels).
-    uint16_t Height;    // Height of icons (pixels).
-    uint16_t Count;     // Number of (logical) icons in this set.
-    uint16_t Allocated; // Was this iconset allocated?
-    uint16_t MapWidth;  // Width of map (in icons).
-    uint16_t MapHeight; // Height of map (in icons).
-    int32_t Size;       // Size of entire iconset memory block.
-    int32_t Icons;      // Offset from buffer start to icon data.
-    int32_t Palettes;   // Offset from buffer start to palette data.
-    int32_t Remaps;     // Offset from buffer start to remap index data.
-    int32_t TransFlag;  // Offset for transparency flag table.
-    int32_t ColorMap;   // Offset for color control value table.
-    int32_t Map;        // Icon map offset (if present).
+    bool Is_CC_IconSet(void) const
+    {
+        return le32toh(CC.Icons) == CC_ICON_OFFSET;
+    }
+
+    int16_t Width;     // Width of icons (pixels).
+    int16_t Height;    // Height of icons (pixels).
+    int16_t Count;     // Number of (logical) icons in this set.
+    int16_t Allocated; // Was this iconset allocated?
+
+    union
+    {
+        // C&C version of struct
+        struct
+        {
+            int32_t Size;      // Size of entire iconset memory block.
+            int32_t Icons;     // Offset from buffer start to icon data.
+            int32_t Palettes;  // Offset from buffer start to palette data.
+            int32_t Remaps;    // Offset from buffer start to remap index data.
+            int32_t TransFlag; // Offset for transparency flag table.
+            int32_t Map;       // Icon map offset (if present).
+        } CC;
+
+        // RA version of struct
+        struct
+        {
+            int16_t MapWidth;  // Width of map (in icons).
+            int16_t MapHeight; // Height of map (in icons).
+            int32_t Size;      // Size of entire iconset memory block.
+            int32_t Icons;     // Offset from buffer start to icon data.
+            int32_t Palettes;  // Offset from buffer start to palette data.
+            int32_t Remaps;    // Offset from buffer start to remap index data.
+            int32_t TransFlag; // Offset for transparency flag table.
+            int32_t ColorMap;  // Offset for color control value table.
+            int32_t Map;       // Icon map offset (if present).
+        } RA;
+    };
 } IControl_Type;
 #pragma pack(pop)
 

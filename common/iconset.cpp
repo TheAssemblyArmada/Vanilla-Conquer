@@ -35,28 +35,19 @@
 
 //#include	"function.h"
 
+//#define		_WIN32
+//#define		WIN32_LEAN_AND_MEAN
+
 #include <stdlib.h>
 #include <stdio.h>
-#include "common/wwstd.h"
-#include "common/file.h"
+#include "wwstd.h"
+#include "file.h"
 #include "tile.h"
-#include "common/iff.h"
+#include "iff.h"
 
 // Misc? ST - 1/3/2019 10:40AM
 // extern int Misc;
 int Misc;
-
-void* Load_Icon_Set(char const* filename, void* iconsetptr, int buffsize);
-void Free_Icon_Set(void const* iconset);
-int Get_Icon_Set_Size(void const* iconset);
-int Get_Icon_Set_Width(void const* iconset);
-int Get_Icon_Set_Height(void const* iconset);
-void* Get_Icon_Set_Icondata(void const* iconset);
-void* Get_Icon_Set_Trans(void const* iconset);
-void* Get_Icon_Set_Remapdata(void const* iconset);
-void* Get_Icon_Set_Palettedata(void const* iconset);
-int Get_Icon_Set_Count(void const* iconset);
-void* Get_Icon_Set_Map(void const* iconset);
 
 //#define	ICON_PALETTE_BYTES	16
 //#define	ICON_MAX					256
@@ -75,7 +66,11 @@ int Get_Icon_Set_Size(void const* iconset)
 
     icontrol = (IControl_Type*)iconset;
     if (icontrol) {
-        size = le32toh(icontrol->Size);
+        if (icontrol->Is_CC_IconSet()) {
+            size = le32toh(icontrol->CC.Size);
+        } else {
+            size = le32toh(icontrol->RA.Size);
+        }
     }
     return (size);
 }
@@ -109,7 +104,11 @@ void* Get_Icon_Set_Icondata(void const* iconset)
     IControl_Type* icontrol;
     icontrol = (IControl_Type*)iconset;
     if (icontrol)
-        return (Add_Long_To_Pointer(iconset, le32toh(icontrol->Icons)));
+        if (icontrol->Is_CC_IconSet()) {
+            return (Add_Long_To_Pointer(iconset, le32toh(icontrol->CC.Icons)));
+        } else {
+            return (Add_Long_To_Pointer(iconset, le32toh(icontrol->RA.Icons)));
+        }
     return (NULL);
 }
 
@@ -120,7 +119,11 @@ void* Get_Icon_Set_Trans(void const* iconset)
 
     icontrol = (IControl_Type*)iconset;
     if (icontrol) {
-        ptr = Add_Long_To_Pointer((void*)iconset, le32toh(icontrol->TransFlag));
+        if (icontrol->Is_CC_IconSet()) {
+            ptr = Add_Long_To_Pointer((void*)iconset, le32toh(icontrol->CC.TransFlag));
+        } else {
+            ptr = Add_Long_To_Pointer((void*)iconset, le32toh(icontrol->RA.TransFlag));
+        }
     }
     return (ptr);
 }
@@ -140,8 +143,61 @@ int Get_Icon_Set_Count(void const* iconset)
 void* Get_Icon_Set_Map(void const* iconset)
 {
     IControl_Type* icontrol;
+    int32_t icontrol_map;
+
     icontrol = (IControl_Type*)iconset;
-    if (icontrol)
-        return (Add_Long_To_Pointer(iconset, le32toh(icontrol->Map)));
+    if (icontrol) {
+        if (icontrol->Is_CC_IconSet()) {
+            memcpy(&icontrol_map, (char*)iconset + offsetof(IControl_Type, CC.Map), sizeof(int32_t));
+        } else {
+            memcpy(&icontrol_map, (char*)iconset + offsetof(IControl_Type, RA.Map), sizeof(int32_t));
+        }
+        return (char*)iconset + le32toh(icontrol_map);
+    }
+    return (NULL);
+}
+
+int Get_Icon_Set_MapWidth(void const* iconset)
+{
+    IControl_Type* icontrol;
+
+    icontrol = (IControl_Type*)iconset;
+    if (iconset) {
+        if (icontrol->Is_CC_IconSet()) {
+            //CC doesn't have this
+        } else {
+            return le16toh((((IControl_Type*)iconset)->RA.MapWidth));
+        }
+    }
+    return (0);
+}
+
+int Get_Icon_Set_MapHeight(void const* iconset)
+{
+    IControl_Type* icontrol;
+
+    icontrol = (IControl_Type*)iconset;
+    if (iconset) {
+        if (icontrol->Is_CC_IconSet()) {
+            //CC doesn't have this
+        } else {
+            return le16toh((((IControl_Type*)iconset)->RA.MapHeight));
+        }
+    }
+    return (0);
+}
+
+unsigned char const* Get_Icon_Set_ControlMap(void const* iconset)
+{
+    IControl_Type* icontrol;
+
+    icontrol = (IControl_Type*)iconset;
+    if (iconset) {
+        if (icontrol->Is_CC_IconSet()) {
+            //CC doesn't have this
+        } else {
+            return ((unsigned char const*)((char*)iconset + ((IControl_Type*)iconset)->RA.ColorMap));
+        }
+    }
     return (NULL);
 }

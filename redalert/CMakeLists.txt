@@ -61,7 +61,6 @@ set(REDALERT_SRC
     help.cpp
     house.cpp
     iconlist.cpp
-    iconset.cpp
     idata.cpp
     infantry.cpp
     init.cpp

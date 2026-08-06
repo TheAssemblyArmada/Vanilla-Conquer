@@ -9,6 +9,7 @@
 // distributed with this program. You should have received a copy of the
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
+#include "tile.h"
 #include "endianness.h"
 #include "graphicsviewport.h"
 #include <string.h>
@@ -16,63 +17,9 @@
 
 #define TD_TILESET_CHECK 0x20
 
-#pragma pack(push, 1)
-struct IconControlType
-{
-    uint8_t* Get_Icon_Data()
-    {
-        if (TD.Icons == TD_TILESET_CHECK) {
-            return reinterpret_cast<uint8_t*>(this) + TD.Icons;
-        } else {
-            return reinterpret_cast<uint8_t*>(this) + RA.Icons;
-        }
-    }
-
-    uint8_t* Get_Icon_Map()
-    {
-        if (TD.Icons == TD_TILESET_CHECK) {
-            return reinterpret_cast<uint8_t*>(this) + TD.Map;
-        } else {
-            return reinterpret_cast<uint8_t*>(this) + RA.Map;
-        }
-    }
-
-    int16_t Width;     // always 24 (ICON_WIDTH)
-    int16_t Height;    // always 24 (ICON_HEIGHT)
-    int16_t Count;     // count of cells in set, not same as images
-    int16_t Allocated; // is treated like a bool, always 0 in the file?
-
-    union
-    {
-        struct
-        {
-            int32_t Size;      // filesize
-            int32_t Icons;     // always 0x00000020
-            int32_t Palettes;  // seems to always be 0x00000000
-            int32_t Remaps;    // unknown, bitfield?
-            int32_t TransFlag; // array of images length, unknown
-            int32_t Map;       // image index for each cell
-        } TD;
-
-        struct
-        {
-            int16_t MapWidth;  // tile width in cells
-            int16_t MapHeight; // tile height in cells
-            int32_t Size;      // filesize
-            int32_t Icons;     // always 0x00000028
-            int32_t Palettes;  // seems to always be 0x00000000
-            int32_t Remaps;    // unknown, bitfield?
-            int32_t TransFlag; // array of images length, unknown
-            int32_t ColorMap;  // terrain type index, ra only
-            int32_t Map;       // image index for each cell
-        } RA;
-    };
-};
-#pragma pack(pop)
-
 int IconEntry;
 void* IconData;
-const IconControlType* LastIconset;
+const IControl_Type* LastIconset;
 const uint8_t* StampPtr;
 const uint8_t* TransFlagPtr;
 const uint8_t* MapPtr;
@@ -80,8 +27,9 @@ int IconWidth;
 int IconHeight;
 int IconSize;
 int IconCount;
+int TDIcons;
 
-void Init_Stamps(const IconControlType* iconset)
+void Init_Stamps(const IControl_Type* iconset)
 {
     if (iconset && LastIconset != iconset) {
         IconCount = le16toh(iconset->Count);
@@ -91,10 +39,10 @@ void Init_Stamps(const IconControlType* iconset)
         IconSize = IconWidth * IconHeight;
 
         // TD and RA tileset headers are slightly different, so check a constant that only exists in one type.
-        if (le32toh(iconset->TD.Icons) == TD_TILESET_CHECK) {
-            MapPtr = reinterpret_cast<const uint8_t*>(iconset) + le32toh(iconset->TD.Map);
-            StampPtr = reinterpret_cast<const uint8_t*>(iconset) + le32toh(iconset->TD.Icons);
-            TransFlagPtr = reinterpret_cast<const uint8_t*>(iconset) + le32toh(iconset->TD.TransFlag);
+        if (iconset->Is_CC_IconSet()) {
+            MapPtr = reinterpret_cast<const uint8_t*>(iconset) + le32toh(iconset->CC.Map);
+            StampPtr = reinterpret_cast<const uint8_t*>(iconset) + le32toh(iconset->CC.Icons);
+            TransFlagPtr = reinterpret_cast<const uint8_t*>(iconset) + le32toh(iconset->CC.TransFlag);
         } else {
             MapPtr = reinterpret_cast<const uint8_t*>(iconset) + le32toh(iconset->RA.Map);
             StampPtr = reinterpret_cast<const uint8_t*>(iconset) + le32toh(iconset->RA.Icons);
@@ -106,7 +54,7 @@ void Init_Stamps(const IconControlType* iconset)
 void Buffer_Draw_Stamp(void* thisptr, void* icondata, int icon, int x, int y, const void* remapper)
 {
     GraphicViewPortClass& viewport = *static_cast<GraphicViewPortClass*>(thisptr);
-    IconControlType* tileset = static_cast<IconControlType*>(icondata);
+    IControl_Type* tileset = static_cast<IControl_Type*>(icondata);
 
     if (!tileset) {
         return;
@@ -177,7 +125,7 @@ void Buffer_Draw_Stamp_Clip(void const* thisptr,
                             int bottom)
 {
     const GraphicViewPortClass& viewport = *static_cast<const GraphicViewPortClass*>(thisptr);
-    const IconControlType* tileset = static_cast<const IconControlType*>(icondata);
+    const IControl_Type* tileset = static_cast<const IControl_Type*>(icondata);
 
     if (!tileset) {
         return;
@@ -263,17 +211,4 @@ void Buffer_Draw_Stamp_Clip(void const* thisptr,
             }
         }
     }
-}
-
-uint8_t* Get_Icon_Set_Map(void* temp)
-{
-    if (temp != nullptr) {
-        if (le32toh(static_cast<IconControlType*>(temp)->TD.Icons) == TD_TILESET_CHECK) {
-            return static_cast<uint8_t*>(temp) + le32toh(static_cast<IconControlType*>(temp)->TD.Icons);
-        } else {
-            return static_cast<uint8_t*>(temp) + le32toh(static_cast<IconControlType*>(temp)->RA.Icons);
-        }
-    }
-
-    return nullptr;
 }
