@@ -142,7 +142,7 @@ endif()
 if(SDL2)
     message("Find path is ${CMAKE_FIND_ROOT_PATH}")
     find_package(SDL2 REQUIRED)
-    list(APPEND VANILLA_LIBS ${SDL2_LIBRARY})
+    list(APPEND VANILLA_LIBS SDL2::SDL2)
     include_directories(${SDL2_INCLUDE_DIR})
 
     # winuser.h defines VK_ macros but it can be prevented
