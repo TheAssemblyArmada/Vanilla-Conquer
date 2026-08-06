@@ -204,7 +204,7 @@ public:
     **	Global flags that are used in the trigger system and are persistent
     **	over the course of the game.
     */
-    bool GlobalFlags[30];
+    bool GlobalFlags[1024];
 
     /*
     **	This records the bookmark view locations the player has recorded.
