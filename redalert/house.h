@@ -988,6 +988,9 @@ public:
 
     int QuantityB(int index)
     {
+        if (index < 0 || index >= (int)(sizeof(BQuantity) / sizeof(BQuantity[0]))) {
+            return (0);
+        }
         return (BQuantity[index]);
     }
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
@@ -995,39 +998,63 @@ public:
     {
         if (index >= UNIT_RA_COUNT)
             index -= UNIT_RA_COUNT;
+        if (index < 0 || index >= (int)(sizeof(UQuantity) / sizeof(UQuantity[0]))) {
+            return (0);
+        }
         return (UQuantity[index]);
     }
     int QuantityI(int index)
     {
         if (index >= INFANTRY_RA_COUNT)
             index -= INFANTRY_RA_COUNT;
+        if (index < 0 || index >= (int)(sizeof(IQuantity) / sizeof(IQuantity[0]))) {
+            return (0);
+        }
         return (IQuantity[index]);
     }
     int QuantityA(int index)
     {
+        if (index < 0 || index >= (int)(sizeof(AQuantity) / sizeof(AQuantity[0]))) {
+            return (0);
+        }
         return (AQuantity[index]);
     }
     int QuantityV(int index)
     {
         if (index >= VESSEL_RA_COUNT)
             index -= VESSEL_RA_COUNT;
+        if (index < 0 || index >= (int)(sizeof(VQuantity) / sizeof(VQuantity[0]))) {
+            return (0);
+        }
         return (VQuantity[index]);
     }
 #else
     int QuantityU(int index)
     {
+        if (index < 0 || index >= (int)(sizeof(UQuantity) / sizeof(UQuantity[0]))) {
+            return (0);
+        }
         return (UQuantity[index]);
     }
     int QuantityI(int index)
     {
+        if (index < 0 || index >= (int)(sizeof(IQuantity) / sizeof(IQuantity[0]))) {
+            return (0);
+        }
         return (IQuantity[index]);
     }
     int QuantityA(int index)
     {
+        if (index < 0 || index >= (int)(sizeof(AQuantity) / sizeof(AQuantity[0]))) {
+            return (0);
+        }
         return (AQuantity[index]);
     }
     int QuantityV(int index)
     {
+        if (index < 0 || index >= (int)(sizeof(VQuantity) / sizeof(VQuantity[0]))) {
+            return (0);
+        }
         return (VQuantity[index]);
     }
 #endif
