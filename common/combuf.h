@@ -56,7 +56,6 @@
 /*---------------------------------------------------------------------------
 This is one output queue entry
 ---------------------------------------------------------------------------*/
-#pragma pack(push, 1)
 typedef struct BITFIELD_STRUCT
 {
     unsigned int IsActive : 1; // 1 = this entry is ready to be processed
@@ -83,7 +82,6 @@ typedef struct BITFIELD_STRUCT
     int ExtraLen;              // size of extra data
     char* ExtraBuffer;         // extra data buffer
 } ReceiveQueueType;
-#pragma pack(pop)
 
 /*
 ***************************** Class Declaration *****************************
