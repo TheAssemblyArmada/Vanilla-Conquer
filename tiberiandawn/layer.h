@@ -38,6 +38,8 @@
 #include "vector.h"
 
 class ObjectClass;
+class Straw;
+class Pipe;
 
 class LayerClass : public DynamicVectorClass<ObjectClass*>
 {
@@ -56,8 +58,8 @@ public:
     /*
     **	File I/O.
     */
-    bool Load(FileClass& file);
-    bool Save(FileClass& file);
+    bool Load(Straw& file);
+    bool Save(Pipe& file) const;
     virtual void Code_Pointers(void);
     virtual void Decode_Pointers(void);
 };

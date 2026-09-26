@@ -36,6 +36,8 @@
 #define HEAP_H
 
 #include "vector.h"
+#include "common/straw.h"
+#include "common/pipe.h"
 
 /**************************************************************************
 **	This is a block memory managment handler. It is used when memory is to
@@ -50,16 +52,16 @@ public:
     FixedHeapClass(int size);
     virtual ~FixedHeapClass(void);
 
-    int ID(void const* pointer);
-    int Count(void)
+    int ID(void const* pointer) const;
+    int Count(void) const
     {
         return ActiveCount;
     };
-    int Length(void)
+    int Length(void) const
     {
         return TotalCount;
     };
-    int Avail(void)
+    int Avail(void) const
     {
         return TotalCount - ActiveCount;
     };
@@ -128,7 +130,7 @@ public:
         : FixedHeapClass(sizeof(T)){};
     virtual ~TFixedHeapClass(void){};
 
-    int ID(T const* pointer)
+    int ID(T const* pointer) const
     {
         return FixedHeapClass::ID(pointer);
     };
@@ -173,6 +175,10 @@ public:
         return ActivePointers[index];
     };
 
+    virtual void const* Active_Ptr(int index) const
+    {
+        return ActivePointers[index];
+    };
     /*
     **	This is an array of pointers to allocated objects. Using this array
     **	to control iteration through the objects ensures a minimum of processing.
@@ -194,7 +200,7 @@ public:
         : FixedIHeapClass(sizeof(T)){};
     virtual ~TFixedIHeapClass(void){};
 
-    int ID(T const* pointer)
+    int ID(T const* pointer) const
     {
         return FixedIHeapClass::ID(pointer);
     };
@@ -210,12 +216,12 @@ public:
     {
         return FixedIHeapClass::Free(pointer);
     };
-    virtual int Save(FileClass&);
-    virtual int Load(FileClass&);
+    virtual int Save(Pipe&) const;
+    virtual int Load(Straw&);
     virtual void Code_Pointers(void);
     virtual void Decode_Pointers(void);
 
-    virtual T* Ptr(int index)
+    virtual T* Ptr(int index) const
     {
         return (T*)FixedIHeapClass::ActivePointers[index];
     };
@@ -237,35 +243,30 @@ public:
  * HISTORY:                                                                                    *
  *   03/15/1995 BRR : Created.                                                                 *
  *=============================================================================================*/
-template <class T> int TFixedIHeapClass<T>::Save(FileClass& file)
+template <class T> int TFixedIHeapClass<T>::Save(Pipe& file) const
 {
-    int i;   // loop counter
     int idx; // object index
 
     /*
     ** Save the number of instances of this class
     */
-    if (file.Write(&ActiveCount, sizeof(ActiveCount)) != sizeof(ActiveCount)) {
-        return (false);
-    }
+    file.Put(&ActiveCount, sizeof(ActiveCount));
 
     /*
     ** Save each instance of this class
     */
-    for (i = 0; i < ActiveCount; i++) {
+    for (int i = 0; i < ActiveCount; i++) {
         /*
         ** Save the array index of the object, so it can be loaded back into the
         ** same array location (so TARGET translations will work)
         */
-        idx = ID(Ptr(i));
-        if (file.Write(&idx, sizeof(idx)) != sizeof(idx)) {
-            return (false);
-        }
+        int idx = ID(Ptr(i));
+        file.Put(&idx, sizeof(idx));
 
         /*
         ** Save the object itself
         */
-        file.Write(Ptr(i), sizeof(T));
+        file.Put(Ptr(i), sizeof(T));
     }
 
     return (true);
@@ -292,7 +293,7 @@ inline void Load_Object(...)
  * HISTORY:                                                                                    *
  *   03/15/1995 BRR : Created.                                                                 *
  *=============================================================================================*/
-template <class T> int TFixedIHeapClass<T>::Load(FileClass& file)
+template <class T> int TFixedIHeapClass<T>::Load(Straw& file)
 {
     int i;   // loop counter
     int idx; // object index
@@ -302,7 +303,7 @@ template <class T> int TFixedIHeapClass<T>::Load(FileClass& file)
     /*
     ** Read the number of instances of this class
     */
-    if (file.Read(&a_count, sizeof(a_count)) != sizeof(a_count)) {
+    if (file.Get(&a_count, sizeof(a_count)) != sizeof(a_count)) {
         return (false);
     }
 
@@ -320,7 +321,7 @@ template <class T> int TFixedIHeapClass<T>::Load(FileClass& file)
         /*
         ** Read the object's array index
         */
-        if (file.Read(&idx, sizeof(idx)) != sizeof(idx)) {
+        if (file.Get(&idx, sizeof(idx)) != sizeof(idx)) {
             return (false);
         }
 
@@ -335,7 +336,7 @@ template <class T> int TFixedIHeapClass<T>::Load(FileClass& file)
         /*
         ** Load the object
         */
-        file.Read(ptr, sizeof(T));
+        file.Get(ptr, sizeof(T));
         new (ptr) T(NoInitClass());
         Load_Object(ptr);
     }

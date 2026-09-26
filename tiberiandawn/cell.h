@@ -40,6 +40,9 @@
 #include "template.h"
 #include "endianness.h"
 
+class Pipe;
+class Straw;
+
 /****************************************************************************
 **	Each cell on the map is controlled by the following structure.
 */
@@ -258,8 +261,8 @@ public:
     **	File I/O.
     */
     bool Should_Save(void) const;
-    bool Save(FileClass& file);
-    bool Load(FileClass& file);
+    bool Save(Pipe& file) const;
+    bool Load(Straw& file);
     void Code_Pointers(void);
     void Decode_Pointers(void);
 

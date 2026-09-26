@@ -33,6 +33,9 @@
 #ifndef TEAMTYPE_H
 #define TEAMTYPE_H
 
+class Pipe;
+class Straw;
+
 /*
 ********************************** Defines **********************************
 */
@@ -112,8 +115,8 @@ public:
     {
         return "TeamTypes";
     };
-    bool Load(FileClass& file);
-    bool Save(FileClass& file);
+    bool Load(Straw& file);
+    bool Save(Pipe& file);
     void Code_Pointers(void);
     void Decode_Pointers(void);
 
