@@ -27,15 +27,15 @@ jobs:
       run: |
         sudo apt-get update -qq > /dev/null
         sudo apt-get install -qq -y ninja-build mingw-w64 imagemagick > /dev/null
-        wget -q https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz
+        wget -q https://www.libsdl.org/release/SDL2-devel-2.32.10-mingw.tar.gz
         wget -q --no-check-certificate https://openal-soft.org/openal-binaries/openal-soft-1.21.0-bin.zip
-        tar -xf SDL2-devel-2.0.12-mingw.tar.gz -C /tmp
+        tar -xf SDL2-devel-2.32.10-mingw.tar.gz -C /tmp
         unzip -qq openal-soft-1.21.0-bin.zip -d /tmp
         mv /tmp/openal-soft-1.21.0-bin/bin/${{ matrix.arch.win }}/soft_oal.dll /tmp/openal-soft-1.21.0-bin/bin/${{ matrix.arch.win }}/OpenAL32.dll
 
     - name: Build Vanilla Conquer
       env:
-        CMAKE_FIND_ROOT_PATH: "/tmp/SDL2-2.0.12/${{ matrix.arch.lin }}-w64-mingw32;/tmp/openal-soft-1.21.0-bin"
+        CMAKE_FIND_ROOT_PATH: "/tmp/SDL2-2.32.10/${{ matrix.arch.lin }}-w64-mingw32;/tmp/openal-soft-1.21.0-bin"
         CMAKE_TOOLCHAIN_FILE: "cmake/${{ matrix.arch.lin }}-mingw-w64-toolchain.cmake"
         VC_CXX_FLAGS: "-w;-Wwrite-strings;-Werror=write-strings"
       run: |
@@ -51,7 +51,7 @@ jobs:
         ${{ matrix.arch.lin }}-w64-mingw32-objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.exe
         ${{ matrix.arch.lin }}-w64-mingw32-objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.exe
         mkdir artifact
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-gcc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.exe ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.exe /tmp/SDL2-2.0.12/${{ matrix.arch.lin }}-w64-mingw32/bin/SDL2.dll /tmp/openal-soft-1.21.0-bin/bin/${{ matrix.arch.win }}/OpenAL32.dll
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-gcc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.exe ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.exe /tmp/SDL2-2.32.10/${{ matrix.arch.lin }}-w64-mingw32/bin/SDL2.dll /tmp/openal-soft-1.21.0-bin/bin/${{ matrix.arch.win }}/OpenAL32.dll
         7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-gcc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.dbg
     
     - name: Add internal tools to archive

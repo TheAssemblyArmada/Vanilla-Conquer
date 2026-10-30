@@ -102,7 +102,7 @@ jobs:
     - name: Install Dependencies
       id: deps
       run: |
-        Invoke-WebRequest -Uri https://www.libsdl.org/release/SDL2-devel-2.0.12-VC.zip -OutFile SDL2-devel.zip
+        Invoke-WebRequest -Uri https://www.libsdl.org/release/SDL2-devel-2.32.10-VC.zip -OutFile SDL2-devel.zip
         Invoke-WebRequest -Uri https://github.com/ninja-build/ninja/releases/download/v1.10.1/ninja-win.zip -OutFile $Env:TEMP\ninja-win.zip
         Invoke-WebRequest -SkipCertificateCheck -Uri https://openal-soft.org/openal-binaries/openal-soft-1.21.0-bin.zip -OutFile openal-soft-1.21.0-bin.zip
         Expand-Archive SDL2-devel.zip -DestinationPath .
@@ -115,11 +115,11 @@ jobs:
 
     - name: Build Vanilla Conquer
       env:
-        CMAKE_FIND_ROOT_PATH: "SDL2-2.0.12;openal-soft-1.21.0-bin;${{ steps.deps.outputs.magickpath }}"
+        CMAKE_FIND_ROOT_PATH: "SDL2-2.32.10;openal-soft-1.21.0-bin;${{ steps.deps.outputs.magickpath }}"
         VC_CXX_FLAGS: "/Zc:strictStrings;-wd4244;-wd4018;-wd4291;-wd4101;-wd4267;-wd4200"
       run: |
         New-Item -Path "build/${{ matrix.preset }}/RelWithDebInfo" -ItemType Directory
-        Copy-Item -Path "SDL2-2.0.12\lib\${{ matrix.arch.cmd }}\SDL2.dll" -Destination build/${{ matrix.preset }}/RelWithDebInfo
+        Copy-Item -Path "SDL2-2.32.10\lib\${{ matrix.arch.cmd }}\SDL2.dll" -Destination build/${{ matrix.preset }}/RelWithDebInfo
         cmake --workflow --preset ${{ matrix.preset }}
         
     - name: Create archives
@@ -127,7 +127,7 @@ jobs:
       shell: bash
       run: |
         mkdir artifact
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.exe ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.exe ./SDL2-2.0.12/lib/${{ matrix.arch.cmd }}/SDL2.dll ./openal-soft-1.21.0-bin/bin/${{ matrix.arch.win }}/OpenAL32.dll
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.exe ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.exe ./SDL2-2.32.10/lib/${{ matrix.arch.cmd }}/SDL2.dll ./openal-soft-1.21.0-bin/bin/${{ matrix.arch.win }}/OpenAL32.dll
         7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.pdb ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.pdb
 
     - name: Add internal tools to archive

@@ -21,6 +21,10 @@
 #include <cmath>
 #include <SDL.h>
 
+// SDL2 window-event handling exists only in video_sdl2.cpp. Keep this forward
+// declaration local to the SDL2 event pump, not in the cross-backend header.
+void Handle_Video_Window_Event(int event, int data1, int data2);
+
 void Focus_Loss();
 void Focus_Restore();
 void Process_Network();
@@ -84,6 +88,7 @@ void WWKeyboardClassSDL2::Fill_Buffer_From_System(void)
             Put_Mouse_Message(key, x, y, event.type == SDL_MOUSEBUTTONDOWN ? false : true);
         } break;
         case SDL_WINDOWEVENT:
+            Handle_Video_Window_Event(event.window.event, event.window.data1, event.window.data2);
             switch (event.window.event) {
             case SDL_WINDOWEVENT_EXPOSED:
             case SDL_WINDOWEVENT_RESTORED:
