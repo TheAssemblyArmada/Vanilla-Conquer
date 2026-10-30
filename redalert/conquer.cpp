@@ -3205,7 +3205,7 @@ int VQ_Call_Back(unsigned char*, int)
 #endif
     Frame_Limiter();
 
-    if ((BreakoutAllowed || Debug_Flag) && (key == KN_ESC || key == KN_SPACE || key == KN_RETURN)) {
+    if ((BreakoutAllowed || Debug_Flag) && key == KN_ESC) {
         Keyboard->Clear();
         Brokeout = true;
         return (true);
