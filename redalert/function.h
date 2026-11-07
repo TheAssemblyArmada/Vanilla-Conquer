@@ -282,6 +282,8 @@ void CC_Draw_Pip(const ObjectClass* object,
                  void const* ghostdata = 0,
                  DirType rotation = DIR_N);
 
+void CC_Draw_Line(int x, int y, int x1, int y1, unsigned char color, int frame, WindowNumberType window);
+
 void Go_Editor(bool flag);
 char* CC_Get_Shape_Filename(void const* shapeptr);
 void CC_Add_Shape_To_Global(void const* shapeptr, char* filename, char code);

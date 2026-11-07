@@ -2744,6 +2744,7 @@ extern void DLL_Draw_Intercept(int shape_number,
                                const char* shape_file_name,
                                char override_owner);
 extern void DLL_Draw_Pip_Intercept(const ObjectClass* object, int pip);
+extern void DLL_Draw_Line_Intercept(int x, int y, int x1, int y1, unsigned char color, int frame);
 void CC_Draw_Shape(void const* shapefile,
                    int shapenum,
                    int x,
@@ -2825,6 +2826,17 @@ void CC_Draw_Pip(const ObjectClass* object,
     }
 #endif
     CC_Draw_Shape(shapefile, shapenum, x, y, window, flags, fadingdata, ghostdata, rotation);
+}
+
+void CC_Draw_Line(int x, int y, int x1, int y1, unsigned char color, int frame, WindowNumberType window)
+{
+#ifdef REMASTER_BUILD
+    if (window == WINDOW_VIRTUAL) {
+        DLL_Draw_Line_Intercept(x, y, x1, y1, color, frame);
+        return;
+    }
+#endif
+    LogicPage->Draw_Line(x, y, x1, y1, color);
 }
 
 /***********************************************************************************************

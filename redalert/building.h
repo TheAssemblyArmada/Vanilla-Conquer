@@ -249,7 +249,8 @@ public:
     **	Member function prototypes.
     */
     static void Init(void);
-    static void Draw_Rally_Overlay(void);
+
+    virtual void Set_Unselected_By_Player(HouseClass* player = NULL);
 
     TARGET Target_Scan(void);
     BuildingTypeClass::AnimControlType const* Fetch_Anim_Control(void)
