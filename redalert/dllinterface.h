@@ -589,10 +589,128 @@ enum EventCallbackMessageEnum
     MESSAGE_TYPE_PLAYER_DISCONNECTED
 };
 
+/*
+** The SDK passes these event payloads from the DLL to the GlyphX host via an
+** EventCallbackStruct, which is a tagged union. The struct tags used to live
+** inside the anonymous union, but C++ only allows a non-anonymous data
+** member inside one, so the tags are pulled out to file scope here. The
+** resulting memory layout is identical to the original.
+*/
+
+struct SoundEffectEventType
+{
+    int SFXIndex;
+    int Variation;
+    int PixelX;
+    int PixelY;
+    int PlayerID; // TO_FIX
+    char SoundEffectName[16];
+    int SoundEffectPriority;
+    int SoundEffectContext;
+};
+
+struct SpeechEventType
+{
+    int SpeechIndex;
+    int PlayerID; // TO_FIX
+    char SpeechName[16];
+};
+
+struct GameOverEventType
+{
+    bool Multiplayer;
+    //
+    // Single-player data
+    //
+    bool IsHuman;
+    bool PlayerWins; // This should specify player id
+    const char* MovieName;
+    const char* MovieName2;
+    const char* MovieName3;
+    const char* MovieName4;
+    const char* AfterScoreMovieName;
+    int Score;
+    int Leadership;
+    int Efficiency;
+    int CategoryTotal;
+    int NODKilled;
+    int GDIKilled;
+    int CiviliansKilled;
+    int NODBuildingsDestroyed;
+    int GDIBuildingsDestroyed;
+    int CiviliansBuildingsDestroyed;
+    int RemainingCredits;
+    int SabotagedStructureType;
+    int TimerRemaining;
+    //
+    // Multi-player data
+    //
+    int MultiPlayerTotalPlayers;
+    GameOverMultiPlayerStatsStruct MultiPlayerPlayersData[GAME_OVER_MULTIPLAYER_MAX_PLAYERS_TRACKED];
+};
+
+struct DebugPrintEventType
+{
+    const char* PrintString;
+};
+
+struct MovieEventType
+{
+    const char* MovieName;
+    int Theme;
+    bool Immediate;
+};
+
+struct MessageEventType
+{
+    const char* Message;
+    float TimeoutSeconds;
+    EventCallbackMessageEnum MessageType;
+    __int64 MessageParam1;
+};
+
+struct UpdateMapCellEventType
+{
+    int CellX;
+    int CellY;
+    char TemplateTypeName[32];
+};
+
+struct AchievementEventType
+{
+    const char* AchievementType;
+    const char* AchievementReason;
+};
+
+struct StoreCarryoverObjectsEventType
+{
+    const CarryoverObjectStruct* CarryoverList;
+};
+
+struct SpecialWeaponTargettingEventType
+{
+    int Type;
+    int ID;
+    char Name[16];
+    DllSuperweaponTypeEnum WeaponType;
+};
+
+struct CenterCameraEventType
+{
+    int CoordX;
+    int CoordY;
+};
+
+struct PingEventType
+{
+    int CoordX;
+    int CoordY;
+};
+
 struct EventCallbackStruct
 {
 
-    EventCallbackStruct::EventCallbackStruct(void)
+    EventCallbackStruct(void)
         : EventType(CALLBACK_EVENT_INVALID)
         , GlyphXPlayerID(0)
     {
@@ -605,115 +723,18 @@ struct EventCallbackStruct
     union
     {
 
-        struct SoundEffectEvent
-        {
-            int SFXIndex;
-            int Variation;
-            int PixelX;
-            int PixelY;
-            int PlayerID; // TO_FIX
-            char SoundEffectName[16];
-            int SoundEffectPriority;
-            int SoundEffectContext;
-        } SoundEffect;
-
-        struct SpeechEvent
-        {
-            int SpeechIndex;
-            int PlayerID; // TO_FIX
-            char SpeechName[16];
-        } Speech;
-
-        struct GameOverEvent
-        {
-            bool Multiplayer;
-            //
-            // Single-player data
-            //
-            bool IsHuman;
-            bool PlayerWins; // This should specify player id
-            const char* MovieName;
-            const char* MovieName2;
-            const char* MovieName3;
-            const char* MovieName4;
-            const char* AfterScoreMovieName;
-            int Score;
-            int Leadership;
-            int Efficiency;
-            int CategoryTotal;
-            int NODKilled;
-            int GDIKilled;
-            int CiviliansKilled;
-            int NODBuildingsDestroyed;
-            int GDIBuildingsDestroyed;
-            int CiviliansBuildingsDestroyed;
-            int RemainingCredits;
-            int SabotagedStructureType;
-            int TimerRemaining;
-            //
-            // Multi-player data
-            //
-            int MultiPlayerTotalPlayers;
-            GameOverMultiPlayerStatsStruct MultiPlayerPlayersData[GAME_OVER_MULTIPLAYER_MAX_PLAYERS_TRACKED];
-        } GameOver;
-
-        struct DebugPrintEvent
-        {
-            const char* PrintString;
-        } DebugPrint;
-
-        struct MovieEvent
-        {
-            const char* MovieName;
-            int Theme;
-            bool Immediate;
-        } Movie;
-
-        struct MessageEvent
-        {
-            const char* Message;
-            float TimeoutSeconds;
-            EventCallbackMessageEnum MessageType;
-            __int64 MessageParam1;
-        } Message;
-
-        struct UpdateMapCellEvent
-        {
-            int CellX;
-            int CellY;
-            char TemplateTypeName[32];
-        } UpdateMapCell;
-
-        struct AchievementEvent
-        {
-            const char* AchievementType;
-            const char* AchievementReason;
-        } Achievement;
-
-        struct StoreCarryoverObjectsEvent
-        {
-            const CarryoverObjectStruct* CarryoverList;
-        } CarryoverObjects;
-
-        struct SpecialWeaponTargettingEvent
-        {
-            int Type;
-            int ID;
-            char Name[16];
-            DllSuperweaponTypeEnum WeaponType;
-        } SpecialWeaponTargetting;
-
-        struct CenterCameraEvent
-        {
-            int CoordX;
-            int CoordY;
-        } CenterCamera;
-
-        struct PingEvent
-        {
-            int CoordX;
-            int CoordY;
-        } Ping;
+        SoundEffectEventType SoundEffect;
+        SpeechEventType Speech;
+        GameOverEventType GameOver;
+        DebugPrintEventType DebugPrint;
+        MovieEventType Movie;
+        MessageEventType Message;
+        UpdateMapCellEventType UpdateMapCell;
+        AchievementEventType Achievement;
+        StoreCarryoverObjectsEventType CarryoverObjects;
+        SpecialWeaponTargettingEventType SpecialWeaponTargetting;
+        CenterCameraEventType CenterCamera;
+        PingEventType Ping;
     };
 };
 

@@ -712,14 +712,13 @@ void BuildingClass::Draw_It(int x, int y, WindowNumberType window)
     }
 
     /*
-    **	Draw the rally point line if this building is selected and has one set.
+    **	The rally point marker is rendered for us by the map: setting a cell's
+    **	IsFlagged bit causes an ANIM_FLAG (FLAGFLY.SHP) on it in vanilla, and
+    **	the same cell state makes the remastered host export a FLAGFLY draw
+    **	via the dynamic map pipe. Refresh_Rally is responsible for moving that
+    **	flag from the old cell to the new one when the rally changes, and
+    **	Limbo clears it when this building is destroyed.
     */
-    if (Rally >= 0 && Is_Selected_By_Player() && Is_Owned_By_Player() && Can_Rally(*this)) {
-        int start_x, start_y, end_x, end_y;
-        Map.Coord_To_Pixel(Coord_Add(Coord, Class->ExitPoint), start_x, start_y);
-        Map.Coord_To_Pixel(Cell_Coord(Rally), end_x, end_y);
-        CC_Draw_Line(start_x, start_y, end_x, end_y, LTGREEN, 1, window);
-    }
 
     TechnoClass::Draw_It(x, y, window);
 }
@@ -735,12 +734,20 @@ void BuildingClass::Draw_It(int x, int y, WindowNumberType window)
  * HISTORY:                                                                                    *
  *   Added for rally point rendering.                                                          *
  *=============================================================================================*/
-void BuildingClass::Set_Unselected_By_Player(HouseClass* player)
+void BuildingClass::Refresh_Rally(void)
 {
-    TechnoClass::Set_Unselected_By_Player(player);
+    if (LastRally >= 0 && LastRally < MAP_CELL_TOTAL && Map.In_Radar(LastRally)
+        && Map[LastRally].IsFlagged && Map[LastRally].Owner == Owner()) {
+        Map[LastRally].Flag_Remove();
+    }
+    LastRally = -1;
 
-    if (Rally >= 0 && Can_Rally(*this)) {
-        Map.Flag_To_Redraw(true);
+    if (Rally >= 0 && Rally < MAP_CELL_TOTAL && Map.In_Radar(Rally) && !Map[Rally].IsFlagged) {
+        if (Map[Rally].Flag_Place(Owner())) {
+            LastRally = Rally;
+        }
+    } else {
+        LastRally = Rally;
     }
 }
 
@@ -1902,6 +1909,7 @@ BuildingClass::BuildingClass(StructType type, HousesType house)
 {
     PlacementDelay = 0;
     Rally = -1;
+    LastRally = -1;
     LastStrength = 0;
     ActLike = House->ActLike;
     BState = BSTATE_NONE;
@@ -2807,6 +2815,15 @@ bool BuildingClass::Limbo(void)
             Update_Specials();
         }
 #endif
+
+        /*
+        **	Drop any rally-point flag we planted on a cell so it does not linger
+        **	once the building that set it is gone. Refresh_Rally handles the
+        **	"is this still ours?" check so we don't accidentally wipe a flag
+        **	a foreign player put on the same cell.
+        */
+        Rally = -1;
+        Refresh_Rally();
     }
     return (TechnoClass::Limbo());
 }

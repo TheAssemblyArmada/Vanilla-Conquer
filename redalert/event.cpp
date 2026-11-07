@@ -488,6 +488,14 @@ void EventClass::Execute(void)
         BuildingClass* building = Data.NavCom.Whom.As_Building();
         if (building && building->IsActive) {
             building->Rally = ::As_Cell(Data.NavCom.Where.As_TARGET());
+            /*
+            **	Move the on-map rally-point flag from the previous cell to
+            **	the new one. Refresh_Rally leaves the cell's flag untouched
+            **	if it belongs to another player, so two overlapping rally
+            **	points (e.g. allied bases close together) don't fight each
+            **	other.
+            */
+            building->Refresh_Rally();
             Map.Flag_To_Redraw(true);
         }
         break;
