@@ -187,11 +187,11 @@ if(BUILD_REMASTERRA)
         # Generate windows version info.
         generate_product_version(
             REMASTERRA_RC
-            NAME "Vanilla Conquer RedAlert DLL"
-            BUNDLE "Vanilla Conquer"
+            NAME "komkommer RedAlert DLL"
+            BUNDLE "komkommer"
             VERSION_MAJOR 3
             VERSION_MINOR 3
-            COMPANY_NAME "Vanilla Conquer"
+            COMPANY_NAME "komkommer"
             COMPANY_COPYRIGHT "Based on code released under GPLv3 by EA"
             ORIGINAL_FILENAME "RedAlert.dll"
             RCFILE_PREFIX "RemasterRA"
@@ -211,73 +211,73 @@ if(BUILD_REMASTERRA)
     set_target_properties(RedAlert PROPERTIES PREFIX "")
 
     add_custom_command(TARGET RedAlert POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources/remaster_mods/Vanilla_RA ${CMAKE_BINARY_DIR}/Vanilla_RA
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/Vanilla_RA/Data
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:RedAlert> ${CMAKE_BINARY_DIR}/Vanilla_RA/Data/
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources/remaster_mods/komkommer_RA ${CMAKE_BINARY_DIR}/komkommer_RA
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/komkommer_RA/Data
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:RedAlert> ${CMAKE_BINARY_DIR}/komkommer_RA/Data/
     )
 endif()
 
 if(BUILD_VANILLARA)
     include(BuildIcons)
     # Create the custom command for generating the ico file for windows.
-    make_icon(INPUT "${CMAKE_SOURCE_DIR}/resources/vanillara_icon.svg" OUTPUT VANILLARA_ICON)
+    make_icon(INPUT "${CMAKE_SOURCE_DIR}/resources/komkommerra_icon.svg" OUTPUT VANILLARA_ICON)
 
     if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
         # Generate windows version info.
         generate_product_version(
             VANILLARA_RC
-            NAME "VanillaRA"
-            BUNDLE "Vanilla Conquer"
+            NAME "KomkommerRA"
+            BUNDLE "komkommer"
             VERSION_MAJOR 1
             VERSION_MINOR 0
-            COMPANY_NAME "Vanilla Conquer"
+            COMPANY_NAME "komkommer"
             COMPANY_COPYRIGHT "Based on code released under GPLv3 by EA"
-            ORIGINAL_FILENAME "vanillara.exe"
-            RCFILE_PREFIX "VanillaRA"
+            ORIGINAL_FILENAME "komkommerra.exe"
+            RCFILE_PREFIX "KomkommerRA"
             ICON "${VANILLARA_ICON}"
         )
     endif()
 
     # A target must include the icon for the custom command to run.
-    add_executable(VanillaRA ${REDALERT_SRC} ${REDALERT_NET_SRC} ${REDALERT_HEADERS} ${VANILLARA_RC} ${VANILLARA_ICON})
+    add_executable(KomkommerRA ${REDALERT_SRC} ${REDALERT_NET_SRC} ${REDALERT_HEADERS} ${VANILLARA_RC} ${VANILLARA_ICON})
 
     if(MAKE_BUNDLE)
         set_source_files_properties(${VANILLARA_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-        set_target_properties(VanillaRA PROPERTIES
+        set_target_properties(KomkommerRA PROPERTIES
             MACOSX_BUNDLE True
-            MACOSX_BUNDLE_GUI_IDENTIFIER com.vanilla-conquer.vanillara
-            MACOSX_BUNDLE_BUNDLE_NAME VanillaRA
+            MACOSX_BUNDLE_GUI_IDENTIFIER com.komkommer.komkommerra
+            MACOSX_BUNDLE_BUNDLE_NAME KomkommerRA
             MACOSX_BUNDLE_BUNDLE_VERSION "1.0"
             MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
             MACOSX_BUNDLE_COPYRIGHT "Based on code released under GPLv3 by EA"
-            MACOSX_BUNDLE_ICON_FILE "vanillara_icon.icns"
+            MACOSX_BUNDLE_ICON_FILE "komkommerra_icon.icns"
         )
     endif()
 
-    target_compile_definitions(VanillaRA PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS})
-    target_include_directories(VanillaRA PUBLIC ${CMAKE_SOURCE_DIR} .)
-    target_link_libraries(VanillaRA commonv ${VANILLA_LIBS} ${STATIC_LIBS})
-    set_target_properties(VanillaRA PROPERTIES OUTPUT_NAME vanillara)
+    target_compile_definitions(KomkommerRA PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS})
+    target_include_directories(KomkommerRA PUBLIC ${CMAKE_SOURCE_DIR} .)
+    target_link_libraries(KomkommerRA commonv ${VANILLA_LIBS} ${STATIC_LIBS})
+    set_target_properties(KomkommerRA PROPERTIES OUTPUT_NAME komkommerra)
     if(MAP_EDITORRA)
-        target_compile_definitions(VanillaRA PUBLIC INTERNAL_VERSION)
+        target_compile_definitions(KomkommerRA PUBLIC INTERNAL_VERSION)
     endif()
     # Control if we auto generate a console and which "main" function we link using MSVC.
     if(MSVC)
-        target_link_options(VanillaRA PRIVATE /subsystem:windows /ENTRY:mainCRTStartup)
+        target_link_options(KomkommerRA PRIVATE /subsystem:windows /ENTRY:mainCRTStartup)
     endif()
     if(WIN32 AND NOT MSVC)
-        set_target_properties(VanillaRA PROPERTIES LINK_FLAGS "-mwindows")
+        set_target_properties(KomkommerRA PROPERTIES LINK_FLAGS "-mwindows")
     endif()
     if(BUILD_WITH_UBSAN)
-        target_compile_options(VanillaRA PUBLIC
+        target_compile_options(KomkommerRA PUBLIC
                     -fsanitize=undefined,float-divide-by-zero,integer,implicit-conversion,implicit-integer-truncation,implicit-integer-arithmetic-value-change,local-bounds,nullability
                     -g3 -fno-omit-frame-pointer)
-        target_link_options(VanillaRA PUBLIC -fsanitize=undefined,float-divide-by-zero,integer,implicit-conversion,implicit-integer-truncation,implicit-integer-arithmetic-value-change,local-bounds,nullability)
+        target_link_options(KomkommerRA PUBLIC -fsanitize=undefined,float-divide-by-zero,integer,implicit-conversion,implicit-integer-truncation,implicit-integer-arithmetic-value-change,local-bounds,nullability)
     endif()
     if(BUILD_WITH_ASAN)
-        target_compile_options(VanillaRA PUBLIC
+        target_compile_options(KomkommerRA PUBLIC
                     -fsanitize=address
                     -g3 -fno-omit-frame-pointer)
-            target_link_options(VanillaRA PUBLIC -fsanitize=address)
+            target_link_options(KomkommerRA PUBLIC -fsanitize=address)
     endif()
 endif()

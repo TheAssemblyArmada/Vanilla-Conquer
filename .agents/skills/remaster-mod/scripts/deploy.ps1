@@ -66,10 +66,10 @@ if ($LASTEXITCODE -ne 0) {
 
 $games = @()
 if ($Game -ne 'RA') {
-    $games += @{ Mod = 'Vanilla_TD'; Parent = 'Tiberian_Dawn'; Dll = 'TiberianDawn.dll' }
+    $games += @{ Mod = 'komkommer_TD'; Parent = 'Tiberian_Dawn'; Dll = 'TiberianDawn.dll' }
 }
 if ($Game -ne 'TD') {
-    $games += @{ Mod = 'Vanilla_RA'; Parent = 'Red_Alert'; Dll = 'RedAlert.dll' }
+    $games += @{ Mod = 'komkommer_RA'; Parent = 'Red_Alert'; Dll = 'RedAlert.dll' }
 }
 
 foreach ($entry in $games) {

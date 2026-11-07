@@ -32,7 +32,7 @@ jobs:
         echo "$Env:TEMP\ninja" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         ninja --version
 
-    - name: Build Vanilla Conquer
+    - name: Build komkommer
       env:
         VC_CXX_FLAGS: "/Zc:strictStrings;-wd4244;-wd4018;-wd4291;-wd4101;-wd4267;-wd4200"
       run: |
@@ -42,15 +42,15 @@ jobs:
       shell: bash
       run: |
         mkdir artifact
-        7z a artifact/vanilla-conquer-remasterdll-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/remaster/RelWithDebInfo/RedAlert.dll ./build/remaster/RelWithDebInfo/TiberianDawn.dll
-        7z a artifact/vanilla-conquer-remasterdll-msvc-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/remaster/RelWithDebInfo/RedAlert.pdb ./build/remaster/RelWithDebInfo/TiberianDawn.pdb
-        7z a artifact/vanilla-ra-remaster-mod-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/remaster/Vanilla_RA
-        7z a artifact/vanilla-td-remaster-mod-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/remaster/Vanilla_TD
+        7z a artifact/komkommer-remasterdll-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/remaster/RelWithDebInfo/RedAlert.dll ./build/remaster/RelWithDebInfo/TiberianDawn.dll
+        7z a artifact/komkommer-remasterdll-msvc-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/remaster/RelWithDebInfo/RedAlert.pdb ./build/remaster/RelWithDebInfo/TiberianDawn.pdb
+        7z a artifact/vanilla-ra-remaster-mod-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/remaster/komkommer_RA
+        7z a artifact/vanilla-td-remaster-mod-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/remaster/komkommer_TD
         
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: vanilla-conquer-remaster-msvc
+        name: komkommer-remaster-msvc
         path: artifact
 
     - name: Upload development release
@@ -113,7 +113,7 @@ jobs:
         echo "magickpath=$(Split-Path -Path $(Get-Command magick).Path -Parent)" >> $env:GITHUB_OUTPUT
         Rename-Item openal-soft-1.21.0-bin\bin\${{ matrix.arch.win }}\soft_oal.dll OpenAL32.dll
 
-    - name: Build Vanilla Conquer
+    - name: Build komkommer
       env:
         CMAKE_FIND_ROOT_PATH: "SDL2-2.0.12;openal-soft-1.21.0-bin;${{ steps.deps.outputs.magickpath }}"
         VC_CXX_FLAGS: "/Zc:strictStrings;-wd4244;-wd4018;-wd4291;-wd4101;-wd4267;-wd4200"
@@ -127,20 +127,20 @@ jobs:
       shell: bash
       run: |
         mkdir artifact
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.exe ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.exe ./SDL2-2.0.12/lib/${{ matrix.arch.cmd }}/SDL2.dll ./openal-soft-1.21.0-bin/bin/${{ matrix.arch.win }}/OpenAL32.dll
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.pdb ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.pdb
+        7z a artifact/komkommer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/komkommertd.exe ./build/${{ matrix.preset }}/RelWithDebInfo/komkommerra.exe ./SDL2-2.0.12/lib/${{ matrix.arch.cmd }}/SDL2.dll ./openal-soft-1.21.0-bin/bin/${{ matrix.arch.win }}/OpenAL32.dll
+        7z a artifact/komkommer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/komkommertd.pdb ./build/${{ matrix.preset }}/RelWithDebInfo/komkommerra.pdb
 
     - name: Add internal tools to archive
       if: ${{ matrix.preset == 'internal' }}
       run: |
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.exe
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.pdb
+        7z a artifact/komkommer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/komkommermix.exe
+        7z a artifact/komkommer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/komkommermix.pdb
     
     - name: Upload artifact
       if: ${{ matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       uses: actions/upload-artifact@v4
       with:
-        name: vanilla-conquer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}
+        name: komkommer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}
         path: artifact
         
     - name: Upload development release

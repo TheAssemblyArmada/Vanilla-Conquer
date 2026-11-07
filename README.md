@@ -1,7 +1,7 @@
-# Vanilla Conquer
-Vanilla Conquer is a fully portable version of the first generation C&C engine and is capable of running both Tiberian Dawn and Red Alert on multiple platforms. It can also be used for mod development for the Remastered Collection.
+# komkommer
+komkommer is a fully portable version of the first generation C&C engine and is capable of running both Tiberian Dawn and Red Alert on multiple platforms. It can also be used for mod development for the Remastered Collection.
 
-The main focus of Vanilla Conquer is to keep the default out-of-box experience faithful to what the games were back when they were released and work as a drop-in replacement for the original executables while also providing bug fixes, compatiblity and quality of life improvements.
+The main focus of komkommer is to keep the default out-of-box experience faithful to what the games were back when they were released and work as a drop-in replacement for the original executables while also providing bug fixes, compatiblity and quality of life improvements.
 
 Current project goals are tracked as [GitHub issues with the goal label](https://github.com/Vanilla-Conquer/Vanilla-Conquer/issues?q=is%3Aissue+is%3Aopen+label%3Agoal).
 
@@ -17,7 +17,7 @@ All of these rooms are bridged together so people can choose their preferred ser
 
 ## Building
 
-We support wide variety of compilers and platforms to target. Vanilla Conquer is known to compile with recent enough gcc, MSVC, mingw-w64 or clang and known to run on Windows, Linux, macOS and BSDs.
+We support wide variety of compilers and platforms to target. komkommer is known to compile with recent enough gcc, MSVC, mingw-w64 or clang and known to run on Windows, Linux, macOS and BSDs.
 
 ### Presets
 
@@ -31,7 +31,7 @@ To build using a preset, add `--preset preset_name` to the CMake command line ex
 
 #### Requirements
 
-The following components are needed to build Vanilla Conquer executables:
+The following components are needed to build komkommer executables:
 
  - [MSVC v142 C++ x86/x64 build tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
  - Windows 10 SDK
@@ -43,14 +43,14 @@ Extract SDL2 and OpenAL somewhere you know. If you are building only Remastered 
 
 #### Building
 
-In a VS command line window in the Vanilla Conquer source directory:
+In a VS command line window in the komkommer source directory:
 
 ```sh
 cmake -DSDL2_ROOT_DIR=C:\path\to\SDL2 -DOPENAL_ROOT=C:\path\to\OpenAL -B build .
 cmake --build build
 ```
 
-This will build Vanilla Conquer executables in the build directory. If you are building Remastered dlls you need to configure cmake with `-A win32` and ensure your VS command line is x86.
+This will build komkommer executables in the build directory. If you are building Remastered dlls you need to configure cmake with `-A win32` and ensure your VS command line is x86.
 
 ### Linux / macOS / BSD
 
@@ -85,7 +85,7 @@ cmake -B build .
 cmake --build build
 ```
 
-This will build Vanilla Conquer executables in the build directory.
+This will build komkommer executables in the build directory.
 
 #### macOS considerations
 
@@ -101,9 +101,9 @@ Binary releases of the latest commit are available from [here](https://github.co
 
 ## Running
 
-### VanillaTD and VanillaRA
+### KomkommerTD and KomkommerRA
 
-Copy the Vanilla executable (`vanillatd.exe` or `vanillara.exe`) to your legacy game directory, on Windows also copy `SDL2.dll` and `OpenAL32.dll`.
+Copy the komkommer executable (`komkommertd.exe` or `komkommerra.exe`) to your legacy game directory, on Windows also copy `SDL2.dll` and `OpenAL32.dll`.
 
 For Tiberian Dawn the final freeware Gold CD release ([GDI](https://www.moddb.com/games/cc-gold/downloads/command-conquer-gold-free-game-gdi-iso), [NOD](https://www.moddb.com/games/cc-gold/downloads/command-conquer-gold-free-game-nod-iso)) works fine.
 
@@ -117,7 +117,7 @@ If you encounter a bug that may be data related like invisible things or crashin
 
 ### Remastered
 
-The build process will produce _Vanilla_TD_ and _Vanilla_RA_ directories in your build directory if you enable them with `-DBUILD_REMASTERTD=ON` and `-DBUILD_REMASTERRA=ON`.
+The build process will produce _komkommer_TD_ and _komkommer_RA_ directories in your build directory if you enable them with `-DBUILD_REMASTERTD=ON` and `-DBUILD_REMASTERRA=ON`.
 These work as mods for the Remastered Collection.
 
 To manually install a local Remastered mod, launch both games once then head to _My Documents/CnCRemastered/CnCRemastered/Mods_.
@@ -125,23 +125,23 @@ You should see _Tiberian\_Dawn_ and _Red\_Alert_ directories.
 
 #### Tiberian Dawn
 
-Copy the _Vanilla_TD_ directory to the _Tiberian\_Dawn_ directory.
+Copy the _komkommer_TD_ directory to the _Tiberian\_Dawn_ directory.
 
 The directory structure should look like this:
 
-    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/Vanilla_TD/Data/TiberianDawn.dll
-    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/Vanilla_TD/ccmod.json
-    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/Vanilla_TD/GameConstants_Mod.xml
+    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/komkommer_TD/Data/TiberianDawn.dll
+    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/komkommer_TD/ccmod.json
+    My Documents/CnCRemastered/CnCRemastered/Mods/Tiberian_Dawn/komkommer_TD/GameConstants_Mod.xml
 
 You should now see the new mod in the mods list of Tiberian Dawn Remastered.
 
 #### Red Alert
 
-Copy the _Vanilla_RA_ directory to the _Red\_Alert_ directory.
+Copy the _komkommer_RA_ directory to the _Red\_Alert_ directory.
 
 The directory structure should look like this:
 
-    My Documents/CnCRemastered/CnCRemastered/Mods/Red_Alert/Vanilla_RA/Data/RedAlert.dll
-    My Documents/CnCRemastered/CnCRemastered/Mods/Red_Alert/Vanilla_RA/ccmod.json
+    My Documents/CnCRemastered/CnCRemastered/Mods/Red_Alert/komkommer_RA/Data/RedAlert.dll
+    My Documents/CnCRemastered/CnCRemastered/Mods/Red_Alert/komkommer_RA/ccmod.json
 
 You should now see the new mod in the mods list of Red Alert Remastered.

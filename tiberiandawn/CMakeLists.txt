@@ -163,11 +163,11 @@ if(BUILD_REMASTERTD)
         # Generate windows version info.
         generate_product_version(
             REMASTERTD_RC
-            NAME "Vanilla Conquer TiberianDawn DLL"
-            BUNDLE "Vanilla Conquer"
+            NAME "komkommer TiberianDawn DLL"
+            BUNDLE "komkommer"
             VERSION_MAJOR 1
             VERSION_MINOR 7
-            COMPANY_NAME "Vanilla Conquer"
+            COMPANY_NAME "komkommer"
             COMPANY_COPYRIGHT "Based on code released under GPLv3 by EA"
             ORIGINAL_FILENAME "TiberianDawn.dll"
             RCFILE_PREFIX "RemasterTD"
@@ -181,79 +181,79 @@ if(BUILD_REMASTERTD)
         ${TIBDAWN_HEADERS}
         ${REMASTERTD_RC}
     )
-    target_compile_definitions(TiberianDawn PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${REMASTER_DEFS} MEGAMAPS)
+    target_compile_definitions(TiberianDawn PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${REMASTER_DEFS})
     target_include_directories(TiberianDawn PUBLIC ${CMAKE_SOURCE_DIR} .)
     target_link_libraries(TiberianDawn commonr ${REMASTER_LIBS} ${STATIC_LIBS})
     set_target_properties(TiberianDawn PROPERTIES PREFIX "")
 
     add_custom_command(TARGET TiberianDawn POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources/remaster_mods/Vanilla_TD ${CMAKE_BINARY_DIR}/Vanilla_TD
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/Vanilla_TD/Data
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:TiberianDawn> ${CMAKE_BINARY_DIR}/Vanilla_TD/Data/
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources/remaster_mods/komkommer_TD ${CMAKE_BINARY_DIR}/komkommer_TD
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/komkommer_TD/Data
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:TiberianDawn> ${CMAKE_BINARY_DIR}/komkommer_TD/Data/
     )
 endif()
 
 if(BUILD_VANILLATD)
     include(BuildIcons)
     # Create the custom command for generating the ico/icns files for display in the OS.
-    make_icon(INPUT "${CMAKE_SOURCE_DIR}/resources/vanillatd_icon.svg" OUTPUT VANILLATD_ICON)
+    make_icon(INPUT "${CMAKE_SOURCE_DIR}/resources/komkommertd_icon.svg" OUTPUT VANILLATD_ICON)
 
     if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
         # Generate windows version info.
         generate_product_version(
             VANILLATD_RC
-            NAME "VanillaTD"
-            BUNDLE "Vanilla Conquer"
+            NAME "KomkommerTD"
+            BUNDLE "komkommer"
             VERSION_MAJOR 1
             VERSION_MINOR 0
-            COMPANY_NAME "Vanilla Conquer"
+            COMPANY_NAME "komkommer"
             COMPANY_COPYRIGHT "Based on code released under GPLv3 by EA"
-            ORIGINAL_FILENAME "vanillatd.exe"
-            RCFILE_PREFIX "VanillaTD"
+            ORIGINAL_FILENAME "komkommertd.exe"
+            RCFILE_PREFIX "KomkommerTD"
             ICON "${VANILLATD_ICON}"
         )
     endif()
 
     # A target must include the icon for the custom command to run.
-    add_executable(VanillaTD ${TIBDAWN_SRC} ${TIBDAWN_NET_SRC} ${TIBDAWN_HEADERS} ${VANILLATD_RC} ${VANILLATD_ICON})
+    add_executable(KomkommerTD ${TIBDAWN_SRC} ${TIBDAWN_NET_SRC} ${TIBDAWN_HEADERS} ${VANILLATD_RC} ${VANILLATD_ICON})
 
     if(MAKE_BUNDLE)
         set_source_files_properties(${VANILLATD_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-        set_target_properties(VanillaTD PROPERTIES
+        set_target_properties(KomkommerTD PROPERTIES
             MACOSX_BUNDLE True
-            MACOSX_BUNDLE_GUI_IDENTIFIER com.vanilla-conquer.vanillatd
-            MACOSX_BUNDLE_BUNDLE_NAME VanillaTD
+            MACOSX_BUNDLE_GUI_IDENTIFIER com.komkommer.komkommertd
+            MACOSX_BUNDLE_BUNDLE_NAME KomkommerTD
             MACOSX_BUNDLE_BUNDLE_VERSION "1.0"
             MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
             MACOSX_BUNDLE_COPYRIGHT "Based on code released under GPLv3 by EA"
-            MACOSX_BUNDLE_ICON_FILE "vanillatd_icon.icns"
+            MACOSX_BUNDLE_ICON_FILE "komkommertd_icon.icns"
         )
     endif()
 
-    target_compile_definitions(VanillaTD PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS} MEGAMAPS)
-    target_include_directories(VanillaTD PUBLIC ${CMAKE_SOURCE_DIR} .)
-    target_link_libraries(VanillaTD commonv ${VANILLA_LIBS} ${STATIC_LIBS})
-    set_target_properties(VanillaTD PROPERTIES OUTPUT_NAME vanillatd)
+    target_compile_definitions(KomkommerTD PUBLIC $<$<CONFIG:Debug>:_DEBUG> ${VANILLA_DEFS} MEGAMAPS)
+    target_include_directories(KomkommerTD PUBLIC ${CMAKE_SOURCE_DIR} .)
+    target_link_libraries(KomkommerTD commonv ${VANILLA_LIBS} ${STATIC_LIBS})
+    set_target_properties(KomkommerTD PROPERTIES OUTPUT_NAME komkommertd)
     if(MAP_EDITORTD)
-        target_compile_definitions(VanillaTD PUBLIC INTERNAL_VERSION)
+        target_compile_definitions(KomkommerTD PUBLIC INTERNAL_VERSION)
     endif()
     # Control if we auto generate a console and which "main" function we link using MSVC.
     if(MSVC)
-        target_link_options(VanillaTD PRIVATE /subsystem:windows /ENTRY:mainCRTStartup)
+        target_link_options(KomkommerTD PRIVATE /subsystem:windows /ENTRY:mainCRTStartup)
     endif()
     if(WIN32 AND NOT MSVC)
-        set_target_properties(VanillaTD PROPERTIES LINK_FLAGS "-mwindows")
+        set_target_properties(KomkommerTD PROPERTIES LINK_FLAGS "-mwindows")
     endif()
     if(BUILD_WITH_UBSAN)
-        target_compile_options(VanillaTD PUBLIC
+        target_compile_options(KomkommerTD PUBLIC
                     -fsanitize=undefined,float-divide-by-zero,integer,implicit-conversion,implicit-integer-truncation,implicit-integer-arithmetic-value-change,local-bounds,nullability
                     -g3 -fno-omit-frame-pointer)
-        target_link_options(VanillaTD PUBLIC -fsanitize=undefined,float-divide-by-zero,integer,implicit-conversion,implicit-integer-truncation,implicit-integer-arithmetic-value-change,local-bounds,nullability)
+        target_link_options(KomkommerTD PUBLIC -fsanitize=undefined,float-divide-by-zero,integer,implicit-conversion,implicit-integer-truncation,implicit-integer-arithmetic-value-change,local-bounds,nullability)
     endif()
     if(BUILD_WITH_ASAN)
-        target_compile_options(VanillaTD PUBLIC
+        target_compile_options(KomkommerTD PUBLIC
                     -fsanitize=address
                     -g3 -fno-omit-frame-pointer)
-        target_link_options(VanillaTD PUBLIC -fsanitize=address)
+        target_link_options(KomkommerTD PUBLIC -fsanitize=address)
     endif()
 endif()

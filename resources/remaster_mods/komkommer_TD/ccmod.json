@@ -1,0 +1,9 @@
+{
+    "name": "Komkommer TD",
+    "description": "komkommer changes.",
+    "author": "chipgatsby",
+    "load_order": 1,
+    "version_high": 1,
+    "version_low": 0,
+    "game_type": "TD"
+}

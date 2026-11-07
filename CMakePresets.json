@@ -8,7 +8,7 @@
     "configurePresets": [
         {
             "name": "release",
-            "displayName": "Vanilla Release build",
+            "displayName": "komkommer Release build",
             "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
@@ -24,7 +24,7 @@
         {
             "name": "remaster",
             "inherits": "release",
-            "displayName": "Vanilla Remaster build",
+            "displayName": "komkommer Remaster build",
             "cacheVariables": {
                 "BUILD_REMASTERTD": "ON",
                 "BUILD_REMASTERRA": "ON",
@@ -38,7 +38,7 @@
         {
             "name": "internal",
             "inherits": "release",
-            "displayName": "Vanilla Internal build",
+            "displayName": "komkommer Internal build",
             "cacheVariables": {
                 "MAP_EDITORTD": "ON",
                 "MAP_EDITORRA": "ON",
@@ -48,7 +48,7 @@
         {
             "name": "testing",
             "inherits": "release",
-            "displayName": "Vanilla build with tests",
+            "displayName": "komkommer build with tests",
             "cacheVariables": {
                 "BUILD_VANILLATD": "OFF",
                 "BUILD_VANILLARA": "OFF",
@@ -58,7 +58,7 @@
         {
             "name": "nonet",
             "inherits": "internal",
-            "displayName": "Vanilla build no networking",
+            "displayName": "komkommer build no networking",
             "cacheVariables": {
                 "NETWORKING": "OFF"
             }
@@ -75,7 +75,7 @@
             "name": "msvc2019-i686-vanilla",
             "inherits": "release",
             "binaryDir": "${sourceDir}/build_msvc32",
-            "displayName": "MSVC 2019 32bit Vanilla build",
+            "displayName": "MSVC 2019 32bit komkommer build",
             "generator": "Visual Studio 16 2019",
             "architecture": "Win32"
         },
@@ -83,7 +83,7 @@
             "name": "msvc2019-x86-64-vanilla",
             "inherits": "release",
             "binaryDir": "${sourceDir}/build_msvc64",
-            "displayName": "MSVC 2019 64bit Vanilla build",
+            "displayName": "MSVC 2019 64bit komkommer build",
             "architecture": "x64"
         }
     ],
@@ -91,36 +91,36 @@
         {
             "name": "remaster",
             "configurePreset": "remaster",
-            "displayName": "Vanilla Game Build",
-            "description": "Vanilla Game Build",
+            "displayName": "komkommer Game Build",
+            "description": "komkommer Game Build",
             "configuration": "RelWithDebInfo"
         },
         {
             "name": "release",
             "configurePreset": "release",
-            "displayName": "Vanilla Game Build",
-            "description": "Vanilla Game Build",
+            "displayName": "komkommer Game Build",
+            "description": "komkommer Game Build",
             "configuration": "RelWithDebInfo"
         },
         {
             "name": "internal",
             "configurePreset": "internal",
-            "displayName": "Vanilla Game Build",
-            "description": "Vanilla Game Build",
+            "displayName": "komkommer Game Build",
+            "description": "komkommer Game Build",
             "configuration": "RelWithDebInfo"
         },
         {
             "name": "testing",
             "configurePreset": "testing",
-            "displayName": "Vanilla Game Build",
-            "description": "Vanilla Game Build",
+            "displayName": "komkommer Game Build",
+            "description": "komkommer Game Build",
             "configuration": "RelWithDebInfo"
         },
         {
             "name": "nonet",
             "configurePreset": "nonet",
-            "displayName": "Vanilla Game Build",
-            "description": "Vanilla Game Build",
+            "displayName": "komkommer Game Build",
+            "description": "komkommer Game Build",
             "configuration": "RelWithDebInfo"
         }
     ],

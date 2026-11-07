@@ -11,7 +11,7 @@
    height="1024.0px"
    width="1024.0px">
   <title
-     id="title4960">VanillaRA</title>
+     id="title4960">KomkommerRA</title>
   <defs
      id="defs3036">
     <filter
@@ -178,7 +178,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title>VanillaRA</dc:title>
+        <dc:title>KomkommerRA</dc:title>
         <cc:license
            rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
         <dc:creator>

@@ -59,7 +59,7 @@ jobs:
       run: |
         sudo cp -R ~/macports/local /opt/local
 
-    - name: Build Vanilla Conquer
+    - name: Build komkommer
       env:
         CMAKE_OSX_ARCHITECTURES: "arm64;x86_64"
         VC_CXX_FLAGS: "-w;-Wwrite-strings;-Werror=write-strings"
@@ -70,29 +70,29 @@ jobs:
     - name: Create archives
       if: ${{ matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       run: |  
-        dsymutil build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.app/Contents/MacOS/vanillatd -o build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.dSYM
-        dsymutil build/${{ matrix.preset }}/RelWithDebInfo/vanillara.app/Contents/MacOS/vanillara -o build/${{ matrix.preset }}/RelWithDebInfo/vanillara.dSYM
-        strip -Sx build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.app/Contents/MacOS/vanillatd
-        strip -Sx build/${{ matrix.preset }}/RelWithDebInfo/vanillara.app/Contents/MacOS/vanillara
-        dylibbundler --create-dir --bundle-deps --overwrite-files --dest-dir ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.app/Contents/libs --fix-file build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.app/Contents/MacOS/vanillatd
-        dylibbundler --create-dir --bundle-deps --overwrite-files --dest-dir ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.app/Contents/libs --fix-file build/${{ matrix.preset }}/RelWithDebInfo/vanillara.app/Contents/MacOS/vanillara
+        dsymutil build/${{ matrix.preset }}/RelWithDebInfo/komkommertd.app/Contents/MacOS/komkommertd -o build/${{ matrix.preset }}/RelWithDebInfo/komkommertd.dSYM
+        dsymutil build/${{ matrix.preset }}/RelWithDebInfo/komkommerra.app/Contents/MacOS/komkommerra -o build/${{ matrix.preset }}/RelWithDebInfo/komkommerra.dSYM
+        strip -Sx build/${{ matrix.preset }}/RelWithDebInfo/komkommertd.app/Contents/MacOS/komkommertd
+        strip -Sx build/${{ matrix.preset }}/RelWithDebInfo/komkommerra.app/Contents/MacOS/komkommerra
+        dylibbundler --create-dir --bundle-deps --overwrite-files --dest-dir ./build/${{ matrix.preset }}/RelWithDebInfo/komkommertd.app/Contents/libs --fix-file build/${{ matrix.preset }}/RelWithDebInfo/komkommertd.app/Contents/MacOS/komkommertd
+        dylibbundler --create-dir --bundle-deps --overwrite-files --dest-dir ./build/${{ matrix.preset }}/RelWithDebInfo/komkommerra.app/Contents/libs --fix-file build/${{ matrix.preset }}/RelWithDebInfo/komkommerra.app/Contents/MacOS/komkommerra
         mkdir artifact
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-macos-clang-universal2-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.app ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.app
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-macos-clang-universal2-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.dSYM ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.dSYM
+        7z a artifact/komkommer-${{ matrix.preset }}-macos-clang-universal2-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/komkommertd.app ./build/${{ matrix.preset }}/RelWithDebInfo/komkommerra.app
+        7z a artifact/komkommer-${{ matrix.preset }}-macos-clang-universal2-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/komkommertd.dSYM ./build/${{ matrix.preset }}/RelWithDebInfo/komkommerra.dSYM
 
     - name: Add internal tools to archive
       if: ${{ matrix.preset == 'internal' }}
       run: |
-        dsymutil build/${{ matrix.preset }}/RelWithDebInfo/vanillamix -o build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dSYM
-        strip -Sx build/${{ matrix.preset }}/RelWithDebInfo/vanillamix
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-macos-clang-universal2--${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-macos-clang-universal2--${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dSYM
+        dsymutil build/${{ matrix.preset }}/RelWithDebInfo/komkommermix -o build/${{ matrix.preset }}/RelWithDebInfo/komkommermix.dSYM
+        strip -Sx build/${{ matrix.preset }}/RelWithDebInfo/komkommermix
+        7z a artifact/komkommer-${{ matrix.preset }}-macos-clang-universal2--${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/komkommermix
+        7z a artifact/komkommer-${{ matrix.preset }}-macos-clang-universal2--${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/komkommermix.dSYM
     
     - name: Upload artifact
       if: ${{ matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       uses: actions/upload-artifact@v4
       with:
-        name: vanilla-conquer-${{ matrix.preset }}-macos-clang-universal2
+        name: komkommer-${{ matrix.preset }}-macos-clang-universal2
         path: artifact
         
     - name: Upload development release
