@@ -3708,6 +3708,10 @@ void DisplayClass::Mouse_Left_Up(CELL cell, bool shadow, ObjectClass* object, Ac
             Set_Default_Mouse(MOUSE_DEPLOY, wsmall);
             break;
 
+        case ACTION_RALLY:
+            Set_Default_Mouse(MOUSE_CAN_MOVE, wsmall);
+            break;
+
         default:
             Set_Default_Mouse(MOUSE_NORMAL, wsmall);
             break;

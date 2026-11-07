@@ -367,6 +367,7 @@ void GScreenClass::Render(void)
         GraphicViewPortClass* oldpage = Set_Logic_Page(HidPage);
 
         Draw_It(IsToRedraw);
+        BuildingClass::Draw_Rally_Overlay();
 
         if (Buttons)
             Buttons->Draw_All(false);

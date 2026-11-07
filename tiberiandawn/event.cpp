@@ -77,13 +77,14 @@ unsigned char EventClass::EventLength[EventClass::LAST_EVENT] = {
     size_of(EventClass, Data.NavCom),          // ARCHIVE
     size_of(EventClass, Data.Timing),          // TIMING
     size_of(EventClass, Data.ProcessTime),     // PROCESS_TIME
+    size_of(EventClass, Data.NavCom),          // RALLY
 };
 
 const char* EventClass::EventNames[EventClass::LAST_EVENT] = {
     "EMPTY",         "ALLY",          "MEGAMISSION", "IDLE",    "SCATTER", "DESTRUCT",     "DEPLOY",
     "PLACE",         "OPTIONS",       "GAMESPEED",   "PRODUCE", "SUSPEND", "ABANDON",      "PRIMARY",
     "SPECIAL_PLACE", "EXIT",          "ANIMATION",   "REPAIR",  "SELL",    "SPECIAL",      "FRAMESYNC",
-    "MESSAGE",       "RESPONSE_TIME", "FRAMEINFO",   "ARCHIVE", "TIMING",  "PROCESS_TIME",
+    "MESSAGE",       "RESPONSE_TIME", "FRAMEINFO",   "ARCHIVE", "TIMING",  "PROCESS_TIME", "RALLY",
 };
 
 /***********************************************************************************************
@@ -370,7 +371,7 @@ void EventClass::Execute(void)
     char txt[80];
     int i;
     //#if (0)
-    if (Type < 0 || Type > PROCESS_TIME) {
+    if (Type < 0 || Type >= LAST_EVENT) {
         char tempbuf[128];
         sprintf(tempbuf, "Packet type %d received\n", Type);
         CCDebugString(tempbuf);
@@ -396,6 +397,15 @@ void EventClass::Execute(void)
             techno->ArchiveTarget = Data.NavCom.Where;
         }
         break;
+
+    case RALLY: {
+        BuildingClass* building = As_Building(Data.NavCom.Whom);
+        if (building && building->IsActive) {
+            building->Rally = ::As_Cell(Data.NavCom.Where);
+            Map.Flag_To_Redraw(true);
+        }
+        break;
+    }
 
     /*
     **	Make or break alliance.

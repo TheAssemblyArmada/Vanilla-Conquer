@@ -566,6 +566,7 @@ typedef enum ActionType : unsigned char
     ACTION_GUARD_AREA,     // Guard the area/object clicked on.
     ACTION_TOGGLE_PRIMARY, // Toggle the primary status of the factory.
     ACTION_NO_DEPLOY,
+    ACTION_RALLY, // Set a production building's rally point.
 
     ACTION_COUNT
 } ActionType;

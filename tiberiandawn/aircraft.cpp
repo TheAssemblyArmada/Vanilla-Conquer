@@ -1148,7 +1148,17 @@ int AircraftClass::Mission_Unload(void)
                                 }
                                 unit->IsALoaner = false;
                                 unit->IsLocked = true;
-                                unit->Scatter(0, true);
+                                TechnoClass* contact = Contact_With_Whom();
+                                BuildingClass* strip =
+                                    (contact != NULL && contact->What_Am_I() == RTTI_BUILDING) ? (BuildingClass*)contact
+                                                                                              : NULL;
+                                if (strip != NULL && *strip == STRUCT_AIRSTRIP && strip->Rally >= 0) {
+                                    unit->Assign_Mission(MISSION_MOVE);
+                                    unit->Assign_Destination(::As_Target(strip->Rally));
+                                    unit->Commence();
+                                } else {
+                                    unit->Scatter(0, true);
+                                }
                             }
                             ScenarioInit--;
 

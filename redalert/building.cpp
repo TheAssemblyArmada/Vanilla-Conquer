@@ -114,6 +114,126 @@
 */
 #include "sidebarglyphx.h"
 
+static bool Can_Rally(StructType type)
+{
+    switch (type) {
+    case STRUCT_BARRACKS:
+    case STRUCT_TENT:
+    case STRUCT_KENNEL:
+    case STRUCT_WEAP:
+    case STRUCT_SHIP_YARD:
+    case STRUCT_SUB_PEN:
+    case STRUCT_REPAIR:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static void Send_To_Rally(BuildingClass const* building, TechnoClass* unit)
+{
+    if (building == NULL || unit == NULL || building->Rally < 0) {
+        return;
+    }
+    unit->Assign_Mission(MISSION_MOVE);
+    unit->Assign_Destination(::As_Target(building->Rally));
+    unit->Commence();
+}
+
+static void Rally_Pixel(COORDINATE coord, int& x, int& y)
+{
+    int xtac = Pixel_To_Lepton(Lepton_To_Pixel(Coord_X(Map.TacticalCoord)));
+    int xoff = Pixel_To_Lepton(Lepton_To_Pixel(Coord_X(coord))) + (CELL_LEPTON_W * 2) - xtac;
+    int ytac = Pixel_To_Lepton(Lepton_To_Pixel(Coord_Y(Map.TacticalCoord)));
+    int yoff = Pixel_To_Lepton(Lepton_To_Pixel(Coord_Y(coord))) + (CELL_LEPTON_W * 2) - ytac;
+    x = Lepton_To_Pixel(xoff) - CELL_PIXEL_W * 2;
+    y = Lepton_To_Pixel(yoff) - CELL_PIXEL_H * 2;
+}
+
+static void Paint_Rally_Line(int x0, int y0, int x1, int y1, unsigned char color, GraphicViewPortClass* viewport)
+{
+    int dx = x1 - x0;
+    int dy = y1 - y0;
+    int adx = dx < 0 ? -dx : dx;
+    int ady = dy < 0 ? -dy : dy;
+    int len = adx > ady ? adx : ady;
+    if (len < 1) {
+        return;
+    }
+
+    const int dash = 4;
+    int natural = len / 7;
+    if (natural < 1) {
+        natural = 1;
+    }
+    int max_count = viewport != NULL ? 256 : 3;
+    int count = natural > max_count ? max_count : natural;
+
+    int order[256];
+    int n = 0;
+    order[n++] = 0;
+    if (count > 2) {
+        order[n++] = count - 1;
+    }
+    if (count > 1) {
+        order[n++] = count / 2;
+    }
+    for (int i = 0; i < count; ++i) {
+        bool seen = false;
+        for (int j = 0; j < n; ++j) {
+            if (order[j] == i) {
+                seen = true;
+                break;
+            }
+        }
+        if (!seen) {
+            order[n++] = i;
+        }
+    }
+
+    for (int k = 0; k < n; ++k) {
+        int a = order[k] * len / count;
+        int b = a + dash;
+        if (b > len) {
+            b = len;
+        }
+        int ax = x0 + dx * a / len;
+        int ay = y0 + dy * a / len;
+        int bx = x0 + dx * b / len;
+        int by = y0 + dy * b / len;
+        if (viewport != NULL && ax >= -32000 && ay >= -32000 && bx >= -32000 && by >= -32000 && ax <= 32000
+            && ay <= 32000 && bx <= 32000 && by <= 32000) {
+            viewport->Draw_Line(ax, ay, bx, by, color);
+        }
+    }
+}
+
+void BuildingClass::Draw_Rally_Overlay(void)
+{
+    if (LogicPage == NULL || LogicPage->Get_Graphic_Buffer() == NULL
+        || WindowList[WINDOW_TACTICAL][WINDOWWIDTH] < 2 || WindowList[WINDOW_TACTICAL][WINDOWHEIGHT] < 2) {
+        return;
+    }
+
+    GraphicViewPortClass draw_window(LogicPage->Get_Graphic_Buffer(),
+                                     WindowList[WINDOW_TACTICAL][WINDOWX] + LogicPage->Get_XPos(),
+                                     WindowList[WINDOW_TACTICAL][WINDOWY] + LogicPage->Get_YPos(),
+                                     WindowList[WINDOW_TACTICAL][WINDOWWIDTH],
+                                     WindowList[WINDOW_TACTICAL][WINDOWHEIGHT]);
+
+    for (int index = 0; index < Buildings.Count(); ++index) {
+        BuildingClass* building = Buildings.Ptr(index);
+        if (building == NULL || !building->IsActive || building->Rally < 0 || !building->Is_Selected_By_Player()
+            || !Can_Rally(*building)) {
+            continue;
+        }
+        int x0, y0, x1, y1;
+        Rally_Pixel(building->Render_Coord(), x0, y0);
+        Rally_Pixel(Cell_Coord(building->Rally), x1, y1);
+        Paint_Rally_Line(x0, y0, x1, y1, ColorRemaps[building->House->RemapColor].Color, &draw_window);
+    }
+}
+
 enum SAMState
 {
     SAM_READY, // Launcher can be facing any direction tracking targets.
@@ -571,6 +691,7 @@ void BuildingClass::Draw_It(int x, int y, WindowNumberType window) const
             }
         }
     }
+
 }
 
 /***********************************************************************************************
@@ -1685,6 +1806,7 @@ BuildingClass::BuildingClass(StructType type, HousesType house)
     , AnimToTrack(TARGET_NONE)
     , LastStrength(0)
     , PlacementDelay(0)
+    , Rally(-1)
 {
     House->Tracking_Add(this);
     IsSecondShot = !Class->Is_Two_Shooter();
@@ -1908,6 +2030,10 @@ void BuildingClass::Active_Click_With(ActionType action, CELL cell)
         Player_Assign_Mission(MISSION_ATTACK, ::As_Target(cell));
     }
 
+    if (action == ACTION_RALLY) {
+        OutList.Add(EventClass(EventClass::RALLY, TargetClass(this), TargetClass(::As_Target(cell))));
+    }
+
     if (action == ACTION_MOVE && *this == STRUCT_CONST) {
         OutList.Add(EventClass(EventClass::ARCHIVE, TargetClass(this), TargetClass(::As_Target(cell))));
         OutList.Add(EventClass(EventClass::SELL, TargetClass(this)));
@@ -2053,7 +2179,12 @@ int BuildingClass::Exit_Object(TechnoClass* base)
             ScenarioInit++;
             cell = Find_Exit_Cell(base);
             if (cell != 0 && base->Unlimbo(Cell_Coord(cell), Direction(Cell_Coord(cell)))) {
-                base->Assign_Mission(MISSION_GUARD);
+                if (Rally >= 0) {
+                    base->Assign_Mission(MISSION_MOVE);
+                    base->Assign_Destination(::As_Target(Rally));
+                } else {
+                    base->Assign_Mission(MISSION_GUARD);
+                }
                 ScenarioInit--;
                 return (2);
             }
@@ -2134,8 +2265,8 @@ int BuildingClass::Exit_Object(TechnoClass* base)
                     **	When disembarking from a transport then guard an area around the
                     **	center of the base.
                     */
-                    base->Assign_Destination(::As_Target(cell));
-                    if (House->IQ >= Rule.IQGuardArea) {
+                    base->Assign_Destination(::As_Target(Rally >= 0 ? Rally : cell));
+                    if (Rally < 0 && House->IQ >= Rule.IQGuardArea) {
                         base->Assign_Mission(MISSION_GUARD_AREA);
                         base->ArchiveTarget = ::As_Target(House->Where_To_Go((FootClass*)base));
                     }
@@ -2169,8 +2300,8 @@ int BuildingClass::Exit_Object(TechnoClass* base)
                     **	When disembarking from a transport then guard an area around the
                     **	center of the base.
                     */
-                    base->Assign_Destination(::As_Target(cell));
-                    if (House->IQ >= Rule.IQGuardArea) {
+                    base->Assign_Destination(::As_Target(Rally >= 0 ? Rally : cell));
+                    if (Rally < 0 && House->IQ >= Rule.IQGuardArea) {
                         base->Assign_Mission(MISSION_GUARD_AREA);
                         base->ArchiveTarget = ::As_Target(House->Where_To_Go((FootClass*)base));
                     }
@@ -2979,6 +3110,10 @@ ActionType BuildingClass::What_Action(CELL cell) const
     if (action == ACTION_ATTACK && Class->PrimaryWeapon != NULL && !Class->PrimaryWeapon->Bullet->IsAntiGround) {
         //	if (action == ACTION_ATTACK && (*this == STRUCT_SAM || *this == STRUCT_AAGUN)) {
         action = ACTION_NONE;
+    }
+
+    if (Can_Rally(*this) && Is_Owned_By_Player() && (action == ACTION_NONE || action == ACTION_MOVE)) {
+        action = ACTION_RALLY;
     }
 
     return (action);
@@ -4374,7 +4509,7 @@ int BuildingClass::Mission_Repair(void)
                     if (IsOwnedByPlayer)
                         Speak(VOX_UNIT_REPAIRED, House);
 
-                    //							Transmit_Message(RADIO_RUN_AWAY);
+                    Send_To_Rally(this, Contact_With_Whom());
                     Begin_Mode(BSTATE_IDLE);
                     Status = IDLE;
                     break;
@@ -4950,11 +5085,14 @@ int BuildingClass::Mission_Unload(void)
                 if (unit) {
                     unit->Assign_Mission(MISSION_MOVE);
 
-                    if (House->IQ >= Rule.IQGuardArea) {
+                    if (Rally < 0 && House->IQ >= Rule.IQGuardArea) {
                         unit->Assign_Mission(MISSION_GUARD_AREA);
                         unit->ArchiveTarget = ::As_Target(House->Where_To_Go(unit));
                     }
                     unit->Force_Track(DriveClass::OUT_OF_WEAPON_FACTORY, coord);
+                    if (Rally >= 0) {
+                        unit->Assign_Destination(::As_Target(Rally));
+                    }
                     //						unit->Force_Track(DriveClass::OUT_OF_WEAPON_FACTORY,
                     //Adjacent_Cell(Adjacent_Cell(Center_Coord(), FACING_S), FACING_S));
                     unit->Set_Speed(128);

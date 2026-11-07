@@ -3747,6 +3747,10 @@ void DisplayClass::Mouse_Left_Up(bool shadow, ObjectClass* object, ActionType ac
             Set_Default_Mouse(MOUSE_DEPLOY, wwsmall);
             break;
 
+        case ACTION_RALLY:
+            Set_Default_Mouse(MOUSE_CAN_MOVE, wwsmall);
+            break;
+
         default:
             Set_Default_Mouse(MOUSE_NORMAL, wwsmall);
             break;

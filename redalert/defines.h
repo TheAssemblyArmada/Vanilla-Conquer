@@ -1051,6 +1051,7 @@ typedef enum ActionType : unsigned char
     ACTION_NO_ENTER,
     ACTION_NO_GREPAIR,
     ACTION_TOGGLE_PRIMARY, // Toggle the primary status of the factory.
+    ACTION_RALLY,          // Set a production building's rally point.
 
     ACTION_COUNT
 } ActionType;

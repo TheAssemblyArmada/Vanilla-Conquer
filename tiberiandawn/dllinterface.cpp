@@ -2416,6 +2416,9 @@ void DLLExportClass::Convert_Action_Type(ActionType type,
     case ACTION_TOGGLE_PRIMARY:
         dll_type = DAT_TOGGLE_PRIMARY;
         break;
+    case ACTION_RALLY:
+        dll_type = DAT_MOVE;
+        break;
     case ACTION_NO_DEPLOY:
         dll_type = DAT_CANT_DEPLOY;
         break;

@@ -368,6 +368,7 @@ void GScreenClass::Render(void)
         // WWMouse->Erase_Mouse(&HidPage, TRUE);
         GraphicViewPortClass* oldpage = Set_Logic_Page(HidPage);
         Draw_It(IsToRedraw);
+        BuildingClass::Draw_Rally_Overlay();
 
         if (Buttons)
             Buttons->Draw_All(false);

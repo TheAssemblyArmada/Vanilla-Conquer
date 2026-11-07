@@ -160,6 +160,11 @@ public:
     */
     TCountDownTimerClass PlacementDelay;
 
+    /*
+    **	Cell produced units head toward. -1 means the player has not set one.
+    */
+    CELL Rally;
+
     /*---------------------------------------------------------------------
     **	Constructors, Destructors, and overloaded operators.
     */
@@ -190,6 +195,7 @@ public:
     **	Member function prototypes.
     */
     static void Init(void);
+    static void Draw_Rally_Overlay(void);
 
     TARGET Target_Scan(void);
     BuildingTypeClass::AnimControlType const* Fetch_Anim_Control(void)
