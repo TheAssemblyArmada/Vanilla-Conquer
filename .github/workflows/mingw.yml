@@ -44,24 +44,24 @@ jobs:
     - name: Create archives
       if: ${{ matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       run: |
-        cp ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.exe ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.dbg
-        cp ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.exe ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.dbg
-        ${{ matrix.arch.lin }}-w64-mingw32-strip --strip-all ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.exe
-        ${{ matrix.arch.lin }}-w64-mingw32-strip --strip-all ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.exe
-        ${{ matrix.arch.lin }}-w64-mingw32-objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.exe
-        ${{ matrix.arch.lin }}-w64-mingw32-objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.exe
+        cp ./build/${{ matrix.preset }}/Release/vanillatd.exe ./build/${{ matrix.preset }}/Release/vanillatd.dbg
+        cp ./build/${{ matrix.preset }}/Release/vanillara.exe ./build/${{ matrix.preset }}/Release/vanillara.dbg
+        ${{ matrix.arch.lin }}-w64-mingw32-strip --strip-all ./build/${{ matrix.preset }}/Release/vanillatd.exe
+        ${{ matrix.arch.lin }}-w64-mingw32-strip --strip-all ./build/${{ matrix.preset }}/Release/vanillara.exe
+        ${{ matrix.arch.lin }}-w64-mingw32-objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/Release/vanillatd.dbg ./build/${{ matrix.preset }}/Release/vanillatd.exe
+        ${{ matrix.arch.lin }}-w64-mingw32-objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/Release/vanillara.dbg ./build/${{ matrix.preset }}/Release/vanillara.exe
         mkdir artifact
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-gcc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.exe ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.exe /tmp/SDL2-2.0.12/${{ matrix.arch.lin }}-w64-mingw32/bin/SDL2.dll /tmp/openal-soft-1.21.0-bin/bin/${{ matrix.arch.win }}/OpenAL32.dll
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-gcc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.dbg
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-gcc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/Release/vanillatd.exe ./build/${{ matrix.preset }}/Release/vanillara.exe /tmp/SDL2-2.0.12/${{ matrix.arch.lin }}-w64-mingw32/bin/SDL2.dll /tmp/openal-soft-1.21.0-bin/bin/${{ matrix.arch.win }}/OpenAL32.dll
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-gcc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/Release/vanillatd.dbg ./build/${{ matrix.preset }}/Release/vanillara.dbg
     
     - name: Add internal tools to archive
       if: ${{ matrix.preset == 'internal' }}
       run: |
-        cp ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.exe ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dbg
-        ${{ matrix.arch.lin }}-w64-mingw32-strip --strip-all ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.exe
-        ${{ matrix.arch.lin }}-w64-mingw32-objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.exe
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-gcc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.exe
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-gcc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dbg
+        cp ./build/${{ matrix.preset }}/Release/vanillamix.exe ./build/${{ matrix.preset }}/Release/vanillamix.dbg
+        ${{ matrix.arch.lin }}-w64-mingw32-strip --strip-all ./build/${{ matrix.preset }}/Release/vanillamix.exe
+        ${{ matrix.arch.lin }}-w64-mingw32-objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/Release/vanillamix.dbg ./build/${{ matrix.preset }}/Release/vanillamix.exe
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-gcc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/Release/vanillamix.exe
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-win-gcc-${{ matrix.arch.lin }}-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/Release/vanillamix.dbg
     
     - name: Upload artifact
       uses: actions/upload-artifact@v4

@@ -58,24 +58,24 @@ jobs:
     - name: Create archives
       if: ${{ matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
       run: |
-        cp ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.dbg
-        cp ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.dbg
-        strip --strip-all ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd
-        strip --strip-all ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara
-        objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd
-        objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara
+        cp ./build/${{ matrix.preset }}/Release/vanillatd ./build/${{ matrix.preset }}/Release/vanillatd.dbg
+        cp ./build/${{ matrix.preset }}/Release/vanillara ./build/${{ matrix.preset }}/Release/vanillara.dbg
+        strip --strip-all ./build/${{ matrix.preset }}/Release/vanillatd
+        strip --strip-all ./build/${{ matrix.preset }}/Release/vanillara
+        objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/Release/vanillatd.dbg ./build/${{ matrix.preset }}/Release/vanillatd
+        objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/Release/vanillara.dbg ./build/${{ matrix.preset }}/Release/vanillara
         mkdir artifact
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillatd.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillara.dbg
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/Release/vanillatd ./build/${{ matrix.preset }}/Release/vanillara
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/Release/vanillatd.dbg ./build/${{ matrix.preset }}/Release/vanillara.dbg
 
     - name: Add internal tools to archive
       if: ${{ matrix.preset == 'internal' }}
       run: |
-        cp ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dbg
-        objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dbg ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix
-        strip --strip-all ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix
-        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/RelWithDebInfo/vanillamix.dbg
+        cp ./build/${{ matrix.preset }}/Release/vanillamix ./build/${{ matrix.preset }}/Release/vanillamix.dbg
+        objcopy --add-gnu-debuglink=./build/${{ matrix.preset }}/Release/vanillamix.dbg ./build/${{ matrix.preset }}/Release/vanillamix
+        strip --strip-all ./build/${{ matrix.preset }}/Release/vanillamix
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/${{ matrix.preset }}/Release/vanillamix
+        7z a artifact/vanilla-conquer-${{ matrix.preset }}-linux-${{ matrix.compiler.cc }}-${{ matrix.os }}-x86_64-${{ steps.gitinfo.outputs.sha_short }}-debug.zip ./build/${{ matrix.preset }}/Release/vanillamix.dbg
     
     - name: Upload artifact
       if: ${{ matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}

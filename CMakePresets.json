@@ -93,42 +93,42 @@
             "configurePreset": "remaster",
             "displayName": "Vanilla Game Build",
             "description": "Vanilla Game Build",
-            "configuration": "RelWithDebInfo"
+            "configuration": "Release"
         },
         {
             "name": "release",
             "configurePreset": "release",
             "displayName": "Vanilla Game Build",
             "description": "Vanilla Game Build",
-            "configuration": "RelWithDebInfo"
+            "configuration": "Release"
         },
         {
             "name": "internal",
             "configurePreset": "internal",
             "displayName": "Vanilla Game Build",
             "description": "Vanilla Game Build",
-            "configuration": "RelWithDebInfo"
+            "configuration": "Release"
         },
         {
             "name": "testing",
             "configurePreset": "testing",
             "displayName": "Vanilla Game Build",
             "description": "Vanilla Game Build",
-            "configuration": "RelWithDebInfo"
+            "configuration": "Release"
         },
         {
             "name": "nonet",
             "configurePreset": "nonet",
             "displayName": "Vanilla Game Build",
             "description": "Vanilla Game Build",
-            "configuration": "RelWithDebInfo"
+            "configuration": "Release"
         }
     ],
     "testPresets": [
         {
             "name": "testing",
             "configurePreset": "testing",
-            "configuration": "RelWithDebInfo",
+            "configuration": "Release",
             "output": {
                 "outputOnFailure": true
             },
