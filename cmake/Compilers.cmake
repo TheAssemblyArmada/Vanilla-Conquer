@@ -49,6 +49,17 @@ else()
         message(STATUS "yes")
         list(APPEND VC_CXX_FLAGS -fsigned-char)
     endif()
+    
+    # Westwood's custom operator new/delete sets IsActive on the raw memory before
+    # the constructor runs / after the destructor finishes. Prevent GCC's lifetime
+    # dead-store elimination from deleting those stores when operator new is inlined.
+    message(STATUS "Checking whether compiler supports -fno-lifetime-dse")
+    check_cxx_compiler_flag("-Werror -fno-lifetime-dse" HAVE_NO_LIFETIME_DSE)
+
+    if(HAVE_NO_LIFETIME_DSE)
+        message(STATUS "yes")
+        list(APPEND VC_CXX_FLAGS -fno-lifetime-dse)
+    endif()
 
     # Not MSVC, but is WIN32... probably mingw
     if(WIN32)
