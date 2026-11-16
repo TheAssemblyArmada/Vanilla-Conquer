@@ -268,7 +268,7 @@ typedef struct NodeNameTag
 // Packet sent over the serial Global Channel
 //...........................................................................
 #pragma pack(push, 1)
-typedef struct BITFIELD_STRUCT
+typedef struct
 {
     SerialCommandType Command;           // One of the enum's defined above
     char Name[MPLAYER_NAME_MAX];         // Player or Game Name
@@ -301,7 +301,7 @@ typedef struct
     char Name[MPLAYER_NAME_MAX]; // Player or Game Name
     union
     {
-        struct BITFIELD_STRUCT
+        struct
         {
             unsigned int IsOpen : 1; // 1 = game is open for joining
         } GameInfo;
@@ -313,20 +313,33 @@ typedef struct
             unsigned int MinVersion; // game's min supported version
             unsigned int MaxVersion; // game's max supported version
         } PlayerInfo;
-        struct BITFIELD_STRUCT
+        struct
         {
-            unsigned char Scenario;      // Scenario #
-            unsigned int Credits;        // player's credits
+            unsigned char Scenario; // Scenario #
+            unsigned int Credits;   // player's credits
+
+            /*
+            ** simulate effects of attribute((ms_struct))
+            */
+#ifdef __BIG_ENDIAN__
+            unsigned int : 28;
+            unsigned int IsGhosties : 1;
+            unsigned int IsGoodies : 1;
+            unsigned int IsTiberium : 1;
+            unsigned int IsBases : 1;
+#else
             unsigned int IsBases : 1;    // 1 = bases are allowed
             unsigned int IsTiberium : 1; // 1 = tiberium is allowed
             unsigned int IsGoodies : 1;  // 1 = goodies are allowed
             unsigned int IsGhosties : 1; // 1 = ghosts are allowed
-            unsigned char BuildLevel;    // buildable level
-            unsigned char UnitCount;     // max # units
-            int Seed;                    // random number seed
-            SpecialClass Special;        // command-line options
-            unsigned int GameSpeed;      // Game Speed
-            unsigned int Version;        // version # common to all players
+            unsigned int : 28;
+#endif
+            unsigned char BuildLevel; // buildable level
+            unsigned char UnitCount;  // max # units
+            int Seed;                 // random number seed
+            SpecialClass Special;     // command-line options
+            unsigned int GameSpeed;   // Game Speed
+            unsigned int Version;     // version # common to all players
         } ScenarioInfo;
         struct
         {

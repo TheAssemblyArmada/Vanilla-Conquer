@@ -42,7 +42,7 @@
 **	same time (same game frame).
 */
 #pragma pack(push, 1)
-class BITFIELD_STRUCT EventClass
+class EventClass
 {
 public:
     /*

@@ -11,7 +11,6 @@
 bool GameInFocus;
 int ScreenWidth;
 int WindowList[9][9];
-extern "C" char* _ShapeBuffer = 0;
 WWKeyboardClass* Keyboard;
 
 void Process_Network()

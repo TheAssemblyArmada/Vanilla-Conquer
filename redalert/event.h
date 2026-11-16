@@ -35,8 +35,6 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-#include "common/bitfields.h"
-
 /*
 **	This event class is used to contain all external game events (things that the player can
 **	do at any time) so that these events can be transported between linked computers. This
@@ -46,7 +44,7 @@
 ** EventLength[] and EventNames[].
 */
 #pragma pack(push, 1)
-class BITFIELD_STRUCT EventClass
+class EventClass
 {
 public:
     /*
