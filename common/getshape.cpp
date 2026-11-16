@@ -194,7 +194,6 @@ int Extract_Shape_Count(void const* buffer)
  *=========================================================================*/
 void* Extract_Shape(void const* buffer, int shape)
 {
-    ShapeBlock_Type* block = (ShapeBlock_Type*)buffer;
     // PG	int numshapes;		// Number of shapes
     uint32_t offset; // Offset of shape data, from start of block
     char* bytebuf = (char*)buffer;
@@ -242,7 +241,9 @@ int Get_Shape_Width(void const* shape)
 {
     Shape_Type* shp = (Shape_Type*)shape;
 
-    return le16toh(shp->Width);
+    uint16_t width;
+    memcpy(&width, &shp->Width, sizeof(width));
+    return le16toh(width);
 
 } /* end of Get_Shape_Width */
 
