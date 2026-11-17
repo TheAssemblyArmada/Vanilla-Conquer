@@ -8,13 +8,13 @@ jobs:
   remaster_msvc:
     runs-on: windows-2022
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         submodules: 'true'
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
         
-    - uses: ilammy/msvc-dev-cmd@v1.13.0
+    - uses: themrmilchmann/setup-msvc-dev@v4
       with:
         arch: x86
         
@@ -48,14 +48,14 @@ jobs:
         7z a artifact/vanilla-td-remaster-mod-msvc-${{ steps.gitinfo.outputs.sha_short }}.zip ./build/remaster/Vanilla_TD
         
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: vanilla-conquer-remaster-msvc
         path: artifact
 
     - name: Upload development release
       if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' }}
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         name: Development Build
         tag_name: "latest"
@@ -67,7 +67,7 @@ jobs:
 
     - name: Upload tagged release
       if: ${{ startsWith(github.ref, 'refs/tags/') }}
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         files: |
           artifact/*
@@ -82,13 +82,13 @@ jobs:
         arch: [{win: Win32, lin: i686, cmd: x86}, {win: Win64, lin: x86_64, cmd: x64}]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         submodules: 'true'
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
         
-    - uses: ilammy/msvc-dev-cmd@v1.13.0
+    - uses: themrmilchmann/setup-msvc-dev@v4
       with:
         arch: ${{ matrix.arch.cmd }}
         
@@ -138,14 +138,14 @@ jobs:
     
     - name: Upload artifact
       if: ${{ matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: vanilla-conquer-${{ matrix.preset }}-win-msvc-${{ matrix.arch.lin }}
         path: artifact
         
     - name: Upload development release
       if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' && matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         name: Development Build
         tag_name: "latest"
@@ -157,7 +157,7 @@ jobs:
 
     - name: Upload tagged release
       if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         files: |
           artifact/*

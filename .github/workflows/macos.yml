@@ -6,13 +6,13 @@ on:
 
 jobs:
   vanilla-macos:
-    runs-on: macos-14
+    runs-on: macos-15
     strategy:
       matrix:
         preset: [release, internal, testing, nonet]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         submodules: 'true'
         fetch-depth: 0
@@ -30,7 +30,7 @@ jobs:
 
     - name: Restore cache
       id: dep-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       env:
         cache-name: cache-dependencies
       with:
@@ -44,8 +44,8 @@ jobs:
     - if: ${{ steps.dep-cache.outputs.cache-hit != 'true' }}
       name: Install macport dependencies
       run: |
-        wget -q https://github.com/macports/macports-base/releases/download/v2.10.5/MacPorts-2.10.5-14-Sonoma.pkg
-        sudo installer -pkg ./MacPorts-2.10.5-14-Sonoma.pkg -target /
+        wget -q https://github.com/macports/macports-base/releases/download/v2.12.7/MacPorts-2.12.7-15-Sequoia.pkg
+        sudo installer -pkg ./MacPorts-2.12.7-15-Sequoia.pkg -target /
         export PATH="/opt/local/bin:/opt/local/sbin:$PATH"
         sudo port selfupdate -N
         sudo port install libsdl2 +universal -N
@@ -90,14 +90,14 @@ jobs:
     
     - name: Upload artifact
       if: ${{ matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: vanilla-conquer-${{ matrix.preset }}-macos-clang-universal2
         path: artifact
         
     - name: Upload development release
       if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/vanilla' && matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         name: Development Build
         tag_name: "latest"
@@ -109,7 +109,7 @@ jobs:
 
     - name: Upload tagged release
       if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.preset != 'testing' &&  matrix.preset != 'nonet' }}
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         files: |
           artifact/*
