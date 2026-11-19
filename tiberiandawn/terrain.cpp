@@ -537,6 +537,7 @@ void TerrainClass::AI(void)
         */
         if (IsCrumbling && Fetch_Stage() == Get_Build_Frame_Count(Class->Get_Image_Data()) - 1) {
             delete this;
+            return;
         }
     }
 
