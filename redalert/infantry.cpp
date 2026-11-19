@@ -588,8 +588,6 @@ void InfantryClass::Draw_It(int x, int y, WindowNumberType window) const
     FootClass::Draw_It(x, y, window);
 }
 
-extern bool MPSuperWeaponDisable;
-
 /***********************************************************************************************
  * InfantryClass::Per_Cell_Process -- Handles special operations that occur once per cell.     *
  *                                                                                             *
@@ -704,7 +702,7 @@ void InfantryClass::Per_Cell_Process(PCPType why)
                                 tech->House->RadarSpied |= housespy;
                             }
 #ifdef REMASTER_BUILD
-                            if (Session.Type == GAME_NORMAL || !MPSuperWeaponDisable) {
+                            if (Session.Type == GAME_NORMAL || Rule.AllowSuperWeapons) {
 #else
                             if (Session.Type == GAME_NORMAL) {
 #endif

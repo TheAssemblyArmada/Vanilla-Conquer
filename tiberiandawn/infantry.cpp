@@ -514,8 +514,7 @@ ResultType InfantryClass::Take_Damage(int& damage, int distance, WarheadType war
             Scatter(c4);
         }
 
-#ifdef BOXING
-        if (IsBoxing) {
+        if (Rule.IsBoxing && IsBoxing) {
             int addval = 0;
 
             switch (warhead) {
@@ -532,7 +531,6 @@ ResultType InfantryClass::Take_Damage(int& damage, int distance, WarheadType war
                 break;
             }
         } else {
-#endif
             if (source && Fear < FEAR_SCARED) {
                 if (Class->IsFraidyCat) {
                     Fear = FEAR_PANIC;
@@ -545,9 +543,7 @@ ResultType InfantryClass::Take_Damage(int& damage, int distance, WarheadType war
                     morefear /= 4;
                 Fear = MIN((int)Fear + morefear, FEAR_MAXIMUM);
             }
-#ifdef BOXING
         }
-#endif
     }
     return (res);
 }
@@ -630,11 +626,9 @@ void InfantryClass::Draw_It(int x, int y, WindowNumberType window)
     }
     shapenum += Class->DoControls[doit].Frame;
 
-#ifdef BOXING
     // BG hack to get him to face right when he's supposed to.
-    if (IsBoxing && facing < Facing_To_32(DIR_S))
+    if (Rule.IsBoxing && IsBoxing && facing < Facing_To_32(DIR_S))
         shapenum += 47;
-#endif
 
     /*
     **	Actually draw the root body of the unit.
@@ -716,7 +710,7 @@ void InfantryClass::Per_Cell_Process(bool center)
     if (center && Mission == MISSION_SABOTAGE) {
         BuildingClass* building = cellptr->Cell_Building();
         if (building && building->As_Target() == NavCom) {
-            int temp = Special.IsScatter;
+            int temp = Rule.IsScatter;
 
             building->IsGoingToBlow = true;
             building->Clicked_As_Target(PlayerPtr->Class->House,
@@ -724,12 +718,12 @@ void InfantryClass::Per_Cell_Process(bool center)
             building->Clicked_As_Target(building->Owner(), 20);
             building->CountDown.Set(20);
             building->WhomToRepay = As_Target();
-            Special.IsScatter = true;
+            Rule.IsScatter = true;
             NavCom = TARGET_NONE;
             Do_Uncloak();
             Arm = Rearm_Delay(true);
             Scatter(building->Center_Coord(), true); // RUN AWAY!
-            Special.IsScatter = temp;
+            Rule.IsScatter = temp;
             return;
         }
     }
@@ -1149,19 +1143,18 @@ void InfantryClass::AI(void)
         break;
 
     case FIRE_OK:
-#ifdef BOXING
         ObjectClass* object = As_Object(TarCom);
 
-        if (object) {
+        if (!Rule.IsBoxing || object) {
             /* If we're engaged in hand-to-hand combat, keep boxing */
-            if (IsBoxing) {
+            if (Rule.IsBoxing && IsBoxing) {
                 IsFiring = true;
                 if (((InfantryClass*)object)->Doing == DO_FIGHT_READY) {
                     Do_Action((DoType)((int)DO_PUNCH + (DoType)(Random_Pick(0, 1) == 1)), true);
                 }
             } else {
 
-                if (Is_Target_Infantry(TarCom) && (Distance(TarCom) <= 0x80)
+                if (Rule.IsBoxing && Is_Target_Infantry(TarCom) && (Distance(TarCom) <= 0x80)
                     && (Coord_Y(Coord) == Coord_Y(object->Coord))) {
 
                     // Too close to shoot, so start hand-to-hand combat
@@ -1172,8 +1165,6 @@ void InfantryClass::AI(void)
                         }
                     }
                 } else {
-#endif
-
                     /*
                     **	Start firing animation.
                     */
@@ -1184,9 +1175,7 @@ void InfantryClass::AI(void)
                         Do_Action(DO_FIRE_WEAPON);
                         IsFiring = true;
                     }
-#ifdef BOXING
                 }
-#endif
 
                 PrimaryFacing.Set(Direction8(Center_Coord(), As_Coord(TarCom)));
 
@@ -1198,10 +1187,8 @@ void InfantryClass::AI(void)
                     NavCom = TARGET_NONE;
                     Path[0] = FACING_NONE;
                 }
-#ifdef BOXING
             }
         }
-#endif
         break;
     }
 
@@ -1216,13 +1203,11 @@ void InfantryClass::AI(void)
     if (IsProne)
         firestage = Class->ProneLaunch;
 
-#ifdef BOXING
-    if (IsBoxing) {
+    if (Rule.IsBoxing && IsBoxing) {
         firestage = 1;
         if (Doing == DO_KICK)
             firestage = 2;
     }
-#endif
 
     if (IsFiring && Fetch_Stage() == firestage) {
         Fire_At(TarCom, 0);
@@ -1254,7 +1239,6 @@ void InfantryClass::AI(void)
             }
             break;
 
-#ifdef BOXING
         case DO_FIGHT_READY:
         case DO_ON_GUARD:
         case DO_PUNCH:
@@ -1270,7 +1254,6 @@ void InfantryClass::AI(void)
                 Do_Action(DO_READY_WEAPON);
             }
             break;
-#endif
 
         /*
         **	When death is due to hand-to-hand combat, use the gunfire death
@@ -1833,18 +1816,16 @@ FireErrorType InfantryClass::Can_Fire(TARGET target, int which) const
     Validate();
     WeaponTypeClass const* weapon = (which == 0) ? &Weapons[Class->Primary] : &Weapons[Class->Secondary];
 
-#ifdef BOXING
     /*
     ** If in hand-to-hand, and we're currently playing a got-hit animation,
     ** then we can't punch back yet.
     */
-    if (IsBoxing) {
+    if (Rule.IsBoxing && IsBoxing) {
         if ((Doing >= DO_PUNCH_HIT1 && Doing <= DO_KICK_DEATH) || (Doing == DO_ON_GUARD))
             return FIRE_BUSY;
         if (Arm)
             return (FIRE_BUSY); // don't let fire if still re-arming
     }
-#endif
 
     /*
     **	Don't allow firing if the turret is not ready.
@@ -2102,7 +2083,7 @@ void InfantryClass::Scatter(COORDINATE threat, bool forced, bool nokidding)
     **	For human players, don't scatter the infantry, if the special
     **	flag has not been enabled that allows infantry scatter.
     */
-    if (!Special.IsScatter && !nokidding && House->IsHuman && !forced && !Team)
+    if (!Rule.IsScatter && !nokidding && House->IsHuman && !forced && !Team)
         return;
 
     if (forced || Class->IsFraidyCat /*|| !(Random_Pick(1, 4) == 1)*/) {
@@ -2387,8 +2368,7 @@ BulletClass* InfantryClass::Fire_At(TARGET target, int which)
 
     IsFiring = false;
 
-#ifdef BOXING
-    if (IsBoxing) {
+    if (Rule.IsBoxing && IsBoxing) {
         RadioMessageType hitaction = (Doing == DO_KICK) ? RADIO_KICK : RADIO_PUNCH;
 
         /*
@@ -2408,8 +2388,6 @@ BulletClass* InfantryClass::Fire_At(TARGET target, int which)
                 Do_Action(DO_READY_WEAPON, true);
         }
     } else {
-#endif
-
         bullet = FootClass::Fire_At(target, which);
         if (bullet) {
 
@@ -2431,10 +2409,7 @@ BulletClass* InfantryClass::Fire_At(TARGET target, int which)
             */
             Sound_Effect(weapon->Sound, Coord);
         }
-
-#ifdef BOXING
     }
-#endif
     return (bullet);
 }
 
@@ -2762,10 +2737,8 @@ RadioMessageType InfantryClass::Receive_Message(RadioClass* from, RadioMessageTy
     switch (message) {
 
     case RADIO_OVER_OUT:
-#ifdef BOXING
-        if (IsBoxing)
+        if (Rule.IsBoxing && IsBoxing)
             Do_Action(DO_READY_WEAPON);
-#endif
         break;
 
     /*
@@ -2773,10 +2746,9 @@ RadioMessageType InfantryClass::Receive_Message(RadioClass* from, RadioMessageTy
     **	then refuse the offer.
     */
     case RADIO_PREPARE_TO_BOX:
-#ifdef BOXING
-        if (IsBoxing)
+        if (Rule.IsBoxing && IsBoxing)
             break;
-#endif
+
         if (Contact_With_Whom() == from) {
             Assign_Target(Contact_With_Whom()->As_Target());
             Do_Action(DO_ON_GUARD, true);
@@ -2825,11 +2797,11 @@ RadioMessageType InfantryClass::Receive_Message(RadioClass* from, RadioMessageTy
 int InfantryClass::Rearm_Delay(bool second) const
 {
     Validate();
-#ifdef BOXING
-    if (IsBoxing) {
+
+    if (Rule.IsBoxing && IsBoxing) {
         return (Random_Pick(5, 50));
     }
-#endif
+
     return (FootClass::Rearm_Delay(second));
 }
 

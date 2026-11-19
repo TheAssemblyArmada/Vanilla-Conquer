@@ -994,7 +994,7 @@ ResultType UnitClass::Take_Damage(int& damage, int distance, WarheadType warhead
         **	Try to crush anyone that fires on this unit if possible. The harvester
         **	typically is the only one that will qualify here.
         */
-        if (!Team && source && !IsTethered && !House->Is_Ally(source) && (!House->IsHuman || Special.IsSmartDefense)) {
+        if (!Team && source && !IsTethered && !House->Is_Ally(source) && (!House->IsHuman || Rule.IsSmartDefense)) {
 
             /*
             **	Try to crush the attacker if it can be crushed by this unit and this unit is

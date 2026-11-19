@@ -951,7 +951,6 @@ void HouseClass::Init(void)
 
 // Object selection list is switched with player context for GlyphX. ST - 8/7/2019 10:11AM
 extern void Logic_Switch_Player_Context(HouseClass* house);
-extern bool MPSuperWeaponDisable;
 
 /***********************************************************************************************
  * HouseClass::AI -- Process house logic.                                                      *
@@ -1223,7 +1222,7 @@ void HouseClass::AI(void)
     **	Process any super weapon logic required.
     */
 #ifdef REMASTER_BUILD
-    if (Session.Type != GAME_GLYPHX_MULTIPLAYER || !MPSuperWeaponDisable) {
+    if (Session.Type != GAME_GLYPHX_MULTIPLAYER || Rule.AllowSuperWeapons) {
         Super_Weapon_Handler();
     }
 #else

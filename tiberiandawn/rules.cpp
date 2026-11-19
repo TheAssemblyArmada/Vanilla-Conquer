@@ -121,7 +121,20 @@ RulesClass::RulesClass(void)
     , IsComputerParanoid(false)
     , IsCompEasyBonus(false)
     , IsFineDifficulty(false)
+    , IsMCVDeploy(false)
+    , IsSeparate(false)
+    , IsTreeTarget(false)
+    , IsTGrowth(true)
+    , IsTSpread(true)
+    , IsNamed(false)
+    , IsSmartDefense(false)
+    , IsScatter(false)
     , AllowSuperWeapons(true)
+    , IsThreePoint(false)
+    , IsBoxing(false)
+    , NukeTime(14)
+    , IonTime(10)
+    , AirStrikeTime(8)
 {
 #ifndef REMASTER_BUILD
 
@@ -256,6 +269,8 @@ static void Difficulty_Put(CCINIClass& ini, DifficultyClass& diff, char const* s
  *=============================================================================================*/
 bool RulesClass::Process(CCINIClass& ini)
 {
+    General(ini);
+    Recharge(ini);
     AI(ini);
     IQ(ini);
     Difficulty(ini);
@@ -279,9 +294,122 @@ bool RulesClass::Process(CCINIClass& ini)
  *=============================================================================================*/
 bool RulesClass::Export(CCINIClass& ini)
 {
+    Export_General(ini);
+    Export_Recharge(ini);
     Export_AI(ini);
     Export_IQ(ini);
     Export_Difficulty(ini);
+
+    return (true);
+}
+
+/***********************************************************************************************
+ * RulesClass::General -- Process the general main game rules.                                 *
+ *                                                                                             *
+ *    This fetches the control constants uses for regular game processing. Any game behavior   *
+ *    controlling values that don't properly fit in any of the other catagories will be        *
+ *    stored here.                                                                             *
+ *                                                                                             *
+ * INPUT:   ini   -- Reference to the database to fetch the values from.                       *
+ *                                                                                             *
+ * OUTPUT:  bool; Was the general section found and processed?                                 *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/08/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+bool RulesClass::General(CCINIClass& ini)
+{
+    static char const* const GENERAL = "General";
+
+    if (ini.Is_Present(GENERAL)) {
+        IsFineDifficulty = ini.Get_Bool(GENERAL, "FineDiffControl", IsFineDifficulty);
+        IsScatter = ini.Get_Bool(GENERAL, "PlayerScatter", IsScatter);
+        IsSmartDefense = ini.Get_Bool(GENERAL, "PlayerReturnFire", IsSmartDefense);
+        IsNamed = ini.Get_Bool(GENERAL, "NamedCivilians", IsNamed);
+        IsTGrowth = ini.Get_Bool(GENERAL, "TiberiumGrows", IsTGrowth);
+        IsTSpread = ini.Get_Bool(GENERAL, "TiberiumSpreads", IsTSpread);
+        IsTreeTarget = ini.Get_Bool(GENERAL, "TreeTargeting", IsTreeTarget);
+        IsSeparate = ini.Get_Bool(GENERAL, "SeparateAircraft", IsSeparate);
+        IsMCVDeploy = ini.Get_Bool(GENERAL, "MCVUndeploy", IsMCVDeploy);
+        IsThreePoint = ini.Get_Bool(GENERAL, "ThreePointTurns", IsThreePoint);
+        IsBoxing = ini.Get_Bool(GENERAL, "HandToHand", IsBoxing);
+
+        return (true);
+    }
+
+    return (false);
+}
+
+/***********************************************************************************************
+ * RulesClass::Recharge -- Process the super weapon recharge statistics.                       *
+ *                                                                                             *
+ *    Use this to set the recharge times for the various super weapons available.              *
+ *                                                                                             *
+ * INPUT:   ini   -- Reference to the database.                                                *
+ *                                                                                             *
+ * OUTPUT:  bool; Was the recharge section found and processed?                                *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/08/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+bool RulesClass::Recharge(CCINIClass& ini)
+{
+    static char const* const RECHARGE = "Recharge";
+    if (ini.Is_Present(RECHARGE)) {
+        AirStrikeTime = ini.Get_Fixed(RECHARGE, "AirStrike", AirStrikeTime);
+        IonTime = ini.Get_Fixed(RECHARGE, "IonCannon", IonTime);
+        NukeTime = ini.Get_Fixed(RECHARGE, "Nuke", NukeTime);
+        return (true);
+    }
+    return (false);
+}
+
+bool RulesClass::Export_Recharge(CCINIClass& ini)
+{
+    static char const RECHARGE[] = "Recharge";
+
+    ini.Put_Fixed(RECHARGE, "AirStrike", AirStrikeTime);
+    ini.Put_Fixed(RECHARGE, "IonCannon", IonTime);
+    ini.Put_Fixed(RECHARGE, "Nuke", NukeTime);
+
+    return (true);
+}
+
+/***********************************************************************************************
+ * RulesClass::General -- Process the general main game rules.                                 *
+ *                                                                                             *
+ *    This fetches the control constants uses for regular game processing. Any game behavior   *
+ *    controlling values that don't properly fit in any of the other catagories will be        *
+ *    stored here.                                                                             *
+ *                                                                                             *
+ * INPUT:   ini   -- Reference to the database to fetch the values from.                       *
+ *                                                                                             *
+ * OUTPUT:  bool; Was the general section found and processed?                                 *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/08/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+bool RulesClass::Export_General(CCINIClass& ini)
+{
+    static char const GENERAL[] = "General";
+
+    ini.Put_Bool(GENERAL, "FineDiffControl", IsFineDifficulty);
+    ini.Put_Bool(GENERAL, "PlayerScatter", IsScatter);
+    ini.Put_Bool(GENERAL, "PlayerReturnFire", IsSmartDefense);
+    ini.Put_Bool(GENERAL, "NamedCivilians", IsNamed);
+    ini.Put_Bool(GENERAL, "TiberiumGrows", IsTGrowth);
+    ini.Put_Bool(GENERAL, "TiberiumSpreads", IsTSpread);
+    ini.Put_Bool(GENERAL, "TreeTargeting", IsTreeTarget);
+    ini.Put_Bool(GENERAL, "SeparateAircraft", IsSeparate);
+    ini.Put_Bool(GENERAL, "MCVUndeploy", IsMCVDeploy);
+    ini.Put_Bool(GENERAL, "ThreePointTurns", IsThreePoint);
+    ini.Put_Bool(GENERAL, "HandToHand", IsBoxing);
 
     return (true);
 }
@@ -375,6 +503,82 @@ bool RulesClass::Export_AI(CCINIClass& ini)
     ini.Put_Bool(AI, "Paranoid", IsComputerParanoid);
     ini.Put_Fixed(AI, "PowerEmergency", PowerEmergencyFraction);
     return (true);
+}
+/***********************************************************************************************
+ * RulesClass::Themes -- Fetches the theme control values from the INI database.               *
+ *                                                                                             *
+ *    The musical theme availability is controlled by the scenario and the player's house      *
+ *    choice. These controls can be specified in the theme control section of the INI          *
+ *    database.                                                                                *
+ *                                                                                             *
+ * INPUT:   ini   -- Reference to the INI database to process.                                 *
+ *                                                                                             *
+ * OUTPUT:  bool; Was the theme section found and processed?                                   *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   08/11/1996 JLB : Created.                                                                 *
+ *=============================================================================================*/
+bool RulesClass::Themes(CCINIClass& ini)
+{
+    static char const* const THEMECONTROL = "ThemeControl";
+
+    if (ini.Is_Present(THEMECONTROL)) {
+        for (ThemeType theme = THEME_FIRST; theme < THEME_COUNT; theme++) {
+            if (ini.Is_Present(THEMECONTROL, Theme.Base_Name(theme))) {
+
+                char buffer[128];
+                int scen = 1;
+                int owners = HOUSEF_GOOD | HOUSEF_BAD | HOUSEF_OTHERS;
+
+                ini.Get_String(THEMECONTROL, Theme.Base_Name(theme), "", buffer, sizeof(buffer));
+                char const* token = strtok(buffer, ",");
+                if (token != NULL) {
+                    scen = atoi(token);
+                }
+
+                token = strtok(NULL, ",");
+                if (token != NULL) {
+                    owners = Owner_From_Name(token);
+                }
+
+                Theme.Set_Theme_Data(theme, scen, owners);
+            }
+        }
+        return (true);
+    }
+    return (false);
+}
+
+bool RulesClass::Export_Themes(CCINIClass& ini)
+{
+    static char const* const THEMECONTROL = "ThemeControl";
+
+    for (ThemeType theme = THEME_FIRST; theme < THEME_COUNT; theme++) {
+
+        char buffer[128];
+        int scen = Theme.Scenario(theme);
+        int owners = Theme.Owner(theme);
+
+        const char* owner_name;
+        switch (owners) {
+        case HOUSEF_GOOD:
+            owner_name = ",GDI";
+            break;
+        case HOUSEF_BAD:
+            owner_name = ",Nod";
+            break;
+        default:
+            owner_name = "";
+            break;
+        }
+
+        snprintf(buffer, sizeof(buffer), "%d,%s", scen, owner_name);
+        ini.Put_String(THEMECONTROL, Theme.Base_Name(theme), buffer);
+    }
+
+    return true;
 }
 
 /***********************************************************************************************
@@ -496,4 +700,24 @@ bool RulesClass::Export_Difficulty(CCINIClass& ini)
     Difficulty_Put(ini, Diff[DIFF_HARD], "Difficult");
 #endif
     return (true);
+}
+
+/***********************************************************************************************
+ * Is_MCV_Deploy -- Check if MCV can be deployed.                                              *
+ *                                                                                             *
+ *    This routine is used to check if the Construction Yard can revert back into an MCV.      *
+ *    It allows the special variables to override anything set by the rules.                   *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  bool; Can the Construction Yard revert back into an MCV.                           *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/24/2019 SKY : Created.                                                                 *
+ *=============================================================================================*/
+bool Is_MCV_Deploy()
+{
+    return Special.UseMCVDeploy ? Special.IsMCVDeploy : Rule.IsMCVDeploy;
 }
