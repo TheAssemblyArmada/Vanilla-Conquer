@@ -38,6 +38,9 @@
 #include "stage.h"
 #include "scroll.h"
 
+class Pipe;
+class Straw;
+
 class MouseClass : public ScrollClass
 {
 public:
@@ -66,8 +69,8 @@ public:
     /*
     **	File I/O.
     */
-    virtual bool Load(FileClass& file);
-    virtual bool Save(FileClass& file);
+    virtual bool Load(Straw& file);
+    virtual bool Save(Pipe& file);
     virtual void Code_Pointers(void);
     virtual void Decode_Pointers(void);
 
